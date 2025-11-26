@@ -113,6 +113,15 @@ const Hero = () => {
               View My Work
             </Button>
           </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="mt-8 text-gray-400 text-sm italic"
+          >
+            "Very high quality work. Great communication. High quality code." — Duncan H., Upwork Client
+          </motion.p>
         </div>
       </div>
 
