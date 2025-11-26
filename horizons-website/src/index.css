@@ -42,11 +42,20 @@
   }
   body, html {
     @apply bg-background text-foreground;
-    cursor: none;
   }
-  
-  a, button {
-    cursor: none;
+
+  /* Only hide cursor on devices with precise pointers (mouse/trackpad) */
+  @media (pointer: fine) {
+    body, html, a, button {
+      cursor: none;
+    }
+  }
+
+  /* Respect user preference for reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    body, html, a, button {
+      cursor: auto;
+    }
   }
 }
 
