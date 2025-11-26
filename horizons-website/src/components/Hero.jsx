@@ -70,18 +70,24 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto"
           >
-            I help businesses automate complex data workflows using Computer Vision, Web Scraping, and AI Agents—delivering production-ready solutions faster and cheaper than hiring multiple specialists.
+            Spending 40+ hours a week on manual data processing? I help businesses automate complex data workflows using Computer Vision, Web Scraping, and AI Agents—delivering production-ready solutions faster and cheaper than hiring multiple specialists.
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="inline-flex items-center gap-4 px-5 py-2.5 bg-white/5 border border-white/10 rounded-full mb-10"
+            className="flex flex-col items-center gap-3 mb-10"
           >
-            <span className="text-accent-purple font-semibold">Starting at €80/hour</span>
-            <span className="text-gray-400">•</span>
-            <span className="text-gray-300">Based in Europe</span>
+            <div className="inline-flex items-center gap-4 px-5 py-2.5 bg-white/5 border border-white/10 rounded-full">
+              <span className="text-accent-purple font-semibold">Starting at €80/hour</span>
+              <span className="text-gray-400">•</span>
+              <span className="text-gray-300">Based in Europe</span>
+            </div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 border border-green-500/30 rounded-full">
+              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+              <span className="text-green-400 text-sm">Limited availability — currently accepting 1-2 new projects</span>
+            </div>
           </motion.div>
 
           <motion.div
