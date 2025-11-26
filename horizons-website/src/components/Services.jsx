@@ -4,13 +4,13 @@ import { Plus } from 'lucide-react'; // Changed import from ArrowRight, ArrowDow
 
 const services = [{
   title: 'COMPUTER VISION & REAL-TIME PROCESSING',
-  description: 'Automate visual inspection and reduce manual review time by 90%+. Real-time object detection, image classification, video analytics with optimized deep learning inference. Specialized in CUDA acceleration and edge deployment for production systems.'
+  description: 'Automate visual inspection and reduce manual review time by 90%+. Real-time object detection, image classification, video analytics with optimized deep learning inference. Specialized in CUDA acceleration and edge deployment for production systems. Ideal for manufacturing, logistics, and quality control teams looking to cut inspection time and eliminate human error.'
 }, {
   title: 'INTELLIGENT WEB SCRAPING & DATA EXTRACTION',
-  description: 'Extract thousands of records daily and turn unstructured data into actionable insights. Automated data extraction from websites with parsing, validation, and standardization. Handle complex workflows with robots.txt compliance and anti-blocking strategies.'
+  description: 'Extract thousands of records daily and turn unstructured data into actionable insights. Automated data extraction from websites with parsing, validation, and standardization. Handle complex workflows with robots.txt compliance and anti-blocking strategies. Perfect for e-commerce, market research, and competitive intelligence teams who need reliable data at scale.'
 }, {
   title: 'AI AGENTS & AUTOMATION WORKFLOWS',
-  description: 'Automate repetitive decisions and reduce manual processing by 40+ hours/week. Custom AI agents using LangChain, n8n, and LLMs. Connect vision, scraping, and decision-making in one intelligent pipeline.'
+  description: 'Automate repetitive decisions and reduce manual processing by 40+ hours/week. Custom AI agents using LangChain, n8n, and LLMs. Connect vision, scraping, and decision-making in one intelligent pipeline. Built for operations teams drowning in repetitive tasks who want their time back.'
 }];
 const Services = () => {
   const [activeIndex, setActiveIndex] = useState(0);
