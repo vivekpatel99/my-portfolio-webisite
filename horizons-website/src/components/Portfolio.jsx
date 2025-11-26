@@ -7,7 +7,7 @@ const projects = [
   {
     id: 1,
     slug: 'Automated-Data-Extraction-Workflow-using-n8n',
-    title: 'Automated Data Extraction Workflow using n8n and OpenAI',
+    title: 'Automated Data Extraction — n8n + OpenAI',
     imgUrl: "https://www.upwork.com/att/download/portfolio/persons/uid/1883842334427528625/profile/projects/files/afa0fdb2-5e26-45a5-b7c2-11b3f2e7555e",
     imgAlt: "An n8n workflow for automated data extraction from German websites.",
     externalLink: "https://www.upwork.com/freelancers/vivekpatel99?p=1981676982472949760",
@@ -16,7 +16,7 @@ const projects = [
   {
     id: 2,
     slug: 'Extract-seller-and-client-information-from-photos-using-OCR',
-    title: 'Extract seller and client information from photos using OCR',
+    title: 'Invoice OCR Data Extraction',
     imgUrl: "https://raw.githubusercontent.com/vivekpatel99/invoice-data-extraction-using-ocr/main/output/original_with_bboxes_demo.jpg",
     imgAlt: "Invoice image with bounding boxes showing extracted client information via OCR.",
     externalLink: "https://www.upwork.com/freelancers/vivekpatel99?p=1961697513038176256", 
@@ -25,7 +25,7 @@ const projects = [
   {
     id: 3,
     slug: 'Yoga-Pose-Estimation-with-YOLO',
-    title: 'Yoga Pose Estimation with YOLO',
+    title: 'Real-time Yoga Pose Detection — YOLO',
     imgUrl: "https://www.upwork.com/att/download/portfolio/persons/uid/1883842334427528625/profile/projects/files/2f4283c5-deca-4a2a-b17d-07033247de19",
     imgAlt: "YOLO model detecting and estimating a yoga pose in an image.",
     externalLink: "https://www.upwork.com/freelancers/vivekpatel99?p=1962080616292315136",
@@ -34,7 +34,7 @@ const projects = [
   {
     id: 4,
     slug: 'football-tracking',
-    title: 'Football Player Tracking System',
+    title: 'Multi-Player Sports Tracking — YOLO + SigLIP',
     imgUrl: "https://raw.githubusercontent.com/vivekpatel99/football-players-tracking-yolo/main/readme-assets/yolov12l_processed_121364_0.gif",
     imgAlt: "Animated GIF showing real-time football player tracking using YOLO and SigLIP.",
     externalLink: "https://github.com/vivekpatel99/football-players-tracking-yolo",
@@ -43,7 +43,7 @@ const projects = [
   {
     id: 5,
     slug: 'medical-segmentation',
-    title: 'Medical Image Segmentation for Cancer Detection',
+    title: 'Medical Image Segmentation — VGG-FCN',
     imgUrl: "https://raw.githubusercontent.com/vivekpatel99/breast-cancer-segmentation-vgg-fcn-pytorch/main/results/predictions_animation.gif",
     imgAlt: "Animation of a VGG-FCN model performing breast cancer segmentation on medical images.",
     externalLink: "https://github.com/vivekpatel99/breast-cancer-segmentation-vgg-fcn-pytorch",
@@ -52,7 +52,7 @@ const projects = [
   {
     id: 6,
     slug: 'ai-planning-agent',
-    title: 'AI Project Planning Agent',
+    title: 'AI Planning Agent — LangGraph',
     imgUrl: "https://raw.githubusercontent.com/vivekpatel99/project-planning-genie/main/assets/final_graph.png",
     imgAlt: "A LangGraph graph visualization for an AI project planning agent.",
     externalLink: "https://github.com/vivekpatel99/project-planning-genie",
