@@ -40,7 +40,7 @@ const About = () => {
               </div>
               <div>
                 <h3 className="text-2xl font-bold text-white mb-3">Key Differentiators</h3>
-                <p className="text-lg text-gray-400">• 94% performance improvement on real-time systems (MAGNA International)<br />• Specialized in CUDA optimization, ONNX quantization, and edge deployment<br />• Full-stack automation: vision systems, web scraping, and AI workflows</p>
+                <p className="text-lg text-gray-400">• 94% faster inference: 37s → 2.5s (MAGNA International)<br />• CUDA, ONNX, edge deployment specialist<br />• End-to-end: vision + scraping + AI agents</p>
               </div>
             </div>
           </motion.div>
