@@ -52,7 +52,7 @@ export const backgrounds = {
 // PROFILE IMAGES
 // ============================================
 export const profileImages = {
-  aboutPhoto: `${BASE_URLS.portfolioAssets}/images/vivek-black-and-white.png`,
+  aboutPhoto: `${BASE_URLS.myPortfolioWebsite}/assets/images/vivek-black-and-white.png`,
   profilePhoto: `${BASE_URLS.hostingerCdn}/9b45fe76e7e373b4cb617a63c8494322.png`,
   heroImage: 'https://imagedelivery.net/LqiWLm-3MGbYHtFuUbcBtA/119580eb-abd9-4191-b93a-f01938786700/public',
   teamCollaboration: `${BASE_URLS.hostingerCdn}/michael-t-rxri-ho62y4-unsplash-2-tvxRc.jpg`,
@@ -115,7 +115,7 @@ export const projectGallery = {
 export const metaImages = {
   ogImage: `${BASE_URLS.myPortfolioWebsite}/assets/logos/white_background.png`,
   twitterImage: `${BASE_URLS.myPortfolioWebsite}/assets/logos/white_background.png`,
-  jsonLdImage: `${BASE_URLS.portfolioAssets}/images/vivek-black-and-white.png`,
+  jsonLdImage: `${BASE_URLS.myPortfolioWebsite}/assets/images/vivek-black-and-white.png`,
 };
 
 // ============================================
