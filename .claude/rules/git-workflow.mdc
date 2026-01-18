@@ -1,0 +1,46 @@
+---
+description: Git workflow and GitHub integration standards
+alwaysApply: true
+---
+
+# Git and GitHub Workflow Standards
+
+## Git Operations
+
+- Use git CLI for all operations
+- Implement proper error handling for Git commands
+- Handle authentication securely
+
+## Branch Management
+
+- Create feature branches for changes
+- Use descriptive branch names (e.g., `feat/dark-mode`, `fix/mobile-nav`)
+- Implement proper branch cleanup after merge
+- Handle branch conflicts appropriately
+
+## PR Operations
+
+- Create PRs with descriptive titles and descriptions
+- Include summary, test plan, and relevant screenshots
+- Reference related issues in PR description
+
+## Commit Standards
+
+- Use conventional commit messages:
+  - `feat:` for new features
+  - `fix:` for bug fixes
+  - `docs:` for documentation
+  - `style:` for formatting/styling
+  - `refactor:` for code refactoring
+  - `perf:` for performance improvements
+  - `test:` for tests
+  - `chore:` for maintenance tasks
+- Keep commits focused and atomic
+- Include relevant context in commit messages
+
+## Error Handling
+
+- Handle network failures gracefully
+- Implement proper retry logic for API calls
+- Provide meaningful error messages
+- Log Git and GitHub operations appropriately

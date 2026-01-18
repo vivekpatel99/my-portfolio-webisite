@@ -9,10 +9,10 @@ const About = () => {
 
         {/* First Section */}
         <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }} 
-            whileInView={{ opacity: 1, x: 0 }} 
-            viewport={{ once: true, amount: 0.3 }} 
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
           >
             <div className="rounded-2xl overflow-hidden aspect-[4/3]">
@@ -25,10 +25,10 @@ const About = () => {
             </div>
           </motion.div>
 
-          <motion.div 
-            initial={{ opacity: 0, x: 50 }} 
-            whileInView={{ opacity: 1, x: 0 }} 
-            viewport={{ once: true, amount: 0.3 }} 
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
           >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-white uppercase">
@@ -49,11 +49,11 @@ const About = () => {
 
         {/* Second Section */}
         <div className="grid lg:grid-cols-2 gap-16 items-center mt-24">
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }} 
-            whileInView={{ opacity: 1, x: 0 }} 
-            viewport={{ once: true, amount: 0.3 }} 
-            transition={{ duration: 0.8, ease: 'easeOut' }} 
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
             className="lg:order-last"
           >
             <div className="rounded-2xl overflow-hidden aspect-[4/3]">
@@ -66,10 +66,10 @@ const About = () => {
             </div>
           </motion.div>
 
-          <motion.div 
-            initial={{ opacity: 0, x: 50 }} 
-            whileInView={{ opacity: 1, x: 0 }} 
-            viewport={{ once: true, amount: 0.3 }} 
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
           >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-white uppercase">

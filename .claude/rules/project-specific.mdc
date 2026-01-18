@@ -1,0 +1,51 @@
+---
+description: Project-specific rules for React portfolio website
+alwaysApply: true
+---
+
+# Project-Specific Rules
+
+## Tech Stack
+
+- **Framework:** React 18 with React Router DOM
+- **Build Tool:** Vite
+- **Styling:** Tailwind CSS with CSS variables
+- **Animations:** Framer Motion
+- **UI Components:** Radix UI primitives
+- **Package Manager:** npm or bun (bun preferred locally)
+
+## Environment and Configuration
+
+- **CRITICAL**: NEVER modify .env files - use environment variables
+- Use `npm` or `bun` for package management (bun is faster for local dev)
+- Pin dependency versions in package.json for reproducibility
+
+## Horizons Platform Constraints
+
+- **DO NOT modify** files in `plugins/` directory
+- **DO NOT modify** Horizons error handlers in `vite.config.js`
+- **DO NOT modify** `window.parent.postMessage()` patterns
+- The website is synced with Hostinger Horizons platform
+
+## Code Quality
+
+- Keep code simple and concise
+- Use meaningful variable and function names
+- Follow existing Tailwind CSS patterns
+- Maintain accessibility (a11y) standards
+- Use Radix UI primitives for accessible components
+
+## Architecture
+
+- Follow section-based single-page architecture
+- Components go in `src/components/`
+- UI primitives go in `src/components/ui/`
+- Use `@/` path alias (maps to `src/`)
+- Use `SectionAnimator` for scroll-triggered animations
+
+## Security
+
+- Never commit secrets or API keys
+- Use environment variables for sensitive data
+- Implement proper input validation
+- Use `noopener,noreferrer` on external links

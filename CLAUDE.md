@@ -49,6 +49,3 @@ This is a React portfolio website for Vivek Patel (vivekapatel.com), built with 
 
 ### Animations
 `SectionAnimator` component wraps home page sections for scroll-triggered animations via Framer Motion.
-
-## Note:
-I am using hostinger Horizons platform. here i am not allow to change project structure. All i can do is Edit files. You always have to guide me through editing file by file (i will copy paste the code file by file on the horizons platform). 

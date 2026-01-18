@@ -40,20 +40,30 @@
   * {
     @apply border-border;
   }
-  body, html {
+
+  body,
+  html {
     @apply bg-background text-foreground;
   }
 
   /* Only hide cursor on devices with precise pointers (mouse/trackpad) */
   @media (pointer: fine) {
-    body, html, a, button {
+
+    body,
+    html,
+    a,
+    button {
       cursor: none;
     }
   }
 
   /* Respect user preference for reduced motion */
   @media (prefers-reduced-motion: reduce) {
-    body, html, a, button {
+
+    body,
+    html,
+    a,
+    button {
       cursor: auto;
     }
   }
@@ -66,12 +76,15 @@
 
 /* For IE, Edge and Firefox */
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .text-gradient {
-  background: linear-gradient(90deg, #D4B4FF, #9372FF); /* Updated gradient end color */
+  background: linear-gradient(90deg, #D4B4FF, #9372FF);
+  /* Updated gradient end color */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
