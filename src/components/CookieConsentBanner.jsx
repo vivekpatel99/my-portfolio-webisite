@@ -1,37 +1,71 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from "@/components/ui/checkbox.jsx";
+import { Checkbox } from '@/components/ui/checkbox.jsx';
 import { Cookie, X, Settings } from 'lucide-react';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from '@/components/ui/use-toast';
 
 const COOKIE_CONSENT_KEY = 'cookie_consent_preferences';
 
 const CookieConsentBanner = ({ onConsent, show, onHide }) => {
-  const [isManaging, setIsManaging] = useState(show);
-  const [preferences, setPreferences] = useState({
-    necessary: true,
-    analytics: false,
-  });
-
-  useEffect(() => {
-    if(show) {
-      // If triggered from footer, load current settings to allow management
-      const savedPrefs = JSON.parse(localStorage.getItem(COOKIE_CONSENT_KEY));
-      if (savedPrefs) {
-        setPreferences(savedPrefs);
-      }
-      setIsManaging(true);
-    } else {
-       // On initial load, check if consent has already been given
-      const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
-      if (!consent) {
-        const timer = setTimeout(() => setIsManaging(true), 1500);
-        return () => clearTimeout(timer);
+  // Lazy initialization - load from localStorage on mount
+  const [preferences, setPreferences] = useState(() => {
+    const savedPrefs = localStorage.getItem(COOKIE_CONSENT_KEY);
+    if (savedPrefs) {
+      try {
+        return JSON.parse(savedPrefs);
+      } catch {
+        return { necessary: true, analytics: false };
       }
     }
+    return { necessary: true, analytics: false };
+  });
+
+  const [isManaging, setIsManaging] = useState(false);
+  const hasInitialized = useRef(false);
+  const prevShowRef = useRef(show);
+
+  // Reload preferences when show prop changes from false to true
+  const reloadPreferences = () => {
+    const savedPrefs = localStorage.getItem(COOKIE_CONSENT_KEY);
+    if (savedPrefs) {
+      try {
+        return JSON.parse(savedPrefs);
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  };
+
+  // Handle external show prop changes
+  useEffect(() => {
+    const wasHidden = !prevShowRef.current;
+    prevShowRef.current = show;
+
+    if (show && wasHidden) {
+      // Triggered externally (e.g., from footer) - reload preferences and show
+      const loaded = reloadPreferences();
+      if (loaded) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: syncing with localStorage when prop changes
+        setPreferences(loaded);
+      }
+      setIsManaging(true);
+    }
   }, [show]);
+
+  // Handle initial display (delayed)
+  useEffect(() => {
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
+
+    const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
+    if (!consent) {
+      const timer = setTimeout(() => setIsManaging(true), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   const handleSavePreferences = () => {
     localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(preferences));
@@ -39,11 +73,11 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
       onConsent();
     }
     toast({
-      title: "Preferences Saved",
-      description: "Your cookie settings have been updated.",
+      title: 'Preferences Saved',
+      description: 'Your cookie settings have been updated.',
     });
     setIsManaging(false);
-    if(onHide) onHide();
+    if (onHide) onHide();
   };
 
   const handleAcceptAll = () => {
@@ -52,7 +86,7 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
     localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(allAccepted));
     onConsent();
     setIsManaging(false);
-    if(onHide) onHide();
+    if (onHide) onHide();
   };
 
   const handleRejectAll = () => {
@@ -60,11 +94,11 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
     setPreferences(allRejected);
     localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(allRejected));
     setIsManaging(false);
-    if(onHide) onHide();
+    if (onHide) onHide();
   };
-  
+
   const handleToggle = (key) => {
-    setPreferences(prev => ({ ...prev, [key]: !prev[key] }));
+    setPreferences((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   return (
@@ -84,12 +118,13 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
             <div className="flex-grow">
               <h3 className="text-lg font-bold text-white mb-1">We value your privacy</h3>
               <p className="text-sm text-gray-300 mb-4">
-                We use cookies to enhance your browsing experience and analyze our traffic. Customize your preferences below or accept all to continue.
+                We use cookies to enhance your browsing experience and analyze our traffic.
+                Customize your preferences below or accept all to continue.
               </p>
-              
+
               <Collapsible>
                 <div className="flex gap-3 mt-4">
-                   <Button
+                  <Button
                     onClick={handleAcceptAll}
                     className="flex-1 bg-accent-purple hover:bg-accent-purple/90 text-white rounded-full"
                     size="sm"
@@ -104,8 +139,12 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
                   >
                     Reject All
                   </Button>
-                   <CollapsibleTrigger asChild>
-                    <Button variant="ghost" size="sm" className="flex-shrink-0 text-white hover:bg-white/10">
+                  <CollapsibleTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex-shrink-0 text-white hover:bg-white/10"
+                    >
                       <Settings className="w-4 h-4 mr-2" />
                       Customize
                     </Button>
@@ -114,25 +153,51 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
 
                 <CollapsibleContent className="mt-6 space-y-4">
                   <div className="p-4 bg-black/20 rounded-lg">
-                      <div className="flex items-center justify-between">
-                        <label htmlFor="necessary" className="font-semibold text-white">Strictly Necessary</label>
-                        <Checkbox id="necessary" checked disabled />
-                      </div>
-                      <p className="text-xs text-gray-400 mt-1">These cookies are essential for the website to function and cannot be switched off.</p>
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="necessary" className="font-semibold text-white">
+                        Strictly Necessary
+                      </label>
+                      <Checkbox id="necessary" checked disabled />
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1">
+                      These cookies are essential for the website to function and cannot be switched
+                      off.
+                    </p>
                   </div>
                   <div className="p-4 bg-black/20 rounded-lg">
-                      <div className="flex items-center justify-between">
-                        <label htmlFor="analytics" className="font-semibold text-white">Analytics Cookies</label>
-                        <Checkbox id="analytics" checked={preferences.analytics} onCheckedChange={() => handleToggle('analytics')} />
-                      </div>
-                      <p className="text-xs text-gray-400 mt-1">These cookies allow us to count visits and traffic sources so we can measure and improve the performance of our site.</p>
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="analytics" className="font-semibold text-white">
+                        Analytics Cookies
+                      </label>
+                      <Checkbox
+                        id="analytics"
+                        checked={preferences.analytics}
+                        onCheckedChange={() => handleToggle('analytics')}
+                      />
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1">
+                      These cookies allow us to count visits and traffic sources so we can measure
+                      and improve the performance of our site.
+                    </p>
                   </div>
-                  <Button onClick={handleSavePreferences} className="w-full mt-2 bg-white/20 hover:bg-white/30 text-white rounded-full">Save Preferences</Button>
+                  <Button
+                    onClick={handleSavePreferences}
+                    className="w-full mt-2 bg-white/20 hover:bg-white/30 text-white rounded-full"
+                  >
+                    Save Preferences
+                  </Button>
                 </CollapsibleContent>
               </Collapsible>
             </div>
-             <button onClick={() => { setIsManaging(false); if(onHide) onHide(); }} className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors" aria-label="Close cookie consent banner">
-                <X size={18} />
+            <button
+              onClick={() => {
+                setIsManaging(false);
+                if (onHide) onHide();
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+              aria-label="Close cookie consent banner"
+            >
+              <X size={18} />
             </button>
           </div>
         </motion.div>

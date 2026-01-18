@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -48,19 +48,19 @@ const Header = () => {
     } else {
       navigate(href);
     }
-    
+
     if (isOpen) {
       setIsOpen(false);
     }
   };
-  
+
   const handleHomeClick = (e) => {
-     e.preventDefault();
-     navigate('/');
-     if (isOpen) {
+    e.preventDefault();
+    navigate('/');
+    if (isOpen) {
       setIsOpen(false);
     }
-  }
+  };
 
   const handleCTA = () => {
     navigate('/contact');
@@ -76,19 +76,28 @@ const Header = () => {
       >
         <div className="container mx-auto px-6 h-20 flex justify-between items-center">
           <Link to="/" onClick={handleHomeClick} className="flex items-center">
-             <img src={assetsLinks.logo} alt="Vivek Patel Logo" className="h-12" />
+            <img src={assetsLinks.logo} alt="Vivek Patel Logo" className="h-12" />
           </Link>
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <a key={link.name} href={link.href} onClick={handleSmoothScroll} className="text-gray-300 hover:text-white transition-colors relative group">
+              <a
+                key={link.name}
+                href={link.href}
+                onClick={handleSmoothScroll}
+                className="text-gray-300 hover:text-white transition-colors relative group"
+              >
                 {link.name}
                 <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-accent-purple transition-all duration-300 group-hover:w-full"></span>
               </a>
             ))}
           </nav>
           <div className="hidden md:flex items-center gap-4">
-            <Button className="bg-accent-purple text-white hover:bg-accent-purple/90 group rounded-full" onClick={handleCTA}>
-              Hire Me <ArrowRight className="ml-2 h-4 w-4 transform transition-transform duration-300 group-hover:translate-x-1" />
+            <Button
+              className="bg-accent-purple text-white hover:bg-accent-purple/90 group rounded-full"
+              onClick={handleCTA}
+            >
+              Hire Me{' '}
+              <ArrowRight className="ml-2 h-4 w-4 transform transition-transform duration-300 group-hover:translate-x-1" />
             </Button>
           </div>
           <div className="md:hidden">
@@ -112,9 +121,9 @@ const Header = () => {
             role="dialog"
             aria-modal="true"
             aria-label="Navigation menu"
-            initial={{ opacity: 0, y: "-100%" }}
+            initial={{ opacity: 0, y: '-100%' }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: "-100%" }}
+            exit={{ opacity: 0, y: '-100%' }}
             transition={{ duration: 0.5, ease: 'easeInOut' }}
             className="fixed inset-0 bg-[#0C0D0D] z-50 md:hidden"
           >
@@ -123,7 +132,11 @@ const Header = () => {
                 <Link to="/" onClick={handleHomeClick} className="flex items-center">
                   <img src={assetsLinks.logo} alt="Vivek Patel Logo" className="h-12" />
                 </Link>
-                <button onClick={() => setIsOpen(false)} className="text-white" aria-label="Close navigation menu">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="text-white"
+                  aria-label="Close navigation menu"
+                >
                   <X size={28} />
                 </button>
               </div>
@@ -143,8 +156,12 @@ const Header = () => {
                 ))}
               </nav>
               <div className="py-8 flex flex-col gap-4">
-                <Button className="bg-accent-purple text-white hover:bg-accent-purple/90 group w-full text-lg py-6 rounded-full" onClick={handleCTA}>
-                    Hire Me <ArrowRight className="ml-2 h-4 w-4 transform transition-transform duration-300 group-hover:translate-x-1" />
+                <Button
+                  className="bg-accent-purple text-white hover:bg-accent-purple/90 group w-full text-lg py-6 rounded-full"
+                  onClick={handleCTA}
+                >
+                  Hire Me{' '}
+                  <ArrowRight className="ml-2 h-4 w-4 transform transition-transform duration-300 group-hover:translate-x-1" />
                 </Button>
               </div>
             </div>

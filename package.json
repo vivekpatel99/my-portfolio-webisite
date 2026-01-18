@@ -6,7 +6,21 @@
   "scripts": {
     "dev": "vite --host :: --port 3000",
     "build": "node tools/generate-sitemap.js && vite build",
-    "preview": "vite preview --host :: --port 3000"
+    "preview": "vite preview --host :: --port 3000",
+    "lint": "eslint src/ --ext .js,.jsx",
+    "lint:fix": "eslint src/ --ext .js,.jsx --fix",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "src/**/*.{css,json,md}": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@babel/traverse": "^7.26.4",
@@ -51,7 +65,13 @@
     "autoprefixer": "^10.4.16",
     "eslint": "^8.57.1",
     "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "postcss": "^8.4.31",
+    "prettier": "^3.8.0",
     "tailwindcss": "^3.3.3",
     "terser": "^5.39.0",
     "vite": "^4.4.5"

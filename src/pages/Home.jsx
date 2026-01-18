@@ -1,4 +1,3 @@
-import React from 'react';
 import { Helmet } from 'react-helmet';
 import Hero from '@/components/Hero';
 import TechStack from '@/components/TechStack';
@@ -17,20 +16,42 @@ const Home = () => {
     <>
       <Helmet>
         <title>Vivek Patel - Expert AI & Computer Vision Engineer</title>
-        <meta name="description" content="Hire Vivek Patel - Freelance AI & Computer Vision Engineer in Europe. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. 94% performance improvements. €80/hour." />
-        <meta name="keywords" content="Vivek Patel, AI Engineer Europe, Computer Vision Freelancer, n8n Automation, Web Scraping Expert, YOLO, PyTorch, LangChain, Data Extraction, Python Developer Europe" />
+        <meta
+          name="description"
+          content="Hire Vivek Patel - Freelance AI & Computer Vision Engineer in Europe. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. 94% performance improvements. €80/hour."
+        />
+        <meta
+          name="keywords"
+          content="Vivek Patel, AI Engineer Europe, Computer Vision Freelancer, n8n Automation, Web Scraping Expert, YOLO, PyTorch, LangChain, Data Extraction, Python Developer Europe"
+        />
         <link rel="canonical" href="https://www.vivekapatel.com/" />
       </Helmet>
       <Hero />
-      <SectionAnimator><TechStack /></SectionAnimator>
-      <SectionAnimator><Services /></SectionAnimator>
+      <SectionAnimator>
+        <TechStack />
+      </SectionAnimator>
+      <SectionAnimator>
+        <Services />
+      </SectionAnimator>
       <About />
-      <SectionAnimator><Experience /></SectionAnimator>
-      <SectionAnimator><Portfolio /></SectionAnimator>
-      <SectionAnimator><Testimonials /></SectionAnimator>
-      <SectionAnimator><Stats /></SectionAnimator>
-      <SectionAnimator><Connect /></SectionAnimator>
-      <SectionAnimator><CTA /></SectionAnimator>
+      <SectionAnimator>
+        <Experience />
+      </SectionAnimator>
+      <SectionAnimator>
+        <Portfolio />
+      </SectionAnimator>
+      <SectionAnimator>
+        <Testimonials />
+      </SectionAnimator>
+      <SectionAnimator>
+        <Stats />
+      </SectionAnimator>
+      <SectionAnimator>
+        <Connect />
+      </SectionAnimator>
+      <SectionAnimator>
+        <CTA />
+      </SectionAnimator>
     </>
   );
 };

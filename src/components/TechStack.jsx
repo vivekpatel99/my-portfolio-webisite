@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { techIcons } from '@/config/links';
 
@@ -54,13 +54,11 @@ const TechStack = () => {
     <section className="py-20 bg-[#0C0D0D] border-t border-b border-[#1E1E2A] overflow-hidden">
       <div className="container mx-auto px-6 text-center">
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Tech Stack & Expertise</h2>
-        <p className="text-lg text-gray-400 mb-12">My engineer's actual toolkit for building intelligent solutions.</p>
+        <p className="text-lg text-gray-400 mb-12">
+          My engineer&apos;s actual toolkit for building intelligent solutions.
+        </p>
         <div className="relative w-full h-32 flex items-center">
-          <motion.div
-            className="absolute flex"
-            variants={marqueeVariants}
-            animate="animate"
-          >
+          <motion.div className="absolute flex" variants={marqueeVariants} animate="animate">
             {marqueeTech.map((tech, index) => (
               <div
                 key={`${tech.name}-${index}`}

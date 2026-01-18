@@ -1,0 +1,7 @@
+dist/
+node_modules/
+plugins/
+*.min.js
+*.min.css
+bun.lock
+package-lock.json

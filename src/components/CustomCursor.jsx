@@ -1,4 +1,3 @@
-import React from 'react';
 import useMousePosition from '@/hooks/useMousePosition';
 import { motion } from 'framer-motion';
 
@@ -20,7 +19,7 @@ const CustomCursor = () => {
     <motion.div
       variants={variants}
       animate="default"
-      transition={{ type: "spring", stiffness: 500, damping: 28 }}
+      transition={{ type: 'spring', stiffness: 500, damping: 28 }}
       className="fixed top-0 left-0 rounded-full pointer-events-none z-[9999]"
     />
   );

@@ -1,13 +1,8 @@
-import React from 'react';
+import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { Briefcase, TrendingUp, Award } from 'lucide-react';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronsUpDown } from 'lucide-react';
-
 
 const experienceData = [
   {
@@ -15,56 +10,64 @@ const experienceData = [
     title: 'Software Engineer, R&D',
     company: 'MAGNA International, St. Valentin, Austria',
     highlight: '94% Performance Improvement',
-    description: 'Optimized real-time image stitching from 37 seconds to 2.5 seconds using CUDA/OpenCV. Deployed vision pipelines and optimized ONNX-based AI models on NVIDIA & Hailo hardware accelerators for production systems.',
+    description:
+      'Optimized real-time image stitching from 37 seconds to 2.5 seconds using CUDA/OpenCV. Deployed vision pipelines and optimized ONNX-based AI models on NVIDIA & Hailo hardware accelerators for production systems.',
     tags: ['CUDA', 'OpenCV', 'ONNX', 'Computer Vision', 'Edge Deployment'],
-    icon: TrendingUp
+    icon: TrendingUp,
   },
   {
     date: 'Nov 2019 - Jun 2023',
     title: 'Software Test Engineer',
     company: 'MAGNA Powertrain, Traiskirchen, Austria',
     highlight: 'Automated Testing Pipeline',
-    description: 'Developed and executed automated tests for automotive software using MATLAB/Simulink. Managed CI/CD pipelines with Jenkins for continuous integration, enabling faster release cycles and improved code quality.',
+    description:
+      'Developed and executed automated tests for automotive software using MATLAB/Simulink. Managed CI/CD pipelines with Jenkins for continuous integration, enabling faster release cycles and improved code quality.',
     tags: ['MATLAB', 'Simulink', 'Jenkins', 'CI/CD', 'Automation'],
-    icon: Award
+    icon: Award,
   },
   {
     date: 'Sep 2016 - Sep 2019',
     title: "Master's in Advanced Electronics",
     company: 'FH Joanneum, Austria',
     highlight: 'Embedded Vision Systems',
-    description: 'Specialization in Automotive Electronics. Thesis: "Closed Loop Object Tracking using Python & ZYNQ deployment." Gained advanced capabilities in embedded vision systems and real-time processing.',
+    description:
+      'Specialization in Automotive Electronics. Thesis: "Closed Loop Object Tracking using Python & ZYNQ deployment." Gained advanced capabilities in embedded vision systems and real-time processing.',
     tags: ['Python', 'ZYNQ', 'Embedded Systems', 'Computer Vision', 'FPGA'],
-    icon: Briefcase
+    icon: Briefcase,
   },
   {
     date: 'Aug 2011 - Jan 2015',
     title: 'Bachelor of Technology, Instrumentation & Control',
     company: 'Nirma University, India',
     highlight: 'Engineering Fundamentals',
-    description: 'Built a strong foundation in control systems, process automation, and industrial instrumentation, which laid the groundwork for a career in complex engineering systems.',
+    description:
+      'Built a strong foundation in control systems, process automation, and industrial instrumentation, which laid the groundwork for a career in complex engineering systems.',
     tags: ['Control Systems', 'Automation', 'Industrial Systems', 'Engineering'],
-    icon: Briefcase
+    icon: Briefcase,
   },
   {
     date: 'Sep 2008 - Feb 2012',
     title: 'Diploma in Instrumentation & Control',
     company: 'A.V. Parekh Technical Institute, India',
     highlight: 'Technical Foundation',
-    description: 'Acquired fundamental technical skills and hands-on experience in instrumentation and control engineering, providing an essential foundation for a comprehensive engineering education.',
+    description:
+      'Acquired fundamental technical skills and hands-on experience in instrumentation and control engineering, providing an essential foundation for a comprehensive engineering education.',
     tags: ['Instrumentation', 'Control', 'Technical Skills', 'Hands-on'],
-    icon: Briefcase
-  }
+    icon: Briefcase,
+  },
 ];
 
-
-const ExperienceItem = ({ item, index }) => {
-  const isLeft = index % 2 === 0;
-  const IconComponent = item.icon || Briefcase;
-
-  const CardContent = ({ className = "" }) => (
+// Extracted outside of ExperienceItem to avoid re-creation on every render
+const ExperienceCardContent = memo(function ExperienceCardContent({
+  item,
+  IconComponent,
+  className = '',
+}) {
+  return (
     <Collapsible>
-      <div className={`bg-white/5 rounded-xl border border-white/10 p-5 transition-all hover:border-accent-purple/50 hover:bg-white/10 ${className}`}>
+      <div
+        className={`bg-white/5 rounded-xl border border-white/10 p-5 transition-all hover:border-accent-purple/50 hover:bg-white/10 ${className}`}
+      >
         <p className="text-sm text-gray-400 mb-1">{item.date}</p>
         <CollapsibleTrigger className="w-full text-left text-accent-purple">
           <div className="flex justify-between items-center w-full gap-3">
@@ -88,7 +91,10 @@ const ExperienceItem = ({ item, index }) => {
           <p className="text-gray-400 text-sm mb-4 leading-relaxed">{item.description}</p>
           <div className="flex flex-wrap gap-2">
             {item.tags.map((tag, idx) => (
-              <span key={idx} className="bg-accent-purple/10 text-accent-purple text-xs font-semibold px-2.5 py-1 rounded-full border border-accent-purple/20">
+              <span
+                key={idx}
+                className="bg-accent-purple/10 text-accent-purple text-xs font-semibold px-2.5 py-1 rounded-full border border-accent-purple/20"
+              >
                 {tag}
               </span>
             ))}
@@ -97,6 +103,11 @@ const ExperienceItem = ({ item, index }) => {
       </div>
     </Collapsible>
   );
+});
+
+const ExperienceItem = ({ item, index }) => {
+  const isLeft = index % 2 === 0;
+  const IconComponent = item.icon || Briefcase;
 
   return (
     <>
@@ -114,7 +125,7 @@ const ExperienceItem = ({ item, index }) => {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5 }}
           >
-            <CardContent />
+            <ExperienceCardContent item={item} IconComponent={IconComponent} />
           </motion.div>
         </div>
       </div>
@@ -131,7 +142,7 @@ const ExperienceItem = ({ item, index }) => {
               transition={{ duration: 0.5 }}
               className="pr-8"
             >
-              <CardContent />
+              <ExperienceCardContent item={item} IconComponent={IconComponent} />
             </motion.div>
           )}
         </div>
@@ -153,7 +164,7 @@ const ExperienceItem = ({ item, index }) => {
               transition={{ duration: 0.5 }}
               className="pl-8"
             >
-              <CardContent />
+              <ExperienceCardContent item={item} IconComponent={IconComponent} />
             </motion.div>
           )}
         </div>
@@ -161,7 +172,6 @@ const ExperienceItem = ({ item, index }) => {
     </>
   );
 };
-
 
 const Experience = () => {
   return (
@@ -178,7 +188,8 @@ const Experience = () => {
             EXPERIENCE <span className="text-accent-purple">JOURNEY</span>
           </h2>
           <p className="text-lg text-gray-400 max-w-3xl mt-4">
-            A 9+ year progression from education to test engineering to cutting-edge Computer Vision optimization.
+            A 9+ year progression from education to test engineering to cutting-edge Computer Vision
+            optimization.
           </p>
         </motion.div>
 
@@ -190,11 +201,7 @@ const Experience = () => {
 
           <div className="relative space-y-12">
             {experienceData.map((item, index) => (
-              <ExperienceItem
-                key={index}
-                item={item}
-                index={index}
-              />
+              <ExperienceItem key={index} item={item} index={index} />
             ))}
           </div>
         </div>
@@ -202,6 +209,5 @@ const Experience = () => {
     </section>
   );
 };
-
 
 export default Experience;

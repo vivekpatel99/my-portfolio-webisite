@@ -48,7 +48,6 @@
 
   /* Only hide cursor on devices with precise pointers (mouse/trackpad) */
   @media (pointer: fine) {
-
     body,
     html,
     a,
@@ -59,7 +58,6 @@
 
   /* Respect user preference for reduced motion */
   @media (prefers-reduced-motion: reduce) {
-
     body,
     html,
     a,
@@ -83,7 +81,7 @@
 }
 
 .text-gradient {
-  background: linear-gradient(90deg, #D4B4FF, #9372FF);
+  background: linear-gradient(90deg, #d4b4ff, #9372ff);
   /* Updated gradient end color */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -17,7 +16,7 @@ const Hero = () => {
     const portfolioSection = document.getElementById('portfolio');
     if (portfolioSection) {
       portfolioSection.scrollIntoView({
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     }
   };
@@ -70,7 +69,9 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto"
           >
-            Spending 40+ hours a week on manual data processing? I help businesses automate complex data workflows using Computer Vision, Web Scraping, and AI Agents—delivering production-ready solutions faster and cheaper than hiring multiple specialists.
+            Spending 40+ hours a week on manual data processing? I help businesses automate complex
+            data workflows using Computer Vision, Web Scraping, and AI Agents—delivering
+            production-ready solutions faster and cheaper than hiring multiple specialists.
           </motion.p>
 
           <motion.p
@@ -95,7 +96,9 @@ const Hero = () => {
             </div>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 border border-green-500/30 rounded-full">
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-              <span className="text-green-400 text-sm">Limited availability — currently accepting 1-2 new projects</span>
+              <span className="text-green-400 text-sm">
+                Limited availability — currently accepting 1-2 new projects
+              </span>
             </div>
           </motion.div>
 
@@ -129,7 +132,8 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 0.8 }}
             className="mt-8 text-gray-400 text-sm italic"
           >
-            "Very high quality work. Great communication. High quality code." — Duncan H., Upwork Client
+            &quot;Very high quality work. Great communication. High quality code.&quot; — Duncan H.,
+            Upwork Client
           </motion.p>
         </div>
       </div>
