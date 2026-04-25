@@ -1,0 +1,25 @@
+# Session Insights
+
+- Root `CLAUDE.md` says this is a React 18 portfolio website built with Vite, Tailwind CSS, Framer Motion, Radix UI primitives, and Sentry.
+- Root `CLAUDE.md` lists `bun` commands for development, build, linting, formatting, and preview.
+- `.claude/CLAUDE.md` explicitly says to use `bun` for package management.
+- Project constraints prohibit modifying Horizons-related code, including `plugins/`, Horizons error handlers in `vite.config.js`, and `window.parent.postMessage()` communication patterns.
+- Repo workflow emphasizes surgical changes and only touching files directly required by the task.
+- Session tracking files in `.claude/` are required so work can continue after memory compaction or clearing.
+- New request is to upgrade all packages to latest, then verify with lint and build.
+- Package files were already dirty before this request; preserve and work around unrelated existing edits rather than overwriting them.
+- Repository uses Bun for package management; dependency commands and lockfile updates should use Bun.
+- Package upgrade work completed: all packages were upgraded to latest.
+- React override was removed after upgrading packages.
+- Tailwind 4 migration required installing/using `@tailwindcss/postcss` and adding `@config` in `src/index.css`.
+- ESLint 10 migration required `eslint.config.cjs` plus `@eslint/compat`.
+- lucide v1 removed the `Github` and `Linkedin` exports; local SVG icons were added to replace them.
+- Latest-package verification passed: `bun outdated` produced no output and `npm outdated --json` returned `{}`.
+- Project verification passed: `bun run lint` exited 0 and `bun run build` exited 0.
+- `npm audit` now reports 0 vulnerabilities after removing unused `eslint-config-react-app` and adding safe overrides for `@babel/core`, `@babel/helpers`, `flatted`, and `yaml`.
+- Bun audit still reports 3 high `minimatch` transitive warnings from `eslint`, `eslint-plugin-jsx-a11y`, and `eslint-plugin-react`.
+- An attempted flat `brace-expansion` override broke ESLint and was removed.
+- Bun does not support nested overrides, so the nested `minimatch` warning remains rather than risking broken lint.
+- User requested committing the package-upgrade changes.
+- Current branch was `dev`; work was moved to `feature/upgrade-latest-packages` before commit preparation to comply with the repo rule forbidding commits directly on `dev`.
+- Commit task is in progress on `feature/upgrade-latest-packages`.
