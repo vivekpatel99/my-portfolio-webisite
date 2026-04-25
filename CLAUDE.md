@@ -109,9 +109,32 @@ bun run lint         # Run ESLint
 bun run lint:fix     # Run ESLint with auto-fix
 bun run format       # Format code with Prettier
 bun run format:check # Check formatting
+
+# Browser automation / UI verification (Playwright CLI — NOT MCP)
+bunx playwright --help                # CLI reference
+bunx playwright codegen http://localhost:3000   # Record interactions
+# Ad-hoc checks: write a tiny script under tools/ or playwright-output/
+#   then run: bunx playwright test <file>  (or use `node` with chromium API)
+
+# Performance / SEO
+bunx lhci autorun    # Local Lighthouse CI (uses lighthouserc.json)
 ```
 
-Verification before claiming done: `bun run lint` and `bun run build` must pass.
+## UI Verification Policy
+
+**Use Playwright CLI, not the Playwright MCP server** (token efficiency — MCP responses are large).
+
+When a task requires verifying UI, accessibility, or visual behavior:
+1. Start `bun run dev` (or `bun run preview` for prod build).
+2. Write a short Playwright script (one-off file in `playwright-output/` or `tools/`) that:
+   - Navigates to the page, waits for the relevant section, asserts what matters.
+   - Captures a screenshot to `screenshots/` only if visual confirmation is needed.
+3. Run via `bunx playwright test <file>` or a plain `node` script using `chromium` from `@playwright/test`.
+4. Delete throwaway scripts after the task — don't leave dead automation behind.
+
+Prefer text assertions (selectors, accessible names, computed styles) over screenshot diffs unless the task is explicitly visual.
+
+Verification before claiming done: `bun run lint` and `bun run build` must pass. For UI changes, also run a Playwright check.
 
 ## Architecture
 
