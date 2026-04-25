@@ -1,13 +1,80 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Behavioral guidelines + project-specific guidance for Claude Code (claude.ai/code) when working in this repository.
 
-## Important Constraints
+**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
+
+---
+
+## Behavioral Guidelines
+
+### 1. Think Before Coding
+
+**Don't assume. Don't hide confusion. Surface tradeoffs.**
+
+Before implementing:
+- State your assumptions explicitly. If uncertain, ask.
+- If multiple interpretations exist, present them — don't pick silently.
+- If a simpler approach exists, say so. Push back when warranted.
+- If something is unclear, stop. Name what's confusing. Ask.
+
+### 2. Simplicity First
+
+**Minimum code that solves the problem. Nothing speculative.**
+
+- No features beyond what was asked.
+- No abstractions for single-use code.
+- No "flexibility" or "configurability" that wasn't requested.
+- No error handling for impossible scenarios.
+- If you write 200 lines and it could be 50, rewrite it.
+
+Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+
+### 3. Surgical Changes
+
+**Touch only what you must. Clean up only your own mess.**
+
+When editing existing code:
+- Don't "improve" adjacent code, comments, or formatting.
+- Don't refactor things that aren't broken.
+- Match existing style, even if you'd do it differently.
+- If you notice unrelated dead code, mention it — don't delete it.
+
+When your changes create orphans:
+- Remove imports/variables/functions that YOUR changes made unused.
+- Don't remove pre-existing dead code unless asked.
+
+The test: every changed line should trace directly to the user's request.
+
+### 4. Goal-Driven Execution
+
+**Define success criteria. Loop until verified.**
+
+Transform tasks into verifiable goals:
+- "Add validation" → "Write tests for invalid inputs, then make them pass"
+- "Fix the bug" → "Write a test that reproduces it, then make it pass"
+- "Refactor X" → "Ensure `bun run lint` and the build pass before and after"
+
+For multi-step tasks, state a brief plan:
+```
+1. [Step] → verify: [check]
+2. [Step] → verify: [check]
+```
+
+Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+
+**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+
+---
+
+## Project Constraints
 
 **DO NOT modify or break Horizons-related code.** This project is synced with Hostinger Horizons platform. The following must remain unchanged:
 - `plugins/` directory (visual-editor, selection-mode, iframe-route-restoration)
 - Error handlers in `vite.config.js` (horizons-vite-error, horizons-runtime-error, etc.)
 - `window.parent.postMessage()` patterns for Horizons communication
+
+If a task seems to require touching this code, stop and ask first (rule #1).
 
 ## Git Workflow
 
@@ -44,9 +111,11 @@ bun run format       # Format code with Prettier
 bun run format:check # Check formatting
 ```
 
+Verification before claiming done: `bun run lint` and `bun run build` must pass.
+
 ## Architecture
 
-This is a React portfolio website for Vivek Patel (vivekapatel.com), built with Vite and using a section-based single-page architecture.
+React portfolio website for Vivek Patel (vivekapatel.com), built with Vite using a section-based single-page architecture.
 
 ### Tech Stack
 - **React 18** with react-router-dom for routing
@@ -58,12 +127,12 @@ This is a React portfolio website for Vivek Patel (vivekapatel.com), built with 
 
 ### Key Structure
 
-- `src/pages/` - Route pages (Home, Contact, Project/:projectId, Legal, DataPolicy)
-- `src/components/` - Home page sections (Hero, TechStack, Services, About, Experience, Portfolio, Testimonials, Stats, Connect, CTA) and shared components
-- `src/components/ui/` - Radix-based UI primitives (button, input, toast, select, etc.)
-- `src/lib/utils.js` - Contains `cn()` helper for Tailwind class merging
-- `src/config/links.js` - External links configuration
-- `tools/generate-sitemap.js` - Sitemap generator (runs automatically on build)
+- `src/pages/` — Route pages (Home, Contact, Project/:projectId, Legal, DataPolicy)
+- `src/components/` — Home page sections (Hero, TechStack, Services, About, Experience, Portfolio, Testimonials, Stats, Connect, CTA) and shared components
+- `src/components/ui/` — Radix-based UI primitives (button, input, toast, select, etc.)
+- `src/lib/utils.js` — Contains `cn()` helper for Tailwind class merging
+- `src/config/links.js` — External links configuration
+- `tools/generate-sitemap.js` — Sitemap generator (runs automatically on build)
 
 ### Layout Pattern
 `Layout.jsx` wraps all routes with Header, Footer, CustomCursor, GoogleAnalytics (consent-gated), and CookieConsentBanner. Uses `<Outlet />` for nested routes.
