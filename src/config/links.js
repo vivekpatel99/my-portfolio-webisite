@@ -3,7 +3,8 @@
 // ============================================
 export const BASE_URLS = {
   // GitHub repositories
-  myPortfolioWebsite: 'https://raw.githubusercontent.com/vivekpatel99/my-portfolio-webisite/main/public',
+  myPortfolioWebsite:
+    'https://raw.githubusercontent.com/vivekpatel99/my-portfolio-webisite/main/public',
   portfolioAssets: 'https://raw.githubusercontent.com/vivekpatel99/portfolio-webisite-assets/main',
 
   // CDNs
@@ -11,9 +12,12 @@ export const BASE_URLS = {
   jsdelivrDevicons: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons',
 
   // External project repos (for portfolio images)
-  invoiceOcrRepo: 'https://raw.githubusercontent.com/vivekpatel99/invoice-data-extraction-using-ocr/main',
-  footballTrackingRepo: 'https://raw.githubusercontent.com/vivekpatel99/football-players-tracking-yolo/main',
-  medicalSegmentationRepo: 'https://raw.githubusercontent.com/vivekpatel99/breast-cancer-segmentation-vgg-fcn-pytorch/main',
+  invoiceOcrRepo:
+    'https://raw.githubusercontent.com/vivekpatel99/invoice-data-extraction-using-ocr/main',
+  footballTrackingRepo:
+    'https://raw.githubusercontent.com/vivekpatel99/football-players-tracking-yolo/main',
+  medicalSegmentationRepo:
+    'https://raw.githubusercontent.com/vivekpatel99/breast-cancer-segmentation-vgg-fcn-pytorch/main',
   planningGenieRepo: 'https://raw.githubusercontent.com/vivekpatel99/project-planning-genie/main',
 };
 
@@ -25,7 +29,8 @@ export const socialLinks = {
   linkedin: 'https://www.linkedin.com/in/vivek-patel99/',
   upwork: 'https://www.upwork.com/freelancers/vivekpatel99?mp_source=share',
   freelancer: 'https://www.freelancer.com/u/vivekpatel999',
-  freelancerMap: 'https://www.freelancermap.de/profil/ai-engineer-specializing-in-computer-vision-with-expertise-in-cuda-and-onnx-optimization',
+  freelancerMap:
+    'https://www.freelancermap.de/profil/ai-engineer-specializing-in-computer-vision-with-expertise-in-cuda-and-onnx-optimization',
   emailHref: 'mailto:vivekp.freelance@pm.me',
   contactEmail: 'vivekp.freelance@pm.me',
 };
@@ -54,7 +59,8 @@ export const backgrounds = {
 export const profileImages = {
   aboutPhoto: `${BASE_URLS.myPortfolioWebsite}/assets/images/vivek-black-and-white.png`,
   profilePhoto: `${BASE_URLS.hostingerCdn}/9b45fe76e7e373b4cb617a63c8494322.png`,
-  heroImage: 'https://imagedelivery.net/LqiWLm-3MGbYHtFuUbcBtA/119580eb-abd9-4191-b93a-f01938786700/public',
+  heroImage:
+    'https://imagedelivery.net/LqiWLm-3MGbYHtFuUbcBtA/119580eb-abd9-4191-b93a-f01938786700/public',
   teamCollaboration: `${BASE_URLS.hostingerCdn}/michael-t-rxri-ho62y4-unsplash-2-tvxRc.jpg`,
 };
 
@@ -91,9 +97,11 @@ export const techIcons = {
 // PORTFOLIO PROJECT IMAGES
 // ============================================
 export const portfolioImages = {
-  n8nWorkflow: 'https://www.upwork.com/att/download/portfolio/persons/uid/1883842334427528625/profile/projects/files/afa0fdb2-5e26-45a5-b7c2-11b3f2e7555e',
+  n8nWorkflow:
+    'https://www.upwork.com/att/download/portfolio/persons/uid/1883842334427528625/profile/projects/files/afa0fdb2-5e26-45a5-b7c2-11b3f2e7555e',
   invoiceOcr: `${BASE_URLS.invoiceOcrRepo}/output/original_with_bboxes_demo.jpg`,
-  yogaPose: 'https://www.upwork.com/att/download/portfolio/persons/uid/1883842334427528625/profile/projects/files/2f4283c5-deca-4a2a-b17d-07033247de19',
+  yogaPose:
+    'https://www.upwork.com/att/download/portfolio/persons/uid/1883842334427528625/profile/projects/files/2f4283c5-deca-4a2a-b17d-07033247de19',
   footballTracking: `${BASE_URLS.footballTrackingRepo}/readme-assets/yolov12l_processed_121364_0.gif`,
   medicalSegmentation: `${BASE_URLS.medicalSegmentationRepo}/results/predictions_animation.gif`,
   aiPlanningAgent: `${BASE_URLS.planningGenieRepo}/assets/final_graph.png`,

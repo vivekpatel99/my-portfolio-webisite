@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import Layout from '@/components/Layout';
@@ -11,7 +10,7 @@ import { AnimatePresence } from 'framer-motion';
 
 function App() {
   const location = useLocation();
-  
+
   // Determine canonical URL:
   // 1. Base domain: https://www.vivekapatel.com
   // 2. Append pathname (handling root '/')

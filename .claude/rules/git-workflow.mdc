@@ -1,28 +1,53 @@
 ---
-description: Git workflow and GitHub integration standards
+description: Git branching workflow, deployment rules, and GitHub standards
+globs: ["**/*"]
 alwaysApply: true
 ---
 
-# Git and GitHub Workflow Standards
+# Git Branching Workflow Rules
 
-## Git Operations
+## STRICT REQUIREMENTS - Claude MUST follow these
 
-- Use git CLI for all operations
-- Implement proper error handling for Git commands
-- Handle authentication securely
+### Branch Rules
+1. **NEVER commit directly to `main`** - Always use PRs
+2. **NEVER commit directly to `dev`** - Always use feature branches
+3. **ALWAYS create feature branches from `dev`**: `git checkout -b feature/<name> dev`
+4. **ALWAYS merge feature branches to `dev` first** before going to `main`
+5. **NEVER force push to `main` or `dev`**
 
-## Branch Management
+### Commit Workflow
+1. Create feature branch: `git checkout -b feature/<descriptive-name> dev`
+2. Make changes and commit locally
+3. Push to remote: `git push -u origin feature/<name>`
+4. Create PR to `dev` branch
+5. After PR merged to `dev`, create PR from `dev` to `main`
+6. Deploy manually via Hostinger panel after `main` merge
 
-- Create feature branches for changes
-- Use descriptive branch names (e.g., `feat/dark-mode`, `fix/mobile-nav`)
-- Implement proper branch cleanup after merge
-- Handle branch conflicts appropriately
+### PR Requirements
+- PRs to `dev`: Must pass build + lint checks
+- PRs to `main`: Must pass build + lint + Lighthouse checks
+- All PRs require review before merge
 
-## PR Operations
+### Hotfix Process (Emergency Only)
+1. Create hotfix branch from `main`: `git checkout -b hotfix/<name> main`
+2. Fix the issue
+3. PR directly to `main` (bypass dev for emergencies)
+4. After merge, also merge `main` back to `dev` to sync
 
-- Create PRs with descriptive titles and descriptions
-- Include summary, test plan, and relevant screenshots
-- Reference related issues in PR description
+### Deployment
+- `main` branch = Production (vivekapatel.com)
+- Deployment is MANUAL via Hostinger panel
+- Never auto-deploy to production
+
+### Branch Structure
+```
+feature/* ──PR──> dev ──PR──> main ──manual deploy──> Hostinger (production)
+                   │            │
+                   │            └── CI: Build + Lint + Lighthouse
+                   └── CI: Build + Lint
+```
+
+---
 
 ## Commit Standards
 
@@ -38,9 +63,12 @@ alwaysApply: true
 - Keep commits focused and atomic
 - Include relevant context in commit messages
 
-## Error Handling
+## Branch Naming
+- Feature branches: `feature/<descriptive-name>` (e.g., `feature/dark-mode`, `feature/contact-form`)
+- Fix branches: `fix/<issue-description>` (e.g., `fix/mobile-nav`, `fix/seo-meta-tags`)
+- Hotfix branches: `hotfix/<critical-issue>` (emergency production fixes)
 
+## Error Handling
 - Handle network failures gracefully
 - Implement proper retry logic for API calls
 - Provide meaningful error messages
-- Log Git and GitHub operations appropriately

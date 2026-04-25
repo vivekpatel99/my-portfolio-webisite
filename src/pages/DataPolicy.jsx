@@ -1,4 +1,3 @@
-import React from 'react';
 import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -12,8 +11,7 @@ const pageVariants = {
 const pageTransition = { type: 'tween', ease: 'anticipate', duration: 0.5 };
 
 const DataPolicy = () => {
-  const handleManageCookies = (e) => {
-    e.preventDefault();
+  const handleManageCookies = () => {
     window.dispatchEvent(new CustomEvent('manage-cookies'));
   };
 
@@ -28,19 +26,28 @@ const DataPolicy = () => {
     >
       <Helmet>
         <title>Cookie Policy | Vivek Patel</title>
-        <meta name="description" content="Learn about the cookies used on vivek-patel.com, why they are used, and how you can manage them." />
+        <meta
+          name="description"
+          content="Learn about the cookies used on vivek-patel.com, why they are used, and how you can manage them."
+        />
         <link rel="canonical" href="https://www.vivekapatel.com/data-policy" />
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.vivekapatel.com/data-policy" />
         <meta property="og:title" content="Cookie Policy | Vivek Patel" />
-        <meta property="og:description" content="Learn about the cookies used on vivekapatel.com, why they are used, and how you can manage them." />
+        <meta
+          property="og:description"
+          content="Learn about the cookies used on vivekapatel.com, why they are used, and how you can manage them."
+        />
         <meta property="og:image" content="https://www.vivekapatel.com/og-image.png" />
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://www.vivekapatel.com/data-policy" />
         <meta name="twitter:title" content="Cookie Policy | Vivek Patel" />
-        <meta name="twitter:description" content="Learn about the cookies used on vivekapatel.com, why they are used, and how you can manage them." />
+        <meta
+          name="twitter:description"
+          content="Learn about the cookies used on vivekapatel.com, why they are used, and how you can manage them."
+        />
         <meta name="twitter:image" content="https://www.vivekapatel.com/og-image.png" />
       </Helmet>
       <div className="container mx-auto px-6 max-w-4xl">
@@ -48,31 +55,82 @@ const DataPolicy = () => {
         <p className="text-gray-400 mb-6">Last updated: November 16, 2025</p>
 
         <div className="prose prose-invert prose-lg max-w-none text-gray-300 space-y-6">
-          <p>This Cookie Policy explains what cookies are and how we use them. You should read this policy to understand what cookies are, how we use them, the types of cookies we use, the information we collect using cookies, and how that information is used and how to control your cookie preferences.</p>
-          <p>For further information on how we use, store, and keep your personal data secure, see our <Link to="/legal" className="text-accent-purple hover:underline">Privacy Policy</Link>.</p>
+          <p>
+            This Cookie Policy explains what cookies are and how we use them. You should read this
+            policy to understand what cookies are, how we use them, the types of cookies we use, the
+            information we collect using cookies, and how that information is used and how to
+            control your cookie preferences.
+          </p>
+          <p>
+            For further information on how we use, store, and keep your personal data secure, see
+            our{' '}
+            <Link to="/legal" className="text-accent-purple hover:underline">
+              Privacy Policy
+            </Link>
+            .
+          </p>
 
           <h2 className="text-2xl font-bold text-white mt-8">What Are Cookies?</h2>
-          <p>Cookies are small text files that are used to store small pieces of information. They are stored on your device when the website is loaded on your browser. These cookies help us make the website function properly, make it more secure, provide a better user experience, and understand how the website performs and to analyze what works and where it needs improvement.</p>
+          <p>
+            Cookies are small text files that are used to store small pieces of information. They
+            are stored on your device when the website is loaded on your browser. These cookies help
+            us make the website function properly, make it more secure, provide a better user
+            experience, and understand how the website performs and to analyze what works and where
+            it needs improvement.
+          </p>
 
           <h2 className="text-2xl font-bold text-white mt-8">How Do We Use Cookies?</h2>
-          <p>As most of the online services, our website uses first-party and third-party cookies for several purposes. First-party cookies are mostly necessary for the website to function the right way, and they do not collect any of your personally identifiable data.</p>
-          <p>The third-party cookies used on our website are mainly for understanding how the website performs, how you interact with our website, keeping our services secure, and all in all providing you with a better and improved user experience and help speed up your future interactions with our website.</p>
+          <p>
+            As most of the online services, our website uses first-party and third-party cookies for
+            several purposes. First-party cookies are mostly necessary for the website to function
+            the right way, and they do not collect any of your personally identifiable data.
+          </p>
+          <p>
+            The third-party cookies used on our website are mainly for understanding how the website
+            performs, how you interact with our website, keeping our services secure, and all in all
+            providing you with a better and improved user experience and help speed up your future
+            interactions with our website.
+          </p>
 
           <h2 className="text-2xl font-bold text-white mt-8">What Types of Cookies Do We Use?</h2>
           <ul className="list-disc pl-5 space-y-2">
-            <li><strong>Strictly Necessary Cookies:</strong> These are required for the operation of our website. They include, for example, cookies that enable you to log into secure areas of our website. Your consent is not required for these cookies.</li>
-            <li><strong>Analytical/Performance Cookies:</strong> They allow us to recognize and count the number of visitors and to see how visitors move around our website when they are using it. This helps us to improve the way our website works. We use Google Analytics for this purpose. These cookies will only be stored with your explicit consent.</li>
+            <li>
+              <strong>Strictly Necessary Cookies:</strong> These are required for the operation of
+              our website. They include, for example, cookies that enable you to log into secure
+              areas of our website. Your consent is not required for these cookies.
+            </li>
+            <li>
+              <strong>Analytical/Performance Cookies:</strong> They allow us to recognize and count
+              the number of visitors and to see how visitors move around our website when they are
+              using it. This helps us to improve the way our website works. We use Google Analytics
+              for this purpose. These cookies will only be stored with your explicit consent.
+            </li>
           </ul>
 
-          <h2 className="text-2xl font-bold text-white mt-8">How Can I Control My Cookie Preferences?</h2>
-          <p>You can manage your cookie preferences at any time by clicking the "Manage Consent" link in the footer of our website. This will let you revisit the cookie consent banner and change your preferences or withdraw your consent right away.</p>
-          <p>In addition to this, different browsers provide different methods to block and delete cookies used by websites. You can change the settings of your browser to block/delete the cookies. To find out more about how to manage and delete cookies, visit wikipedia.org, www.allaboutcookies.org.</p>
+          <h2 className="text-2xl font-bold text-white mt-8">
+            How Can I Control My Cookie Preferences?
+          </h2>
+          <p>
+            You can manage your cookie preferences at any time by clicking the &quot;Manage
+            Consent&quot; link in the footer of our website. This will let you revisit the cookie
+            consent banner and change your preferences or withdraw your consent right away.
+          </p>
+          <p>
+            In addition to this, different browsers provide different methods to block and delete
+            cookies used by websites. You can change the settings of your browser to block/delete
+            the cookies. To find out more about how to manage and delete cookies, visit
+            wikipedia.org, www.allaboutcookies.org.
+          </p>
         </div>
 
         <div className="mt-12 text-center">
-            <Button asChild size="lg" className="bg-accent-purple text-white hover:bg-accent-purple/90 group rounded-full text-lg py-6 px-8">
-                <a href="#" onClick={handleManageCookies}>Manage Your Cookie Consent</a>
-            </Button>
+          <Button
+            size="lg"
+            className="bg-accent-purple text-white hover:bg-accent-purple/90 group rounded-full text-lg py-6 px-8"
+            onClick={handleManageCookies}
+          >
+            Manage Your Cookie Consent
+          </Button>
         </div>
       </div>
     </motion.div>

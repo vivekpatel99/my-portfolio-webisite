@@ -30,20 +30,24 @@ When completing work:
 - Close issues with `gh issue close <number>`
 - Reference issues in commits: `Fixes #123`
 
+## Git Workflow (MANDATORY)
+
+Before ANY git operations:
+1. Check current branch with `git branch`
+2. **NEVER commit to `main` or `dev` directly**
+3. Create feature branches from `dev`: `git checkout -b feature/<name> dev`
+4. All changes go through PR process
+
+**Workflow:** `feature/* → PR → dev → PR → main → manual deploy`
+
 ## Key Constraints
 
 1. **DO NOT modify Horizons-related code** (see root CLAUDE.md for details)
-2. Use `npm` or `bun` for package management (bun preferred locally for speed)
+2. Use `bun` for package management (npm compatible)
 3. Keep the section-based single-page architecture
 4. Maintain accessibility (a11y) standards
 5. Follow existing Tailwind CSS patterns
-
-## Before Implementation
-
-1. Fetch open issues to see current tasks
-2. Read root `CLAUDE.md` for architecture details
-3. Understand the section-based component structure
-
+6. **Run `bun run lint` before committing**
 
 ## Before you start:
 Create following files in .claude dir (update them if already exists), keep in mind that aim for these files are for you to remember all the context after your memory get compacted or cleared.
@@ -57,4 +61,13 @@ NOTE: You must always use sub-agents to update these files, so that you will not
 - Iteratively update the insights file after processing each task
 - Check off each tasks in the todos as you complete them and make sure it's updated before your memory gets compacted
 - After any memory compaction, read context and todos files before continuing
+
+## Before Implementation
+
+1. Fetch open issues to see current tasks
+2. Read root `CLAUDE.md` for architecture details
+3. Understand the section-based component structure
+
+
+
 

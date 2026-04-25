@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Github, Linkedin, Mail, ArrowRight, Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/customSupabaseClient';
 import { socialLinks } from '@/config/links'; // Import the centralized links
@@ -12,31 +18,31 @@ import { socialLinks } from '@/config/links'; // Import the centralized links
 // Custom logo components for platform links
 const UpworkIcon = () => (
   <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M18.561 13.158c-1.102 0-2.135-.467-3.074-1.227l.228-1.076.008-.042c.207-1.143.849-3.06 2.839-3.06 1.492 0 2.703 1.212 2.703 2.703-.001 1.489-1.212 2.702-2.704 2.702zm0-8.14c-2.539 0-4.51 1.649-5.31 4.366-1.22-1.834-2.148-4.036-2.687-5.892H7.828v7.112c-.002 1.406-1.141 2.546-2.547 2.548-1.405-.002-2.543-1.143-2.545-2.548V3.492H0v7.112c0 2.914 2.37 5.303 5.281 5.303 2.913 0 5.283-2.389 5.283-5.303v-1.19c.529 1.107 1.182 2.229 1.974 3.221l-1.673 7.873h2.797l1.213-5.71c1.063.679 2.285 1.109 3.686 1.109 3 0 5.439-2.452 5.439-5.45 0-3-2.439-5.439-5.439-5.439z"/>
+    <path d="M18.561 13.158c-1.102 0-2.135-.467-3.074-1.227l.228-1.076.008-.042c.207-1.143.849-3.06 2.839-3.06 1.492 0 2.703 1.212 2.703 2.703-.001 1.489-1.212 2.702-2.704 2.702zm0-8.14c-2.539 0-4.51 1.649-5.31 4.366-1.22-1.834-2.148-4.036-2.687-5.892H7.828v7.112c-.002 1.406-1.141 2.546-2.547 2.548-1.405-.002-2.543-1.143-2.545-2.548V3.492H0v7.112c0 2.914 2.37 5.303 5.281 5.303 2.913 0 5.283-2.389 5.283-5.303v-1.19c.529 1.107 1.182 2.229 1.974 3.221l-1.673 7.873h2.797l1.213-5.71c1.063.679 2.285 1.109 3.686 1.109 3 0 5.439-2.452 5.439-5.45 0-3-2.439-5.439-5.439-5.439z" />
   </svg>
 );
 const FreelancerIcon = () => (
   <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M14.096 3.076l1.634 2.292L24 3.076M5.503 20.924l4.474-4.374-2.692-2.89m6.133-10.584L11.027 5.23l4.022.15M4.124 3.077l.857 1.76 4.734.294m-3.058 7.072l3.497-6.522L0 5.13"/>
+    <path d="M14.096 3.076l1.634 2.292L24 3.076M5.503 20.924l4.474-4.374-2.692-2.89m6.133-10.584L11.027 5.23l4.022.15M4.124 3.077l.857 1.76 4.734.294m-3.058 7.072l3.497-6.522L0 5.13" />
   </svg>
 );
 const FreelancerMapIcon = () => (
   <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M16.5 3L7.5 21" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+    <path d="M16.5 3L7.5 21" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
   </svg>
 );
 
 const platformLinks = [
-    { name: 'Upwork', icon: UpworkIcon, url: socialLinks.upwork }, // Using centralized link
-    { name: 'Freelancer.com', icon: FreelancerIcon, url: socialLinks.freelancer }, // Using centralized link
-    { name: 'FreelancerMap', icon: FreelancerMapIcon, url: socialLinks.freelancerMap }, // Using centralized link
-    { name: 'Email', icon: Mail, url: socialLinks.emailHref } // Using centralized link
+  { name: 'Upwork', icon: UpworkIcon, url: socialLinks.upwork }, // Using centralized link
+  { name: 'Freelancer.com', icon: FreelancerIcon, url: socialLinks.freelancer }, // Using centralized link
+  { name: 'FreelancerMap', icon: FreelancerMapIcon, url: socialLinks.freelancerMap }, // Using centralized link
+  { name: 'Email', icon: Mail, url: socialLinks.emailHref }, // Using centralized link
 ];
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
   in: { opacity: 1, y: 0 },
-  out: { opacity: 0, y: -20 }
+  out: { opacity: 0, y: -20 },
 };
 const pageTransition = { type: 'tween', ease: 'anticipate', duration: 0.5 };
 
@@ -46,46 +52,42 @@ const Contact = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormState(prevState => ({ ...prevState, [name]: value }));
+    setFormState((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const handleSelectChange = (value) => {
-    setFormState(prevState => ({ ...prevState, budget: value }));
+    setFormState((prevState) => ({ ...prevState, budget: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formState.name || !formState.email || !formState.description) {
-        toast({
-            title: "Uh oh! Missing fields.",
-            description: "Please fill out all required fields before sending.",
-            variant: "destructive",
-        });
-        return;
+      toast({
+        title: 'Uh oh! Missing fields.',
+        description: 'Please fill out all required fields before sending.',
+        variant: 'destructive',
+      });
+      return;
     }
 
     setIsSubmitting(true);
 
-    const leadData = { 
-      name: formState.name, 
-      email: formState.email, 
-      budget: formState.budget, 
-      description: formState.description 
+    const leadData = {
+      name: formState.name,
+      email: formState.email,
+      budget: formState.budget,
+      description: formState.description,
     };
 
     // 1. Insert into database
-    const { error: dbError } = await supabase
-      .from('leads')
-      .insert([leadData])
-      .select()
-      .single();
+    const { error: dbError } = await supabase.from('leads').insert([leadData]).select().single();
 
     if (dbError) {
       console.error('Error submitting to Supabase:', dbError);
       toast({
-        title: "Submission Failed",
-        description: "Something went wrong saving your data. Please try again later.",
-        variant: "destructive",
+        title: 'Submission Failed',
+        description: 'Something went wrong saving your data. Please try again later.',
+        variant: 'destructive',
       });
       setIsSubmitting(false);
       return;
@@ -95,7 +97,7 @@ const Contact = () => {
     const { error: functionError } = await supabase.functions.invoke('contact-form-email', {
       body: JSON.stringify({
         ...leadData,
-        recipientEmail: socialLinks.contactEmail // Pass the email dynamically
+        recipientEmail: socialLinks.contactEmail, // Pass the email dynamically
       }),
     });
 
@@ -108,46 +110,68 @@ const Contact = () => {
     setIsSubmitting(false);
 
     toast({
-      title: "🚀 Message Sent!",
+      title: '🚀 Message Sent!',
       description: "Thanks for reaching out! I'll get back to you within 24 hours.",
     });
     setFormState({ name: '', email: '', budget: '', description: '' });
   };
 
   return (
-    <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}>
+    <motion.div
+      initial="initial"
+      animate="in"
+      exit="out"
+      variants={pageVariants}
+      transition={pageTransition}
+    >
       <Helmet>
         <title>Contact | Vivek Patel, AI & Computer Vision Engineer</title>
-        <meta name="description" content="Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Europe. Get a quote within 24 hours. €80/hour." />
-        <meta name="keywords" content="Hire AI Engineer Europe, Computer Vision Freelancer, n8n Developer, Web Scraping Expert, Project Quote, LangChain Developer, YOLO Expert" />
+        <meta
+          name="description"
+          content="Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Europe. Get a quote within 24 hours. €80/hour."
+        />
+        <meta
+          name="keywords"
+          content="Hire AI Engineer Europe, Computer Vision Freelancer, n8n Developer, Web Scraping Expert, Project Quote, LangChain Developer, YOLO Expert"
+        />
         <link rel="canonical" href="https://www.vivekapatel.com/contact" />
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.vivekapatel.com/contact" />
         <meta property="og:title" content="Contact | Vivek Patel, AI & Computer Vision Engineer" />
-        <meta property="og:description" content="Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Europe. Get a quote within 24 hours." />
+        <meta
+          property="og:description"
+          content="Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Europe. Get a quote within 24 hours."
+        />
         <meta property="og:image" content="https://www.vivekapatel.com/og-image.png" />
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://www.vivekapatel.com/contact" />
         <meta name="twitter:title" content="Contact | Vivek Patel, AI & Computer Vision Engineer" />
-        <meta name="twitter:description" content="Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Europe. Get a quote within 24 hours." />
+        <meta
+          name="twitter:description"
+          content="Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Europe. Get a quote within 24 hours."
+        />
         <meta name="twitter:image" content="https://www.vivekapatel.com/og-image.png" />
       </Helmet>
-      
+
       <section className="bg-[#0C0D0D] text-white py-24 sm:py-32">
         <div className="container mx-auto px-6">
-          <motion.div 
+          <motion.div
             className="text-center max-w-3xl mx-auto"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
           >
             <h1 className="text-2xl sm:text-3xl md:text-6xl font-bold text-white uppercase mb-4 leading-tight break-words">
-            Let's Build Your <span className="text-accent-purple">Computer Vision</span>, <span className="text-accent-purple">Web Scraping</span> & <span className="text-accent-purple">AI</span> Projects — <span className="text-accent-purple">€80/hour</span>
+              Let&apos;s Build Your <span className="text-accent-purple">Computer Vision</span>,{' '}
+              <span className="text-accent-purple">Web Scraping</span> &{' '}
+              <span className="text-accent-purple">AI</span> Projects —{' '}
+              <span className="text-accent-purple">€80/hour</span>
             </h1>
             <p className="text-lg text-gray-400 mb-12">
-              Have a project in mind? Reach out directly using the form below or connect with me on your favorite platform. I typically respond within 24 hours.
+              Have a project in mind? Reach out directly using the form below or connect with me on
+              your favorite platform. I typically respond within 24 hours.
             </p>
           </motion.div>
 
@@ -161,17 +185,29 @@ const Contact = () => {
             <div className="flex flex-wrap justify-center gap-6 text-center">
               <div className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-accent-purple">100%</span>
-                <span className="text-gray-400 text-sm">Job Success<br/>on Upwork</span>
+                <span className="text-gray-400 text-sm">
+                  Job Success
+                  <br />
+                  on Upwork
+                </span>
               </div>
               <div className="hidden sm:block w-px h-12 bg-white/10"></div>
               <div className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-accent-purple">11+</span>
-                <span className="text-gray-400 text-sm">Projects<br/>Delivered</span>
+                <span className="text-gray-400 text-sm">
+                  Projects
+                  <br />
+                  Delivered
+                </span>
               </div>
               <div className="hidden sm:block w-px h-12 bg-white/10"></div>
               <div className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-accent-purple">5★</span>
-                <span className="text-gray-400 text-sm">Average<br/>Rating</span>
+                <span className="text-gray-400 text-sm">
+                  Average
+                  <br />
+                  Rating
+                </span>
               </div>
             </div>
           </motion.div>
@@ -185,16 +221,46 @@ const Contact = () => {
               transition={{ duration: 0.7, delay: 0.4 }}
             >
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">Full Name *</label>
-                <Input type="text" id="name" name="name" placeholder="John Doe" value={formState.name} onChange={handleInputChange} className="h-14" required disabled={isSubmitting} />
+                <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
+                  Full Name *
+                </label>
+                <Input
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder="John Doe"
+                  value={formState.name}
+                  onChange={handleInputChange}
+                  className="h-14"
+                  required
+                  disabled={isSubmitting}
+                />
               </div>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">Email Address *</label>
-                <Input type="email" id="email" name="email" placeholder="john@company.com" value={formState.email} onChange={handleInputChange} className="h-14" required disabled={isSubmitting} />
+                <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+                  Email Address *
+                </label>
+                <Input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="john@company.com"
+                  value={formState.email}
+                  onChange={handleInputChange}
+                  className="h-14"
+                  required
+                  disabled={isSubmitting}
+                />
               </div>
               <div>
-                <label htmlFor="budget" className="block text-sm font-medium text-gray-300 mb-2">Budget Range (Optional)</label>
-                <Select onValueChange={handleSelectChange} value={formState.budget} disabled={isSubmitting}>
+                <label htmlFor="budget" className="block text-sm font-medium text-gray-300 mb-2">
+                  Budget Range (Optional)
+                </label>
+                <Select
+                  onValueChange={handleSelectChange}
+                  value={formState.budget}
+                  disabled={isSubmitting}
+                >
                   <SelectTrigger id="budget" className="h-14 text-gray-400">
                     <SelectValue placeholder="Select your budget range" />
                   </SelectTrigger>
@@ -207,33 +273,47 @@ const Contact = () => {
                 </Select>
               </div>
               <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-2">Project Description *</label>
-                <Textarea id="description" name="description" placeholder="Tell me about your project, goals, and timeline..." value={formState.description} onChange={handleInputChange} rows={5} required disabled={isSubmitting} />
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
+                  Project Description *
+                </label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  placeholder="Tell me about your project, goals, and timeline..."
+                  value={formState.description}
+                  onChange={handleInputChange}
+                  rows={5}
+                  required
+                  disabled={isSubmitting}
+                />
               </div>
               <div className="text-center">
-                 <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="group relative inline-flex items-center justify-center overflow-hidden rounded-full p-0.5 text-lg font-medium text-white transition-all duration-300 bg-gradient-to-br from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <span className="relative inline-flex items-center px-8 py-3.5 transition-all duration-75 ease-in bg-[#0C0D0D] rounded-full group-hover:bg-opacity-0">
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                          Sending...
-                        </>
-                      ) : (
-                        <>
-                          Send My Project Details <ArrowRight className="ml-2 h-5 w-5" />
-                        </>
-                      )}
-                    </span>
-                  </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="group relative inline-flex items-center justify-center overflow-hidden rounded-full p-0.5 text-lg font-medium text-white transition-all duration-300 bg-gradient-to-br from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span className="relative inline-flex items-center px-8 py-3.5 transition-all duration-75 ease-in bg-[#0C0D0D] rounded-full group-hover:bg-opacity-0">
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        Send My Project Details <ArrowRight className="ml-2 h-5 w-5" />
+                      </>
+                    )}
+                  </span>
+                </button>
               </div>
             </motion.form>
           </div>
 
-          <motion.div 
+          <motion.div
             className="text-center mt-24"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -261,16 +341,30 @@ const Contact = () => {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="text-center mt-24"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.8 }}
           >
-              <div className="flex justify-center space-x-6">
-                <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-accent-purple transition-colors"><Linkedin size={24} /></a>
-                <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-accent-purple transition-colors"><Github size={24} /></a>
-              </div>
+            <div className="flex justify-center space-x-6">
+              <a
+                href={socialLinks.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-accent-purple transition-colors"
+              >
+                <Linkedin size={24} />
+              </a>
+              <a
+                href={socialLinks.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-accent-purple transition-colors"
+              >
+                <Github size={24} />
+              </a>
+            </div>
           </motion.div>
         </div>
       </section>
