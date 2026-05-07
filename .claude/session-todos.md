@@ -1,12 +1,14 @@
 # Session Todos
 
-- [x] Inspect current dependency/package state and confirm Bun package metadata.
-- [x] Upgrade all packages to latest using Bun, preserving unrelated existing edits.
-- [x] Apply any minimal migration fixes required by upgraded packages.
-- [x] Run `bun run lint` and resolve upgrade-related lint failures.
-- [x] Run `bun run build` and resolve upgrade-related build failures.
-- [x] Confirm latest-package status with `bun outdated` and `npm outdated --json`.
-- [x] Remove unused `eslint-config-react-app` and add safe npm audit overrides for `@babel/core`, `@babel/helpers`, `flatted`, and `yaml`.
-- [x] Remove broken flat `brace-expansion` override and leave Bun nested `minimatch` transitive warnings documented.
-- [x] Summarize changed package files, verification results, and any remaining migration notes.
-- [ ] Commit package-upgrade changes from `feature/upgrade-latest-packages`.
+- [x] Refresh stale latest-package versions after outdated checks found newer releases.
+- [x] Run `bun install --frozen-lockfile`.
+- [x] Run `bun run lint`.
+- [x] Run `bun outdated`.
+- [x] Run `npm outdated --json`.
+- [x] Run `npm audit --audit-level=high`.
+- [x] Run `bun run build`.
+- [x] Run a Playwright preview smoke check.
+- [x] Update session tracking files for closeout.
+- [ ] Commit the `feature/upgrade-latest-packages` branch changes.
+- [ ] Merge the branch to `dev` through the repo workflow.
+- [ ] Verify the merged `dev` state before starting the next issue.
