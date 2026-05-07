@@ -11,7 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Github, Linkedin, Mail, ArrowRight, Loader2 } from 'lucide-react';
+import { Mail, ArrowRight, Loader2 } from 'lucide-react';
+import { Github, Linkedin } from '@/components/icons/SocialIcons';
 import { supabase } from '@/lib/customSupabaseClient';
 import { socialLinks } from '@/config/links'; // Import the centralized links
 

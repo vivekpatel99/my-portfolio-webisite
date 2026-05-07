@@ -1,0 +1,7 @@
+#:schema https://developers.openai.com/codex/config-schema.json
+
+model = "gpt-5.5"
+personality = "pragmatic"
+web_search = "live"
+model_reasoning_effort = "high"
+project_doc_fallback_filenames = ["CLAUDE.md"]

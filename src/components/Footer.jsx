@@ -1,4 +1,4 @@
-import { Github, Linkedin } from 'lucide-react';
+import { Github, Linkedin } from '@/components/icons/SocialIcons';
 import { toast } from '@/components/ui/use-toast';
 import { Link } from 'react-router-dom';
 import { socialLinks, assetsLinks } from '@/config/links';
