@@ -11,6 +11,8 @@
     "lint:fix": "eslint src/ --ext .js,.jsx --fix",
     "format": "prettier --write src/",
     "format:check": "prettier --check src/",
+    "precommit": "lint-staged",
+    "verify": "bun run lint && bun run build",
     "prepare": "husky"
   },
   "lint-staged": {
@@ -19,6 +21,12 @@
       "prettier --write"
     ],
     "src/**/*.{css,json,md}": [
+      "prettier --write"
+    ],
+    "*.{js,cjs,mjs,json}": [
+      "prettier --write"
+    ],
+    "docs/**/*.{json,md}": [
       "prettier --write"
     ]
   },

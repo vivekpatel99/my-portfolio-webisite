@@ -109,6 +109,9 @@ bun run lint         # Run ESLint
 bun run lint:fix     # Run ESLint with auto-fix
 bun run format       # Format code with Prettier
 bun run format:check # Check formatting
+bun run precommit    # Run staged-file checks used by .husky/pre-commit
+bun run verify       # Run full pre-push verification (lint + build)
+bun run prepare      # Install Husky git hooks after dependency install
 
 # Browser automation / UI verification (Playwright CLI — NOT MCP)
 bunx playwright --help                # CLI reference
@@ -135,6 +138,17 @@ When a task requires verifying UI, accessibility, or visual behavior:
 Prefer text assertions (selectors, accessible names, computed styles) over screenshot diffs unless the task is explicitly visual.
 
 Verification before claiming done: `bun run lint` and `bun run build` must pass. For UI changes, also run a Playwright check.
+
+## Git Hooks
+
+Husky hooks are installed through `bun run prepare` and Git should report `core.hooksPath` as `.husky/_`.
+
+- `.husky/pre-commit` blocks direct commits to `main` and `dev`, then runs `bun run precommit`.
+- `bun run precommit` runs `lint-staged`, which fixes staged source files, root JS/JSON config files, and docs files with ESLint/Prettier where configured.
+- `.husky/pre-push` runs `bun run verify`.
+- `bun run verify` runs `bun run lint && bun run build`.
+
+If a hook fails, fix the reported issue and rerun the same command manually before retrying the Git operation. Do not use `--no-verify` unless the user explicitly approves a one-off bypass.
 
 ## Architecture
 

@@ -48,6 +48,11 @@ Before ANY git operations:
 4. Maintain accessibility (a11y) standards
 5. Follow existing Tailwind CSS patterns
 6. **Run `bun run lint` before committing**
+7. Husky is the local Git-hook runner:
+   - Install hooks with `bun run prepare` after dependency install.
+   - Pre-commit blocks direct commits to `main`/`dev` and runs `bun run precommit`.
+   - Pre-push runs `bun run verify` (`bun run lint && bun run build`).
+   - Do not bypass hooks with `--no-verify` unless the user explicitly approves it.
 
 ## Before you start:
 Create following files in .claude dir (update them if already exists), keep in mind that aim for these files are for you to remember all the context after your memory get compacted or cleared.
@@ -67,7 +72,6 @@ NOTE: You must always use sub-agents to update these files, so that you will not
 1. Fetch open issues to see current tasks
 2. Read root `CLAUDE.md` for architecture details
 3. Understand the section-based component structure
-
 
 
 
