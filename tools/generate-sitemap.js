@@ -1,27 +1,30 @@
-import {
-    writeFileSync
-} from 'fs';
+import { writeFileSync } from 'fs';
 
 const BASE_URL = 'https://www.vivekapatel.com';
-const LASTMOD = '2026-05-07';
+const LASTMOD = new Date().toISOString().slice(0, 10);
 
-const staticPages = [{
+const staticPages = [
+  {
     loc: BASE_URL,
     lastmod: LASTMOD,
-    priority: '1.00'
-}, {
+    priority: '1.00',
+  },
+  {
     loc: `${BASE_URL}/contact`,
     lastmod: LASTMOD,
-    priority: '0.95'
-}, {
+    priority: '0.95',
+  },
+  {
     loc: `${BASE_URL}/legal`,
     lastmod: LASTMOD,
-    priority: '0.50'
-}, {
+    priority: '0.50',
+  },
+  {
     loc: `${BASE_URL}/data-policy`,
     lastmod: LASTMOD,
-    priority: '0.50'
-}];
+    priority: '0.50',
+  },
+];
 
 const sitemap = `
   <?xml version="1.0" encoding="UTF-8"?>
@@ -41,8 +44,8 @@ const sitemap = `
 `;
 
 try {
-    writeFileSync('public/sitemap.xml', sitemap.trim());
-    console.log('✅ sitemap.xml generated successfully!');
+  writeFileSync('public/sitemap.xml', sitemap.trim());
+  console.log('✅ sitemap.xml generated successfully!');
 } catch (error) {
-    console.error('❌ Error generating sitemap.xml:', error);
+  console.error('❌ Error generating sitemap.xml:', error);
 }
