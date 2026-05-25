@@ -7,7 +7,6 @@ import Home from '@/pages/Home';
 import { AnimatePresence } from 'framer-motion';
 
 const Contact = lazy(() => import('@/pages/Contact'));
-const Project = lazy(() => import('@/pages/Project'));
 const Legal = lazy(() => import('@/pages/Legal'));
 const DataPolicy = lazy(() => import('@/pages/DataPolicy'));
 
@@ -60,14 +59,9 @@ function App() {
                 </LazyRoute>
               }
             />
-            <Route
-              path="project/:projectId"
-              element={
-                <LazyRoute>
-                  <Project />
-                </LazyRoute>
-              }
-            />
+            <Route path="project/:projectId" element={<Navigate to="/" replace />} />
+            <Route path="privacy-policy" element={<Navigate to="/legal" replace />} />
+            <Route path="cookie-policy" element={<Navigate to="/data-policy" replace />} />
             <Route
               path="legal"
               element={

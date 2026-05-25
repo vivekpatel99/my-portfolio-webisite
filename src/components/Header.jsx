@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,9 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
+  const menuButtonRef = useRef(null);
+  const closeButtonRef = useRef(null);
+  const dialogRef = useRef(null);
 
   const navLinks = [
     { name: 'Services', href: '/#services' },
@@ -32,19 +35,66 @@ const Header = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isOpen) {
+      return undefined;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    closeButtonRef.current?.focus();
+
+    const getFocusableElements = () =>
+      Array.from(
+        dialogRef.current?.querySelectorAll(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        ) || []
+      );
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setIsOpen(false);
+        requestAnimationFrame(() => menuButtonRef.current?.focus());
+        return;
+      }
+
+      if (event.key !== 'Tab') {
+        return;
+      }
+
+      const focusableElements = getFocusableElements();
+      if (focusableElements.length === 0) {
+        return;
+      }
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
+
   const handleSmoothScroll = (e) => {
     e.preventDefault();
     const href = e.currentTarget.getAttribute('href');
     const [path, id] = href.split('#');
 
-    if (path === '/' && id) {
-      navigate(path);
-      setTimeout(() => {
-        const targetElement = document.getElementById(id);
-        if (targetElement) {
-          targetElement.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 100);
+    if (id) {
+      navigate({ pathname: path || '/', hash: `#${id}` });
     } else {
       navigate(href);
     }
@@ -102,6 +152,7 @@ const Header = () => {
           </div>
           <div className="md:hidden">
             <button
+              ref={menuButtonRef}
               onClick={() => setIsOpen(!isOpen)}
               className="text-white"
               aria-label="Toggle navigation menu"
@@ -117,6 +168,7 @@ const Header = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            ref={dialogRef}
             id="mobile-menu"
             role="dialog"
             aria-modal="true"
@@ -133,6 +185,7 @@ const Header = () => {
                   <img src={assetsLinks.logo} alt="Vivek Patel Logo" className="h-12" />
                 </Link>
                 <button
+                  ref={closeButtonRef}
                   onClick={() => setIsOpen(false)}
                   className="text-white"
                   aria-label="Close navigation menu"

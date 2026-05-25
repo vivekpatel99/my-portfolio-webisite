@@ -11,7 +11,7 @@ const Footer = () => {
     window.dispatchEvent(new CustomEvent('manage-cookies'));
     toast({
       title: 'Manage Cookie Consent',
-      description: 'Scroll down to adjust your cookie preferences.',
+      description: 'Cookie preferences opened.',
     });
   };
 

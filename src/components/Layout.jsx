@@ -117,7 +117,7 @@ const Layout = () => {
         Skip to main content
       </a>
       {isCustomCursorEnabled && <CustomCursor />}
-      {gaConsent && <GoogleAnalytics />}
+      {gaConsent && <GoogleAnalytics hasConsent={gaConsent} />}
       <div className="min-h-screen bg-[#0C0D0D] text-white overflow-x-hidden flex flex-col">
         <Header />
         <main id="main-content" className="flex-grow">

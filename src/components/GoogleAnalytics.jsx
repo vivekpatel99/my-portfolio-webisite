@@ -9,7 +9,7 @@ const GoogleAnalytics = ({ hasConsent }) => {
       return;
     }
 
-    if (process.env.NODE_ENV !== 'production' || window.location.hostname === 'localhost') {
+    if (!import.meta.env.PROD || window.location.hostname === 'localhost') {
       return;
     }
 

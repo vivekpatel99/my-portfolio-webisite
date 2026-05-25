@@ -62,7 +62,14 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formState.name || !formState.email || !formState.description) {
+    const leadData = {
+      name: formState.name.trim(),
+      email: formState.email.trim(),
+      budget: formState.budget,
+      description: formState.description.trim(),
+    };
+
+    if (!leadData.name || !leadData.email || !leadData.description) {
       toast({
         title: 'Uh oh! Missing fields.',
         description: 'Please fill out all required fields before sending.',
@@ -72,13 +79,6 @@ const Contact = () => {
     }
 
     setIsSubmitting(true);
-
-    const leadData = {
-      name: formState.name,
-      email: formState.email,
-      budget: formState.budget,
-      description: formState.description,
-    };
 
     // 1. Insert into database
     const { error: dbError } = await supabase.from('leads').insert([leadData]).select().single();
@@ -104,8 +104,13 @@ const Contact = () => {
 
     if (functionError) {
       console.error('Error invoking email function:', functionError);
-      // This is not a critical error for the user, so we can show a success message anyway
-      // but log it for debugging. You could add a different toast for a partial success.
+      setIsSubmitting(false);
+      toast({
+        title: 'Saved, Email Delayed',
+        description: 'Your message was saved, but the email alert failed. I will still review it.',
+      });
+      setFormState({ name: '', email: '', budget: '', description: '' });
+      return;
     }
 
     setIsSubmitting(false);
@@ -353,6 +358,7 @@ const Contact = () => {
                 href={socialLinks.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Visit my LinkedIn profile"
                 className="text-gray-400 hover:text-accent-purple transition-colors"
               >
                 <Linkedin size={24} />
@@ -361,6 +367,7 @@ const Contact = () => {
                 href={socialLinks.github}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Visit my GitHub profile"
                 className="text-gray-400 hover:text-accent-purple transition-colors"
               >
                 <Github size={24} />

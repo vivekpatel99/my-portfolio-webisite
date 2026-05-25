@@ -33,7 +33,7 @@ const TechLogo = ({ tech }) => (
         className="h-full w-full object-contain"
         alt={`${tech.name} logo`}
         src={tech.logo}
-        loading="eager"
+        loading="lazy"
         decoding="async"
         width="80"
         height="80"
