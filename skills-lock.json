@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "code-upgrade": {
+      "source": "robinebers/skills",
+      "sourceType": "github",
+      "skillPath": "skills/code-upgrade/SKILL.md",
+      "computedHash": "385296043b0ab2dafcb97e8afb0fa0aba045e49856fe68668a1a17dd1f8b8c90"
+    }
+  }
+}

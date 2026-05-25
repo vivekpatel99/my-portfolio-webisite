@@ -108,21 +108,11 @@ export const portfolioImages = {
 };
 
 // ============================================
-// PROJECT CASE STUDY GALLERY (Project.jsx)
-// ============================================
-export const projectGallery = {
-  hero: `${BASE_URLS.hostingerCdn}/gemini_generated_image_n6u5epn6u5epn6u5-5ABrF.png`,
-  gallery1: `${BASE_URLS.hostingerCdn}/gemini_generated_image_mxgp1bmxgp1bmxgp-IDwMQ.png`,
-  gallery2: `${BASE_URLS.hostingerCdn}/gemini_generated_image_mxgp1bmxgp1bmxgp-1-RqwfI.png`,
-  gallery3: `${BASE_URLS.hostingerCdn}/professional-exchange-BmQpX.png`,
-};
-
-// ============================================
 // META/SEO IMAGES (for index.html reference)
 // ============================================
 export const metaImages = {
-  ogImage: `${BASE_URLS.myPortfolioWebsite}/assets/logos/white_background.png`,
-  twitterImage: `${BASE_URLS.myPortfolioWebsite}/assets/logos/white_background.png`,
+  ogImage: 'https://www.vivekapatel.com/og-image.png',
+  twitterImage: 'https://www.vivekapatel.com/og-image.png',
   jsonLdImage: `${BASE_URLS.myPortfolioWebsite}/assets/images/vivek-black-and-white.png`,
 };
 

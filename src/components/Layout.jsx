@@ -6,26 +6,91 @@ import { Toaster } from '@/components/ui/toaster';
 import CustomCursor from '@/components/CustomCursor';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 import CookieConsentBanner from '@/components/CookieConsentBanner';
+import {
+  createMediaQueryList,
+  shouldMountCustomCursor,
+  subscribeMediaQuery,
+} from '@/lib/customCursor';
 
 const COOKIE_CONSENT_KEY = 'cookie_consent_preferences';
+
+const useCustomCursorEnabled = () => {
+  const [isEnabled, setIsEnabled] = useState(false);
+
+  useEffect(() => {
+    const mediaWindow = typeof window !== 'undefined' ? window : undefined;
+    const pointerQuery = createMediaQueryList(mediaWindow, '(pointer: fine)');
+    const reducedMotionQuery = createMediaQueryList(
+      mediaWindow,
+      '(prefers-reduced-motion: reduce)'
+    );
+
+    if (!pointerQuery || !reducedMotionQuery) {
+      return undefined;
+    }
+
+    const updateCursorPreference = () => {
+      setIsEnabled(
+        shouldMountCustomCursor({
+          hasFinePointer: pointerQuery.matches,
+          prefersReducedMotion: reducedMotionQuery.matches,
+        })
+      );
+    };
+
+    updateCursorPreference();
+    const cleanupPointerQuery = subscribeMediaQuery(pointerQuery, updateCursorPreference);
+    const cleanupReducedMotionQuery = subscribeMediaQuery(
+      reducedMotionQuery,
+      updateCursorPreference
+    );
+
+    return () => {
+      cleanupPointerQuery();
+      cleanupReducedMotionQuery();
+    };
+  }, []);
+
+  return isEnabled;
+};
 
 const Layout = () => {
   // Lazy initialization - check localStorage on mount
   const [gaConsent, setGaConsent] = useState(() => {
-    const savedPrefs = localStorage.getItem(COOKIE_CONSENT_KEY);
-    if (savedPrefs) {
-      try {
+    try {
+      const savedPrefs =
+        typeof window !== 'undefined' && window.localStorage
+          ? window.localStorage.getItem(COOKIE_CONSENT_KEY)
+          : null;
+      if (savedPrefs) {
         const prefs = JSON.parse(savedPrefs);
         return prefs.analytics === true;
-      } catch {
-        return false;
       }
+    } catch {
+      return false;
     }
     return false;
   });
   const [showConsentManager, setShowConsentManager] = useState(false);
+  const isCustomCursorEnabled = useCustomCursorEnabled();
 
   useEffect(() => {
+    if (typeof document === 'undefined') {
+      return undefined;
+    }
+
+    document.documentElement.classList.toggle('custom-cursor-enabled', isCustomCursorEnabled);
+
+    return () => {
+      document.documentElement.classList.remove('custom-cursor-enabled');
+    };
+  }, [isCustomCursorEnabled]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return undefined;
+    }
+
     // Listen for event from footer to manage cookies
     const handleManageCookies = () => setShowConsentManager(true);
     window.addEventListener('manage-cookies', handleManageCookies);
@@ -51,8 +116,8 @@ const Layout = () => {
       >
         Skip to main content
       </a>
-      <CustomCursor />
-      {gaConsent && <GoogleAnalytics />}
+      {isCustomCursorEnabled && <CustomCursor />}
+      {gaConsent && <GoogleAnalytics hasConsent={gaConsent} />}
       <div className="min-h-screen bg-[#0C0D0D] text-white overflow-x-hidden flex flex-col">
         <Header />
         <main id="main-content" className="flex-grow">

@@ -1,49 +1,35 @@
-import {
-    writeFileSync
-} from 'fs';
+import { writeFileSync } from 'fs';
 
 const BASE_URL = 'https://www.vivekapatel.com';
-const today = new Date().toISOString().split('T')[0];
+const LASTMOD = new Date().toISOString().slice(0, 10);
 
-const projectSlugs = [
-    'Automated-Data-Extraction-Workflow-using-n8n',
-    'Extract-seller-and-client-information-from-photos-using-OCR',
-    'Yoga-Pose-Estimation-with-YOLO',
-    'football-tracking',
-    'medical-segmentation',
-    'ai-planning-agent',
-];
-
-const staticPages = [{
+const staticPages = [
+  {
     loc: BASE_URL,
-    lastmod: today,
-    priority: '1.00'
-}, {
+    lastmod: LASTMOD,
+    priority: '1.00',
+  },
+  {
     loc: `${BASE_URL}/contact`,
-    lastmod: today,
-    priority: '0.95'
-}, {
+    lastmod: LASTMOD,
+    priority: '0.95',
+  },
+  {
     loc: `${BASE_URL}/legal`,
-    lastmod: today,
-    priority: '0.50'
-}, {
+    lastmod: LASTMOD,
+    priority: '0.50',
+  },
+  {
     loc: `${BASE_URL}/data-policy`,
-    lastmod: today,
-    priority: '0.50'
-}];
-
-const projectPages = projectSlugs.map(slug => ({
-    loc: `${BASE_URL}/project/${slug}`,
-    lastmod: today,
-    priority: '0.90',
-}));
-
-const allPages = [...staticPages, ...projectPages];
+    lastmod: LASTMOD,
+    priority: '0.50',
+  },
+];
 
 const sitemap = `
   <?xml version="1.0" encoding="UTF-8"?>
   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    ${allPages
+    ${staticPages
       .map(
         (page) => `
       <url>
@@ -58,8 +44,8 @@ const sitemap = `
 `;
 
 try {
-    writeFileSync('public/sitemap.xml', sitemap.trim());
-    console.log('✅ sitemap.xml generated successfully!');
+  writeFileSync('public/sitemap.xml', sitemap.trim());
+  console.log('✅ sitemap.xml generated successfully!');
 } catch (error) {
-    console.error('❌ Error generating sitemap.xml:', error);
+  console.error('❌ Error generating sitemap.xml:', error);
 }

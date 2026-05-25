@@ -13,7 +13,8 @@
   animation: scroll 40s linear infinite;
 }
 
-.scroller:hover .scroller-inner {
+.scroller:hover .scroller-inner,
+.scroller:focus-within .scroller-inner {
   animation-play-state: paused;
 }
 

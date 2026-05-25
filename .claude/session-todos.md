@@ -1,14 +1,13 @@
-# Session Todos
+# QA Session Todos
 
-- [x] Refresh stale latest-package versions after outdated checks found newer releases.
-- [x] Run `bun install --frozen-lockfile`.
-- [x] Run `bun run lint`.
-- [x] Run `bun outdated`.
-- [x] Run `npm outdated --json`.
-- [x] Run `npm audit --audit-level=high`.
-- [x] Run `bun run build`.
-- [x] Run a Playwright preview smoke check.
-- [x] Update session tracking files for closeout.
-- [ ] Commit the `feature/upgrade-latest-packages` branch changes.
-- [ ] Merge the branch to `dev` through the repo workflow.
-- [ ] Verify the merged `dev` state before starting the next issue.
+- [x] Phase 0: Build preview, verify prod URL, init session tracking files
+- [x] Agent 1: Route & Navigation QA
+- [x] Agent 2: Responsive & Device QA
+- [x] Agent 3: Contact & Forms QA
+- [x] Agent 4: Accessibility QA
+- [x] Agent 5: Performance QA
+- [x] Agent 6: Visual & Animation QA
+- [x] Agent 7: SEO & Meta QA
+- [x] Agent 8: Edge Cases & Resilience QA
+- [x] Phase 2: Cross-env parity, triage, re-verify P0/P1
+- [x] Phase 3: Consolidated bug report + improvement backlog

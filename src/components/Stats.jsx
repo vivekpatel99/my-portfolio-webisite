@@ -1,37 +1,56 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useAnimation } from 'framer-motion';
+import { motion, useInView, useAnimation, useReducedMotion } from 'framer-motion';
+
+export const formatTickerValue = (value, progress) => {
+  const clampedProgress = Math.min(Math.max(progress, 0), 1);
+  const decimals = Number.isInteger(value) ? 0 : value.toString().split('.')[1]?.length || 0;
+  const currentValue = Math.min(value * clampedProgress, value);
+  return currentValue.toFixed(decimals);
+};
 
 const NumberTicker = ({ value, suffix }) => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, amount: 0.5 });
   const controls = useAnimation();
-  const [count, setCount] = useState(0);
+  const shouldReduceMotion = useReducedMotion();
+  const [count, setCount] = useState('0');
+  const displayCount = shouldReduceMotion ? formatTickerValue(value, 1) : count;
 
   useEffect(() => {
+    if (shouldReduceMotion) {
+      return undefined;
+    }
+
     if (inView) {
       controls.start({ opacity: 1, y: 0 });
-      const end = value;
       const duration = 2000; // milliseconds
       let startTime = null;
+      let frameId = null;
 
       const animateCount = (currentTime) => {
         if (!startTime) startTime = currentTime;
         const progress = (currentTime - startTime) / duration;
-        const currentCount = Math.min(Math.floor(progress * end), end);
-        setCount(currentCount);
+        setCount(formatTickerValue(value, progress));
 
         if (progress < 1) {
-          requestAnimationFrame(animateCount);
+          frameId = requestAnimationFrame(animateCount);
         }
       };
 
-      requestAnimationFrame(animateCount);
+      frameId = requestAnimationFrame(animateCount);
+      return () => {
+        if (frameId) {
+          cancelAnimationFrame(frameId);
+        }
+      };
     }
-  }, [inView, value, controls]);
+
+    return undefined;
+  }, [inView, value, controls, shouldReduceMotion]);
 
   return (
     <span ref={ref}>
-      {count}
+      {displayCount}
       {suffix}
     </span>
   );
