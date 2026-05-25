@@ -1,10 +1,10 @@
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+import { MotionConfig } from 'framer-motion';
 import * as Sentry from '@sentry/react';
 import App from '@/App';
 import ScrollToTop from '@/components/ScrollToTop';
 import '@/index.css';
-import { Toaster } from '@/components/ui/toaster';
 
 // Initialize Sentry
 Sentry.init({
@@ -23,10 +23,11 @@ Sentry.init({
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <>
-    <BrowserRouter>
-      <ScrollToTop />
-      <App />
-      <Toaster />
-    </BrowserRouter>
+    <MotionConfig reducedMotion="user">
+      <BrowserRouter>
+        <ScrollToTop />
+        <App />
+      </BrowserRouter>
+    </MotionConfig>
   </>
 );

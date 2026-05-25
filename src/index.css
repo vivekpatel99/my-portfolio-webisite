@@ -1,8 +1,8 @@
-@config "../tailwind.config.js";
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@config '../tailwind.config.js';
+@source '../index.html';
+@source './**/*.{js,jsx}';
+@plugin 'tailwindcss-animate';
 
 @layer base {
   :root {
@@ -48,12 +48,12 @@
     @apply bg-background text-foreground;
   }
 
-  /* Only hide cursor on devices with precise pointers (mouse/trackpad) */
-  @media (pointer: fine) {
-    body,
-    html,
-    a,
-    button {
+  /* Only hide cursor when the custom cursor is mounted. */
+  @media (hover: hover) and (pointer: fine) {
+    html.custom-cursor-enabled,
+    html.custom-cursor-enabled body,
+    html.custom-cursor-enabled a,
+    html.custom-cursor-enabled button {
       cursor: none;
     }
   }
@@ -65,6 +65,26 @@
     a,
     button {
       cursor: auto;
+    }
+
+    html {
+      scroll-behavior: auto;
+    }
+
+    .scroller-inner,
+    .animate-pulse,
+    .animate-spin,
+    [class*='animate-'] {
+      animation: none !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    .scroller-inner {
+      transform: none !important;
+    }
+
+    .scroller:hover .scroller-inner {
+      animation-play-state: paused;
     }
   }
 }

@@ -1,12 +1,35 @@
+import { lazy, Suspense } from 'react';
+import * as Sentry from '@sentry/react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import Layout from '@/components/Layout';
 import Home from '@/pages/Home';
-import Contact from '@/pages/Contact';
-import Project from '@/pages/Project';
-import Legal from '@/pages/Legal';
-import DataPolicy from '@/pages/DataPolicy';
 import { AnimatePresence } from 'framer-motion';
+
+const Contact = lazy(() => import('@/pages/Contact'));
+const Project = lazy(() => import('@/pages/Project'));
+const Legal = lazy(() => import('@/pages/Legal'));
+const DataPolicy = lazy(() => import('@/pages/DataPolicy'));
+
+const RouteFallback = () => (
+  <div className="min-h-screen bg-[#0C0D0D]" role="status" aria-live="polite">
+    <span className="sr-only">Loading page</span>
+  </div>
+);
+
+const RouteErrorFallback = () => (
+  <div className="min-h-screen bg-[#0C0D0D] flex items-center justify-center px-6">
+    <p className="text-sm text-white/70" role="alert">
+      This page could not load.
+    </p>
+  </div>
+);
+
+const LazyRoute = ({ children }) => (
+  <Sentry.ErrorBoundary fallback={<RouteErrorFallback />}>
+    <Suspense fallback={<RouteFallback />}>{children}</Suspense>
+  </Sentry.ErrorBoundary>
+);
 
 function App() {
   const location = useLocation();
@@ -29,10 +52,38 @@ function App() {
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
-            <Route path="contact" element={<Contact />} />
-            <Route path="project/:projectId" element={<Project />} />
-            <Route path="legal" element={<Legal />} />
-            <Route path="data-policy" element={<DataPolicy />} />
+            <Route
+              path="contact"
+              element={
+                <LazyRoute>
+                  <Contact />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path="project/:projectId"
+              element={
+                <LazyRoute>
+                  <Project />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path="legal"
+              element={
+                <LazyRoute>
+                  <Legal />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path="data-policy"
+              element={
+                <LazyRoute>
+                  <DataPolicy />
+                </LazyRoute>
+              }
+            />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>

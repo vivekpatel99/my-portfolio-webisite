@@ -3,47 +3,30 @@ import {
 } from 'fs';
 
 const BASE_URL = 'https://www.vivekapatel.com';
-const today = new Date().toISOString().split('T')[0];
-
-const projectSlugs = [
-    'Automated-Data-Extraction-Workflow-using-n8n',
-    'Extract-seller-and-client-information-from-photos-using-OCR',
-    'Yoga-Pose-Estimation-with-YOLO',
-    'football-tracking',
-    'medical-segmentation',
-    'ai-planning-agent',
-];
+const LASTMOD = '2026-05-07';
 
 const staticPages = [{
     loc: BASE_URL,
-    lastmod: today,
+    lastmod: LASTMOD,
     priority: '1.00'
 }, {
     loc: `${BASE_URL}/contact`,
-    lastmod: today,
+    lastmod: LASTMOD,
     priority: '0.95'
 }, {
     loc: `${BASE_URL}/legal`,
-    lastmod: today,
+    lastmod: LASTMOD,
     priority: '0.50'
 }, {
     loc: `${BASE_URL}/data-policy`,
-    lastmod: today,
+    lastmod: LASTMOD,
     priority: '0.50'
 }];
-
-const projectPages = projectSlugs.map(slug => ({
-    loc: `${BASE_URL}/project/${slug}`,
-    lastmod: today,
-    priority: '0.90',
-}));
-
-const allPages = [...staticPages, ...projectPages];
 
 const sitemap = `
   <?xml version="1.0" encoding="UTF-8"?>
   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    ${allPages
+    ${staticPages
       .map(
         (page) => `
       <url>
