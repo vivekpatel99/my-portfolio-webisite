@@ -1,1 +1,11 @@
-bunx lint-staged
+branch="$(git branch --show-current)"
+
+case "$branch" in
+  main|dev)
+    echo "Blocked: do not commit directly to $branch. Create feature/<name> from dev."
+    exit 1
+    ;;
+esac
+
+echo "Running staged pre-commit checks..."
+bun run precommit
