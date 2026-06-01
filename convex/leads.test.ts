@@ -32,11 +32,24 @@ describe("submitLead", () => {
     expect(leads[0].budget).toBeUndefined();
   });
 
-  it("CVX-003: rejects missing name", async () => {
+  it("CVX-003: rejects empty name", async () => {
     const t = convexTest(schema);
     await expect(
       t.mutation(api.leads.submitLead, {
-        name: "   ",
+        name: "",
+        email: "jane@example.com",
+        description: "Valid description.",
+      }),
+    ).rejects.toThrow(/Name is required/);
+    const leads = await t.run(async (ctx) => ctx.db.query("leads").collect());
+    expect(leads).toHaveLength(0);
+  });
+
+  it("CVX-008: rejects whitespace-only name", async () => {
+    const t = convexTest(schema);
+    await expect(
+      t.mutation(api.leads.submitLead, {
+        name: " \t\n ",
         email: "jane@example.com",
         description: "Valid description.",
       }),
@@ -136,6 +149,23 @@ describe("submitLead", () => {
     const leads = await t.run(async (ctx) => ctx.db.query("leads").collect());
     expect(leads[0].name).toBe("Jane 🚀");
     expect(leads[0].description).toBe("项目说明");
+  });
+
+  it("rejects 4th submit from same email within one hour", async () => {
+    const t = convexTest(schema);
+    const input = {
+      name: "Jane",
+      email: "rate-limit@example.com",
+      description: "Rate limit check.",
+    };
+    for (let i = 0; i < 3; i++) {
+      await t.mutation(api.leads.submitLead, input);
+    }
+    await expect(t.mutation(api.leads.submitLead, input)).rejects.toThrow(
+      /Please wait before submitting again/,
+    );
+    const leads = await t.run(async (ctx) => ctx.db.query("leads").collect());
+    expect(leads).toHaveLength(3);
   });
 
   it("CVX-013: allows parallel duplicate submits", async () => {

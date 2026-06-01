@@ -24,3 +24,6 @@ jobs:
       - run: npm run build
         env:
           VITE_CONVEX_URL: https://placeholder.convex.cloud
+
+      - name: Fail if Supabase references remain in production bundle
+        run: '! grep -riq supabase dist/assets'
