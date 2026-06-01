@@ -243,6 +243,14 @@ Test all categories simultaneously for fastest results
 | FRM-011 | GitHub link | Opens profile | [ ] |
 | FRM-012 | LinkedIn link | Opens profile | [ ] |
 
+### Contact Form (Convex E2E — post-migration)
+
+| ID | Test | Steps | Expected | Check |
+|----|------|-------|----------|-------|
+| FRM-013 | Full submit (staging) | Fill all fields; submit | Success toast; lead in Convex dashboard | [ ] |
+| FRM-014 | Submit without budget | Omit budget; submit | Success; lead has no budget | [ ] |
+| FRM-015 | Email notification | After FRM-013 | Email at configured recipient | [ ] |
+
 ---
 
 ## Test Category 7: Cookie Consent (GDPR)
@@ -387,7 +395,7 @@ Test all categories simultaneously for fastest results
 
 ## Configuration
 
-- **Contact Form:** Validation-only by default; run FRM-013–015 on staging after Convex migration
+- **Contact Form:** Skip actual submission (validation only)
 - **Rate-Limited Sites:** Test all, accept failures from LinkedIn/Upwork
 - **Execution:** All 7 agents in parallel
 
