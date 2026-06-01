@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
+import * as Sentry from '@sentry/react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
@@ -76,10 +77,14 @@ const Contact = () => {
         description: formState.description,
       });
     } catch (error) {
-      console.error('Error submitting lead:', error);
+      Sentry.captureException(error);
+      const description =
+        error?.data?.message ??
+        error?.message ??
+        'Something went wrong saving your data. Please try again later.';
       toast({
         title: "Submission Failed",
-        description: "Something went wrong saving your data. Please try again later.",
+        description,
         variant: "destructive",
       });
       setIsSubmitting(false);

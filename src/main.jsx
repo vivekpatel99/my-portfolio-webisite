@@ -1,20 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import { ConvexProvider, ConvexReactClient } from 'convex/react';
+import { ConvexProvider } from 'convex/react';
 import * as Sentry from "@sentry/react";
 import App from '@/App';
 import ScrollToTop from '@/components/ScrollToTop';
 import '@/index.css';
 import { Toaster } from '@/components/ui/toaster';
-
-const convexUrl = import.meta.env.VITE_CONVEX_URL;
-if (!convexUrl) {
-  console.error(
-    'VITE_CONVEX_URL is not set. Contact form submissions will fail until Convex is configured.',
-  );
-}
-const convex = new ConvexReactClient(convexUrl ?? '');
+import convex from '@/lib/convexClient';
 
 // Initialize Sentry
 Sentry.init({
