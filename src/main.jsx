@@ -26,11 +26,11 @@ Sentry.init({
 });
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <>
+  <ConvexProvider client={convex}>
     <BrowserRouter>
       <ScrollToTop />
       <App />
       <Toaster />
     </BrowserRouter>
-  </>
+  </ConvexProvider>
 );

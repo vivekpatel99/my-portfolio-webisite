@@ -6,8 +6,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Github, Linkedin, Mail, ArrowRight, Loader2 } from 'lucide-react';
-import { supabase } from '@/lib/customSupabaseClient';
-import { socialLinks } from '@/config/links'; // Import the centralized links
+import { useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
+import { socialLinks } from '@/config/links';
 
 // Custom logo components for platform links
 const UpworkIcon = () => (
@@ -43,6 +44,7 @@ const pageTransition = { type: 'tween', ease: 'anticipate', duration: 0.5 };
 const Contact = () => {
   const [formState, setFormState] = useState({ name: '', email: '', budget: '', description: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitLead = useMutation(api.leads.submitLead);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -66,22 +68,15 @@ const Contact = () => {
 
     setIsSubmitting(true);
 
-    const leadData = { 
-      name: formState.name, 
-      email: formState.email, 
-      budget: formState.budget, 
-      description: formState.description 
-    };
-
-    // 1. Insert into database
-    const { error: dbError } = await supabase
-      .from('leads')
-      .insert([leadData])
-      .select()
-      .single();
-
-    if (dbError) {
-      console.error('Error submitting to Supabase:', dbError);
+    try {
+      await submitLead({
+        name: formState.name,
+        email: formState.email,
+        budget: formState.budget || undefined,
+        description: formState.description,
+      });
+    } catch (error) {
+      console.error('Error submitting lead:', error);
       toast({
         title: "Submission Failed",
         description: "Something went wrong saving your data. Please try again later.",
@@ -89,20 +84,6 @@ const Contact = () => {
       });
       setIsSubmitting(false);
       return;
-    }
-
-    // 2. Trigger email notification function, passing the entire form payload and recipient email
-    const { error: functionError } = await supabase.functions.invoke('contact-form-email', {
-      body: JSON.stringify({
-        ...leadData,
-        recipientEmail: socialLinks.contactEmail // Pass the email dynamically
-      }),
-    });
-
-    if (functionError) {
-      console.error('Error invoking email function:', functionError);
-      // This is not a critical error for the user, so we can show a success message anyway
-      // but log it for debugging. You could add a different toast for a partial success.
     }
 
     setIsSubmitting(false);

@@ -387,7 +387,7 @@ Test all categories simultaneously for fastest results
 
 ## Configuration
 
-- **Contact Form:** Skip actual submission (validation only)
+- **Contact Form:** Validation-only by default; run FRM-013–015 on staging after Convex migration
 - **Rate-Limited Sites:** Test all, accept failures from LinkedIn/Upwork
 - **Execution:** All 7 agents in parallel
 
