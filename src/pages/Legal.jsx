@@ -82,6 +82,7 @@ const Legal = () => {
           <h2 className="text-2xl font-bold text-white mt-8">Data Processors</h2>
           <p>I use third-party services to facilitate my service ("Service Providers"), and these are my main data processors:</p>
           <ul className="list-disc pl-5 space-y-2">
+              <li><strong><a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-accent-purple hover:underline">Resend</a>:</strong> For transactional email delivery when you submit the contact form.</li>
               <li><strong><a href="https://www.convex.dev/privacy" target="_blank" rel="noopener noreferrer" className="text-accent-purple hover:underline">Convex</a>:</strong> For database hosting and backend services (contact form submissions).</li>
               <li><strong>Google Analytics:</strong> For website traffic analysis (with your consent).</li>
               <li><strong>Hostinger:</strong> For website hosting.</li>
