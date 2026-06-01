@@ -1,5 +1,6 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { internalMutation } from "../_generated/server";
+import { validateLeadInput } from "../lib/leadValidation";
 
 const importRowValidator = v.object({
   name: v.string(),
@@ -17,12 +18,25 @@ export const importFromRows = internalMutation({
   returns: v.object({
     inserted: v.number(),
     skipped: v.number(),
+    invalid: v.number(),
   }),
   handler: async (ctx, { rows }) => {
     let inserted = 0;
     let skipped = 0;
+    let invalid = 0;
 
     for (const row of rows) {
+      let lead;
+      try {
+        lead = validateLeadInput(row);
+      } catch (error) {
+        if (error instanceof ConvexError) {
+          invalid += 1;
+          continue;
+        }
+        throw error;
+      }
+
       if (row.supabaseId) {
         const existing = await ctx.db
           .query("leads")
@@ -35,16 +49,13 @@ export const importFromRows = internalMutation({
       }
 
       await ctx.db.insert("leads", {
-        name: row.name.trim(),
-        email: row.email.trim(),
-        budget: row.budget?.trim() || undefined,
-        description: row.description.trim(),
+        ...lead,
         createdAt: row.createdAt ?? Date.now(),
         supabaseId: row.supabaseId,
       });
       inserted += 1;
     }
 
-    return { inserted, skipped };
+    return { inserted, skipped, invalid };
   },
 });

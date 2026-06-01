@@ -11,5 +11,6 @@ export default defineSchema({
     supabaseId: v.optional(v.string()),
   })
     .index("by_createdAt", ["createdAt"])
-    .index("by_supabaseId", ["supabaseId"]),
+    .index("by_supabaseId", ["supabaseId"])
+    .index("by_email", ["email"]),
 });

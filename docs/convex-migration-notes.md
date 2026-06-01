@@ -21,19 +21,27 @@
 ## Email (replaces `contact-form-email` Edge Function)
 
 - **Provider:** Resend (`https://api.resend.com/emails`)
-- **Convex env vars (dashboard):**
-  - `RESEND_API_KEY` — required for email delivery
-  - `CONTACT_RECIPIENT_EMAIL` — defaults to `vivekp.freelance@pm.me` if unset
-  - `RESEND_FROM_EMAIL` — optional; defaults to `onboarding@resend.dev` for testing
+
+### Convex environment variables (dashboard)
+
+Set these on the **production** deployment in the Convex dashboard (Settings → Environment variables). Do not commit values to git.
+
+| Variable | Required | Notes |
+|----------|----------|-------|
+| `RESEND_API_KEY` | Yes | Resend API key; email is skipped with a log error if missing (lead still saved). |
+| `CONTACT_RECIPIENT_EMAIL` | Recommended | Inbox for contact notifications; defaults to `vivekp.freelance@pm.me` if unset. |
+| `RESEND_FROM_EMAIL` | **Yes in production** | Sender address, e.g. `Portfolio Contact <hello@yourdomain.com>`. Must use a **verified domain** in Resend. Do not rely on the sandbox `onboarding@resend.dev` in production. |
+
+### Frontend environment variables (Horizons / CI)
+
+| Variable | Required | Notes |
+|----------|----------|-------|
+| `VITE_CONVEX_URL` | Yes | Deployment URL from `npx convex deploy` or dashboard; see `.env.example`. |
 
 ## Historical data import
 
 1. Export CSV from Supabase Table Editor → `leads`.
 2. Run `npx convex run migrations/importLeads:importFromRows --args '{"rows":[...]}'` (see `convex/migrations/importLeads.ts`).
-
-## Frontend env (Horizons / CI — do not commit `.env`)
-
-- `VITE_CONVEX_URL` — from `npx convex deploy` output or Convex dashboard
 
 ## Post-cutover
 

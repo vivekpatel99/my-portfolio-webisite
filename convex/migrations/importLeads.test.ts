@@ -18,11 +18,11 @@ describe("importFromRows", () => {
     const first = await t.mutation(internal.migrations.importLeads.importFromRows, {
       rows,
     });
-    expect(first).toEqual({ inserted: 1, skipped: 0 });
+    expect(first).toEqual({ inserted: 1, skipped: 0, invalid: 0 });
     const second = await t.mutation(internal.migrations.importLeads.importFromRows, {
       rows,
     });
-    expect(second).toEqual({ inserted: 0, skipped: 1 });
+    expect(second).toEqual({ inserted: 0, skipped: 1, invalid: 0 });
     const leads = await t.run(async (ctx) => ctx.db.query("leads").collect());
     expect(leads).toHaveLength(1);
   });
