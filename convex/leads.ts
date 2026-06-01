@@ -5,6 +5,24 @@ import { validateLeadInput } from "./lib/leadValidation";
 
 const RATE_LIMIT_WINDOW_MS = 3_600_000;
 const RATE_LIMIT_MAX_SUBMISSIONS = 3;
+const RESEND_SANDBOX_FROM = "onboarding@resend.dev";
+const DEFAULT_FROM = `Portfolio Contact <${RESEND_SANDBOX_FROM}>`;
+
+function isConvexProduction(): boolean {
+  const cloudUrl = process.env.CONVEX_CLOUD_URL ?? "";
+  if (cloudUrl.includes("convex.cloud")) {
+    return true;
+  }
+  const deployment = process.env.CONVEX_DEPLOYMENT ?? "";
+  return deployment.length > 0 && !deployment.includes("anonymous");
+}
+
+function usesResendSandboxFrom(resendFromEmail: string | undefined): boolean {
+  if (!resendFromEmail) {
+    return true;
+  }
+  return resendFromEmail.includes(RESEND_SANDBOX_FROM);
+}
 
 export const submitLead = mutation({
   args: {
@@ -58,8 +76,18 @@ export const sendContactEmail = internalAction({
     const apiKey = process.env.RESEND_API_KEY;
     const recipient =
       process.env.CONTACT_RECIPIENT_EMAIL ?? "vivekp.freelance@pm.me";
-    const from =
-      process.env.RESEND_FROM_EMAIL ?? "Portfolio Contact <onboarding@resend.dev>";
+    const resendFromEmail = process.env.RESEND_FROM_EMAIL;
+    const from = resendFromEmail ?? DEFAULT_FROM;
+
+    if (isConvexProduction() && usesResendSandboxFrom(resendFromEmail)) {
+      console.error(
+        "sendContactEmail: RESEND_FROM_EMAIL is unset or uses Resend sandbox",
+        RESEND_SANDBOX_FROM,
+        "in production. Set a verified-domain sender in the Convex dashboard (e.g.",
+        "Portfolio Contact <hello@yourdomain.com>). Lead saved:",
+        args.leadId,
+      );
+    }
 
     if (!apiKey) {
       console.error(

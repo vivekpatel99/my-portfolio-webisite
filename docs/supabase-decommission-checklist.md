@@ -14,8 +14,15 @@ Complete after Convex is live in production and contact form E2E passes (FRM-013
 ## Convex production
 
 - [ ] `npx convex deploy` (cloud deployment — set `CONVEX_DEPLOY_KEY` in CI)
-- [ ] Set `RESEND_API_KEY`, `CONTACT_RECIPIENT_EMAIL`, optional `RESEND_FROM_EMAIL`
-- [ ] Set `VITE_CONVEX_URL` in Hostinger Horizons build environment
+- [ ] Set Convex dashboard env vars (see [`convex-migration-notes.md`](convex-migration-notes.md)):
+
+| Variable | Required | Notes |
+|----------|----------|-------|
+| `RESEND_API_KEY` | Yes | Resend API key for outbound mail |
+| `CONTACT_RECIPIENT_EMAIL` | Recommended | Notification inbox; defaults to `vivekp.freelance@pm.me` if unset |
+| `RESEND_FROM_EMAIL` | **Yes in production** | Verified-domain sender (not `onboarding@resend.dev`) |
+
+- [ ] Set `VITE_CONVEX_URL` in Hostinger Horizons build environment (see `.env.example`)
 
 ## Verification
 

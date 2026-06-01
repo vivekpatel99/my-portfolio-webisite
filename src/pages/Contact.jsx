@@ -8,7 +8,7 @@ import { toast } from '@/components/ui/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Github, Linkedin, Mail, ArrowRight, Loader2 } from 'lucide-react';
 import { useMutation } from 'convex/react';
-import { api } from '../../convex/_generated/api';
+import { api } from '@convex/api';
 import { socialLinks } from '@/config/links';
 
 // Custom logo components for platform links
