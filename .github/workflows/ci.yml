@@ -21,6 +21,9 @@ jobs:
 
       - run: npm test
 
+      - name: Fail if committed bundle points at local services
+        run: "! grep -RInE 'https?://(localhost|127\\.0\\.0\\.1|\\[::1\\])(:[0-9]+)?' dist/assets"
+
       - run: npm run build
         env:
           VITE_CONVEX_URL: https://placeholder.convex.cloud
