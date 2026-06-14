@@ -27,4 +27,5 @@ Complete after Convex is live in production and contact form E2E passes (FRM-013
 ## Verification
 
 - [ ] `grep -ri supabase dist/` returns nothing after rebuild
-- [ ] Test lead insert + email on production
+- [ ] `npm run convex:smoke` inserts a test lead in the intended Convex deployment
+- [ ] Contact form E2E sends a production test lead + email

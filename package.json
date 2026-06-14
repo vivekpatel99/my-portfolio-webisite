@@ -8,6 +8,7 @@
     "build": "node tools/generate-sitemap.js && vite build",
     "preview": "vite preview --host :: --port 3000",
     "convex:dev": "convex dev",
+    "convex:smoke": "node tools/convex-smoke-test.mjs",
     "test": "vitest run"
   },
   "dependencies": {
@@ -28,7 +29,7 @@
     "@sentry/react": "^7.100.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
-    "convex": "^1.39.1",
+    "convex": "^1.41.0",
     "framer-motion": "^10.16.4",
     "lucide-react": "^0.285.0",
     "react": "18.2.0",

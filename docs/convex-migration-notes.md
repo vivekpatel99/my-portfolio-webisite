@@ -38,6 +38,16 @@ Set these on the **production** deployment in the Convex dashboard (Settings →
 |----------|----------|-------|
 | `VITE_CONVEX_URL` | Yes | Deployment URL from `npx convex deploy` or dashboard; see `.env.example`. |
 
+## Live smoke test
+
+After dependencies are installed and `VITE_CONVEX_URL` points at the intended Convex deployment, run:
+
+```sh
+npm run convex:smoke
+```
+
+This submits a clearly marked test lead through `api.leads.submitLead`, the same public mutation used by the contact form. If `RESEND_API_KEY` is configured on that deployment, the smoke test may also send a test notification email.
+
 ## Historical data import
 
 1. Export CSV from Supabase Table Editor → `leads`.
