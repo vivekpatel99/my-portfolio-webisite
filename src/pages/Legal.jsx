@@ -39,7 +39,7 @@ const Legal = () => {
       </Helmet>
       <div className="container mx-auto px-6 max-w-4xl">
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-8">Privacy Policy</h1>
-        <p className="text-gray-400 mb-6">Last updated: November 16, 2025</p>
+        <p className="text-gray-400 mb-6">Last updated: June 1, 2026</p>
         
         <div className="prose prose-invert prose-lg max-w-none text-gray-300 space-y-6">
           <p>Vivek Patel ("I", "me", or "my") operates the https://www.vivek-patel.com website (the "Service"). This page informs you of my policies regarding the collection, use, and disclosure of personal data when you use my Service and the choices you have associated with that data. This Privacy Policy is compliant with the General Data Protection Regulation (GDPR).</p>
@@ -82,7 +82,8 @@ const Legal = () => {
           <h2 className="text-2xl font-bold text-white mt-8">Data Processors</h2>
           <p>I use third-party services to facilitate my service ("Service Providers"), and these are my main data processors:</p>
           <ul className="list-disc pl-5 space-y-2">
-              <li><strong>Supabase:</strong> For database hosting and backend services (contact form submissions).</li>
+              <li><strong><a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-accent-purple hover:underline">Resend</a>:</strong> For transactional email delivery when you submit the contact form.</li>
+              <li><strong><a href="https://www.convex.dev/privacy" target="_blank" rel="noopener noreferrer" className="text-accent-purple hover:underline">Convex</a>:</strong> For database hosting and backend services (contact form submissions).</li>
               <li><strong>Google Analytics:</strong> For website traffic analysis (with your consent).</li>
               <li><strong>Hostinger:</strong> For website hosting.</li>
           </ul>
