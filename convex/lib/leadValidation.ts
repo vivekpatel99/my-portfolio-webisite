@@ -23,7 +23,7 @@ export function validateLeadInput(args: {
   description: string;
 }) {
   const name = args.name.trim();
-  const email = args.email.trim();
+  const email = args.email.trim().toLowerCase();
   const description = args.description.trim();
   const budget = normalizeBudget(args.budget);
 

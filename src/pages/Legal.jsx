@@ -39,7 +39,7 @@ const Legal = () => {
       </Helmet>
       <div className="container mx-auto px-6 max-w-4xl">
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-8">Privacy Policy</h1>
-        <p className="text-gray-400 mb-6">Last updated: November 16, 2025</p>
+        <p className="text-gray-400 mb-6">Last updated: June 1, 2026</p>
         
         <div className="prose prose-invert prose-lg max-w-none text-gray-300 space-y-6">
           <p>Vivek Patel ("I", "me", or "my") operates the https://www.vivek-patel.com website (the "Service"). This page informs you of my policies regarding the collection, use, and disclosure of personal data when you use my Service and the choices you have associated with that data. This Privacy Policy is compliant with the General Data Protection Regulation (GDPR).</p>

@@ -78,4 +78,28 @@ describe("Contact form", () => {
       });
     });
   });
+
+  it("FE-004: mutation failure shows Convex error message in toast", async () => {
+    mockSubmitLead.mockRejectedValue({ data: "Please wait before submitting again." });
+    const { container } = render(<Contact />);
+    fireEvent.change(container.querySelector('input[name="name"]'), {
+      target: { name: "name", value: "Jane Doe" },
+    });
+    fireEvent.change(container.querySelector('input[name="email"]'), {
+      target: { name: "email", value: "jane@example.com" },
+    });
+    fireEvent.change(container.querySelector('textarea[name="description"]'), {
+      target: { name: "description", value: "Need help." },
+    });
+    fireEvent.submit(container.querySelector("form"));
+    await waitFor(() => {
+      expect(toast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: "Submission Failed",
+          description: "Please wait before submitting again.",
+          variant: "destructive",
+        }),
+      );
+    });
+  });
 });

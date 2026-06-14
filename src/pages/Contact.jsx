@@ -78,9 +78,13 @@ const Contact = () => {
       });
     } catch (error) {
       Sentry.captureException(error);
+      const convexMessage =
+        typeof error?.data === 'string'
+          ? error.data
+          : error?.data?.message;
       const description =
-        error?.data?.message ??
-        error?.message ??
+        convexMessage ??
+        error?.message?.replace(/^\[CONVEX[^\]]*\]\s*/i, '') ??
         'Something went wrong saving your data. Please try again later.';
       toast({
         title: "Submission Failed",
