@@ -27,6 +27,9 @@ jobs:
       - name: Fail if committed bundle lacks Convex cloud URL
         run: grep -q '\.convex\.cloud' dist/assets/*.js
 
+      - name: Fail if committed bundle uses placeholder Convex URL
+        run: '! grep -q "placeholder.convex.cloud" dist/assets/*.js'
+
       - run: npm run build
         env:
           VITE_CONVEX_URL: https://placeholder.convex.cloud
