@@ -32,11 +32,20 @@ Set these on the **production** deployment in the Convex dashboard (Settings →
 | `CONTACT_RECIPIENT_EMAIL` | Recommended | Inbox for contact notifications; defaults to `vivekp.freelance@pm.me` if unset. |
 | `RESEND_FROM_EMAIL` | **Yes in production** | Sender address, e.g. `Portfolio Contact <hello@yourdomain.com>`. Must use a **verified domain** in Resend. Do not rely on the sandbox `onboarding@resend.dev` in production. |
 
+### Resend sender DNS risk
+
+Public DNS currently authorizes Proton Mail in SPF. If `RESEND_FROM_EMAIL` sends
+from `@vivekapatel.com`, add the exact Resend-provided domain verification
+records before sending production contact notifications. Keep SPF as a single
+combined TXT record that includes both Proton Mail and Resend; do not publish
+multiple SPF TXT records at `@`. This repo does not include live Resend dashboard
+DNS values, so verify the required records in Resend before changing DNS.
+
 ### Frontend environment variables (Horizons / CI)
 
 | Variable | Required | Notes |
 |----------|----------|-------|
-| `VITE_CONVEX_URL` | Yes | Deployment URL from `npx convex deploy` or dashboard; see `.env.example`. |
+| `VITE_CONVEX_URL` | Yes | Real deployment URL from `npx convex deploy` or dashboard; see `.env.example`. Production startup fails fast if this is missing, not an absolute URL, non-HTTPS, or still a placeholder. |
 
 ## Live smoke test
 
