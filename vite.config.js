@@ -104,7 +104,14 @@ const configWindowFetchMonkeyPatch = `
 const originalFetch = window.fetch;
 
 window.fetch = function(...args) {
-	const url = args[0] instanceof Request ? args[0].url : String(args[0]);
+	const firstArg = args[0];
+	
+	// Let native fetch handle missing or invalid arguments
+	if (!firstArg) {
+		return originalFetch.apply(this, args);
+	}
+	
+	const url = firstArg instanceof Request ? firstArg.url : String(firstArg);
 
 	// Skip WebSocket URLs
 	if (url.startsWith('ws:') || url.startsWith('wss:')) {
