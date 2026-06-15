@@ -24,7 +24,7 @@ test('renders contact form without submitting a lead', async ({ page }) => {
 
 test('empty submit shows custom missing-fields validation without Convex mutation', async ({ page }) => {
   await page.getByRole('button', { name: /Send My Project Details/i }).click();
-  await expect(page.getByText('Uh oh! Missing fields.')).toBeVisible();
+  await expect(page.getByText('Uh oh! Missing fields.').first()).toBeVisible();
   expect(convexMutationRequests).toEqual([]);
 });
 
@@ -33,8 +33,17 @@ test('whitespace-only required fields are rejected before Convex mutation', asyn
   await page.getByLabel('Email Address *').fill('   ');
   await page.getByLabel('Project Description *').fill('   ');
   await page.getByRole('button', { name: /Send My Project Details/i }).click();
-  await expect(page.getByText('Uh oh! Missing fields.')).toBeVisible();
+  await expect(page.getByText('Uh oh! Missing fields.').first()).toBeVisible();
   await expect(page.getByText('Message Sent')).toBeHidden();
+  expect(convexMutationRequests).toEqual([]);
+});
+
+test('invalid email is rejected before Convex mutation', async ({ page }) => {
+  await page.getByLabel('Full Name *').fill('QA Invalid Email');
+  await page.getByLabel('Email Address *').fill('not-an-email');
+  await page.getByLabel('Project Description *').fill('This should never reach Convex.');
+  await page.getByRole('button', { name: /Send My Project Details/i }).click();
+  await expect(page.getByText('Invalid email address.').first()).toBeVisible();
   expect(convexMutationRequests).toEqual([]);
 });
 

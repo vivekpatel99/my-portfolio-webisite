@@ -1,29 +1,8 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import { absoluteUrl, defaultSeo, SITE_NAME } from '@/lib/seoConfig';
 
-export const SITE_URL = 'https://www.vivekapatel.com';
-export const SITE_NAME = 'Vivek Patel';
-export const DEFAULT_OG_IMAGE_PATH = '/og-image.png';
-
-export const defaultSeo = {
-  title: 'Vivek Patel - Expert AI & Computer Vision Engineer',
-  description:
-    'Hire Vivek Patel - Freelance AI & Computer Vision Engineer in Europe. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. 94% performance improvements. €80/hour.',
-  keywords:
-    'Vivek Patel, AI Engineer Europe, Computer Vision Freelancer, n8n Automation, Web Scraping Expert, YOLO, PyTorch, LangChain, Data Extraction, Python Developer Europe',
-  path: '/',
-  type: 'website',
-  image: DEFAULT_OG_IMAGE_PATH,
-};
-
-export const absoluteUrl = (pathOrUrl = '/') => {
-  if (/^https?:\/\//i.test(pathOrUrl)) {
-    return pathOrUrl;
-  }
-
-  const path = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
-  return `${SITE_URL}${path === '/' ? '/' : path}`;
-};
+export { absoluteUrl, defaultSeo, routeSeo } from '@/lib/seoConfig';
 
 export const Seo = ({
   title = defaultSeo.title,
@@ -43,6 +22,8 @@ export const Seo = ({
     React.createElement('meta', { name: 'description', content: description }),
     keywords ? React.createElement('meta', { name: 'keywords', content: keywords }) : null,
     React.createElement('link', { rel: 'canonical', href: url }),
+    React.createElement('link', { rel: 'alternate', hrefLang: 'en', href: url }),
+    React.createElement('link', { rel: 'alternate', hrefLang: 'x-default', href: url }),
     React.createElement('meta', { property: 'og:site_name', content: SITE_NAME }),
     React.createElement('meta', { property: 'og:type', content: type }),
     React.createElement('meta', { property: 'og:url', content: url }),

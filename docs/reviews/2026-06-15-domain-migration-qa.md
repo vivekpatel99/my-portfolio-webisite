@@ -19,7 +19,7 @@ The remaining issues are mostly SEO/social-preview cleanup and contact-form/emai
 | Desktop browser check | No console errors in sampled routes |
 | Mobile browser check | `390px` viewport passed with no horizontal overflow |
 | Images in sampled pages | No broken loaded images found in sampled browser checks |
-| Local tests | `npm test` passed: 4 files, 25 tests |
+| Local tests | `npm test` passed locally during the migration QA; the suite has since been expanded |
 | Production build | `npm run build` passed |
 | Robots | `https://www.vivekapatel.com/robots.txt` returns `200` |
 | Sitemap | `https://www.vivekapatel.com/sitemap.xml` returns `200` |
@@ -178,25 +178,25 @@ Recommended fix:
 
 ### 8. Playwright QA Artifacts Need Refresh
 
-Existing Playwright QA files are useful but should not be trusted blindly after the Convex migration.
+The Playwright QA files were refreshed after the Convex migration and moved out
+of the generated artifact directory.
 
 Notes:
 
-- Some contact specs still stub old Supabase endpoints while the app now uses Convex.
 - Full Playwright contact E2E can create a real lead/email.
 - Some "BUG" tests are polarity traps where a passing test means the bug still exists.
-- `@playwright/test` is not currently listed in `package.json`.
+- `@playwright/test` is listed in `package.json`; install browsers before running
+  browser QA locally.
 
 Relevant files:
 
-- `playwright-output/qa.config.js`
-- `playwright-output/qa-contact.spec.js`
-- `playwright-output/qa-edge.spec.js`
-- `playwright-output/qa-a11y.spec.js`
+- `tests/qa/qa.config.js`
+- `tests/qa/qa-contact.spec.js`
+- `tests/qa/qa-edge.spec.js`
+- `tests/qa/qa-a11y.spec.js`
 
 Recommended fix:
 
-- Update Playwright specs for Convex.
 - Separate passive production checks from tests that submit forms.
 - Add a clearly named live-smoke mode for intentional email/lead tests.
 
@@ -208,7 +208,7 @@ Relevant files:
 
 - `src/components/Layout.jsx`
 - `src/components/GoogleAnalytics.jsx`
-- `playwright-output/qa-edge.spec.js`
+- `tests/qa/qa-edge.spec.js`
 
 Recommended fix:
 

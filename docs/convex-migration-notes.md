@@ -45,7 +45,7 @@ DNS values, so verify the required records in Resend before changing DNS.
 
 | Variable | Required | Notes |
 |----------|----------|-------|
-| `VITE_CONVEX_URL` | Yes | Real deployment URL from `npx convex deploy` or dashboard; see `.env.example`. Production startup fails fast if this is missing, not an absolute URL, non-HTTPS, or still a placeholder. |
+| `VITE_CONVEX_URL` | Yes | Real deployment URL from `npx convex deploy` or dashboard; see `.env.example`. Production startup fails fast if this is missing, not an absolute URL, non-HTTPS, not a `convex.cloud` deployment, includes credentials, includes an explicit port, includes a path/query/hash, or is still a placeholder. Regional Convex hosts such as `https://<deployment>.<region>.convex.cloud` are valid. |
 
 ## Live smoke test
 

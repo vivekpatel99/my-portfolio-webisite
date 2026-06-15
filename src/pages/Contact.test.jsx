@@ -18,7 +18,7 @@ vi.mock("@/components/ui/use-toast", () => ({
   toast: vi.fn(),
 }));
 
-vi.mock("@sentry/react", () => ({
+vi.mock("@/lib/sentryTelemetry", () => ({
   captureException: vi.fn(),
 }));
 
@@ -86,7 +86,30 @@ describe("Contact form", () => {
     expect(mockSubmitLead).not.toHaveBeenCalled();
   });
 
-  it("FE-003: valid submit calls mutation", async () => {
+  it("FE-003: invalid email is rejected before mutation", () => {
+    const { container } = render(<Contact />);
+    fireEvent.change(container.querySelector('input[name="name"]'), {
+      target: { name: "name", value: "Jane Doe" },
+    });
+    fireEvent.change(container.querySelector('input[name="email"]'), {
+      target: { name: "email", value: "not-an-email" },
+    });
+    fireEvent.change(container.querySelector('textarea[name="description"]'), {
+      target: { name: "description", value: "Need help with a CV pipeline." },
+    });
+
+    fireEvent.submit(container.querySelector("form"));
+
+    expect(toast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: "Invalid email address.",
+        variant: "destructive",
+      }),
+    );
+    expect(mockSubmitLead).not.toHaveBeenCalled();
+  });
+
+  it("FE-004: valid submit calls mutation", async () => {
     const { container } = render(<Contact />);
     const nameEl = container.querySelector('input[name="name"]');
     fireEvent.change(nameEl, {
@@ -109,7 +132,7 @@ describe("Contact form", () => {
     });
   });
 
-  it("FE-004: mutation failure shows Convex error message in toast", async () => {
+  it("FE-005: mutation failure shows Convex error message in toast", async () => {
     mockSubmitLead.mockRejectedValue({ data: "Please wait before submitting again." });
     const { container } = render(<Contact />);
     fireEvent.change(container.querySelector('input[name="name"]'), {

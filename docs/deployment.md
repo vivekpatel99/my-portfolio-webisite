@@ -25,6 +25,12 @@ The expected value shape is:
 https://<deployment-name>.convex.cloud
 ```
 
+Regional Convex deployments can include extra labels, for example:
+
+```text
+https://<deployment-name>.<region>.convex.cloud
+```
+
 Convex backend email variables are set in the Convex dashboard:
 
 - `RESEND_API_KEY`
@@ -40,6 +46,6 @@ Convex backend email variables are set in the Convex dashboard:
 5. Hostinger Horizons auto-builds and refreshes the site.
 6. Verify `/`, `/contact`, `/robots.txt`, and `/sitemap.xml` on the live domain.
 
-For contact-form changes, submit one clearly marked QA lead after deploy and
-confirm that the lead and email notification reach the expected production
-systems.
+For contact-form changes, submit one clearly marked QA lead only after explicit
+approval for live side effects, then confirm that the lead and email
+notification reach the expected production systems.

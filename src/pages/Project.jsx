@@ -110,7 +110,7 @@ const Project = () => {
         image={project.images.hero.src}
       />
 
-      <main>
+      <div>
         <SectionAnimator>
           <header className="pt-48 pb-16"> 
             <div className="container mx-auto px-6 text-center max-w-4xl">
@@ -171,13 +171,13 @@ const Project = () => {
         <SectionAnimator>
             <section className="py-24 text-center">
                 <div className="container mx-auto px-6">
-                     <div className="flex justify-center items-center gap-4">
-                        <Button asChild variant="outline" className="border-accent-purple/40 hover:bg-accent-purple/10 text-white rounded-full text-lg py-7 px-10">
+                     <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-4">
+                        <Button asChild variant="outline" className="w-full sm:w-auto border-accent-purple/40 hover:bg-accent-purple/10 text-white rounded-full text-base sm:text-lg py-6 sm:py-7 px-6 sm:px-10">
                            <Link to="/">
                                <ArrowLeft className="mr-2 h-5 w-5" /> Back to Home
                            </Link>
                         </Button>
-                        <Button asChild size="lg" className="bg-accent-purple text-white hover:bg-accent-purple/90 group rounded-full text-lg py-7 px-10">
+                        <Button asChild size="lg" className="w-full sm:w-auto bg-accent-purple text-white hover:bg-accent-purple/90 group rounded-full text-base sm:text-lg py-6 sm:py-7 px-6 sm:px-10">
                             <Link to="/contact">
                                 Let's Talk <ArrowRight className="ml-2 h-5 w-5 transform transition-transform duration-300 group-hover:translate-x-1" />
                             </Link>
@@ -187,7 +187,7 @@ const Project = () => {
             </section>
         </SectionAnimator>
 
-      </main>
+      </div>
     </motion.div>;
 };
 export default Project;

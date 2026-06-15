@@ -35,7 +35,7 @@ Verified in the migration QA:
 - Hostinger returns `200` for app routes so React Router can handle SPA routing.
 - Sampled desktop and mobile browser checks had no console errors or horizontal overflow.
 - Sampled loaded images were not broken.
-- `npm test` passed locally: 4 files, 25 tests.
+- `npm test` passed locally during the migration QA; the suite has since been expanded.
 - `npm run build` passed locally.
 - `robots.txt` and `sitemap.xml` return `200`.
 - DNS and mail records still resolve for Hostinger and ProtonMail.
@@ -50,9 +50,9 @@ Not proven by the migration QA:
 Known follow-up items from the migration QA that affect this plan:
 
 - `/og-image.png` returned HTTP `422`; verify social image URLs explicitly.
-- Some route-specific SEO metadata may still be overridden by home/default metadata.
+- Route-specific SEO now uses generated static route HTML; verify raw head tags before deploy.
 - Empty contact-form submit was updated to use the custom missing-fields toast.
-- Existing Playwright QA artifacts should be refreshed before being treated as authoritative.
+- Playwright QA specs live in `tests/qa/`; generated browser artifacts are written to ignored output directories.
 
 ---
 
@@ -274,7 +274,7 @@ happy path cannot create a real Convex lead or send a real email.
 | FRM-002 | Missing name | Fill email+desc | Toast error | [ ] |
 | FRM-003 | Missing email | Fill name+desc | Toast error | [ ] |
 | FRM-004 | Missing description | Fill name+email | Toast error | [ ] |
-| FRM-005 | Invalid email | Bad email format | HTML5 validation | [ ] |
+| FRM-005 | Invalid email | Bad email format | Custom "Invalid email address" toast appears; no Convex mutation is sent | [ ] |
 | FRM-006 | Budget dropdown | Click dropdown | Options appear | [ ] |
 | FRM-007 | Select budget | Select option | Value selected | [ ] |
 

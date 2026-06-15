@@ -5,7 +5,7 @@ const routes = [
   { path: '/contact', heading: /Let's Build Your/i },
   { path: '/legal', heading: 'Privacy Policy' },
   { path: '/data-policy', heading: 'Cookie Policy' },
-  { path: '/project/social-media-app', heading: /social media/i },
+  { path: '/project/social-media-app', heading: /Next-Gen Banking UI/i },
 ];
 
 test.describe('Route rendering', () => {
@@ -35,7 +35,7 @@ test('invalid project shows toast and redirects', async ({ page }) => {
 test('header hash nav on same page scrolls to section', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/');
-  await page.getByRole('link', { name: 'Services', exact: true }).click();
+  await page.getByRole('navigation').getByRole('link', { name: 'Services', exact: true }).click();
   await expect
     .poll(async () => {
       const el = page.locator('#services');
@@ -48,7 +48,7 @@ test('header hash nav on same page scrolls to section', async ({ page }) => {
 test('header hash nav from contact page lands on services', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/contact');
-  await page.getByRole('link', { name: 'Services', exact: true }).click();
+  await page.getByRole('navigation').getByRole('link', { name: 'Services', exact: true }).click();
   await expect(page).toHaveURL(/\/(#services)?$/);
   await expect
     .poll(async () => {
@@ -62,7 +62,7 @@ test('header hash nav from contact page lands on services', async ({ page }) => 
 test('Hire Me CTA navigates to contact', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/');
-  await page.getByRole('button', { name: /Hire Me/i }).click();
+  await page.getByRole('banner').getByRole('button', { name: /Hire Me/i }).click();
   await expect(page).toHaveURL(/\/contact/);
 });
 

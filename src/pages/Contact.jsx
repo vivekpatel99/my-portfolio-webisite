@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import * as Sentry from '@sentry/react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
@@ -10,6 +9,7 @@ import { useMutation } from 'convex/react';
 import { api } from '@convex/api';
 import { socialLinks } from '@/config/links';
 import { Seo } from '@/lib/seo';
+import { captureException } from '@/lib/sentryTelemetry';
 
 // Custom logo components for platform links
 const UpworkIcon = () => (
@@ -41,6 +41,7 @@ const pageVariants = {
   out: { opacity: 0, y: -20 }
 };
 const pageTransition = { type: 'tween', ease: 'anticipate', duration: 0.5 };
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const Contact = () => {
   const [formState, setFormState] = useState({ name: '', email: '', budget: '', description: '' });
@@ -74,6 +75,15 @@ const Contact = () => {
         return;
     }
 
+    if (!EMAIL_PATTERN.test(trimmedFormState.email)) {
+      toast({
+        title: "Invalid email address.",
+        description: "Please enter a valid email address before sending.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -84,7 +94,7 @@ const Contact = () => {
         description: trimmedFormState.description,
       });
     } catch (error) {
-      Sentry.captureException(error);
+      captureException(error);
       const convexMessage =
         typeof error?.data === 'string'
           ? error.data
@@ -254,8 +264,8 @@ const Contact = () => {
             transition={{ duration: 0.7, delay: 0.8 }}
           >
               <div className="flex justify-center space-x-6">
-                <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-accent-purple transition-colors"><Linkedin size={24} /></a>
-                <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-accent-purple transition-colors"><Github size={24} /></a>
+                <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile" className="text-gray-400 hover:text-accent-purple transition-colors"><Linkedin size={24} /></a>
+                <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub profile" className="text-gray-400 hover:text-accent-purple transition-colors"><Github size={24} /></a>
               </div>
           </motion.div>
         </div>

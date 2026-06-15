@@ -9,6 +9,18 @@ const PLACEHOLDER_HOSTS = new Set([
 const LOCAL_DEVELOPMENT_MESSAGE =
   'Convex is not configured. Set VITE_CONVEX_URL in .env.local to enable contact form submissions.';
 
+const CONVEX_CLOUD_HOST_PATTERN =
+  /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)?\.convex\.cloud$/;
+const EXPLICIT_PORT_PATTERN = /^https?:\/\/[^/?#]+:\d+(?=[/?#]|$)/i;
+
+function isConvexCloudHost(hostname) {
+  return CONVEX_CLOUD_HOST_PATTERN.test(hostname);
+}
+
+function hasExplicitPort(value) {
+  return EXPLICIT_PORT_PATTERN.test(value);
+}
+
 function describeConvexUrlIssue(rawUrl, { isProduction } = {}) {
   const value = typeof rawUrl === 'string' ? rawUrl.trim() : '';
 
@@ -31,6 +43,7 @@ function describeConvexUrlIssue(rawUrl, { isProduction } = {}) {
   const normalizedHost = parsed.hostname.toLowerCase();
   const hasPlaceholderText =
     normalizedHost.startsWith('your-') ||
+    normalizedHost.startsWith('example.') ||
     normalizedValue.includes('<') ||
     normalizedValue.includes('placeholder');
 
@@ -40,6 +53,25 @@ function describeConvexUrlIssue(rawUrl, { isProduction } = {}) {
 
   if (isProduction && parsed.protocol !== 'https:') {
     return 'Production VITE_CONVEX_URL must use https://.';
+  }
+
+  if (isProduction && !isConvexCloudHost(normalizedHost)) {
+    return 'Production VITE_CONVEX_URL must point to a convex.cloud deployment.';
+  }
+
+  if (isProduction && (parsed.username || parsed.password)) {
+    return 'Production VITE_CONVEX_URL must not include credentials.';
+  }
+
+  if (isProduction && hasExplicitPort(value)) {
+    return 'Production VITE_CONVEX_URL must not include an explicit port.';
+  }
+
+  if (
+    isProduction &&
+    (parsed.pathname !== '/' || parsed.search || parsed.hash)
+  ) {
+    return 'Production VITE_CONVEX_URL must not include a path, query, or hash.';
   }
 
   return null;

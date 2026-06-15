@@ -6,6 +6,9 @@ const NumberTicker = ({ value, suffix }) => {
     const inView = useInView(ref, { once: true, amount: 0.5 });
     const controls = useAnimation();
     const [count, setCount] = useState(0);
+    const decimalPlaces = Number.isInteger(value)
+        ? 0
+        : String(value).split('.')[1]?.length ?? 0;
 
     useEffect(() => {
         if (inView) {
@@ -18,7 +21,11 @@ const NumberTicker = ({ value, suffix }) => {
             const animateCount = (currentTime) => {
                 if (!startTime) startTime = currentTime;
                 const progress = (currentTime - startTime) / duration;
-                const currentCount = Math.min(Math.floor(progress * end), end);
+                const rawCount = Math.min(progress * end, end);
+                const currentCount =
+                    decimalPlaces > 0
+                        ? Number(rawCount.toFixed(decimalPlaces))
+                        : Math.floor(rawCount);
                 setCount(currentCount);
 
                 if (progress < 1) {
@@ -30,7 +37,7 @@ const NumberTicker = ({ value, suffix }) => {
         }
     }, [inView, value, controls]);
 
-    return <span ref={ref}>{count}{suffix}</span>;
+    return <span ref={ref}>{decimalPlaces > 0 ? count.toFixed(decimalPlaces) : count}{suffix}</span>;
 }
 
 const defaultStats = [

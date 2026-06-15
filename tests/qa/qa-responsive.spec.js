@@ -22,7 +22,7 @@ test('mobile menu opens and closes', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
   await expect(page.getByRole('dialog', { name: 'Navigation menu' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Services' })).toBeVisible();
+  await expect(page.getByRole('dialog', { name: 'Navigation menu' }).getByRole('link', { name: 'Services' })).toBeVisible();
   await page.getByRole('button', { name: 'Close navigation menu' }).click();
   await expect(page.getByRole('dialog', { name: 'Navigation menu' })).toBeHidden();
 });
@@ -31,14 +31,14 @@ test('mobile menu CTA navigates to contact', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
-  await page.getByRole('button', { name: /Hire Me/i }).click();
+  await page.getByRole('dialog', { name: 'Navigation menu' }).getByRole('button', { name: /Hire Me/i }).click();
   await expect(page).toHaveURL(/\/contact/);
 });
 
 test('desktop shows nav links, mobile shows hamburger', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/');
-  await expect(page.getByRole('link', { name: 'Services', exact: true })).toBeVisible();
+  await expect(page.getByRole('navigation').getByRole('link', { name: 'Services', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Toggle navigation menu' })).toBeHidden();
 
   await page.setViewportSize({ width: 390, height: 844 });
@@ -46,20 +46,33 @@ test('desktop shows nav links, mobile shows hamburger', async ({ page }) => {
 });
 
 test('custom cursor disabled on touch emulation', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'no-preference' });
-  await page.goto('/');
-  await page.evaluate(() => {
+  await page.addInitScript(() => {
+    const nativeMatchMedia = window.matchMedia.bind(window);
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
-      value: (query) => ({
-        matches: query.includes('pointer: coarse'),
-        media: query,
-        addEventListener: () => {},
-        removeEventListener: () => {},
-      }),
+      value: (query) => {
+        if (query.includes('pointer: fine')) {
+          return {
+            matches: false,
+            media: query,
+            addEventListener: () => {},
+            removeEventListener: () => {},
+          };
+        }
+        if (query.includes('pointer: coarse')) {
+          return {
+            matches: true,
+            media: query,
+            addEventListener: () => {},
+            removeEventListener: () => {},
+          };
+        }
+        return nativeMatchMedia(query);
+      },
     });
   });
-  await page.reload();
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/');
   await expect(page.locator('html')).not.toHaveClass(/custom-cursor-enabled/);
 });
 

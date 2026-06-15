@@ -10,7 +10,7 @@ const projectSlugs = [
 ];
 
 const staticPages = [{
-    loc: BASE_URL,
+    loc: `${BASE_URL}/`,
     lastmod: today,
     priority: '1.00'
 }, {

@@ -5,26 +5,9 @@ import Footer from '@/components/Footer';
 import { Toaster } from '@/components/ui/toaster';
 import CustomCursor from '@/components/CustomCursor';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
+import SentryTelemetry from '@/components/SentryTelemetry';
 import CookieConsentBanner from '@/components/CookieConsentBanner';
-
-const COOKIE_CONSENT_KEY = 'cookie_consent_preferences';
-
-const readAnalyticsConsent = () => {
-  if (typeof window === 'undefined') {
-    return false;
-  }
-
-  try {
-    const savedPrefs = window.localStorage.getItem(COOKIE_CONSENT_KEY);
-    if (!savedPrefs) {
-      return false;
-    }
-
-    return JSON.parse(savedPrefs)?.analytics === true;
-  } catch {
-    return false;
-  }
-};
+import { COOKIE_CONSENT_KEY, readAnalyticsConsent } from '@/lib/consent';
 
 const Layout = () => {
   const [gaConsent, setGaConsent] = useState(readAnalyticsConsent);
@@ -73,6 +56,7 @@ const Layout = () => {
       </a>
       <CustomCursor />
       <GoogleAnalytics hasConsent={gaConsent} />
+      <SentryTelemetry hasConsent={gaConsent} />
       <div className="min-h-screen bg-[#0C0D0D] text-white overflow-x-hidden flex flex-col">
         <Header />
         <main id="main-content" className="flex-grow">

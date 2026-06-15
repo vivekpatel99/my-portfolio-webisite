@@ -5,10 +5,12 @@
   "private": true,
   "scripts": {
     "dev": "vite --host :: --port 3000",
-    "build": "node tools/generate-sitemap.js && vite build",
+    "build": "node tools/generate-sitemap.js && vite build && node tools/generate-static-route-html.js",
     "preview": "vite preview --host :: --port 3000",
-    "qa:playwright:passive": "playwright test -c playwright-output/qa.config.js",
-    "qa:playwright:live-contact": "QA_LIVE_CONTACT_SUBMIT=1 playwright test -c playwright-output/qa.config.js --project=prod-live-contact-submit",
+    "qa:playwright:passive": "playwright test -c tests/qa/qa.config.js",
+    "qa:playwright:ci": "playwright test -c tests/qa/qa.config.js --project=preview-desktop --project=preview-mobile",
+    "qa:playwright:live-contact": "QA_LIVE_CONTACT_SUBMIT=1 playwright test -c tests/qa/qa.config.js --project=prod-live-contact-submit",
+    "qa:seo": "node tests/qa/qa-seo-check.js",
     "convex:dev": "convex dev",
     "convex:smoke": "node tools/convex-smoke-test.mjs",
     "test": "vitest run"

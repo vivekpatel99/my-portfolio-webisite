@@ -1,4 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const testDir = path.dirname(fileURLToPath(import.meta.url));
+const repoRoot = path.resolve(testDir, '../..');
+const artifactDir = path.join(repoRoot, 'playwright-output');
 
 const previewURL = process.env.QA_PREVIEW_URL ?? 'http://127.0.0.1:3000';
 const prodURL = process.env.QA_PROD_URL ?? 'https://www.vivekapatel.com';
@@ -21,7 +27,7 @@ const passiveProjects = [
   },
   {
     name: 'preview-mobile',
-    use: { ...devices['iPhone 14'], baseURL: previewURL },
+    use: { ...devices['iPhone 14'], browserName: 'chromium', baseURL: previewURL },
   },
   {
     name: 'prod-desktop',
@@ -29,7 +35,7 @@ const passiveProjects = [
   },
   {
     name: 'prod-mobile',
-    use: { ...devices['iPhone 14'], baseURL: prodURL },
+    use: { ...devices['iPhone 14'], browserName: 'chromium', baseURL: prodURL },
   },
 ].map((project) => ({ ...project, testMatch: passiveSpecs }));
 
@@ -44,9 +50,10 @@ const liveProjects = includeLiveContactSubmit
   : [];
 
 export default defineConfig({
-  testDir: '.',
+  testDir,
   timeout: 60_000,
   expect: { timeout: 10_000 },
-  reporter: [['list'], ['json', { outputFile: 'playwright-output/qa-results.json' }]],
+  outputDir: path.join(artifactDir, 'test-results'),
+  reporter: [['list'], ['json', { outputFile: path.join(artifactDir, 'qa-results.json') }]],
   projects: [...passiveProjects, ...liveProjects],
 });
