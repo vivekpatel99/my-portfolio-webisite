@@ -46,6 +46,10 @@
     @apply bg-background text-foreground;
   }
 
+  section[id] {
+    scroll-margin-top: 6rem;
+  }
+
   /* Only hide cursor on devices with precise pointers (mouse/trackpad) */
   @media (pointer: fine) {
 

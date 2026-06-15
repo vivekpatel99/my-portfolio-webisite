@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
-import * as Sentry from '@sentry/react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
@@ -10,6 +8,8 @@ import { Github, Linkedin, Mail, ArrowRight, Loader2 } from 'lucide-react';
 import { useMutation } from 'convex/react';
 import { api } from '@convex/api';
 import { socialLinks } from '@/config/links';
+import { Seo } from '@/lib/seo';
+import { captureException } from '@/lib/sentryTelemetry';
 
 // Custom logo components for platform links
 const UpworkIcon = () => (
@@ -41,6 +41,7 @@ const pageVariants = {
   out: { opacity: 0, y: -20 }
 };
 const pageTransition = { type: 'tween', ease: 'anticipate', duration: 0.5 };
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const Contact = () => {
   const [formState, setFormState] = useState({ name: '', email: '', budget: '', description: '' });
@@ -58,7 +59,14 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formState.name || !formState.email || !formState.description) {
+    const trimmedFormState = {
+      ...formState,
+      name: formState.name.trim(),
+      email: formState.email.trim().toLowerCase(),
+      description: formState.description.trim(),
+    };
+
+    if (!trimmedFormState.name || !trimmedFormState.email || !trimmedFormState.description) {
         toast({
             title: "Uh oh! Missing fields.",
             description: "Please fill out all required fields before sending.",
@@ -67,17 +75,26 @@ const Contact = () => {
         return;
     }
 
+    if (!EMAIL_PATTERN.test(trimmedFormState.email)) {
+      toast({
+        title: "Invalid email address.",
+        description: "Please enter a valid email address before sending.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       await submitLead({
-        name: formState.name,
-        email: formState.email,
+        name: trimmedFormState.name,
+        email: trimmedFormState.email,
         budget: formState.budget || undefined,
-        description: formState.description,
+        description: trimmedFormState.description,
       });
     } catch (error) {
-      Sentry.captureException(error);
+      captureException(error);
       const convexMessage =
         typeof error?.data === 'string'
           ? error.data
@@ -106,24 +123,12 @@ const Contact = () => {
 
   return (
     <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}>
-      <Helmet>
-        <title>Contact | Vivek Patel, AI & Computer Vision Engineer</title>
-        <meta name="description" content="Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Europe. Get a quote within 24 hours. €80/hour." />
-        <meta name="keywords" content="Hire AI Engineer Europe, Computer Vision Freelancer, n8n Developer, Web Scraping Expert, Project Quote, LangChain Developer, YOLO Expert" />
-        <link rel="canonical" href="https://www.vivekapatel.com/contact" />
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://www.vivekapatel.com/contact" />
-        <meta property="og:title" content="Contact | Vivek Patel, AI & Computer Vision Engineer" />
-        <meta property="og:description" content="Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Europe. Get a quote within 24 hours." />
-        <meta property="og:image" content="https://www.vivekapatel.com/og-image.png" />
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content="https://www.vivekapatel.com/contact" />
-        <meta name="twitter:title" content="Contact | Vivek Patel, AI & Computer Vision Engineer" />
-        <meta name="twitter:description" content="Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Europe. Get a quote within 24 hours." />
-        <meta name="twitter:image" content="https://www.vivekapatel.com/og-image.png" />
-      </Helmet>
+      <Seo
+        title="Contact | Vivek Patel, AI & Computer Vision Engineer"
+        description="Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Europe. Get a quote within 24 hours. €80/hour."
+        keywords="Hire AI Engineer Europe, Computer Vision Freelancer, n8n Developer, Web Scraping Expert, Project Quote, LangChain Developer, YOLO Expert"
+        path="/contact"
+      />
       
       <section className="bg-[#0C0D0D] text-white py-24 sm:py-32">
         <div className="container mx-auto px-6">
@@ -169,6 +174,7 @@ const Contact = () => {
           <div className="max-w-2xl mx-auto">
             <motion.form
               onSubmit={handleSubmit}
+              noValidate
               className="space-y-6 bg-white/5 p-8 rounded-2xl border border-white/10"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -258,8 +264,8 @@ const Contact = () => {
             transition={{ duration: 0.7, delay: 0.8 }}
           >
               <div className="flex justify-center space-x-6">
-                <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-accent-purple transition-colors"><Linkedin size={24} /></a>
-                <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-accent-purple transition-colors"><Github size={24} /></a>
+                <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile" className="text-gray-400 hover:text-accent-purple transition-colors"><Linkedin size={24} /></a>
+                <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub profile" className="text-gray-400 hover:text-accent-purple transition-colors"><Github size={24} /></a>
               </div>
           </motion.div>
         </div>

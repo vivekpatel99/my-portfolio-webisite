@@ -5,8 +5,12 @@
   "private": true,
   "scripts": {
     "dev": "vite --host :: --port 3000",
-    "build": "node tools/generate-sitemap.js && vite build",
+    "build": "node tools/generate-sitemap.js && vite build && node tools/generate-static-route-html.js",
     "preview": "vite preview --host :: --port 3000",
+    "qa:playwright:passive": "playwright test -c tests/qa/qa.config.js",
+    "qa:playwright:ci": "playwright test -c tests/qa/qa.config.js --project=preview-desktop --project=preview-mobile",
+    "qa:playwright:live-contact": "QA_LIVE_CONTACT_SUBMIT=1 playwright test -c tests/qa/qa.config.js --project=prod-live-contact-submit",
+    "qa:seo": "node tests/qa/qa-seo-check.js",
     "convex:dev": "convex dev",
     "convex:smoke": "node tools/convex-smoke-test.mjs",
     "test": "vitest run"
@@ -48,6 +52,7 @@
     "@babel/parser": "^7.27.0",
     "@babel/types": "^7.27.0",
     "@edge-runtime/vm": "^5.0.0",
+    "@playwright/test": "^1.60.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",

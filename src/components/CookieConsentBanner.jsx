@@ -5,8 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox.jsx";
 import { Cookie, X, Settings } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { toast } from '@/components/ui/use-toast';
-
-const COOKIE_CONSENT_KEY = 'cookie_consent_preferences';
+import { COOKIE_CONSENT_KEY, readCookieConsentPreferences } from '@/lib/consent';
 
 const CookieConsentBanner = ({ onConsent, show, onHide }) => {
   const [isManaging, setIsManaging] = useState(show);
@@ -18,14 +17,14 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
   useEffect(() => {
     if(show) {
       // If triggered from footer, load current settings to allow management
-      const savedPrefs = JSON.parse(localStorage.getItem(COOKIE_CONSENT_KEY));
+      const savedPrefs = readCookieConsentPreferences();
       if (savedPrefs) {
         setPreferences(savedPrefs);
       }
       setIsManaging(true);
     } else {
        // On initial load, check if consent has already been given
-      const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
+      const consent = readCookieConsentPreferences();
       if (!consent) {
         const timer = setTimeout(() => setIsManaging(true), 1500);
         return () => clearTimeout(timer);

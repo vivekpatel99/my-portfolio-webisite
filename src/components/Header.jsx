@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,9 @@ import { assetsLinks } from '@/config/links';
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const menuRef = useRef(null);
+  const closeButtonRef = useRef(null);
+  const previousFocusRef = useRef(null);
   const navigate = useNavigate();
 
   const navLinks = [
@@ -32,19 +35,57 @@ const Header = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isOpen) {
+      return undefined;
+    }
+
+    previousFocusRef.current = document.activeElement;
+    closeButtonRef.current?.focus();
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+        return;
+      }
+
+      if (event.key !== 'Tab' || !menuRef.current) {
+        return;
+      }
+
+      const focusableElements = menuRef.current.querySelectorAll(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (!firstElement || !lastElement) {
+        return;
+      }
+
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      previousFocusRef.current?.focus?.();
+    };
+  }, [isOpen]);
+
   const handleSmoothScroll = (e) => {
     e.preventDefault();
     const href = e.currentTarget.getAttribute('href');
     const [path, id] = href.split('#');
 
     if (path === '/' && id) {
-      navigate(path);
-      setTimeout(() => {
-        const targetElement = document.getElementById(id);
-        if (targetElement) {
-          targetElement.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 100);
+      navigate(`/#${id}`);
     } else {
       navigate(href);
     }
@@ -108,6 +149,7 @@ const Header = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            ref={menuRef}
             id="mobile-menu"
             role="dialog"
             aria-modal="true"
@@ -123,7 +165,7 @@ const Header = () => {
                 <Link to="/" onClick={handleHomeClick} className="flex items-center">
                   <img src={assetsLinks.logo} alt="Vivek Patel Logo" className="h-12" />
                 </Link>
-                <button onClick={() => setIsOpen(false)} className="text-white" aria-label="Close navigation menu">
+                <button ref={closeButtonRef} onClick={() => setIsOpen(false)} className="text-white" aria-label="Close navigation menu">
                   <X size={28} />
                 </button>
               </div>

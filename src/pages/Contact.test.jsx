@@ -3,6 +3,7 @@
  */
 import React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { toast } from "@/components/ui/use-toast";
 import Contact from "./Contact";
@@ -17,7 +18,7 @@ vi.mock("@/components/ui/use-toast", () => ({
   toast: vi.fn(),
 }));
 
-vi.mock("@sentry/react", () => ({
+vi.mock("@/lib/sentryTelemetry", () => ({
   captureException: vi.fn(),
 }));
 
@@ -44,9 +45,15 @@ describe("Contact form", () => {
     mockSubmitLead.mockResolvedValue({ success: true });
   });
 
-  it("FE-001: empty submit shows missing fields toast, mutation not called", () => {
+  it("FE-001: empty submit click shows missing fields toast, mutation not called", async () => {
+    const user = userEvent.setup();
     const { container } = render(<Contact />);
-    fireEvent.submit(container.querySelector("form"));
+    const form = container.querySelector("form");
+    expect(form.noValidate).toBe(true);
+    expect(container.querySelector('input[name="name"]').required).toBe(true);
+
+    await user.click(screen.getByRole("button", { name: /send my project details/i }));
+
     expect(toast).toHaveBeenCalledWith(
       expect.objectContaining({
         title: "Uh oh! Missing fields.",
@@ -56,7 +63,53 @@ describe("Contact form", () => {
     expect(mockSubmitLead).not.toHaveBeenCalled();
   });
 
-  it("FE-003: valid submit calls mutation", async () => {
+  it("FE-002: whitespace-only required fields are treated as missing", () => {
+    const { container } = render(<Contact />);
+    fireEvent.change(container.querySelector('input[name="name"]'), {
+      target: { name: "name", value: "   " },
+    });
+    fireEvent.change(container.querySelector('input[name="email"]'), {
+      target: { name: "email", value: "   " },
+    });
+    fireEvent.change(container.querySelector('textarea[name="description"]'), {
+      target: { name: "description", value: "   " },
+    });
+
+    fireEvent.submit(container.querySelector("form"));
+
+    expect(toast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: "Uh oh! Missing fields.",
+        variant: "destructive",
+      }),
+    );
+    expect(mockSubmitLead).not.toHaveBeenCalled();
+  });
+
+  it("FE-003: invalid email is rejected before mutation", () => {
+    const { container } = render(<Contact />);
+    fireEvent.change(container.querySelector('input[name="name"]'), {
+      target: { name: "name", value: "Jane Doe" },
+    });
+    fireEvent.change(container.querySelector('input[name="email"]'), {
+      target: { name: "email", value: "not-an-email" },
+    });
+    fireEvent.change(container.querySelector('textarea[name="description"]'), {
+      target: { name: "description", value: "Need help with a CV pipeline." },
+    });
+
+    fireEvent.submit(container.querySelector("form"));
+
+    expect(toast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: "Invalid email address.",
+        variant: "destructive",
+      }),
+    );
+    expect(mockSubmitLead).not.toHaveBeenCalled();
+  });
+
+  it("FE-004: valid submit calls mutation", async () => {
     const { container } = render(<Contact />);
     const nameEl = container.querySelector('input[name="name"]');
     fireEvent.change(nameEl, {
@@ -79,7 +132,7 @@ describe("Contact form", () => {
     });
   });
 
-  it("FE-004: mutation failure shows Convex error message in toast", async () => {
+  it("FE-005: mutation failure shows Convex error message in toast", async () => {
     mockSubmitLead.mockRejectedValue({ data: "Please wait before submitting again." });
     const { container } = render(<Contact />);
     fireEvent.change(container.querySelector('input[name="name"]'), {

@@ -1,5 +1,12 @@
 *.zip
 node_modules/
+dist/
+playwright-output/
+test-results/
+playwright-report/
+blob-report/
+.lighthouseci/
+.playwright-cli/
 horizons-website/screenshots/
 .env.local
 .env*.local

@@ -2,13 +2,16 @@ name: CI
 
 on:
   push:
-    branches: [main, "cursor/**"]
+    branches: [main, "codex/**", "cursor/**"]
   pull_request:
     branches: [main]
 
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
+    env:
+      CI: true
+      VITE_CONVEX_URL: ${{ vars.VITE_CONVEX_URL || vars.PRODUCTION_CONVEX_URL || vars.CONVEX_URL }}
     steps:
       - uses: actions/checkout@v4
 
@@ -19,20 +22,97 @@ jobs:
 
       - run: npm ci
 
+      - name: Validate production-like Convex URL
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${VITE_CONVEX_URL:-}" ]]; then
+            echo "::error title=Missing Convex URL::Set the VITE_CONVEX_URL repository variable to the production Convex deployment URL."
+            exit 1
+          fi
+
+          if [[ ! "$VITE_CONVEX_URL" =~ ^https://[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)?\.convex\.cloud/?$ ]]; then
+            echo "::error title=Invalid Convex URL::VITE_CONVEX_URL must be a production-like https://*.convex.cloud URL, including regional Convex hosts."
+            exit 1
+          fi
+
+          if [[ "$VITE_CONVEX_URL" =~ ^https://(your-|example\.) || "$VITE_CONVEX_URL" =~ (placeholder|localhost|127\.0\.0\.1|\[::1\]) ]]; then
+            echo "::error title=Unsafe Convex URL::VITE_CONVEX_URL must not point at a local or placeholder backend."
+            exit 1
+          fi
+
       - run: npm test
 
-      - name: Fail if committed bundle points at local services
-        run: "! grep -RInE 'https?://(localhost|127\\.0\\.0\\.1|\\[::1\\])(:[0-9]+)?' dist/assets"
+      - name: Remove stale build output
+        run: rm -rf dist
 
-      - name: Fail if committed bundle lacks Convex cloud URL
-        run: grep -q '\.convex\.cloud' dist/assets/*.js
+      - name: Build production bundle
+        run: npm run build
 
-      - name: Fail if committed bundle uses placeholder Convex URL
-        run: '! grep -q "placeholder.convex.cloud" dist/assets/*.js'
+      - name: Validate fresh production bundle
+        shell: bash
+        run: |
+          set -euo pipefail
 
-      - run: npm run build
+          if [[ ! -d dist ]]; then
+            echo "::error title=Missing dist::Build did not create a dist directory."
+            exit 1
+          fi
+
+          if ! find dist -type f -print -quit | grep -q .; then
+            echo "::error title=Empty dist::Build created dist but no files."
+            exit 1
+          fi
+
+          if ! grep -R --fixed-strings --quiet "$VITE_CONVEX_URL" dist; then
+            echo "::error title=Convex URL missing::Fresh dist does not contain the configured VITE_CONVEX_URL."
+            exit 1
+          fi
+
+          if grep -RInEi 'supabase' dist; then
+            echo "::error title=Supabase reference found::Fresh dist must not contain Supabase strings."
+            exit 1
+          fi
+
+          if grep -RInE '(https?|wss?)://(localhost|127\.0\.0\.1|0\.0\.0\.0|\[::1\])(:[0-9]+)?|https?:\\?/\\?/(yourserver\.io|(placeholder|your-deployment|example)[-.a-z0-9]*\.convex\.cloud)' dist; then
+            echo "::error title=Unsafe backend URL found::Fresh dist must not contain local or placeholder backend URLs."
+            exit 1
+          fi
+
+      - name: Ensure generated dist is not tracked
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git ls-files --error-unmatch dist >/dev/null 2>&1; then
+            echo "::error title=Tracked dist found::dist/ is generated output and must not be tracked."
+            git ls-files dist
+            exit 1
+          fi
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run passive Playwright QA against preview
+        shell: bash
         env:
-          VITE_CONVEX_URL: https://placeholder.convex.cloud
+          QA_PREVIEW_URL: http://127.0.0.1:3000
+          QA_PROD_URL: http://127.0.0.1:3000
+        run: |
+          set -euo pipefail
 
-      - name: Fail if Supabase references remain in production bundle
-        run: '! grep -riq supabase dist/assets'
+          npm run preview -- --host 127.0.0.1 --port 3000 &
+          preview_pid=$!
+          trap 'kill "$preview_pid"' EXIT
+
+          for i in {1..30}; do
+            if curl --fail --silent --show-error "$QA_PREVIEW_URL" >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+
+          curl --fail --silent --show-error "$QA_PREVIEW_URL" >/dev/null
+          npm run qa:seo
+          npm run qa:playwright:ci
