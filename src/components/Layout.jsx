@@ -9,28 +9,50 @@ import CookieConsentBanner from '@/components/CookieConsentBanner';
 
 const COOKIE_CONSENT_KEY = 'cookie_consent_preferences';
 
+const readAnalyticsConsent = () => {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  try {
+    const savedPrefs = window.localStorage.getItem(COOKIE_CONSENT_KEY);
+    if (!savedPrefs) {
+      return false;
+    }
+
+    return JSON.parse(savedPrefs)?.analytics === true;
+  } catch {
+    return false;
+  }
+};
+
 const Layout = () => {
-  const [gaConsent, setGaConsent] = useState(false);
+  const [gaConsent, setGaConsent] = useState(readAnalyticsConsent);
   const [showConsentManager, setShowConsentManager] = useState(false);
 
+  const syncAnalyticsConsent = useCallback(() => {
+    setGaConsent(readAnalyticsConsent());
+  }, []);
+
   useEffect(() => {
-    // Check for existing consent on initial load
-    const savedPrefs = localStorage.getItem(COOKIE_CONSENT_KEY);
-    if (savedPrefs) {
-      const prefs = JSON.parse(savedPrefs);
-      if (prefs.analytics) {
-        setGaConsent(true);
-      }
-    }
+    syncAnalyticsConsent();
 
     // Listen for event from footer to manage cookies
     const handleManageCookies = () => setShowConsentManager(true);
+    const handleStorage = (event) => {
+      if (event.key === COOKIE_CONSENT_KEY) {
+        syncAnalyticsConsent();
+      }
+    };
+
     window.addEventListener('manage-cookies', handleManageCookies);
+    window.addEventListener('storage', handleStorage);
 
     return () => {
       window.removeEventListener('manage-cookies', handleManageCookies);
+      window.removeEventListener('storage', handleStorage);
     };
-  }, []);
+  }, [syncAnalyticsConsent]);
 
   const handleConsent = useCallback(() => {
     setGaConsent(true);
@@ -38,7 +60,8 @@ const Layout = () => {
 
   const handleHideManager = useCallback(() => {
     setShowConsentManager(false);
-  }, []);
+    syncAnalyticsConsent();
+  }, [syncAnalyticsConsent]);
 
   return (
     <>
@@ -49,7 +72,7 @@ const Layout = () => {
         Skip to main content
       </a>
       <CustomCursor />
-      {gaConsent && <GoogleAnalytics />}
+      <GoogleAnalytics hasConsent={gaConsent} />
       <div className="min-h-screen bg-[#0C0D0D] text-white overflow-x-hidden flex flex-col">
         <Header />
         <main id="main-content" className="flex-grow">
