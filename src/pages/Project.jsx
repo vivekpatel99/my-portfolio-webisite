@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
 import Stats from '@/components/Stats';
 import SectionAnimator from '@/components/SectionAnimator';
@@ -8,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { toast } from "@/components/ui/use-toast";
 import { projectGallery } from '@/config/links';
+import { Seo } from '@/lib/seo';
 
 // Mock data for projects
 const projectData = {
@@ -101,24 +101,14 @@ const Project = () => {
   }
 
   return <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition} className="bg-[#0C0D0D] text-white">
-      <Helmet>
-        <title>{`${project.title} | Project Case Study - Vivek Patel`}</title>
-        <meta name="description" content={`Case study for the ${project.title} project. Discover the challenges, solutions, and results achieved by Vivek Patel, AI & Computer Vision Engineer.`} />
-        <meta name="keywords" content={`${project.title}, case study, portfolio, Vivek Patel, ${project.category}, AI project, web development`} />
-        <link rel="canonical" href={`https://www.vivekapatel.com/project/${projectId}`} />
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="article" />
-        <meta property="og:url" content={`https://www.vivekapatel.com/project/${projectId}`} />
-        <meta property="og:title" content={`${project.title} | Project Case Study - Vivek Patel`} />
-        <meta property="og:description" content={`Case study for the ${project.title} project. Discover the challenges, solutions, and results achieved.`} />
-        <meta property="og:image" content={project.images.hero.src} />
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content={`https://www.vivekapatel.com/project/${projectId}`} />
-        <meta name="twitter:title" content={`${project.title} | Project Case Study - Vivek Patel`} />
-        <meta name="twitter:description" content={`Case study for the ${project.title} project. Discover the challenges, solutions, and results achieved.`} />
-        <meta name="twitter:image" content={project.images.hero.src} />
-      </Helmet>
+      <Seo
+        title={`${project.title} | Project Case Study - Vivek Patel`}
+        description={`Case study for the ${project.title} project. Discover the challenges, solutions, and results achieved by Vivek Patel, AI & Computer Vision Engineer.`}
+        keywords={`${project.title}, case study, portfolio, Vivek Patel, ${project.category}, AI project, web development`}
+        path={`/project/${projectId}`}
+        type="article"
+        image={project.images.hero.src}
+      />
 
       <main>
         <SectionAnimator>

@@ -1,7 +1,8 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { socialLinks } from '@/config/links';
+import { Seo } from '@/lib/seo';
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -20,33 +21,21 @@ const Legal = () => {
       transition={pageTransition}
       className="bg-[#0C0D0D] text-white py-24 sm:py-32"
     >
-      <Helmet>
-        <title>Privacy Policy | Vivek Patel</title>
-        <meta name="description" content="Privacy Policy for vivek-patel.com, outlining how personal data is collected, used, and protected in compliance with GDPR." />
-        <link rel="canonical" href="https://www.vivekapatel.com/legal" />
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://www.vivekapatel.com/legal" />
-        <meta property="og:title" content="Privacy Policy | Vivek Patel" />
-        <meta property="og:description" content="Privacy Policy for vivekapatel.com, outlining how personal data is collected, used, and protected in compliance with GDPR." />
-        <meta property="og:image" content="https://www.vivekapatel.com/og-image.png" />
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content="https://www.vivekapatel.com/legal" />
-        <meta name="twitter:title" content="Privacy Policy | Vivek Patel" />
-        <meta name="twitter:description" content="Privacy Policy for vivekapatel.com, outlining how personal data is collected, used, and protected in compliance with GDPR." />
-        <meta name="twitter:image" content="https://www.vivekapatel.com/og-image.png" />
-      </Helmet>
+      <Seo
+        title="Privacy Policy | Vivek Patel"
+        description="Privacy Policy for vivekapatel.com, outlining how personal data is collected, used, and protected in compliance with GDPR."
+        path="/legal"
+      />
       <div className="container mx-auto px-6 max-w-4xl">
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-8">Privacy Policy</h1>
         <p className="text-gray-400 mb-6">Last updated: June 1, 2026</p>
         
         <div className="prose prose-invert prose-lg max-w-none text-gray-300 space-y-6">
-          <p>Vivek Patel ("I", "me", or "my") operates the https://www.vivek-patel.com website (the "Service"). This page informs you of my policies regarding the collection, use, and disclosure of personal data when you use my Service and the choices you have associated with that data. This Privacy Policy is compliant with the General Data Protection Regulation (GDPR).</p>
+          <p>Vivek Patel ("I", "me", or "my") operates the https://www.vivekapatel.com website (the "Service"). This page informs you of my policies regarding the collection, use, and disclosure of personal data when you use my Service and the choices you have associated with that data. This Privacy Policy is compliant with the General Data Protection Regulation (GDPR).</p>
 
           <h2 className="text-2xl font-bold text-white mt-8">Data Controller</h2>
           <p>Vivek Patel is the data controller of your personal information.</p>
-          <p>Contact Email: <a href="mailto:contact@vivek-patel.com" className="text-accent-purple hover:underline">contact@vivek-patel.com</a></p>
+          <p>Contact Email: <a href={socialLinks.emailHref} className="text-accent-purple hover:underline">{socialLinks.contactEmail}</a></p>
 
           <h2 className="text-2xl font-bold text-white mt-8">Information Collection and Use</h2>
           <p>I collect several different types of information for various purposes to provide and improve my Service to you.</p>

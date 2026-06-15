@@ -1,6 +1,5 @@
 import React from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
 import Layout from '@/components/Layout';
 import Home from '@/pages/Home';
 import Contact from '@/pages/Contact';
@@ -11,21 +10,9 @@ import { AnimatePresence } from 'framer-motion';
 
 function App() {
   const location = useLocation();
-  
-  // Determine canonical URL:
-  // 1. Base domain: https://www.vivekapatel.com
-  // 2. Append pathname (handling root '/')
-  // 3. Ensure no double slashes if pathname starts with /
-  const canonicalPath = location.pathname === '/' ? '' : location.pathname;
-  const canonicalUrl = `https://www.vivekapatel.com${canonicalPath}`;
 
   return (
     <>
-      {/* Global Canonical Tag Management */}
-      <Helmet>
-        <link rel="canonical" href={canonicalUrl} />
-      </Helmet>
-
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Layout />}>
