@@ -15,6 +15,8 @@ export const BASE_URLS = {
   footballTrackingRepo: 'https://raw.githubusercontent.com/vivekpatel99/football-players-tracking-yolo/main',
   medicalSegmentationRepo: 'https://raw.githubusercontent.com/vivekpatel99/breast-cancer-segmentation-vgg-fcn-pytorch/main',
   planningGenieRepo: 'https://raw.githubusercontent.com/vivekpatel99/project-planning-genie/main',
+  n8nRepo: 'https://raw.githubusercontent.com/n8n-io/n8n/master',
+  yogaPoseRepo: 'https://raw.githubusercontent.com/vivekpatel99/yoga-pose-estimation/main',
 };
 
 // ============================================
@@ -91,9 +93,9 @@ export const techIcons = {
 // PORTFOLIO PROJECT IMAGES
 // ============================================
 export const portfolioImages = {
-  n8nWorkflow: 'https://www.upwork.com/att/download/portfolio/persons/uid/1883842334427528625/profile/projects/files/afa0fdb2-5e26-45a5-b7c2-11b3f2e7555e',
+  n8nWorkflow: `${BASE_URLS.n8nRepo}/assets/n8n-screenshot-readme.png`,
   invoiceOcr: `${BASE_URLS.invoiceOcrRepo}/output/original_with_bboxes_demo.jpg`,
-  yogaPose: 'https://www.upwork.com/att/download/portfolio/persons/uid/1883842334427528625/profile/projects/files/2f4283c5-deca-4a2a-b17d-07033247de19',
+  yogaPose: `${BASE_URLS.yogaPoseRepo}/assets/demo.gif`,
   footballTracking: `${BASE_URLS.footballTrackingRepo}/readme-assets/yolov12l_processed_121364_0.gif`,
   medicalSegmentation: `${BASE_URLS.medicalSegmentationRepo}/results/predictions_animation.gif`,
   aiPlanningAgent: `${BASE_URLS.planningGenieRepo}/assets/final_graph.png`,

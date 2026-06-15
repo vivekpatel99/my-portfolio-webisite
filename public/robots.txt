@@ -1,3 +1,7 @@
 User-agent: *
 Allow: /
+
+User-agent: Googlebot
+Allow: /
+
 Sitemap: https://www.vivekapatel.com/sitemap.xml

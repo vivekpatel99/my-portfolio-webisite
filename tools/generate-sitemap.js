@@ -6,12 +6,7 @@ const BASE_URL = 'https://www.vivekapatel.com';
 const today = new Date().toISOString().split('T')[0];
 
 const projectSlugs = [
-    'Automated-Data-Extraction-Workflow-using-n8n',
-    'Extract-seller-and-client-information-from-photos-using-OCR',
-    'Yoga-Pose-Estimation-with-YOLO',
-    'football-tracking',
-    'medical-segmentation',
-    'ai-planning-agent',
+    'social-media-app',
 ];
 
 const staticPages = [{
@@ -62,4 +57,5 @@ try {
     console.log('✅ sitemap.xml generated successfully!');
 } catch (error) {
     console.error('❌ Error generating sitemap.xml:', error);
+    process.exit(1);
 }

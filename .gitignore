@@ -1,5 +1,6 @@
 *.zip
 node_modules/
+dist/
 horizons-website/screenshots/
 .env.local
 .env*.local
