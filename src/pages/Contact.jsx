@@ -62,7 +62,7 @@ const Contact = () => {
     const trimmedFormState = {
       ...formState,
       name: formState.name.trim(),
-      email: formState.email.trim(),
+      email: formState.email.trim().toLowerCase(),
       description: formState.description.trim(),
     };
 

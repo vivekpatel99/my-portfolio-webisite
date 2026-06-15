@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-const GA_TRACKING_ID = 'G-7E37RV2DDN';
+const GA_TRACKING_ID = import.meta.env.VITE_GA_TRACKING_ID || 'G-7E37RV2DDN';
 const GA_SCRIPT_ID = 'google-analytics-gtag';
 const GA_COOKIE_NAMES = ['_ga', '_gid', '_gat', `_ga_${GA_TRACKING_ID.replace('G-', '')}`];
 

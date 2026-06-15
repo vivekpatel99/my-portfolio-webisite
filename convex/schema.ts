@@ -24,5 +24,9 @@ export default defineSchema({
     .index("by_createdAt", ["createdAt"])
     .index("by_supabaseId", ["supabaseId"])
     .index("by_email", ["email"])
-    .index("by_email_and_createdAt", ["email", "createdAt"]),
+    .index("by_email_and_createdAt", ["email", "createdAt"])
+    .index("by_emailNotificationStatus_and_emailNotificationUpdatedAt", [
+      "emailNotificationStatus",
+      "emailNotificationUpdatedAt",
+    ]),
 });

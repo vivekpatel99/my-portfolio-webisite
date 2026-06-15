@@ -1,7 +1,7 @@
 import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
-import { internalAction, internalMutation, mutation } from "./_generated/server";
+import { internalAction, internalMutation, internalQuery, mutation } from "./_generated/server";
 import { validateLeadInput } from "./lib/leadValidation";
 
 const RATE_LIMIT_WINDOW_MS = 3_600_000;
@@ -210,6 +210,37 @@ export const markEmailNotificationStatus = internalMutation({
   },
 });
 
+export const getStalePendingLeads = internalQuery({
+  args: {
+    cutoff: v.number(),
+  },
+  returns: v.array(
+    v.object({
+      _id: v.id("leads"),
+      name: v.string(),
+      email: v.string(),
+      budget: v.optional(v.string()),
+      description: v.string(),
+    })
+  ),
+  handler: async (ctx, args) => {
+    const staleLeads = await ctx.db
+      .query("leads")
+      .withIndex("by_emailNotificationStatus_and_emailNotificationUpdatedAt", (q) =>
+        q.eq("emailNotificationStatus", "pending").lt("emailNotificationUpdatedAt", args.cutoff)
+      )
+      .take(20);
+
+    return staleLeads.map((lead) => ({
+      _id: lead._id,
+      name: lead.name,
+      email: lead.email,
+      budget: lead.budget,
+      description: lead.description,
+    }));
+  },
+});
+
 function emailResultToStatus(
   result: ContactEmailSendResult,
 ): { status: EmailNotificationUpdateStatus; error?: string } {
@@ -243,18 +274,17 @@ export const sendContactEmail = internalAction({
     try {
       const result = await sendContactEmailNotification(args);
       const update = emailResultToStatus(result);
-      const updateResult: null = await ctx.runMutation(
+      await ctx.runMutation(
         internal.leads.markEmailNotificationStatus,
         {
           leadId: args.leadId,
           ...update,
         },
       );
-      void updateResult;
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Unknown email notification error";
-      const updateResult: null = await ctx.runMutation(
+      await ctx.runMutation(
         internal.leads.markEmailNotificationStatus,
         {
           leadId: args.leadId,
@@ -262,7 +292,6 @@ export const sendContactEmail = internalAction({
           error: message,
         },
       );
-      void updateResult;
       throw error;
     }
     return null;
