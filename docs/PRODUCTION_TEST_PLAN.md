@@ -1,17 +1,58 @@
-# Production Test Plan - vivekapatel.com
+# Production Test Plan - www.vivekapatel.com
 
-**Last Updated:** 2025-11-27
-**Website:** https://vivekapatel.com
-**Status:** Ready for testing
+**Last Updated:** 2026-06-15
+**Website:** https://www.vivekapatel.com
+**Status:** Post-migration plan updated; passive checks are the default
 
 ---
 
 ## Quick Start
 
-Run all tests in parallel using 7 sub-agents:
+Run passive production and local checks first. These checks must not submit the
+live contact form, create Convex leads, or send email:
 ```
-Test all categories simultaneously for fastest results
+Run passive production checks against www.vivekapatel.com and local build/test checks.
 ```
+
+Run live side-effect tests only after the controlled sender address and expected
+recipient mailbox are confirmed:
+```
+Run the approved live contact-form checklist from this plan.
+```
+
+---
+
+## 2026-06-15 Migration QA Notes
+
+The Hostinger domain migration is mostly working based on the
+`docs/reviews/2026-06-15-domain-migration-qa.md` review.
+
+Verified in the migration QA:
+
+- `https://vivekapatel.com/` and `https://www.vivekapatel.com/` load the new site.
+- Main production routes render, including `/contact`, `/legal`,
+  `/data-policy`, `/project/social-media-app`, and an unknown-route fallback.
+- Hostinger returns `200` for app routes so React Router can handle SPA routing.
+- Sampled desktop and mobile browser checks had no console errors or horizontal overflow.
+- Sampled loaded images were not broken.
+- `npm test` passed locally: 4 files, 25 tests.
+- `npm run build` passed locally.
+- `robots.txt` and `sitemap.xml` return `200`.
+- DNS and mail records still resolve for Hostinger and ProtonMail.
+
+Not proven by the migration QA:
+
+- Live Convex dashboard environment values for `CONTACT_RECIPIENT_EMAIL`,
+  `RESEND_API_KEY`, or `RESEND_FROM_EMAIL`.
+- Final Hotmail/Outlook mailbox delivery.
+- The contact notification sender's deliverability and `Reply-To` behavior.
+
+Known follow-up items from the migration QA that affect this plan:
+
+- `/og-image.png` returned HTTP `422`; verify social image URLs explicitly.
+- Some route-specific SEO metadata may still be overridden by home/default metadata.
+- Empty contact-form submit was updated to use the custom missing-fields toast.
+- Existing Playwright QA artifacts should be refreshed before being treated as authoritative.
 
 ---
 
@@ -21,22 +62,22 @@ Test all categories simultaneously for fastest results
 
 | ID | URL | Check |
 |----|-----|-------|
-| R-001 | https://vivekapatel.com/ | [ ] 200, contains "Vivek Patel" |
-| R-002 | https://vivekapatel.com/contact | [ ] 200, contact form visible |
-| R-003 | https://vivekapatel.com/legal | [ ] 200, "Privacy Policy" |
-| R-004 | https://vivekapatel.com/data-policy | [ ] 200, "Cookie Policy" |
-| R-005 | https://vivekapatel.com/project/social-media-app | [ ] 200, project details |
-| R-006 | https://vivekapatel.com/nonexistent | [ ] Redirects to home |
-| R-007 | https://vivekapatel.com/project/invalid | [ ] Redirects to home |
+| R-001 | https://www.vivekapatel.com/ | [ ] 200, contains "Vivek Patel" |
+| R-002 | https://www.vivekapatel.com/contact | [ ] 200, contact form visible |
+| R-003 | https://www.vivekapatel.com/legal | [ ] 200, "Privacy Policy" |
+| R-004 | https://www.vivekapatel.com/data-policy | [ ] 200, "Cookie Policy" |
+| R-005 | https://www.vivekapatel.com/project/social-media-app | [ ] 200, project details |
+| R-006 | https://www.vivekapatel.com/nonexistent | [ ] Redirects to home |
+| R-007 | https://www.vivekapatel.com/project/invalid | [ ] Redirects to home |
 
 ### Hash Routes (Scroll Anchors)
 
 | ID | URL | Check |
 |----|-----|-------|
-| R-008 | https://vivekapatel.com/#services | [ ] Scrolls to services |
-| R-009 | https://vivekapatel.com/#about | [ ] Scrolls to about |
-| R-010 | https://vivekapatel.com/#portfolio | [ ] Scrolls to portfolio |
-| R-011 | https://vivekapatel.com/#testimonials | [ ] Scrolls to testimonials |
+| R-008 | https://www.vivekapatel.com/#services | [ ] Scrolls to services |
+| R-009 | https://www.vivekapatel.com/#about | [ ] Scrolls to about |
+| R-010 | https://www.vivekapatel.com/#portfolio | [ ] Scrolls to portfolio |
+| R-011 | https://www.vivekapatel.com/#testimonials | [ ] Scrolls to testimonials |
 
 ---
 
@@ -79,8 +120,8 @@ Test all categories simultaneously for fastest results
 
 | ID | URL | Check |
 |----|-----|-------|
-| SEO-014 | https://vivekapatel.com/sitemap.xml | [ ] 200, valid XML |
-| SEO-015 | https://vivekapatel.com/robots.txt | [ ] 200, allows crawling |
+| SEO-014 | https://www.vivekapatel.com/sitemap.xml | [ ] 200, valid XML |
+| SEO-015 | https://www.vivekapatel.com/robots.txt | [ ] 200, allows crawling |
 
 ---
 
@@ -137,9 +178,9 @@ Test all categories simultaneously for fastest results
 
 | ID | Project | URL | Check |
 |----|---------|-----|-------|
-| AST-008 | n8n | https://www.upwork.com/att/download/portfolio/persons/uid/1883842334427528625/profile/projects/files/afa0fdb2-5e26-45a5-b7c2-11b3f2e7555e | [ ] |
+| AST-008 | n8n | https://raw.githubusercontent.com/n8n-io/n8n/master/assets/n8n-screenshot-readme.png | [ ] |
 | AST-009 | Invoice OCR | https://raw.githubusercontent.com/vivekpatel99/invoice-data-extraction-using-ocr/main/output/original_with_bboxes_demo.jpg | [ ] |
-| AST-010 | Yoga Pose | https://www.upwork.com/att/download/portfolio/persons/uid/1883842334427528625/profile/projects/files/2f4283c5-deca-4a2a-b17d-07033247de19 | [ ] |
+| AST-010 | Yoga Pose | https://raw.githubusercontent.com/vivekpatel99/yoga-pose-estimation/main/assets/demo.gif | [ ] |
 | AST-011 | Football GIF | https://raw.githubusercontent.com/vivekpatel99/football-players-tracking-yolo/main/readme-assets/yolov12l_processed_121364_0.gif | [ ] |
 | AST-012 | Medical GIF | https://raw.githubusercontent.com/vivekpatel99/breast-cancer-segmentation-vgg-fcn-pytorch/main/results/predictions_animation.gif | [ ] |
 | AST-013 | AI Agent | https://raw.githubusercontent.com/vivekpatel99/project-planning-genie/main/assets/final_graph.png | [ ] |
@@ -221,11 +262,15 @@ Test all categories simultaneously for fastest results
 
 ---
 
-## Test Category 6: Contact Form (Validation Only)
+## Test Category 6: Contact Form (Passive/Local Only)
+
+These tests are safe for routine production checks because they do not submit a
+valid live contact form payload. Keep browser/network tooling configured so the
+happy path cannot create a real Convex lead or send a real email.
 
 | ID | Test | Steps | Expected | Check |
 |----|------|-------|----------|-------|
-| FRM-001 | Empty submit | Submit empty | Toast "Missing fields" | [ ] |
+| FRM-001 | Empty submit | Submit empty | Custom "Missing fields" toast appears; no Convex mutation is sent | [ ] |
 | FRM-002 | Missing name | Fill email+desc | Toast error | [ ] |
 | FRM-003 | Missing email | Fill name+desc | Toast error | [ ] |
 | FRM-004 | Missing description | Fill name+email | Toast error | [ ] |
@@ -243,13 +288,32 @@ Test all categories simultaneously for fastest results
 | FRM-011 | GitHub link | Opens profile | [ ] |
 | FRM-012 | LinkedIn link | Opens profile | [ ] |
 
-### Contact Form (Convex E2E — post-migration)
+### Local Convex Checks
+
+Run these against local/unit test infrastructure only. They may verify lead
+validation and insertion behavior in tests, but they do not prove production
+Convex environment variables or production mailbox delivery.
 
 | ID | Test | Steps | Expected | Check |
 |----|------|-------|----------|-------|
-| FRM-013 | Full submit (staging) | Fill all fields; submit | Success toast; lead in Convex dashboard | [ ] |
-| FRM-014 | Submit without budget | Omit budget; submit | Success; lead has no budget | [ ] |
-| FRM-015 | Email notification | After FRM-013 | Email at configured recipient | [ ] |
+| FRM-013 | Unit tests | `npm test` | Convex lead tests pass locally | [ ] |
+| FRM-014 | Production build | `npm run build` | Build completes | [ ] |
+
+### Live Side-Effect Tests (Explicit Approval Required)
+
+Do not run these during passive production QA. These tests can create real
+Convex leads and can send real email through the production notification path.
+Before starting, confirm the controlled sender address and expected recipient
+mailbox with the site owner. Do not record secrets in this document.
+
+| ID | Test | Steps | Expected | Check |
+|----|------|-------|----------|-------|
+| LIVE-001 | Confirm production config presence | Check Convex dashboard settings for `CONTACT_RECIPIENT_EMAIL`, `RESEND_API_KEY`, and `RESEND_FROM_EMAIL` | Required values are present; secrets are not copied into notes | [ ] |
+| LIVE-002 | Submit marked QA lead | Submit one contact form using a real controlled sender email and clear QA message text | Success toast appears and exactly one QA lead is expected | [ ] |
+| LIVE-003 | Confirm Convex lead | Inspect production Convex dashboard | QA lead exists with expected name, email, message, and optional budget | [ ] |
+| LIVE-004 | Confirm Hotmail/Outlook delivery | Check the expected Hotmail/Outlook recipient mailbox, including Focused/Other/Junk/Quarantine | Notification arrives at the expected mailbox | [ ] |
+| LIVE-005 | Confirm sender acceptance | Inspect delivered message headers/sender display | Sender is acceptable for production use and not flagged unexpectedly | [ ] |
+| LIVE-006 | Confirm Reply-To | Reply to the delivered notification | Reply reaches the controlled test sender inbox | [ ] |
 
 ---
 
@@ -374,14 +438,18 @@ Test all categories simultaneously for fastest results
 | 3. External Links | 11 | | | |
 | 4. Asset Loading | 19 | | | |
 | 5. Interactive Components | 25 | | | |
-| 6. Contact Form | 12 | | | |
+| 6. Contact Form Passive/Local | 14 | | | |
 | 7. Cookie Consent | 10 | | | |
 | 8. Performance | 11 | | | |
 | 9. Accessibility | 10 | | | |
 | 10. Responsive Design | 12 | | | |
 | 11. Animations | 10 | | | |
 | 12. Error Handling | 4 | | | |
-| **TOTAL** | **150** | | | |
+| Live Side-Effect Contact Checklist | 6 | | | |
+| **TOTAL INCLUDING LIVE CHECKLIST** | **158** | | | |
+
+Default passive production QA excludes the live side-effect checklist unless it
+has been explicitly approved for a controlled run.
 
 ---
 
@@ -395,9 +463,11 @@ Test all categories simultaneously for fastest results
 
 ## Configuration
 
-- **Contact Form:** Skip actual submission (validation only)
+- **Default mode:** Passive production checks plus local `npm test` and `npm run build`
+- **Contact Form:** Skip valid live submission unless explicitly running the live side-effect checklist
+- **Live Convex/email:** Not proven until `LIVE-001` through `LIVE-006` pass
 - **Rate-Limited Sites:** Test all, accept failures from LinkedIn/Upwork
-- **Execution:** All 7 agents in parallel
+- **Execution:** Parallel agents are fine for passive checks; live side-effect tests must run serially
 
 ---
 
@@ -408,7 +478,7 @@ Test all categories simultaneously for fastest results
 | 1 | Page Load, SEO | WebFetch + HTML parse | ~5 min |
 | 2 | External Links | WebFetch HEAD requests | ~3 min |
 | 3 | Asset Loading | WebFetch HEAD requests | ~5 min |
-| 4 | Interactive, Form, Cookie | Playwright | ~10 min |
+| 4 | Interactive, Form, Cookie | Playwright, passive paths only | ~10 min |
 | 5 | Performance, Accessibility | Lighthouse CLI | ~5 min |
 | 6 | Responsive, Animations | Playwright viewports | ~8 min |
 | 7 | Error Handling | Mixed | ~3 min |
@@ -418,11 +488,18 @@ Test all categories simultaneously for fastest results
 ## How to Run
 
 ```bash
-# Ask Claude Code to run production tests
-"Run the production test plan against vivekapatel.com using parallel agents"
+# Ask Claude Code to run passive production tests
+"Run the passive production test plan against www.vivekapatel.com using parallel agents"
 
 # Or run specific categories
 "Run only SEO and Performance tests on production"
+
+# Run only after explicit approval and mailbox confirmation
+"Run the approved live contact-form checklist from docs/PRODUCTION_TEST_PLAN.md"
+
+# Optional local commands after installing Playwright browsers
+npm run qa:playwright:passive
+QA_LIVE_CONTACT_EMAIL=controlled-sender@example.com npm run qa:playwright:live-contact
 ```
 
 ---
@@ -431,4 +508,5 @@ Test all categories simultaneously for fastest results
 
 | Date | Changes |
 |------|---------|
+| 2026-06-15 | Updated after Hostinger/Convex migration QA; separated passive checks from live Convex/email side-effect tests; added Hotmail/Outlook final delivery checklist |
 | 2025-11-27 | Initial test plan created |
