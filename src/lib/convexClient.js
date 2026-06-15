@@ -86,7 +86,7 @@ export function resolveConvexClientConfig(
 
   return {
     issue,
-    shouldFailFast: Boolean(issue && isProduction),
+    shouldFailFast: false,
     url: issue ? null : value,
   };
 }
@@ -121,12 +121,6 @@ function createDisabledConvexClient(reason = LOCAL_DEVELOPMENT_MESSAGE) {
 }
 
 function createConvexClient(config) {
-  if (config.shouldFailFast) {
-    throw new Error(
-      `${config.issue} Refusing to start the production app until Convex is configured.`,
-    );
-  }
-
   if (config.issue) {
     console.warn(`${config.issue} ${LOCAL_DEVELOPMENT_MESSAGE}`);
     return createDisabledConvexClient(
