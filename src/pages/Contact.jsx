@@ -164,23 +164,25 @@ const Contact = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
+            role="region"
+            aria-label="Client success metrics"
           >
-            <div className="flex flex-wrap justify-center gap-6 text-center">
-              <div className="flex items-center gap-2">
+            <ul className="flex flex-wrap justify-center gap-6 text-center">
+              <li className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-accent-purple">100%</span>
                 <span className="text-gray-400 text-sm">Job Success<br/>on Upwork</span>
-              </div>
-              <div className="hidden sm:block w-px h-12 bg-white/10"></div>
-              <div className="flex items-center gap-2">
+              </li>
+              <li className="hidden sm:block w-px h-12 bg-white/10" role="separator" aria-hidden="true"></li>
+              <li className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-accent-purple">11+</span>
                 <span className="text-gray-400 text-sm">Projects<br/>Delivered</span>
-              </div>
-              <div className="hidden sm:block w-px h-12 bg-white/10"></div>
-              <div className="flex items-center gap-2">
+              </li>
+              <li className="hidden sm:block w-px h-12 bg-white/10" role="separator" aria-hidden="true"></li>
+              <li className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-accent-purple">5★</span>
                 <span className="text-gray-400 text-sm">Average<br/>Rating</span>
-              </div>
-            </div>
+              </li>
+            </ul>
           </motion.div>
 
           <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[0.85fr_1.15fr]">
@@ -296,9 +298,10 @@ const Contact = () => {
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label={`Connect with Vivek Patel on ${link.name}`}
                     className="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-lg text-white font-semibold transition-all hover:bg-white/10 hover:border-accent-purple/50"
                   >
-                    <Icon />
+                    <Icon aria-hidden="true" />
                     {link.name}
                   </a>
                 );

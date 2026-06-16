@@ -87,7 +87,7 @@ const Project = () => {
       <SectionAnimator>
         <div className="container mx-auto px-6 pb-16">
           <div className="aspect-video overflow-hidden rounded-lg border border-white/10 shadow-2xl shadow-accent-purple/10">
-            <img className="h-full w-full object-cover" alt={project.image.alt} src={project.image.src} />
+            <img className="h-full w-full object-cover" alt={project.image.alt} src={project.image.src} loading="lazy" />
           </div>
         </div>
       </SectionAnimator>

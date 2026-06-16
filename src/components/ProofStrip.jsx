@@ -30,11 +30,12 @@ const proofItems = [
 ];
 
 const ProofStrip = () => (
-  <section className="bg-[#0C0D0D] border-y border-white/10">
+  <section className="bg-[#0C0D0D] border-y border-white/10" aria-labelledby="proof-heading">
     <div className="container mx-auto px-6 py-8">
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+      <h2 id="proof-heading" className="sr-only">Professional Credentials and Achievements</h2>
+      <ul className="grid grid-cols-2 gap-3 md:grid-cols-5">
         {proofItems.map(({ label, detail, icon: Icon }) => (
-          <div
+          <li
             key={label}
             className="flex min-h-[112px] flex-col justify-between rounded-lg border border-white/10 bg-white/[0.04] p-4"
           >
@@ -43,9 +44,9 @@ const ProofStrip = () => (
               <p className="text-base font-bold text-white sm:text-lg">{label}</p>
               <p className="mt-1 text-xs uppercase tracking-wide text-gray-500">{detail}</p>
             </div>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   </section>
 );
