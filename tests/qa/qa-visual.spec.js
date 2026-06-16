@@ -12,6 +12,11 @@ const routeSlug = (pagePath) =>
         .replace(/[^a-z0-9]+/gi, '-')
         .replace(/^-|-$/g, '');
 
+const pngDimensions = (pngBuffer) => ({
+  width: pngBuffer.readUInt32BE(16),
+  height: pngBuffer.readUInt32BE(20),
+});
+
 for (const pagePath of pages) {
   for (const [label, width] of [
     ['390', 390],
@@ -20,10 +25,19 @@ for (const pagePath of pages) {
     test(`screenshot ${pagePath} at ${label}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 844 });
       await page.goto(pagePath);
-      await page.waitForTimeout(2000);
-      await page.screenshot({
+      await expect(page.locator('body')).toBeVisible();
+
+      const screenshot = await page.screenshot({
         path: path.join(artifactDir, `qa-${routeSlug(pagePath)}-${label}.png`),
         fullPage: false,
+      });
+      const dimensions = pngDimensions(screenshot);
+      const devicePixelRatio = await page.evaluate(() => window.devicePixelRatio);
+
+      expect(screenshot.byteLength).toBeGreaterThan(1_000);
+      expect(dimensions).toEqual({
+        width: Math.round(width * devicePixelRatio),
+        height: Math.round(844 * devicePixelRatio),
       });
     });
   }

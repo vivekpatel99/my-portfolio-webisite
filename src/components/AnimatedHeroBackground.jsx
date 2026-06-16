@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { backgrounds } from '@/config/links';
 
 const imageUrl = backgrounds.hero;
@@ -26,15 +26,17 @@ const layers = [
 ];
 
 const AnimatedHeroBackground = () => {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden">
       {layers.map((layer, index) => (
         <motion.div
           key={index}
           className="absolute inset-[-10%] w-[120%] h-[120%]"
-          initial={layer.initial}
-          animate={layer.animate}
-          transition={layer.transition}
+          initial={shouldReduceMotion ? false : layer.initial}
+          animate={shouldReduceMotion ? false : layer.animate}
+          transition={shouldReduceMotion ? undefined : layer.transition}
           style={{
             backgroundImage: `url(${imageUrl})`,
             backgroundSize: 'cover',

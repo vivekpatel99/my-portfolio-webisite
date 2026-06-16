@@ -2,8 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useNavigate, Link } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { assetsLinks } from '@/config/links';
+
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined'
+    && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,6 +17,7 @@ const Header = () => {
   const closeButtonRef = useRef(null);
   const previousFocusRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const navLinks = [
     { name: 'Services', href: '/#services' },
@@ -125,7 +130,15 @@ const Header = () => {
     const [path, id] = href.split('#');
 
     if (path === '/' && id) {
-      navigate(`/#${id}`);
+      const nextHash = `#${id}`;
+
+      if (location.pathname === '/' && location.hash === nextHash) {
+        document
+          .getElementById(decodeURIComponent(id))
+          ?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+      } else {
+        navigate(`/#${id}`);
+      }
     } else {
       navigate(href);
     }

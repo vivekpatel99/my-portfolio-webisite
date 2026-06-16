@@ -152,6 +152,13 @@ function getParentOrigin() {
 	return null;
 }
 
+function isTrustedParentEvent(event) {
+	return (
+		event.source === window.parent &&
+		ALLOWED_PARENT_ORIGINS.includes(event.origin)
+	);
+}
+
 async function handleEditSave(updatedText) {
 	const newText = updatedText
 		// Replacing characters that cause Babel parser to crash
@@ -340,6 +347,10 @@ function disableEditMode() {
 }
 
 window.addEventListener("message", function (event) {
+	if (!isTrustedParentEvent(event)) {
+		return;
+	}
+
 	if (event.data?.type === "edit-save") {
 		handleEditSave(event.data?.payload?.newText);
 	}

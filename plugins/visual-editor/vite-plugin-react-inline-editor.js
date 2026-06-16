@@ -13,6 +13,60 @@ import {
 } from '../utils/ast-utils.js';
 
 const EDITABLE_HTML_TAGS = ["a", "Button", "button", "p", "span", "h1", "h2", "h3", "h4", "h5", "h6", "label", "Label", "img"];
+const LOCAL_DEV_HOSTS = new Set(['localhost', '127.0.0.1', '::1']);
+
+function normalizeHostname(hostname) {
+	return hostname?.replace(/^\[(.*)\]$/, '$1').toLowerCase();
+}
+
+function parseHostHeader(hostHeader) {
+	if (!hostHeader) {
+		return null;
+	}
+
+	try {
+		const url = new URL(`http://${hostHeader}`);
+		return {
+			host: url.host.toLowerCase(),
+			hostname: normalizeHostname(url.hostname),
+		};
+	} catch {
+		return null;
+	}
+}
+
+function parseOriginHeader(originHeader) {
+	if (!originHeader) {
+		return null;
+	}
+
+	try {
+		const url = new URL(originHeader);
+		return {
+			host: url.host.toLowerCase(),
+			hostname: normalizeHostname(url.hostname),
+			protocol: url.protocol,
+		};
+	} catch {
+		return null;
+	}
+}
+
+function isAllowedApplyEditRequest(req) {
+	const requestHost = parseHostHeader(req.headers.host);
+	const origin = parseOriginHeader(req.headers.origin);
+
+	if (!requestHost || !origin) {
+		return false;
+	}
+
+	return (
+		(origin.protocol === 'http:' || origin.protocol === 'https:')
+		&& LOCAL_DEV_HOSTS.has(requestHost.hostname)
+		&& LOCAL_DEV_HOSTS.has(origin.hostname)
+		&& origin.host === requestHost.host
+	);
+}
 
 function parseEditId(editId) {
 	const parts = editId.split(':');
@@ -259,6 +313,11 @@ export default function inlineEditPlugin() {
 		configureServer(server) {
 			server.middlewares.use('/api/apply-edit', async (req, res, next) => {
 				if (req.method !== 'POST') return next();
+
+				if (!isAllowedApplyEditRequest(req)) {
+					res.writeHead(403, { 'Content-Type': 'application/json' });
+					return res.end(JSON.stringify({ error: 'Forbidden' }));
+				}
 
 				let body = '';
 				req.on('data', chunk => { body += chunk.toString(); });

@@ -8,6 +8,49 @@ import selectionModePlugin from './plugins/selection-mode/vite-plugin-selection-
 
 const isDev = process.env.NODE_ENV !== 'production';
 
+const TRUSTED_PARENT_ORIGINS = [
+	'https://horizons.hostinger.com',
+	'https://horizons.hostinger.dev',
+	'https://horizons-frontend-local.hostinger.dev',
+	'http://localhost:4000',
+];
+
+const configTrustedParentMessaging = `
+const ALLOWED_PARENT_ORIGINS = ${JSON.stringify(TRUSTED_PARENT_ORIGINS)};
+
+function getTrustedParentOrigin() {
+	if (window.self === window.top) {
+		return null;
+	}
+
+	if (
+		window.location.ancestorOrigins &&
+		window.location.ancestorOrigins.length > 0
+	) {
+		const ancestorOrigin = window.location.ancestorOrigins[0];
+		return ALLOWED_PARENT_ORIGINS.includes(ancestorOrigin) ? ancestorOrigin : null;
+	}
+
+	if (document.referrer) {
+		try {
+			const referrerOrigin = new URL(document.referrer).origin;
+			return ALLOWED_PARENT_ORIGINS.includes(referrerOrigin) ? referrerOrigin : null;
+		} catch {}
+	}
+
+	return null;
+}
+
+function postToTrustedParent(message) {
+	const parentOrigin = getTrustedParentOrigin();
+	if (!parentOrigin) {
+		return;
+	}
+
+	window.parent.postMessage(message, parentOrigin);
+}
+`;
+
 const configHorizonsViteErrorHandler = `
 const observer = new MutationObserver((mutations) => {
 	for (const mutation of mutations) {
@@ -47,10 +90,10 @@ function handleViteOverlay(node) {
 		const fileText = fileElement ? fileElement.textContent.trim() : '';
 		const error = messageText + (fileText ? ' File:' + fileText : '');
 
-		window.parent.postMessage({
+		postToTrustedParent({
 			type: 'horizons-vite-error',
 			error,
-		}, '*');
+		});
 	}
 }
 `;
@@ -66,11 +109,11 @@ window.onerror = (message, source, lineno, colno, errorObj) => {
 		colno,
 	}) : null;
 
-	window.parent.postMessage({
+	postToTrustedParent({
 		type: 'horizons-runtime-error',
 		message,
 		error: errorDetails
-	}, '*');
+	});
 };
 `;
 
@@ -93,10 +136,10 @@ console.error = function(...args) {
 		errorString = args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : String(arg)).join(' ');
 	}
 
-	window.parent.postMessage({
+	postToTrustedParent({
 		type: 'horizons-console-error',
 		error: errorString
-	}, '*');
+	});
 };
 `;
 
@@ -168,10 +211,10 @@ if (window.navigation && window.self !== window.top) {
 			return;
 		}
 
-		window.parent.postMessage({
+		postToTrustedParent({
 			type: 'horizons-navigation-error',
 			url,
-		}, '*');
+		});
 	});
 }
 `;
@@ -179,38 +222,42 @@ if (window.navigation && window.self !== window.top) {
 const addTransformIndexHtml = {
 	name: 'add-transform-index-html',
 	transformIndexHtml(html) {
-		const tags = [
-			{
-				tag: 'script',
-				attrs: { type: 'module' },
-				children: configHorizonsRuntimeErrorHandler,
-				injectTo: 'head',
-			},
-			{
-				tag: 'script',
-				attrs: { type: 'module' },
-				children: configHorizonsViteErrorHandler,
-				injectTo: 'head',
-			},
-			{
-				tag: 'script',
-				attrs: {type: 'module'},
-				children: configHorizonsConsoleErrroHandler,
-				injectTo: 'head',
-			},
-			{
-				tag: 'script',
-				attrs: { type: 'module' },
-				children: configWindowFetchMonkeyPatch,
-				injectTo: 'head',
-			},
-			{
-				tag: 'script',
-				attrs: { type: 'module' },
-				children: configNavigationHandler,
-				injectTo: 'head',
-			},
-		];
+		const tags = [];
+
+		if (isDev) {
+			tags.push(
+				{
+					tag: 'script',
+					attrs: { type: 'module' },
+					children: `${configTrustedParentMessaging}\n${configHorizonsRuntimeErrorHandler}`,
+					injectTo: 'head',
+				},
+				{
+					tag: 'script',
+					attrs: { type: 'module' },
+					children: `${configTrustedParentMessaging}\n${configHorizonsViteErrorHandler}`,
+					injectTo: 'head',
+				},
+				{
+					tag: 'script',
+					attrs: { type: 'module' },
+					children: `${configTrustedParentMessaging}\n${configHorizonsConsoleErrroHandler}`,
+					injectTo: 'head',
+				},
+				{
+					tag: 'script',
+					attrs: { type: 'module' },
+					children: configWindowFetchMonkeyPatch,
+					injectTo: 'head',
+				},
+				{
+					tag: 'script',
+					attrs: { type: 'module' },
+					children: `${configTrustedParentMessaging}\n${configNavigationHandler}`,
+					injectTo: 'head',
+				},
+			);
+		}
 
 		if (!isDev && process.env.TEMPLATE_BANNER_SCRIPT_URL && process.env.TEMPLATE_REDIRECT_URL) {
 			tags.push(
@@ -253,11 +300,14 @@ export default defineConfig({
 		addTransformIndexHtml
 	],
 	server: {
-		cors: true,
+		host: '127.0.0.1',
+		cors: {
+			origin: /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/,
+		},
 		headers: {
 			'Cross-Origin-Embedder-Policy': 'credentialless',
 		},
-		allowedHosts: true,
+		allowedHosts: ['localhost', '127.0.0.1', '::1'],
 	},
 	resolve: {
 		extensions: ['.jsx', '.js', '.tsx', '.ts', '.json', ],

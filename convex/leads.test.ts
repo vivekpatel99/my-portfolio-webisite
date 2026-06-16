@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 import { convexTest } from "convex-test";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import {
   buildContactEmailPayload,
@@ -182,6 +182,32 @@ describe("submitLead", () => {
     expect(leads).toHaveLength(3);
   });
 
+  it("rejects submissions when the global contact throttle is full", async () => {
+    const now = new Date("2026-06-15T12:00:00.000Z");
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+
+    const t = convexTest(schema, modules);
+    for (let i = 0; i < 30; i++) {
+      await t.run(async (ctx) => {
+        await ctx.db.insert("leads", {
+          name: `Lead ${i}`,
+          email: `global-${i}@example.com`,
+          description: "Recent global contact.",
+          createdAt: now.getTime() - 1,
+        });
+      });
+    }
+
+    await expect(
+      t.mutation(api.leads.submitLead, {
+        name: "Jane",
+        email: "global-limit@example.com",
+        description: "Global throttle should reject.",
+      }),
+    ).rejects.toThrow(/Please wait before submitting again/);
+  });
+
   it("allows a submit when one prior lead is exactly on the rate-limit boundary", async () => {
     const now = new Date("2026-06-15T12:00:00.000Z");
     vi.useFakeTimers();
@@ -330,5 +356,133 @@ describe("contact email notification", () => {
     });
 
     expect(result).toEqual({ status: "missing-api-key" });
+  });
+});
+
+describe("email notification retry state", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("claims stale pending leads transactionally before retry scheduling", async () => {
+    const now = new Date("2026-06-15T12:00:00.000Z");
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+
+    const t = convexTest(schema, modules);
+    const staleUpdatedAt = now.getTime() - 6 * 60 * 1000;
+    const leadId = await t.run(async (ctx) =>
+      ctx.db.insert("leads", {
+        name: "Retry Me",
+        email: "retry@example.com",
+        description: "Pending too long.",
+        createdAt: staleUpdatedAt,
+        emailNotificationStatus: "pending",
+        emailNotificationUpdatedAt: staleUpdatedAt,
+      }),
+    );
+
+    const first = await t.mutation(
+      internal.leads.claimStaleEmailNotificationRetries,
+      { cutoff: now.getTime() - 5 * 60 * 1000 },
+    );
+    const second = await t.mutation(
+      internal.leads.claimStaleEmailNotificationRetries,
+      { cutoff: now.getTime() - 5 * 60 * 1000 },
+    );
+
+    expect(first).toHaveLength(1);
+    expect(first[0]._id).toBe(leadId);
+    expect(second).toHaveLength(0);
+
+    const lead = await t.run(async (ctx) => ctx.db.get(leadId));
+    expect(lead?.emailNotificationStatus).toBe("retrying");
+    expect(lead?.emailNotificationUpdatedAt).toBe(now.getTime());
+  });
+
+  it("claiming an individual attempt prevents duplicate sends", async () => {
+    const now = new Date("2026-06-15T12:00:00.000Z");
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+
+    const t = convexTest(schema, modules);
+    const leadId = await t.run(async (ctx) =>
+      ctx.db.insert("leads", {
+        name: "Send Once",
+        email: "once@example.com",
+        description: "Only one sender should claim this.",
+        createdAt: now.getTime(),
+        emailNotificationStatus: "pending",
+        emailNotificationUpdatedAt: now.getTime(),
+      }),
+    );
+
+    const first = await t.mutation(internal.leads.claimEmailNotificationAttempt, {
+      leadId,
+    });
+    const second = await t.mutation(internal.leads.claimEmailNotificationAttempt, {
+      leadId,
+    });
+
+    expect(first?._id).toBe(leadId);
+    expect(second).toBeNull();
+    const lead = await t.run(async (ctx) => ctx.db.get(leadId));
+    expect(lead?.emailNotificationStatus).toBe("sending");
+  });
+
+  it("reclaims stale retrying leads that were claimed but not scheduled", async () => {
+    const now = new Date("2026-06-15T12:00:00.000Z");
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+
+    const t = convexTest(schema, modules);
+    const staleUpdatedAt = now.getTime() - 6 * 60 * 1000;
+    const leadId = await t.run(async (ctx) =>
+      ctx.db.insert("leads", {
+        name: "Retry Again",
+        email: "retry-again@example.com",
+        description: "Retrying state got stuck.",
+        createdAt: staleUpdatedAt,
+        emailNotificationStatus: "retrying",
+        emailNotificationUpdatedAt: staleUpdatedAt,
+      }),
+    );
+
+    const claimed = await t.mutation(
+      internal.leads.claimStaleEmailNotificationRetries,
+      { cutoff: now.getTime() - 5 * 60 * 1000 },
+    );
+
+    expect(claimed).toHaveLength(1);
+    expect(claimed[0]._id).toBe(leadId);
+  });
+
+  it("keeps transient Resend responses retryable as pending", async () => {
+    const now = new Date("2026-06-15T12:00:00.000Z");
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+
+    const t = convexTest(schema, modules);
+    const leadId = await t.run(async (ctx) =>
+      ctx.db.insert("leads", {
+        name: "Transient",
+        email: "transient@example.com",
+        description: "Retry later.",
+        createdAt: now.getTime(),
+        emailNotificationStatus: "sending",
+        emailNotificationUpdatedAt: now.getTime(),
+      }),
+    );
+
+    await t.mutation(internal.leads.markEmailNotificationStatus, {
+      leadId,
+      status: "pending",
+      error: "Transient Resend API error 500: temporarily unavailable",
+    });
+
+    const lead = await t.run(async (ctx) => ctx.db.get(leadId));
+    expect(lead?.emailNotificationStatus).toBe("pending");
+    expect(lead?.emailNotificationError).toContain("Transient Resend API error");
+    expect(lead?.emailNotificationUpdatedAt).toBe(now.getTime());
   });
 });

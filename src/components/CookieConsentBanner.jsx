@@ -41,7 +41,8 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
     }
 
     previousFocusRef.current = document.activeElement;
-    window.requestAnimationFrame(() => bannerRef.current?.focus());
+    const scheduleFocus = window.requestAnimationFrame || ((callback) => window.setTimeout(callback, 0));
+    scheduleFocus(() => bannerRef.current?.focus());
 
     return () => {
       previousFocusRef.current?.focus?.();

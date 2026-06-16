@@ -11,6 +11,8 @@ export default defineSchema({
     emailNotificationStatus: v.optional(
       v.union(
         v.literal("pending"),
+        v.literal("sending"),
+        v.literal("retrying"),
         v.literal("sent"),
         v.literal("missing_api_key"),
         v.literal("resend_error"),

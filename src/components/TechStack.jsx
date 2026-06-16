@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { techIcons } from '@/config/links';
 
 const techStack = [
@@ -28,6 +28,8 @@ const techStack = [
 const marqueeTech = [...techStack, ...techStack];
 
 const TechStack = () => {
+  const shouldReduceMotion = useReducedMotion();
+
   // Preload images for instant display + browser caching
   useEffect(() => {
     techStack.forEach((tech) => {
@@ -55,16 +57,12 @@ const TechStack = () => {
       <div className="container mx-auto px-6 text-center">
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Tech Stack & Expertise</h2>
         <p className="text-lg text-gray-400 mb-12">My engineer's actual toolkit for building intelligent solutions.</p>
-        <div className="relative w-full h-32 flex items-center">
-          <motion.div
-            className="absolute flex"
-            variants={marqueeVariants}
-            animate="animate"
-          >
-            {marqueeTech.map((tech, index) => (
+        <div className={shouldReduceMotion ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8" : "relative w-full h-32 flex items-center"}>
+          {shouldReduceMotion ? (
+            techStack.map((tech) => (
               <div
-                key={`${tech.name}-${index}`}
-                className="flex-shrink-0 w-48 mx-6 flex flex-col justify-center items-center group"
+                key={tech.name}
+                className="flex flex-col justify-center items-center group"
               >
                 <div className="h-20 w-20 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-white/5 rounded-lg p-3">
                   <img
@@ -73,7 +71,6 @@ const TechStack = () => {
                     src={tech.logo}
                     loading="lazy"
                     onError={(e) => {
-                      // Fallback to placeholder with tech name initial
                       e.target.onerror = null;
                       e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23333' width='100' height='100'/%3E%3Ctext x='50' y='55' font-size='40' text-anchor='middle' fill='%23fff' font-family='Arial'%3E${tech.name[0]}%3C/text%3E%3C/svg%3E`;
                     }}
@@ -83,8 +80,38 @@ const TechStack = () => {
                   {tech.name}
                 </p>
               </div>
-            ))}
-          </motion.div>
+            ))
+          ) : (
+            <motion.div
+              className="absolute flex"
+              variants={marqueeVariants}
+              animate="animate"
+            >
+              {marqueeTech.map((tech, index) => (
+                <div
+                  key={`${tech.name}-${index}`}
+                  className="flex-shrink-0 w-48 mx-6 flex flex-col justify-center items-center group"
+                >
+                  <div className="h-20 w-20 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-white/5 rounded-lg p-3">
+                    <img
+                      className="h-full w-full object-contain"
+                      alt={`${tech.name} logo`}
+                      src={tech.logo}
+                      loading="lazy"
+                      onError={(e) => {
+                        // Fallback to placeholder with tech name initial
+                        e.target.onerror = null;
+                        e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23333' width='100' height='100'/%3E%3Ctext x='50' y='55' font-size='40' text-anchor='middle' fill='%23fff' font-family='Arial'%3E${tech.name[0]}%3C/text%3E%3C/svg%3E`;
+                      }}
+                    />
+                  </div>
+                  <p className="mt-2 text-sm text-gray-300 opacity-80 group-hover:opacity-100 transition-opacity">
+                    {tech.name}
+                  </p>
+                </div>
+              ))}
+            </motion.div>
+          )}
         </div>
       </div>
     </section>

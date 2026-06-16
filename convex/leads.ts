@@ -1,16 +1,28 @@
 import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
-import { internalAction, internalMutation, internalQuery, mutation } from "./_generated/server";
+import { internalAction, internalMutation, mutation } from "./_generated/server";
 import { validateLeadInput } from "./lib/leadValidation";
 
 const RATE_LIMIT_WINDOW_MS = 3_600_000;
 const RATE_LIMIT_MAX_SUBMISSIONS = 3;
+const GLOBAL_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const GLOBAL_RATE_LIMIT_MAX_SUBMISSIONS = 30;
+const EMAIL_RETRY_BATCH_SIZE = 20;
+const EMAIL_ATTEMPT_STALE_MS = 10 * 60 * 1000;
 const RESEND_SANDBOX_FROM = "onboarding@resend.dev";
 const DEFAULT_FROM = `Portfolio Contact <${RESEND_SANDBOX_FROM}>`;
 
 type ContactEmailArgs = {
   leadId: Id<"leads">;
+  name: string;
+  email: string;
+  budget?: string;
+  description: string;
+};
+
+type ClaimedEmailLead = {
+  _id: Id<"leads">;
   name: string;
   email: string;
   budget?: string;
@@ -32,6 +44,8 @@ type ContactEmailSendResult =
 
 type EmailNotificationStatus =
   | "pending"
+  | "sending"
+  | "retrying"
   | "sent"
   | "missing_api_key"
   | "resend_error"
@@ -39,7 +53,7 @@ type EmailNotificationStatus =
 
 type EmailNotificationUpdateStatus = Exclude<
   EmailNotificationStatus,
-  "pending"
+  "sending" | "retrying"
 >;
 
 type ContactEmailDependencies = {
@@ -158,6 +172,16 @@ export const submitLead = mutation({
     const lead = validateLeadInput(args);
 
     const cutoff = Date.now() - RATE_LIMIT_WINDOW_MS;
+    const globalCutoff = Date.now() - GLOBAL_RATE_LIMIT_WINDOW_MS;
+    const recentGlobal = await ctx.db
+      .query("leads")
+      .withIndex("by_createdAt", (q) => q.gt("createdAt", globalCutoff))
+      .take(GLOBAL_RATE_LIMIT_MAX_SUBMISSIONS);
+
+    if (recentGlobal.length >= GLOBAL_RATE_LIMIT_MAX_SUBMISSIONS) {
+      throw new ConvexError("Please wait before submitting again.");
+    }
+
     const recent = await ctx.db
       .query("leads")
       .withIndex("by_email_and_createdAt", (q) =>
@@ -192,6 +216,7 @@ export const markEmailNotificationStatus = internalMutation({
   args: {
     leadId: v.id("leads"),
     status: v.union(
+      v.literal("pending"),
       v.literal("sent"),
       v.literal("missing_api_key"),
       v.literal("resend_error"),
@@ -210,7 +235,56 @@ export const markEmailNotificationStatus = internalMutation({
   },
 });
 
-export const getStalePendingLeads = internalQuery({
+export const claimEmailNotificationAttempt = internalMutation({
+  args: {
+    leadId: v.id("leads"),
+  },
+  returns: v.union(
+    v.object({
+      _id: v.id("leads"),
+      name: v.string(),
+      email: v.string(),
+      budget: v.optional(v.string()),
+      description: v.string(),
+    }),
+    v.null(),
+  ),
+  handler: async (ctx, args) => {
+    const lead = await ctx.db.get(args.leadId);
+    if (!lead) {
+      return null;
+    }
+
+    const now = Date.now();
+    const staleAttemptCutoff = now - EMAIL_ATTEMPT_STALE_MS;
+    const status = lead.emailNotificationStatus ?? "pending";
+    const updatedAt = lead.emailNotificationUpdatedAt ?? 0;
+    const claimable =
+      status === "pending" ||
+      status === "retrying" ||
+      ((status === "sending") && updatedAt < staleAttemptCutoff);
+
+    if (!claimable) {
+      return null;
+    }
+
+    await ctx.db.patch(args.leadId, {
+      emailNotificationStatus: "sending",
+      emailNotificationError: undefined,
+      emailNotificationUpdatedAt: now,
+    });
+
+    return {
+      _id: lead._id,
+      name: lead.name,
+      email: lead.email,
+      budget: lead.budget,
+      description: lead.description,
+    };
+  },
+});
+
+export const claimStaleEmailNotificationRetries = internalMutation({
   args: {
     cutoff: v.number(),
   },
@@ -224,12 +298,61 @@ export const getStalePendingLeads = internalQuery({
     })
   ),
   handler: async (ctx, args) => {
-    const staleLeads = await ctx.db
+    const now = Date.now();
+    const stalePendingLeads = await ctx.db
       .query("leads")
-      .withIndex("by_emailNotificationStatus_and_emailNotificationUpdatedAt", (q) =>
-        q.eq("emailNotificationStatus", "pending").lt("emailNotificationUpdatedAt", args.cutoff)
+      .withIndex(
+        "by_emailNotificationStatus_and_emailNotificationUpdatedAt",
+        (q) =>
+          q
+            .eq("emailNotificationStatus", "pending")
+            .lt("emailNotificationUpdatedAt", args.cutoff),
       )
-      .take(20);
+      .take(EMAIL_RETRY_BATCH_SIZE);
+
+    const remainingAfterPending = EMAIL_RETRY_BATCH_SIZE - stalePendingLeads.length;
+    const staleSendingLeads =
+      remainingAfterPending > 0
+        ? await ctx.db
+            .query("leads")
+            .withIndex(
+              "by_emailNotificationStatus_and_emailNotificationUpdatedAt",
+              (q) =>
+                q
+                  .eq("emailNotificationStatus", "sending")
+                  .lt("emailNotificationUpdatedAt", now - EMAIL_ATTEMPT_STALE_MS),
+            )
+            .take(remainingAfterPending)
+        : [];
+    const remainingAfterSending =
+      EMAIL_RETRY_BATCH_SIZE - stalePendingLeads.length - staleSendingLeads.length;
+    const staleRetryingLeads =
+      remainingAfterSending > 0
+        ? await ctx.db
+            .query("leads")
+            .withIndex(
+              "by_emailNotificationStatus_and_emailNotificationUpdatedAt",
+              (q) =>
+                q
+                  .eq("emailNotificationStatus", "retrying")
+                  .lt("emailNotificationUpdatedAt", args.cutoff),
+            )
+            .take(remainingAfterSending)
+        : [];
+
+    const staleLeads = [
+      ...stalePendingLeads,
+      ...staleSendingLeads,
+      ...staleRetryingLeads,
+    ];
+
+    for (const lead of staleLeads) {
+      await ctx.db.patch(lead._id, {
+        emailNotificationStatus: "retrying",
+        emailNotificationError: "Email notification retry claimed.",
+        emailNotificationUpdatedAt: now,
+      });
+    }
 
     return staleLeads.map((lead) => ({
       _id: lead._id,
@@ -255,6 +378,13 @@ function emailResultToStatus(
     };
   }
 
+  if (result.httpStatus === 429 || result.httpStatus >= 500) {
+    return {
+      status: "pending",
+      error: `Transient Resend API error ${result.httpStatus}: ${result.body}`,
+    };
+  }
+
   return {
     status: "resend_error",
     error: `Resend API returned ${result.httpStatus}: ${result.body}`,
@@ -271,8 +401,23 @@ export const sendContactEmail = internalAction({
   },
   returns: v.null(),
   handler: async (ctx, args) => {
+    const lead: ClaimedEmailLead | null = await ctx.runMutation(
+      internal.leads.claimEmailNotificationAttempt,
+      { leadId: args.leadId },
+    );
+
+    if (!lead) {
+      return null;
+    }
+
     try {
-      const result = await sendContactEmailNotification(args);
+      const result = await sendContactEmailNotification({
+        leadId: lead._id,
+        name: lead.name,
+        email: lead.email,
+        budget: lead.budget,
+        description: lead.description,
+      });
       const update = emailResultToStatus(result);
       await ctx.runMutation(
         internal.leads.markEmailNotificationStatus,
@@ -288,11 +433,10 @@ export const sendContactEmail = internalAction({
         internal.leads.markEmailNotificationStatus,
         {
           leadId: args.leadId,
-          status: "unexpected_error",
-          error: message,
+          status: "pending",
+          error: `Transient email notification error: ${message}`,
         },
       );
-      throw error;
     }
     return null;
   },
