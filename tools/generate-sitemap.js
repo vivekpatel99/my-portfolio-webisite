@@ -6,7 +6,9 @@ const BASE_URL = 'https://www.vivekapatel.com';
 const today = new Date().toISOString().split('T')[0];
 
 const projectSlugs = [
-    'social-media-app',
+    'n8n-openai-data-extraction',
+    'invoice-ocr-extraction',
+    'yolo-computer-vision-optimization',
 ];
 
 const staticPages = [{
@@ -36,20 +38,18 @@ const projectPages = projectSlugs.map(slug => ({
 const allPages = [...staticPages, ...projectPages];
 
 const sitemap = `
-  <?xml version="1.0" encoding="UTF-8"?>
-  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    ${allPages
-      .map(
-        (page) => `
-      <url>
-        <loc>${page.loc}</loc>
-        <lastmod>${page.lastmod}</lastmod>
-        <priority>${page.priority}</priority>
-      </url>
-    `
-      )
-      .join('')}
-  </urlset>
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${allPages
+  .map(
+    (page) => `  <url>
+    <loc>${page.loc}</loc>
+    <lastmod>${page.lastmod}</lastmod>
+    <priority>${page.priority}</priority>
+  </url>`
+  )
+  .join('\n')}
+</urlset>
 `;
 
 try {

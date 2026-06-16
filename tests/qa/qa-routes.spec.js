@@ -2,10 +2,12 @@ import { expect, test } from '@playwright/test';
 
 const routes = [
   { path: '/', heading: /Vivek Patel/i },
-  { path: '/contact', heading: /Let's Build Your/i },
+  { path: '/contact', heading: /Request a Project Estimate/i },
   { path: '/legal', heading: 'Privacy Policy' },
   { path: '/data-policy', heading: 'Cookie Policy' },
-  { path: '/project/social-media-app', heading: /Next-Gen Banking UI/i },
+  { path: '/project/n8n-openai-data-extraction', heading: /n8n \+ OpenAI Data Extraction/i },
+  { path: '/project/invoice-ocr-extraction', heading: /Invoice OCR Extraction/i },
+  { path: '/project/yolo-computer-vision-optimization', heading: /YOLO Computer Vision Optimization/i },
 ];
 
 test.describe('Route rendering', () => {
@@ -28,7 +30,7 @@ test('unknown route redirects to home', async ({ page }) => {
 
 test('invalid project shows toast and redirects', async ({ page }) => {
   await page.goto('/project/nonexistent-slug');
-  await expect(page.getByText(/could not be found|not found/i)).toBeVisible({ timeout: 8000 });
+  await expect(page.getByText('Project Not Found', { exact: true })).toBeVisible({ timeout: 8000 });
   await expect(page).toHaveURL(/\/$/, { timeout: 10000 });
 });
 
@@ -59,22 +61,20 @@ test('header hash nav from contact page lands on services', async ({ page }) => 
     .toBeTruthy();
 });
 
-test('Hire Me CTA navigates to contact', async ({ page }) => {
+test('primary estimate CTA navigates to contact', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/');
-  await page.getByRole('banner').getByRole('button', { name: /Hire Me/i }).click();
+  await page.getByRole('banner').getByRole('button', { name: /Request Estimate/i }).click();
   await expect(page).toHaveURL(/\/contact/);
 });
 
-test('portfolio cards open external links', async ({ page, context }) => {
+test('portfolio cards navigate to internal case studies', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/#portfolio');
   await page.locator('#portfolio').scrollIntoViewIfNeeded();
-  const popupPromise = context.waitForEvent('page');
-  await page.getByRole('button', { name: /View project: Automated Data Extraction/i }).click();
-  const popup = await popupPromise;
-  expect(popup.url()).toMatch(/upwork\.com|github\.com/);
-  await popup.close();
+  await page.getByRole('link', { name: /Read case study: Automated Data Extraction/i }).click();
+  await expect(page).toHaveURL(/\/project\/n8n-openai-data-extraction/);
+  await expect(page.getByRole('heading', { name: /n8n \+ OpenAI Data Extraction/i })).toBeVisible();
 });
 
 test('back navigation restores contact page', async ({ page }) => {

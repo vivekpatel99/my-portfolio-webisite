@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Github, Linkedin, Mail, ArrowRight, Loader2 } from 'lucide-react';
+import { Github, Linkedin, Mail, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
 import { useMutation } from 'convex/react';
 import { api } from '@convex/api';
 import { socialLinks } from '@/config/links';
@@ -33,6 +33,18 @@ const platformLinks = [
     { name: 'Freelancer.com', icon: FreelancerIcon, url: socialLinks.freelancer }, // Using centralized link
     { name: 'FreelancerMap', icon: FreelancerMapIcon, url: socialLinks.freelancerMap }, // Using centralized link
     { name: 'Email', icon: Mail, url: socialLinks.emailHref } // Using centralized link
+];
+
+const nextSteps = [
+  'I review the project goals, data sources, and technical risks.',
+  'You receive a suggested scope, timeline, and first milestone.',
+  'If it is a fit, we start with a focused build or optimization sprint.',
+];
+
+const descriptionPrompts = [
+  'What data, documents, images, or workflow should be automated?',
+  'What does a successful output look like?',
+  'Do you already have code, samples, screenshots, or a deadline?',
 ];
 
 const pageVariants = {
@@ -138,11 +150,11 @@ const Contact = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
           >
-            <h1 className="text-2xl sm:text-3xl md:text-6xl font-bold text-white uppercase mb-4 leading-tight break-words">
-            Let's Build Your <span className="text-accent-purple">Computer Vision</span>, <span className="text-accent-purple">Web Scraping</span> & <span className="text-accent-purple">AI</span> Projects — <span className="text-accent-purple">€80/hour</span>
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white uppercase mb-4 leading-tight break-words">
+              Request a <span className="text-accent-purple">Project Estimate</span>
             </h1>
             <p className="text-lg text-gray-400 mb-12">
-              Have a project in mind? Reach out directly using the form below or connect with me on your favorite platform. I typically respond within 24 hours.
+              Share the workflow, data problem, or computer-vision bottleneck you want solved. I typically respond within 24 hours with fit, next steps, and the clearest scope path.
             </p>
           </motion.div>
 
@@ -152,41 +164,69 @@ const Contact = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
+            role="region"
+            aria-label="Client success metrics"
           >
-            <div className="flex flex-wrap justify-center gap-6 text-center">
-              <div className="flex items-center gap-2">
+            <ul className="flex flex-wrap justify-center gap-6 text-center">
+              <li className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-accent-purple">100%</span>
                 <span className="text-gray-400 text-sm">Job Success<br/>on Upwork</span>
-              </div>
-              <div className="hidden sm:block w-px h-12 bg-white/10"></div>
-              <div className="flex items-center gap-2">
+              </li>
+              <li className="hidden sm:block w-px h-12 bg-white/10" role="separator" aria-hidden="true"></li>
+              <li className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-accent-purple">11+</span>
                 <span className="text-gray-400 text-sm">Projects<br/>Delivered</span>
-              </div>
-              <div className="hidden sm:block w-px h-12 bg-white/10"></div>
-              <div className="flex items-center gap-2">
+              </li>
+              <li className="hidden sm:block w-px h-12 bg-white/10" role="separator" aria-hidden="true"></li>
+              <li className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-accent-purple">5★</span>
                 <span className="text-gray-400 text-sm">Average<br/>Rating</span>
-              </div>
-            </div>
+              </li>
+            </ul>
           </motion.div>
 
-          <div className="max-w-2xl mx-auto">
+          <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[0.85fr_1.15fr]">
+            <motion.aside
+              className="rounded-lg border border-white/10 bg-white/[0.04] p-6"
+              initial={{ opacity: 0, x: -16 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.35 }}
+            >
+              <h2 className="text-2xl font-bold uppercase text-white">What happens next</h2>
+              <div className="mt-6 space-y-5">
+                {nextSteps.map((step, index) => (
+                  <div key={step} className="flex gap-3">
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-accent-purple" aria-hidden="true" />
+                    <p className="text-sm leading-relaxed text-gray-300">
+                      <span className="font-semibold text-white">Step {index + 1}:</span> {step}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-8 rounded-lg border border-accent-purple/20 bg-accent-purple/10 p-4">
+                <p className="text-sm text-gray-300">Prefer email?</p>
+                <a href={socialLinks.emailHref} className="mt-1 inline-flex items-center gap-2 font-semibold text-white hover:text-accent-purple">
+                  <Mail className="h-4 w-4" aria-hidden="true" />
+                  {socialLinks.contactEmail}
+                </a>
+              </div>
+            </motion.aside>
+
             <motion.form
               onSubmit={handleSubmit}
               noValidate
-              className="space-y-6 bg-white/5 p-8 rounded-2xl border border-white/10"
+              className="space-y-6 bg-white/5 p-6 sm:p-8 rounded-lg border border-white/10"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.7, delay: 0.4 }}
             >
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">Full Name *</label>
-                <Input type="text" id="name" name="name" placeholder="John Doe" value={formState.name} onChange={handleInputChange} className="h-14" required disabled={isSubmitting} />
+                <Input type="text" id="name" name="name" placeholder="Alex from Acme Ops" value={formState.name} onChange={handleInputChange} className="h-14" required disabled={isSubmitting} />
               </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">Email Address *</label>
-                <Input type="email" id="email" name="email" placeholder="john@company.com" value={formState.email} onChange={handleInputChange} className="h-14" required disabled={isSubmitting} />
+                <Input type="email" id="email" name="email" placeholder="alex@company.com" value={formState.email} onChange={handleInputChange} className="h-14" required disabled={isSubmitting} />
               </div>
               <div>
                 <label htmlFor="budget" className="block text-sm font-medium text-gray-300 mb-2">Budget Range (Optional)</label>
@@ -204,7 +244,18 @@ const Contact = () => {
               </div>
               <div>
                 <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-2">Project Description *</label>
-                <Textarea id="description" name="description" placeholder="Tell me about your project, goals, and timeline..." value={formState.description} onChange={handleInputChange} rows={5} required disabled={isSubmitting} />
+                <Textarea id="description" name="description" placeholder="Example: We need invoice OCR or a data extraction workflow that exports clean records to our CRM within 4 weeks..." value={formState.description} onChange={handleInputChange} rows={5} required disabled={isSubmitting} />
+                <div className="mt-3 rounded-lg border border-white/10 bg-black/20 p-4">
+                  <p className="text-sm font-semibold text-white">Helpful details to include:</p>
+                  <ul className="mt-2 space-y-2 text-sm text-gray-400">
+                    {descriptionPrompts.map((prompt) => (
+                      <li key={prompt} className="flex gap-2">
+                        <span className="text-accent-purple">•</span>
+                        <span>{prompt}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
               <div className="text-center">
                  <button
@@ -220,7 +271,7 @@ const Contact = () => {
                         </>
                       ) : (
                         <>
-                          Send My Project Details <ArrowRight className="ml-2 h-5 w-5" />
+                          Request a Project Estimate <ArrowRight className="ml-2 h-5 w-5" />
                         </>
                       )}
                     </span>
@@ -247,9 +298,10 @@ const Contact = () => {
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label={`Connect with Vivek Patel on ${link.name}`}
                     className="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-lg text-white font-semibold transition-all hover:bg-white/10 hover:border-accent-purple/50"
                   >
-                    <Icon />
+                    <Icon aria-hidden="true" />
                     {link.name}
                   </a>
                 );

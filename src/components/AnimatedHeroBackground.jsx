@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { backgrounds } from '@/config/links';
 
@@ -9,13 +9,7 @@ const layers = [
     initial: { x: '-5%', y: '-5%', scale: 1.1 },
     animate: { x: '5%', y: '5%' },
     transition: { duration: 20, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' },
-    opacity: 0.8,
-  },
-  {
-    initial: { x: '5%', y: '5%', scale: 1.2 },
-    animate: { x: '-5%', y: '-5%' },
-    transition: { duration: 25, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' },
-    opacity: 0.6,
+    opacity: 0.7,
   },
   {
     initial: { x: '0%', y: '10%', scale: 1.05 },
@@ -26,6 +20,32 @@ const layers = [
 ];
 
 const AnimatedHeroBackground = () => {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    const handleChange = (e) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handleChange);
+
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  if (prefersReducedMotion) {
+    return (
+      <div 
+        className="absolute inset-0 w-full h-full"
+        style={{
+          backgroundImage: `url(${imageUrl})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: 0.8,
+        }}
+      />
+    );
+  }
+
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden">
       {layers.map((layer, index) => (
@@ -40,6 +60,7 @@ const AnimatedHeroBackground = () => {
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             opacity: layer.opacity,
+            willChange: 'transform',
           }}
         />
       ))}
