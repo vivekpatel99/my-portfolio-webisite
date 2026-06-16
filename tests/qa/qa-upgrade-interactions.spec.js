@@ -61,7 +61,7 @@ test('hero and header CTAs activate the expected routes and sections', async ({ 
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/');
 
-  await page.getByRole('button', { name: 'View Case Studies' }).click();
+  await page.getByRole('link', { name: 'View Case Studies' }).click();
   await expect
     .poll(async () => {
       const box = await page.locator('#portfolio').boundingBox();
