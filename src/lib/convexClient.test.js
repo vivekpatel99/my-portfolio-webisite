@@ -34,10 +34,10 @@ describe('resolveConvexClientConfig', () => {
     });
   });
 
-  it('fails fast in production without a Convex URL', () => {
+  it('keeps production bootable without a Convex URL', () => {
     expect(resolveConvexClientConfig('', { isProduction: true })).toEqual({
       issue: 'Missing VITE_CONVEX_URL.',
-      shouldFailFast: true,
+      shouldFailFast: false,
       url: null,
     });
   });
@@ -49,7 +49,7 @@ describe('resolveConvexClientConfig', () => {
     ]) {
       expect(resolveConvexClientConfig(url, { isProduction: true })).toEqual({
         issue: 'VITE_CONVEX_URL still contains a placeholder value.',
-        shouldFailFast: true,
+        shouldFailFast: false,
         url: null,
       });
     }
@@ -62,7 +62,7 @@ describe('resolveConvexClientConfig', () => {
       }),
     ).toEqual({
       issue: 'Production VITE_CONVEX_URL must use https://.',
-      shouldFailFast: true,
+      shouldFailFast: false,
       url: null,
     });
   });
@@ -74,7 +74,7 @@ describe('resolveConvexClientConfig', () => {
       }),
     ).toEqual({
       issue: 'Production VITE_CONVEX_URL must point to a convex.cloud deployment.',
-      shouldFailFast: true,
+      shouldFailFast: false,
       url: null,
     });
   });
@@ -86,7 +86,7 @@ describe('resolveConvexClientConfig', () => {
       }),
     ).toEqual({
       issue: 'Production VITE_CONVEX_URL must point to a convex.cloud deployment.',
-      shouldFailFast: true,
+      shouldFailFast: false,
       url: null,
     });
   });
@@ -99,7 +99,7 @@ describe('resolveConvexClientConfig', () => {
     ]) {
       expect(resolveConvexClientConfig(url, { isProduction: true })).toEqual({
         issue: 'Production VITE_CONVEX_URL must not include a path, query, or hash.',
-        shouldFailFast: true,
+        shouldFailFast: false,
         url: null,
       });
     }
@@ -112,7 +112,7 @@ describe('resolveConvexClientConfig', () => {
     ]) {
       expect(resolveConvexClientConfig(url, { isProduction: true })).toEqual({
         issue: 'Production VITE_CONVEX_URL must not include an explicit port.',
-        shouldFailFast: true,
+        shouldFailFast: false,
         url: null,
       });
     }
@@ -125,7 +125,7 @@ describe('resolveConvexClientConfig', () => {
     ]) {
       expect(resolveConvexClientConfig(url, { isProduction: true })).toEqual({
         issue: 'Production VITE_CONVEX_URL must not include credentials.',
-        shouldFailFast: true,
+        shouldFailFast: false,
         url: null,
       });
     }

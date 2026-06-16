@@ -1,6 +1,16 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+
+  RewriteCond %{HTTP_HOST} ^vivekapatel\.com$ [NC]
+  RewriteRule ^ https://www.vivekapatel.com%{REQUEST_URI} [R=301,L,QSA]
+
+  # Missing hashed Vite assets must fail as 404s. Rewriting them to
+  # index.html makes browsers reject module scripts as text/html.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^assets/ - [R=404,L]
+
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule ^ index.html [L]
@@ -9,11 +19,12 @@
 <IfModule mod_headers.c>
   Header set X-Powered-By "Hostinger Horizons"
 
-  # Cache everything on CDN by default
-  Header set Cache-Control "public, s-maxage=604800, max-age=0"
+  # HTML must revalidate so mobile CDN variants do not keep stale bundle URLs.
+  # Use no-cache instead of no-store to preserve bfcache for better back/forward UX.
+  Header set Cache-Control "no-cache, must-revalidate, max-age=0"
   
-  # Cache in browser all assets
+  # Hashed Vite assets are safe to cache aggressively.
   <If "%{REQUEST_URI} =~ m#^/assets/.*$#">
-    Header set Cache-Control "public, max-age=604800"
+    Header set Cache-Control "public, max-age=31536000, immutable"
   </If>
 </IfModule>

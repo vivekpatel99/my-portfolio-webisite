@@ -94,6 +94,18 @@ test('rapid route switching does not crash', async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
+test('fetch instrumentation supports URL objects', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('/');
+  const status = await page.evaluate(async () => {
+    const response = await fetch(new URL('/robots.txt', window.location.href));
+    return response.status;
+  });
+  expect(status).toBe(200);
+  expect(errors).toEqual([]);
+});
+
 test('legal pages are scrollable to footer', async ({ page }) => {
   await page.goto('/legal');
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));

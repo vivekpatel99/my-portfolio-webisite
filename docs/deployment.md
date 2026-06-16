@@ -44,7 +44,16 @@ Convex backend email variables are set in the Convex dashboard:
 3. Wait for GitHub CI to pass.
 4. Merge to `main`.
 5. Hostinger Horizons auto-builds and refreshes the site.
-6. Verify `/`, `/contact`, `/robots.txt`, and `/sitemap.xml` on the live domain.
+6. Purge the Hostinger/CDN cache after the new build is live, especially after
+   Vite bundle changes. HTML is configured to revalidate, while hashed
+   `/assets/` files are cached long-term.
+7. Verify both `http://vivekapatel.com/` and `https://vivekapatel.com/` redirect
+   to `https://www.vivekapatel.com/` with query strings preserved after the purge.
+   Example: `https://vivekapatel.com/contact?source=test` should redirect to
+   `https://www.vivekapatel.com/contact?source=test`
+8. Verify `/`, `/contact`, `/robots.txt`, and `/sitemap.xml` on the live domain.
+9. Verify a missing asset such as `/assets/not-a-real-bundle.js` returns `404`
+   instead of rewriting to the homepage.
 
 For contact-form changes, submit one clearly marked QA lead only after explicit
 approval for live side effects, then confirm that the lead and email
