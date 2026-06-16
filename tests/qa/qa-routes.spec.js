@@ -5,6 +5,9 @@ const routes = [
   { path: '/contact', heading: /Let's Build Your/i },
   { path: '/legal', heading: 'Privacy Policy' },
   { path: '/data-policy', heading: 'Cookie Policy' },
+  { path: '/project/n8n-openai-data-extraction', heading: /n8n \+ OpenAI Data Extraction/i },
+  { path: '/project/invoice-ocr-extraction', heading: /Invoice OCR Extraction/i },
+  { path: '/project/yolo-computer-vision-optimization', heading: /YOLO Computer Vision Optimization/i },
   { path: '/project/social-media-app', heading: /Next-Gen Banking UI/i },
 ];
 
@@ -21,15 +24,18 @@ test.describe('Route rendering', () => {
   }
 });
 
-test('unknown route redirects to home', async ({ page }) => {
+test('unknown route renders a noindex 404 page', async ({ page }) => {
   await page.goto('/foo-bar-baz');
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/foo-bar-baz$/);
+  await expect(page.getByRole('heading', { name: 'Page Not Found' })).toBeVisible();
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, nofollow');
 });
 
-test('invalid project shows toast and redirects', async ({ page }) => {
+test('invalid project renders a noindex 404 page', async ({ page }) => {
   await page.goto('/project/nonexistent-slug');
-  await expect(page.getByText(/could not be found|not found/i)).toBeVisible({ timeout: 8000 });
-  await expect(page).toHaveURL(/\/$/, { timeout: 10000 });
+  await expect(page).toHaveURL(/\/project\/nonexistent-slug$/);
+  await expect(page.getByRole('heading', { name: 'Page Not Found' })).toBeVisible();
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, nofollow');
 });
 
 test('header hash nav on same page scrolls to section', async ({ page }) => {
@@ -66,14 +72,23 @@ test('Hire Me CTA navigates to contact', async ({ page }) => {
   await expect(page).toHaveURL(/\/contact/);
 });
 
-test('portfolio cards open external links', async ({ page, context }) => {
+test('portfolio case-study cards open internal project pages', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto('/#portfolio');
+  await page.locator('#portfolio').scrollIntoViewIfNeeded();
+  await page.getByRole('link', { name: /Read case study: Automated Data Extraction/i }).click();
+  await expect(page).toHaveURL(/\/project\/n8n-openai-data-extraction/);
+  await expect(page.getByRole('heading', { name: /n8n \+ OpenAI Data Extraction/i })).toBeVisible();
+});
+
+test('portfolio external cards open external links', async ({ page, context }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/#portfolio');
   await page.locator('#portfolio').scrollIntoViewIfNeeded();
   const popupPromise = context.waitForEvent('page');
-  await page.getByRole('button', { name: /View project: Automated Data Extraction/i }).click();
+  await page.getByRole('link', { name: /View project: Multi-Player Sports Tracking/i }).click();
   const popup = await popupPromise;
-  expect(popup.url()).toMatch(/upwork\.com|github\.com/);
+  expect(popup.url()).toMatch(/github\.com/);
   await popup.close();
 });
 

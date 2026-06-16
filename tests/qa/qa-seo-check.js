@@ -16,26 +16,38 @@ const expectedRoutes = [
   {
     route: 'contact',
     path: '/contact',
-    canonical: 'https://www.vivekapatel.com/contact',
+    canonical: 'https://www.vivekapatel.com/contact/',
     title: /Contact/i,
   },
   {
     route: 'legal',
     path: '/legal',
-    canonical: 'https://www.vivekapatel.com/legal',
+    canonical: 'https://www.vivekapatel.com/legal/',
     title: /Privacy Policy/i,
   },
   {
     route: 'data-policy',
     path: '/data-policy',
-    canonical: 'https://www.vivekapatel.com/data-policy',
+    canonical: 'https://www.vivekapatel.com/data-policy/',
     title: /Cookie Policy/i,
   },
   {
-    route: 'project',
-    path: '/project/social-media-app',
-    canonical: 'https://www.vivekapatel.com/project/social-media-app',
-    title: /Next-Gen Banking UI/i,
+    route: 'n8n-project',
+    path: '/project/n8n-openai-data-extraction',
+    canonical: 'https://www.vivekapatel.com/project/n8n-openai-data-extraction/',
+    title: /n8n \+ OpenAI Data Extraction/i,
+  },
+  {
+    route: 'invoice-project',
+    path: '/project/invoice-ocr-extraction',
+    canonical: 'https://www.vivekapatel.com/project/invoice-ocr-extraction/',
+    title: /Invoice OCR Extraction/i,
+  },
+  {
+    route: 'yolo-project',
+    path: '/project/yolo-computer-vision-optimization',
+    canonical: 'https://www.vivekapatel.com/project/yolo-computer-vision-optimization/',
+    title: /YOLO Computer Vision Optimization/i,
   },
 ];
 

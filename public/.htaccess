@@ -1,8 +1,10 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+  ErrorDocument 404 /404.html
 
-  RewriteCond %{HTTP_HOST} ^vivekapatel\.com$ [NC]
+  RewriteCond %{HTTPS} !=on [OR]
+  RewriteCond %{HTTP_HOST} !^www\.vivekapatel\.com$ [NC]
   # Keep the target query-free so Apache preserves the original query string.
   RewriteRule ^(.*)$ https://www.vivekapatel.com/$1 [R=301,L]
 
@@ -14,11 +16,28 @@
 
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^ index.html [L]
+  RewriteRule ^$ index.html [L]
+
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(contact|legal|data-policy)/?$ index.html [L]
+
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^project/(n8n-openai-data-extraction|invoice-ocr-extraction|yolo-computer-vision-optimization|social-media-app)/?$ index.html [L]
+
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ - [R=404,L]
 </IfModule>
 
 <IfModule mod_headers.c>
-  Header set X-Powered-By "Hostinger Horizons"
+  Header unset X-Powered-By
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+  Header set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://stats.g.doubleclick.net https://*.ingest.de.sentry.io https://*.convex.cloud wss://*.convex.cloud; upgrade-insecure-requests"
 
   # HTML must revalidate so mobile CDN variants do not keep stale bundle URLs.
   # Allow browser storage while preserving bfcache for better back/forward UX.

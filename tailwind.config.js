@@ -41,7 +41,7 @@ module.exports = {
         accent: {
           default: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
-          purple: '#9372FF', // Updated accent purple color
+          purple: '#7C3AED',
         },
         popover: {
           default: 'hsl(var(--popover))',

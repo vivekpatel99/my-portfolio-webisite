@@ -8,6 +8,7 @@ import { assetsLinks } from '@/config/links';
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const headerRef = useRef(null);
   const menuRef = useRef(null);
   const closeButtonRef = useRef(null);
   const previousFocusRef = useRef(null);
@@ -43,6 +44,29 @@ const Header = () => {
     previousFocusRef.current = document.activeElement;
     closeButtonRef.current?.focus();
 
+    const backgroundElements = [
+      headerRef.current,
+      document.getElementById('main-content'),
+      document.querySelector('footer'),
+      document.querySelector('a[href="#main-content"]'),
+    ].filter(Boolean);
+    const backgroundElementState = backgroundElements.map((element) => ({
+      element,
+      ariaHidden: element.getAttribute('aria-hidden'),
+      hadInertAttribute: element.hasAttribute('inert'),
+      inert: element.inert,
+    }));
+    const previousOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    backgroundElements.forEach((element) => {
+      element.setAttribute('aria-hidden', 'true');
+      element.setAttribute('inert', '');
+      element.inert = true;
+    });
+
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         setIsOpen(false);
@@ -75,6 +99,22 @@ const Header = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      backgroundElementState.forEach(({ element, ariaHidden, hadInertAttribute, inert }) => {
+        if (ariaHidden === null) {
+          element.removeAttribute('aria-hidden');
+        } else {
+          element.setAttribute('aria-hidden', ariaHidden);
+        }
+
+        if (hadInertAttribute) {
+          element.setAttribute('inert', '');
+        } else {
+          element.removeAttribute('inert');
+        }
+        element.inert = inert;
+      });
       previousFocusRef.current?.focus?.();
     };
   }, [isOpen]);
@@ -113,6 +153,7 @@ const Header = () => {
   return (
     <>
       <motion.header
+        ref={headerRef}
         className={`fixed top-0 left-0 w-full z-50 transition-colors duration-300 ${isScrolled ? 'bg-[#0C0D0D]/80 backdrop-blur-lg border-b border-white/10' : 'bg-transparent'}`}
       >
         <div className="container mx-auto px-6 h-20 flex justify-between items-center">
@@ -135,7 +176,7 @@ const Header = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-white"
+              className="min-h-11 min-w-11 inline-flex items-center justify-center text-white"
               aria-label="Toggle navigation menu"
               aria-expanded={isOpen}
               aria-controls="mobile-menu"
@@ -165,7 +206,7 @@ const Header = () => {
                 <Link to="/" onClick={handleHomeClick} className="flex items-center">
                   <img src={assetsLinks.logo} alt="Vivek Patel Logo" className="h-12" />
                 </Link>
-                <button ref={closeButtonRef} onClick={() => setIsOpen(false)} className="text-white" aria-label="Close navigation menu">
+                <button ref={closeButtonRef} onClick={() => setIsOpen(false)} className="min-h-11 min-w-11 inline-flex items-center justify-center text-white" aria-label="Close navigation menu">
                   <X size={28} />
                 </button>
               </div>

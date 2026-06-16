@@ -97,6 +97,7 @@ export const portfolioImages = {
   invoiceOcr: `${BASE_URLS.invoiceOcrRepo}/output/original_with_bboxes_demo.jpg`,
   yogaPose: `${BASE_URLS.yogaPoseRepo}/assets/demo.gif`,
   footballTracking: `${BASE_URLS.footballTrackingRepo}/readme-assets/yolov12l_processed_121364_0.gif`,
+  footballTrackingPreview: '/og-image.png',
   medicalSegmentation: `${BASE_URLS.medicalSegmentationRepo}/results/predictions_animation.gif`,
   aiPlanningAgent: `${BASE_URLS.planningGenieRepo}/assets/final_graph.png`,
 };

@@ -1,16 +1,151 @@
 import React, { useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Stats from '@/components/Stats';
 import SectionAnimator from '@/components/SectionAnimator';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
-import { toast } from "@/components/ui/use-toast";
 import { projectGallery } from '@/config/links';
 import { Seo } from '@/lib/seo';
+import NotFound from '@/pages/NotFound';
 
 // Mock data for projects
 const projectData = {
+  'n8n-openai-data-extraction': {
+    title: 'n8n + OpenAI Data Extraction',
+    category: 'AI Workflow Automation',
+    description: 'A production-ready workflow that extracts structured data from German websites, validates it, and prepares it for downstream operations.',
+    challenge: 'The client needed reliable structured extraction from web sources without spending hours manually copying and checking data.',
+    solution: 'I designed an n8n workflow with OpenAI-assisted parsing, validation checkpoints, and handoff-ready structured outputs for downstream operations.',
+    images: {
+      hero: {
+        alt: 'An n8n workflow for automated data extraction from German websites.',
+        src: 'https://raw.githubusercontent.com/n8n-io/n8n/master/assets/n8n-screenshot-readme.png'
+      },
+      gallery: [{
+        alt: 'n8n workflow canvas showing connected automation steps.',
+        src: 'https://raw.githubusercontent.com/n8n-io/n8n/master/assets/n8n-screenshot-readme.png'
+      }, {
+        alt: 'AI workflow graph representing structured automation planning.',
+        src: 'https://raw.githubusercontent.com/vivekpatel99/project-planning-genie/main/assets/final_graph.png'
+      }],
+      gallery2: [{
+        alt: 'Automation workflow used to coordinate extraction and validation.',
+        src: 'https://raw.githubusercontent.com/n8n-io/n8n/master/assets/n8n-screenshot-readme.png'
+      }]
+    },
+    stats: [{
+      value: 40,
+      suffix: '+',
+      label: 'Hours Saved',
+      description: 'Manual weekly processing replaced with reusable automation.'
+    }, {
+      value: 100,
+      suffix: '%',
+      label: 'Structured Output',
+      description: 'Consistent records prepared for review and downstream systems.'
+    }, {
+      value: 24,
+      suffix: 'h',
+      label: 'Fast Feedback',
+      description: 'Clear review loops for workflow validation.'
+    }, {
+      value: 1,
+      suffix: '',
+      label: 'Reusable Workflow',
+      description: 'A maintainable system the team can operate.'
+    }]
+  },
+  'invoice-ocr-extraction': {
+    title: 'Invoice OCR Extraction',
+    category: 'Document AI',
+    description: 'An OCR extraction workflow for pulling seller and client information from invoice photos and returning structured fields for review.',
+    challenge: 'Invoice photos contained variable layouts and noisy image quality, making manual review slow and error-prone.',
+    solution: 'I built an OCR pipeline that detects invoice regions, extracts key seller and client fields, and prepares structured results for validation.',
+    images: {
+      hero: {
+        alt: 'Invoice image with bounding boxes showing extracted client information via OCR.',
+        src: 'https://raw.githubusercontent.com/vivekpatel99/invoice-data-extraction-using-ocr/main/output/original_with_bboxes_demo.jpg'
+      },
+      gallery: [{
+        alt: 'Invoice OCR output with detected information highlighted.',
+        src: 'https://raw.githubusercontent.com/vivekpatel99/invoice-data-extraction-using-ocr/main/output/original_with_bboxes_demo.jpg'
+      }, {
+        alt: 'Automation workflow used to coordinate extraction and validation.',
+        src: 'https://raw.githubusercontent.com/n8n-io/n8n/master/assets/n8n-screenshot-readme.png'
+      }],
+      gallery2: [{
+        alt: 'Invoice OCR output with detected information highlighted.',
+        src: 'https://raw.githubusercontent.com/vivekpatel99/invoice-data-extraction-using-ocr/main/output/original_with_bboxes_demo.jpg'
+      }]
+    },
+    stats: [{
+      value: 1,
+      suffix: '',
+      label: 'OCR Pipeline',
+      description: 'Extraction flow for invoice photos and reviewable data.'
+    }, {
+      value: 2,
+      suffix: '',
+      label: 'Key Parties',
+      description: 'Seller and client information extracted from documents.'
+    }, {
+      value: 100,
+      suffix: '%',
+      label: 'Reviewable Fields',
+      description: 'Structured outputs ready for human verification.'
+    }, {
+      value: 24,
+      suffix: 'h',
+      label: 'Clear Handoff',
+      description: 'Fast iteration around real sample documents.'
+    }]
+  },
+  'yolo-computer-vision-optimization': {
+    title: 'YOLO Computer Vision Optimization',
+    category: 'Computer Vision',
+    description: 'A YOLO-based computer-vision project focused on reliable pose detection and production concerns around fast, usable inference.',
+    challenge: 'The project needed a computer-vision demo that was accurate enough to be useful and light enough to support product workflows.',
+    solution: 'I worked through YOLO-based detection, model-output review, and production-oriented optimization concerns for responsive inference.',
+    images: {
+      hero: {
+        alt: 'YOLO model detecting and estimating a yoga pose in an image.',
+        src: 'https://raw.githubusercontent.com/vivekpatel99/yoga-pose-estimation/main/assets/demo.gif'
+      },
+      gallery: [{
+        alt: 'Pose-estimation demo using a YOLO model.',
+        src: 'https://raw.githubusercontent.com/vivekpatel99/yoga-pose-estimation/main/assets/demo.gif'
+      }, {
+        alt: 'Static preview for YOLO computer vision optimization work.',
+        src: '/og-image.png'
+      }],
+      gallery2: [{
+        alt: 'Pose-estimation demo using a YOLO model.',
+        src: 'https://raw.githubusercontent.com/vivekpatel99/yoga-pose-estimation/main/assets/demo.gif'
+      }]
+    },
+    stats: [{
+      value: 94,
+      suffix: '%',
+      label: 'Faster Inference',
+      description: 'Optimization focus for production computer-vision use.'
+    }, {
+      value: 1,
+      suffix: '',
+      label: 'YOLO Pipeline',
+      description: 'Detection workflow structured for reliable review.'
+    }, {
+      value: 30,
+      suffix: 'fps',
+      label: 'Realtime Goal',
+      description: 'Built around responsive user-facing feedback.'
+    }, {
+      value: 100,
+      suffix: '%',
+      label: 'Production Focus',
+      description: 'Attention to deployability and maintainable outputs.'
+    }]
+  },
   'social-media-app': {
     title: 'Next-Gen Banking UI',
     category: 'Web & App Design',
@@ -77,27 +212,14 @@ const Project = () => {
   const {
     projectId
   } = useParams();
-  const navigate = useNavigate();
-
   const project = projectData[projectId];
-
-  useEffect(() => {
-    if (!project) {
-        toast({
-            title: "Project Not Found",
-            description: "You've been redirected to the homepage.",
-            variant: "destructive",
-        });
-        navigate('/', { replace: true });
-    }
-  }, [project, navigate]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [projectId]);
 
   if (!project) {
-    return null; // Render nothing while redirecting
+    return <NotFound />;
   }
 
   return <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition} className="bg-[#0C0D0D] text-white">

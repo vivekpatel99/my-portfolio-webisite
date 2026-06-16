@@ -13,6 +13,24 @@ export const defaultSeo = {
   image: DEFAULT_OG_IMAGE_PATH,
 };
 
+export const normalizeSitePath = (pathOrUrl = '/') => {
+  if (/^https?:\/\//i.test(pathOrUrl)) {
+    return pathOrUrl;
+  }
+
+  const path = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
+  if (path === '/') {
+    return '/';
+  }
+
+  const hasFileExtension = /\/[^/]+\.[^/]+$/.test(path);
+  if (hasFileExtension) {
+    return path;
+  }
+
+  return `${path.replace(/\/+$/, '')}/`;
+};
+
 export const routeSeo = {
   '/': defaultSeo,
   '/contact': {
@@ -41,6 +59,36 @@ export const routeSeo = {
     type: 'website',
     image: DEFAULT_OG_IMAGE_PATH,
   },
+  '/project/n8n-openai-data-extraction': {
+    title: 'n8n + OpenAI Data Extraction | AI Case Study - Vivek Patel',
+    description:
+      'A production-ready workflow that extracts structured data from German websites, validates it, and prepares it for downstream operations.',
+    keywords:
+      'n8n OpenAI automation, data extraction workflow, web scraping automation, AI workflow case study, Vivek Patel',
+    path: '/project/n8n-openai-data-extraction',
+    type: 'article',
+    image: DEFAULT_OG_IMAGE_PATH,
+  },
+  '/project/invoice-ocr-extraction': {
+    title: 'Invoice OCR Extraction | AI Case Study - Vivek Patel',
+    description:
+      'An OCR extraction workflow for pulling seller and client information from invoice photos and returning structured fields for review.',
+    keywords:
+      'invoice OCR, document AI, data extraction, computer vision case study, Vivek Patel',
+    path: '/project/invoice-ocr-extraction',
+    type: 'article',
+    image: DEFAULT_OG_IMAGE_PATH,
+  },
+  '/project/yolo-computer-vision-optimization': {
+    title: 'YOLO Computer Vision Optimization | AI Case Study - Vivek Patel',
+    description:
+      'A YOLO-based computer-vision project focused on reliable pose detection and production concerns around fast, usable inference.',
+    keywords:
+      'YOLO optimization, computer vision, pose detection, AI case study, Vivek Patel',
+    path: '/project/yolo-computer-vision-optimization',
+    type: 'article',
+    image: DEFAULT_OG_IMAGE_PATH,
+  },
   '/project/social-media-app': {
     title: 'Next-Gen Banking UI | Project Case Study - Vivek Patel',
     description:
@@ -59,6 +107,5 @@ export const absoluteUrl = (pathOrUrl = '/') => {
     return pathOrUrl;
   }
 
-  const path = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
-  return `${SITE_URL}${path === '/' ? '/' : path}`;
+  return `${SITE_URL}${normalizeSitePath(pathOrUrl)}`;
 };

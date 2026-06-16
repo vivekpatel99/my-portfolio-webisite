@@ -1,43 +1,42 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { portfolioImages } from '@/config/links';
 
 const projects = [
   {
     id: 1,
-    slug: 'Automated-Data-Extraction-Workflow-using-n8n',
+    slug: 'n8n-openai-data-extraction',
     title: 'Automated Data Extraction — n8n + OpenAI',
     imgUrl: portfolioImages.n8nWorkflow,
     imgAlt: "An n8n workflow for automated data extraction from German websites.",
     externalLink: "https://www.upwork.com/freelancers/vivekpatel99?p=1981676982472949760",
-    isExternal: true
+    isExternal: false
   },
   {
     id: 2,
-    slug: 'Extract-seller-and-client-information-from-photos-using-OCR',
+    slug: 'invoice-ocr-extraction',
     title: 'Invoice OCR Data Extraction',
     imgUrl: portfolioImages.invoiceOcr,
     imgAlt: "Invoice image with bounding boxes showing extracted client information via OCR.",
     externalLink: "https://www.upwork.com/freelancers/vivekpatel99?p=1961697513038176256",
-    isExternal: true
+    isExternal: false
   },
   {
     id: 3,
-    slug: 'Yoga-Pose-Estimation-with-YOLO',
+    slug: 'yolo-computer-vision-optimization',
     title: 'Real-time Yoga Pose Detection — YOLO',
     imgUrl: portfolioImages.yogaPose,
     imgAlt: "YOLO model detecting and estimating a yoga pose in an image.",
     externalLink: "https://www.upwork.com/freelancers/vivekpatel99?p=1962080616292315136",
-    isExternal: true
+    isExternal: false
   },
   {
     id: 4,
     slug: 'football-tracking',
     title: 'Multi-Player Sports Tracking — YOLO + SigLIP',
-    imgUrl: portfolioImages.footballTracking,
-    imgAlt: "Animated GIF showing real-time football player tracking using YOLO and SigLIP.",
+    imgUrl: portfolioImages.footballTrackingPreview,
+    imgAlt: "Static preview for a football player tracking project using YOLO and SigLIP.",
     externalLink: "https://github.com/vivekpatel99/football-players-tracking-yolo",
     isExternal: true
   },
@@ -61,31 +60,8 @@ const projects = [
   }
 ];
 
-const ProjectCard = ({ project, onClick }) => {
-  const handleClick = () => {
-    if (project.isExternal && project.externalLink) {
-      window.open(project.externalLink, '_blank', 'noopener,noreferrer');
-    } else {
-      onClick(project.slug);
-    }
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleClick();
-    }
-  };
-
-  return (
-    <div
-      className="group relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer"
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
-      role="button"
-      tabIndex={0}
-      aria-label={`View project: ${project.title}`}
-    >
+const ProjectCardContent = ({ project }) => (
+  <>
       <img
         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         alt={project.imgAlt}
@@ -103,17 +79,38 @@ const ProjectCard = ({ project, onClick }) => {
           </div>
         </div>
       </div>
-    </div>
+  </>
+);
+
+const ProjectCard = ({ project }) => {
+  const className = "group relative block aspect-[4/3] rounded-2xl overflow-hidden focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-accent-purple";
+
+  if (project.isExternal && project.externalLink) {
+    return (
+      <a
+        href={project.externalLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={className}
+        aria-label={`View project: ${project.title}`}
+      >
+        <ProjectCardContent project={project} />
+      </a>
+    );
+  }
+
+  return (
+    <Link
+      to={`/project/${project.slug}`}
+      className={className}
+      aria-label={`Read case study: ${project.title}`}
+    >
+      <ProjectCardContent project={project} />
+    </Link>
   );
 };
 
 const Portfolio = () => {
-  const navigate = useNavigate();
-
-  const handleProjectClick = (slug) => {
-    navigate(`/project/${slug}`);
-  };
-
   return (
     <section id="portfolio" className="py-24 bg-[#0C0D0D]">
       <div className="container mx-auto px-6">
@@ -136,7 +133,6 @@ const Portfolio = () => {
             <ProjectCard
               key={project.id}
               project={project}
-              onClick={handleProjectClick}
             />
           ))}
         </div>
