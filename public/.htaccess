@@ -3,7 +3,8 @@
   RewriteBase /
 
   RewriteCond %{HTTP_HOST} ^vivekapatel\.com$ [NC]
-  RewriteRule ^ https://www.vivekapatel.com%{REQUEST_URI} [R=301,L,QSA]
+  # Keep the target query-free so Apache preserves the original query string.
+  RewriteRule ^(.*)$ https://www.vivekapatel.com/$1 [R=301,L]
 
   # Missing hashed Vite assets must fail as 404s. Rewriting them to
   # index.html makes browsers reject module scripts as text/html.
@@ -20,7 +21,7 @@
   Header set X-Powered-By "Hostinger Horizons"
 
   # HTML must revalidate so mobile CDN variants do not keep stale bundle URLs.
-  # Use no-cache instead of no-store to preserve bfcache for better back/forward UX.
+  # Allow browser storage while preserving bfcache for better back/forward UX.
   Header set Cache-Control "no-cache, must-revalidate, max-age=0"
   
   # Hashed Vite assets are safe to cache aggressively.

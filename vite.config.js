@@ -105,13 +105,18 @@ const originalFetch = window.fetch;
 
 window.fetch = function(...args) {
 	const firstArg = args[0];
-	
-	// Let native fetch handle missing or invalid arguments
-	if (!firstArg) {
+
+	// Let native fetch handle missing or invalid arguments.
+	if (firstArg == null) {
 		return originalFetch.apply(this, args);
 	}
-	
-	const url = firstArg instanceof Request ? firstArg.url : String(firstArg);
+
+	let url;
+	try {
+		url = typeof Request !== 'undefined' && firstArg instanceof Request ? firstArg.url : String(firstArg);
+	} catch (error) {
+		return originalFetch.apply(this, args);
+	}
 
 	// Skip WebSocket URLs
 	if (url.startsWith('ws:') || url.startsWith('wss:')) {
