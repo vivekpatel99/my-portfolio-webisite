@@ -31,7 +31,7 @@ Verified in the migration QA:
 
 - `https://vivekapatel.com/` and `https://www.vivekapatel.com/` load the new site.
 - Main production routes render, including `/contact`, `/legal`,
-  `/data-policy`, `/project/social-media-app`, and an unknown-route fallback.
+  `/data-policy`, the three real case-study routes, and an unknown-route fallback.
 - Hostinger returns `200` for app routes so React Router can handle SPA routing.
 - Sampled desktop and mobile browser checks had no console errors or horizontal overflow.
 - Sampled loaded images were not broken.
@@ -49,7 +49,7 @@ Not proven by the migration QA:
 
 Known follow-up items from the migration QA that affect this plan:
 
-- `/og-image.png` returned HTTP `422`; verify social image URLs explicitly.
+- `/og-image.png` has been added locally; recheck the production URL after deploy.
 - Route-specific SEO now uses generated static route HTML; verify raw head tags before deploy.
 - Empty contact-form submit was updated to use the custom missing-fields toast.
 - Playwright QA specs live in `tests/qa/`; generated browser artifacts are written to ignored output directories.
@@ -66,18 +66,20 @@ Known follow-up items from the migration QA that affect this plan:
 | R-002 | https://www.vivekapatel.com/contact | [ ] 200, contact form visible |
 | R-003 | https://www.vivekapatel.com/legal | [ ] 200, "Privacy Policy" |
 | R-004 | https://www.vivekapatel.com/data-policy | [ ] 200, "Cookie Policy" |
-| R-005 | https://www.vivekapatel.com/project/social-media-app | [ ] 200, project details |
-| R-006 | https://www.vivekapatel.com/nonexistent | [ ] Redirects to home |
-| R-007 | https://www.vivekapatel.com/project/invalid | [ ] Redirects to home |
+| R-005 | https://www.vivekapatel.com/project/n8n-openai-data-extraction | [ ] 200, n8n + OpenAI case study |
+| R-006 | https://www.vivekapatel.com/project/invoice-ocr-extraction | [ ] 200, invoice OCR case study |
+| R-007 | https://www.vivekapatel.com/project/yolo-computer-vision-optimization | [ ] 200, YOLO case study |
+| R-008 | https://www.vivekapatel.com/nonexistent | [ ] Redirects to home |
+| R-009 | https://www.vivekapatel.com/project/invalid | [ ] Redirects to home |
 
 ### Hash Routes (Scroll Anchors)
 
 | ID | URL | Check |
 |----|-----|-------|
-| R-008 | https://www.vivekapatel.com/#services | [ ] Scrolls to services |
-| R-009 | https://www.vivekapatel.com/#about | [ ] Scrolls to about |
-| R-010 | https://www.vivekapatel.com/#portfolio | [ ] Scrolls to portfolio |
-| R-011 | https://www.vivekapatel.com/#testimonials | [ ] Scrolls to testimonials |
+| R-010 | https://www.vivekapatel.com/#services | [ ] Scrolls to services |
+| R-011 | https://www.vivekapatel.com/#about | [ ] Scrolls to about |
+| R-012 | https://www.vivekapatel.com/#portfolio | [ ] Scrolls to portfolio |
+| R-013 | https://www.vivekapatel.com/#testimonials | [ ] Scrolls to testimonials |
 
 ---
 
@@ -144,9 +146,7 @@ Known follow-up items from the migration QA that affect this plan:
 | EXT-006 | n8n Workflow | https://www.upwork.com/freelancers/vivekpatel99?p=1981676982472949760 | [ ] |
 | EXT-007 | Invoice OCR | https://www.upwork.com/freelancers/vivekpatel99?p=1961697513038176256 | [ ] |
 | EXT-008 | Yoga Pose | https://www.upwork.com/freelancers/vivekpatel99?p=1962080616292315136 | [ ] |
-| EXT-009 | Football Tracking | https://github.com/vivekpatel99/football-players-tracking-yolo | [ ] |
-| EXT-010 | Medical Segmentation | https://github.com/vivekpatel99/breast-cancer-segmentation-vgg-fcn-pytorch | [ ] |
-| EXT-011 | AI Planning Agent | https://github.com/vivekpatel99/project-planning-genie | [ ] |
+| EXT-009 | Related Football Tracking GitHub link | https://github.com/vivekpatel99/football-players-tracking-yolo | [ ] |
 
 ---
 
@@ -156,23 +156,22 @@ Known follow-up items from the migration QA that affect this plan:
 
 | ID | Asset | URL | Check |
 |----|-------|-----|-------|
-| AST-001 | Favicon | https://raw.githubusercontent.com/vivekpatel99/my-portfolio-webisite/main/public/assets/logos/mylogo.png | [ ] |
-| AST-002 | Logo | https://raw.githubusercontent.com/vivekpatel99/my-portfolio-webisite/main/public/assets/logos/white_background.png | [ ] |
+| AST-001 | Favicon | https://www.vivekapatel.com/assets/logos/mylogo.png | [ ] |
+| AST-002 | Logo | https://www.vivekapatel.com/assets/logos/mylogo.png | [ ] |
 
 ### Background Images
 
 | ID | Asset | URL | Check |
 |----|-------|-----|-------|
 | AST-003 | Hero BG | https://horizons-cdn.hostinger.com/6c79ee82-b048-4e51-aa3e-90c95281746e/71f6723b117af5fb7e36d829dfcd6b7f.jpg | [ ] |
-| AST-004 | Black BG | https://horizons-cdn.hostinger.com/6c79ee82-b048-4e51-aa3e-90c95281746e/3d284e50ce513c15332533e5e6e3bae1.png | [ ] |
+| AST-004 | CTA BG | https://horizons-cdn.hostinger.com/6c79ee82-b048-4e51-aa3e-90c95281746e/71f6723b117af5fb7e36d829dfcd6b7f.jpg | [ ] |
 
 ### Profile Images
 
 | ID | Asset | URL | Check |
 |----|-------|-----|-------|
-| AST-005 | About Photo | https://raw.githubusercontent.com/vivekpatel99/my-portfolio-webisite/main/public/assets/images/vivek-black-and-white.png | [ ] |
-| AST-006 | Profile Photo | https://horizons-cdn.hostinger.com/6c79ee82-b048-4e51-aa3e-90c95281746e/9b45fe76e7e373b4cb617a63c8494322.png | [ ] |
-| AST-007 | Hero Image | https://imagedelivery.net/LqiWLm-3MGbYHtFuUbcBtA/119580eb-abd9-4191-b93a-f01938786700/public | [ ] |
+| AST-005 | About Photo | https://www.vivekapatel.com/assets/images/vivek-black-and-white.png | [ ] |
+| AST-006 | Collaboration Photo | https://horizons-cdn.hostinger.com/6c79ee82-b048-4e51-aa3e-90c95281746e/michael-t-rxri-ho62y4-unsplash-2-tvxRc.jpg | [ ] |
 
 ### Portfolio Project Images
 
@@ -182,19 +181,7 @@ Known follow-up items from the migration QA that affect this plan:
 | AST-009 | Invoice OCR | https://raw.githubusercontent.com/vivekpatel99/invoice-data-extraction-using-ocr/main/output/original_with_bboxes_demo.jpg | [ ] |
 | AST-010 | Yoga Pose | https://raw.githubusercontent.com/vivekpatel99/yoga-pose-estimation/main/assets/demo.gif | [ ] |
 | AST-011 | Football GIF | https://raw.githubusercontent.com/vivekpatel99/football-players-tracking-yolo/main/readme-assets/yolov12l_processed_121364_0.gif | [ ] |
-| AST-012 | Medical GIF | https://raw.githubusercontent.com/vivekpatel99/breast-cancer-segmentation-vgg-fcn-pytorch/main/results/predictions_animation.gif | [ ] |
-| AST-013 | AI Agent | https://raw.githubusercontent.com/vivekpatel99/project-planning-genie/main/assets/final_graph.png | [ ] |
-
-### Tech Stack Icons (Sample)
-
-| ID | Icon | URL | Check |
-|----|------|-----|-------|
-| AST-014 | Python | https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg | [ ] |
-| AST-015 | PyTorch | https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg | [ ] |
-| AST-016 | TensorFlow | https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg | [ ] |
-| AST-017 | YOLO | https://raw.githubusercontent.com/ultralytics/assets/main/logo/Ultralytics_Logotype_Original.svg | [ ] |
-| AST-018 | OpenAI | https://cdn.worldvectorlogo.com/logos/openai-2.svg | [ ] |
-| AST-019 | HuggingFace | https://huggingface.co/front/assets/huggingface_logo.svg | [ ] |
+| AST-012 | AI Agent Graph | https://raw.githubusercontent.com/vivekpatel99/project-planning-genie/main/assets/final_graph.png | [ ] |
 
 ---
 
@@ -208,14 +195,14 @@ Known follow-up items from the migration QA that affect this plan:
 | INT-002 | Mobile menu open | Click hamburger | Menu slides in | [ ] |
 | INT-003 | Mobile menu close | Click link | Menu closes | [ ] |
 | INT-004 | Logo click | Click logo | Navigate home | [ ] |
-| INT-005 | Hire Me button | Click header CTA | Navigate /contact | [ ] |
+| INT-005 | Request Estimate button | Click header CTA | Navigate /contact | [ ] |
 
 ### Hero Section
 
 | ID | Test | Steps | Expected | Check |
 |----|------|-------|----------|-------|
-| INT-006 | Hero "Hire Me" | Click button | Navigate /contact | [ ] |
-| INT-007 | "View My Work" | Click button | Scroll #portfolio | [ ] |
+| INT-006 | Hero "Request a Project Estimate" | Click button | Navigate /contact | [ ] |
+| INT-007 | "View Case Studies" | Click button | Scroll #portfolio | [ ] |
 | INT-008 | Upwork badge | Click badge | Opens Upwork new tab | [ ] |
 
 ### Services Section
@@ -232,33 +219,26 @@ Known follow-up items from the migration QA that affect this plan:
 | ID | Test | Steps | Expected | Check |
 |----|------|-------|----------|-------|
 | INT-013 | Card hover | Hover project | Zoom, overlay | [ ] |
-| INT-014 | External project | Click n8n | Opens Upwork new tab | [ ] |
-| INT-015 | GitHub project | Click Football | Opens GitHub new tab | [ ] |
+| INT-014 | Case-study card | Click n8n case study | Navigates to `/project/n8n-openai-data-extraction` | [ ] |
+| INT-015 | Secondary proof link | Click Upwork project link | Opens Upwork new tab | [ ] |
 
-### Experience Section
-
-| ID | Test | Steps | Expected | Check |
-|----|------|-------|----------|-------|
-| INT-016 | Expand | Click item | Description expands | [ ] |
-| INT-017 | Collapse | Click again | Collapses | [ ] |
-
-### Connect & CTA
+### Case Studies & CTA
 
 | ID | Test | Steps | Expected | Check |
 |----|------|-------|----------|-------|
-| INT-018 | Upwork card | Click card | Opens Upwork | [ ] |
-| INT-019 | Direct Message | Click card | Navigate /contact | [ ] |
-| INT-020 | Get Free Quote | Click CTA | Navigate /contact | [ ] |
+| INT-016 | View Case Studies | Click detail-page link | Navigates back to `/#portfolio` | [ ] |
+| INT-017 | Request Estimate | Click detail-page CTA | Navigates /contact | [ ] |
+| INT-018 | Final CTA | Click bottom CTA | Navigate /contact | [ ] |
 
 ### Footer
 
 | ID | Test | Steps | Expected | Check |
 |----|------|-------|----------|-------|
-| INT-021 | Quick Links | Click links | Navigate/scroll | [ ] |
-| INT-022 | Privacy Policy | Click | Navigate /legal | [ ] |
-| INT-023 | Cookie Policy | Click | Navigate /data-policy | [ ] |
-| INT-024 | Manage Cookies | Click | Toast appears | [ ] |
-| INT-025 | Social links | Click | Opens new tab | [ ] |
+| INT-019 | Quick Links | Click links | Navigate/scroll | [ ] |
+| INT-020 | Privacy Policy | Click | Navigate /legal | [ ] |
+| INT-021 | Cookie Policy | Click | Navigate /data-policy | [ ] |
+| INT-022 | Manage Cookies | Click | Consent manager appears | [ ] |
+| INT-023 | Social links | Click | Opens new tab | [ ] |
 
 ---
 

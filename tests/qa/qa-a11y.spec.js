@@ -6,7 +6,7 @@ test('home has exactly one main landmark', async ({ page }) => {
 });
 
 test('project page uses a single main landmark', async ({ page }) => {
-  await page.goto('/project/social-media-app');
+  await page.goto('/project/n8n-openai-data-extraction');
   await expect(page.locator('main')).toHaveCount(1);
 });
 

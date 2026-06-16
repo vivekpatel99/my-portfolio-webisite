@@ -49,15 +49,8 @@ test('cookie customize panel expands', async ({ page }) => {
 });
 
 test('stats ticker preserves decimal values', async ({ page }) => {
-  await page.goto('/project/social-media-app');
+  await page.goto('/project/yolo-computer-vision-optimization');
   const statsSection = page.locator('#stats-section');
   await statsSection.scrollIntoViewIfNeeded();
-  await expect(statsSection).toContainText(/4\.9|99\.9/, { timeout: 5000 });
-});
-
-test('tech stack marquee section visible', async ({ page }) => {
-  await page.goto('/');
-  await page.locator('#tech-stack, [class*="TechStack"], section').first();
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight / 2));
-  await expect(page.getByText(/tech stack|technologies|stack/i).first()).toBeVisible({ timeout: 5000 });
+  await expect(statsSection).toContainText(/2\.5/, { timeout: 5000 });
 });

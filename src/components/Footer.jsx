@@ -37,7 +37,7 @@ const Footer = () => {
             ],
         },
         {
-            title: 'Company',
+            title: 'Work With Me',
             links: [
                 { name: 'Contact Me', href: '/contact' },
             ],
@@ -64,7 +64,7 @@ const Footer = () => {
                     {/* Logo Section */}
                     <div className="lg:col-span-1">
                         <img src={assetsLinks.logo} alt="Vivek Patel Logo" className="h-12 mb-2" />
-                        <p className="text-gray-400">Creative solutions that drive results.</p>
+                        <p className="text-gray-400">AI automation, data extraction, and computer vision systems built for production.</p>
                     </div>
 
                     {/* Dynamic Sections */}

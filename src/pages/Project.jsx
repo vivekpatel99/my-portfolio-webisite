@@ -4,91 +4,36 @@ import { motion } from 'framer-motion';
 import Stats from '@/components/Stats';
 import SectionAnimator from '@/components/SectionAnimator';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, ArrowLeft } from 'lucide-react';
-import { toast } from "@/components/ui/use-toast";
-import { projectGallery } from '@/config/links';
+import { ArrowRight, ArrowLeft, ArrowUpRight } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
 import { Seo } from '@/lib/seo';
+import { getCaseStudyBySlug } from '@/data/caseStudies';
 
-// Mock data for projects
-const projectData = {
-  'social-media-app': {
-    title: 'Next-Gen Banking UI',
-    category: 'Web & App Design',
-    description: 'A revolutionary banking interface designed for simplicity, security, and a seamless user experience. It empowers users with intuitive financial management tools, all within a stunning, modern design.',
-    challenge: 'The primary challenge was to demystify complex banking operations. We needed to create a dashboard that was both powerful for seasoned users and approachable for beginners, all while ensuring bank-grade security and flawless performance across all devices.',
-    solution: 'We developed a modular, widget-based dashboard allowing for deep personalization. By leveraging cutting-edge data visualization, we transformed complex transaction histories and investment data into beautiful, interactive charts. The implementation of biometric authentication and end-to-end encryption guarantees user data is always secure.',
-    images: {
-      hero: {
-        alt: 'Main dashboard of a modern banking application',
-        src: projectGallery.hero
-      },
-      gallery: [{
-        alt: 'Detailed view of a transaction history page',
-        src: projectGallery.gallery1
-      }, {
-        alt: 'Analytics dashboard showing spending habits',
-        src: projectGallery.gallery2
-      }],
-      gallery2: [{
-        alt: 'User setting up a new payment on the banking app',
-        src: projectGallery.gallery3
-      }]
-    },
-    stats: [{
-      value: 50,
-      suffix: '%',
-      label: 'Faster Onboarding',
-      description: 'Streamlined user registration process.'
-    }, {
-      value: 2,
-      suffix: 'M+',
-      label: 'Transactions Processed',
-      description: 'Securely handled within the first year.'
-    }, {
-      value: 4.9,
-      suffix: '/5',
-      label: 'User Rating',
-      description: 'Overwhelmingly positive feedback on app stores.'
-    }, {
-      value: 99.9,
-      suffix: '%',
-      label: 'Service Uptime',
-      description: 'Uninterrupted access to banking services.'
-    }]
-  },
-};
 const pageVariants = {
-  initial: {
-    opacity: 0
-  },
-  in: {
-    opacity: 1
-  },
-  out: {
-    opacity: 0
-  }
+  initial: { opacity: 0 },
+  in: { opacity: 1 },
+  out: { opacity: 0 },
 };
+
 const pageTransition = {
   type: 'tween',
   ease: 'anticipate',
-  duration: 0.8
+  duration: 0.8,
 };
-const Project = () => {
-  const {
-    projectId
-  } = useParams();
-  const navigate = useNavigate();
 
-  const project = projectData[projectId];
+const Project = () => {
+  const { projectId } = useParams();
+  const navigate = useNavigate();
+  const project = getCaseStudyBySlug(projectId);
 
   useEffect(() => {
     if (!project) {
-        toast({
-            title: "Project Not Found",
-            description: "You've been redirected to the homepage.",
-            variant: "destructive",
-        });
-        navigate('/', { replace: true });
+      toast({
+        title: 'Project Not Found',
+        description: 'That case study could not be found. You have been redirected to the homepage.',
+        variant: 'destructive',
+      });
+      navigate('/', { replace: true });
     }
   }, [project, navigate]);
 
@@ -97,97 +42,153 @@ const Project = () => {
   }, [projectId]);
 
   if (!project) {
-    return null; // Render nothing while redirecting
+    return null;
   }
 
-  return <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition} className="bg-[#0C0D0D] text-white">
+  return (
+    <motion.div
+      initial="initial"
+      animate="in"
+      exit="out"
+      variants={pageVariants}
+      transition={pageTransition}
+      className="bg-[#0C0D0D] text-white"
+    >
       <Seo
-        title={`${project.title} | Project Case Study - Vivek Patel`}
-        description={`Case study for the ${project.title} project. Discover the challenges, solutions, and results achieved by Vivek Patel, AI & Computer Vision Engineer.`}
-        keywords={`${project.title}, case study, portfolio, Vivek Patel, ${project.category}, AI project, web development`}
-        path={`/project/${projectId}`}
+        title={`${project.title} | AI Case Study - Vivek Patel`}
+        description={project.summary}
+        keywords={`${project.title}, ${project.category}, case study, Vivek Patel, AI automation, computer vision, data extraction`}
+        path={`/project/${project.slug}`}
         type="article"
-        image={project.images.hero.src}
+        image={project.image.src}
       />
 
-      <div>
-        <SectionAnimator>
-          <header className="pt-48 pb-16"> 
-            <div className="container mx-auto px-6 text-center max-w-4xl">
-              <h1 className="text-4xl md:text-6xl font-bold uppercase mb-4">{project.title}</h1>
-              <p className="text-lg md:text-xl text-gray-400">{project.description}</p>
+      <SectionAnimator>
+        <header className="pt-40 pb-12 sm:pt-48 sm:pb-16">
+          <div className="container mx-auto max-w-5xl px-6">
+            <Link
+              to="/#portfolio"
+              className="mb-8 inline-flex items-center text-sm font-semibold text-gray-400 hover:text-white"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
+              View Case Studies
+            </Link>
+            <div className="inline-flex rounded-full border border-accent-purple/30 bg-accent-purple/15 px-4 py-1.5 text-sm font-semibold uppercase text-[#d8caff]">
+              {project.category}
             </div>
-          </header>
-        </SectionAnimator>
-        
-        <SectionAnimator>
-            <div className="container mx-auto px-6 mb-16">
-                 <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl shadow-accent-purple/10">
-                    <img className="w-full h-full object-cover" alt={project.images.hero.alt} src={project.images.hero.src} />
-                 </div>
+            <h1 className="mt-6 max-w-4xl text-4xl font-bold uppercase leading-tight text-white md:text-6xl">
+              {project.title}
+            </h1>
+            <p className="mt-6 max-w-3xl text-lg text-gray-400 md:text-xl">{project.summary}</p>
+          </div>
+        </header>
+      </SectionAnimator>
+
+      <SectionAnimator>
+        <div className="container mx-auto px-6 pb-16">
+          <div className="aspect-video overflow-hidden rounded-lg border border-white/10 shadow-2xl shadow-accent-purple/10">
+            <img className="h-full w-full object-cover" alt={project.image.alt} src={project.image.src} />
+          </div>
+        </div>
+      </SectionAnimator>
+
+      <SectionAnimator>
+        <section className="py-12">
+          <div className="container mx-auto grid gap-8 px-6 md:grid-cols-3">
+            <div className="rounded-lg border border-white/10 bg-white/[0.04] p-6 md:col-span-1">
+              <h2 className="text-xl font-bold uppercase text-white">Stack</h2>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {project.stack.map((item) => (
+                  <span
+                    key={item}
+                    className="rounded-full border border-accent-purple/20 bg-accent-purple/10 px-3 py-1 text-sm font-semibold text-accent-purple"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+              <div className="mt-8 space-y-3">
+                {project.externalLinks.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-gray-300 hover:text-white"
+                  >
+                    {link.label}
+                    <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                  </a>
+                ))}
+              </div>
             </div>
-        </SectionAnimator>
 
-        <SectionAnimator>
-            <div className="container mx-auto px-6 mb-16">
-                <div className="grid grid-cols-1 gap-8">
-                    <div className="grid md:grid-cols-2 gap-8">
-                        <div className="aspect-square rounded-2xl overflow-hidden">
-                           <img className="w-full h-full object-cover" alt={project.images.gallery[0].alt} src={project.images.gallery[0].src} />
-                        </div>
-                        <div className="aspect-square rounded-2xl overflow-hidden">
-                            <img className="w-full h-full object-cover" alt={project.images.gallery[1].alt} src={project.images.gallery[1].src} />
-                        </div>
-                    </div>
-                </div>
+            <div className="grid gap-8 md:col-span-2 md:grid-cols-2">
+              <div>
+                <h2 className="text-3xl font-bold uppercase text-white">The Challenge</h2>
+                <p className="mt-5 text-lg leading-relaxed text-gray-400">{project.challenge}</p>
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold uppercase text-white">The Solution</h2>
+                <p className="mt-5 text-lg leading-relaxed text-gray-400">{project.solution}</p>
+              </div>
             </div>
-        </SectionAnimator>
-        
-        <SectionAnimator>
-            <section className="py-16">
-                <div className="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-start">
-                    <div>
-                        <h2 className="text-3xl md:text-4xl font-bold mb-6">The Challenge</h2>
-                        <p className="text-lg text-gray-400">{project.challenge}</p>
-                    </div>
-                     <div>
-                        <h2 className="text-3xl md:text-4xl font-bold mb-6">The Solution</h2>
-                        <p className="text-lg text-gray-400">{project.solution}</p>
-                    </div>
-                </div>
-            </section>
-        </SectionAnimator>
-        
-        <SectionAnimator>
-            <div className="container mx-auto px-6 mb-16">
-                <div className="aspect-video rounded-2xl overflow-hidden">
-                    <img className="w-full h-full object-cover" alt={project.images.gallery2[0].alt} src={project.images.gallery2[0].src} />
-                </div>
+          </div>
+        </section>
+      </SectionAnimator>
+
+      <SectionAnimator>
+        <section className="py-12">
+          <div className="container mx-auto px-6">
+            <div className="rounded-lg border border-white/10 bg-white/[0.04] p-6 md:p-8">
+              <h2 className="text-3xl font-bold uppercase text-white">Outcome</h2>
+              <p className="mt-5 max-w-4xl text-lg leading-relaxed text-gray-400">{project.outcome}</p>
             </div>
-        </SectionAnimator>
+          </div>
+        </section>
+      </SectionAnimator>
 
-        <Stats customStats={project.stats} />
+      <SectionAnimator>
+        <div className="container mx-auto grid gap-6 px-6 py-12 md:grid-cols-2">
+          {project.gallery.map((image) => (
+            <div key={image.src} className="aspect-[4/3] overflow-hidden rounded-lg border border-white/10 bg-white/[0.04]">
+              <img className="h-full w-full object-cover" alt={image.alt} src={image.src} loading="lazy" />
+            </div>
+          ))}
+        </div>
+      </SectionAnimator>
 
-        <SectionAnimator>
-            <section className="py-24 text-center">
-                <div className="container mx-auto px-6">
-                     <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-4">
-                        <Button asChild variant="outline" className="w-full sm:w-auto border-accent-purple/40 hover:bg-accent-purple/10 text-white rounded-full text-base sm:text-lg py-6 sm:py-7 px-6 sm:px-10">
-                           <Link to="/">
-                               <ArrowLeft className="mr-2 h-5 w-5" /> Back to Home
-                           </Link>
-                        </Button>
-                        <Button asChild size="lg" className="w-full sm:w-auto bg-accent-purple text-white hover:bg-accent-purple/90 group rounded-full text-base sm:text-lg py-6 sm:py-7 px-6 sm:px-10">
-                            <Link to="/contact">
-                                Let's Talk <ArrowRight className="ml-2 h-5 w-5 transform transition-transform duration-300 group-hover:translate-x-1" />
-                            </Link>
-                        </Button>
-                    </div>
-                </div>
-            </section>
-        </SectionAnimator>
+      <Stats customStats={project.stats} />
 
-      </div>
-    </motion.div>;
+      <SectionAnimator>
+        <section className="py-24 text-center">
+          <div className="container mx-auto px-6">
+            <div className="flex flex-col items-stretch justify-center gap-4 sm:flex-row sm:items-center">
+              <Button
+                asChild
+                variant="outline"
+                className="w-full rounded-full border-accent-purple/40 px-6 py-6 text-base text-white hover:bg-accent-purple/10 sm:w-auto sm:px-10 sm:py-7 sm:text-lg"
+              >
+                <Link to="/#portfolio">
+                  <ArrowLeft className="mr-2 h-5 w-5" /> View Case Studies
+                </Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                className="group w-full rounded-full bg-accent-purple px-6 py-6 text-base text-white hover:bg-accent-purple/90 sm:w-auto sm:px-10 sm:py-7 sm:text-lg"
+              >
+                <Link to="/contact">
+                  Request a Project Estimate
+                  <ArrowRight className="ml-2 h-5 w-5 transform transition-transform duration-300 group-hover:translate-x-1" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+      </SectionAnimator>
+    </motion.div>
+  );
 };
+
 export default Project;

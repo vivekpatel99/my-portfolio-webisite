@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated package name from `web-app` to `vivekapatel-portfolio`
 - Improved About section with updated profile images
 - Enhanced Hero section layout and animations
-- Updated TechStack component with better error handling
+- Improved technology display handling
 - Reorganized documentation into `docs/` directory
 
 ### Removed

@@ -1,6 +1,9 @@
 export const SITE_URL = 'https://www.vivekapatel.com';
 export const SITE_NAME = 'Vivek Patel';
 export const DEFAULT_OG_IMAGE_PATH = '/og-image.png';
+const N8N_IMAGE = 'https://raw.githubusercontent.com/n8n-io/n8n/master/assets/n8n-screenshot-readme.png';
+const INVOICE_OCR_IMAGE = 'https://raw.githubusercontent.com/vivekpatel99/invoice-data-extraction-using-ocr/main/output/original_with_bboxes_demo.jpg';
+const YOLO_IMAGE = 'https://raw.githubusercontent.com/vivekpatel99/yoga-pose-estimation/main/assets/demo.gif';
 
 export const defaultSeo = {
   title: 'Vivek Patel - Expert AI & Computer Vision Engineer',
@@ -41,16 +44,35 @@ export const routeSeo = {
     type: 'website',
     image: DEFAULT_OG_IMAGE_PATH,
   },
-  '/project/social-media-app': {
-    title: 'Next-Gen Banking UI | Project Case Study - Vivek Patel',
+  '/project/n8n-openai-data-extraction': {
+    title: 'n8n + OpenAI Data Extraction | AI Case Study - Vivek Patel',
     description:
-      'Case study for the Next-Gen Banking UI project. Discover the challenges, solutions, and results achieved by Vivek Patel, AI & Computer Vision Engineer.',
+      'Case study for an n8n and OpenAI workflow that extracts structured data from German websites and prepares it for reliable business use.',
     keywords:
-      'Next-Gen Banking UI, case study, portfolio, Vivek Patel, Web & App Design, AI project, web development',
-    path: '/project/social-media-app',
+      'n8n OpenAI data extraction, AI workflow automation, web scraping case study, Vivek Patel, data extraction automation',
+    path: '/project/n8n-openai-data-extraction',
     type: 'article',
-    image:
-      'https://horizons-cdn.hostinger.com/6c79ee82-b048-4e51-aa3e-90c95281746e/gemini_generated_image_n6u5epn6u5epn6u5-5ABrF.png',
+    image: N8N_IMAGE,
+  },
+  '/project/invoice-ocr-extraction': {
+    title: 'Invoice OCR Extraction | AI Case Study - Vivek Patel',
+    description:
+      'Case study for an OCR workflow that extracts seller and client information from invoice photos and returns structured, reviewable data.',
+    keywords:
+      'invoice OCR extraction, document AI case study, OCR automation, Vivek Patel, AI data extraction',
+    path: '/project/invoice-ocr-extraction',
+    type: 'article',
+    image: INVOICE_OCR_IMAGE,
+  },
+  '/project/yolo-computer-vision-optimization': {
+    title: 'YOLO Computer Vision Optimization | AI Case Study - Vivek Patel',
+    description:
+      'Case study for a YOLO-based computer vision project focused on real-time pose detection and production inference optimization.',
+    keywords:
+      'YOLO computer vision, pose detection, real-time inference optimization, Vivek Patel, computer vision case study',
+    path: '/project/yolo-computer-vision-optimization',
+    type: 'article',
+    image: YOLO_IMAGE,
   },
 };
 

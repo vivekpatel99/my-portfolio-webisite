@@ -3,28 +3,28 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus } from 'lucide-react'; // Changed import from ArrowRight, ArrowDownRight to Plus
 
 const services = [{
-  title: 'COMPUTER VISION & REAL-TIME PROCESSING',
-  description: 'Automate visual inspection and reduce manual review time by 90%+. Real-time object detection, image classification, video analytics with optimized deep learning inference. Specialized in CUDA acceleration and edge deployment for production systems. Ideal for manufacturing, logistics, and quality control teams looking to cut inspection time and eliminate human error.'
+  title: 'DATA EXTRACTION AUTOMATION SPRINT',
+  description: 'A focused buildout for teams stuck copying information from websites, PDFs, invoices, or messy internal sources. I map the workflow, build the extractor, add validation, and deliver a reusable automation your team can actually operate.'
 }, {
-  title: 'INTELLIGENT WEB SCRAPING & DATA EXTRACTION',
-  description: 'Extract thousands of records daily and turn unstructured data into actionable insights. Automated data extraction from websites with parsing, validation, and standardization. Handle complex workflows with robots.txt compliance and anti-blocking strategies. Perfect for e-commerce, market research, and competitive intelligence teams who need reliable data at scale.'
+  title: 'COMPUTER VISION PRODUCTION OPTIMIZATION',
+  description: 'For existing YOLO, OCR, OpenCV, ONNX, or edge-AI systems that need to become faster and more reliable. I profile the bottlenecks, improve inference flow, and prepare the pipeline for production constraints.'
 }, {
-  title: 'AI AGENTS & AUTOMATION WORKFLOWS',
-  description: 'Automate repetitive decisions and reduce manual processing by 40+ hours/week. Custom AI agents using LangChain, n8n, and LLMs. Connect vision, scraping, and decision-making in one intelligent pipeline. Built for operations teams drowning in repetitive tasks who want their time back.'
+  title: 'AI WORKFLOW BUILDOUT',
+  description: 'A complete workflow build for operations teams that need LLMs, n8n, APIs, scraping, and human review connected into one dependable system. Best for replacing repeatable decisions and handoffs without hiring multiple specialists.'
 }];
 const Services = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const handleServiceClick = index => {
     setActiveIndex(activeIndex === index ? null : index);
   };
-  const filterTags = ['Deep Learning', 'Real-time Inference', 'Data Extraction', 'Workflow Automation'];
+  const filterTags = ['Fixed-scope builds', 'Production handoff', 'Automation ROI', 'Direct engineer access'];
   return <section id="services" className="py-24 bg-[#0C0D0D]">
     <div className="container mx-auto px-6 relative z-10">
       <div className="mb-16">
-        <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight text-white uppercase">
-          MY <span className="text-accent-purple">SERVICES</span>
+        <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-white uppercase">
+          SERVICE <span className="text-accent-purple">OFFERS</span>
         </h2>
-        <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mt-4">End-to-end intelligent automation systems combining Computer Vision, Web Scraping, and AI Agents.</p>
+        <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mt-4">Clear, purchasable ways to turn manual data work and slow AI pipelines into production-ready systems.</p>
         <div className="flex flex-wrap gap-3 mt-8">
           {filterTags.map(tag => <button key={tag} className="px-5 py-2 border border-gray-600 rounded-full text-gray-400 cursor-default uppercase">
             {tag}

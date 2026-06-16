@@ -70,7 +70,7 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto"
           >
-            Spending 40+ hours a week on manual data processing? I help businesses automate complex data workflows using Computer Vision, Web Scraping, and AI Agents—delivering production-ready solutions faster and cheaper than hiring multiple specialists.
+            Spending 40+ hours a week on manual data processing? I build production-ready data extraction, Computer Vision, and AI workflow systems that replace repetitive work with reliable automation.
           </motion.p>
 
           <motion.p
@@ -110,7 +110,7 @@ const Hero = () => {
               size="lg"
               className="bg-accent-purple hover:bg-accent-purple/90 text-white font-bold px-8 py-6 text-lg rounded-full group"
             >
-              Hire Me
+              Request a Project Estimate
               <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
             <Button
@@ -119,7 +119,7 @@ const Hero = () => {
               variant="outline"
               className="border-2 border-accent-purple/40 hover:bg-accent-purple/10 text-white px-8 py-6 text-lg rounded-full"
             >
-              View My Work
+              View Case Studies
             </Button>
           </motion.div>
 

@@ -16,7 +16,7 @@ test.describe('live contact submission', () => {
       .getByLabel('Project Description *')
       .fill(`Automated live QA smoke at ${ts}. Please ignore. Marker: QA_LIVE_CONTACT_SUBMIT.`);
 
-    await page.getByRole('button', { name: /Send My Project Details/i }).click();
+    await page.getByRole('button', { name: /Request a Project Estimate/i }).click();
 
     await expect(page.getByText('Message Sent')).toBeVisible({ timeout: 20_000 });
     await expect(page.getByLabel('Full Name *')).toHaveValue('');

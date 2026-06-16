@@ -14,7 +14,7 @@ The remaining issues are mostly SEO/social-preview cleanup and contact-form/emai
 |---|---|
 | Apex domain | `https://vivekapatel.com/` loads the new site |
 | WWW domain | `https://www.vivekapatel.com/` loads the new site |
-| Production routes | `/contact`, `/legal`, `/data-policy`, `/project/social-media-app`, and unknown-route fallback render |
+| Production routes | `/contact`, `/legal`, `/data-policy`, real case-study routes, and unknown-route fallback render |
 | SPA fallback | Hostinger returns `200` for app routes so React Router can handle them |
 | Desktop browser check | No console errors in sampled routes |
 | Mobile browser check | `390px` viewport passed with no horizontal overflow |
@@ -33,22 +33,20 @@ The remaining issues are mostly SEO/social-preview cleanup and contact-form/emai
 
 ## Open Issues
 
-### 1. `/og-image.png` Returns 422
+### 1. `/og-image.png` Was Fixed In Follow-Up
 
-`https://www.vivekapatel.com/og-image.png` returns HTTP `422`.
+`https://www.vivekapatel.com/og-image.png` returned HTTP `422` during the
+original migration QA.
 
-The currently effective live meta image is the GitHub raw PNG and that URL returns `200`, but route code still references `/og-image.png`. This can break social previews if those route-specific tags become active or are read before hydration.
+Follow-up work added a real `public/og-image.png` and normalized local route
+metadata to use `/og-image.png`. Recheck the production URL after deployment to
+confirm Hostinger is serving the new asset.
 
 Relevant files:
 
-- `src/pages/Contact.jsx`
-- Other route/page Helmet metadata that references `/og-image.png`
+- `public/og-image.png`
+- `src/lib/seoConfig.js`
 - `index.html`
-
-Recommended fix:
-
-- Add a real `public/og-image.png`, or update all route meta tags to use an existing stable image URL.
-- Recheck with `curl -I https://www.vivekapatel.com/og-image.png`.
 
 ### 2. Route-Specific SEO Meta Is Not Fully Effective
 
@@ -215,14 +213,16 @@ Recommended fix:
 - Review consent state wiring.
 - Confirm GA script only loads after consent and actually loads when consent is accepted.
 
-### 10. Production Test Plan Is Stale
+### 10. Production Test Plan Was Refreshed In Follow-Up
 
-`docs/PRODUCTION_TEST_PLAN.md` says it was last updated on `2025-11-27`, before this migration.
+`docs/PRODUCTION_TEST_PLAN.md` was stale during the migration QA. Follow-up
+work refreshed it for the current portfolio conversion, separated passive checks
+from tests with external side effects, and removed obsolete template/project
+references.
 
 Recommended fix:
 
-- Update it with the 2026-06-15 migration findings.
-- Mark risky tests separately from passive tests.
+- Recheck the refreshed plan against production after the portfolio upgrade is deployed.
 
 ## Not Run Intentionally
 
@@ -236,11 +236,11 @@ Run these only when the test sender email and expected recipient mailbox are con
 
 ## Suggested Next Fix Order
 
-1. Fix `/og-image.png` or normalize all OG/Twitter image references.
+1. Recheck `/og-image.png` on production after deployment.
 2. Fix route-specific SEO metadata precedence.
 3. Decide native vs custom contact-form validation UX.
 4. Add tests for Resend payload and `reply_to`.
 5. Confirm Convex production env vars and run one deliberate live email test.
 6. Improve the Convex rate-limit index/query shape.
 7. Refresh Playwright QA specs for Convex and the current production site.
-8. Update `docs/PRODUCTION_TEST_PLAN.md`.
+8. Keep `docs/PRODUCTION_TEST_PLAN.md` current as routes and QA modes change.

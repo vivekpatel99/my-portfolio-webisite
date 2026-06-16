@@ -1,119 +1,58 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { portfolioImages } from '@/config/links';
+import { Link } from 'react-router-dom';
+import { featuredCaseStudies } from '@/data/caseStudies';
 
-const projects = [
-  {
-    id: 1,
-    slug: 'Automated-Data-Extraction-Workflow-using-n8n',
-    title: 'Automated Data Extraction — n8n + OpenAI',
-    imgUrl: portfolioImages.n8nWorkflow,
-    imgAlt: "An n8n workflow for automated data extraction from German websites.",
-    externalLink: "https://www.upwork.com/freelancers/vivekpatel99?p=1981676982472949760",
-    isExternal: true
-  },
-  {
-    id: 2,
-    slug: 'Extract-seller-and-client-information-from-photos-using-OCR',
-    title: 'Invoice OCR Data Extraction',
-    imgUrl: portfolioImages.invoiceOcr,
-    imgAlt: "Invoice image with bounding boxes showing extracted client information via OCR.",
-    externalLink: "https://www.upwork.com/freelancers/vivekpatel99?p=1961697513038176256",
-    isExternal: true
-  },
-  {
-    id: 3,
-    slug: 'Yoga-Pose-Estimation-with-YOLO',
-    title: 'Real-time Yoga Pose Detection — YOLO',
-    imgUrl: portfolioImages.yogaPose,
-    imgAlt: "YOLO model detecting and estimating a yoga pose in an image.",
-    externalLink: "https://www.upwork.com/freelancers/vivekpatel99?p=1962080616292315136",
-    isExternal: true
-  },
-  {
-    id: 4,
-    slug: 'football-tracking',
-    title: 'Multi-Player Sports Tracking — YOLO + SigLIP',
-    imgUrl: portfolioImages.footballTracking,
-    imgAlt: "Animated GIF showing real-time football player tracking using YOLO and SigLIP.",
-    externalLink: "https://github.com/vivekpatel99/football-players-tracking-yolo",
-    isExternal: true
-  },
-  {
-    id: 5,
-    slug: 'medical-segmentation',
-    title: 'Medical Image Segmentation — VGG-FCN',
-    imgUrl: portfolioImages.medicalSegmentation,
-    imgAlt: "Animation of a VGG-FCN model performing breast cancer segmentation on medical images.",
-    externalLink: "https://github.com/vivekpatel99/breast-cancer-segmentation-vgg-fcn-pytorch",
-    isExternal: true
-  },
-  {
-    id: 6,
-    slug: 'ai-planning-agent',
-    title: 'AI Planning Agent — LangGraph',
-    imgUrl: portfolioImages.aiPlanningAgent,
-    imgAlt: "A LangGraph graph visualization for an AI project planning agent.",
-    externalLink: "https://github.com/vivekpatel99/project-planning-genie",
-    isExternal: true
-  }
-];
-
-const ProjectCard = ({ project, onClick }) => {
-  const handleClick = () => {
-    if (project.isExternal && project.externalLink) {
-      window.open(project.externalLink, '_blank', 'noopener,noreferrer');
-    } else {
-      onClick(project.slug);
-    }
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleClick();
-    }
-  };
-
+const ProjectCard = ({ project }) => {
+  const secondaryLink = project.externalLinks?.[0];
   return (
-    <div
-      className="group relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer"
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
-      role="button"
-      tabIndex={0}
-      aria-label={`View project: ${project.title}`}
-    >
-      <img
-        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        alt={project.imgAlt}
-        src={project.imgUrl}
-        loading="lazy"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
-      <div className="absolute bottom-0 left-0 p-6 w-full transform translate-y-0 opacity-100 lg:translate-y-4 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 transition-all duration-300">
-        <div className="flex justify-between items-end">
-          <div>
-            <h3 className="text-xl font-bold text-white mb-1">{project.title}</h3>
-          </div>
-          <div className="bg-white/10 backdrop-blur-sm p-3 rounded-full">
-            <ArrowUpRight className="w-5 h-5 text-white" />
+    <article className="group overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] transition-all duration-300 hover:border-accent-purple/50 hover:bg-white/[0.07]">
+      <Link
+        to={`/project/${project.slug}`}
+        className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple"
+        aria-label={`Read case study: ${project.cardTitle}`}
+      >
+        <div className="relative aspect-[4/3] overflow-hidden">
+          <img
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            alt={project.image.alt}
+            src={project.image.src}
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent"></div>
+          <div className="absolute bottom-0 left-0 w-full p-5">
+            <div className="mb-3 inline-flex rounded-full border border-accent-purple/30 bg-accent-purple/15 px-3 py-1 text-xs font-semibold uppercase text-[#d8caff]">
+              {project.category}
+            </div>
+            <div className="flex items-end justify-between gap-4">
+              <h3 className="text-xl font-bold leading-tight text-white">{project.cardTitle}</h3>
+              <span className="rounded-full bg-white/10 p-3 backdrop-blur-sm" aria-hidden="true">
+                <ArrowUpRight className="h-5 w-5 text-white" />
+              </span>
+            </div>
           </div>
         </div>
+      </Link>
+      <div className="flex min-h-[148px] flex-col justify-between p-5">
+        <p className="text-sm leading-relaxed text-gray-400">{project.summary}</p>
+        {secondaryLink && (
+          <a
+            href={secondaryLink.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-accent-purple hover:text-white"
+          >
+            {secondaryLink.label}
+            <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+          </a>
+        )}
       </div>
-    </div>
+    </article>
   );
 };
 
 const Portfolio = () => {
-  const navigate = useNavigate();
-
-  const handleProjectClick = (slug) => {
-    navigate(`/project/${slug}`);
-  };
-
   return (
     <section id="portfolio" className="py-24 bg-[#0C0D0D]">
       <div className="container mx-auto px-6">
@@ -123,20 +62,19 @@ const Portfolio = () => {
               Portfolio
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight uppercase">
-              My Latest <span className="text-accent-purple">Projects</span>
+              Featured <span className="text-accent-purple">Case Studies</span>
             </h2>
             <p className="text-lg text-gray-400 mt-6 mb-12">
-              A showcase of successful projects combining Computer Vision, Web Scraping, and AI optimization. Each case study highlights measurable results and the tech stack used.
+              Real client work in data extraction, OCR, and computer vision. Each case study shows the business problem, technical approach, and measurable outcome.
             </p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((project) => (
+          {featuredCaseStudies.map((project) => (
             <ProjectCard
               key={project.id}
               project={project}
-              onClick={handleProjectClick}
             />
           ))}
         </div>
