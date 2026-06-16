@@ -18,7 +18,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version-file: .nvmrc
+          node-version: "24"
           cache: npm
 
       - run: npm ci
@@ -29,8 +29,17 @@ jobs:
           set -euo pipefail
 
           if [[ -z "${VITE_CONVEX_URL:-}" ]]; then
-            echo "::error title=Missing Convex URL::Set the VITE_CONVEX_URL repository variable to the production Convex deployment URL."
-            exit 1
+            if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+              echo "::warning title=Missing Convex URL::Using https://validation.convex.cloud for PR validation since VITE_CONVEX_URL is not configured."
+              VITE_CONVEX_URL="https://validation.convex.cloud"
+            else
+              echo "::error title=Missing Convex URL::Set the VITE_CONVEX_URL repository variable to the production Convex deployment URL."
+              exit 1
+            fi
+          fi
+
+          if [[ -n "${VITE_CONVEX_URL:-}" ]]; then
+            echo "VITE_CONVEX_URL=$VITE_CONVEX_URL" >> "$GITHUB_ENV"
           fi
 
           if [[ ! "$VITE_CONVEX_URL" =~ ^https://[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)?\.convex\.cloud/?$ ]]; then
