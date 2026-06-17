@@ -143,9 +143,9 @@ test('contact guidance, budget dropdown, and validation work without submitting 
   await page.goto('/contact');
   await expect(page.getByRole('heading', { name: 'What happens next' })).toBeVisible();
   await expect(page.getByText('Helpful details to include:')).toBeVisible();
-  await expect(page.getByRole('link', { name: /vivekp\.freelance@pm\.me/i })).toHaveAttribute(
+  await expect(page.getByRole('link', { name: /contact@vivekapatel\.com/i })).toHaveAttribute(
     'href',
-    'mailto:vivekp.freelance@pm.me',
+    'mailto:contact@vivekapatel.com',
   );
 
   await page.getByLabel('Budget Range (Optional)').click();
