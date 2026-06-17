@@ -83,6 +83,13 @@ function getParentOrigin() {
 	return null;
 }
 
+function isTrustedParentEvent(event) {
+	return (
+		event.source === window.parent
+		&& ALLOWED_PARENT_ORIGINS.includes(event.origin)
+	);
+}
+
 /**
  * Extract file path from React Fiber metadata (simplified - only for filePath)
  * @param {*} node - DOM node
@@ -421,6 +428,10 @@ function disableSelectionMode() {
 }
 
 window.addEventListener('message', (event) => {
+	if (!isTrustedParentEvent(event)) {
+		return;
+	}
+
 	if (event.data?.type === MESSAGE_TYPE_ENABLE_SELECTION_MODE) {
 		enableSelectionMode();
 	}

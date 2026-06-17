@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CI: true
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       VITE_CONVEX_URL: ${{ vars.VITE_CONVEX_URL || vars.PRODUCTION_CONVEX_URL || vars.CONVEX_URL || secrets.VITE_CONVEX_URL || secrets.PRODUCTION_CONVEX_URL || secrets.CONVEX_URL }}
     steps:
       - uses: actions/checkout@v4
@@ -31,12 +32,13 @@ jobs:
             if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
               echo "::warning title=Missing Convex URL::Using the temporary PR fallback https://coordinated-mandrill-587.eu-west-1.convex.cloud"
               VITE_CONVEX_URL="https://coordinated-mandrill-587.eu-west-1.convex.cloud"
-              echo "VITE_CONVEX_URL=$VITE_CONVEX_URL" >> "$GITHUB_ENV"
             else
               echo "::error title=Missing Convex URL::Set the VITE_CONVEX_URL repository variable (or secret) to the production Convex deployment URL."
               exit 1
             fi
           fi
+
+          echo "VITE_CONVEX_URL=$VITE_CONVEX_URL" >> "$GITHUB_ENV"
 
           if [[ ! "$VITE_CONVEX_URL" =~ ^https://[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)?\.convex\.cloud/?$ ]]; then
             echo "::error title=Invalid Convex URL::VITE_CONVEX_URL must be a production-like https://*.convex.cloud URL, including regional Convex hosts."

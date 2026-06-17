@@ -1,8 +1,6 @@
 import { cronJobs } from "convex/server";
 import { internal } from "./_generated/api";
 import { internalAction } from "./_generated/server";
-import { v } from "convex/values";
-import type { Id } from "./_generated/dataModel";
 
 const PENDING_EMAIL_RETRY_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
 
@@ -10,23 +8,19 @@ export const retryPendingEmails = internalAction({
   args: {},
   handler: async (ctx) => {
     const cutoff = Date.now() - PENDING_EMAIL_RETRY_THRESHOLD_MS;
-    
-    const stalePendingLeads: Array<{ 
-      _id: Id<"leads">; 
-      name: string; 
-      email: string; 
-      budget?: string; 
-      description: string 
-    }> = 
-      await ctx.runQuery(internal.leads.getStalePendingLeads, { cutoff });
-    
-    if (stalePendingLeads.length === 0) {
+
+    const claimedLeads = await ctx.runMutation(
+      internal.leads.claimStaleEmailNotificationRetries,
+      { cutoff },
+    );
+
+    if (claimedLeads.length === 0) {
       return { retriedCount: 0 };
     }
-    
-    console.log(`Found ${stalePendingLeads.length} stale pending email(s), retrying...`);
-    
-    for (const lead of stalePendingLeads) {
+
+    console.log(`Claimed ${claimedLeads.length} stale email notification(s), retrying...`);
+
+    for (const lead of claimedLeads) {
       await ctx.scheduler.runAfter(0, internal.leads.sendContactEmail, {
         leadId: lead._id,
         name: lead.name,
@@ -35,8 +29,8 @@ export const retryPendingEmails = internalAction({
         description: lead.description,
       });
     }
-    
-    return { retriedCount: stalePendingLeads.length };
+
+    return { retriedCount: claimedLeads.length };
   },
 });
 

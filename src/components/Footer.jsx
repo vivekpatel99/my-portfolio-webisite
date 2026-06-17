@@ -1,12 +1,10 @@
 import React from 'react';
 import { Github, Linkedin } from 'lucide-react'; 
 import { toast } from "@/components/ui/use-toast";
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { socialLinks, assetsLinks } from '@/config/links'; 
 
 const Footer = () => {
-    const navigate = useNavigate();
-
     const handleManageCookies = (e) => {
         e.preventDefault();
         // This is a simple way to signal the Layout to show the banner.
@@ -44,17 +42,10 @@ const Footer = () => {
         },
     ];
 
-    const socialIcons = [ 
-        { icon: <Github size={20} />, name: 'Github' },
-        { icon: <Linkedin size={20} />, name: 'Linkedin' },
+    const socialIcons = [
+        { icon: <Github size={20} />, name: 'Github', href: socialLinks.github },
+        { icon: <Linkedin size={20} />, name: 'Linkedin', href: socialLinks.linkedin },
     ];
-
-     const handleSocialClick = (platformName) => {
-        const url = socialLinks[platformName.toLowerCase()]; 
-        if (url) {
-            window.open(url, '_blank', 'noopener,noreferrer');
-        }
-    };
 
 
     return (
@@ -92,15 +83,17 @@ const Footer = () => {
                         <p className="font-semibold text-white mb-6">Connect With Me</p>
                         <div className="flex space-x-4">
                             {socialIcons.map((social) => (
-                                <button
+                                <a
                                     key={social.name}
-                                    onClick={() => handleSocialClick(social.name)}
-                                    className="text-gray-400 hover:text-accent-purple transition-colors duration-300"
+                                    href={social.href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="min-h-11 min-w-11 inline-flex items-center justify-center text-gray-400 hover:text-accent-purple transition-colors duration-300"
                                     title={`Visit my ${social.name}`}
                                     aria-label={`Visit my ${social.name} profile`}
                                 >
                                     {social.icon}
-                                </button>
+                                </a>
                             ))}
                         </div>
                     </div>

@@ -16,6 +16,24 @@ export const defaultSeo = {
   image: DEFAULT_OG_IMAGE_PATH,
 };
 
+export const normalizeSitePath = (pathOrUrl = '/') => {
+  if (/^https?:\/\//i.test(pathOrUrl)) {
+    return pathOrUrl;
+  }
+
+  const path = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
+  if (path === '/') {
+    return '/';
+  }
+
+  const hasFileExtension = /\/[^/]+\.[^/]+$/.test(path);
+  if (hasFileExtension) {
+    return path;
+  }
+
+  return `${path.replace(/\/+$/, '')}/`;
+};
+
 export const routeSeo = {
   '/': defaultSeo,
   '/contact': {
@@ -81,6 +99,5 @@ export const absoluteUrl = (pathOrUrl = '/') => {
     return pathOrUrl;
   }
 
-  const path = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
-  return `${SITE_URL}${path === '/' ? '/' : path}`;
+  return `${SITE_URL}${normalizeSitePath(pathOrUrl)}`;
 };

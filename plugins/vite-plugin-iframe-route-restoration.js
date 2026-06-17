@@ -8,6 +8,7 @@ export default function iframeRouteRestorationPlugin() {
           "https://horizons.hostinger.com",
           "https://horizons.hostinger.dev",
           "https://horizons-frontend-local.hostinger.dev",
+          "http://localhost:4000",
       ];
 
         // Check to see if the page is in an iframe
@@ -20,7 +21,10 @@ export default function iframeRouteRestorationPlugin() {
             try {
               const currentRoute = getCurrentRoute();
               sessionStorage.setItem(STORAGE_KEY, currentRoute);
-              window.parent.postMessage({message: 'route-changed', route: currentRoute}, '*');
+              const parentOrigin = getParentOrigin();
+              if (parentOrigin) {
+                window.parent.postMessage({message: 'route-changed', route: currentRoute}, parentOrigin);
+              }
             } catch {}
           };
 
@@ -80,12 +84,14 @@ export default function iframeRouteRestorationPlugin() {
                   window.location.ancestorOrigins &&
                   window.location.ancestorOrigins.length > 0
               ) {
-                  return window.location.ancestorOrigins[0];
+                  const ancestorOrigin = window.location.ancestorOrigins[0];
+                  return ALLOWED_PARENT_ORIGINS.includes(ancestorOrigin) ? ancestorOrigin : null;
               }
 
               if (document.referrer) {
                   try {
-                      return new URL(document.referrer).origin;
+                      const referrerOrigin = new URL(document.referrer).origin;
+                      return ALLOWED_PARENT_ORIGINS.includes(referrerOrigin) ? referrerOrigin : null;
                   } catch (e) {
                       console.warn("Invalid referrer URL:", document.referrer);
                   }
@@ -94,12 +100,14 @@ export default function iframeRouteRestorationPlugin() {
               return null;
           };
 
+          const isTrustedParentEvent = (event) => {
+            return event.source === window.parent && ALLOWED_PARENT_ORIGINS.includes(event.origin);
+          };
+
           window.addEventListener('popstate', save);
           window.addEventListener('hashchange', save);
           window.addEventListener("message", function (event) {
-              const parentOrigin = getParentOrigin();
-
-              if (event.data?.type === "redirect-home" && parentOrigin && ALLOWED_PARENT_ORIGINS.includes(parentOrigin)) {
+              if (event.data?.type === "redirect-home" && isTrustedParentEvent(event)) {
                 const saved = sessionStorage.getItem(STORAGE_KEY);
 
                 if(saved && saved !== '/') {

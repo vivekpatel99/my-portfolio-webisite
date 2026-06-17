@@ -1,7 +1,7 @@
 import React from 'react';
 import { Star } from 'lucide-react';
 import { socialLinks } from '@/config/links';
-import './Testimonials.css'; // We'll create this file for the animation
+import './Testimonials.css';
 
 const UpworkIcon = () => (
     <svg className="w-10 h-10 text-[#14A800] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
@@ -78,11 +78,8 @@ const TestimonialCard = ({ projectTitle, clientName, content, link }) => (
 
 
 const Testimonials = () => {
-    // Duplicate testimonials for a seamless loop
-    const duplicatedTestimonials = [...testimonials, ...testimonials];
-
     return (
-        <section id="testimonials" className="py-24 bg-[#0C0D0D] overflow-hidden">
+        <section id="testimonials" className="py-24 bg-[#0C0D0D]">
             <div className="container mx-auto px-6">
                 <div className="text-left mb-12">
                     <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight uppercase">
@@ -90,12 +87,10 @@ const Testimonials = () => {
                     </h2>
                     <p className="text-lg text-gray-400 mt-2">Real projects. Real impact.</p>
                 </div>
-            </div>
 
-            <div className="scroller">
-                <div className="scroller-inner">
-                    {duplicatedTestimonials.map((testimonial, index) => (
-                        <TestimonialCard key={`${testimonial.id}-${index}`} {...testimonial} />
+                <div className="testimonial-grid">
+                    {testimonials.map((testimonial) => (
+                        <TestimonialCard key={testimonial.id} {...testimonial} />
                     ))}
                 </div>
             </div>

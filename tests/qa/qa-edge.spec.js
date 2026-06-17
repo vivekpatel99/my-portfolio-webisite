@@ -106,6 +106,47 @@ test('fetch instrumentation supports URL objects', async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
+test('fetch instrumentation delegates malformed arguments to native fetch', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('/');
+
+  const result = await page.evaluate(async () => {
+    const malformed = {
+      toString() {
+        throw new Error('malformed fetch input');
+      },
+    };
+
+    const calls = [() => fetch(), () => fetch(undefined), () => fetch(null), () => fetch(malformed)];
+    const consoleErrors = [];
+    const originalConsoleError = console.error;
+    console.error = (...args) => {
+      consoleErrors.push(args.map((arg) => (arg instanceof Error ? arg.message : String(arg))).join(' '));
+    };
+
+    try {
+      const outcomes = await Promise.all(
+        calls.map(async (call) => {
+          try {
+            await call();
+            return 'resolved';
+          } catch (error) {
+            return error instanceof Error ? error.name : typeof error;
+          }
+        })
+      );
+      return { consoleErrors, outcomes };
+    } finally {
+      console.error = originalConsoleError;
+    }
+  });
+
+  expect(result.outcomes).toHaveLength(4);
+  expect(result.consoleErrors).toEqual([]);
+  expect(errors).toEqual([]);
+});
+
 test('legal pages are scrollable to footer', async ({ page }) => {
   await page.goto('/legal');
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));

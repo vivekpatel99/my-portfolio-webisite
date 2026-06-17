@@ -11,6 +11,7 @@ export const Seo = ({
   path = defaultSeo.path,
   type = defaultSeo.type,
   image = defaultSeo.image,
+  noindex = false,
 }) => {
   const url = absoluteUrl(path);
   const imageUrl = absoluteUrl(image);
@@ -20,6 +21,10 @@ export const Seo = ({
     null,
     React.createElement('title', null, title),
     React.createElement('meta', { name: 'description', content: description }),
+    React.createElement('meta', {
+      name: 'robots',
+      content: noindex ? 'noindex, nofollow' : 'index, follow',
+    }),
     keywords ? React.createElement('meta', { name: 'keywords', content: keywords }) : null,
     React.createElement('link', { rel: 'canonical', href: url }),
     React.createElement('link', { rel: 'alternate', hrefLang: 'en', href: url }),

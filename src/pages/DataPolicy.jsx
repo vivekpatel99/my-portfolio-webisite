@@ -44,12 +44,13 @@ const DataPolicy = () => {
 
           <h2 className="text-2xl font-bold text-white mt-8">How Do We Use Cookies?</h2>
           <p>As most of the online services, our website uses first-party and third-party cookies for several purposes. First-party cookies are mostly necessary for the website to function the right way, and they do not collect any of your personally identifiable data.</p>
-          <p>The third-party cookies used on our website are mainly for understanding how the website performs, how you interact with our website, keeping our services secure, and all in all providing you with a better and improved user experience and help speed up your future interactions with our website.</p>
+          <p>The third-party cookies used on our website are mainly for understanding how the website performs, how you interact with our website, diagnosing site errors, keeping our services secure, and all in all providing you with a better and improved user experience and help speed up your future interactions with our website.</p>
 
           <h2 className="text-2xl font-bold text-white mt-8">What Types of Cookies Do We Use?</h2>
           <ul className="list-disc pl-5 space-y-2">
             <li><strong>Strictly Necessary Cookies:</strong> These are required for core website operation, such as remembering cookie preferences and keeping the contact experience functional. Your consent is not required for these cookies.</li>
             <li><strong>Analytical/Performance Cookies:</strong> They allow us to recognize and count the number of visitors and to see how visitors move around our website when they are using it. This helps us to improve the way our website works. We use Google Analytics for this purpose. These cookies will only be stored with your explicit consent.</li>
+            <li><strong>Diagnostics Cookies:</strong> With your consent, Sentry helps identify errors, performance issues, and masked session replay data so the site can be improved without intentionally collecting personal content.</li>
           </ul>
 
           <h2 className="text-2xl font-bold text-white mt-8">How Can I Control My Cookie Preferences?</h2>

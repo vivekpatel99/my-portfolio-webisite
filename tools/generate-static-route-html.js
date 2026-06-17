@@ -6,6 +6,13 @@ const distDir = path.join(process.cwd(), 'dist');
 const indexPath = path.join(distDir, 'index.html');
 const indexHtml = readFileSync(indexPath, 'utf8');
 const staticRoutes = Object.keys(routeSeo).filter((route) => route !== '/');
+const notFoundSeo = {
+  title: 'Page Not Found | Vivek Patel',
+  description: 'The requested page could not be found.',
+  path: '/404',
+  type: 'website',
+  image: '/og-image.png',
+};
 
 const escapeAttr = (value) =>
   String(value)
@@ -111,6 +118,14 @@ function applySeo(html, seo) {
   return nextHtml;
 }
 
+function applyNoIndex(html) {
+  return replaceOrInsert(
+    html,
+    /<meta[^>]+name=["']robots["'][^>]*>/i,
+    '<meta data-react-helmet="true" name="robots" content="noindex, nofollow" />',
+  );
+}
+
 const rootHtml = applySeo(indexHtml, routeSeo['/']);
 writeFileSync(indexPath, rootHtml);
 
@@ -120,4 +135,6 @@ for (const route of staticRoutes) {
   writeFileSync(path.join(routeDir, 'index.html'), applySeo(rootHtml, routeSeo[route]));
 }
 
-console.log(`Generated static HTML for ${staticRoutes.length + 1} routes.`);
+writeFileSync(path.join(distDir, '404.html'), applyNoIndex(applySeo(rootHtml, notFoundSeo)));
+
+console.log(`Generated static HTML for ${staticRoutes.length + 2} routes, including 404.html.`);

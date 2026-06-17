@@ -23,12 +23,14 @@ test.describe('Route rendering', () => {
   }
 });
 
-test('unknown route redirects to home', async ({ page }) => {
+test('unknown route renders a noindex 404 page', async ({ page }) => {
   await page.goto('/foo-bar-baz');
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/foo-bar-baz$/);
+  await expect(page.getByRole('heading', { name: 'Page Not Found' })).toBeVisible();
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, nofollow');
 });
 
-test('invalid project shows toast and redirects', async ({ page }) => {
+test('invalid project redirects home with an error toast', async ({ page }) => {
   await page.goto('/project/nonexistent-slug');
   await expect(page.getByText('Project Not Found', { exact: true })).toBeVisible({ timeout: 8000 });
   await expect(page).toHaveURL(/\/$/, { timeout: 10000 });

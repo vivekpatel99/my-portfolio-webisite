@@ -35,6 +35,21 @@ test('mobile menu closes on Escape', async ({ page }) => {
   await expect(page.getByRole('dialog')).toBeHidden();
 });
 
+test('mobile menu isolates background content while open', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
+  await expect(page.getByRole('dialog', { name: 'Navigation menu' })).toBeVisible();
+  await expect(page.locator('#main-content')).toHaveAttribute('aria-hidden', 'true');
+  await expect(page.locator('body')).toHaveCSS('overflow', 'hidden');
+});
+
+test('testimonial links are not duplicated for animation', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('.testimonial-card-link')).toHaveCount(4);
+  await expect(page.locator('.scroller-inner')).toHaveCount(0);
+});
+
 test('reduced motion disables custom cursor', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');

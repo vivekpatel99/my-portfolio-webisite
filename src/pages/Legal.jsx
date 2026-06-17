@@ -46,13 +46,13 @@ const Legal = () => {
             <li>Full Name</li>
             <li>Project Description and Budget</li>
           </ul>
-          <p><strong>Usage Data (with consent):</strong> With your explicit consent via our cookie banner, I may also collect information on how the Service is accessed and used ("Usage Data") through Google Analytics. This Usage Data may include information such as your computer's Internet Protocol address (e.g. IP address), browser type, browser version, the pages of our Service that you visit, the time and date of your visit, the time spent on those pages, and other diagnostic data.</p>
+          <p><strong>Usage Data (with consent):</strong> With your explicit consent via our cookie banner, I may also collect information on how the Service is accessed and used ("Usage Data") through Google Analytics and Sentry. This Usage Data may include information such as your computer's Internet Protocol address (e.g. IP address), browser type, browser version, pages visited, time and date of visits, time spent on pages, performance data, and error diagnostics.</p>
           <p><strong>Cookies Data:</strong> I use cookies and similar tracking technologies to track the activity on our Service. Please see my <Link to="/data-policy" className="text-accent-purple hover:underline">Cookie Policy</Link> for more details.</p>
 
           <h2 className="text-2xl font-bold text-white mt-8">Legal Basis for Processing under GDPR</h2>
           <p>If you are from the European Economic Area (EEA), Vivek Patel's legal basis for collecting and using the personal information described in this Privacy Policy depends on the Personal Data I collect and the specific context in which I collect it:</p>
           <ul className="list-disc pl-5 space-y-2">
-            <li><strong>Consent:</strong> You have given me permission to do so for a specific purpose (e.g., analytics cookies).</li>
+            <li><strong>Consent:</strong> You have given me permission to do so for a specific purpose (e.g., analytics and diagnostics cookies).</li>
             <li><strong>Legitimate Interests:</strong> Processing your data from the contact form is necessary for the purposes of my legitimate interest in responding to your project inquiry, and this interest is not overridden by your data protection rights.</li>
           </ul>
 
@@ -72,8 +72,9 @@ const Legal = () => {
           <p>I use third-party services to facilitate my service ("Service Providers"), and these are my main data processors:</p>
           <ul className="list-disc pl-5 space-y-2">
               <li><strong><a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-accent-purple hover:underline">Resend</a>:</strong> For transactional email delivery when you submit the contact form.</li>
-              <li><strong><a href="https://www.convex.dev/privacy" target="_blank" rel="noopener noreferrer" className="text-accent-purple hover:underline">Convex</a>:</strong> For database hosting and backend services (contact form submissions).</li>
+              <li><strong><a href="https://www.convex.dev/legal/privacy" target="_blank" rel="noopener noreferrer" className="text-accent-purple hover:underline">Convex</a>:</strong> For database hosting and backend services (contact form submissions).</li>
               <li><strong>Google Analytics:</strong> For website traffic analysis (with your consent).</li>
+              <li><strong><a href="https://sentry.io/privacy/" target="_blank" rel="noopener noreferrer" className="text-accent-purple hover:underline">Sentry</a>:</strong> For error monitoring, performance diagnostics, and masked session replay only after analytics and diagnostics consent is granted.</li>
               <li><strong>Hostinger:</strong> For website hosting.</li>
           </ul>
 

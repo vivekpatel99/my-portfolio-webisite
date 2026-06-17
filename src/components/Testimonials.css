@@ -1,29 +1,15 @@
-.scroller {
-  max-width: 100%;
-  overflow: hidden;
-  -webkit-mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
-  mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
-}
-
-.scroller-inner {
-  display: flex;
-  gap: 1.5rem; /* 24px */
-  padding-block: 1rem;
-  width: max-content;
-  animation: scroll 40s linear infinite;
-}
-
-.scroller:hover .scroller-inner {
-  animation-play-state: paused;
-}
-
 .testimonial-card-link {
   display: block;
-  width: clamp(20rem, 1rem + 40vw, 25rem); /* Responsive card width */
+  min-height: 100%;
 }
 
-@keyframes scroll {
-  to {
-    transform: translateX(calc(-50% - 0.75rem)); /* Half width of container minus half the gap */
-  }
+.testimonial-card-link:focus-visible {
+  outline: 3px solid #9372FF;
+  outline-offset: 4px;
+}
+
+.testimonial-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
 }
