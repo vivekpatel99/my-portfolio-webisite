@@ -82,7 +82,7 @@ export const techIcons = {
   n8n: 'https://avatars.githubusercontent.com/u/45487711?s=200&v=4',
   langchain: 'https://avatars.githubusercontent.com/u/126733545?s=200&v=4',
   streamlit: 'https://streamlit.io/images/brand/streamlit-mark-color.png',
-  claude: `${BASE_URLS.myPortfolioWebsite}/assets/logos/claude-color.svg`,
+  claude: '/assets/logos/claude-color.svg',
   openai: 'https://cdn.worldvectorlogo.com/logos/openai-2.svg',
   mlflow: 'https://www.mlflow.org/img/mlflow-black.svg',
   huggingface: 'https://huggingface.co/front/assets/huggingface_logo.svg',

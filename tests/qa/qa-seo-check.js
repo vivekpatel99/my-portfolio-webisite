@@ -49,7 +49,15 @@ const expectedRoutes = [
     canonical: 'https://www.vivekapatel.com/project/yolo-computer-vision-optimization/',
     title: /YOLO Computer Vision Optimization/i,
   },
+  {
+    route: 'social-media-project',
+    path: '/project/social-media-app',
+    canonical: 'https://www.vivekapatel.com/project/social-media-app/',
+    title: /Next-Gen Banking UI/i,
+  },
 ];
+
+const previewPath = (pathSuffix) => pathSuffix === '/' ? '/' : `${pathSuffix}/`;
 
 function fetchHead(url) {
   try {
@@ -104,7 +112,7 @@ for (const [env, base] of [
 ]) {
   for (const routeConfig of expectedRoutes) {
     const { route, path: pathSuffix, canonical: expectedCanonical, title: expectedTitle } = routeConfig;
-    const url = `${base}${pathSuffix}`;
+    const url = `${base}${previewPath(pathSuffix)}`;
     const head = fetchHead(url);
     if (!head) {
       findings.push({ env, route, issue: 'Failed to fetch page', severity: 'P0' });
