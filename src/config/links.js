@@ -13,8 +13,8 @@ export const socialLinks = {
   upwork: 'https://www.upwork.com/freelancers/vivekpatel99?mp_source=share',
   freelancer: 'https://www.freelancer.com/u/vivekpatel999',
   freelancerMap: 'https://www.freelancermap.de/profil/ai-engineer-specializing-in-computer-vision-with-expertise-in-cuda-and-onnx-optimization',
-  emailHref: 'mailto:vivekp.freelance@pm.me',
-  contactEmail: 'vivekp.freelance@pm.me',
+  emailHref: 'mailto:contact@vivekapatel.com',
+  contactEmail: 'contact@vivekapatel.com',
 };
 
 export const logos = {

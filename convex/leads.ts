@@ -114,7 +114,7 @@ export async function sendContactEmailNotification(
   const fetchImpl = dependencies.fetch ?? fetch;
   const logger = dependencies.logger ?? console;
   const apiKey = env.RESEND_API_KEY;
-  const recipient = env.CONTACT_RECIPIENT_EMAIL ?? "vivekp.freelance@pm.me";
+  const recipient = env.CONTACT_RECIPIENT_EMAIL ?? "contact@vivekapatel.com";
   const resendFromEmail = env.RESEND_FROM_EMAIL;
   const from = resendFromEmail ?? DEFAULT_FROM;
 
