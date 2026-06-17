@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest';
 import Portfolio from './Portfolio';
 
 describe('Portfolio', () => {
-  it('uses internal links for case studies and real anchors for external project cards', () => {
+  it('links portfolio cards to internal case studies', () => {
     render(
       <MemoryRouter>
         <Portfolio />
@@ -20,9 +20,7 @@ describe('Portfolio', () => {
     }).getAttribute('href')).toBe('/project/n8n-openai-data-extraction');
 
     expect(screen.getByRole('link', {
-      name: /view project: multi-player sports tracking/i,
-    }).getAttribute('href')).toBe(
-      'https://github.com/vivekpatel99/football-players-tracking-yolo',
-    );
+      name: /read case study: invoice ocr data extraction/i,
+    }).getAttribute('href')).toBe('/project/invoice-ocr-extraction');
   });
 });

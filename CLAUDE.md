@@ -35,7 +35,7 @@ This is a React portfolio website for Vivek Patel (vivekapatel.com), built with 
 ### Key Structure
 
 - `src/pages/` - Route pages (Home, Contact, Project/:projectId, Legal, DataPolicy)
-- `src/components/` - Home page sections (Hero, TechStack, Services, About, Experience, Portfolio, Testimonials, Stats, Connect, CTA) and shared components
+- `src/components/` - Home page sections (Hero, ProofStrip, Portfolio, Services, Testimonials, About, CTA) and shared components
 - `src/components/ui/` - Radix-based UI primitives (button, input, toast, select, etc.)
 - `src/lib/utils.js` - Contains `cn()` helper for Tailwind class merging
 - `src/config/links.js` - External links configuration

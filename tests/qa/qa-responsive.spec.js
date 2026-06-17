@@ -31,7 +31,7 @@ test('mobile menu CTA navigates to contact', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
-  await page.getByRole('dialog', { name: 'Navigation menu' }).getByRole('button', { name: /Hire Me/i }).click();
+  await page.getByRole('dialog', { name: 'Navigation menu' }).getByRole('button', { name: /Request a Project Estimate/i }).click();
   await expect(page).toHaveURL(/\/contact/);
 });
 

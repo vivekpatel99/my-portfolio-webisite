@@ -32,28 +32,22 @@ const expectedRoutes = [
     title: /Cookie Policy/i,
   },
   {
-    route: 'n8n-project',
+    route: 'project-n8n',
     path: '/project/n8n-openai-data-extraction',
     canonical: 'https://www.vivekapatel.com/project/n8n-openai-data-extraction/',
     title: /n8n \+ OpenAI Data Extraction/i,
   },
   {
-    route: 'invoice-project',
+    route: 'project-invoice-ocr',
     path: '/project/invoice-ocr-extraction',
     canonical: 'https://www.vivekapatel.com/project/invoice-ocr-extraction/',
     title: /Invoice OCR Extraction/i,
   },
   {
-    route: 'yolo-project',
+    route: 'project-yolo',
     path: '/project/yolo-computer-vision-optimization',
     canonical: 'https://www.vivekapatel.com/project/yolo-computer-vision-optimization/',
     title: /YOLO Computer Vision Optimization/i,
-  },
-  {
-    route: 'social-media-project',
-    path: '/project/social-media-app',
-    canonical: 'https://www.vivekapatel.com/project/social-media-app/',
-    title: /Next-Gen Banking UI/i,
   },
 ];
 

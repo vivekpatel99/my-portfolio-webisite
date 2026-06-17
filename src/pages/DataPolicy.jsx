@@ -48,7 +48,7 @@ const DataPolicy = () => {
 
           <h2 className="text-2xl font-bold text-white mt-8">What Types of Cookies Do We Use?</h2>
           <ul className="list-disc pl-5 space-y-2">
-            <li><strong>Strictly Necessary Cookies:</strong> These are required for the operation of our website. They include, for example, cookies that enable you to log into secure areas of our website. Your consent is not required for these cookies.</li>
+            <li><strong>Strictly Necessary Cookies:</strong> These are required for core website operation, such as remembering cookie preferences and keeping the contact experience functional. Your consent is not required for these cookies.</li>
             <li><strong>Analytical/Performance Cookies:</strong> They allow us to recognize and count the number of visitors and to see how visitors move around our website when they are using it. This helps us to improve the way our website works. We use Google Analytics for this purpose. These cookies will only be stored with your explicit consent.</li>
             <li><strong>Diagnostics Cookies:</strong> With your consent, Sentry helps identify errors, performance issues, and masked session replay data so the site can be improved without intentionally collecting personal content.</li>
           </ul>

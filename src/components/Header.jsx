@@ -183,7 +183,7 @@ const Header = () => {
           </nav>
           <div className="hidden md:flex items-center gap-4">
             <Button className="bg-accent-purple text-white hover:bg-accent-purple/90 group rounded-full" onClick={handleCTA}>
-              Hire Me <ArrowRight className="ml-2 h-4 w-4 transform transition-transform duration-300 group-hover:translate-x-1" />
+              Request Estimate <ArrowRight className="ml-2 h-4 w-4 transform transition-transform duration-300 group-hover:translate-x-1" />
             </Button>
           </div>
           <div className="md:hidden">
@@ -240,7 +240,7 @@ const Header = () => {
               </nav>
               <div className="py-8 flex flex-col gap-4">
                 <Button className="bg-accent-purple text-white hover:bg-accent-purple/90 group w-full text-lg py-6 rounded-full" onClick={handleCTA}>
-                    Hire Me <ArrowRight className="ml-2 h-4 w-4 transform transition-transform duration-300 group-hover:translate-x-1" />
+                    Request a Project Estimate <ArrowRight className="ml-2 h-4 w-4 transform transition-transform duration-300 group-hover:translate-x-1" />
                 </Button>
               </div>
             </div>
