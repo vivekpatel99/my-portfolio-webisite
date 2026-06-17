@@ -9,7 +9,7 @@ const RATE_LIMIT_MAX_SUBMISSIONS = 3;
 const GLOBAL_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const GLOBAL_RATE_LIMIT_MAX_SUBMISSIONS = 30;
 const EMAIL_RETRY_BATCH_SIZE = 20;
-const EMAIL_ATTEMPT_STALE_MS = 10 * 60 * 1000;
+const EMAIL_ATTEMPT_STALE_MS = 5 * 60 * 1000; // Aligned with cron retry threshold
 const RESEND_SANDBOX_FROM = "onboarding@resend.dev";
 const DEFAULT_FROM = `Portfolio Contact <${RESEND_SANDBOX_FROM}>`;
 
@@ -320,7 +320,7 @@ export const claimStaleEmailNotificationRetries = internalMutation({
               (q) =>
                 q
                   .eq("emailNotificationStatus", "sending")
-                  .lt("emailNotificationUpdatedAt", now - EMAIL_ATTEMPT_STALE_MS),
+                  .lt("emailNotificationUpdatedAt", args.cutoff),
             )
             .take(remainingAfterPending)
         : [];

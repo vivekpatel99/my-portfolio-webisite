@@ -457,6 +457,34 @@ describe("email notification retry state", () => {
     expect(claimed[0]._id).toBe(leadId);
   });
 
+  it("reclaims stale sending leads that timed out", async () => {
+    const now = new Date("2026-06-15T12:00:00.000Z");
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+
+    const t = convexTest(schema, modules);
+    const staleUpdatedAt = now.getTime() - 6 * 60 * 1000;
+    const leadId = await t.run(async (ctx) =>
+      ctx.db.insert("leads", {
+        name: "Send Timeout",
+        email: "timeout@example.com",
+        description: "Sending state timed out.",
+        createdAt: staleUpdatedAt,
+        emailNotificationStatus: "sending",
+        emailNotificationUpdatedAt: staleUpdatedAt,
+      }),
+    );
+
+    const claimed = await t.mutation(
+      internal.leads.claimStaleEmailNotificationRetries,
+      { cutoff: now.getTime() - 5 * 60 * 1000 },
+    );
+
+    expect(claimed).toHaveLength(1);
+    expect(claimed[0]._id).toBe(leadId);
+    expect(claimed[0].name).toBe("Send Timeout");
+  });
+
   it("keeps transient Resend responses retryable as pending", async () => {
     const now = new Date("2026-06-15T12:00:00.000Z");
     vi.useFakeTimers();
