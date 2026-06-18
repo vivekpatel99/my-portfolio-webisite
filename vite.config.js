@@ -318,6 +318,37 @@ export default defineConfig({
 	},
 	build: {
 		rollupOptions: {
+			output: {
+				manualChunks(id) {
+					if (!id.includes('node_modules')) {
+						return;
+					}
+
+					if (id.includes('@sentry')) {
+						return 'vendor-sentry';
+					}
+
+					if (id.includes('convex')) {
+						return 'vendor-convex';
+					}
+
+					if (id.includes('framer-motion')) {
+						return 'vendor-motion';
+					}
+
+					if (id.includes('@radix-ui')) {
+						return 'vendor-radix';
+					}
+
+					if (
+						id.includes('react-dom') ||
+						id.includes('react-router') ||
+						id.includes('/react/')
+					) {
+						return 'vendor-react';
+					}
+				},
+			},
 			external: [
 				'@babel/parser',
 				'@babel/traverse',

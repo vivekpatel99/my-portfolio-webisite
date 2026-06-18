@@ -7,11 +7,11 @@ import {
 const SentryTelemetry = ({ hasConsent }) => {
   useEffect(() => {
     if (hasConsent) {
-      initializeSentryTelemetry();
+      void initializeSentryTelemetry();
       return undefined;
     }
 
-    closeSentryTelemetry();
+    void closeSentryTelemetry();
     return undefined;
   }, [hasConsent]);
 

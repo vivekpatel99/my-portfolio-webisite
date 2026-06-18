@@ -1,14 +1,42 @@
-import * as Sentry from '@sentry/react';
-import { convexDeploymentOrigin } from '@/lib/convexClient';
-
 const SENTRY_DSN =
   import.meta.env.VITE_SENTRY_DSN ||
   'https://b697debff1be30b835700c935a494249@o4510426517143552.ingest.de.sentry.io/4510426780532816';
 
 let initialized = false;
+let initializing = false;
+let sentryModule = null;
+let sentryLoadPromise = null;
 
-export function initializeSentryTelemetry() {
-  if (initialized || process.env.NODE_ENV !== 'production') {
+function getConvexDeploymentOrigin() {
+  const value = import.meta.env.VITE_CONVEX_URL?.trim();
+  if (!value) {
+    return null;
+  }
+
+  try {
+    return new URL(value).origin;
+  } catch {
+    return null;
+  }
+}
+
+async function loadSentry() {
+  if (sentryModule) {
+    return sentryModule;
+  }
+
+  if (!sentryLoadPromise) {
+    sentryLoadPromise = import('@sentry/react').then((module) => {
+      sentryModule = module;
+      return module;
+    });
+  }
+
+  return sentryLoadPromise;
+}
+
+export async function initializeSentryTelemetry() {
+  if (initialized || initializing || process.env.NODE_ENV !== 'production') {
     return;
   }
 
@@ -17,47 +45,57 @@ export function initializeSentryTelemetry() {
     return;
   }
 
-  const tracePropagationTargets = ['localhost'];
-  if (convexDeploymentOrigin) {
-    tracePropagationTargets.push(convexDeploymentOrigin);
+  initializing = true;
+
+  try {
+    const Sentry = await loadSentry();
+    const tracePropagationTargets = ['localhost'];
+    const convexDeploymentOrigin = getConvexDeploymentOrigin();
+
+    if (convexDeploymentOrigin) {
+      tracePropagationTargets.push(convexDeploymentOrigin);
+    }
+
+    Sentry.init({
+      dsn: SENTRY_DSN,
+      integrations: [
+        Sentry.browserTracingIntegration(),
+        Sentry.replayIntegration({
+          maskAllText: true,
+          blockAllMedia: true,
+        }),
+      ],
+      tracesSampleRate: 0.2,
+      tracePropagationTargets,
+      replaysSessionSampleRate: 0.05,
+      replaysOnErrorSampleRate: 1.0,
+      sendDefaultPii: false,
+    });
+
+    initialized = true;
+  } finally {
+    initializing = false;
   }
-
-  Sentry.init({
-    dsn: SENTRY_DSN,
-    integrations: [
-      Sentry.browserTracingIntegration(),
-      Sentry.replayIntegration({
-        maskAllText: true,
-        blockAllMedia: true,
-      }),
-    ],
-    tracesSampleRate: 0.2,
-    tracePropagationTargets,
-    replaysSessionSampleRate: 0.05,
-    replaysOnErrorSampleRate: 1.0,
-    sendDefaultPii: false,
-  });
-
-  initialized = true;
 }
 
-export function closeSentryTelemetry() {
+export async function closeSentryTelemetry() {
   if (!initialized) {
     return;
   }
 
-  const client = Sentry.getCurrentHub().getClient();
-  void client?.close?.(2000);
+  const Sentry = sentryModule ?? (await loadSentry());
+  const client = Sentry.getClient();
+  await client?.close?.(2000);
   initialized = false;
 }
 
 export function captureException(error, context) {
-  if (!initialized) {
+  if (!initialized || !sentryModule) {
     if (process.env.NODE_ENV !== 'production') {
       console.error('Sentry not initialized:', error, context);
     }
     return;
   }
 
-  Sentry.captureException(error, context);
+  sentryModule.captureException(error, context);
 }

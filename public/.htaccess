@@ -24,7 +24,7 @@
 
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^project/(n8n-openai-data-extraction|invoice-ocr-extraction|yolo-computer-vision-optimization|social-media-app)/?$ index.html [L]
+  RewriteRule ^project/(n8n-openai-data-extraction|invoice-ocr-extraction|yolo-computer-vision-optimization)/?$ index.html [L]
 
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
@@ -46,5 +46,10 @@
   # Hashed Vite assets are safe to cache aggressively.
   <If "%{REQUEST_URI} =~ m#^/assets/.*$#">
     Header set Cache-Control "public, max-age=31536000, immutable"
+  </If>
+
+  # Stable root assets can be cached for a day.
+  <If "%{REQUEST_URI} =~ m#^/(og-image\.png|robots\.txt|sitemap\.xml)$#">
+    Header set Cache-Control "public, max-age=86400"
   </If>
 </IfModule>

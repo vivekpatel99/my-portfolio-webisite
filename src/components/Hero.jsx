@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +8,16 @@ import { socialLinks } from '@/config/links';
 
 const Hero = () => {
   const navigate = useNavigate();
+  const shouldReduceMotion = useReducedMotion();
+
+  const fadeUp = (delay = 0) =>
+    shouldReduceMotion
+      ? {}
+      : {
+          initial: { opacity: 0, y: 30 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.8, delay },
+        };
 
   const handleCTAClick = () => {
     navigate('/contact');
@@ -30,9 +40,7 @@ const Hero = () => {
       <div className="container mx-auto px-6 relative z-10">
         <div className="max-w-5xl mx-auto text-left md:text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            {...fadeUp()}
             className="inline-flex items-center gap-2 px-4 py-2 bg-accent-purple/10 border border-accent-purple/20 rounded-full mb-8"
           >
             <Sparkles className="w-4 h-4 text-accent-purple" />
@@ -57,9 +65,13 @@ const Hero = () => {
           </motion.div>
 
           <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            {...(shouldReduceMotion
+              ? {}
+              : {
+                  initial: { y: 20 },
+                  animate: { y: 0 },
+                  transition: { duration: 0.6, delay: 0.1 },
+                })}
             className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight text-white uppercase break-words"
           >
             Vivek Patel
@@ -67,27 +79,21 @@ const Hero = () => {
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            {...fadeUp(0.15)}
             className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto"
           >
             Spending 40+ hours a week on manual data processing? I build production-ready data extraction, Computer Vision, and AI workflow systems that replace repetitive work with reliable automation.
           </motion.p>
 
           <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.45 }}
+            {...fadeUp(0.2)}
             className="text-sm text-gray-500 mb-6"
           >
             Work directly with me—no account managers, no handoffs.
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
+            {...fadeUp(0.25)}
             className="flex flex-col items-center gap-3 mb-10"
           >
             <div className="inline-flex items-center gap-4 px-5 py-2.5 bg-white/5 border border-white/10 rounded-full">
@@ -102,9 +108,7 @@ const Hero = () => {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+            {...fadeUp(0.3)}
             className="flex flex-col sm:flex-row gap-4 justify-start md:justify-center"
           >
             <Button
@@ -128,9 +132,13 @@ const Hero = () => {
           </motion.div>
 
           <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
+            {...(shouldReduceMotion
+              ? {}
+              : {
+                  initial: { opacity: 0 },
+                  animate: { opacity: 1 },
+                  transition: { duration: 0.8, delay: 0.5 },
+                })}
             className="mt-8 text-gray-400 text-sm italic"
           >
             "Very high quality work. Great communication. High quality code." — Duncan H., Upwork Client
