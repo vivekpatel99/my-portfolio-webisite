@@ -13,3 +13,67 @@
   gap: 1.5rem;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
 }
+
+.testimonial-marquee {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+.testimonial-marquee-row {
+  overflow: hidden;
+}
+
+.testimonial-marquee-track {
+  display: flex;
+  width: max-content;
+  gap: 1.5rem;
+  animation-duration: var(--marquee-duration, 40s);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.testimonial-marquee-left {
+  animation-name: testimonial-marquee-left;
+}
+
+.testimonial-marquee-right {
+  animation-name: testimonial-marquee-right;
+}
+
+.testimonial-marquee-row:hover .testimonial-marquee-track {
+  animation-play-state: paused;
+}
+
+.testimonial-marquee-item {
+  width: min(100vw - 3rem, 22rem);
+  flex-shrink: 0;
+}
+
+@keyframes testimonial-marquee-left {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(calc(-50% - 0.75rem));
+  }
+}
+
+@keyframes testimonial-marquee-right {
+  from {
+    transform: translateX(calc(-50% - 0.75rem));
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-marquee-track {
+    animation: none;
+  }
+}

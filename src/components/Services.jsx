@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus } from 'lucide-react'; // Changed import from ArrowRight, ArrowDownRight to Plus
+import { Plus } from 'lucide-react';
+import AnimatedSectionHeading from '@/components/AnimatedSectionHeading';
 
 const services = [{
   title: 'DATA EXTRACTION AUTOMATION SPRINT',
@@ -21,9 +22,12 @@ const Services = () => {
   return <section id="services" className="py-24 bg-[#0C0D0D]">
     <div className="container mx-auto px-6 relative z-10">
       <div className="mb-16">
-        <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-white uppercase">
-          SERVICE <span className="text-accent-purple">OFFERS</span>
-        </h2>
+        <AnimatedSectionHeading
+          as="h2"
+          className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-white uppercase"
+          before="SERVICE"
+          highlight="OFFERS"
+        />
         <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mt-4">Clear, purchasable ways to turn manual data work and slow AI pipelines into production-ready systems.</p>
         <div className="flex flex-wrap gap-3 mt-8" role="list">
           {filterTags.map(tag => <span key={tag} role="listitem" className="px-5 py-2 border border-gray-600 rounded-full text-gray-400 uppercase">

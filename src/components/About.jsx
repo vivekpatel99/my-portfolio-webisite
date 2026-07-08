@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { profileImages } from '@/config/links';
+import AnimatedSectionHeading from '@/components/AnimatedSectionHeading';
 
 const About = () => {
   return (
@@ -31,9 +32,11 @@ const About = () => {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
           >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-white uppercase">
-              WHO I <span className="text-accent-purple">AM</span>
-            </h2>
+            <AnimatedSectionHeading
+              className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-white uppercase"
+              before="WHO I"
+              highlight="AM"
+            />
             <div className="space-y-8">
               <div>
                 <h3 className="text-2xl font-bold text-white mb-3">Vivek Patel — AI Engineer specializing in Computer Vision</h3>
@@ -72,9 +75,11 @@ const About = () => {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
           >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-white uppercase">
-              MY <span className="text-accent-purple">PROCESS</span>
-            </h2>
+            <AnimatedSectionHeading
+              className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-white uppercase"
+              before="MY"
+              highlight="PROCESS"
+            />
             <div className="space-y-8">
               <div>
                 <h3 className="text-2xl font-bold text-white mb-3">Strategy & Discovery</h3>
@@ -90,9 +95,11 @@ const About = () => {
         {/* Third Section - When You Hire Me */}
         <div className="mt-20 py-24">
           <div className="mb-12">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-white uppercase">
-              WHEN YOU <span className="text-accent-purple">HIRE ME</span>
-            </h2>
+            <AnimatedSectionHeading
+              className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-white uppercase"
+              before="WHEN YOU"
+              highlight="HIRE ME"
+            />
             <p className="text-lg text-gray-400 max-w-3xl">Here's exactly what to expect. I deliver a clear process, regular updates, and production-ready results.</p>
           </div>
 

@@ -1,12 +1,66 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { featuredCaseStudies } from '@/data/caseStudies';
+import AnimatedSectionHeading from '@/components/AnimatedSectionHeading';
+import useFinePointer from '@/hooks/useFinePointer';
 
-const ProjectCard = ({ project }) => {
+const ProjectCard = ({ project, index }) => {
+  const shouldReduceMotion = useReducedMotion();
+  const hasFinePointer = useFinePointer();
+  const cardRef = useRef(null);
+  const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0, sheenX: 50, sheenY: 50 });
   const secondaryLink = project.externalLinks?.[0];
+  const enableTilt = hasFinePointer && !shouldReduceMotion;
+
+  const handleMouseMove = (event) => {
+    if (!enableTilt || !cardRef.current) {
+      return;
+    }
+
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+
+    setTilt({
+      rotateX: (0.5 - y) * 10,
+      rotateY: (x - 0.5) * 10,
+      sheenX: x * 100,
+      sheenY: y * 100,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setTilt({ rotateX: 0, rotateY: 0, sheenX: 50, sheenY: 50 });
+  };
+
   return (
-    <article className="group overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] transition-all duration-300 hover:border-accent-purple/50 hover:bg-white/[0.07]">
+    <motion.div
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 40 }}
+      whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{
+        duration: 0.65,
+        delay: shouldReduceMotion ? 0 : index * 0.1,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+    >
+      <motion.article
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        animate={{
+          rotateX: enableTilt ? tilt.rotateX : 0,
+          rotateY: enableTilt ? tilt.rotateY : 0,
+        }}
+        transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+        style={{
+          transformStyle: 'preserve-3d',
+          perspective: 1000,
+        }}
+        className="group overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] transition-[border-color,background-color,box-shadow] duration-300 hover:border-accent-purple/50 hover:bg-white/[0.07] hover:shadow-[0_20px_50px_-20px_rgba(124,58,237,0.35)]"
+      >
       <Link
         to={`/project/${project.slug}`}
         className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple"
@@ -19,7 +73,15 @@ const ProjectCard = ({ project }) => {
             src={project.image.src}
             loading="lazy"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+          {enableTilt && (
+            <div
+              className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+              style={{
+                background: `radial-gradient(circle at ${tilt.sheenX}% ${tilt.sheenY}%, rgba(212,180,255,0.22) 0%, transparent 55%)`,
+              }}
+            />
+          )}
           <div className="absolute bottom-0 left-0 w-full p-5">
             <div className="mb-3 inline-flex rounded-full border border-accent-purple/30 bg-accent-purple/15 px-3 py-1 text-xs font-semibold uppercase text-[#d8caff]">
               {project.category}
@@ -47,7 +109,8 @@ const ProjectCard = ({ project }) => {
           </a>
         )}
       </div>
-    </article>
+      </motion.article>
+    </motion.div>
   );
 };
 
@@ -60,9 +123,11 @@ const Portfolio = () => {
             <div className="inline-block px-4 py-1.5 border border-white/20 rounded-full text-sm mb-4 uppercase">
               Portfolio
             </div>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight uppercase">
-              Featured <span className="text-accent-purple">Case Studies</span>
-            </h2>
+            <AnimatedSectionHeading
+              className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight uppercase"
+              before="Featured"
+              highlight="Case Studies"
+            />
             <p className="text-lg text-gray-400 mt-6 mb-12">
               Real client work in data extraction, OCR, and computer vision. Each case study shows the business problem, technical approach, and measurable outcome.
             </p>
@@ -70,10 +135,11 @@ const Portfolio = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {featuredCaseStudies.map((project) => (
+          {featuredCaseStudies.map((project, index) => (
             <ProjectCard
               key={project.id}
               project={project}
+              index={index}
             />
           ))}
         </div>

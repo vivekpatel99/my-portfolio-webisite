@@ -7,6 +7,8 @@ import CustomCursor from '@/components/CustomCursor';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 import SentryTelemetry from '@/components/SentryTelemetry';
 import CookieConsentBanner from '@/components/CookieConsentBanner';
+import ScrollProgressBar from '@/components/ScrollProgressBar';
+import GrainOverlay from '@/components/GrainOverlay';
 import { COOKIE_CONSENT_KEY, readAnalyticsConsent } from '@/lib/consent';
 
 const Layout = () => {
@@ -20,7 +22,6 @@ const Layout = () => {
   useEffect(() => {
     syncAnalyticsConsent();
 
-    // Listen for event from footer to manage cookies
     const handleManageCookies = () => setShowConsentManager(true);
     const handleStorage = (event) => {
       if (event.key === COOKIE_CONSENT_KEY) {
@@ -54,6 +55,8 @@ const Layout = () => {
       >
         Skip to main content
       </a>
+      <ScrollProgressBar />
+      <GrainOverlay />
       <CustomCursor />
       <GoogleAnalytics hasConsent={gaConsent} />
       <SentryTelemetry hasConsent={gaConsent} />

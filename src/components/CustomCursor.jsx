@@ -2,9 +2,13 @@ import React, { useEffect, useState } from 'react';
 import useMousePosition from '@/hooks/useMousePosition';
 import { motion } from 'framer-motion';
 
+const INTERACTIVE_SELECTOR = 'a, button, [role="button"], input, textarea, select, label[for]';
+
 const CustomCursor = () => {
   const { x, y } = useMousePosition();
   const [enabled, setEnabled] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
 
   useEffect(() => {
     const pointerQuery = window.matchMedia('(pointer: fine)');
@@ -46,16 +50,35 @@ const CustomCursor = () => {
     };
   }, []);
 
-  const variants = {
-    default: {
-      x: x - 8,
-      y: y - 8,
-      height: 16,
-      width: 16,
-      backgroundColor: '#9372FF', // Updated to the new purple
-      mixBlendMode: 'difference',
-    },
-  };
+  useEffect(() => {
+    if (!enabled) {
+      return undefined;
+    }
+
+    const handlePointerOver = (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) {
+        return;
+      }
+      setIsHovering(Boolean(target.closest(INTERACTIVE_SELECTOR)));
+    };
+
+    const handlePointerDown = () => setIsPressed(true);
+    const handlePointerUp = () => setIsPressed(false);
+
+    document.addEventListener('mouseover', handlePointerOver);
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('mouseup', handlePointerUp);
+
+    return () => {
+      document.removeEventListener('mouseover', handlePointerOver);
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('mouseup', handlePointerUp);
+    };
+  }, [enabled]);
+
+  const size = isPressed ? 12 : isHovering ? 40 : 16;
+  const ringOpacity = isHovering ? 1 : 0;
 
   if (!enabled) {
     return null;
@@ -63,11 +86,32 @@ const CustomCursor = () => {
 
   return (
     <motion.div
-      variants={variants}
-      animate="default"
-      transition={{ type: "spring", stiffness: 500, damping: 28 }}
-      className="fixed top-0 left-0 rounded-full pointer-events-none z-[9999]"
-    />
+      className="fixed top-0 left-0 pointer-events-none z-[9999]"
+      animate={{
+        x: x - size / 2,
+        y: y - size / 2,
+        width: size,
+        height: size,
+      }}
+      transition={{ type: 'spring', stiffness: 500, damping: 28 }}
+    >
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        animate={{
+          backgroundColor: isHovering ? 'rgba(147, 114, 255, 0.25)' : '#9372FF',
+          mixBlendMode: isHovering ? 'normal' : 'difference',
+        }}
+        transition={{ duration: 0.15 }}
+      />
+      <motion.div
+        className="absolute inset-0 rounded-full border-2 border-[#D4B4FF]"
+        animate={{
+          opacity: ringOpacity,
+          scale: isHovering ? 1 : 0.8,
+        }}
+        transition={{ duration: 0.2 }}
+      />
+    </motion.div>
   );
 };
 
