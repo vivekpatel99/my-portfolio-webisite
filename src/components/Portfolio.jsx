@@ -4,25 +4,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { featuredCaseStudies } from '@/data/caseStudies';
 
-const CONFIDENCE_VALUES = ['0.98', '0.96', '0.99', '0.97', '0.95', '0.94'];
-
-const AnalysisOverlay = ({ confidence }) => (
-  <div
-    className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-    aria-hidden="true"
-  >
-    <span className="absolute left-3 top-3 h-5 w-5 border-l-2 border-t-2 border-[#9372FF]" />
-    <span className="absolute right-3 top-3 h-5 w-5 border-r-2 border-t-2 border-[#9372FF]" />
-    <span className="absolute bottom-3 left-3 h-5 w-5 border-b-2 border-l-2 border-[#9372FF]" />
-    <span className="absolute bottom-3 right-3 h-5 w-5 border-b-2 border-r-2 border-[#9372FF]" />
-    <span className="cv-card-scanline absolute inset-x-0 top-0 h-px" />
-    <span className="absolute right-3 bottom-3 rounded bg-black/70 px-2 py-0.5 font-mono text-[11px] tracking-wider text-[#d8caff]">
-      match: {confidence}
-    </span>
-  </div>
-);
-
-const ProjectCard = ({ project, confidence, reduceMotion }) => {
+const ProjectCard = ({ project, reduceMotion }) => {
   const cardRef = useRef(null);
   const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0, sheenX: 50, sheenY: 50 });
   const secondaryLink = project.externalLinks?.[0];
@@ -83,7 +65,6 @@ const ProjectCard = ({ project, confidence, reduceMotion }) => {
               aria-hidden="true"
             />
           )}
-          <AnalysisOverlay confidence={confidence} />
           <div className="absolute bottom-0 left-0 w-full p-5">
             <div className="mb-3 inline-flex rounded-full border border-accent-purple/30 bg-accent-purple/15 px-3 py-1 text-xs font-semibold uppercase text-[#d8caff]">
               {project.category}
@@ -121,7 +102,6 @@ const Portfolio = () => {
 
   return (
     <section id="portfolio" className="relative py-24 bg-[#0C0D0D]">
-      <div className="absolute inset-0 cv-grid" aria-hidden="true"></div>
       <div className="container mx-auto px-6 relative">
         <div className="flex flex-col lg:flex-row gap-8 items-start justify-between">
           <div className="w-full lg:w-2/3">
@@ -151,11 +131,7 @@ const Portfolio = () => {
                 ease: 'easeOut',
               }}
             >
-              <ProjectCard
-                project={project}
-                confidence={CONFIDENCE_VALUES[index % CONFIDENCE_VALUES.length]}
-                reduceMotion={reduceMotion}
-              />
+              <ProjectCard project={project} reduceMotion={reduceMotion} />
             </motion.div>
           ))}
         </div>
