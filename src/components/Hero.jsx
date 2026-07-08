@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import AnimatedHeroBackground from '@/components/AnimatedHeroBackground';
+import InteractiveHeroBackground from '@/components/InteractiveHeroBackground';
 import { socialLinks } from '@/config/links';
 
 const Hero = () => {
@@ -13,18 +13,9 @@ const Hero = () => {
     navigate('/contact');
   };
 
-  const handleViewWorkClick = () => {
-    const portfolioSection = document.getElementById('portfolio');
-    if (portfolioSection) {
-      portfolioSection.scrollIntoView({
-        behavior: 'smooth'
-      });
-    }
-  };
-
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      <AnimatedHeroBackground />
+      <InteractiveHeroBackground />
       <div className="absolute inset-0 bg-black/40"></div>
 
       <div className="container mx-auto px-6 relative z-10">
@@ -63,7 +54,7 @@ const Hero = () => {
             className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight text-white uppercase break-words"
           >
             Vivek Patel
-            <span className="block text-accent-purple">Computer Vision & AI Engineer</span>
+            <span className="block text-gradient">Computer Vision & AI Engineer</span>
           </motion.h1>
 
           <motion.p

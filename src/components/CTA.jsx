@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import AnimatedCtaBackground from '@/components/AnimatedCtaBackground';
+import InteractiveCtaBackground from '@/components/InteractiveCtaBackground';
 import { useNavigate } from 'react-router-dom';
 const CTA = () => {
   const navigate = useNavigate();
@@ -9,7 +9,7 @@ const CTA = () => {
     navigate('/contact');
   };
   return <section id="cta" className="relative py-32 overflow-hidden">
-    <AnimatedCtaBackground />
+    <InteractiveCtaBackground />
     <div className="absolute inset-0 bg-black/40"></div> {/* Adjusted overlay opacity */}
 
     <div className="container mx-auto px-6 relative z-10">

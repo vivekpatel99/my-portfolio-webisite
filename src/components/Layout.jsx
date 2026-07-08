@@ -4,6 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Toaster } from '@/components/ui/toaster';
 import CustomCursor from '@/components/CustomCursor';
+import ScrollProgressBar from '@/components/ScrollProgressBar';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 import SentryTelemetry from '@/components/SentryTelemetry';
 import CookieConsentBanner from '@/components/CookieConsentBanner';
@@ -54,6 +55,7 @@ const Layout = () => {
       >
         Skip to main content
       </a>
+      <ScrollProgressBar />
       <CustomCursor />
       <GoogleAnalytics hasConsent={gaConsent} />
       <SentryTelemetry hasConsent={gaConsent} />

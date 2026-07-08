@@ -1,12 +1,66 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { featuredCaseStudies } from '@/data/caseStudies';
 
-const ProjectCard = ({ project }) => {
+const CONFIDENCE_VALUES = ['0.98', '0.96', '0.99', '0.97', '0.95', '0.94'];
+
+const AnalysisOverlay = ({ confidence }) => (
+  <div
+    className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+    aria-hidden="true"
+  >
+    <span className="absolute left-3 top-3 h-5 w-5 border-l-2 border-t-2 border-[#9372FF]" />
+    <span className="absolute right-3 top-3 h-5 w-5 border-r-2 border-t-2 border-[#9372FF]" />
+    <span className="absolute bottom-3 left-3 h-5 w-5 border-b-2 border-l-2 border-[#9372FF]" />
+    <span className="absolute bottom-3 right-3 h-5 w-5 border-b-2 border-r-2 border-[#9372FF]" />
+    <span className="cv-card-scanline absolute inset-x-0 top-0 h-px" />
+    <span className="absolute right-3 bottom-3 rounded bg-black/70 px-2 py-0.5 font-mono text-[11px] tracking-wider text-[#d8caff]">
+      match: {confidence}
+    </span>
+  </div>
+);
+
+const ProjectCard = ({ project, confidence, reduceMotion }) => {
+  const cardRef = useRef(null);
+  const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0, sheenX: 50, sheenY: 50 });
   const secondaryLink = project.externalLinks?.[0];
+
+  const handleMouseMove = (event) => {
+    if (reduceMotion || !cardRef.current) {
+      return;
+    }
+
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+
+    setTilt({
+      rotateX: (0.5 - y) * 10,
+      rotateY: (x - 0.5) * 10,
+      sheenX: x * 100,
+      sheenY: y * 100,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setTilt({ rotateX: 0, rotateY: 0, sheenX: 50, sheenY: 50 });
+  };
+
   return (
-    <article className="group overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] transition-all duration-300 hover:border-accent-purple/50 hover:bg-white/[0.07]">
+    <motion.article
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      animate={{
+        rotateX: reduceMotion ? 0 : tilt.rotateX,
+        rotateY: reduceMotion ? 0 : tilt.rotateY,
+      }}
+      transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+      style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
+      className="group h-full overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] transition-[border-color,background-color,box-shadow] duration-300 hover:border-accent-purple/50 hover:bg-white/[0.07] hover:shadow-[0_20px_50px_-20px_rgba(124,58,237,0.35)]"
+    >
       <Link
         to={`/project/${project.slug}`}
         className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple"
@@ -14,12 +68,22 @@ const ProjectCard = ({ project }) => {
       >
         <div className="relative aspect-[4/3] overflow-hidden">
           <img
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
             alt={project.image.alt}
             src={project.image.src}
             loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent"></div>
+          {!reduceMotion && (
+            <div
+              className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+              style={{
+                background: `radial-gradient(circle at ${tilt.sheenX}% ${tilt.sheenY}%, rgba(212,180,255,0.22) 0%, transparent 55%)`,
+              }}
+              aria-hidden="true"
+            />
+          )}
+          <AnalysisOverlay confidence={confidence} />
           <div className="absolute bottom-0 left-0 w-full p-5">
             <div className="mb-3 inline-flex rounded-full border border-accent-purple/30 bg-accent-purple/15 px-3 py-1 text-xs font-semibold uppercase text-[#d8caff]">
               {project.category}
@@ -47,14 +111,18 @@ const ProjectCard = ({ project }) => {
           </a>
         )}
       </div>
-    </article>
+    </motion.article>
   );
 };
 
 const Portfolio = () => {
+  const reduceMotion = useReducedMotion();
+  const canObserveInView = typeof window !== 'undefined' && 'IntersectionObserver' in window;
+
   return (
-    <section id="portfolio" className="py-24 bg-[#0C0D0D]">
-      <div className="container mx-auto px-6">
+    <section id="portfolio" className="relative py-24 bg-[#0C0D0D]">
+      <div className="absolute inset-0 cv-grid" aria-hidden="true"></div>
+      <div className="container mx-auto px-6 relative">
         <div className="flex flex-col lg:flex-row gap-8 items-start justify-between">
           <div className="w-full lg:w-2/3">
             <div className="inline-block px-4 py-1.5 border border-white/20 rounded-full text-sm mb-4 uppercase">
@@ -70,11 +138,25 @@ const Portfolio = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {featuredCaseStudies.map((project) => (
-            <ProjectCard
+          {featuredCaseStudies.map((project, index) => (
+            <motion.div
               key={project.id}
-              project={project}
-            />
+              initial={reduceMotion || !canObserveInView ? false : { opacity: 0, y: 36 }}
+              animate={reduceMotion || !canObserveInView ? { opacity: 1, y: 0 } : undefined}
+              whileInView={reduceMotion || !canObserveInView ? undefined : { opacity: 1, y: 0 }}
+              viewport={canObserveInView ? { once: true, amount: 0.15 } : undefined}
+              transition={{
+                duration: reduceMotion ? 0.4 : 0.6,
+                delay: reduceMotion ? 0 : (index % 3) * 0.12,
+                ease: 'easeOut',
+              }}
+            >
+              <ProjectCard
+                project={project}
+                confidence={CONFIDENCE_VALUES[index % CONFIDENCE_VALUES.length]}
+                reduceMotion={reduceMotion}
+              />
+            </motion.div>
           ))}
         </div>
       </div>
