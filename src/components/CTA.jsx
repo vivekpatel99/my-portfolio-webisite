@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import InteractiveCtaBackground from '@/components/InteractiveCtaBackground';
+import AnimatedCtaBackground from '@/components/AnimatedCtaBackground';
 import AnimatedSectionHeading from '@/components/AnimatedSectionHeading';
 import MagneticButton from '@/components/MagneticButton';
 import { useNavigate } from 'react-router-dom';
@@ -14,7 +14,7 @@ const CTA = () => {
 
   return (
     <section id="cta" className="relative py-32 overflow-hidden">
-      <InteractiveCtaBackground />
+      <AnimatedCtaBackground />
       <div className="absolute inset-0 bg-black/40" />
 
       <div className="container mx-auto px-6 relative z-10">

@@ -1,62 +1,72 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import ParticleConstellation from '@/components/ParticleConstellation';
+import AnimatedHeroBackground from '@/components/AnimatedHeroBackground';
+import AuroraGlow from '@/components/AuroraGlow';
+import MagneticButton from '@/components/MagneticButton';
+import useFinePointer from '@/hooks/useFinePointer';
 import { socialLinks } from '@/config/links';
 
-const KineticLine = ({ text, className = '', wordClassName = '', baseDelay = 0, reduceMotion }) => {
-  if (reduceMotion) {
-    return <span className={className}>{text}</span>;
-  }
-
-  const words = text.split(' ');
-  return (
-    <span className={className}>
-      {words.map((word, index) => (
-        <span key={`${word}-${index}`} className="inline-block whitespace-pre">
-          <motion.span
-            className={`inline-block will-change-transform ${wordClassName}`.trim()}
-            initial={{ y: '0.6em', opacity: 0, filter: 'blur(8px)' }}
-            animate={{ y: '0em', opacity: 1, filter: 'blur(0px)' }}
-            transition={{
-              duration: 0.7,
-              delay: baseDelay + index * 0.07,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-          >
-            {word}
-          </motion.span>
-          {index < words.length - 1 ? ' ' : null}
-        </span>
-      ))}
-    </span>
-  );
-};
+const PARALLAX_STRENGTH = 14;
 
 const Hero = () => {
   const navigate = useNavigate();
-  const reduceMotion = useReducedMotion();
+  const shouldReduceMotion = useReducedMotion();
+  const hasFinePointer = useFinePointer();
+  const sectionRef = useRef(null);
+  const [parallax, setParallax] = useState({ x: 0, y: 0 });
+
+  const parallaxEnabled = hasFinePointer && !shouldReduceMotion;
+
+  const handleMouseMove = (event) => {
+    if (!parallaxEnabled || !sectionRef.current) {
+      return;
+    }
+
+    const rect = sectionRef.current.getBoundingClientRect();
+    const relativeX = (event.clientX - rect.left) / rect.width - 0.5;
+    const relativeY = (event.clientY - rect.top) / rect.height - 0.5;
+
+    setParallax({
+      x: relativeX * PARALLAX_STRENGTH,
+      y: relativeY * PARALLAX_STRENGTH,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setParallax({ x: 0, y: 0 });
+  };
 
   const handleCTAClick = () => {
     navigate('/contact');
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-[#0C0D0D]">
-      <div className="absolute inset-0 cv-grid" aria-hidden="true"></div>
-      <div className="absolute inset-0" aria-hidden="true">
-        <ParticleConstellation />
-      </div>
-      <div
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(124,58,237,0.12),transparent_65%)]"
+    <section
+      ref={sectionRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
+    >
+      <motion.div
+        className="absolute inset-0"
+        animate={parallaxEnabled ? { x: parallax.x * -1, y: parallax.y * -1 } : { x: 0, y: 0 }}
+        transition={{ type: 'spring', stiffness: 60, damping: 20, mass: 0.8 }}
         aria-hidden="true"
-      ></div>
+      >
+        <AnimatedHeroBackground />
+      </motion.div>
+      <AuroraGlow />
       <div className="absolute inset-0 bg-black/40"></div>
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="max-w-5xl mx-auto text-left md:text-center">
+        <motion.div
+          className="max-w-5xl mx-auto text-left md:text-center"
+          animate={parallaxEnabled ? { x: parallax.x * 0.4, y: parallax.y * 0.4 } : { x: 0, y: 0 }}
+          transition={{ type: 'spring', stiffness: 60, damping: 20, mass: 0.8 }}
+        >
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -84,21 +94,15 @@ const Hero = () => {
             </a>
           </motion.div>
 
-          <h1
-            className="glitch-hover text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight text-white uppercase break-words"
-            aria-label="Vivek Patel Computer Vision & AI Engineer"
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight text-white uppercase break-words"
           >
-            <span aria-hidden="true">
-              <KineticLine text="Vivek Patel" baseDelay={0.2} reduceMotion={reduceMotion} />
-              <KineticLine
-                text="Computer Vision & AI Engineer"
-                className="block"
-                wordClassName="text-gradient"
-                baseDelay={0.4}
-                reduceMotion={reduceMotion}
-              />
-            </span>
-          </h1>
+            Vivek Patel
+            <span className="block text-gradient">Computer Vision & AI Engineer</span>
+          </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 30 }}
@@ -141,24 +145,28 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 justify-start md:justify-center"
           >
-            <Button
-              onClick={handleCTAClick}
-              size="lg"
-              className="bg-accent-purple hover:bg-accent-purple/90 text-white font-bold px-8 py-6 text-lg rounded-full group"
-            >
-              Request a Project Estimate
-              <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-2 border-accent-purple/40 hover:bg-accent-purple/10 text-white px-8 py-6 text-lg rounded-full"
-            >
-              <a href="#portfolio">
-                View Case Studies
-              </a>
-            </Button>
+            <MagneticButton>
+              <Button
+                onClick={handleCTAClick}
+                size="lg"
+                className="bg-accent-purple hover:bg-accent-purple/90 text-white font-bold px-8 py-6 text-lg rounded-full group"
+              >
+                Request a Project Estimate
+                <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </MagneticButton>
+            <MagneticButton>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="border-2 border-accent-purple/40 hover:bg-accent-purple/10 text-white px-8 py-6 text-lg rounded-full"
+              >
+                <a href="#portfolio">
+                  View Case Studies
+                </a>
+              </Button>
+            </MagneticButton>
           </motion.div>
 
           <motion.p
@@ -169,7 +177,7 @@ const Hero = () => {
           >
             "Very high quality work. Great communication. High quality code." — Duncan H., Upwork Client
           </motion.p>
-        </div>
+        </motion.div>
       </div>
 
       <motion.div
