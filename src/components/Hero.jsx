@@ -1,30 +1,58 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import AnimatedHeroBackground from '@/components/AnimatedHeroBackground';
+import ParticleConstellation from '@/components/ParticleConstellation';
 import { socialLinks } from '@/config/links';
+
+const KineticLine = ({ text, className = '', wordClassName = '', baseDelay = 0, reduceMotion }) => {
+  if (reduceMotion) {
+    return <span className={`${className} ${wordClassName}`.trim()}>{text}</span>;
+  }
+
+  const words = text.split(' ');
+  return (
+    <span className={className}>
+      {words.map((word, index) => (
+        <span key={`${word}-${index}`} className="inline-block whitespace-pre">
+          <motion.span
+            className={`inline-block will-change-transform ${wordClassName}`.trim()}
+            initial={{ y: '0.6em', opacity: 0, filter: 'blur(8px)' }}
+            animate={{ y: '0em', opacity: 1, filter: 'blur(0px)' }}
+            transition={{
+              duration: 0.7,
+              delay: baseDelay + index * 0.07,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+          >
+            {word}
+          </motion.span>
+          {index < words.length - 1 ? ' ' : null}
+        </span>
+      ))}
+    </span>
+  );
+};
 
 const Hero = () => {
   const navigate = useNavigate();
+  const reduceMotion = useReducedMotion();
 
   const handleCTAClick = () => {
     navigate('/contact');
   };
 
-  const handleViewWorkClick = () => {
-    const portfolioSection = document.getElementById('portfolio');
-    if (portfolioSection) {
-      portfolioSection.scrollIntoView({
-        behavior: 'smooth'
-      });
-    }
-  };
-
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      <AnimatedHeroBackground />
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-[#0C0D0D]">
+      <div className="absolute inset-0 cv-grid" aria-hidden="true"></div>
+      <div className="absolute inset-0" aria-hidden="true">
+        <ParticleConstellation />
+      </div>
+      <div
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(124,58,237,0.12),transparent_65%)]"
+        aria-hidden="true"
+      ></div>
       <div className="absolute inset-0 bg-black/40"></div>
 
       <div className="container mx-auto px-6 relative z-10">
@@ -56,15 +84,21 @@ const Hero = () => {
             </a>
           </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight text-white uppercase break-words"
+          <h1
+            className="glitch-hover text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight text-white uppercase break-words"
+            aria-label="Vivek Patel Computer Vision & AI Engineer"
           >
-            Vivek Patel
-            <span className="block text-accent-purple">Computer Vision & AI Engineer</span>
-          </motion.h1>
+            <span aria-hidden="true">
+              <KineticLine text="Vivek Patel" baseDelay={0.2} reduceMotion={reduceMotion} />
+              <KineticLine
+                text="Computer Vision & AI Engineer"
+                className="block"
+                wordClassName="text-gradient"
+                baseDelay={0.4}
+                reduceMotion={reduceMotion}
+              />
+            </span>
+          </h1>
 
           <motion.p
             initial={{ opacity: 0, y: 30 }}

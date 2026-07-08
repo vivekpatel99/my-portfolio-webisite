@@ -92,3 +92,118 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+/* --- CV-themed visual effects (V3 redesign) --- */
+
+/* Faint animated graph-paper texture for dark sections */
+.cv-grid {
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(147, 114, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(147, 114, 255, 0.045) 1px, transparent 1px);
+  background-size: 48px 48px;
+  animation: cv-grid-pan 60s linear infinite;
+}
+
+@keyframes cv-grid-pan {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 48px 48px;
+  }
+}
+
+/* Brief RGB-split glitch + scan pass on hero H1 hover */
+.glitch-hover {
+  position: relative;
+}
+
+.glitch-hover::after {
+  content: '';
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(212, 180, 255, 0.85), transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.glitch-hover:hover {
+  animation: cv-glitch 0.35s steps(2, end) 1;
+}
+
+.glitch-hover:hover::after {
+  animation: cv-h1-scan 0.5s ease-out 1;
+}
+
+@keyframes cv-glitch {
+  0%,
+  100% {
+    text-shadow: none;
+    transform: translate(0, 0);
+  }
+
+  25% {
+    text-shadow: -2px 0 rgba(255, 61, 113, 0.75), 2px 0 rgba(0, 229, 255, 0.75);
+    transform: translate(1px, -1px);
+  }
+
+  50% {
+    text-shadow: 2px 0 rgba(255, 61, 113, 0.75), -2px 0 rgba(0, 229, 255, 0.75);
+    transform: translate(-1px, 1px);
+  }
+
+  75% {
+    text-shadow: -1px 0 rgba(255, 61, 113, 0.6), 1px 0 rgba(0, 229, 255, 0.6);
+    transform: translate(1px, 0);
+  }
+}
+
+@keyframes cv-h1-scan {
+  from {
+    top: 0;
+    opacity: 1;
+  }
+
+  to {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+/* Portfolio card "analysis" scan sweep */
+.cv-card-scanline {
+  background: linear-gradient(90deg, transparent, rgba(147, 114, 255, 0.9), transparent);
+  box-shadow: 0 0 10px 1px rgba(124, 58, 237, 0.5);
+  opacity: 0;
+}
+
+.group:hover .cv-card-scanline {
+  animation: cv-card-scan 0.9s ease-in-out 1;
+}
+
+@keyframes cv-card-scan {
+  0% {
+    top: 0;
+    opacity: 1;
+  }
+
+  100% {
+    top: calc(100% - 1px);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .cv-grid,
+  .glitch-hover:hover,
+  .glitch-hover:hover::after,
+  .group:hover .cv-card-scanline {
+    animation: none;
+  }
+}
