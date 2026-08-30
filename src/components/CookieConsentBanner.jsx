@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from "@/components/ui/checkbox.jsx";
 import { Cookie, X, Settings } from 'lucide-react';
@@ -94,8 +94,7 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
   };
 
   return (
-    <AnimatePresence>
-      {isManaging && (
+    isManaging ? (
         <motion.div
           ref={bannerRef}
           role="dialog"
@@ -104,7 +103,7 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
           tabIndex={-1}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          transition={{ duration: 0.15 }}
           className="fixed inset-x-0 top-20 z-40 rounded-b-2xl p-3 sm:inset-x-auto sm:top-auto sm:bottom-4 sm:left-auto sm:right-4 sm:w-auto sm:max-w-lg sm:rounded-2xl sm:p-6 bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl shadow-black/30"
         >
           <div className="flex items-start gap-4">
@@ -166,8 +165,7 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
             </button>
           </div>
         </motion.div>
-      )}
-    </AnimatePresence>
+    ) : null
   );
 };
 

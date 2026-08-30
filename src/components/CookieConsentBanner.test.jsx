@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import React from 'react';
-import { render, screen, waitFor, cleanup } from '@testing-library/react';
+import { render, screen, waitFor, cleanup, act, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import CookieConsentBanner from './CookieConsentBanner';
@@ -96,5 +96,23 @@ describe('CookieConsentBanner', () => {
     });
 
     trigger.remove();
+  });
+
+  it('hides at once on first-visit Reject All', async () => {
+    vi.useFakeTimers();
+    const onHide = vi.fn();
+    render(<CookieConsentBanner onConsent={vi.fn()} show={false} onHide={onHide} />);
+    expect(screen.queryByRole('dialog')).toBeNull();
+    await act(async () => {
+      vi.advanceTimersByTime(1500);
+    });
+    fireEvent.click(screen.getByRole('button', { name: /^reject all$/i }));
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(onHide).toHaveBeenCalledTimes(1);
+    expect(JSON.parse(window.localStorage.getItem(COOKIE_CONSENT_KEY))).toEqual({
+      necessary: true,
+      analytics: false,
+    });
+    vi.useRealTimers();
   });
 });
