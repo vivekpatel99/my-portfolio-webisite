@@ -179,7 +179,7 @@ export const submitLead = mutation({
       .take(GLOBAL_RATE_LIMIT_MAX_SUBMISSIONS);
 
     if (recentGlobal.length >= GLOBAL_RATE_LIMIT_MAX_SUBMISSIONS) {
-      throw new ConvexError("Please wait before submitting again.");
+      throw new ConvexError("The site is receiving too many requests. Please wait a few minutes and try again.");
     }
 
     const recent = await ctx.db
@@ -190,7 +190,7 @@ export const submitLead = mutation({
       .take(RATE_LIMIT_MAX_SUBMISSIONS);
 
     if (recent.length >= RATE_LIMIT_MAX_SUBMISSIONS) {
-      throw new ConvexError("Please wait before submitting again.");
+      throw new ConvexError("This email already sent several messages recently. Please wait before submitting again.");
     }
 
     const leadId = await ctx.db.insert("leads", {

@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import CookieConsentBanner from './CookieConsentBanner';
@@ -27,6 +27,7 @@ vi.mock('framer-motion', () => {
 
 describe('CookieConsentBanner', () => {
   beforeEach(() => {
+    cleanup();
     storage.clear();
     Object.defineProperty(window, 'localStorage', {
       configurable: true,
@@ -57,6 +58,27 @@ describe('CookieConsentBanner', () => {
     });
     expect(onConsent).not.toHaveBeenCalled();
     expect(onHide).toHaveBeenCalledTimes(1);
+  });
+
+  it('sits under the header on small screens so hero CTAs stay free', () => {
+    render(<CookieConsentBanner onConsent={vi.fn()} show onHide={vi.fn()} />);
+    const dialog = screen.getByRole('dialog', { name: /we value your privacy/i });
+    const classes = dialog.className.split(/\s+/);
+    expect(classes).toContain('top-20');
+    expect(classes).toContain('sm:bottom-4');
+    expect(classes).toContain('sm:max-w-lg');
+    expect(classes).toContain('sm:right-4');
+    expect(classes).not.toContain('left-4');
+    expect(classes).not.toContain('right-4');
+    expect(classes).not.toContain('bottom-0');
+  });
+
+  it('keeps expanded settings reachable', async () => {
+    const user = userEvent.setup();
+    render(<CookieConsentBanner onConsent={vi.fn()} show onHide={vi.fn()} />);
+    await user.click(screen.getByRole('button', { name: /customize/i }));
+    expect(screen.getByRole('button', { name: /save preferences/i })).toBeTruthy();
+    expect(screen.getByLabelText(/analytics and diagnostics cookies/i)).toBeTruthy();
   });
 
   it('moves focus to the manager when opened explicitly', async () => {

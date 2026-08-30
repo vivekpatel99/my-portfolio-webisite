@@ -129,12 +129,15 @@ function applyNoIndex(html) {
 const rootHtml = applySeo(indexHtml, routeSeo['/']);
 writeFileSync(indexPath, rootHtml);
 
+const stripHeroPreload = (html) =>
+  html.replace(/<link\b(?=[^>]*\brel=["']preload["'])(?=[^>]*\bas=["']image["'])[^>]*>\s*/i, '');
+
 for (const route of staticRoutes) {
   const routeDir = path.join(distDir, route);
   mkdirSync(routeDir, { recursive: true });
-  writeFileSync(path.join(routeDir, 'index.html'), applySeo(rootHtml, routeSeo[route]));
+  writeFileSync(path.join(routeDir, 'index.html'), stripHeroPreload(applySeo(rootHtml, routeSeo[route])));
 }
 
-writeFileSync(path.join(distDir, '404.html'), applyNoIndex(applySeo(rootHtml, notFoundSeo)));
+writeFileSync(path.join(distDir, '404.html'), stripHeroPreload(applyNoIndex(applySeo(rootHtml, notFoundSeo))));
 
 console.log(`Generated static HTML for ${staticRoutes.length + 2} routes, including 404.html.`);

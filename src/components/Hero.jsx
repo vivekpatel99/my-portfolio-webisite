@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -8,18 +8,10 @@ import { socialLinks } from '@/config/links';
 
 const Hero = () => {
   const navigate = useNavigate();
+  const reduceMotion = useReducedMotion();
 
   const handleCTAClick = () => {
     navigate('/contact');
-  };
-
-  const handleViewWorkClick = () => {
-    const portfolioSection = document.getElementById('portfolio');
-    if (portfolioSection) {
-      portfolioSection.scrollIntoView({
-        behavior: 'smooth'
-      });
-    }
   };
 
   return (
@@ -96,7 +88,7 @@ const Hero = () => {
               <span className="text-gray-300">Based in Europe</span>
             </div>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 border border-green-500/30 rounded-full">
-              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+              <span className={`h-2 w-2 rounded-full bg-green-500 ${reduceMotion ? '' : 'animate-pulse'}`}></span>
               <span className="text-green-400 text-sm">Limited availability — currently accepting 1-2 new projects</span>
             </div>
           </motion.div>
@@ -138,6 +130,7 @@ const Hero = () => {
         </div>
       </div>
 
+      {!reduceMotion && (
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -156,6 +149,7 @@ const Hero = () => {
           />
         </motion.div>
       </motion.div>
+      )}
     </section>
   );
 };

@@ -176,7 +176,7 @@ describe("submitLead", () => {
       await t.mutation(api.leads.submitLead, input);
     }
     await expect(t.mutation(api.leads.submitLead, input)).rejects.toThrow(
-      /Please wait before submitting again/,
+      /This email already sent several messages recently/,
     );
     const leads = await t.run(async (ctx) => ctx.db.query("leads").collect());
     expect(leads).toHaveLength(3);
@@ -205,7 +205,7 @@ describe("submitLead", () => {
         email: "global-limit@example.com",
         description: "Global throttle should reject.",
       }),
-    ).rejects.toThrow(/Please wait before submitting again/);
+    ).rejects.toThrow(/The site is receiving too many requests/);
   });
 
   it("allows a submit when one prior lead is exactly on the rate-limit boundary", async () => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -8,8 +8,9 @@ import { Github, Linkedin, Mail, ArrowRight, Loader2, CheckCircle2 } from 'lucid
 import { useMutation } from 'convex/react';
 import { api } from '@convex/api';
 import { socialLinks } from '@/config/links';
-import { Seo } from '@/lib/seo';
+import { Seo, routeSeo } from '@/lib/seo';
 import { captureException } from '@/lib/sentryTelemetry';
+import { BUDGET_LABELS, BUDGET_OPTIONS } from '@/lib/budgetOptions';
 
 // Custom logo components for platform links
 const UpworkIcon = () => (
@@ -57,12 +58,19 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const Contact = () => {
   const [formState, setFormState] = useState({ name: '', email: '', budget: '', description: '' });
+  const [fieldErrors, setFieldErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const submittingRef = useRef(false);
   const submitLead = useMutation(api.leads.submitLead);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormState(prevState => ({ ...prevState, [name]: value }));
+    setFieldErrors((prev) => {
+      if (!prev[name]) return prev;
+      const { [name]: _removed, ...rest } = prev;
+      return rest;
+    });
   };
 
   const handleSelectChange = (value) => {
@@ -78,24 +86,33 @@ const Contact = () => {
       description: formState.description.trim(),
     };
 
-    if (!trimmedFormState.name || !trimmedFormState.email || !trimmedFormState.description) {
+    const nextErrors = {};
+    if (!trimmedFormState.name) {
+      nextErrors.name = 'Name is required.';
+    }
+    if (!trimmedFormState.email) {
+      nextErrors.email = 'Email is required.';
+    } else if (!EMAIL_PATTERN.test(trimmedFormState.email)) {
+      nextErrors.email = 'Enter a valid email address.';
+    }
+    if (!trimmedFormState.description) {
+      nextErrors.description = 'Project description is required.';
+    }
+    setFieldErrors(nextErrors);
+
+    if (nextErrors.name || nextErrors.email || nextErrors.description) {
         toast({
-            title: "Uh oh! Missing fields.",
-            description: "Please fill out all required fields before sending.",
+            title: nextErrors.email && trimmedFormState.email ? "Invalid email address." : "Uh oh! Missing fields.",
+            description: nextErrors.email && trimmedFormState.email
+              ? "Please enter a valid email address before sending."
+              : "Please fill out all required fields before sending.",
             variant: "destructive",
         });
         return;
     }
 
-    if (!EMAIL_PATTERN.test(trimmedFormState.email)) {
-      toast({
-        title: "Invalid email address.",
-        description: "Please enter a valid email address before sending.",
-        variant: "destructive",
-      });
-      return;
-    }
-
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setIsSubmitting(true);
 
     try {
@@ -120,27 +137,25 @@ const Contact = () => {
         description,
         variant: "destructive",
       });
+      submittingRef.current = false;
       setIsSubmitting(false);
       return;
     }
 
+    submittingRef.current = false;
     setIsSubmitting(false);
 
     toast({
-      title: "🚀 Message Sent!",
-      description: "Thanks for reaching out! I'll get back to you within 24 hours.",
+      title: "Request received",
+      description: "Your details are saved. I'll get back to you within 24 hours.",
     });
     setFormState({ name: '', email: '', budget: '', description: '' });
+    setFieldErrors({});
   };
 
   return (
     <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}>
-      <Seo
-        title="Contact | Vivek Patel, AI & Computer Vision Engineer"
-        description="Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Europe. Get a quote within 24 hours. €80/hour."
-        keywords="Hire AI Engineer Europe, Computer Vision Freelancer, n8n Developer, Web Scraping Expert, Project Quote, LangChain Developer, YOLO Expert"
-        path="/contact"
-      />
+      <Seo {...routeSeo['/contact']} />
       
       <section className="bg-[#0C0D0D] text-white py-24 sm:py-32">
         <div className="container mx-auto px-6">
@@ -222,11 +237,13 @@ const Contact = () => {
             >
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">Full Name *</label>
-                <Input type="text" id="name" name="name" placeholder="Alex from Acme Ops" value={formState.name} onChange={handleInputChange} className="h-14" required disabled={isSubmitting} />
+                <Input type="text" id="name" name="name" placeholder="Alex from Acme Ops" value={formState.name} onChange={handleInputChange} className="h-14" required disabled={isSubmitting} aria-invalid={Boolean(fieldErrors.name)} aria-describedby={fieldErrors.name ? 'name-error' : undefined} />
+                {fieldErrors.name ? <p id="name-error" role="alert" className="mt-2 text-sm text-red-400">{fieldErrors.name}</p> : null}
               </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">Email Address *</label>
-                <Input type="email" id="email" name="email" placeholder="alex@company.com" value={formState.email} onChange={handleInputChange} className="h-14" required disabled={isSubmitting} />
+                <Input type="email" id="email" name="email" placeholder="alex@company.com" value={formState.email} onChange={handleInputChange} className="h-14" required disabled={isSubmitting} aria-invalid={Boolean(fieldErrors.email)} aria-describedby={fieldErrors.email ? 'email-error' : undefined} />
+                {fieldErrors.email ? <p id="email-error" role="alert" className="mt-2 text-sm text-red-400">{fieldErrors.email}</p> : null}
               </div>
               <div>
                 <label htmlFor="budget" className="block text-sm font-medium text-gray-300 mb-2">Budget Range (Optional)</label>
@@ -235,16 +252,16 @@ const Contact = () => {
                     <SelectValue placeholder="Select your budget range" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="< €5k">&lt; €5,000</SelectItem>
-                    <SelectItem value="€5k-€10k">€5,000 - €10,000</SelectItem>
-                    <SelectItem value="€10k-€25k">€10,000 - €25,000</SelectItem>
-                    <SelectItem value="€25k+">€25,000+</SelectItem>
+                    {BUDGET_OPTIONS.map((value) => (
+                      <SelectItem key={value} value={value}>{BUDGET_LABELS[value]}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
               <div>
                 <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-2">Project Description *</label>
-                <Textarea id="description" name="description" placeholder="Example: We need invoice OCR or a data extraction workflow that exports clean records to our CRM within 4 weeks..." value={formState.description} onChange={handleInputChange} rows={5} required disabled={isSubmitting} />
+                <Textarea id="description" name="description" placeholder="Example: We need invoice OCR or a data extraction workflow that exports clean records to our CRM within 4 weeks..." value={formState.description} onChange={handleInputChange} rows={5} required disabled={isSubmitting} aria-invalid={Boolean(fieldErrors.description)} aria-describedby={fieldErrors.description ? 'description-error' : undefined} />
+                {fieldErrors.description ? <p id="description-error" role="alert" className="mt-2 text-sm text-red-400">{fieldErrors.description}</p> : null}
                 <div className="mt-3 rounded-lg border border-white/10 bg-black/20 p-4">
                   <p className="text-sm font-semibold text-white">Helpful details to include:</p>
                   <ul className="mt-2 space-y-2 text-sm text-gray-400">

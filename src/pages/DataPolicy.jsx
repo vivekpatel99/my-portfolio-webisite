@@ -33,7 +33,7 @@ const DataPolicy = () => {
       />
       <div className="container mx-auto px-6 max-w-4xl">
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-8">Cookie Policy</h1>
-        <p className="text-gray-400 mb-6">Last updated: November 16, 2025</p>
+        <p className="text-gray-400 mb-6">Last updated: 30 August 2026</p>
 
         <div className="prose prose-invert prose-lg max-w-none text-gray-300 space-y-6">
           <p>This Cookie Policy explains what cookies are and how we use them. You should read this policy to understand what cookies are, how we use them, the types of cookies we use, the information we collect using cookies, and how that information is used and how to control your cookie preferences.</p>
@@ -48,9 +48,8 @@ const DataPolicy = () => {
 
           <h2 className="text-2xl font-bold text-white mt-8">What Types of Cookies Do We Use?</h2>
           <ul className="list-disc pl-5 space-y-2">
-            <li><strong>Strictly Necessary Cookies:</strong> These are required for core website operation, such as remembering cookie preferences and keeping the contact experience functional. Your consent is not required for these cookies.</li>
-            <li><strong>Analytical/Performance Cookies:</strong> They allow us to recognize and count the number of visitors and to see how visitors move around our website when they are using it. This helps us to improve the way our website works. We use Google Analytics for this purpose. These cookies will only be stored with your explicit consent.</li>
-            <li><strong>Diagnostics Cookies:</strong> With your consent, Sentry helps identify errors, performance issues, and masked session replay data so the site can be improved without intentionally collecting personal content.</li>
+            <li><strong>Strictly necessary preference:</strong> Your analytics choice is stored in the browser's localStorage under <code>cookie_consent_preferences</code>. This is not a tracking cookie. It only remembers Accept, Reject, or Customize.</li>
+            <li><strong>Analytics and diagnostics:</strong> With your explicit consent, Google Analytics measures visits and Sentry records errors (including masked session replay). One consent flag starts both. No analytics or Sentry scripts load until you accept.</li>
           </ul>
 
           <h2 className="text-2xl font-bold text-white mt-8">How Can I Control My Cookie Preferences?</h2>

@@ -156,7 +156,7 @@ Indexes:
 4. The mutation inserts the lead with `emailNotificationStatus: "pending"`.
 5. It schedules `internal.leads.sendContactEmail`.
 6. The internal action calls Resend if `RESEND_API_KEY` is configured.
-7. The action writes back `sent`, `missing_api_key`, `resend_error`, or `unexpected_error`.
+7. The action writes back `sent`, `missing_api_key`, `resend_error`, or returns the row to `pending` so the cron can retry. `unexpected_error` exists in the schema but is not written.
 
 There is no Convex auth configuration today. This is intentionally an anonymous insert-only contact form: public clients can submit leads, but there are no public read/update/delete functions.
 
