@@ -167,5 +167,5 @@ export const getCaseStudyBySlug = (slug) =>
 
 export const caseStudySlugs = caseStudies.map((caseStudy) => caseStudy.slug);
 
-export const primaryContactHref = '/contact';
+export const primaryContactHref = '/contact/';
 export const directEmailHref = socialLinks.emailHref;

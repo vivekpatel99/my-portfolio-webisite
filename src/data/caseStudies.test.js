@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { caseStudies, getCaseStudyBySlug, caseStudySlugs } from './caseStudies';
+import { caseStudies, getCaseStudyBySlug, caseStudySlugs, primaryContactHref } from './caseStudies';
 import { routeSeo } from '../lib/seoConfig';
 
 describe('caseStudies data structure', () => {
@@ -115,6 +115,10 @@ describe('caseStudySlugs', () => {
   it('allows an optional trailing slash in the Apache project rule', () => {
     const htaccess = readFileSync(resolve(process.cwd(), 'public/.htaccess'), 'utf8');
     expect(htaccess).toMatch(/RewriteRule \^project\/\([^)]+\)\/\?\$/);
+  });
+
+  it('uses a trailing slash on the primary contact href', () => {
+    expect(primaryContactHref).toBe('/contact/');
   });
 });
 

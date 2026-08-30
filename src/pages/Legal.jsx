@@ -47,7 +47,7 @@ const Legal = () => {
             <li>Project Description and Budget</li>
           </ul>
           <p><strong>Usage Data (with consent):</strong> With your explicit consent via our cookie banner, I may also collect information on how the Service is accessed and used ("Usage Data") through Google Analytics and Sentry. This Usage Data may include information such as your computer's Internet Protocol address (e.g. IP address), browser type, browser version, pages visited, time and date of visits, time spent on pages, performance data, and error diagnostics.</p>
-          <p><strong>Cookies Data:</strong> I use cookies and similar tracking technologies to track the activity on our Service. Please see my <Link to="/data-policy" className="text-accent-purple hover:underline">Cookie Policy</Link> for more details.</p>
+          <p><strong>Cookies Data:</strong> I use cookies and similar tracking technologies to track the activity on our Service. Please see my <Link to="/data-policy/" className="text-accent-purple hover:underline">Cookie Policy</Link> for more details.</p>
 
           <h2 className="text-2xl font-bold text-white mt-8">Legal Basis for Processing under GDPR</h2>
           <p>If you are from the European Economic Area (EEA), Vivek Patel's legal basis for collecting and using the personal information described in this Privacy Policy depends on the Personal Data I collect and the specific context in which I collect it:</p>

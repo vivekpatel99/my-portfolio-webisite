@@ -11,7 +11,7 @@ const Hero = () => {
   const reduceMotion = useReducedMotion();
 
   const handleCTAClick = () => {
-    navigate('/contact');
+    navigate('/contact/');
   };
 
   return (

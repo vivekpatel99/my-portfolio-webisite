@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const CTA = () => {
   const navigate = useNavigate();
   const handleCTAClick = () => {
-    navigate('/contact');
+    navigate('/contact/');
   };
   return <section id="cta" className="relative py-32 overflow-hidden">
     <AnimatedCtaBackground />

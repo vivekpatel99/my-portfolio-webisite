@@ -128,7 +128,7 @@ test('all featured case-study cards and detail CTAs work', async ({ page }) => {
 
     await page.goto(caseStudy.path);
     await page.getByRole('link', { name: 'Request a Project Estimate' }).click();
-    await expect(page).toHaveURL(/\/contact$/);
+    await expect(page).toHaveURL(/\/contact\/?$/);
   }
 });
 
@@ -184,5 +184,5 @@ test('mobile navigation menu links and CTA work', async ({ page }) => {
   await page.getByRole('dialog', { name: 'Navigation menu' }).getByRole('button', {
     name: /Request a Project Estimate/i,
   }).click();
-  await expect(page).toHaveURL(/\/contact$/);
+  await expect(page).toHaveURL(/\/contact\/?$/);
 });

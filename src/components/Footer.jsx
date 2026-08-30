@@ -22,15 +22,15 @@ const Footer = () => {
         {
             title: 'Legal',
             links: [
-                { name: 'Privacy Policy', href: '/legal' }, // Updated Path
-                { name: 'Cookie Policy', href: '/data-policy' }, // Updated Path
+                { name: 'Privacy Policy', href: '/legal/' },
+                { name: 'Cookie Policy', href: '/data-policy/' },
                 { name: 'Manage Consent', href: '#', onClick: handleManageCookies },
             ],
         },
         {
             title: 'Work With Me',
             links: [
-                { name: 'Contact Me', href: '/contact' },
+                { name: 'Contact Me', href: '/contact/' },
             ],
         },
     ];

@@ -188,7 +188,7 @@ const Project = () => {
                 size="lg"
                 className="group w-full rounded-full bg-accent-purple px-6 py-6 text-base text-white hover:bg-accent-purple/90 sm:w-auto sm:px-10 sm:py-7 sm:text-lg"
               >
-                <Link to="/contact">
+                <Link to="/contact/">
                   Request a Project Estimate
                   <ArrowRight className="ml-2 h-5 w-5 transform transition-transform duration-300 group-hover:translate-x-1" />
                 </Link>
