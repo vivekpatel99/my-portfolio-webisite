@@ -315,4 +315,12 @@ describe("Contact form", () => {
       );
     });
   });
+
+  it('leaves the optional budget unselected until the visitor picks one', () => {
+    const { container } = render(<Contact />);
+    const budget = container.querySelector('#budget');
+    expect(budget.tagName).toBe('SELECT');
+    expect(budget.value).toBe('');
+    expect(container.querySelector('select')?.value).toBe('');
+  });
 });
