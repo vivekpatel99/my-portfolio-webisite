@@ -8,7 +8,6 @@ const importRowValidator = v.object({
   budget: v.optional(v.string()),
   description: v.string(),
   createdAt: v.optional(v.number()),
-  supabaseId: v.optional(v.string()),
 });
 
 const MAX_IMPORT_BATCH_SIZE = 100;
@@ -61,21 +60,9 @@ export const importFromRows = internalMutation({
         continue;
       }
 
-      if (row.supabaseId) {
-        const existing = await ctx.db
-          .query("leads")
-          .withIndex("by_supabaseId", (q) => q.eq("supabaseId", row.supabaseId))
-          .unique();
-        if (existing) {
-          skipped += 1;
-          continue;
-        }
-      }
-
       await ctx.db.insert("leads", {
         ...lead,
         createdAt: row.createdAt ?? now,
-        supabaseId: row.supabaseId,
       });
       inserted += 1;
     }

@@ -137,12 +137,10 @@ The `leads` table stores:
 - `description`
 - `createdAt`
 - optional email notification status/error fields
-- optional `supabaseId` for migrated rows
 
 Indexes:
 
 - `by_createdAt`
-- `by_supabaseId`
 - `by_email`
 - `by_email_and_createdAt`
 
@@ -217,7 +215,7 @@ Vitest:
 Important test coverage:
 
 - `convex/leads.test.ts`: lead validation, inserts, optional budget, oversized fields, invalid email/budget, unicode, plain-text XSS-like payloads, rate limiting, duplicate parallel submits, Resend payload and error behavior.
-- `convex/migrations/importLeads.test.ts`: historical lead import behavior and `supabaseId` idempotency.
+- `convex/migrations/importLeads.test.ts`: historical lead import behavior.
 - `src/pages/Contact.test.jsx`: mocked Convex mutation behavior for missing fields, invalid email, valid submit, and mutation failure.
 - `src/lib/convexClient.test.js`: Convex URL validation and disabled-client behavior.
 - `src/components/SentryTelemetry.test.jsx`: consent-gated Sentry behavior.
