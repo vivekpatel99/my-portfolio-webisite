@@ -323,4 +323,30 @@ describe("Contact form", () => {
     expect(budget.value).toBe('');
     expect(container.querySelector('select')?.value).toBe('');
   });
+
+  it('sends a chosen budget with the lead', async () => {
+    const { container } = render(<Contact />);
+    fireEvent.change(container.querySelector('input[name="name"]'), {
+      target: { name: 'name', value: 'Jane Doe' },
+    });
+    fireEvent.change(container.querySelector('input[name="email"]'), {
+      target: { name: 'email', value: 'jane@example.com' },
+    });
+    fireEvent.change(container.querySelector('#budget'), {
+      target: { value: '< €5k' },
+    });
+    fireEvent.change(container.querySelector('textarea[name="description"]'), {
+      target: { name: 'description', value: 'Need help.' },
+    });
+    fireEvent.submit(container.querySelector('form'));
+
+    await waitFor(() => {
+      expect(mockSubmitLead).toHaveBeenCalledWith({
+        name: 'Jane Doe',
+        email: 'jane@example.com',
+        budget: '< €5k',
+        description: 'Need help.',
+      });
+    });
+  });
 });

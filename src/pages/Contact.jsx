@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Github, Linkedin, Mail, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
 import { useMutation } from 'convex/react';
 import { api } from '@convex/api';
@@ -247,16 +246,19 @@ const Contact = () => {
               </div>
               <div>
                 <label htmlFor="budget" className="block text-sm font-medium text-gray-300 mb-2">Budget Range (Optional)</label>
-                <Select onValueChange={handleSelectChange} value={formState.budget} disabled={isSubmitting}>
-                  <SelectTrigger id="budget" className="h-14 text-gray-400">
-                    <SelectValue placeholder="Select your budget range" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {BUDGET_OPTIONS.map((value) => (
-                      <SelectItem key={value} value={value}>{BUDGET_LABELS[value]}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <select
+                  id="budget"
+                  name="budget"
+                  value={formState.budget}
+                  onChange={(event) => handleSelectChange(event.target.value)}
+                  disabled={isSubmitting}
+                  className="h-14 w-full rounded-md border border-white/20 bg-transparent px-4 text-md text-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-purple focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="">Select your budget range</option>
+                  {BUDGET_OPTIONS.map((value) => (
+                    <option key={value} value={value}>{BUDGET_LABELS[value]}</option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-2">Project Description *</label>
