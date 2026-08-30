@@ -21,6 +21,7 @@ export default defineSchema({
     ),
     emailNotificationError: v.optional(v.string()),
     emailNotificationUpdatedAt: v.optional(v.number()),
+    emailNotificationAttemptCount: v.optional(v.number()),
     supabaseId: v.optional(v.string()),
   })
     .index("by_createdAt", ["createdAt"])

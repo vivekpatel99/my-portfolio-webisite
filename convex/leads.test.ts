@@ -513,4 +513,109 @@ describe("email notification retry state", () => {
     expect(lead?.emailNotificationError).toContain("Transient Resend API error");
     expect(lead?.emailNotificationUpdatedAt).toBe(now.getTime());
   });
+
+  it("stops claiming a lead after three cron retries and uses resend_error", async () => {
+    const now = new Date("2026-06-15T12:00:00.000Z");
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+
+    const t = convexTest(schema, modules);
+    const staleUpdatedAt = now.getTime() - 6 * 60 * 1000;
+    const leadId = await t.run(async (ctx) =>
+      ctx.db.insert("leads", {
+        name: "Retry Cap",
+        email: "retry-cap@example.com",
+        description: "Transient failures should not retry forever.",
+        createdAt: staleUpdatedAt,
+        emailNotificationStatus: "pending",
+        emailNotificationUpdatedAt: staleUpdatedAt,
+      }),
+    );
+
+    const cutoff = now.getTime() - 5 * 60 * 1000;
+    for (let attempt = 1; attempt <= 3; attempt += 1) {
+      const claimed = await t.mutation(internal.leads.claimStaleEmailNotificationRetries, {
+        cutoff,
+      });
+      expect(claimed).toHaveLength(1);
+      expect(claimed[0]._id).toBe(leadId);
+      await t.run(async (ctx) => {
+        await ctx.db.patch(leadId, {
+          emailNotificationStatus: "pending",
+          emailNotificationUpdatedAt: staleUpdatedAt,
+        });
+      });
+    }
+
+    const exhausted = await t.mutation(internal.leads.claimStaleEmailNotificationRetries, {
+      cutoff,
+    });
+    expect(exhausted).toHaveLength(0);
+    const lead = await t.run(async (ctx) => ctx.db.get(leadId));
+    expect(lead?.emailNotificationStatus).toBe("resend_error");
+    expect(lead?.emailNotificationError).toContain("Gave up after 3 email retries.");
+  });
+
+  it("exhausts a hung sending reclaim against the same retry cap", async () => {
+    const now = new Date("2026-06-15T12:00:00.000Z");
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+
+    const t = convexTest(schema, modules);
+    const staleUpdatedAt = now.getTime() - 6 * 60 * 1000;
+    const leadId = await t.run(async (ctx) =>
+      ctx.db.insert("leads", {
+        name: "Hung Send",
+        email: "hung-send@example.com",
+        description: "Stuck in sending.",
+        createdAt: staleUpdatedAt,
+        emailNotificationStatus: "sending",
+        emailNotificationUpdatedAt: staleUpdatedAt,
+        emailNotificationAttemptCount: 3,
+      }),
+    );
+
+    const claimed = await t.mutation(internal.leads.claimStaleEmailNotificationRetries, {
+      cutoff: now.getTime() - 5 * 60 * 1000,
+    });
+    expect(claimed).toHaveLength(0);
+    const lead = await t.run(async (ctx) => ctx.db.get(leadId));
+    expect(lead?.emailNotificationStatus).toBe("resend_error");
+  });
+
+  it("retries uncapped leads in a mixed batch and exhausts the capped one", async () => {
+    const now = new Date("2026-06-15T12:00:00.000Z");
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+
+    const t = convexTest(schema, modules);
+    const staleUpdatedAt = now.getTime() - 6 * 60 * 1000;
+    const [freshId, exhaustedId] = await t.run(async (ctx) => {
+      const fresh = await ctx.db.insert("leads", {
+        name: "Still Retrying",
+        email: "fresh-retry@example.com",
+        description: "Under the cap.",
+        createdAt: staleUpdatedAt,
+        emailNotificationStatus: "pending",
+        emailNotificationUpdatedAt: staleUpdatedAt,
+      });
+      const exhausted = await ctx.db.insert("leads", {
+        name: "Already Capped",
+        email: "capped@example.com",
+        description: "At the cap.",
+        createdAt: staleUpdatedAt,
+        emailNotificationStatus: "pending",
+        emailNotificationUpdatedAt: staleUpdatedAt,
+        emailNotificationAttemptCount: 3,
+      });
+      return [fresh, exhausted];
+    });
+
+    const claimed = await t.mutation(internal.leads.claimStaleEmailNotificationRetries, {
+      cutoff: now.getTime() - 5 * 60 * 1000,
+    });
+    expect(claimed.map((lead) => lead._id)).toEqual([freshId]);
+    const exhausted = await t.run(async (ctx) => ctx.db.get(exhaustedId));
+    expect(exhausted?.emailNotificationStatus).toBe("resend_error");
+  });
 });
