@@ -9,6 +9,7 @@ const RATE_LIMIT_MAX_SUBMISSIONS = 3;
 const GLOBAL_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const GLOBAL_RATE_LIMIT_MAX_SUBMISSIONS = 30;
 const EMAIL_RETRY_BATCH_SIZE = 20;
+const EMAIL_RETRY_MAX_ATTEMPTS = 3;
 const EMAIL_ATTEMPT_STALE_MS = 5 * 60 * 1000; // Aligned with cron retry threshold
 const RESEND_SANDBOX_FROM = "onboarding@resend.dev";
 const DEFAULT_FROM = `Portfolio Contact <${RESEND_SANDBOX_FROM}>`;
@@ -346,15 +347,29 @@ export const claimStaleEmailNotificationRetries = internalMutation({
       ...staleRetryingLeads,
     ];
 
+    const claimedLeads = [];
     for (const lead of staleLeads) {
+      const attempts = (lead.emailNotificationAttemptCount ?? 0) + 1;
+      if (attempts > EMAIL_RETRY_MAX_ATTEMPTS) {
+        await ctx.db.patch(lead._id, {
+          emailNotificationStatus: "resend_error",
+          emailNotificationError: `Gave up after ${EMAIL_RETRY_MAX_ATTEMPTS} email retries.`,
+          emailNotificationUpdatedAt: now,
+          emailNotificationAttemptCount: EMAIL_RETRY_MAX_ATTEMPTS,
+        });
+        continue;
+      }
+
       await ctx.db.patch(lead._id, {
         emailNotificationStatus: "retrying",
         emailNotificationError: "Email notification retry claimed.",
         emailNotificationUpdatedAt: now,
+        emailNotificationAttemptCount: attempts,
       });
+      claimedLeads.push(lead);
     }
 
-    return staleLeads.map((lead) => ({
+    return claimedLeads.map((lead) => ({
       _id: lead._id,
       name: lead.name,
       email: lead.email,

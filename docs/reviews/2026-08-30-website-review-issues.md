@@ -15,7 +15,7 @@ Status: `done` · `blocked` · `later` · `skip` · `dismissed`
 | 1 | Self-host/compress assets, slug lists, cookie banner, SEO from case studies | done |
 | 2 | 404, telemetry env, SPA pageviews, contact copy, error boundary | done |
 | 3 | Policy copy, project stats, reduced motion, dead code, tests | done |
-| Later | Email retry cap, leftover schema/client, JS split, trailing slashes | later |
+| Later | Email retry cap, leftover schema/client, JS split, trailing slashes | I-23 done. Rest later |
 | Owner | Real n8n client-canvas screenshot | blocked |
 
 Required vs optional:
@@ -59,7 +59,7 @@ How it was checked:
 | I-20 | Budget strings duplicated FE/BE | hygiene | done |
 | I-21 | Hero image preloaded on every static route | perf | done |
 | I-22 | Pulse animation ignores reduced motion | a11y | done |
-| I-23 | Email retries forever on Resend failure | ops | later |
+| I-23 | Email retries forever on Resend failure | ops | done |
 | I-24 | `supabaseId` leftover on leads schema | hygiene | later |
 | I-25 | `convexClient.js` is a large fake client for missing env | hygiene | later |
 | I-26 | One large JS chunk | perf | later |
@@ -371,11 +371,18 @@ How it was checked:
 
 ### I-23 — Email retries forever
 
-Cap Resend retries in the ten-minute cron. Glance at failed rows in the Convex dashboard. Do not add an eighth status.
+| | |
+|--|--|
+| **Status** | done |
+| **Files** | `convex/schema.ts`, `convex/leads.ts`, `convex/leads.test.ts` |
+
+**Problem:** Transient Resend 429/5xx and thrown errors set `pending` again. The ten-minute cron then claimed those rows forever.
+
+**Fix:** Count cron claims in `emailNotificationAttemptCount`. After 3 claims, set existing `resend_error` with `Gave up after 3 email retries.` No new status. Dev table glance: one lead, status `sent`, no looping pending rows.
 
 ### I-24 — `supabaseId` leftover
 
-Optional field + index on `leads` from the import migration. Remove after confirming no import rerun is needed.
+Optional field + index on `leads` from the import migration. Left in place. `convex/migrations/importLeads.ts` still dedups on `supabaseId`, so a rerun is still possible.
 
 ### I-25 — Fake Convex client
 
