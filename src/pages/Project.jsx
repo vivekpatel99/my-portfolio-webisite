@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Stats from '@/components/Stats';
@@ -45,10 +45,6 @@ const CaseStudyMedia = ({ src, alt, poster, className }) => {
 const Project = () => {
   const { projectId } = useParams();
   const project = getCaseStudyBySlug(projectId);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [projectId]);
 
   if (!project) {
     return <NotFound />;
