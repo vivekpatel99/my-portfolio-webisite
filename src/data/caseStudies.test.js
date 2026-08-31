@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { caseStudies, getCaseStudyBySlug, caseStudySlugs } from './caseStudies';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { caseStudies, getCaseStudyBySlug, caseStudySlugs, primaryContactHref } from './caseStudies';
+import { routeSeo } from '../lib/seoConfig';
 
 describe('caseStudies data structure', () => {
   it('should have at least one case study', () => {
@@ -80,6 +83,42 @@ describe('caseStudySlugs', () => {
     caseStudies.forEach((caseStudy) => {
       expect(caseStudySlugs).toContain(caseStudy.slug);
     });
+  });
+
+  it('matches the Apache project allowlist and routeSeo keys', () => {
+    const htaccess = readFileSync(resolve(process.cwd(), 'public/.htaccess'), 'utf8');
+    const match = htaccess.match(/RewriteRule \^project\/\(([^)]+)\)/);
+    expect(match).toBeTruthy();
+    expect(match[1].split('|').sort()).toEqual([...caseStudySlugs].sort());
+    expect(htaccess).not.toContain('social-media-app');
+
+    const projectKeys = Object.keys(routeSeo)
+      .filter((key) => key.startsWith('/project/'))
+      .map((key) => key.replace('/project/', ''))
+      .sort();
+    expect(projectKeys).toEqual([...caseStudySlugs].sort());
+  });
+
+  it('keeps routeSeo path in sync with its route key', () => {
+    Object.entries(routeSeo)
+      .filter(([key]) => key.startsWith('/project/'))
+      .forEach(([key, seo]) => {
+        expect(seo.path).toBe(key);
+      });
+  });
+
+  it('does not mention social-media-app in data or SEO', () => {
+    expect(caseStudySlugs).not.toContain('social-media-app');
+    expect(Object.keys(routeSeo).join(' ')).not.toContain('social-media-app');
+  });
+
+  it('allows an optional trailing slash in the Apache project rule', () => {
+    const htaccess = readFileSync(resolve(process.cwd(), 'public/.htaccess'), 'utf8');
+    expect(htaccess).toMatch(/RewriteRule \^project\/\([^)]+\)\/\?\$/);
+  });
+
+  it('uses a trailing slash on the primary contact href', () => {
+    expect(primaryContactHref).toBe('/contact/');
   });
 });
 

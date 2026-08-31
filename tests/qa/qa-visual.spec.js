@@ -59,7 +59,7 @@ test('cookie customize panel expands', async ({ page }) => {
   });
   await page.goto('/');
   await page.getByRole('button', { name: /Customize/i }).click({ timeout: 5000 });
-  await expect(page.getByText(/analytics|essential/i).first()).toBeVisible();
+  await expect(page.getByLabel(/Analytics and Diagnostics Cookies/i)).toBeVisible();
 });
 
 test('stats ticker preserves decimal values', async ({ page }) => {

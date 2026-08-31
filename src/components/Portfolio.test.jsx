@@ -17,10 +17,10 @@ describe('Portfolio', () => {
 
     expect(screen.getByRole('link', {
       name: /read case study: automated data extraction/i,
-    }).getAttribute('href')).toBe('/project/n8n-openai-data-extraction');
+    }).getAttribute('href')).toBe('/project/n8n-openai-data-extraction/');
 
     expect(screen.getByRole('link', {
       name: /read case study: invoice ocr data extraction/i,
-    }).getAttribute('href')).toBe('/project/invoice-ocr-extraction');
+    }).getAttribute('href')).toBe('/project/invoice-ocr-extraction/');
   });
 });

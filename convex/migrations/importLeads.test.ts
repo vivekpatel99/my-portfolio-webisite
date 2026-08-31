@@ -1,15 +1,18 @@
+/// <reference types="vite/client" />
 import { convexTest } from "convex-test";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { internal } from "../_generated/api";
 import schema from "../schema";
 
-describe("importFromRows", () => {
-  afterEach(() => {
-    vi.useRealTimers();
-  });
+const modules = import.meta.glob("/convex/**/*.ts");
 
+afterEach(() => {
+  vi.useRealTimers();
+});
+
+describe("importFromRows", () => {
   it("MIG-004: import invalid email returns invalid: 1", async () => {
-    const t = convexTest(schema);
+    const t = convexTest(schema, modules);
     const result = await t.mutation(internal.migrations.importLeads.importFromRows, {
       rows: [
         {
@@ -24,12 +27,12 @@ describe("importFromRows", () => {
     expect(leads).toHaveLength(0);
   });
 
-  it("MIG-005: duplicate rows without supabaseId both insert", async () => {
-    const t = convexTest(schema);
+  it("MIG-005: duplicate rows both insert when there is no import key", async () => {
+    const t = convexTest(schema, modules);
     const row = {
       name: "Legacy Lead",
       email: "legacy-dup@example.com",
-      description: "No supabaseId — no dedup key.",
+      description: "No import key — no dedup.",
     };
     const first = await t.mutation(internal.migrations.importLeads.importFromRows, {
       rows: [row],
@@ -43,31 +46,8 @@ describe("importFromRows", () => {
     expect(leads).toHaveLength(2);
   });
 
-  it("MIG-003: skips duplicate supabaseId on re-import", async () => {
-    const t = convexTest(schema);
-    const rows = [
-      {
-        name: "Legacy Lead",
-        email: "legacy@example.com",
-        description: "Imported once.",
-        supabaseId: "sb-123",
-        createdAt: 1_700_000_000_000,
-      },
-    ];
-    const first = await t.mutation(internal.migrations.importLeads.importFromRows, {
-      rows,
-    });
-    expect(first).toEqual({ inserted: 1, skipped: 0, invalid: 0 });
-    const second = await t.mutation(internal.migrations.importLeads.importFromRows, {
-      rows,
-    });
-    expect(second).toEqual({ inserted: 0, skipped: 1, invalid: 0 });
-    const leads = await t.run(async (ctx) => ctx.db.query("leads").collect());
-    expect(leads).toHaveLength(1);
-  });
-
   it("rejects import batches over the transaction limit", async () => {
-    const t = convexTest(schema);
+    const t = convexTest(schema, modules);
     const rows = Array.from({ length: 101 }, (_, index) => ({
       name: `Legacy Lead ${index}`,
       email: `legacy-${index}@example.com`,
@@ -84,7 +64,7 @@ describe("importFromRows", () => {
     vi.useFakeTimers();
     vi.setSystemTime(now);
 
-    const t = convexTest(schema);
+    const t = convexTest(schema, modules);
     const result = await t.mutation(internal.migrations.importLeads.importFromRows, {
       rows: [
         {
@@ -112,5 +92,33 @@ describe("importFromRows", () => {
     const leads = await t.run(async (ctx) => ctx.db.query("leads").collect());
     expect(leads).toHaveLength(1);
     expect(leads[0].email).toBe("valid@example.com");
+  });
+});
+
+describe("removeLegacySupabaseIds", () => {
+  it("removes legacy ids in bounded batches before the schema is narrowed", async () => {
+    vi.useFakeTimers();
+    const t = convexTest(schema, modules);
+    await t.run(async (ctx) => {
+      for (let index = 0; index < 101; index += 1) {
+        await ctx.db.insert("leads", {
+          name: `Imported Lead ${index}`,
+          email: `imported-${index}@example.com`,
+          description: "Has a legacy import key.",
+          createdAt: index + 1,
+          supabaseId: `sb-${index}`,
+        });
+      }
+    });
+
+    const firstBatch = await t.mutation(
+      internal.migrations.importLeads.removeLegacySupabaseIds,
+      {},
+    );
+    expect(firstBatch).toMatchObject({ scanned: 100, cleaned: 100, isDone: false });
+    await t.finishAllScheduledFunctions(vi.runAllTimers);
+
+    const leads = await t.run(async (ctx) => ctx.db.query("leads").collect());
+    expect(leads.every((lead) => lead.supabaseId === undefined)).toBe(true);
   });
 });

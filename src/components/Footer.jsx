@@ -1,19 +1,12 @@
 import React from 'react';
 import { Github, Linkedin } from 'lucide-react'; 
-import { toast } from "@/components/ui/use-toast";
 import { Link } from 'react-router-dom';
 import { socialLinks, assetsLinks } from '@/config/links'; 
 
 const Footer = () => {
     const handleManageCookies = (e) => {
         e.preventDefault();
-        // This is a simple way to signal the Layout to show the banner.
-        // A more robust solution might use a global state (Context API).
         window.dispatchEvent(new CustomEvent('manage-cookies'));
-        toast({
-            title: "Manage Cookie Consent",
-            description: "Scroll down to adjust your cookie preferences.",
-        });
     };
 
     const footerSections = [
@@ -29,15 +22,15 @@ const Footer = () => {
         {
             title: 'Legal',
             links: [
-                { name: 'Privacy Policy', href: '/legal' }, // Updated Path
-                { name: 'Cookie Policy', href: '/data-policy' }, // Updated Path
+                { name: 'Privacy Policy', href: '/legal/' },
+                { name: 'Cookie Policy', href: '/data-policy/' },
                 { name: 'Manage Consent', href: '#', onClick: handleManageCookies },
             ],
         },
         {
             title: 'Work With Me',
             links: [
-                { name: 'Contact Me', href: '/contact' },
+                { name: 'Contact Me', href: '/contact/' },
             ],
         },
     ];

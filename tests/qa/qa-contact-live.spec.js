@@ -18,7 +18,7 @@ test.describe('live contact submission', () => {
 
     await page.getByRole('button', { name: /Request a Project Estimate/i }).click();
 
-    await expect(page.getByText('Message Sent')).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByText('Request received')).toBeVisible({ timeout: 20_000 });
     await expect(page.getByLabel('Full Name *')).toHaveValue('');
   });
 });

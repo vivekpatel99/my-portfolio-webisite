@@ -137,12 +137,10 @@ The `leads` table stores:
 - `description`
 - `createdAt`
 - optional email notification status/error fields
-- optional `supabaseId` for migrated rows
 
 Indexes:
 
 - `by_createdAt`
-- `by_supabaseId`
 - `by_email`
 - `by_email_and_createdAt`
 
@@ -156,7 +154,7 @@ Indexes:
 4. The mutation inserts the lead with `emailNotificationStatus: "pending"`.
 5. It schedules `internal.leads.sendContactEmail`.
 6. The internal action calls Resend if `RESEND_API_KEY` is configured.
-7. The action writes back `sent`, `missing_api_key`, `resend_error`, or `unexpected_error`.
+7. The action writes back `sent`, `missing_api_key`, `resend_error`, or returns the row to `pending` so the cron can retry. `unexpected_error` exists in the schema but is not written.
 
 There is no Convex auth configuration today. This is intentionally an anonymous insert-only contact form: public clients can submit leads, but there are no public read/update/delete functions.
 
@@ -217,7 +215,7 @@ Vitest:
 Important test coverage:
 
 - `convex/leads.test.ts`: lead validation, inserts, optional budget, oversized fields, invalid email/budget, unicode, plain-text XSS-like payloads, rate limiting, duplicate parallel submits, Resend payload and error behavior.
-- `convex/migrations/importLeads.test.ts`: historical lead import behavior and `supabaseId` idempotency.
+- `convex/migrations/importLeads.test.ts`: historical lead import behavior.
 - `src/pages/Contact.test.jsx`: mocked Convex mutation behavior for missing fields, invalid email, valid submit, and mutation failure.
 - `src/lib/convexClient.test.js`: Convex URL validation and disabled-client behavior.
 - `src/components/SentryTelemetry.test.jsx`: consent-gated Sentry behavior.

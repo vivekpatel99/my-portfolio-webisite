@@ -30,10 +30,38 @@ test('unknown route renders a noindex 404 page', async ({ page }) => {
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, nofollow');
 });
 
-test('invalid project redirects home with an error toast', async ({ page }) => {
+test('invalid project slug renders the 404 page', async ({ page }) => {
   await page.goto('/project/nonexistent-slug');
-  await expect(page.getByText('Project Not Found', { exact: true })).toBeVisible({ timeout: 8000 });
-  await expect(page).toHaveURL(/\/$/, { timeout: 10000 });
+  await expect(page).toHaveURL(/\/project\/nonexistent-slug/);
+  await expect(page.getByRole('heading', { name: 'Page Not Found' })).toBeVisible();
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, nofollow');
+  await expect(page.getByText(/redirect|message sent/i)).toHaveCount(0);
+});
+
+test('uppercase project slug is treated as unknown', async ({ page }) => {
+  await page.goto('/project/N8N-OPENAI-DATA-EXTRACTION');
+  await expect(page).toHaveURL(/\/project\/N8N-OPENAI-DATA-EXTRACTION/);
+  await expect(page.getByRole('heading', { name: 'Page Not Found' })).toBeVisible();
+});
+
+test('unknown project slug with a trailing slash is 404', async ({ page }) => {
+  await page.goto('/project/nonexistent-slug/');
+  await expect(page.getByRole('heading', { name: 'Page Not Found' })).toBeVisible();
+});
+
+test('client navigation to an unknown project slug stays on 404', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => window.history.pushState({}, '', '/project/nonexistent-slug'));
+  await page.evaluate(() => window.dispatchEvent(new PopStateEvent('popstate')));
+  await expect(page).toHaveURL(/\/project\/nonexistent-slug/);
+  await expect(page.getByRole('heading', { name: 'Page Not Found' })).toBeVisible();
+});
+
+test('bare /project paths render 404', async ({ page }) => {
+  for (const path of ['/project', '/project/']) {
+    await page.goto(path);
+    await expect(page.getByRole('heading', { name: 'Page Not Found' })).toBeVisible();
+  }
 });
 
 test('header hash nav on same page scrolls to section', async ({ page }) => {
