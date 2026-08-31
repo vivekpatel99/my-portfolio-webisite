@@ -23,7 +23,7 @@ export const caseStudies = [
         description: 'Weekly manual research and formatting work targeted for automation.',
       },
       {
-        value: 11,
+        value: 21,
         suffix: '+',
         label: 'Projects Delivered',
         description: 'Built from patterns proven across AI automation client work.',

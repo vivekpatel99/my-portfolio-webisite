@@ -13,7 +13,7 @@ const proofItems = [
     icon: CheckCircle2,
   },
   {
-    label: '11+ Projects',
+    label: '21+ Projects',
     detail: 'AI and automation work',
     icon: Sparkles,
   },
