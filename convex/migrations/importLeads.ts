@@ -1,4 +1,5 @@
 import { ConvexError, v } from "convex/values";
+import { internal } from "../_generated/api";
 import { internalMutation } from "../_generated/server";
 import { validateLeadInput } from "../lib/leadValidation";
 
@@ -12,6 +13,7 @@ const importRowValidator = v.object({
 
 const MAX_IMPORT_BATCH_SIZE = 100;
 const MAX_FUTURE_CREATED_AT_MS = 24 * 60 * 60 * 1000;
+const LEGACY_CLEANUP_BATCH_SIZE = 100;
 
 function isValidCreatedAt(createdAt: number | undefined, now: number) {
   if (createdAt === undefined) {
@@ -68,5 +70,51 @@ export const importFromRows = internalMutation({
     }
 
     return { inserted, skipped, invalid };
+  },
+});
+
+export const removeLegacySupabaseIds = internalMutation({
+  args: {
+    cursor: v.optional(v.string()),
+  },
+  returns: v.object({
+    scanned: v.number(),
+    cleaned: v.number(),
+    continueCursor: v.string(),
+    isDone: v.boolean(),
+  }),
+  handler: async (ctx, { cursor }): Promise<{
+    scanned: number;
+    cleaned: number;
+    continueCursor: string;
+    isDone: boolean;
+  }> => {
+    const page = await ctx.db.query("leads").paginate({
+      numItems: LEGACY_CLEANUP_BATCH_SIZE,
+      cursor: cursor ?? null,
+    });
+    let cleaned = 0;
+
+    for (const lead of page.page) {
+      if (lead.supabaseId !== undefined) {
+        await ctx.db.patch("leads", lead._id, { supabaseId: undefined });
+        cleaned += 1;
+      }
+    }
+
+    if (!page.isDone) {
+      await ctx.scheduler.runAfter(
+        0,
+        internal.migrations.importLeads.removeLegacySupabaseIds,
+        { cursor: page.continueCursor },
+      );
+    }
+
+    return {
+      scanned: page.page.length,
+      cleaned,
+      continueCursor: page.continueCursor,
+      isDone: page.isDone,
+    };
   },
 });

@@ -104,7 +104,7 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.15 }}
-          className="fixed inset-x-0 top-20 z-40 rounded-b-2xl p-3 sm:inset-x-auto sm:top-auto sm:bottom-4 sm:left-auto sm:right-4 sm:w-auto sm:max-w-lg sm:rounded-2xl sm:p-6 bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl shadow-black/30"
+          className="fixed inset-x-0 top-20 z-40 max-h-[calc(100dvh-5rem)] overflow-y-auto rounded-b-2xl p-3 sm:inset-x-auto sm:top-auto sm:bottom-4 sm:left-auto sm:right-4 sm:w-auto sm:max-w-lg sm:max-h-[calc(100dvh-2rem)] sm:rounded-2xl sm:p-6 bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl shadow-black/30"
         >
           <div className="flex items-start gap-4">
             <div className="hidden p-3 bg-accent-purple/20 rounded-full flex-shrink-0 sm:block">

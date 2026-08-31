@@ -77,6 +77,10 @@ describe('CookieConsentBanner', () => {
     const user = userEvent.setup();
     render(<CookieConsentBanner onConsent={vi.fn()} show onHide={vi.fn()} />);
     await user.click(screen.getByRole('button', { name: /customize/i }));
+    const dialog = screen.getByRole('dialog', { name: /we value your privacy/i });
+    const classes = dialog.className.split(/\s+/);
+    expect(classes).toContain('max-h-[calc(100dvh-5rem)]');
+    expect(classes).toContain('overflow-y-auto');
     expect(screen.getByRole('button', { name: /save preferences/i })).toBeTruthy();
     expect(screen.getByLabelText(/analytics and diagnostics cookies/i)).toBeTruthy();
   });

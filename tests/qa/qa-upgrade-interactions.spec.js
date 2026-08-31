@@ -110,7 +110,7 @@ test('all featured case-study cards and detail CTAs work', async ({ page }) => {
     await page.goto('/#portfolio');
     await page.locator('#portfolio').scrollIntoViewIfNeeded();
     await page.getByRole('link', { name: caseStudy.cardName }).click();
-    await expect(page).toHaveURL(new RegExp(`${caseStudy.path}$`));
+    await expect(page).toHaveURL(new RegExp(`${caseStudy.path}/$`));
     await expect(page.getByRole('heading', { name: caseStudy.heading })).toBeVisible();
 
     for (const stackItem of caseStudy.stack) {
@@ -148,8 +148,7 @@ test('contact guidance, budget dropdown, and validation work without submitting 
     'mailto:contact@vivekapatel.com',
   );
 
-  await page.getByLabel('Budget Range (Optional)').click();
-  await page.getByRole('option', { name: '€5,000 - €10,000' }).click();
+  await page.getByLabel('Budget Range (Optional)').selectOption({ label: '€5,000 - €10,000' });
   await expect(page.getByLabel('Budget Range (Optional)')).toContainText('€5,000 - €10,000');
 
   await page.getByRole('button', { name: /Request a Project Estimate/i }).click();
