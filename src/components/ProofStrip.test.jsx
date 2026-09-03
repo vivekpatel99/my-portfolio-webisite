@@ -34,9 +34,9 @@ describe('ProofStrip component', () => {
     expect(screen.getByText('Client delivery record')).toBeTruthy();
   });
 
-  it('should display 11+ Projects label', () => {
+  it('should display 21+ Projects label', () => {
     render(<ProofStrip />);
-    expect(screen.getByText('11+ Projects')).toBeTruthy();
+    expect(screen.getByText('21+ Projects')).toBeTruthy();
     expect(screen.getByText('AI and automation work')).toBeTruthy();
   });
 
