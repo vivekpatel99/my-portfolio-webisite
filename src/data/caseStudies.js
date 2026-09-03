@@ -1,4 +1,4 @@
-import { portfolioImages, socialLinks } from '@/config/links';
+import { portfolioImages, socialLinks } from '../config/links.js';
 
 export const caseStudies = [
   {
@@ -23,18 +23,6 @@ export const caseStudies = [
         description: 'Weekly manual research and formatting work targeted for automation.',
       },
       {
-        value: 21,
-        suffix: '+',
-        label: 'Projects Delivered',
-        description: 'Built from patterns proven across AI automation client work.',
-      },
-      {
-        value: 100,
-        suffix: '%',
-        label: 'Job Success',
-        description: 'Delivered with the reliability expected from Upwork client work.',
-      },
-      {
         value: 1,
         suffix: '',
         label: 'Reusable Workflow',
@@ -43,16 +31,12 @@ export const caseStudies = [
     ],
     image: {
       src: portfolioImages.n8nWorkflow,
-      alt: 'An n8n workflow for automated data extraction from German websites.',
+      alt: 'First-party automation workflow graph from related planning work.',
     },
     gallery: [
       {
         src: portfolioImages.n8nWorkflow,
-        alt: 'n8n workflow canvas showing connected automation steps.',
-      },
-      {
-        src: portfolioImages.aiPlanningAgent,
-        alt: 'AI workflow graph representing structured automation planning.',
+        alt: 'Automation workflow graph used to plan extraction and validation steps.',
       },
     ],
     stack: ['n8n', 'OpenAI', 'Web Scraping', 'Data Validation'],
@@ -89,18 +73,6 @@ export const caseStudies = [
         suffix: '',
         label: 'Party Types',
         description: 'Seller and client details extracted from invoice images.',
-      },
-      {
-        value: 300,
-        suffix: '+',
-        label: 'Client Hours',
-        description: 'Experience base across delivered AI and automation work.',
-      },
-      {
-        value: 5,
-        suffix: '★',
-        label: 'Client Standard',
-        description: 'Built for the quality bar reflected in Upwork feedback.',
       },
     ],
     image: {
@@ -158,12 +130,6 @@ export const caseStudies = [
         label: 'Original Runtime',
         description: 'Baseline runtime before production optimization.',
       },
-      {
-        value: 9,
-        suffix: '+',
-        label: 'Years Experience',
-        description: 'Engineering background across automation, testing, and computer vision.',
-      },
     ],
     image: {
       src: portfolioImages.yogaPose,
@@ -176,6 +142,7 @@ export const caseStudies = [
       },
       {
         src: portfolioImages.footballTracking,
+        poster: portfolioImages.footballTrackingPoster,
         alt: 'YOLO tracking multiple football players in video.',
       },
     ],
@@ -200,5 +167,5 @@ export const getCaseStudyBySlug = (slug) =>
 
 export const caseStudySlugs = caseStudies.map((caseStudy) => caseStudy.slug);
 
-export const primaryContactHref = '/contact';
+export const primaryContactHref = '/contact/';
 export const directEmailHref = socialLinks.emailHref;

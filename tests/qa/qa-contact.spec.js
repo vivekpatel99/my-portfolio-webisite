@@ -34,7 +34,7 @@ test('whitespace-only required fields are rejected before Convex mutation', asyn
   await page.getByLabel('Project Description *').fill('   ');
   await page.getByRole('button', { name: /Request a Project Estimate/i }).click();
   await expect(page.getByText('Uh oh! Missing fields.').first()).toBeVisible();
-  await expect(page.getByText('Message Sent')).toBeHidden();
+  await expect(page.getByText('Request received')).toBeHidden();
   expect(convexMutationRequests).toEqual([]);
 });
 

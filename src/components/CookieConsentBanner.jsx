@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from "@/components/ui/checkbox.jsx";
 import { Cookie, X, Settings } from 'lucide-react';
@@ -94,32 +94,30 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
   };
 
   return (
-    <AnimatePresence>
-      {isManaging && (
+    isManaging ? (
         <motion.div
           ref={bannerRef}
           role="dialog"
           aria-modal="false"
           aria-labelledby="cookie-consent-title"
           tabIndex={-1}
-          initial={{ y: '100%' }}
-          animate={{ y: '0%' }}
-          exit={{ y: '100%' }}
-          transition={{ type: 'spring', stiffness: 200, damping: 30 }}
-          className="fixed bottom-4 left-4 right-4 sm:left-auto sm:w-auto sm:max-w-lg p-6 bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl shadow-black/30 z-50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.15 }}
+          className="fixed inset-x-0 top-20 z-40 max-h-[calc(100dvh-5rem)] overflow-y-auto rounded-b-2xl p-3 sm:inset-x-auto sm:top-auto sm:bottom-4 sm:left-auto sm:right-4 sm:w-auto sm:max-w-lg sm:max-h-[calc(100dvh-2rem)] sm:rounded-2xl sm:p-6 bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl shadow-black/30"
         >
           <div className="flex items-start gap-4">
-            <div className="p-3 bg-accent-purple/20 rounded-full flex-shrink-0">
+            <div className="hidden p-3 bg-accent-purple/20 rounded-full flex-shrink-0 sm:block">
               <Cookie className="w-6 h-6 text-accent-purple" />
             </div>
             <div className="flex-grow">
               <h3 id="cookie-consent-title" className="text-lg font-bold text-white mb-1">We value your privacy</h3>
-              <p className="text-sm text-gray-300 mb-4">
-                We use optional analytics and diagnostics cookies to measure traffic and understand site errors with Google Analytics and Sentry. Customize your preferences below or accept all to continue.
+              <p className="mb-4 hidden text-sm text-gray-300 sm:block">
+                We use optional analytics and diagnostics to measure traffic and understand site errors with Google Analytics and Sentry. Customize your preferences below or accept all to continue.
               </p>
               
               <Collapsible>
-                <div className="flex flex-col sm:flex-row gap-3 mt-4">
+                <div className="mt-3 flex flex-row flex-wrap gap-2 sm:mt-4 sm:gap-3">
                    <Button
                     onClick={handleAcceptAll}
                     className="min-h-11 flex-1 bg-accent-purple hover:bg-accent-purple/90 text-white rounded-full"
@@ -149,7 +147,7 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
                         <label htmlFor="necessary" className="font-semibold text-white">Strictly Necessary</label>
                         <Checkbox id="necessary" checked disabled />
                       </div>
-                      <p className="text-xs text-gray-400 mt-1">These cookies are essential for the website to function and cannot be switched off.</p>
+                      <p className="text-xs text-gray-400 mt-1">This preference is stored in your browser so the site remembers your choice. It is not a tracking cookie.</p>
                   </div>
                   <div className="p-4 bg-black/20 rounded-lg">
                       <div className="flex items-center justify-between">
@@ -167,8 +165,7 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
             </button>
           </div>
         </motion.div>
-      )}
-    </AnimatePresence>
+    ) : null
   );
 };
 

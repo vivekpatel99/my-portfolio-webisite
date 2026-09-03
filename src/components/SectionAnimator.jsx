@@ -1,13 +1,15 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 const SectionAnimator = ({ children, className }) => {
+  const reduceMotion = useReducedMotion();
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={reduceMotion ? false : { opacity: 0, y: 50 }}
+      whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.1 }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
+      transition={{ duration: reduceMotion ? 0 : 0.8, ease: 'easeOut' }}
       className={className}
     >
       {children}

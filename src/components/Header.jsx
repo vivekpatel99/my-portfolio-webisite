@@ -157,7 +157,7 @@ const Header = () => {
   }
 
   const handleCTA = () => {
-    navigate('/contact');
+    navigate('/contact/');
     if (isOpen) {
       setIsOpen(false);
     }

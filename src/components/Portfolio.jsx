@@ -8,7 +8,7 @@ const ProjectCard = ({ project }) => {
   return (
     <article className="group overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] transition-all duration-300 hover:border-accent-purple/50 hover:bg-white/[0.07]">
       <Link
-        to={`/project/${project.slug}`}
+        to={`/project/${project.slug}/`}
         className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple"
         aria-label={`Read case study: ${project.cardTitle}`}
       >

@@ -6,7 +6,7 @@ const PENDING_EMAIL_RETRY_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
 
 export const retryPendingEmails = internalAction({
   args: {},
-  handler: async (ctx) => {
+  handler: async (ctx): Promise<{ retriedCount: number }> => {
     const cutoff = Date.now() - PENDING_EMAIL_RETRY_THRESHOLD_MS;
 
     const claimedLeads = await ctx.runMutation(

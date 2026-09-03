@@ -176,7 +176,7 @@ describe("submitLead", () => {
       await t.mutation(api.leads.submitLead, input);
     }
     await expect(t.mutation(api.leads.submitLead, input)).rejects.toThrow(
-      /Please wait before submitting again/,
+      /This email already sent several messages recently/,
     );
     const leads = await t.run(async (ctx) => ctx.db.query("leads").collect());
     expect(leads).toHaveLength(3);
@@ -205,7 +205,7 @@ describe("submitLead", () => {
         email: "global-limit@example.com",
         description: "Global throttle should reject.",
       }),
-    ).rejects.toThrow(/Please wait before submitting again/);
+    ).rejects.toThrow(/The site is receiving too many requests/);
   });
 
   it("allows a submit when one prior lead is exactly on the rate-limit boundary", async () => {
@@ -512,5 +512,236 @@ describe("email notification retry state", () => {
     expect(lead?.emailNotificationStatus).toBe("pending");
     expect(lead?.emailNotificationError).toContain("Transient Resend API error");
     expect(lead?.emailNotificationUpdatedAt).toBe(now.getTime());
+  });
+
+  it("stops claiming a lead after three cron retries and uses resend_error", async () => {
+    const now = new Date("2026-06-15T12:00:00.000Z");
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+
+    const t = convexTest(schema, modules);
+    const staleUpdatedAt = now.getTime() - 6 * 60 * 1000;
+    const leadId = await t.run(async (ctx) =>
+      ctx.db.insert("leads", {
+        name: "Retry Cap",
+        email: "retry-cap@example.com",
+        description: "Transient failures should not retry forever.",
+        createdAt: staleUpdatedAt,
+        emailNotificationStatus: "pending",
+        emailNotificationUpdatedAt: staleUpdatedAt,
+      }),
+    );
+
+    const cutoff = now.getTime() - 5 * 60 * 1000;
+    for (let attempt = 1; attempt <= 3; attempt += 1) {
+      const claimed = await t.mutation(internal.leads.claimStaleEmailNotificationRetries, {
+        cutoff,
+      });
+      expect(claimed).toHaveLength(1);
+      expect(claimed[0]._id).toBe(leadId);
+      const afterClaim = await t.run(async (ctx) => ctx.db.get(leadId));
+      expect(afterClaim?.emailNotificationAttemptCount).toBe(attempt);
+      expect(afterClaim?.emailNotificationStatus).toBe("retrying");
+      await t.run(async (ctx) => {
+        await ctx.db.patch(leadId, {
+          emailNotificationStatus: "pending",
+          emailNotificationUpdatedAt: staleUpdatedAt,
+        });
+      });
+    }
+
+    const exhausted = await t.mutation(internal.leads.claimStaleEmailNotificationRetries, {
+      cutoff,
+    });
+    expect(exhausted).toHaveLength(0);
+    const lead = await t.run(async (ctx) => ctx.db.get(leadId));
+    expect(lead?.emailNotificationStatus).toBe("resend_error");
+    expect(lead?.emailNotificationError).toBe("Gave up after 3 email retries.");
+    expect(lead?.emailNotificationError).not.toContain("Email notification retry claimed.");
+
+    const secondPass = await t.mutation(internal.leads.claimStaleEmailNotificationRetries, {
+      cutoff,
+    });
+    expect(secondPass).toHaveLength(0);
+  });
+
+  it("exhausts a hung sending reclaim against the same retry cap", async () => {
+    const now = new Date("2026-06-15T12:00:00.000Z");
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+
+    const t = convexTest(schema, modules);
+    const staleUpdatedAt = now.getTime() - 6 * 60 * 1000;
+    const leadId = await t.run(async (ctx) =>
+      ctx.db.insert("leads", {
+        name: "Hung Send",
+        email: "hung-send@example.com",
+        description: "Stuck in sending.",
+        createdAt: staleUpdatedAt,
+        emailNotificationStatus: "sending",
+        emailNotificationUpdatedAt: staleUpdatedAt,
+        emailNotificationAttemptCount: 3,
+      }),
+    );
+
+    const claimed = await t.mutation(internal.leads.claimStaleEmailNotificationRetries, {
+      cutoff: now.getTime() - 5 * 60 * 1000,
+    });
+    expect(claimed).toHaveLength(0);
+    const lead = await t.run(async (ctx) => ctx.db.get(leadId));
+    expect(lead?.emailNotificationStatus).toBe("resend_error");
+    expect(lead?.emailNotificationError).toBe("Gave up after 3 email retries.");
+  });
+
+  it("reclaims a hung sending lead under the cap and increments the count", async () => {
+    const now = new Date("2026-06-15T12:00:00.000Z");
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+
+    const t = convexTest(schema, modules);
+    const staleUpdatedAt = now.getTime() - 6 * 60 * 1000;
+    const leadId = await t.run(async (ctx) =>
+      ctx.db.insert("leads", {
+        name: "Hung Under Cap",
+        email: "hung-under@example.com",
+        description: "Stuck in sending under cap.",
+        createdAt: staleUpdatedAt,
+        emailNotificationStatus: "sending",
+        emailNotificationUpdatedAt: staleUpdatedAt,
+        emailNotificationAttemptCount: 2,
+      }),
+    );
+
+    const claimed = await t.mutation(internal.leads.claimStaleEmailNotificationRetries, {
+      cutoff: now.getTime() - 5 * 60 * 1000,
+    });
+    expect(claimed).toHaveLength(1);
+    const underCap = await t.run(async (ctx) => ctx.db.get(leadId));
+    expect(underCap?.emailNotificationStatus).toBe("retrying");
+    expect(underCap?.emailNotificationAttemptCount).toBe(3);
+  });
+
+  it("keeps the retry count when a transient bounce returns the row to pending", async () => {
+    const now = new Date("2026-06-15T12:00:00.000Z");
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+
+    const t = convexTest(schema, modules);
+    const staleUpdatedAt = now.getTime() - 6 * 60 * 1000;
+    const leadId = await t.run(async (ctx) =>
+      ctx.db.insert("leads", {
+        name: "Bounce Count",
+        email: "bounce-count@example.com",
+        description: "Count must survive pending bounce.",
+        createdAt: staleUpdatedAt,
+        emailNotificationStatus: "pending",
+        emailNotificationUpdatedAt: staleUpdatedAt,
+        emailNotificationAttemptCount: 2,
+      }),
+    );
+
+    await t.mutation(internal.leads.claimStaleEmailNotificationRetries, {
+      cutoff: now.getTime() - 5 * 60 * 1000,
+    });
+    await t.mutation(internal.leads.markEmailNotificationStatus, {
+      leadId,
+      status: "pending",
+      error: "Transient Resend API error 429: rate limited",
+    });
+
+    const bounced = await t.run(async (ctx) => ctx.db.get(leadId));
+    expect(bounced?.emailNotificationStatus).toBe("pending");
+    expect(bounced?.emailNotificationAttemptCount).toBe(3);
+  });
+
+  it("does not increment the retry count on an individual send claim", async () => {
+    const now = new Date("2026-06-15T12:00:00.000Z");
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+
+    const t = convexTest(schema, modules);
+    const leadId = await t.run(async (ctx) =>
+      ctx.db.insert("leads", {
+        name: "Send Claim",
+        email: "send-claim@example.com",
+        description: "Individual claim is not a cron retry.",
+        createdAt: now.getTime(),
+        emailNotificationStatus: "retrying",
+        emailNotificationUpdatedAt: now.getTime(),
+        emailNotificationAttemptCount: 2,
+      }),
+    );
+
+    const claimed = await t.mutation(internal.leads.claimEmailNotificationAttempt, {
+      leadId,
+    });
+    expect(claimed?._id).toBe(leadId);
+    const afterSendClaim = await t.run(async (ctx) => ctx.db.get(leadId));
+    expect(afterSendClaim?.emailNotificationStatus).toBe("sending");
+    expect(afterSendClaim?.emailNotificationAttemptCount).toBe(2);
+  });
+
+  it("does not claim terminal email statuses even with a zero retry count", async () => {
+    const now = new Date("2026-06-15T12:00:00.000Z");
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+
+    const t = convexTest(schema, modules);
+    const staleUpdatedAt = now.getTime() - 6 * 60 * 1000;
+    await t.run(async (ctx) => {
+      for (const status of ["sent", "missing_api_key", "resend_error", "unexpected_error"] as const) {
+        await ctx.db.insert("leads", {
+          name: status,
+          email: `${status}@example.com`,
+          description: "Terminal status must stay unclaimed.",
+          createdAt: staleUpdatedAt,
+          emailNotificationStatus: status,
+          emailNotificationUpdatedAt: staleUpdatedAt,
+          emailNotificationAttemptCount: 0,
+        });
+      }
+    });
+
+    const claimed = await t.mutation(internal.leads.claimStaleEmailNotificationRetries, {
+      cutoff: now.getTime() - 5 * 60 * 1000,
+    });
+    expect(claimed).toHaveLength(0);
+  });
+
+  it("retries uncapped leads in a mixed batch and exhausts the capped one", async () => {
+    const now = new Date("2026-06-15T12:00:00.000Z");
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+
+    const t = convexTest(schema, modules);
+    const staleUpdatedAt = now.getTime() - 6 * 60 * 1000;
+    const [freshId, exhaustedId] = await t.run(async (ctx) => {
+      const fresh = await ctx.db.insert("leads", {
+        name: "Still Retrying",
+        email: "fresh-retry@example.com",
+        description: "Under the cap.",
+        createdAt: staleUpdatedAt,
+        emailNotificationStatus: "pending",
+        emailNotificationUpdatedAt: staleUpdatedAt,
+      });
+      const exhausted = await ctx.db.insert("leads", {
+        name: "Already Capped",
+        email: "capped@example.com",
+        description: "At the cap.",
+        createdAt: staleUpdatedAt,
+        emailNotificationStatus: "pending",
+        emailNotificationUpdatedAt: staleUpdatedAt,
+        emailNotificationAttemptCount: 3,
+      });
+      return [fresh, exhausted];
+    });
+
+    const claimed = await t.mutation(internal.leads.claimStaleEmailNotificationRetries, {
+      cutoff: now.getTime() - 5 * 60 * 1000,
+    });
+    expect(claimed).toHaveLength(1);
+    expect(claimed[0]._id).toBe(freshId);
+    const exhausted = await t.run(async (ctx) => ctx.db.get(exhaustedId));
+    expect(exhausted?.emailNotificationStatus).toBe("resend_error");
   });
 });

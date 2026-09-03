@@ -9,6 +9,7 @@ const RATE_LIMIT_MAX_SUBMISSIONS = 3;
 const GLOBAL_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const GLOBAL_RATE_LIMIT_MAX_SUBMISSIONS = 30;
 const EMAIL_RETRY_BATCH_SIZE = 20;
+const EMAIL_RETRY_MAX_ATTEMPTS = 3;
 const EMAIL_ATTEMPT_STALE_MS = 5 * 60 * 1000; // Aligned with cron retry threshold
 const RESEND_SANDBOX_FROM = "onboarding@resend.dev";
 const DEFAULT_FROM = `Portfolio Contact <${RESEND_SANDBOX_FROM}>`;
@@ -179,7 +180,7 @@ export const submitLead = mutation({
       .take(GLOBAL_RATE_LIMIT_MAX_SUBMISSIONS);
 
     if (recentGlobal.length >= GLOBAL_RATE_LIMIT_MAX_SUBMISSIONS) {
-      throw new ConvexError("Please wait before submitting again.");
+      throw new ConvexError("The site is receiving too many requests. Please wait a few minutes and try again.");
     }
 
     const recent = await ctx.db
@@ -190,7 +191,7 @@ export const submitLead = mutation({
       .take(RATE_LIMIT_MAX_SUBMISSIONS);
 
     if (recent.length >= RATE_LIMIT_MAX_SUBMISSIONS) {
-      throw new ConvexError("Please wait before submitting again.");
+      throw new ConvexError("This email already sent several messages recently. Please wait before submitting again.");
     }
 
     const leadId = await ctx.db.insert("leads", {
@@ -346,15 +347,29 @@ export const claimStaleEmailNotificationRetries = internalMutation({
       ...staleRetryingLeads,
     ];
 
+    const claimedLeads = [];
     for (const lead of staleLeads) {
+      const attempts = (lead.emailNotificationAttemptCount ?? 0) + 1;
+      if (attempts > EMAIL_RETRY_MAX_ATTEMPTS) {
+        await ctx.db.patch(lead._id, {
+          emailNotificationStatus: "resend_error",
+          emailNotificationError: `Gave up after ${EMAIL_RETRY_MAX_ATTEMPTS} email retries.`,
+          emailNotificationUpdatedAt: now,
+          emailNotificationAttemptCount: EMAIL_RETRY_MAX_ATTEMPTS,
+        });
+        continue;
+      }
+
       await ctx.db.patch(lead._id, {
         emailNotificationStatus: "retrying",
         emailNotificationError: "Email notification retry claimed.",
         emailNotificationUpdatedAt: now,
+        emailNotificationAttemptCount: attempts,
       });
+      claimedLeads.push(lead);
     }
 
-    return staleLeads.map((lead) => ({
+    return claimedLeads.map((lead) => ({
       _id: lead._id,
       name: lead.name,
       email: lead.email,

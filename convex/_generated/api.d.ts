@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as crons from "../crons.js";
 import type * as leads from "../leads.js";
 import type * as lib_leadValidation from "../lib/leadValidation.js";
 import type * as migrations_importLeads from "../migrations/importLeads.js";
@@ -19,6 +20,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  crons: typeof crons;
   leads: typeof leads;
   "lib/leadValidation": typeof lib_leadValidation;
   "migrations/importLeads": typeof migrations_importLeads;
