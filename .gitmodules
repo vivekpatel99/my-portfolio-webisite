@@ -1,0 +1,3 @@
+[submodule ".agents/sol-advisor"]
+	path = .agents/sol-advisor
+	url = https://github.com/DannyMac180/sol-advisor.git
