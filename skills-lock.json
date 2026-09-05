@@ -36,6 +36,36 @@
       "sourceType": "github",
       "skillPath": "skills/convex-setup-auth/SKILL.md",
       "computedHash": "b1a940758751c5b2fdc6ced105b19927a1655f0c1d4bd2fd5536dc3264202c00"
+    },
+    "ponytail": {
+      "source": "DietrichGebert/ponytail",
+      "sourceType": "github",
+      "skillPath": "skills/ponytail/SKILL.md",
+      "computedHash": "1b9eaae4b639a2a6c311ad88a83e2bb0b38a612c17c84e8ac0b7603ec325604e"
+    },
+    "ponytail-audit": {
+      "source": "DietrichGebert/ponytail",
+      "sourceType": "github",
+      "skillPath": "skills/ponytail-audit/SKILL.md",
+      "computedHash": "c0f03b6e1d95809f74e989f4bc51a6959ce98696aef0e334f0c5c332f9504bd5"
+    },
+    "ponytail-debt": {
+      "source": "DietrichGebert/ponytail",
+      "sourceType": "github",
+      "skillPath": "skills/ponytail-debt/SKILL.md",
+      "computedHash": "83dc090d3c4ad4cf1fcde236e607c4c4c4c42700fb68e7856041bdac69a7df17"
+    },
+    "ponytail-help": {
+      "source": "DietrichGebert/ponytail",
+      "sourceType": "github",
+      "skillPath": "skills/ponytail-help/SKILL.md",
+      "computedHash": "61ec008731e4788e34000c95e76bc324254849df54dd8fff63ece57dd7c4442b"
+    },
+    "ponytail-review": {
+      "source": "DietrichGebert/ponytail",
+      "sourceType": "github",
+      "skillPath": "skills/ponytail-review/SKILL.md",
+      "computedHash": "f77338e574a8ca0a7f7a8964322c39a88bc16536e13c707b7fd57ec50848f36a"
     }
   }
 }
