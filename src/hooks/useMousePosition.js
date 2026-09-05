@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-const useMousePosition = () => {
+const useMousePosition = (enabled = true) => {
   const [position, setPosition] = useState({ x: -100, y: -100 });
   const frameRef = useRef(null);
   const latestPosition = useRef({ x: -100, y: -100 });
@@ -11,6 +11,8 @@ const useMousePosition = () => {
   }, []);
 
   useEffect(() => {
+    if (!enabled) return undefined;
+
     const handleMouseMove = (e) => {
       latestPosition.current = { x: e.clientX, y: e.clientY };
 
@@ -26,9 +28,10 @@ const useMousePosition = () => {
       window.removeEventListener('mousemove', handleMouseMove);
       if (frameRef.current !== null) {
         cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
       }
     };
-  }, [updatePosition]);
+  }, [enabled, updatePosition]);
 
   return position;
 };

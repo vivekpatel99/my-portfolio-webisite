@@ -3,8 +3,8 @@ import useMousePosition from '@/hooks/useMousePosition';
 import { motion } from 'framer-motion';
 
 const CustomCursor = () => {
-  const { x, y } = useMousePosition();
   const [enabled, setEnabled] = useState(false);
+  const { x, y } = useMousePosition(enabled);
 
   useEffect(() => {
     const pointerQuery = window.matchMedia('(pointer: fine)');

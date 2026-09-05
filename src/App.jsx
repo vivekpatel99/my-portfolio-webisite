@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import Home from '@/pages/Home';
-import Contact from '@/pages/Contact';
-import Project from '@/pages/Project';
-import Legal from '@/pages/Legal';
-import DataPolicy from '@/pages/DataPolicy';
 import NotFound from '@/pages/NotFound';
+
+const Contact = lazy(() => import('@/pages/ContactRoute'));
+const Project = lazy(() => import('@/pages/Project'));
+const Legal = lazy(() => import('@/pages/Legal'));
+const DataPolicy = lazy(() => import('@/pages/DataPolicy'));
 
 function App() {
   return (

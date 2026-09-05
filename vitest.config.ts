@@ -7,7 +7,7 @@ export default defineConfig({
   test: {
     environment: "edge-runtime",
     environmentMatchGlobs: [["src/**/*.test.{jsx,tsx}", "jsdom"]],
-    exclude: [...configDefaults.exclude, "playwright-output/**", "tests/qa/**"],
+    exclude: [...configDefaults.exclude, "playwright-output/**", "tests/qa/**", "plugins/pstack/**"],
     server: { deps: { inline: ["convex-test"] } },
   },
   resolve: {
