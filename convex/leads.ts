@@ -2,6 +2,7 @@ import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import { internalAction, internalMutation, mutation } from "./_generated/server";
+import { formatInquiryContext, type InquiryContext } from "./lib/inquiryContext";
 import { validateLeadInput } from "./lib/leadValidation";
 
 const RATE_LIMIT_WINDOW_MS = 3_600_000;
@@ -13,6 +14,15 @@ const EMAIL_RETRY_MAX_ATTEMPTS = 3;
 const EMAIL_ATTEMPT_STALE_MS = 5 * 60 * 1000; // Aligned with cron retry threshold
 const RESEND_SANDBOX_FROM = "onboarding@resend.dev";
 const DEFAULT_FROM = `Portfolio Contact <${RESEND_SANDBOX_FROM}>`;
+const inquiryContextValidator = v.object({
+  origin: v.optional(v.union(v.literal("service"), v.literal("case-study"), v.literal("fit-diagnostic"))),
+  projectType: v.optional(v.union(v.literal("document-web-extraction"), v.literal("workflow-automation"), v.literal("computer-vision"))),
+  serviceId: v.optional(v.union(v.literal("document-web-extraction"), v.literal("workflow-automation"), v.literal("computer-vision"))),
+  caseStudySlug: v.optional(v.union(v.literal("n8n-openai-data-extraction"), v.literal("invoice-ocr-extraction"), v.literal("yolo-computer-vision-optimization"))),
+  fitDecision: v.optional(v.union(v.literal("strong-fit"), v.literal("possible-fit"), v.literal("not-recommended"))),
+  timeline: v.optional(v.union(v.literal("exploring"), v.literal("within-one-month"), v.literal("one-to-three-months"), v.literal("flexible"))),
+  currentBlocker: v.optional(v.union(v.literal("defining-inputs"), v.literal("defining-handoff"), v.literal("workflow-reliability"), v.literal("review-ownership"))),
+});
 
 type ContactEmailArgs = {
   leadId: Id<"leads">;
@@ -20,6 +30,7 @@ type ContactEmailArgs = {
   email: string;
   budget?: string;
   description: string;
+  inquiryContext?: InquiryContext;
 };
 
 type ClaimedEmailLead = {
@@ -28,6 +39,7 @@ type ClaimedEmailLead = {
   email: string;
   budget?: string;
   description: string;
+  inquiryContext?: InquiryContext;
 };
 
 type ContactEmailPayload = {
@@ -101,6 +113,7 @@ export function buildContactEmailPayload(
       ``,
       `Description:`,
       args.description,
+      ...(args.inquiryContext ? ["", ...formatInquiryContext(args.inquiryContext)] : []),
       ``,
       `Lead ID: ${args.leadId}`,
     ].join("\n"),
@@ -167,6 +180,7 @@ export const submitLead = mutation({
     email: v.string(),
     budget: v.optional(v.string()),
     description: v.string(),
+    inquiryContext: v.optional(inquiryContextValidator),
   },
   returns: v.object({ success: v.boolean() }),
   handler: async (ctx, args) => {
@@ -195,7 +209,11 @@ export const submitLead = mutation({
     }
 
     const leadId = await ctx.db.insert("leads", {
-      ...lead,
+      name: lead.name,
+      email: lead.email,
+      description: lead.description,
+      ...(lead.budget ? { budget: lead.budget } : {}),
+      ...(lead.inquiryContext ? { inquiryContext: lead.inquiryContext } : {}),
       createdAt: Date.now(),
       emailNotificationStatus: "pending",
       emailNotificationUpdatedAt: Date.now(),
@@ -247,6 +265,7 @@ export const claimEmailNotificationAttempt = internalMutation({
       email: v.string(),
       budget: v.optional(v.string()),
       description: v.string(),
+      inquiryContext: v.optional(inquiryContextValidator),
     }),
     v.null(),
   ),
@@ -281,6 +300,7 @@ export const claimEmailNotificationAttempt = internalMutation({
       email: lead.email,
       budget: lead.budget,
       description: lead.description,
+      inquiryContext: lead.inquiryContext,
     };
   },
 });
@@ -296,6 +316,7 @@ export const claimStaleEmailNotificationRetries = internalMutation({
       email: v.string(),
       budget: v.optional(v.string()),
       description: v.string(),
+      inquiryContext: v.optional(inquiryContextValidator),
     })
   ),
   handler: async (ctx, args) => {
@@ -375,6 +396,7 @@ export const claimStaleEmailNotificationRetries = internalMutation({
       email: lead.email,
       budget: lead.budget,
       description: lead.description,
+      inquiryContext: lead.inquiryContext,
     }));
   },
 });
@@ -432,6 +454,7 @@ export const sendContactEmail = internalAction({
         email: lead.email,
         budget: lead.budget,
         description: lead.description,
+        inquiryContext: lead.inquiryContext,
       });
       const update = emailResultToStatus(result);
       await ctx.runMutation(

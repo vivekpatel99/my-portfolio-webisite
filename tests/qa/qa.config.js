@@ -42,7 +42,7 @@ const passiveProjects = [
 ].map((project) => ({
   ...project,
   testMatch: project.name.startsWith('preview-')
-    ? [...passiveSpecs, 'qa-project-fit.spec.js']
+    ? [...passiveSpecs, 'qa-project-fit.spec.js', 'qa-estimate.spec.js']
     : passiveSpecs,
 }));
 

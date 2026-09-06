@@ -121,6 +121,7 @@ Current backend shape:
 | --- | --- |
 | `convex/schema.ts` | Defines the single `leads` table and indexes. |
 | `convex/leads.ts` | Public lead submission mutation, internal email status mutation, internal Resend email action, email helpers. |
+| `convex/lib/inquiryContext.ts` | Allowlisted estimate-context IDs, canonical labels, source-pair validation, and frontend context projections. It contains no raw questionnaire values. |
 | `convex/lib/leadValidation.ts` | Shared lead validation and normalization. |
 | `convex/migrations/importLeads.ts` | Internal migration helper for historical lead rows. |
 | `convex/leads.test.ts` | Convex lead and email-helper tests. |
@@ -135,6 +136,7 @@ The `leads` table stores:
 - `email`
 - optional `budget`
 - `description`
+- optional `inquiryContext`: canonical IDs for an explicitly reviewed project type, timeline, blocker, case-study/service source, or derived scope-check decision. The raw scope-check questionnaire and free-text browser state are never stored.
 - `createdAt`
 - optional email notification status/error fields
 
@@ -163,6 +165,7 @@ Security caveats:
 - Rate limiting is per email, not per IP/device.
 - Parallel duplicate submissions are allowed by existing tests.
 - XSS-like text is stored as plain text; keep React escaping intact if rendering leads anywhere in the future.
+- A scope check keeps its questionnaire and remaining answers in page memory. Only an optional derived decision and broad project type, or a published service area, can appear in the editable contact preview and be stored after explicit submission.
 
 ## Environment Variables
 

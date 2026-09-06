@@ -28,7 +28,7 @@ const Legal = () => {
       />
       <div className="container mx-auto px-6 max-w-4xl">
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-8">Privacy Policy</h1>
-        <p className="text-gray-400 mb-6">Last updated: June 1, 2026</p>
+        <p className="text-gray-400 mb-6">Last updated: September 6, 2026</p>
         
         <div className="prose prose-invert prose-lg max-w-none text-gray-300 space-y-6">
           <p>Vivek Patel ("I", "me", or "my") operates the https://www.vivekapatel.com website (the "Service"). This page informs you of my policies regarding the collection, use, and disclosure of personal data when you use my Service and the choices you have associated with that data. This Privacy Policy is compliant with the General Data Protection Regulation (GDPR).</p>
@@ -44,8 +44,10 @@ const Legal = () => {
           <ul className="list-disc pl-5 space-y-2">
             <li>Email address</li>
             <li>Full Name</li>
-            <li>Project Description and Budget</li>
+            <li>Project description and budget</li>
+            <li>Optional estimate context: a selected project type, timeline, current blocker, or a bounded case-study, service, or derived scope-check reference. These values are informational only. The full scope-check questionnaire and remaining answers stay in the page and are not submitted; only the optional derived reference shown for review can be sent after you explicitly submit the contact form.</li>
           </ul>
+          <p>Contact-form fields and optional estimate context stay in the page while unsent and reset when you refresh or leave. When you submit, they are stored with the inquiry and used to respond and send the transactional contact notification.</p>
           <p><strong>Usage Data (with consent):</strong> With your explicit consent via our cookie banner, I may also collect information on how the Service is accessed and used ("Usage Data") through Google Analytics and Sentry. This Usage Data may include information such as your computer's Internet Protocol address (e.g. IP address), browser type, browser version, pages visited, time and date of visits, time spent on pages, performance data, and error diagnostics.</p>
           <p><strong>Cookies Data:</strong> I use cookies and similar tracking technologies to track the activity on our Service. Please see my <Link to="/data-policy/" className="text-accent-purple hover:underline">Cookie Policy</Link> for more details.</p>
 

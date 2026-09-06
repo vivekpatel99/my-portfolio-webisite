@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { resolveConvexClientConfig } from './convexClient';
+import { CONVEX_CLIENT_OPTIONS, resolveConvexClientConfig } from './convexClient';
 
 describe('resolveConvexClientConfig', () => {
+  it('disables Convex SDK console logging so rejected contact payloads cannot become console telemetry', () => {
+    expect(CONVEX_CLIENT_OPTIONS).toEqual({ logger: false });
+  });
   it('accepts a real Convex deployment URL', () => {
     expect(
       resolveConvexClientConfig('https://zealous-bear-17.convex.cloud', {

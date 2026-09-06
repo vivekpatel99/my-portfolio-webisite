@@ -49,7 +49,7 @@ export function initializeSentryTelemetry() {
         if (
           breadcrumb?.category?.startsWith('ui.')
           && typeof target?.closest === 'function'
-          && target.closest('#project-fit-diagnostic')
+          && target.closest('#project-fit-diagnostic, #contact-inquiry')
         ) {
           return null;
         }

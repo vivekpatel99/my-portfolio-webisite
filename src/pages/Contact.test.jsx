@@ -6,6 +6,7 @@ import { fireEvent, render, screen, waitFor, cleanup } from "@testing-library/re
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { toast } from "@/components/ui/use-toast";
+import { captureException } from "@/lib/sentryTelemetry";
 import Contact from "./Contact";
 
 const mockSubmitLead = vi.fn();
@@ -36,7 +37,7 @@ vi.mock("framer-motion", () => {
         },
     },
   );
-  return { motion };
+  return { MotionConfig: ({ children }) => <>{children}</>, motion, useReducedMotion: () => false };
 });
 
 describe("Contact form", () => {
@@ -348,5 +349,110 @@ describe("Contact form", () => {
         description: 'Need help.',
       });
     });
+  });
+
+  it('shows bounded optional context before submitting and sends only the selected IDs', async () => {
+    const { container } = render(<Contact />);
+    fireEvent.change(container.querySelector('#projectType'), { target: { value: 'workflow-automation' } });
+    fireEvent.change(container.querySelector('#timeline'), { target: { value: 'within-one-month' } });
+    fireEvent.change(container.querySelector('#currentBlocker'), { target: { value: 'workflow-reliability' } });
+    expect(screen.getByText('Context that will be shared')).toBeTruthy();
+    expect(screen.getByText('Project type: Workflow automation')).toBeTruthy();
+    fireEvent.change(container.querySelector('input[name="name"]'), { target: { name: 'name', value: 'Jane Doe' } });
+    fireEvent.change(container.querySelector('input[name="email"]'), { target: { name: 'email', value: 'jane@example.com' } });
+    fireEvent.change(container.querySelector('textarea[name="description"]'), { target: { name: 'description', value: 'Need help.' } });
+    fireEvent.submit(container.querySelector('form'));
+    await waitFor(() => expect(mockSubmitLead).toHaveBeenCalledWith(expect.objectContaining({
+      inquiryContext: {
+        projectType: 'workflow-automation',
+        timeline: 'within-one-month',
+        currentBlocker: 'workflow-reliability',
+      },
+    })));
+  });
+
+  it('preserves a bounded case-study source when an independent optional field is cleared', async () => {
+    const { container } = render(<Contact initialInquiryContext={{
+      origin: 'case-study',
+      caseStudySlug: 'invoice-ocr-extraction',
+      projectType: 'document-web-extraction',
+      serviceId: 'document-web-extraction',
+    }} />);
+    fireEvent.change(container.querySelector('#timeline'), { target: { value: 'exploring' } });
+    fireEvent.change(container.querySelector('#timeline'), { target: { value: '' } });
+    expect(screen.getByText('Case study viewed: Invoice OCR Client-Field Extraction')).toBeTruthy();
+    expect(screen.queryByText('Timing: Exploring the scope')).toBeNull();
+    expect(screen.getByText('Context that will be shared')).toBeTruthy();
+    fireEvent.change(container.querySelector('input[name="name"]'), { target: { name: 'name', value: 'Jane Doe' } });
+    fireEvent.change(container.querySelector('input[name="email"]'), { target: { name: 'email', value: 'jane@example.com' } });
+    fireEvent.change(container.querySelector('textarea[name="description"]'), { target: { name: 'description', value: 'Need help.' } });
+    fireEvent.submit(container.querySelector('form'));
+    await waitFor(() => expect(mockSubmitLead).toHaveBeenCalledWith(expect.objectContaining({
+      inquiryContext: {
+        origin: 'case-study',
+        caseStudySlug: 'invoice-ocr-extraction',
+        projectType: 'document-web-extraction',
+        serviceId: 'document-web-extraction',
+      },
+    })));
+  });
+
+  it('removes a last direct timeline from the preview and omits inquiryContext on submit', async () => {
+    const { container } = render(<Contact />);
+    fireEvent.change(container.querySelector('#timeline'), { target: { value: 'exploring' } });
+    fireEvent.change(container.querySelector('#timeline'), { target: { value: '' } });
+
+    expect(screen.queryByText('Context that will be shared')).toBeNull();
+    fireEvent.change(container.querySelector('input[name="name"]'), { target: { name: 'name', value: 'Jane Doe' } });
+    fireEvent.change(container.querySelector('input[name="email"]'), { target: { name: 'email', value: 'jane@example.com' } });
+    fireEvent.change(container.querySelector('textarea[name="description"]'), { target: { name: 'description', value: 'Need help.' } });
+    fireEvent.submit(container.querySelector('form'));
+
+    await waitFor(() => expect(mockSubmitLead).toHaveBeenCalledWith({
+      name: 'Jane Doe',
+      email: 'jane@example.com',
+      budget: undefined,
+      description: 'Need help.',
+    }));
+  });
+
+  it('removes a last direct blocker from the preview and omits inquiryContext on submit', async () => {
+    const { container } = render(<Contact />);
+    fireEvent.change(container.querySelector('#currentBlocker'), { target: { value: 'workflow-reliability' } });
+    fireEvent.change(container.querySelector('#currentBlocker'), { target: { value: '' } });
+
+    expect(screen.queryByText('Context that will be shared')).toBeNull();
+    fireEvent.change(container.querySelector('input[name="name"]'), { target: { name: 'name', value: 'Jane Doe' } });
+    fireEvent.change(container.querySelector('input[name="email"]'), { target: { name: 'email', value: 'jane@example.com' } });
+    fireEvent.change(container.querySelector('textarea[name="description"]'), { target: { name: 'description', value: 'Need help.' } });
+    fireEvent.submit(container.querySelector('form'));
+
+    await waitFor(() => expect(mockSubmitLead).toHaveBeenCalledWith({
+      name: 'Jane Doe',
+      email: 'jane@example.com',
+      budget: undefined,
+      description: 'Need help.',
+    }));
+  });
+
+  it('removes previewed context and restores focus to its legend', async () => {
+    const user = userEvent.setup();
+    render(<Contact initialInquiryContext={{ projectType: 'workflow-automation' }} />);
+    await user.click(screen.getByRole('button', { name: 'Remove estimate context' }));
+    await waitFor(() => expect(screen.getByText('Estimate context (optional)')).toBe(document.activeElement));
+    expect(screen.queryByText('Context that will be shared')).toBeNull();
+  });
+
+  it('does not expose a raw backend error in a toast or telemetry', async () => {
+    mockSubmitLead.mockRejectedValue({ data: 'Server says description=private project details' });
+    const { container } = render(<Contact />);
+    fireEvent.change(container.querySelector('input[name="name"]'), { target: { name: 'name', value: 'Jane Doe' } });
+    fireEvent.change(container.querySelector('input[name="email"]'), { target: { name: 'email', value: 'jane@example.com' } });
+    fireEvent.change(container.querySelector('textarea[name="description"]'), { target: { name: 'description', value: 'Private project details.' } });
+    fireEvent.submit(container.querySelector('form'));
+    await waitFor(() => expect(toast).toHaveBeenCalledWith(expect.objectContaining({
+      description: 'We could not save your request. Please try again or use the email link below.',
+    })));
+    expect(captureException).toHaveBeenCalledWith(expect.objectContaining({ message: 'Contact submission failed' }), expect.any(Object));
   });
 });

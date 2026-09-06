@@ -107,6 +107,7 @@ describe("removeLegacySupabaseIds", () => {
           description: "Has a legacy import key.",
           createdAt: index + 1,
           supabaseId: `sb-${index}`,
+          ...(index === 0 ? { inquiryContext: { projectType: "workflow-automation", timeline: "exploring" } } : {}),
         });
       }
     });
@@ -120,5 +121,6 @@ describe("removeLegacySupabaseIds", () => {
 
     const leads = await t.run(async (ctx) => ctx.db.query("leads").collect());
     expect(leads.every((lead) => lead.supabaseId === undefined)).toBe(true);
+    expect(leads.find((lead) => lead.email === 'imported-0@example.com')?.inquiryContext).toEqual({ projectType: 'workflow-automation', timeline: 'exploring' });
   });
 });

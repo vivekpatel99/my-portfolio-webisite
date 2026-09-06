@@ -122,7 +122,7 @@ for (const viewport of viewports) {
         }
         await auditDiagnostic(page);
 
-        const proofLinks = diagnostic.getByRole('link');
+        const proofLinks = diagnostic.locator('a[href^="/project/"]');
         await expect(proofLinks).toHaveCount(outcome.proofSlugs.length);
         for (const slug of outcome.proofSlugs) {
           await expect(diagnostic.locator(`a[href="/project/${slug}/"]`)).toHaveCount(1);

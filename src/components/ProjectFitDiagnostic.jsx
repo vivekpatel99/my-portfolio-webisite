@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { classifyProjectFit } from '@/lib/projectFitDiagnostic';
+import { createFitDiagnosticInquiryContext, FIT_DECISION } from '../../convex/lib/inquiryContext';
 
 const QUESTIONS = [
   {
@@ -54,6 +55,11 @@ const QUESTIONS = [
 const buttonClass = 'min-h-11 rounded-full px-5 py-3 font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple focus-visible:ring-offset-4 focus-visible:ring-offset-[#0C0D0D]';
 
 const proofLabel = ({ id, scope, title }) => `${title || id.replaceAll('-', ' ')}${scope ? `: ${scope}` : ''}`;
+const fitDecisionContext = {
+  'Strong Fit': FIT_DECISION.STRONG,
+  'Possible Fit': FIT_DECISION.POSSIBLE,
+  'Not Recommended': FIT_DECISION.NOT_RECOMMENDED,
+};
 
 const ProjectFitDiagnostic = () => {
   const [answers, setAnswers] = useState({});
@@ -103,7 +109,7 @@ const ProjectFitDiagnostic = () => {
         <div className="rounded-xl border border-white/10 bg-white/[0.04] p-5 sm:p-8">
           <p className="text-sm font-semibold uppercase tracking-wide text-[#d8caff]">Scope check</p>
           <h2 id="project-fit-heading" className="mt-3 text-3xl font-bold uppercase leading-tight text-white md:text-4xl">Project Fit Diagnostic</h2>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-gray-400">Your answers stay only in this page. They reset if you leave or reload, and nothing is submitted.</p>
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-gray-400">Your full questionnaire and remaining answers stay only in this page and reset if you leave or reload. An optional handoff can carry only a derived scope-check result and broad project type or published service area to the estimate form. You can review, edit, or remove it there; it is sent only after you explicitly submit the contact form.</p>
 
           {step === null && (
             <div className="mt-5 max-w-2xl">
@@ -158,6 +164,7 @@ const ProjectFitDiagnostic = () => {
               <div className="mt-7 flex flex-wrap gap-3">
                 <button type="button" className={`border border-white/30 text-white hover:bg-white/10 ${buttonClass}`} onClick={() => goToStep(QUESTIONS.length - 1, 'question')}>Back to last question</button>
                 <button type="button" className={`border border-white/30 text-white hover:bg-white/10 ${buttonClass}`} onClick={restart}>Restart</button>
+                <Link to="/contact/" state={{ inquiryContext: createFitDiagnosticInquiryContext(fitDecisionContext[result.decision], answers.projectType) }} className={`border border-white/30 text-white hover:bg-white/10 ${buttonClass}`}>Ask about next steps</Link>
               </div>
             </div>
           )}

@@ -7,6 +7,17 @@ export default defineSchema({
     email: v.string(),
     budget: v.optional(v.string()),
     description: v.string(),
+    inquiryContext: v.optional(
+      v.object({
+        origin: v.optional(v.union(v.literal("service"), v.literal("case-study"), v.literal("fit-diagnostic"))),
+        projectType: v.optional(v.union(v.literal("document-web-extraction"), v.literal("workflow-automation"), v.literal("computer-vision"))),
+        serviceId: v.optional(v.union(v.literal("document-web-extraction"), v.literal("workflow-automation"), v.literal("computer-vision"))),
+        caseStudySlug: v.optional(v.union(v.literal("n8n-openai-data-extraction"), v.literal("invoice-ocr-extraction"), v.literal("yolo-computer-vision-optimization"))),
+        fitDecision: v.optional(v.union(v.literal("strong-fit"), v.literal("possible-fit"), v.literal("not-recommended"))),
+        timeline: v.optional(v.union(v.literal("exploring"), v.literal("within-one-month"), v.literal("one-to-three-months"), v.literal("flexible"))),
+        currentBlocker: v.optional(v.union(v.literal("defining-inputs"), v.literal("defining-handoff"), v.literal("workflow-reliability"), v.literal("review-ownership"))),
+      }),
+    ),
     createdAt: v.number(),
     emailNotificationStatus: v.optional(
       v.union(

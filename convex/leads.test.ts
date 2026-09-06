@@ -46,6 +46,56 @@ describe("submitLead", () => {
     expect(leads[0].budget).toBeUndefined();
   });
 
+  it("stores only canonical bounded estimate context and uses labels in notification text", async () => {
+    const t = convexTest(schema, modules);
+    await t.mutation(api.leads.submitLead, {
+      name: "Context Lead",
+      email: "context@example.com",
+      description: "A normal request.",
+      inquiryContext: {
+        origin: "case-study",
+        caseStudySlug: "invoice-ocr-extraction",
+        projectType: "document-web-extraction",
+        serviceId: "document-web-extraction",
+        timeline: "within-one-month",
+      },
+    });
+    const [lead] = await t.run(async (ctx) => ctx.db.query("leads").collect());
+    expect(lead.inquiryContext).toEqual({
+      origin: "case-study",
+      caseStudySlug: "invoice-ocr-extraction",
+      projectType: "document-web-extraction",
+      serviceId: "document-web-extraction",
+      timeline: "within-one-month",
+    });
+    const payload = buildContactEmailPayload({
+      leadId: lead._id,
+      name: lead.name,
+      email: lead.email,
+      description: lead.description,
+      inquiryContext: lead.inquiryContext,
+    }, { from: "Portfolio Contact <hello@example.com>", recipient: "owner@example.com" });
+    expect(payload.text).toContain("Case study viewed: Invoice OCR Client-Field Extraction");
+    expect(payload.text).toContain("Timing: Within one month");
+    expect(payload.text).not.toContain("rawDiagnosticAnswer");
+  });
+
+  it("rejects forged estimate context before insert or scheduling", async () => {
+    const t = convexTest(schema, modules);
+    await expect(t.mutation(api.leads.submitLead, {
+      name: "Forged Context",
+      email: "forged@example.com",
+      description: "Must not persist.",
+      inquiryContext: {
+        origin: "case-study",
+        caseStudySlug: "invoice-ocr-extraction",
+        projectType: "computer-vision",
+        serviceId: "computer-vision",
+      },
+    })).rejects.toThrow(/Invalid estimate context/);
+    expect(await t.run(async (ctx) => ctx.db.query("leads").collect())).toEqual([]);
+  });
+
   it("CVX-003: rejects empty name", async () => {
     const t = convexTest(schema, modules);
     await expect(
@@ -428,6 +478,31 @@ describe("email notification retry state", () => {
     expect(second).toBeNull();
     const lead = await t.run(async (ctx) => ctx.db.get(leadId));
     expect(lead?.emailNotificationStatus).toBe("sending");
+  });
+
+  it("returns persisted context for retry while legacy rows remain valid", async () => {
+    const t = convexTest(schema, modules);
+    const contextualLeadId = await t.run(async (ctx) => ctx.db.insert("leads", {
+      name: "Context Retry",
+      email: "context-retry@example.com",
+      description: "Retry reads the stored values.",
+      createdAt: Date.now(),
+      inquiryContext: { origin: "fit-diagnostic", fitDecision: "not-recommended" },
+      emailNotificationStatus: "pending",
+      emailNotificationUpdatedAt: Date.now(),
+    }));
+    const legacyLeadId = await t.run(async (ctx) => ctx.db.insert("leads", {
+      name: "Legacy Retry",
+      email: "legacy-retry@example.com",
+      description: "No new optional fields.",
+      createdAt: Date.now(),
+      emailNotificationStatus: "pending",
+      emailNotificationUpdatedAt: Date.now(),
+    }));
+    const contextualClaim = await t.mutation(internal.leads.claimEmailNotificationAttempt, { leadId: contextualLeadId });
+    const legacyClaim = await t.mutation(internal.leads.claimEmailNotificationAttempt, { leadId: legacyLeadId });
+    expect(contextualClaim?.inquiryContext).toEqual({ origin: "fit-diagnostic", fitDecision: "not-recommended" });
+    expect(legacyClaim?.inquiryContext).toBeUndefined();
   });
 
   it("reclaims stale retrying leads that were claimed but not scheduled", async () => {

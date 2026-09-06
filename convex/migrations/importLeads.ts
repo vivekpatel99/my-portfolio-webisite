@@ -63,7 +63,11 @@ export const importFromRows = internalMutation({
       }
 
       await ctx.db.insert("leads", {
-        ...lead,
+        name: lead.name,
+        email: lead.email,
+        description: lead.description,
+        ...(lead.budget ? { budget: lead.budget } : {}),
+        ...(lead.inquiryContext ? { inquiryContext: lead.inquiryContext } : {}),
         createdAt: row.createdAt ?? now,
       });
       inserted += 1;
