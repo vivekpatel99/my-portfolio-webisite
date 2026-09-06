@@ -54,6 +54,7 @@ describe('Gate 1 claim ledger', () => {
       'src/components/About.jsx', 'src/components/Testimonials.jsx', 'src/components/CTA.jsx',
       'src/components/Footer.jsx', 'src/components/Portfolio.jsx', 'src/pages/Contact.jsx',
       'src/pages/Project.jsx',
+      'src/components/ProjectFitDiagnostic.jsx', 'src/lib/projectFitDiagnostic.js',
       'src/data/positioning.js', 'src/data/caseStudies.js', 'src/lib/seoConfig.js', 'index.html',
     ].map(source).join('\n');
 

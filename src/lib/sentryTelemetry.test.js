@@ -69,6 +69,35 @@ describe('deferred Sentry SDK', () => {
     expect(sdk.captureException).toHaveBeenCalledTimes(1);
   });
 
+  it('drops UI breadcrumbs from the project-fit diagnostic only', async () => {
+    const telemetry = await import('./sentryTelemetry');
+    const pending = telemetry.initializeSentryTelemetry();
+    release();
+    await pending;
+
+    const beforeBreadcrumb = sdk.init.mock.calls[0][0].beforeBreadcrumb;
+    expect(beforeBreadcrumb).toEqual(expect.any(Function));
+
+    const diagnostic = { id: 'project-fit-diagnostic' };
+    const nestedDiagnosticTarget = {
+      closest: vi.fn((selector) => (selector === '#project-fit-diagnostic' ? diagnostic : null)),
+    };
+    const outsideTarget = {
+      closest: vi.fn(() => null),
+    };
+    const click = { category: 'ui.click', message: 'radio selected' };
+    const input = { category: 'ui.input', message: 'answer typed' };
+    const consoleBreadcrumb = { category: 'console', message: 'outside UI' };
+
+    expect(beforeBreadcrumb(click, { event: { target: nestedDiagnosticTarget } })).toBeNull();
+    expect(beforeBreadcrumb(input, { event: { target: nestedDiagnosticTarget } })).toBeNull();
+    expect(nestedDiagnosticTarget.closest).toHaveBeenCalledWith('#project-fit-diagnostic');
+    expect(beforeBreadcrumb(click, { event: { target: outsideTarget } })).toBe(click);
+    expect(beforeBreadcrumb(consoleBreadcrumb, { event: { target: nestedDiagnosticTarget } })).toBe(consoleBreadcrumb);
+    expect(beforeBreadcrumb(click, {})).toBe(click);
+    expect(beforeBreadcrumb(click, { event: { target: {} } })).toBe(click);
+  });
+
   it('does not initialize if consent is revoked during the download, and can retry on consent', async () => {
     const telemetry = await import('./sentryTelemetry');
     const pending = telemetry.initializeSentryTelemetry();
