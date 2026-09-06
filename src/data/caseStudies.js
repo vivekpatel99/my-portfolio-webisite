@@ -10,7 +10,13 @@ export const caseStudyPublicationRecords = [
       slug: 'n8n-openai-data-extraction', title: 'n8n + OpenAI Data Extraction', cardTitle: 'Document & Web Data Extraction', category: 'Workflow Automation',
       summary: 'An n8n workflow that assembles structured parsing, validation, and handoff steps for document and web data.',
       image: { kind: 'schematic', alt: 'Illustrative diagram of input, extraction, validation, and handoff steps.', label: 'Input → extraction → validation → handoff', caption: 'Schematic of the reviewed workflow stages; it is not a client workflow screenshot.' },
-      gallery: [], stack: ['n8n', 'OpenAI', 'Structured Parsing', 'Data Validation'],
+      gallery: [{
+        kind: 'image',
+        src: '/assets/case-studies/planning-graph.webp',
+        alt: 'Planning graph from separate workflow-planning work.',
+        label: 'Related planning work',
+        caption: 'Related workflow-planning illustration — not evidence from this exact case study.',
+      }], stack: ['n8n', 'OpenAI', 'Structured Parsing', 'Data Validation'],
       claims: [{ id: 'n8n-document-web-extraction-workflow', placement: 'n8n case study' }],
       story: {
         situation: 'The implementation focused on moving defined incoming material toward structured records without hiding the steps that need review.',
@@ -62,7 +68,13 @@ export const caseStudyPublicationRecords = [
       slug: 'yolo-computer-vision-optimization', title: 'YOLO Pose Estimation on Still Images', cardTitle: 'YOLO Pose Estimation', category: 'Computer Vision',
       summary: 'A YOLO-based pose-estimation workflow that processes still images and saves annotated overlays.',
       image: { kind: 'schematic', alt: 'Illustrative diagram of a still image being processed into a pose overlay.', label: 'Still image → pose overlay → review', caption: 'Schematic of still-image pose overlay processing; it is not a measured production demonstration.' },
-      gallery: [], stack: ['YOLO', 'Python', 'Computer Vision', 'Still Images'],
+      gallery: [{
+        kind: 'image',
+        src: '/assets/case-studies/football-tracking.webp',
+        alt: 'Football tracking frame from separate computer-vision work.',
+        label: 'Separate computer-vision work',
+        caption: 'Separate football-tracking work — not evidence from this exact case study.',
+      }], stack: ['YOLO', 'Python', 'Computer Vision', 'Still Images'],
       claims: [{ id: 'yolo-still-image-pose-estimation', placement: 'pose case study' }],
       story: {
         situation: 'The work focused on applying a pose model to supplied still-image inputs and preserving a visual result for review.',
