@@ -15,9 +15,9 @@ const CTA = () => {
     <div className="container mx-auto px-6 relative z-10">
       <div className="max-w-4xl mx-auto text-center">
         <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight uppercase break-words">
-          Ready to Start Your <span className="text-accent-purple">Project</span>?
+          Ready to Map Your <span className="text-accent-purple">Workflow</span>?
         </h2>
-        <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">Let's build your next AI solution together. You'll get production-ready code, clear communication at every milestone, and 30 days of support after delivery—so your team never feels stuck.</p>
+        <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">Share the input, the fields you need, and the destination. We can decide whether a reviewable extraction or workflow automation build is a fit.</p>
         <div>
           <Button onClick={handleCTAClick} size="lg" className="bg-accent-purple hover:bg-accent-purple/90 text-white font-bold px-10 py-7 text-xl rounded-full group">
             Request a Project Estimate

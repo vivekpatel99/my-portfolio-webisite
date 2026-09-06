@@ -2,22 +2,22 @@ import { expect, test } from '@playwright/test';
 
 const caseStudies = [
   {
-    cardName: /Read case study: Automated Data Extraction/i,
+    cardName: /Read case study: Document & Web Data Extraction/i,
     path: '/project/n8n-openai-data-extraction',
     heading: /n8n \+ OpenAI Data Extraction/i,
-    stack: ['n8n', 'OpenAI', 'Web Scraping', 'Data Validation'],
+    stack: ['n8n', 'OpenAI', 'Structured Parsing', 'Data Validation'],
   },
   {
     cardName: /Read case study: Invoice OCR Data Extraction/i,
     path: '/project/invoice-ocr-extraction',
-    heading: /Invoice OCR Extraction/i,
-    stack: ['OCR', 'Python', 'Image Processing', 'Structured Extraction'],
+    heading: /Invoice OCR Client-Field Extraction/i,
+    stack: ['OCR', 'Python', 'Image Processing', 'Spreadsheet Export'],
   },
   {
-    cardName: /Read case study: Real-Time Pose Detection/i,
+    cardName: /Read case study: YOLO Pose Estimation/i,
     path: '/project/yolo-computer-vision-optimization',
-    heading: /YOLO Computer Vision Optimization/i,
-    stack: ['YOLO', 'Python', 'Computer Vision', 'Real-time Inference'],
+    heading: /YOLO Pose Estimation on Still Images/i,
+    stack: ['YOLO', 'Python', 'Computer Vision', 'Still Images'],
   },
 ];
 
@@ -38,16 +38,16 @@ test.beforeEach(async ({ page }) => {
 test('homepage upgrade flow exposes proof, case studies, offers, testimonials, and CTA', async ({ page }) => {
   await page.goto('/');
 
-  for (const text of ['Top Rated Plus', '100% Job Success', '21+ Projects', '300+ Hours', '94% Faster']) {
+  for (const text of ['Top Rated Plus', 'Structured, reviewable data', 'Validation and handoff']) {
     await expect(page.getByText(text, { exact: true })).toBeVisible();
   }
 
   const headings = [
     /Featured Case Studies/i,
-    /Service Offers/i,
-    /Client Results/i,
+    /Service Focus/i,
+    /Client Feedback/i,
     /Who I Am/i,
-    /Ready to Start Your Project/i,
+    /Ready to Map Your Workflow/i,
   ];
 
   for (const heading of headings) {
@@ -75,7 +75,7 @@ test('hero and header CTAs activate the expected routes and sections', async ({ 
   await expect(page.getByRole('heading', { name: /Request a Project Estimate/i })).toBeVisible();
 
   await page.goto('/');
-  await page.getByRole('navigation').getByRole('link', { name: 'Testimonials', exact: true }).click();
+  await page.getByRole('navigation').getByRole('link', { name: 'Client feedback', exact: true }).click();
   await expect
     .poll(async () => {
       const box = await page.locator('#testimonials').boundingBox();
@@ -86,13 +86,16 @@ test('hero and header CTAs activate the expected routes and sections', async ({ 
 
 test('service offer accordions are keyboard and click operable', async ({ page }) => {
   await page.goto('/#services');
+  await expect(page.getByRole('heading', { name: 'Not the right fit' })).toBeVisible();
+  await expect(page.getByText(/do not promise guaranteed accuracy or savings/i)).toBeVisible();
+  await expect(page.getByText(/data access and clear success criteria/i)).toBeVisible();
   const services = page.locator('#services [role="button"]');
   await expect(services).toHaveCount(3);
 
   for (const service of [
-    'DATA EXTRACTION AUTOMATION SPRINT',
-    'COMPUTER VISION PRODUCTION OPTIMIZATION',
-    'AI WORKFLOW BUILDOUT',
+    'DOCUMENT & WEB DATA EXTRACTION',
+    'WORKFLOW AUTOMATION',
+    'COMPUTER VISION SUPPORT',
   ]) {
     const row = page.locator('#services [role="button"]').filter({ hasText: service });
     const initialExpanded = await row.getAttribute('aria-expanded');

@@ -146,7 +146,7 @@ const Contact = () => {
 
     toast({
       title: "Request received",
-      description: "Your details are saved. I'll get back to you within 24 hours.",
+      description: "Your details are saved. I'll review the workflow details you shared.",
     });
     setFormState({ name: '', email: '', budget: '', description: '' });
     setFieldErrors({});
@@ -168,35 +168,8 @@ const Contact = () => {
               Request a <span className="text-accent-purple">Project Estimate</span>
             </h1>
             <p className="text-lg text-gray-400 mb-12">
-              Share the workflow, data problem, or computer-vision bottleneck you want solved. I typically respond within 24 hours with fit, next steps, and the clearest scope path.
+              Share the workflow, documents, web data, or image input you want to make reviewable. We can assess fit, scope, and next steps from the materials available.
             </p>
-          </motion.div>
-
-          {/* Social Proof Section */}
-          <motion.div
-            className="max-w-2xl mx-auto mb-8"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            role="region"
-            aria-label="Client success metrics"
-          >
-            <ul className="flex flex-wrap justify-center gap-6 text-center">
-              <li className="flex items-center gap-2">
-                <span className="text-2xl font-bold text-accent-purple">100%</span>
-                <span className="text-gray-400 text-sm">Job Success<br/>on Upwork</span>
-              </li>
-              <li className="hidden sm:block w-px h-12 bg-white/10" role="separator" aria-hidden="true"></li>
-              <li className="flex items-center gap-2">
-                <span className="text-2xl font-bold text-accent-purple">21+</span>
-                <span className="text-gray-400 text-sm">Projects<br/>Delivered</span>
-              </li>
-              <li className="hidden sm:block w-px h-12 bg-white/10" role="separator" aria-hidden="true"></li>
-              <li className="flex items-center gap-2">
-                <span className="text-2xl font-bold text-accent-purple">5★</span>
-                <span className="text-gray-400 text-sm">Average<br/>Rating</span>
-              </li>
-            </ul>
           </motion.div>
 
           <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[0.85fr_1.15fr]">

@@ -1,8 +1,24 @@
 import { expect, test } from '@playwright/test';
 import path from 'path';
+import { mkdirSync } from 'fs';
 
 const pages = ['/', '/contact', '/legal', '/data-policy'];
-const artifactDir = path.join(process.cwd(), 'playwright-output');
+const artifactDir = process.env.QA_SCREENSHOT_DIR ?? path.join(process.cwd(), 'playwright-output');
+mkdirSync(artifactDir, { recursive: true });
+
+const readiness = {
+  '/': /Vivek Patel/i,
+  '/contact': /Request a Project Estimate/i,
+  '/legal': /Privacy Policy/i,
+  '/data-policy': /Cookie Policy/i,
+};
+
+const isSettled = (heading) => {
+  for (let node = heading; node && node.tagName !== 'BODY'; node = node.parentElement) {
+    if (Number.parseFloat(getComputedStyle(node).opacity) < 0.99) return false;
+  }
+  return true;
+};
 
 const routeSlug = (pagePath) =>
   pagePath === '/'
@@ -25,7 +41,10 @@ for (const pagePath of pages) {
     test(`screenshot ${pagePath} at ${label}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 844 });
       await page.goto(pagePath);
-      await expect(page.locator('body')).toBeVisible();
+      const heading = page.getByRole('heading', { level: 1, name: readiness[pagePath] });
+      await expect(heading).toBeVisible();
+      await expect(page.locator('main')).toBeVisible();
+      await expect.poll(() => heading.evaluate(isSettled)).toBe(true);
 
       const screenshot = await page.screenshot({
         path: path.join(artifactDir, `qa-${routeSlug(pagePath)}-${label}.png`),
@@ -62,9 +81,39 @@ test('cookie customize panel expands', async ({ page }) => {
   await expect(page.getByLabel(/Analytics and Diagnostics Cookies/i)).toBeVisible();
 });
 
-test('stats ticker preserves decimal values', async ({ page }) => {
+test('pose case shows its evidence scope instead of an unsupported metric grid', async ({ page }) => {
   await page.goto('/project/yolo-computer-vision-optimization');
-  const statsSection = page.locator('#stats-section');
-  await statsSection.scrollIntoViewIfNeeded();
-  await expect(statsSection).toContainText(/2\.5/, { timeout: 5000 });
+  await expect(page.getByRole('heading', { name: /evidence scope & limitations/i })).toBeVisible();
+  await expect(page.getByText(/Pose overlays are generated on still images/i)).toBeVisible();
+  await expect(page.locator('#stats-section')).toHaveCount(0);
+});
+
+test('n8n schematics keep every step inside their card and detail containers', async ({ page }) => {
+  for (const [pathSuffix, selector] of [
+    ['/', '#portfolio figure'],
+    ['/project/n8n-openai-data-extraction', 'figure'],
+  ]) {
+    for (const width of [390, 1280]) {
+      await page.setViewportSize({ width, height: 844 });
+      await page.goto(pathSuffix);
+      const schematic = page.locator(selector).filter({ hasText: 'handoff' }).first();
+      await expect(schematic).toBeVisible();
+      await expect(schematic).toContainText('handoff');
+      expect(await schematic.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
+    }
+  }
+});
+
+test('portfolio case labels stay below the n8n process schematic', async ({ page }) => {
+  for (const width of [390, 1280]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/');
+    const card = page.locator('article').filter({ has: page.getByRole('link', { name: /Read case study: Document & Web Data Extraction/i }) });
+    const schematic = card.locator('figure');
+    const title = card.getByRole('heading', { name: /Document & Web Data Extraction/i });
+    await expect(schematic).toBeVisible();
+    await expect(title).toBeVisible();
+    const [schematicBox, titleBox] = await Promise.all([schematic.boundingBox(), title.boundingBox()]);
+    expect(schematicBox?.y + schematicBox?.height).toBeLessThanOrEqual(titleBox?.y ?? 0);
+  }
 });

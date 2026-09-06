@@ -5,11 +5,11 @@ export const SITE_NAME = 'Vivek Patel';
 export const DEFAULT_OG_IMAGE_PATH = '/og-image.png';
 
 export const defaultSeo = {
-  title: 'Vivek Patel - Expert AI & Computer Vision Engineer',
+  title: 'Vivek Patel - AI Automation Engineer',
   description:
-    'Hire Vivek Patel - Freelance AI & Computer Vision Engineer in Europe. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. 94% performance improvements. €80/hour.',
+    'Vivek Patel is an AI Automation Engineer helping operations teams turn messy documents and web data into structured, reviewable records and dependable handoffs.',
   keywords:
-    'Vivek Patel, AI Engineer Europe, Computer Vision Freelancer, n8n Automation, Web Scraping Expert, YOLO, PyTorch, LangChain, Data Extraction, Python Developer Europe',
+    'Vivek Patel, AI Automation Engineer, document data extraction, web data extraction, n8n automation, Python workflow automation, computer vision',
   path: '/',
   type: 'website',
   image: DEFAULT_OG_IMAGE_PATH,
@@ -36,11 +36,11 @@ export const normalizeSitePath = (pathOrUrl = '/') => {
 export const routeSeo = {
   '/': defaultSeo,
   '/contact': {
-    title: 'Contact | Vivek Patel, AI & Computer Vision Engineer',
+    title: 'Contact | Vivek Patel, AI Automation Engineer',
     description:
-      'Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Europe. Get a quote within 24 hours. €80/hour.',
+      'Contact Vivek Patel to discuss documents, web data, or workflow automation that needs structured records, validation, and a reviewable handoff.',
     keywords:
-      'Hire AI Engineer Europe, Computer Vision Freelancer, n8n Developer, Web Scraping Expert, Project Quote, LangChain Developer, YOLO Expert',
+      'AI automation consultation, document data extraction, web data extraction, n8n workflow, Python workflow automation, computer vision',
     path: '/contact',
     type: 'website',
     image: DEFAULT_OG_IMAGE_PATH,
@@ -65,7 +65,7 @@ export const routeSeo = {
     caseStudies.map((caseStudy) => [
       `/project/${caseStudy.slug}`,
       {
-        title: `${caseStudy.title} | AI Case Study - Vivek Patel`,
+        title: `${caseStudy.title} | Case Study - Vivek Patel`,
         description: caseStudy.summary,
         keywords: `${caseStudy.title}, ${caseStudy.category}, case study, Vivek Patel, AI automation, computer vision, data extraction`,
         path: `/project/${caseStudy.slug}`,

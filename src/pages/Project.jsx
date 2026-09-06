@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import Stats from '@/components/Stats';
 import SectionAnimator from '@/components/SectionAnimator';
+import CaseStudyVisual from '@/components/CaseStudyVisual';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { Seo, routeSeo } from '@/lib/seo';
@@ -19,27 +19,6 @@ const pageTransition = {
   type: 'tween',
   ease: 'anticipate',
   duration: 0.8,
-};
-
-const isVideoSrc = (src = '') => /\.(mp4|webm)$/i.test(src);
-
-const CaseStudyMedia = ({ src, alt, poster, className }) => {
-  if (isVideoSrc(src)) {
-    return (
-      <video
-        className={className}
-        src={src}
-        poster={poster}
-        autoPlay
-        loop
-        muted
-        playsInline
-        aria-label={alt}
-      />
-    );
-  }
-
-  return <img className={className} alt={alt} src={src} loading="lazy" />;
 };
 
 const Project = () => {
@@ -87,11 +66,9 @@ const Project = () => {
       <SectionAnimator>
         <div className="container mx-auto px-6 pb-16">
           <div className="aspect-video overflow-hidden rounded-lg border border-white/10 shadow-2xl shadow-accent-purple/10">
-            <CaseStudyMedia
+            <CaseStudyVisual
               className="h-full w-full object-cover"
-              alt={project.image.alt}
-              src={project.image.src}
-              poster={project.image.poster}
+              visual={project.image}
             />
           </div>
         </div>
@@ -146,29 +123,12 @@ const Project = () => {
         <section className="py-12">
           <div className="container mx-auto px-6">
             <div className="rounded-lg border border-white/10 bg-white/[0.04] p-6 md:p-8">
-              <h2 className="text-3xl font-bold uppercase text-white">Outcome</h2>
+              <h2 className="text-3xl font-bold uppercase text-white">Evidence scope & limitations</h2>
               <p className="mt-5 max-w-4xl text-lg leading-relaxed text-gray-400">{project.outcome}</p>
             </div>
           </div>
         </section>
       </SectionAnimator>
-
-      <SectionAnimator>
-        <div className="container mx-auto grid gap-6 px-6 py-12 md:grid-cols-2">
-          {project.gallery.map((image) => (
-            <div key={image.src} className="aspect-[4/3] overflow-hidden rounded-lg border border-white/10 bg-white/[0.04]">
-              <CaseStudyMedia
-                className="h-full w-full object-cover"
-                alt={image.alt}
-                src={image.src}
-                poster={image.poster}
-              />
-            </div>
-          ))}
-        </div>
-      </SectionAnimator>
-
-      <Stats customStats={project.stats} />
 
       <SectionAnimator>
         <section className="py-24 text-center">
