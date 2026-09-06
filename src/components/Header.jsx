@@ -23,7 +23,7 @@ const Header = () => {
     { name: 'Services', href: '/#services' },
     { name: 'About', href: '/#about' },
     { name: 'Portfolio', href: '/#portfolio' },
-    { name: 'Testimonials', href: '/#testimonials' },
+    { name: 'Client feedback', href: '/#testimonials' },
   ];
 
   const handleScroll = () => {

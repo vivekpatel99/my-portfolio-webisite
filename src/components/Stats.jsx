@@ -39,37 +39,13 @@ const NumberTicker = ({ value, suffix }) => {
     return <span ref={ref}>{decimalPlaces > 0 ? count.toFixed(decimalPlaces) : count}{suffix}</span>;
 }
 
-const defaultStats = [
-  {
-    value: 11,
-    suffix: '+',
-    label: 'Projects Delivered',
-    description: 'AI and Computer Vision solutions delivered for clients across Europe and Asia—from startups to enterprises.',
-  },
-{
-  value: 100,
-    suffix: '%',
-      label: 'Job Success Rate',
-        description: 'Consistent 5-star reviews and positive testimonials from clients who value measurable results.',
-},
-{
-  value: 300,
-  suffix: '+',
-  label: 'Hours of Solutions Delivered',
-  description: 'Production-ready AI solutions—from Computer Vision pipelines to intelligent automation workflows—delivered to clients.',
-},
-{
-  value: 9,
-    suffix: '+',
-      label: 'Years in Production AI',
-        description: 'Building and optimizing real-time AI systems in production environments at companies like MAGNA International.',
-},
-];
-
-
 const Stats = ({ customStats }) => {
-  const stats = customStats || defaultStats;
+  const stats = customStats ?? [];
   const isProjectPage = !!customStats;
+
+  if (stats.length === 0) {
+    return null;
+  }
 
   return (
     <section id="stats-section" className="py-24 bg-[#0C0D0D]">

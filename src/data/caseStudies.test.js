@@ -15,8 +15,13 @@ describe('caseStudies data structure', () => {
       expect(caseStudy).toHaveProperty('slug');
       expect(caseStudy).toHaveProperty('cardTitle');
       expect(caseStudy).toHaveProperty('image');
-      expect(caseStudy.image).toHaveProperty('src');
       expect(caseStudy.image).toHaveProperty('alt');
+      expect(['image', 'schematic']).toContain(caseStudy.image.kind);
+      if (caseStudy.image.kind === 'image') {
+        expect(caseStudy.image).toHaveProperty('src');
+      }
+      expect(caseStudy).toHaveProperty('claimIds');
+      expect(caseStudy).toHaveProperty('claimPlacement');
     });
   });
 
@@ -125,8 +130,10 @@ describe('caseStudySlugs', () => {
 describe('case study data validation', () => {
   it('should have valid image URLs', () => {
     caseStudies.forEach((caseStudy) => {
-      expect(caseStudy.image.src).toBeTruthy();
-      expect(typeof caseStudy.image.src).toBe('string');
+      if (caseStudy.image.kind === 'image') {
+        expect(caseStudy.image.src).toBeTruthy();
+        expect(typeof caseStudy.image.src).toBe('string');
+      }
     });
   });
 
@@ -161,6 +168,15 @@ describe('case study data validation', () => {
           expect(tech.length).toBeGreaterThan(0);
         });
       }
+    });
+  });
+
+  it('uses only evidence-backed claim IDs and no unsupported metric grid', () => {
+    const ledger = JSON.parse(readFileSync(resolve(process.cwd(), 'docs/claims/gate-1-claim-ledger.json'), 'utf8'));
+    const ledgerIds = new Set(ledger.filter((claim) => claim.classification === 'verified').map((claim) => claim.id));
+    caseStudies.forEach((caseStudy) => {
+      expect(caseStudy.stats).toBeUndefined();
+      caseStudy.claimIds.forEach((id) => expect(ledgerIds.has(id)).toBe(true));
     });
   });
 });

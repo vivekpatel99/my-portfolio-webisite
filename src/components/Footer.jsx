@@ -48,7 +48,7 @@ const Footer = () => {
                     {/* Logo Section */}
                     <div className="lg:col-span-1">
                         <img src={assetsLinks.logo} alt="Vivek Patel Logo" className="h-12 mb-2" />
-                        <p className="text-gray-400">AI automation, data extraction, and computer vision systems built for production.</p>
+                        <p className="text-gray-400">Document and web-data extraction, workflow automation, and computer vision support.</p>
                     </div>
 
                     {/* Dynamic Sections */}

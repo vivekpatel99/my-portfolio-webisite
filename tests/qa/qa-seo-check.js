@@ -41,13 +41,13 @@ const expectedRoutes = [
     route: 'project-invoice-ocr',
     path: '/project/invoice-ocr-extraction',
     canonical: 'https://www.vivekapatel.com/project/invoice-ocr-extraction/',
-    title: /Invoice OCR Extraction/i,
+    title: /Invoice OCR Client-Field Extraction/i,
   },
   {
     route: 'project-yolo',
     path: '/project/yolo-computer-vision-optimization',
     canonical: 'https://www.vivekapatel.com/project/yolo-computer-vision-optimization/',
-    title: /YOLO Computer Vision Optimization/i,
+    title: /YOLO Pose Estimation on Still Images/i,
   },
 ];
 
@@ -80,6 +80,18 @@ function getCanonical(head) {
 
 function getTitle(head) {
   return head.match(/<title>([\s\S]*?)<\/title>/i)?.[1] ?? null;
+}
+
+function getJsonLd(head) {
+  return [...head.matchAll(/<script\s+type=["']application\/ld\+json["'][^>]*>\s*([\s\S]*?)\s*<\/script>/gi)]
+    .map(([, payload]) => {
+      try {
+        return JSON.parse(payload);
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean);
 }
 
 function getAlternateLinks(head) {
@@ -155,6 +167,18 @@ for (const [env, base] of [
     if (!description) {
       findings.push({ env, route, issue: 'Missing meta description', severity: 'P1' });
     }
+
+    if (route === 'home') {
+      const jsonLd = getJsonLd(head);
+      const professionalService = jsonLd.find((item) => item['@type'] === 'ProfessionalService');
+      const person = jsonLd.find((item) => item['@type'] === 'Person');
+      if (professionalService?.areaServed) {
+        findings.push({ env, route, issue: 'ProfessionalService must not claim an unapproved areaServed', severity: 'P1' });
+      }
+      if (person?.workLocation?.name !== 'Europe') {
+        findings.push({ env, route, issue: 'Person workLocation must retain the approved Europe location metadata', severity: 'P1' });
+      }
+    }
   }
 }
 
@@ -189,6 +213,15 @@ if (ogInIndex?.includes('github')) {
 }
 if (indexHtml.includes('application/ld+json')) {
   findings.push({ issue: 'JSON-LD present in index.html', severity: 'OK', type: 'pass' });
+}
+
+for (const assetPath of [
+  path.join(process.cwd(), 'public/assets/case-studies/invoice-ocr.webp'),
+  path.join(process.cwd(), 'dist/assets/case-studies/invoice-ocr.webp'),
+]) {
+  if (existsSync(assetPath)) {
+    findings.push({ issue: `Removed invoice asset is present: ${assetPath}`, severity: 'P0' });
+  }
 }
 
 console.log(JSON.stringify(findings, null, 2));
