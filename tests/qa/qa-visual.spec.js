@@ -83,7 +83,7 @@ test('cookie customize panel expands', async ({ page }) => {
 
 test('pose case shows its evidence scope instead of an unsupported metric grid', async ({ page }) => {
   await page.goto('/project/yolo-computer-vision-optimization');
-  await expect(page.getByRole('heading', { name: /evidence scope & limitations/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Limitations', exact: true })).toBeVisible();
   await expect(page.getByText(/Pose overlays are generated on still images/i)).toBeVisible();
   await expect(page.locator('#stats-section')).toHaveCount(0);
 });

@@ -19,6 +19,7 @@ const passiveSpecs = [
   'qa-routes.spec.js',
   'qa-upgrade-interactions.spec.js',
   'qa-visual.spec.js',
+  'qa-case-studies.spec.js',
 ];
 
 const passiveProjects = [

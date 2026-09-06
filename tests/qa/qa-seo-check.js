@@ -1,9 +1,14 @@
 import { execFileSync } from 'child_process';
 import { readFileSync, existsSync } from 'fs';
 import path from 'path';
+import { caseStudies } from '../../src/data/caseStudies.js';
 
 const PREVIEW = process.env.QA_PREVIEW_URL ?? 'http://127.0.0.1:3000';
 const PROD = process.env.QA_PROD_URL ?? 'https://www.vivekapatel.com';
+const localOnly = process.env.QA_LOCAL_ONLY === '1';
+if (localOnly && !['localhost', '127.0.0.1', '[::1]'].includes(new URL(PREVIEW).hostname)) {
+  throw new Error('QA_LOCAL_ONLY requires a loopback preview URL');
+}
 
 const findings = [];
 const expectedRoutes = [
@@ -31,24 +36,12 @@ const expectedRoutes = [
     canonical: 'https://www.vivekapatel.com/data-policy/',
     title: /Cookie Policy/i,
   },
-  {
-    route: 'project-n8n',
-    path: '/project/n8n-openai-data-extraction',
-    canonical: 'https://www.vivekapatel.com/project/n8n-openai-data-extraction/',
-    title: /n8n \+ OpenAI Data Extraction/i,
-  },
-  {
-    route: 'project-invoice-ocr',
-    path: '/project/invoice-ocr-extraction',
-    canonical: 'https://www.vivekapatel.com/project/invoice-ocr-extraction/',
-    title: /Invoice OCR Client-Field Extraction/i,
-  },
-  {
-    route: 'project-yolo',
-    path: '/project/yolo-computer-vision-optimization',
-    canonical: 'https://www.vivekapatel.com/project/yolo-computer-vision-optimization/',
-    title: /YOLO Pose Estimation on Still Images/i,
-  },
+  ...caseStudies.map((study) => ({
+    route: `project-${study.slug}`,
+    path: `/project/${study.slug}`,
+    canonical: `https://www.vivekapatel.com/project/${study.slug}/`,
+    title: new RegExp(study.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'),
+  })),
 ];
 
 const previewPath = (pathSuffix) => pathSuffix === '/' ? '/' : `${pathSuffix}/`;
@@ -112,10 +105,10 @@ function getAlternateLinks(head) {
   return alternates;
 }
 
-for (const [env, base] of [
+for (const [env, base] of (localOnly ? [['preview', PREVIEW]] : [
   ['preview', PREVIEW],
   ['prod', PROD],
-]) {
+])) {
   for (const routeConfig of expectedRoutes) {
     const { route, path: pathSuffix, canonical: expectedCanonical, title: expectedTitle } = routeConfig;
     const url = `${base}${previewPath(pathSuffix)}`;
@@ -215,13 +208,24 @@ if (indexHtml.includes('application/ld+json')) {
   findings.push({ issue: 'JSON-LD present in index.html', severity: 'OK', type: 'pass' });
 }
 
-for (const assetPath of [
-  path.join(process.cwd(), 'public/assets/case-studies/invoice-ocr.webp'),
-  path.join(process.cwd(), 'dist/assets/case-studies/invoice-ocr.webp'),
-]) {
-  if (existsSync(assetPath)) {
-    findings.push({ issue: `Removed invoice asset is present: ${assetPath}`, severity: 'P0' });
+for (const directory of ['public', 'dist']) {
+  for (const asset of ['invoice-ocr.webp', 'football-tracking.mp4', 'football-tracking.webp', 'planning-graph.webp', 'yoga-pose.webp']) {
+    const assetPath = path.join(process.cwd(), directory, 'assets/case-studies', asset);
+    if (existsSync(assetPath)) findings.push({ issue: `Withheld case-study asset is present: ${assetPath}`, severity: 'P0' });
   }
+}
+
+for (const slug of ['withheld-case-study', 'nonexistent-gate2-study']) {
+  if (existsSync(path.join(process.cwd(), 'dist/project', slug, 'index.html'))) {
+    findings.push({ issue: `Unavailable case-study static route exists: ${slug}`, severity: 'P0' });
+  }
+  if (sitemapPath && readFileSync(sitemapPath, 'utf8').includes(`/project/${slug}`)) {
+    findings.push({ issue: `Unavailable case study is in sitemap: ${slug}`, severity: 'P0' });
+  }
+}
+const notFoundHtml = readFileSync(path.join(process.cwd(), 'dist/404.html'), 'utf8');
+if (getMeta(notFoundHtml, 'robots') !== 'noindex, nofollow') {
+  findings.push({ issue: 'Static 404 must be non-indexable before JavaScript', severity: 'P0' });
 }
 
 console.log(JSON.stringify(findings, null, 2));
