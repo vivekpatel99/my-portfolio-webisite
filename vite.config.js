@@ -1,6 +1,6 @@
 import path from 'node:path';
 import react from '@vitejs/plugin-react';
-import { createLogger, defineConfig } from 'vite';
+import { defineConfig } from 'vite';
 import inlineEditPlugin from './plugins/visual-editor/vite-plugin-react-inline-editor.js';
 import editModeDevPlugin from './plugins/visual-editor/vite-plugin-edit-mode.js';
 import iframeRouteRestorationPlugin from './plugins/vite-plugin-iframe-route-restoration.js';
@@ -279,21 +279,7 @@ const addTransformIndexHtml = {
 	},
 };
 
-console.warn = () => {};
-
-const logger = createLogger()
-const loggerError = logger.error
-
-logger.error = (msg, options) => {
-	if (options?.error?.toString().includes('CssSyntaxError: [postcss]')) {
-		return;
-	}
-
-	loggerError(msg, options);
-}
-
 export default defineConfig({
-	customLogger: logger,
 	plugins: [
 		...(isDev ? [inlineEditPlugin(), editModeDevPlugin(), iframeRouteRestorationPlugin(), selectionModePlugin()] : []),
 		react(),
@@ -317,6 +303,7 @@ export default defineConfig({
 		},
 	},
 	build: {
+		minify: 'terser',
 		rollupOptions: {
 			external: [
 				'@babel/parser',

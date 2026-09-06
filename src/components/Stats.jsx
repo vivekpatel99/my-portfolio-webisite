@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useAnimation } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 
 const NumberTicker = ({ value, suffix }) => {
     const ref = useRef(null);
     const inView = useInView(ref, { once: true, amount: 0.5 });
-    const controls = useAnimation();
     const [count, setCount] = useState(0);
     const decimalPlaces = Number.isInteger(value)
         ? 0
@@ -12,8 +11,7 @@ const NumberTicker = ({ value, suffix }) => {
 
     useEffect(() => {
         if (inView) {
-            controls.start({ opacity: 1, y: 0 });
-            let start = 0;
+            let frameId;
             const end = value;
             const duration = 2000; // milliseconds
             let startTime = null;
@@ -29,13 +27,14 @@ const NumberTicker = ({ value, suffix }) => {
                 setCount(currentCount);
 
                 if (progress < 1) {
-                    requestAnimationFrame(animateCount);
+                    frameId = requestAnimationFrame(animateCount);
                 }
             };
 
-            requestAnimationFrame(animateCount);
+            frameId = requestAnimationFrame(animateCount);
+            return () => cancelAnimationFrame(frameId);
         }
-    }, [inView, value, controls]);
+    }, [inView, value, decimalPlaces]);
 
     return <span ref={ref}>{decimalPlaces > 0 ? count.toFixed(decimalPlaces) : count}{suffix}</span>;
 }

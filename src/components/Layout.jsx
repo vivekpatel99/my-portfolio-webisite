@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { Suspense, useState, useEffect, useCallback } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -60,7 +60,9 @@ const Layout = () => {
       <div className="min-h-screen bg-[#0C0D0D] text-white overflow-x-hidden flex flex-col">
         <Header />
         <main id="main-content" className="flex-grow">
-          <Outlet />
+          <Suspense fallback={<div className="min-h-screen" role="status" aria-label="Loading page" />}>
+            <Outlet />
+          </Suspense>
         </main>
         <Footer />
         <Toaster />
