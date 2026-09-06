@@ -3,6 +3,13 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { positioning, serviceOffers } from '@/data/positioning';
+import { createServiceInquiryContext } from '../../convex/lib/inquiryContext';
+
+const serviceIdByClaimId = {
+  'offer-document-data-extraction': 'document-web-extraction',
+  'offer-workflow-automation': 'workflow-automation',
+  'offer-computer-vision-support': 'computer-vision',
+};
 
 const Services = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -30,7 +37,7 @@ const Services = () => {
                   <span className="flex items-center gap-4"><span className={`break-words text-xl font-bold transition-colors duration-300 sm:text-2xl md:text-5xl ${isActive ? 'text-white' : 'text-gray-600 group-hover:text-gray-400'}`}>{service.title}</span>{isActive && <motion.span className="h-4 w-4 rounded-full bg-accent-purple" initial={reduceMotion ? false : { scale: 0 }} animate={{ scale: 1 }} />}</span>
                   <motion.span className="text-accent-purple" animate={{ rotate: isActive ? 45 : 0 }} transition={{ duration: reduceMotion ? 0 : 0.3 }}><Plus size={40} className={`${isActive ? 'text-accent-purple' : 'text-gray-600 group-hover:text-gray-400'} transition-colors`} aria-hidden="true" /></motion.span>
                 </button>
-                <AnimatePresence initial={false}>{isActive && <motion.div id={`service-content-${index}`} initial={reduceMotion ? false : { opacity: 0, height: 0, y: -20 }} animate={{ opacity: 1, height: 'auto', y: 0 }} exit={reduceMotion ? { opacity: 0 } : { opacity: 0, height: 0, y: -20 }} transition={{ duration: reduceMotion ? 0 : 0.4, ease: 'easeInOut' }} className="overflow-hidden"><div className="pb-8 pr-4 sm:pr-8 md:pr-16"><p className="max-w-2xl text-lg text-gray-400">{service.description}</p></div></motion.div>}</AnimatePresence>
+                <AnimatePresence initial={false}>{isActive && <motion.div id={`service-content-${index}`} initial={reduceMotion ? false : { opacity: 0, height: 0, y: -20 }} animate={{ opacity: 1, height: 'auto', y: 0 }} exit={reduceMotion ? { opacity: 0 } : { opacity: 0, height: 0, y: -20 }} transition={{ duration: reduceMotion ? 0 : 0.4, ease: 'easeInOut' }} className="overflow-hidden"><div className="pb-8 pr-4 sm:pr-8 md:pr-16"><p className="max-w-2xl text-lg text-gray-400">{service.description}</p><Link to="/contact/" state={{ inquiryContext: createServiceInquiryContext(serviceIdByClaimId[service.claimId]) }} className="mt-5 inline-flex min-h-11 items-center rounded-full border border-accent-purple/40 px-4 py-2 text-sm font-semibold text-[#d8caff] hover:bg-accent-purple/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple">Ask about this service</Link></div></motion.div>}</AnimatePresence>
               </div>
             );
           })}

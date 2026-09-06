@@ -41,7 +41,7 @@ describe('ProjectFitDiagnostic', () => {
     const diagnostic = document.querySelector('#project-fit-diagnostic');
     expect(diagnostic.classList.contains('sentry-block')).toBe(true);
     expect(diagnostic.classList.contains('sentry-ignore')).toBe(true);
-    expect(screen.getByText('Your answers stay only in this page. They reset if you leave or reload, and nothing is submitted.')).toBeTruthy();
+    expect(screen.getByText('Your full questionnaire and remaining answers stay only in this page and reset if you leave or reload. An optional handoff can carry only a derived scope-check result and broad project type or published service area to the estimate form. You can review, edit, or remove it there; it is sent only after you explicitly submit the contact form.')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Start diagnostic' })).toBeTruthy();
     expect(document.activeElement).toBe(document.body);
   });
@@ -125,7 +125,7 @@ describe('ProjectFitDiagnostic', () => {
     for (const heading of ['Why this result', 'Limits and risks to review', 'Next step', 'Relevant published proof']) {
       expect(screen.getByRole('heading', { name: heading })).toBeTruthy();
     }
-    const proofLinks = screen.getAllByRole('link');
+    const proofLinks = Array.from(screen.getByRole('heading', { name: 'Relevant published proof' }).parentElement.querySelectorAll('a'));
     expect(new Set(proofLinks.map((link) => link.textContent)).size).toBe(proofLinks.length);
     expect(proofLinks.map((link) => link.getAttribute('href'))).toEqual([
       '/project/n8n-openai-data-extraction/',

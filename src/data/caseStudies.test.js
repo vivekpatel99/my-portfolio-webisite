@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { caseStudies, caseStudyPublicationRecords, getCaseStudyBySlug, caseStudySlugs, primaryContactHref } from './caseStudies';
 import { routeSeo } from '../lib/seoConfig';
+import { INQUIRY_CONTEXT_CASE_STUDY_SLUGS } from '../../convex/lib/inquiryContext';
 
 describe('caseStudies data structure', () => {
   it('should have at least one case study', () => {
@@ -133,6 +134,10 @@ describe('caseStudySlugs', () => {
     expect(caseStudies.map((study) => study.id)).not.toEqual(expect.arrayContaining(unpublishedIds));
     expect(caseStudySlugs).not.toContain('withheld-case-study');
     expect(Object.keys(routeSeo)).not.toContain('/project/withheld-case-study');
+  });
+
+  it('keeps estimate-context case-study IDs aligned with published public slugs', () => {
+    expect([...INQUIRY_CONTEXT_CASE_STUDY_SLUGS].sort()).toEqual([...caseStudySlugs].sort());
   });
 
   it('allows an optional trailing slash in the Apache project rule', () => {

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { MotionConfig, motion, useReducedMotion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
@@ -10,6 +10,13 @@ import { socialLinks } from '@/config/links';
 import { Seo, routeSeo } from '@/lib/seo';
 import { captureException } from '@/lib/sentryTelemetry';
 import { BUDGET_LABELS, BUDGET_OPTIONS } from '@/lib/budgetOptions';
+import {
+  createDirectInquiryContext,
+  CURRENT_BLOCKER_OPTIONS,
+  inquiryContextSummary,
+  PROJECT_TYPE_OPTIONS,
+  TIMELINE_OPTIONS,
+} from '../../convex/lib/inquiryContext';
 
 // Custom logo components for platform links
 const UpworkIcon = () => (
@@ -54,12 +61,38 @@ const pageVariants = {
 };
 const pageTransition = { type: 'tween', ease: 'anticipate', duration: 0.5 };
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const SAFE_SUBMISSION_MESSAGES = new Set([
+  'Please wait before submitting again.',
+  'This email already sent several messages recently. Please wait before submitting again.',
+  'The site is receiving too many requests. Please wait a few minutes and try again.',
+  'Invalid estimate context.',
+]);
 
-const Contact = () => {
+const safeSubmissionMessage = (error) => {
+  const candidate = typeof error?.data === 'string'
+    ? error.data
+    : typeof error?.data?.message === 'string'
+      ? error.data.message
+      : '';
+  return SAFE_SUBMISSION_MESSAGES.has(candidate)
+    ? candidate
+    : 'We could not save your request. Please try again or use the email link below.';
+};
+
+const Contact = ({ initialInquiryContext }) => {
   const [formState, setFormState] = useState({ name: '', email: '', budget: '', description: '' });
+  const reduceMotion = useReducedMotion();
+  const [inquiryContext, setInquiryContext] = useState(initialInquiryContext);
+  const [contextChangeNotice, setContextChangeNotice] = useState('');
+  const [contextFields, setContextFields] = useState(() => ({
+    projectType: initialInquiryContext?.projectType ?? '',
+    timeline: initialInquiryContext?.timeline ?? '',
+    currentBlocker: initialInquiryContext?.currentBlocker ?? '',
+  }));
   const [fieldErrors, setFieldErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const submittingRef = useRef(false);
+  const contextLegendRef = useRef(null);
   const submitLead = useMutation(api.leads.submitLead);
 
   const handleInputChange = (e) => {
@@ -74,6 +107,34 @@ const Contact = () => {
 
   const handleSelectChange = (value) => {
     setFormState(prevState => ({ ...prevState, budget: value }));
+  };
+
+  const handleContextChange = (event) => {
+    const { name, value } = event.target;
+    setContextFields((current) => {
+      const next = { ...current, [name]: value };
+      setInquiryContext((existing) => {
+        if (existing && (name !== 'projectType' || value === (existing.projectType ?? ''))) {
+          const merged = { ...existing, [name]: value || undefined };
+          const nextContext = Object.fromEntries(
+            Object.entries(merged).filter(([, entry]) => entry !== undefined && entry !== ''),
+          );
+          return Object.keys(nextContext).length > 0 ? nextContext : undefined;
+        }
+        if (existing?.origin && name === 'projectType') {
+          setContextChangeNotice('Changing the project type replaces the previous source context.');
+        }
+        return createDirectInquiryContext(next);
+      });
+      return next;
+    });
+  };
+
+  const removeInquiryContext = () => {
+    setContextFields({ projectType: '', timeline: '', currentBlocker: '' });
+    setInquiryContext(undefined);
+    setContextChangeNotice('');
+    requestAnimationFrame(() => contextLegendRef.current?.focus());
   };
 
   const handleSubmit = async (e) => {
@@ -100,6 +161,8 @@ const Contact = () => {
     setFieldErrors(nextErrors);
 
     if (nextErrors.name || nextErrors.email || nextErrors.description) {
+        const firstInvalidId = nextErrors.name ? 'name' : nextErrors.email ? 'email' : 'description';
+        requestAnimationFrame(() => document.getElementById(firstInvalidId)?.focus());
         toast({
             title: nextErrors.email && trimmedFormState.email ? "Invalid email address." : "Uh oh! Missing fields.",
             description: nextErrors.email && trimmedFormState.email
@@ -120,20 +183,13 @@ const Contact = () => {
         email: trimmedFormState.email,
         budget: formState.budget || undefined,
         description: trimmedFormState.description,
+        ...(inquiryContext ? { inquiryContext } : {}),
       });
     } catch (error) {
-      captureException(error);
-      const convexMessage =
-        typeof error?.data === 'string'
-          ? error.data
-          : error?.data?.message;
-      const description =
-        convexMessage ??
-        error?.message?.replace(/^\[CONVEX[^\]]*\]\s*/i, '') ??
-        'Something went wrong saving your data. Please try again later.';
+      captureException(new Error('Contact submission failed'), { tags: { feature: 'contact-form' } });
       toast({
         title: "Submission Failed",
-        description,
+        description: safeSubmissionMessage(error),
         variant: "destructive",
       });
       submittingRef.current = false;
@@ -149,20 +205,22 @@ const Contact = () => {
       description: "Your details are saved. I'll review the workflow details you shared.",
     });
     setFormState({ name: '', email: '', budget: '', description: '' });
+    removeInquiryContext();
     setFieldErrors({});
   };
 
   return (
-    <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}>
+    <MotionConfig reducedMotion={reduceMotion ? 'always' : 'never'}>
+    <motion.div initial={reduceMotion ? false : 'initial'} animate="in" exit="out" variants={pageVariants} transition={reduceMotion ? { duration: 0 } : pageTransition}>
       <Seo {...routeSeo['/contact']} />
       
       <section className="bg-[#0C0D0D] text-white py-24 sm:py-32">
         <div className="container mx-auto px-6">
           <motion.div 
             className="text-center max-w-3xl mx-auto"
-            initial={{ opacity: 0, y: -20 }}
+            initial={reduceMotion ? false : { opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
+            transition={reduceMotion ? { duration: 0 } : { duration: 0.7, delay: 0.2 }}
           >
             <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white uppercase mb-4 leading-tight break-words">
               Request a <span className="text-accent-purple">Project Estimate</span>
@@ -175,9 +233,9 @@ const Contact = () => {
           <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[0.85fr_1.15fr]">
             <motion.aside
               className="rounded-lg border border-white/10 bg-white/[0.04] p-6"
-              initial={{ opacity: 0, x: -16 }}
+              initial={reduceMotion ? false : { opacity: 0, x: -16 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, delay: 0.35 }}
+              transition={reduceMotion ? { duration: 0 } : { duration: 0.7, delay: 0.35 }}
             >
               <h2 className="text-2xl font-bold uppercase text-white">What happens next</h2>
               <div className="mt-6 space-y-5">
@@ -200,12 +258,13 @@ const Contact = () => {
             </motion.aside>
 
             <motion.form
+              id="contact-inquiry"
               onSubmit={handleSubmit}
               noValidate
-              className="space-y-6 bg-white/5 p-6 sm:p-8 rounded-lg border border-white/10"
-              initial={{ opacity: 0, scale: 0.95 }}
+              className="sentry-block sentry-ignore space-y-6 bg-white/5 p-6 sm:p-8 rounded-lg border border-white/10"
+              initial={reduceMotion ? false : { opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7, delay: 0.4 }}
+              transition={reduceMotion ? { duration: 0 } : { duration: 0.7, delay: 0.4 }}
             >
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">Full Name *</label>
@@ -233,6 +292,43 @@ const Contact = () => {
                   ))}
                 </select>
               </div>
+              <fieldset className="rounded-lg border border-white/10 bg-black/20 p-4" aria-describedby="estimate-context-help">
+                <legend ref={contextLegendRef} tabIndex="-1" className="px-1 text-sm font-semibold text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple">Estimate context (optional)</legend>
+                <p id="estimate-context-help" className="mt-1 text-sm leading-relaxed text-gray-400">Choose only the bounded details you want shown before submitting. They are informational and do not verify fit or affect priority.</p>
+                <div className="mt-4 grid gap-4">
+                  <div>
+                    <label htmlFor="projectType" className="block text-sm font-medium text-gray-300 mb-2">Project type</label>
+                    <select id="projectType" name="projectType" value={contextFields.projectType} onChange={handleContextChange} disabled={isSubmitting} className="h-12 w-full rounded-md border border-white/20 bg-[#0C0D0D] px-4 text-base text-gray-200 focus:outline-none focus:ring-2 focus:ring-accent-purple disabled:cursor-not-allowed disabled:opacity-50">
+                      <option value="">Do not add a project type</option>
+                      {PROJECT_TYPE_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="timeline" className="block text-sm font-medium text-gray-300 mb-2">Timeline</label>
+                    <select id="timeline" name="timeline" value={contextFields.timeline} onChange={handleContextChange} disabled={isSubmitting} className="h-12 w-full rounded-md border border-white/20 bg-[#0C0D0D] px-4 text-base text-gray-200 focus:outline-none focus:ring-2 focus:ring-accent-purple disabled:cursor-not-allowed disabled:opacity-50">
+                      <option value="">Do not add a timeline</option>
+                      {TIMELINE_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="currentBlocker" className="block text-sm font-medium text-gray-300 mb-2">Current blocker</label>
+                    <select id="currentBlocker" name="currentBlocker" value={contextFields.currentBlocker} onChange={handleContextChange} disabled={isSubmitting} className="h-12 w-full rounded-md border border-white/20 bg-[#0C0D0D] px-4 text-base text-gray-200 focus:outline-none focus:ring-2 focus:ring-accent-purple disabled:cursor-not-allowed disabled:opacity-50">
+                      <option value="">Do not add a blocker</option>
+                      {CURRENT_BLOCKER_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                    </select>
+                  </div>
+                </div>
+                {contextChangeNotice && <p className="mt-3 text-sm text-gray-300" role="status">{contextChangeNotice}</p>}
+                {inquiryContext && (
+                  <div id="estimate-context-preview" className="mt-5 rounded-md border border-accent-purple/30 bg-accent-purple/10 p-4" aria-live="polite">
+                    <p className="font-semibold text-white">Context that will be shared</p>
+                    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-relaxed text-gray-200">
+                      {inquiryContextSummary(inquiryContext).map((item) => <li key={item}>{item}</li>)}
+                    </ul>
+                    <button type="button" onClick={removeInquiryContext} disabled={isSubmitting} className="mt-3 min-h-11 rounded-full px-3 text-sm font-semibold text-[#d8caff] underline decoration-accent-purple underline-offset-4 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple disabled:cursor-not-allowed">Remove estimate context</button>
+                  </div>
+                )}
+              </fieldset>
               <div>
                 <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-2">Project Description *</label>
                 <Textarea id="description" name="description" placeholder="Example: We need invoice OCR or a data extraction workflow that exports clean records to our CRM within 4 weeks..." value={formState.description} onChange={handleInputChange} rows={5} required disabled={isSubmitting} aria-invalid={Boolean(fieldErrors.description)} aria-describedby={fieldErrors.description ? 'description-error' : undefined} />
@@ -253,9 +349,9 @@ const Contact = () => {
                  <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="group relative inline-flex items-center justify-center overflow-hidden rounded-full p-0.5 text-lg font-medium text-white transition-all duration-300 bg-gradient-to-br from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="group relative inline-flex max-w-full items-center justify-center overflow-hidden rounded-full p-0.5 text-base font-medium text-white transition-all duration-300 bg-gradient-to-br from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 disabled:opacity-50 disabled:cursor-not-allowed sm:text-lg"
                   >
-                    <span className="relative inline-flex items-center px-8 py-3.5 transition-all duration-75 ease-in bg-[#0C0D0D] rounded-full group-hover:bg-opacity-0">
+                    <span className="relative inline-flex max-w-full items-center px-5 py-3.5 text-center transition-all duration-75 ease-in bg-[#0C0D0D] rounded-full group-hover:bg-opacity-0 sm:px-8">
                       {isSubmitting ? (
                         <>
                           <Loader2 className="mr-2 h-5 w-5 animate-spin" />
@@ -268,15 +364,16 @@ const Contact = () => {
                       )}
                     </span>
                   </button>
+                  <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-gray-400">Submitting sends your contact details, optional budget, project description, and only the context shown above. Nothing from the scope check is sent automatically. Unsent details reset if you refresh or leave this page. See the <a href="/legal/" className="text-[#d8caff] underline decoration-accent-purple underline-offset-4 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple">Privacy Policy</a>.</p>
               </div>
             </motion.form>
           </div>
 
           <motion.div 
             className="text-center mt-24"
-            initial={{ opacity: 0, y: 20 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.6 }}
+            transition={reduceMotion ? { duration: 0 } : { duration: 0.7, delay: 0.6 }}
           >
             <h2 className="text-2xl font-bold text-white mb-8">
               Or connect on your preferred platform
@@ -303,9 +400,9 @@ const Contact = () => {
 
           <motion.div 
             className="text-center mt-24"
-            initial={{ opacity: 0, y: 20 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.8 }}
+            transition={reduceMotion ? { duration: 0 } : { duration: 0.7, delay: 0.8 }}
           >
               <div className="flex justify-center space-x-6">
                 <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile" className="text-gray-400 hover:text-accent-purple transition-colors"><Linkedin size={24} /></a>
@@ -315,6 +412,7 @@ const Contact = () => {
         </div>
       </section>
     </motion.div>
+    </MotionConfig>
   );
 };
 

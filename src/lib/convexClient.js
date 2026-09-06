@@ -8,6 +8,7 @@ const PLACEHOLDER_HOSTS = new Set([
 
 const LOCAL_DEVELOPMENT_MESSAGE =
   'Convex is not configured. Set VITE_CONVEX_URL in .env.local to enable contact form submissions.';
+export const CONVEX_CLIENT_OPTIONS = Object.freeze({ logger: false });
 
 const CONVEX_CLOUD_HOST_PATTERN =
   /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)?\.convex\.cloud$/;
@@ -128,7 +129,10 @@ function createConvexClient(config) {
     );
   }
 
-  return new ConvexReactClient(config.url);
+  // The SDK logs rejected mutation payloads to the browser console by default.
+  // Contact inquiries can contain free text, so keep SDK logging disabled and report
+  // only the generic, explicitly sanitized failure from the form.
+  return new ConvexReactClient(config.url, CONVEX_CLIENT_OPTIONS);
 }
 
 export const convexRuntimeConfig = resolveConvexClientConfig(

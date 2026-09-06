@@ -69,7 +69,7 @@ describe('deferred Sentry SDK', () => {
     expect(sdk.captureException).toHaveBeenCalledTimes(1);
   });
 
-  it('drops UI breadcrumbs from the project-fit diagnostic only', async () => {
+  it('drops UI breadcrumbs from the project-fit diagnostic and contact inquiry', async () => {
     const telemetry = await import('./sentryTelemetry');
     const pending = telemetry.initializeSentryTelemetry();
     release();
@@ -80,7 +80,11 @@ describe('deferred Sentry SDK', () => {
 
     const diagnostic = { id: 'project-fit-diagnostic' };
     const nestedDiagnosticTarget = {
-      closest: vi.fn((selector) => (selector === '#project-fit-diagnostic' ? diagnostic : null)),
+      closest: vi.fn((selector) => (selector.includes('#project-fit-diagnostic') ? diagnostic : null)),
+    };
+    const contactInquiry = { id: 'contact-inquiry' };
+    const nestedContactTarget = {
+      closest: vi.fn((selector) => (selector.includes('#contact-inquiry') ? contactInquiry : null)),
     };
     const outsideTarget = {
       closest: vi.fn(() => null),
@@ -91,7 +95,8 @@ describe('deferred Sentry SDK', () => {
 
     expect(beforeBreadcrumb(click, { event: { target: nestedDiagnosticTarget } })).toBeNull();
     expect(beforeBreadcrumb(input, { event: { target: nestedDiagnosticTarget } })).toBeNull();
-    expect(nestedDiagnosticTarget.closest).toHaveBeenCalledWith('#project-fit-diagnostic');
+    expect(nestedDiagnosticTarget.closest).toHaveBeenCalledWith('#project-fit-diagnostic, #contact-inquiry');
+    expect(beforeBreadcrumb(click, { event: { target: nestedContactTarget } })).toBeNull();
     expect(beforeBreadcrumb(click, { event: { target: outsideTarget } })).toBe(click);
     expect(beforeBreadcrumb(consoleBreadcrumb, { event: { target: nestedDiagnosticTarget } })).toBe(consoleBreadcrumb);
     expect(beforeBreadcrumb(click, {})).toBe(click);

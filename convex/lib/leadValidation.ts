@@ -1,4 +1,5 @@
 import { ConvexError } from "convex/values";
+import { normalizeInquiryContext, type InquiryContext } from "./inquiryContext";
 
 export const BUDGET_OPTIONS = ["< €5k", "€5k-€10k", "€10k-€25k", "€25k+"] as const;
 export const MAX_NAME_LENGTH = 200;
@@ -21,11 +22,18 @@ export function validateLeadInput(args: {
   email: string;
   budget?: string;
   description: string;
+  inquiryContext?: unknown;
 }) {
   const name = args.name.trim();
   const email = args.email.trim().toLowerCase();
   const description = args.description.trim();
   const budget = normalizeBudget(args.budget);
+  let inquiryContext: InquiryContext | undefined;
+  try {
+    inquiryContext = normalizeInquiryContext(args.inquiryContext);
+  } catch {
+    throw new ConvexError("Invalid estimate context.");
+  }
 
   if (!name) {
     throw new ConvexError("Name is required.");
@@ -46,5 +54,5 @@ export function validateLeadInput(args: {
     throw new ConvexError("Project description is too long.");
   }
 
-  return { name, email, description, budget };
+  return { name, email, description, budget, inquiryContext };
 }

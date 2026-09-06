@@ -8,6 +8,7 @@ import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { Seo, routeSeo } from '@/lib/seo';
 import { getCaseStudyBySlug } from '@/data/caseStudies';
 import NotFound from '@/pages/NotFound';
+import { createCaseStudyInquiryContext } from '../../convex/lib/inquiryContext';
 
 const sections = [
   ['situation', 'Situation'],
@@ -173,7 +174,7 @@ const Project = () => {
                 <Link to="/#portfolio"><ArrowLeft className="mr-2 h-5 w-5" /> View Case Studies</Link>
               </Button>
               <Button asChild size="lg" className="group w-full rounded-full bg-accent-purple px-6 py-6 text-base text-white hover:bg-accent-purple/90 sm:w-auto sm:px-10 sm:py-7 sm:text-lg">
-                <Link to={serviceLink.href}>Request a Project Estimate<span className="sr-only">: {serviceLink.label}</span><ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none motion-reduce:transition-none" /></Link>
+                <Link to={serviceLink.href} state={{ inquiryContext: createCaseStudyInquiryContext(project.slug) }}>Request a Project Estimate<span className="sr-only">: {serviceLink.label}</span><ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none motion-reduce:transition-none" /></Link>
               </Button>
             </div>
           </div>
