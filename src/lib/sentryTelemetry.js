@@ -44,6 +44,18 @@ export function initializeSentryTelemetry() {
       replaysSessionSampleRate: 0.05,
       replaysOnErrorSampleRate: 1.0,
       sendDefaultPii: false,
+      beforeBreadcrumb(breadcrumb, hint) {
+        const target = hint?.event?.target;
+        if (
+          breadcrumb?.category?.startsWith('ui.')
+          && typeof target?.closest === 'function'
+          && target.closest('#project-fit-diagnostic')
+        ) {
+          return null;
+        }
+
+        return breadcrumb;
+      },
     });
 
     initialized = true;
