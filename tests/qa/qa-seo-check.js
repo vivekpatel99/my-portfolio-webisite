@@ -11,6 +11,15 @@ if (localOnly && !['localhost', '127.0.0.1', '[::1]'].includes(new URL(PREVIEW).
 }
 
 const findings = [];
+const withheldCaseStudyAssets = [
+  'invoice-ocr.webp',
+  'football-tracking.mp4',
+  'yoga-pose.webp',
+];
+const relatedContextAssets = [
+  { slug: 'n8n-openai-data-extraction', asset: 'planning-graph.webp' },
+  { slug: 'yolo-computer-vision-optimization', asset: 'football-tracking.webp' },
+];
 const expectedRoutes = [
   {
     route: 'home',
@@ -209,9 +218,21 @@ if (indexHtml.includes('application/ld+json')) {
 }
 
 for (const directory of ['public', 'dist']) {
-  for (const asset of ['invoice-ocr.webp', 'football-tracking.mp4', 'football-tracking.webp', 'planning-graph.webp', 'yoga-pose.webp']) {
+  for (const asset of withheldCaseStudyAssets) {
     const assetPath = path.join(process.cwd(), directory, 'assets/case-studies', asset);
     if (existsSync(assetPath)) findings.push({ issue: `Withheld case-study asset is present: ${assetPath}`, severity: 'P0' });
+  }
+}
+
+for (const { slug, asset } of relatedContextAssets) {
+  const caseStudy = caseStudies.find((study) => study.slug === slug);
+  if (caseStudy?.image?.src?.endsWith(`/${asset}`)) {
+    findings.push({ issue: `Related-context asset is used as a primary case-study image: ${asset}`, severity: 'P0' });
+  }
+
+  const galleryItem = caseStudy?.gallery?.find((item) => item.src?.endsWith(`/${asset}`));
+  if (!galleryItem || !/not evidence from this exact case study/i.test(galleryItem.caption ?? '')) {
+    findings.push({ issue: `Related-context asset is missing its required disclaimer: ${asset}`, severity: 'P0' });
   }
 }
 
