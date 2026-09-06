@@ -1,11 +1,33 @@
-import { mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'fs';
 import path from 'path';
+import { caseStudySlugs } from '../src/data/caseStudies.js';
 import { absoluteUrl, routeSeo, SITE_NAME } from '../src/lib/seoConfig.js';
 
 const distDir = path.join(process.cwd(), 'dist');
 const indexPath = path.join(distDir, 'index.html');
 const indexHtml = readFileSync(indexPath, 'utf8');
 const staticRoutes = Object.keys(routeSeo).filter((route) => route !== '/');
+const publishedProjectSlugs = new Set(caseStudySlugs);
+const seoProjectSlugs = Object.keys(routeSeo)
+  .filter((route) => route.startsWith('/project/'))
+  .map((route) => route.replace('/project/', ''));
+
+if (seoProjectSlugs.length !== publishedProjectSlugs.size || seoProjectSlugs.some((slug) => !publishedProjectSlugs.has(slug))) {
+  throw new Error('Static project routes must match the published case-study projection');
+}
+
+const removeStaleProjectHtml = () => {
+  const projectDir = path.join(distDir, 'project');
+  if (!existsSync(projectDir)) return;
+  readdirSync(projectDir).forEach((entry) => {
+    const entryPath = path.join(projectDir, entry);
+    if (statSync(entryPath).isDirectory() && !publishedProjectSlugs.has(entry)) {
+      rmSync(entryPath, { recursive: true, force: true });
+    }
+  });
+};
+
+removeStaleProjectHtml();
 const notFoundSeo = {
   title: 'Page Not Found | Vivek Patel',
   description: 'The requested page could not be found.',

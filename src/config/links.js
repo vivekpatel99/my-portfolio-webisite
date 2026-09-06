@@ -26,10 +26,6 @@ export const profileImages = {
   aboutPhoto: '/assets/images/vivek-black-and-white.webp',
 };
 
-export const portfolioImages = {
-  yogaPose: '/assets/case-studies/yoga-pose.webp',
-};
-
 export const assetsLinks = {
   logo: logos.logo,
 };

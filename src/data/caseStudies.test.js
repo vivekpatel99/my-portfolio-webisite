@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { caseStudies, getCaseStudyBySlug, caseStudySlugs, primaryContactHref } from './caseStudies';
+import { caseStudies, caseStudyPublicationRecords, getCaseStudyBySlug, caseStudySlugs, primaryContactHref } from './caseStudies';
 import { routeSeo } from '../lib/seoConfig';
 
 describe('caseStudies data structure', () => {
@@ -16,12 +16,20 @@ describe('caseStudies data structure', () => {
       expect(caseStudy).toHaveProperty('cardTitle');
       expect(caseStudy).toHaveProperty('image');
       expect(caseStudy.image).toHaveProperty('alt');
+      expect(caseStudy.image).toHaveProperty('label');
+      expect(caseStudy.image).toHaveProperty('caption');
       expect(['image', 'schematic']).toContain(caseStudy.image.kind);
       if (caseStudy.image.kind === 'image') {
         expect(caseStudy.image).toHaveProperty('src');
       }
       expect(caseStudy).toHaveProperty('claimIds');
       expect(caseStudy).toHaveProperty('claimPlacement');
+      expect(caseStudy).toHaveProperty('story');
+      ['situation', 'constraints', 'interpretationNotice', 'decisions', 'approach', 'evidence', 'result', 'limitations', 'relatedExperience'].forEach((section) => {
+        expect(caseStudy.story).toHaveProperty(section);
+      });
+      expect(caseStudy.story.relatedExperience.status).toBe('not-provided');
+      expect(caseStudy).toHaveProperty('links');
     });
   });
 
@@ -115,6 +123,16 @@ describe('caseStudySlugs', () => {
   it('does not mention social-media-app in data or SEO', () => {
     expect(caseStudySlugs).not.toContain('social-media-app');
     expect(Object.keys(routeSeo).join(' ')).not.toContain('social-media-app');
+  });
+
+  it('does not expose unpublished records through cards, routes, SEO, or public slugs', () => {
+    const unpublishedIds = caseStudyPublicationRecords
+      .filter((record) => record.publishingStatus !== 'published')
+      .map((record) => record.id);
+    expect(unpublishedIds).toContain('withheld-case-study');
+    expect(caseStudies.map((study) => study.id)).not.toEqual(expect.arrayContaining(unpublishedIds));
+    expect(caseStudySlugs).not.toContain('withheld-case-study');
+    expect(Object.keys(routeSeo)).not.toContain('/project/withheld-case-study');
   });
 
   it('allows an optional trailing slash in the Apache project rule', () => {

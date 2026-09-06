@@ -89,7 +89,7 @@ test('service offer accordions are keyboard and click operable', async ({ page }
   await expect(page.getByRole('heading', { name: 'Not the right fit' })).toBeVisible();
   await expect(page.getByText(/do not promise guaranteed accuracy or savings/i)).toBeVisible();
   await expect(page.getByText(/data access and clear success criteria/i)).toBeVisible();
-  const services = page.locator('#services [role="button"]');
+  const services = page.locator('#services').getByRole('button');
   await expect(services).toHaveCount(3);
 
   for (const service of [
@@ -97,7 +97,7 @@ test('service offer accordions are keyboard and click operable', async ({ page }
     'WORKFLOW AUTOMATION',
     'COMPUTER VISION SUPPORT',
   ]) {
-    const row = page.locator('#services [role="button"]').filter({ hasText: service });
+    const row = page.locator('#services').getByRole('button').filter({ hasText: service });
     const initialExpanded = await row.getAttribute('aria-expanded');
     await row.click();
     await expect(row).toHaveAttribute('aria-expanded', initialExpanded === 'true' ? 'false' : 'true');

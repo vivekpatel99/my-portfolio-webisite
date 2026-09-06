@@ -24,6 +24,7 @@
 
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
+  # Generated from published case-study slugs by tools/generate-sitemap.js.
   RewriteRule ^project/(n8n-openai-data-extraction|invoice-ocr-extraction|yolo-computer-vision-optimization)/?$ index.html [L]
 
   RewriteCond %{REQUEST_FILENAME} !-f

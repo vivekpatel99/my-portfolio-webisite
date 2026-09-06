@@ -8,7 +8,8 @@ const Testimonials = () => (
       <MessageSquare className="mx-auto h-8 w-8 text-accent-purple" aria-hidden="true" />
       <h2 id="feedback-heading" className="mt-5 text-3xl font-bold uppercase text-white md:text-5xl">CLIENT <span className="text-accent-purple">FEEDBACK</span></h2>
       <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-400">Read client feedback and engagement history on my Upwork profile.</p>
-      <a href={approvedProof.upwork.href} target="_blank" rel="noopener noreferrer" className="mt-8 inline-flex items-center gap-2 rounded-full border border-accent-purple/40 px-6 py-3 font-semibold text-white transition-colors hover:bg-accent-purple/10">View feedback on Upwork <ArrowUpRight className="h-4 w-4" aria-hidden="true" /></a>
+      <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-gray-400">This is a general marketplace-profile link. It does not independently verify the claims in any individual case study.</p>
+      <a href={approvedProof.upwork.href} target="_blank" rel="noopener noreferrer" className="mt-8 inline-flex items-center gap-2 rounded-full border border-accent-purple/40 px-6 py-3 font-semibold text-white transition-colors hover:bg-accent-purple/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple">View feedback on Upwork <ArrowUpRight className="h-4 w-4" aria-hidden="true" /></a>
     </div>
   </section>
 );

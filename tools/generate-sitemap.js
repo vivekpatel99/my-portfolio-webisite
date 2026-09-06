@@ -1,8 +1,30 @@
 import { execFileSync } from 'child_process';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { caseStudyPublicationRecords, caseStudySlugs } from '../src/data/caseStudies.js';
+import { validatePublishedClaimReferences } from '../src/data/caseStudyPublishing.js';
 import { absoluteUrl, routeSeo } from '../src/lib/seoConfig.js';
 
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+
+const validatePublishedCaseStudies = () => {
+    const ledger = JSON.parse(readFileSync('docs/claims/gate-1-claim-ledger.json', 'utf8'));
+    validatePublishedClaimReferences(caseStudyPublicationRecords, ledger);
+};
+
+const syncApacheProjectAllowlist = () => {
+    const htaccessPath = 'public/.htaccess';
+    const current = readFileSync(htaccessPath, 'utf8');
+    const generatedRule = `RewriteRule ^project/${caseStudySlugs.length > 0 ? `(${caseStudySlugs.join('|')})` : '(?!)'}/?$ index.html [L]`;
+    const rulePattern = /RewriteRule \^project\/\([^)]+\)\/\?\$ index\.html \[L\]/;
+    if (!rulePattern.test(current)) {
+        throw new Error('Could not find the Apache case-study allowlist to regenerate');
+    }
+    const next = current.replace(rulePattern, generatedRule);
+    if (next !== current) writeFileSync(htaccessPath, next);
+};
+
+validatePublishedCaseStudies();
+syncApacheProjectAllowlist();
 
 const isoDateFromSourceDateEpoch = () => {
     const rawEpoch = process.env.SOURCE_DATE_EPOCH;
