@@ -35,6 +35,15 @@ describe('case-study publishing boundary', () => {
     ])).toEqual([]);
   });
 
+  it('requires a safe first-party service link even when an approved external proof link is valid', () => {
+    const externalOnly = recordsFixture();
+    externalOnly[0].portfolioSafeContent.links.service = [
+      structuredClone(externalOnly[0].portfolioSafeContent.links.proof[0]),
+    ];
+    expect(() => validateCaseStudyPublishing(externalOnly)).toThrow(/service must include a safe first-party link/);
+    expect(() => validateCaseStudyPublishing(recordsFixture())).not.toThrow();
+  });
+
   it.each([
     ['a missing publishing status', (records) => { delete records[0].publishingStatus; }, /publishingStatus/],
     ['an unknown publishing status', (records) => { records[0].publishingStatus = 'reviewing'; }, /publishingStatus/],
@@ -65,6 +74,21 @@ describe('case-study publishing boundary', () => {
     const wrongPlacement = recordsFixture();
     wrongPlacement[0].portfolioSafeContent.claims[0].placement = 'services';
     expect(() => validatePublishedClaimReferences(wrongPlacement, ledgerFixture())).toThrow(/not allowed/);
+  });
+
+  it('rejects malformed and duplicate claim-ledger entries before resolving published claims', () => {
+    const malformed = ledgerFixture();
+    malformed[0] = { id: malformed[0].id, classification: 'verified', allowedPlacement: [] };
+    expect(() => validatePublishedClaimReferences(recordsFixture(), malformed)).toThrow(/allowedPlacement/);
+
+    const conflictingDuplicate = ledgerFixture();
+    const withheld = conflictingDuplicate.find((claim) => claim.id === 'rate-eur-80');
+    conflictingDuplicate.push({
+      ...withheld,
+      classification: 'verified',
+      allowedPlacement: ['n8n case study'],
+    });
+    expect(() => validatePublishedClaimReferences(recordsFixture(), conflictingDuplicate)).toThrow(/duplicates claim ledger ID rate-eur-80/);
   });
 
   it('binds every published claim to the authoritative ledger without importing it into the browser schema', () => {

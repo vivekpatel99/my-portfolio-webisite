@@ -75,4 +75,16 @@ describe('real publication build consumers', () => {
     expect(() => run(directory, 'generate-sitemap')).toThrow(/non-public claim/);
     expect(existsSync(path.join(directory, 'public/sitemap.xml'))).toBe(false);
   });
+
+  it('fails the real build when a duplicate ledger ID tries to override withheld evidence', () => {
+    const records = structuredClone(caseStudyPublicationRecords);
+    records[0].portfolioSafeContent.claims[0].id = 'rate-eur-80';
+    const directory = fixture(records);
+    const ledgerPath = path.join(directory, 'docs/claims/gate-1-claim-ledger.json');
+    const ledger = JSON.parse(readFileSync(ledgerPath, 'utf8'));
+    ledger.push({ ...ledger.find(({ id }) => id === 'rate-eur-80'), classification: 'verified', allowedPlacement: ['n8n case study'] });
+    writeFileSync(ledgerPath, JSON.stringify(ledger));
+    expect(() => run(directory, 'generate-sitemap')).toThrow(/duplicate/i);
+    expect(existsSync(path.join(directory, 'public/sitemap.xml'))).toBe(false);
+  });
 });

@@ -19,6 +19,9 @@ const APPROVED_EXTERNAL_HREFS = new Set([
   'https://www.upwork.com/freelancers/vivekpatel99?p=1961697513038176256',
   'https://www.upwork.com/freelancers/vivekpatel99?p=1962080616292315136',
 ]);
+const LEDGER_CLASSIFICATIONS = new Set([
+  'verified', 'related-credential', 'target-estimate', 'unsupported', 'approval-required',
+]);
 
 const isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
 const hasText = (value) => typeof value === 'string' && value.trim().length > 0;
@@ -133,6 +136,9 @@ const validateLinkList = (links, path, errors, { allowEmpty = false } = {}) => {
   });
 };
 
+const hasSafeFirstPartyLink = (links) => Array.isArray(links)
+  && links.some((link) => isObject(link) && isSafeRelativePath(link.href));
+
 const validateClaims = (claims, path, errors) => {
   if (!Array.isArray(claims) || claims.length === 0) {
     errors.push(`${path} must be a non-empty array`);
@@ -216,6 +222,9 @@ export function validateCaseStudyPublishing(records) {
       errors.push(`${path}.portfolioSafeContent.links must contain only service, clientFeedback, and proof`);
     } else {
       validateLinkList(content.links.service, `${path}.portfolioSafeContent.links.service`, errors);
+      if (!hasSafeFirstPartyLink(content.links.service)) {
+        errors.push(`${path}.portfolioSafeContent.links.service must include a safe first-party link`);
+      }
       validateLinkList(content.links.clientFeedback, `${path}.portfolioSafeContent.links.clientFeedback`, errors, { allowEmpty: true });
       validateLinkList(content.links.proof, `${path}.portfolioSafeContent.links.proof`, errors, { allowEmpty: true });
     }
@@ -227,9 +236,36 @@ export function validateCaseStudyPublishing(records) {
 }
 
 export function validatePublishedClaimReferences(records, claimLedger) {
-  const errors = [];
   if (!Array.isArray(claimLedger)) throw new Error('Claim ledger must be an array');
-  const ledgerById = new Map(claimLedger.map((claim) => [claim.id, claim]));
+  const ledgerErrors = [];
+  const ledgerById = new Map();
+  claimLedger.forEach((claim, index) => {
+    const path = `claimLedger[${index}]`;
+    if (!isObject(claim)) {
+      ledgerErrors.push(`${path} must be an object`);
+      return;
+    }
+    if (!hasText(claim.id)) ledgerErrors.push(`${path}.id must be a non-empty string`);
+    if (!LEDGER_CLASSIFICATIONS.has(claim.classification)) {
+      ledgerErrors.push(`${path}.classification must be a recognized claim classification`);
+    }
+    if (!Array.isArray(claim.allowedPlacement) || claim.allowedPlacement.length === 0 || !claim.allowedPlacement.every(hasText)) {
+      ledgerErrors.push(`${path}.allowedPlacement must be a non-empty array of strings`);
+    }
+    if (hasText(claim.id)) {
+      if (ledgerById.has(claim.id)) {
+        ledgerErrors.push(`${path}.id duplicates claim ledger ID ${claim.id}`);
+      } else {
+        ledgerById.set(claim.id, claim);
+      }
+    }
+  });
+
+  if (ledgerErrors.length > 0) {
+    throw new Error(`Invalid claim ledger:\n- ${ledgerErrors.join('\n- ')}`);
+  }
+
+  const errors = [];
 
   records
     .filter((record) => record.publishingStatus === PUBLISHING_STATUS.PUBLISHED)
