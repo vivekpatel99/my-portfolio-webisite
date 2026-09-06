@@ -170,10 +170,31 @@ describe('case study data validation', () => {
         caseStudy.gallery.forEach((item) => {
           expect(item).toHaveProperty('src');
           expect(item).toHaveProperty('alt');
+          expect(item).toHaveProperty('label');
+          expect(item).toHaveProperty('caption');
           expect(item.alt).toBeTruthy();
+          expect(item.caption).toMatch(/not evidence from this exact case study/i);
         });
       }
     });
+  });
+
+  it('keeps current schematics primary while restoring only safe related-work thumbnails', () => {
+    const n8n = getCaseStudyBySlug('n8n-openai-data-extraction');
+    const invoice = getCaseStudyBySlug('invoice-ocr-extraction');
+    const pose = getCaseStudyBySlug('yolo-computer-vision-optimization');
+
+    expect(n8n.image.kind).toBe('schematic');
+    expect(n8n.gallery).toEqual([
+      expect.objectContaining({ src: '/assets/case-studies/planning-graph.webp' }),
+    ]);
+    expect(invoice.image.kind).toBe('schematic');
+    expect(invoice.gallery).toEqual([]);
+    expect(pose.image.kind).toBe('schematic');
+    expect(pose.gallery).toEqual([
+      expect.objectContaining({ src: '/assets/case-studies/football-tracking.webp' }),
+    ]);
+    expect(JSON.stringify(caseStudies)).not.toContain('invoice-ocr.webp');
   });
 
   it('should have valid stack array', () => {

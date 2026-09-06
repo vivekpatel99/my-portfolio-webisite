@@ -44,6 +44,7 @@ const Project = () => {
 
   const projectSeo = routeSeo[`/project/${project.slug}`];
   const { story, links } = project;
+  const gallery = project.gallery ?? [];
   const serviceLink = links.service.find((link) => link.href.startsWith('/'));
   const proofLinks = links.proof;
 
@@ -78,6 +79,25 @@ const Project = () => {
           </div>
         </div>
       </SectionAnimator>
+
+      {gallery.length > 0 && (
+        <SectionAnimator>
+          <section className="container mx-auto px-6 pb-16" aria-labelledby="related-visual-context-heading">
+            <div className="mb-8 max-w-3xl">
+              <h2 id="related-visual-context-heading" className="text-2xl font-bold uppercase text-white md:text-3xl">Related visual context</h2>
+              <p className="mt-3 text-sm leading-relaxed text-gray-400">These retained thumbnails show related or separate work. Their captions distinguish them from evidence for this exact case study.</p>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2">
+              {gallery.map((visual) => (
+                <div key={visual.src || visual.label} className="overflow-hidden rounded-lg border border-white/10 bg-white/[0.04]">
+                  <div className="border-b border-white/10 px-4 py-3 text-sm font-semibold uppercase tracking-wide text-[#d8caff]">{visual.label}</div>
+                  <CaseStudyVisual className="min-h-[16rem]" visual={visual} />
+                </div>
+              ))}
+            </div>
+          </section>
+        </SectionAnimator>
+      )}
 
       <nav aria-label="Case study sections" className="border-y border-white/10 bg-white/[0.03]">
         <div className="container mx-auto max-w-5xl overflow-x-auto px-6">

@@ -21,6 +21,13 @@ const caseStudyFixture = {
     label: 'Input → review',
     caption: 'Illustrative workflow schematic — not client source material.',
   },
+  gallery: [{
+    kind: 'image',
+    src: '/assets/case-studies/related-work.webp',
+    alt: 'Related workflow planning illustration.',
+    label: 'Related planning work',
+    caption: 'Related planning work — not evidence from this exact case study.',
+  }],
   stack: ['n8n'],
   challenge: 'A defined workflow needed reviewable output.',
   solution: 'The public approach uses explicit review steps.',
@@ -47,9 +54,22 @@ const caseStudyFixture = {
   },
 };
 
+const caseStudyWithoutGallery = {
+  ...caseStudyFixture,
+  id: 'published-case-study-without-gallery',
+  slug: 'published-case-study-without-gallery',
+  title: 'Published case study without gallery',
+  cardTitle: 'Published case study without gallery',
+  gallery: undefined,
+};
+
 vi.mock('@/data/caseStudies', () => ({
   caseStudies: [],
-  getCaseStudyBySlug: (slug) => (slug === caseStudyFixture.slug ? caseStudyFixture : undefined),
+  getCaseStudyBySlug: (slug) => {
+    if (slug === caseStudyFixture.slug) return caseStudyFixture;
+    if (slug === caseStudyWithoutGallery.slug) return caseStudyWithoutGallery;
+    return undefined;
+  },
 }));
 
 vi.mock('@/components/ui/use-toast', () => ({ toast: vi.fn() }));
@@ -82,6 +102,9 @@ describe('Project', () => {
     expect(screen.getByText(/engineering interpretation, not a record of client decisions/i)).toBeTruthy();
     expect(screen.getByText(/does not independently verify the technical claims/i)).toBeTruthy();
     expect(screen.getByText(/client feedback is linked from the homepage/i)).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'Related visual context' })).toBeTruthy();
+    expect(screen.getByText(/not evidence from this exact case study/i)).toBeTruthy();
+    expect(screen.getByAltText('Related workflow planning illustration.')).toBeTruthy();
     expect(screen.getByRole('link', { name: 'Explore services' }).getAttribute('href')).toBe('/#services');
     expect(screen.getByRole('link', { name: 'View client feedback' }).getAttribute('href')).toBe('/#testimonials');
   });
@@ -90,5 +113,11 @@ describe('Project', () => {
     renderProject('/project/withheld-case-study');
     expect(screen.getByRole('heading', { name: 'Page Not Found' })).toBeTruthy();
     expect(toast).not.toHaveBeenCalled();
+  });
+
+  it('renders a published case study safely when no related gallery is provided', () => {
+    renderProject('/project/published-case-study-without-gallery');
+    expect(screen.getByRole('heading', { name: 'Published case study without gallery' })).toBeTruthy();
+    expect(screen.queryByRole('heading', { name: 'Related visual context' })).toBeNull();
   });
 });
