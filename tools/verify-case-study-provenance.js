@@ -9,6 +9,10 @@ export const CASE_STUDY_DIRECTORY = 'public/assets/case-studies';
 const identifyingWebpChunks = ['EXIF', 'XMP ', 'ICCP'];
 const identifyingMp4Atoms = ['©nam', '©cmt', '©cpy', 'titl', 'desc', 'loci', '©xyz', 'gps '];
 const nonessentialMp4MetadataMarkers = ['Lavf', 'Lavc', 'libx264', 'VideoHandler'];
+const mp4ContainerAtoms = new Set(['moov', 'trak', 'mdia', 'minf', 'stbl', 'edts', 'dinf', 'udta', 'meta', 'ilst']);
+const prohibitedMp4MetadataAtoms = new Set(['uuid', 'XMP_', 'xml ', 'ID32']);
+const unresolvedMp4MetadataFields = new Set(['©too']);
+const approvalEvidencePattern = /^https:\/\/github\.com\/vivekpatel99\/my-portfolio-webisite\/issues\/50#issuecomment-\d+$/;
 
 function issue(errors, message) {
   errors.push(message);
@@ -60,7 +64,53 @@ export function inspectAssetMetadata(assetPath, buffer, expectation, approvalSta
     for (const atom of identifyingMp4Atoms) {
       if (text.includes(atom)) issue(errors, `${assetPath}: embedded identifying metadata atom ${atom} is prohibited`);
     }
+    const metadataFields = [];
+    const metadataHandlers = [];
+    const parseAtoms = (start, end, parent = null) => {
+      for (let offset = start; offset + 8 <= end;) {
+        let size = buffer.readUInt32BE(offset);
+        const type = buffer.subarray(offset + 4, offset + 8).toString('latin1');
+        let headerSize = 8;
+        if (size === 1) {
+          if (offset + 16 > end) return issue(errors, `${assetPath}: malformed extended-size MP4 atom ${type}`);
+          const extendedSize = buffer.readBigUInt64BE(offset + 8);
+          if (extendedSize > BigInt(Number.MAX_SAFE_INTEGER)) return issue(errors, `${assetPath}: oversized MP4 atom ${type}`);
+          size = Number(extendedSize);
+          headerSize = 16;
+        } else if (size === 0) {
+          size = end - offset;
+        }
+        if (size < headerSize || offset + size > end) return issue(errors, `${assetPath}: malformed MP4 atom ${type}`);
+        if (parent === 'ilst' || (parent === 'udta' && type !== 'meta')) metadataFields.push(type);
+        if (prohibitedMp4MetadataAtoms.has(type)) issue(errors, `${assetPath}: MP4 metadata atom ${type} is prohibited`);
+        if (type === 'keys') issue(errors, `${assetPath}: keyed MP4 metadata is prohibited`);
+        if (parent === 'meta' && !['hdlr', 'ilst', 'keys'].includes(type)) issue(errors, `${assetPath}: non-allowlisted MP4 meta child ${type} is prohibited`);
+        if (type === 'hdlr') {
+          const payloadStart = offset + headerSize;
+          if (size < headerSize + 24) {
+            issue(errors, `${assetPath}: malformed MP4 handler atom`);
+          } else {
+            const handlerType = buffer.subarray(payloadStart + 8, payloadStart + 12).toString('latin1');
+            const handlerName = buffer.subarray(payloadStart + 24, offset + size).toString('utf8').replace(/\0+$/g, '');
+            metadataHandlers.push({ parent, handlerType, handlerName });
+            if (handlerName && handlerName !== 'VideoHandler') issue(errors, `${assetPath}: non-allowlisted MP4 handler name is prohibited`);
+          }
+        }
+        if (mp4ContainerAtoms.has(type) && parent !== 'ilst') {
+          const childStart = offset + headerSize + (type === 'meta' ? 4 : 0);
+          if (childStart > offset + size) return issue(errors, `${assetPath}: malformed MP4 container ${type}`);
+          parseAtoms(childStart, offset + size, type);
+        }
+        offset += size;
+      }
+    };
+    parseAtoms(0, buffer.length);
+    const allowedFields = approvalStatus === 'approved' ? new Set() : unresolvedMp4MetadataFields;
+    for (const field of metadataFields) {
+      if (!allowedFields.has(field)) issue(errors, `${assetPath}: non-allowlisted MP4 metadata field ${field} is prohibited`);
+    }
     if (approvalStatus === 'approved') {
+      if (metadataHandlers.some((handler) => handler.parent === 'meta')) issue(errors, `${assetPath}: approved derivatives must omit the nonessential MP4 metadata handler`);
       for (const marker of nonessentialMp4MetadataMarkers) {
         if (text.includes(marker)) issue(errors, `${assetPath}: approved derivatives must omit unnecessary embedded metadata marker ${marker}`);
       }
@@ -94,6 +144,44 @@ function isIsoDateTime(value) {
   return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/.test(value) && !Number.isNaN(Date.parse(value));
 }
 
+function isApprovalEvidence(value) {
+  return typeof value === 'string' && approvalEvidencePattern.test(value);
+}
+
+function isExactKaggleDatasetVersionUrl(value, sourceUrl, version) {
+  if (!Number.isInteger(version) || version < 1) return false;
+  try {
+    const versionUrl = new URL(value);
+    const source = new URL(sourceUrl);
+    return versionUrl.protocol === 'https:' && versionUrl.hostname === 'www.kaggle.com' && !versionUrl.search && !versionUrl.hash &&
+      source.pathname.startsWith('/datasets/') && versionUrl.pathname === `${source.pathname}/versions/${version}`;
+  } catch {
+    return false;
+  }
+}
+
+function hasExactSourceMapping(mapping, kaggle) {
+  if (mapping?.status !== 'confirmed') return false;
+  if (mapping.kind === 'dataset') {
+    return typeof mapping.datasetFilePath === 'string' && mapping.datasetFilePath.trim().length > 0 &&
+      Number.isInteger(mapping.datasetFileBytes) && mapping.datasetFileBytes > 0 &&
+      isExactKaggleDatasetVersionUrl(mapping.datasetVersionUrl, kaggle?.sourceUrl, mapping.datasetVersion);
+  }
+  if (mapping.kind === 'notebook') {
+    return Number.isInteger(mapping.notebookVersionNumber) && mapping.notebookVersionNumber > 0 &&
+      typeof kaggle?.sourceUrl === 'string' && kaggle.sourceUrl.includes('/code/');
+  }
+  return false;
+}
+
+function hasManualLicenseReview(review, approvalEvidence) {
+  return review?.reviewedBy === 'Viv' &&
+    review?.conclusion === 'compatible-for-public-display-and-transformed-redistribution' &&
+    isIsoDateTime(review?.reviewedAt) &&
+    isApprovalEvidence(review?.evidence) &&
+    review.evidence === approvalEvidence;
+}
+
 function hasPinnedUpstreamEvidence(upstream) {
   if (!/^[a-f0-9]{40}$/.test(upstream?.commit ?? '') || !/^[a-f0-9]{64}$/.test(upstream?.sha256 ?? '')) return false;
   try {
@@ -115,18 +203,18 @@ function validateEntry(entry, errors) {
   const kaggle = entry.kaggle ?? {};
   if (entry.provenanceStatus !== 'confirmed') issue(errors, `${label}: approved entries require confirmed provenance`);
   if (entry.provenanceConfidence !== 'high') issue(errors, `${label}: approved entries require high-confidence provenance`);
-  if (typeof entry.sourceMappingEvidence !== 'string' || !entry.sourceMappingEvidence.trim()) issue(errors, `${label}: approved entries require source-mapping evidence`);
+  if (!hasExactSourceMapping(entry.exactSourceMapping, kaggle)) issue(errors, `${label}: approved entries require a confirmed exact Kaggle dataset-file or notebook-version mapping`);
   if (entry.licenseCompatibility !== 'compatible') issue(errors, `${label}: approved entries require compatible public-display and transformed-redistribution terms`);
-  if (!isExactKaggleSourceUrl(kaggle.datasetUrl, kaggle.owner)) issue(errors, `${label}: approved entries require an exact Kaggle dataset or notebook URL matching its owner`);
+  if (!isExactKaggleSourceUrl(kaggle.sourceUrl, kaggle.owner)) issue(errors, `${label}: approved entries require an exact Kaggle dataset or notebook URL matching its owner`);
   if (typeof kaggle.owner !== 'string' || !kaggle.owner) issue(errors, `${label}: approved entries require a Kaggle owner`);
-  if (typeof kaggle.license?.label !== 'string' || !kaggle.license.label.trim() || !Array.isArray(kaggle.license.urls) || kaggle.license.urls.length === 0 || kaggle.license.urls.some((url) => !isHttpsUrl(url))) issue(errors, `${label}: approved entries require an explicit license and valid HTTPS license URL`);
+  if (typeof kaggle.license?.label !== 'string' || !kaggle.license.label.trim() || !Array.isArray(kaggle.license.urls) || kaggle.license.urls.length === 0 || kaggle.license.urls.some((url) => !isHttpsUrl(url)) || kaggle.license.sourceEvidenceUrl !== kaggle.sourceUrl) issue(errors, `${label}: approved entries require an explicit license, valid HTTPS terms, and first-party Kaggle license evidence`);
   if (typeof entry.attribution !== 'string' || !entry.attribution.trim()) issue(errors, `${label}: approved entries require attribution`);
   if (!Array.isArray(entry.transformationHistory) || entry.transformationHistory.length === 0 || entry.transformationHistory.some((step) => typeof step !== 'string' || !step.trim())) issue(errors, `${label}: approved entries require non-empty transformationHistory steps`);
   if (entry.downloadedAt !== null && !isIsoDateTime(entry.downloadedAt)) issue(errors, `${label}: approved entries require a valid ISO source download date when supplied`);
   if (entry.downloadedAt === null && (typeof entry.downloadedAtReason !== 'string' || !entry.downloadedAtReason.trim())) issue(errors, `${label}: approved entries require a source download date or explicit unknown-date reason`);
-  if (typeof kaggle.exactDatasetFileVersion !== 'string' || !kaggle.exactDatasetFileVersion.trim()) issue(errors, `${label}: approved entries require an exact dataset file or version`);
   if (!hasPinnedUpstreamEvidence(entry.upstream)) issue(errors, `${label}: approved entries require an immutable GitHub blob URL, commit, and SHA-256 evidence`);
-  if (typeof entry.approval?.approvedBy !== 'string' || !entry.approval.approvedBy.trim() || !isIsoDateTime(entry.approval?.approvedAt) || !isHttpsUrl(entry.approval?.evidence)) issue(errors, `${label}: approved entries require an approver, ISO approval date, and HTTPS approval evidence URL`);
+  if (entry.approval?.approvedBy !== 'Viv' || !isIsoDateTime(entry.approval?.approvedAt) || !isApprovalEvidence(entry.approval?.evidence)) issue(errors, `${label}: approved entries require Viv's ISO-dated authorization in an issue #50 comment`);
+  if (!hasManualLicenseReview(entry.licenseReview, entry.approval?.evidence)) issue(errors, `${label}: approved entries require Viv's explicit license-compatibility review in the same issue #50 comment`);
   if (entry.resolutionNeeded != null) issue(errors, `${label}: approved entries must not retain a resolutionNeeded blocker`);
 }
 
@@ -159,10 +247,102 @@ export function verifyCaseStudyProvenance({ root = repositoryRoot, manifest = re
   return { errors, warnings, verified: entries.length, publicAssets: publicAssets.length };
 }
 
-function main() {
+function kaggleSourceParts(sourceUrl) {
+  const url = new URL(sourceUrl);
+  const [, kind, owner, slug] = url.pathname.split('/');
+  return { kind, owner, slug };
+}
+
+async function fetchJson(fetchImpl, url, label, errors, options = {}) {
+  try {
+    const response = await fetchImpl(url, { ...options, headers: { Accept: 'application/json', ...options.headers } });
+    if (!response.ok) {
+      issue(errors, `${label}: first-party evidence request failed with HTTP ${response.status}`);
+      return null;
+    }
+    return await response.json();
+  } catch (error) {
+    issue(errors, `${label}: first-party evidence request failed (${error.message})`);
+    return null;
+  }
+}
+
+export async function verifyRemoteApprovalEvidence(manifest, fetchImpl = fetch) {
+  const errors = [];
+  for (const entry of manifest.assets.filter((asset) => asset.approvalStatus === 'approved')) {
+    const label = entry.path;
+    const evidenceUrl = new URL(entry.approval.evidence);
+    const commentId = evidenceUrl.hash.replace('#issuecomment-', '');
+    const comment = await fetchJson(fetchImpl, `https://api.github.com/repos/vivekpatel99/my-portfolio-webisite/issues/comments/${commentId}`, label, errors);
+    const requiredCommentLines = [
+      `Asset provenance approval: ${entry.path}`,
+      `License compatibility: compatible-for-public-display-and-transformed-redistribution`,
+      `Kaggle source: ${entry.exactSourceMapping.datasetVersionUrl ?? entry.kaggle.sourceUrl}`,
+      `Kaggle license: ${entry.kaggle.license.label}`,
+      `Public derivative SHA-256: ${entry.sha256}`,
+      `Attribution: ${entry.attribution}`,
+    ];
+    if (entry.exactSourceMapping.kind === 'dataset') {
+      requiredCommentLines.push(`Kaggle file: ${entry.exactSourceMapping.datasetFilePath}`);
+      requiredCommentLines.push(`Kaggle file bytes: ${entry.exactSourceMapping.datasetFileBytes}`);
+    } else {
+      requiredCommentLines.push(`Kaggle notebook version: ${entry.exactSourceMapping.notebookVersionNumber}`);
+    }
+    const commentLines = new Set(typeof comment?.body === 'string' ? comment.body.split(/\r?\n/).map((line) => line.trim()) : []);
+    if (comment && (comment.html_url !== entry.approval.evidence || comment.user?.login !== 'vivekpatel99' || comment.author_association !== 'OWNER' || requiredCommentLines.some((line) => !commentLines.has(line)))) {
+      issue(errors, `${label}: approval evidence must be an owner-authored issue #50 comment binding the exact asset, source record, license, hash, and attribution`);
+    }
+
+    const { kind, owner, slug } = kaggleSourceParts(entry.kaggle.sourceUrl);
+    if (entry.exactSourceMapping.kind === 'dataset') {
+      const version = entry.exactSourceMapping.datasetVersion;
+      const metadata = await fetchJson(fetchImpl, `https://www.kaggle.com/api/v1/datasets/view/${owner}/${slug}?datasetVersionNumber=${version}`, label, errors);
+      if (metadata && (metadata.ref !== `${owner}/${slug}` || metadata.ownerRef !== owner || metadata.licenseName !== entry.kaggle.license.label || !metadata.versions?.some((item) => item.versionNumber === version))) {
+        issue(errors, `${label}: Kaggle API metadata does not confirm the owner, dataset version, and license`);
+      }
+      let pageToken = null;
+      let foundFile = false;
+      for (let page = 0; page < 100 && !foundFile; page += 1) {
+        const query = new URLSearchParams({ pageSize: '200', datasetVersionNumber: String(version) });
+        if (pageToken) query.set('pageToken', pageToken);
+        const listing = await fetchJson(fetchImpl, `https://www.kaggle.com/api/v1/datasets/list/${owner}/${slug}?${query}`, label, errors);
+        if (!listing) break;
+        foundFile = listing.datasetFiles?.some((file) => file.name === entry.exactSourceMapping.datasetFilePath && file.totalBytes === entry.exactSourceMapping.datasetFileBytes) ?? false;
+        pageToken = listing.nextPageToken || null;
+        if (!pageToken) break;
+      }
+      if (!foundFile) issue(errors, `${label}: Kaggle API did not confirm the exact dataset file name and byte length`);
+    } else if (kind === 'code') {
+      const token = process.env.KAGGLE_API_TOKEN;
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers.Authorization = `Bearer ${token}`;
+      const notebook = await fetchJson(
+        fetchImpl,
+        'https://www.kaggle.com/api/v1/kernels.KernelsApiService/GetKernel',
+        label,
+        errors,
+        { method: 'POST', headers, body: JSON.stringify({ userName: owner, kernelSlug: `${slug}/${entry.exactSourceMapping.notebookVersionNumber}` }) },
+      );
+      const currentVersion = notebook?.metadata?.currentVersionNumber ?? notebook?.metadata?.current_version_number;
+      if (notebook && (notebook.metadata?.ref !== `${owner}/${slug}` || currentVersion !== entry.exactSourceMapping.notebookVersionNumber)) {
+        issue(errors, `${label}: Kaggle API did not confirm the exact notebook owner, slug, and version number`);
+      }
+    }
+  }
+  return errors;
+}
+
+export async function verifyDeployableCaseStudyProvenance({ root = repositoryRoot, manifest = readManifest(), fetchImpl = fetch } = {}) {
+  const result = verifyCaseStudyProvenance({ root, manifest, mode: 'deploy' });
+  if (result.errors.length) return result;
+  result.errors.push(...await verifyRemoteApprovalEvidence(manifest, fetchImpl));
+  return result;
+}
+
+async function main() {
   const mode = process.argv[2] === '--deploy' ? 'deploy' : process.argv[2] === '--audit' || process.argv.length === 2 ? 'audit' : null;
   if (!mode) throw new Error('Usage: node tools/verify-case-study-provenance.js [--audit|--deploy]');
-  const result = verifyCaseStudyProvenance({ mode });
+  const result = mode === 'deploy' ? await verifyDeployableCaseStudyProvenance() : verifyCaseStudyProvenance({ mode });
   for (const warning of result.warnings) console.warn(`WARNING: ${warning}`);
   if (result.errors.length) {
     for (const error of result.errors) console.error(`ERROR: ${error}`);
@@ -171,4 +351,4 @@ function main() {
   console.log(`Case-study provenance ${mode} verification passed: ${result.verified}/${result.publicAssets} assets covered.`);
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) main();
+if (process.argv[1] === fileURLToPath(import.meta.url)) await main();
