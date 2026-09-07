@@ -39,12 +39,7 @@ const passiveProjects = [
     name: 'prod-mobile',
     use: { ...devices['iPhone 14'], browserName: 'chromium', baseURL: prodURL },
   },
-].map((project) => ({
-  ...project,
-  testMatch: project.name.startsWith('preview-')
-    ? [...passiveSpecs, 'qa-project-fit.spec.js']
-    : passiveSpecs,
-}));
+].map((project) => ({ ...project, testMatch: passiveSpecs }));
 
 const liveProjects = includeLiveContactSubmit
   ? [
