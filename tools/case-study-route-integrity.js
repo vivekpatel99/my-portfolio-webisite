@@ -1,7 +1,7 @@
 import { lstatSync, readdirSync, rmSync, rmdirSync } from 'node:fs';
 import path from 'node:path';
 import { caseStudySlugs } from '../src/data/caseStudies.js';
-import { routeSeo } from '../src/lib/seoConfig.js';
+import { routeSeo, SITE_URL } from '../src/lib/seoConfig.js';
 
 const projectRoutePrefix = '/project/';
 
@@ -51,7 +51,7 @@ export const projectSlugsFromSitemap = (sitemap) =>
     }
 
     const routeMatch = pathname.match(/^\/project\/([a-z0-9]+(?:-[a-z0-9]+)*)\/$/);
-    if (!routeMatch) {
+    if (!routeMatch || location !== `${SITE_URL}/project/${routeMatch[1]}/`) {
       throw new Error(`Sitemap case-study location must be a canonical project route: ${location}`);
     }
     return routeMatch[1];
@@ -113,6 +113,7 @@ export const assertSitemapCaseStudyRoutes = (sitemap, slugs = caseStudySlugs) =>
 export const removeStaleProjectHtml = (distDir, slugs = caseStudySlugs) => {
   assertUniqueSlugs(slugs, 'Case-study source');
   assertSafeSlugs(slugs);
+  if (!assertRealProjectDirectory(distDir)) return [];
   const projectDirectory = path.join(distDir, 'project');
   if (!assertRealProjectDirectory(projectDirectory)) return [];
 
@@ -133,6 +134,30 @@ export const removeStaleProjectHtml = (distDir, slugs = caseStudySlugs) => {
     });
 
   return staleSlugs;
+};
+
+// Check every existing output component before the generator writes any files.
+export const assertSafeStaticOutput = (distDir, routes) => {
+  if (!assertRealProjectDirectory(distDir)) {
+    throw new Error('Static output directory does not exist');
+  }
+  const outputs = ['index.html', '404.html', ...routes.map((route) => `${route.replace(/^\//, '')}/index.html`)];
+  for (const output of outputs) {
+    const parts = output.split('/');
+    let current = distDir;
+    for (let index = 0; index < parts.length; index += 1) {
+      current = path.join(current, parts[index]);
+      let info;
+      try {
+        info = lstatSync(current);
+      } catch (error) {
+        if (error.code === 'ENOENT') break;
+        throw error;
+      }
+      const valid = index === parts.length - 1 ? info.isFile() : info.isDirectory();
+      if (!valid) throw new Error(`Static output must not follow symlinks or special files: ${current}`);
+    }
+  }
 };
 
 export const assertStaticCaseStudyRoutes = (distDir, slugs = caseStudySlugs) => {

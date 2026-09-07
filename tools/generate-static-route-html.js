@@ -4,15 +4,17 @@ import { absoluteUrl, routeSeo, SITE_NAME } from '../src/lib/seoConfig.js';
 import {
   assertCaseStudyRouteSources,
   assertStaticCaseStudyRoutes,
+  assertSafeStaticOutput,
   removeStaleProjectHtml,
 } from './case-study-route-integrity.js';
 
 const distDir = path.join(process.cwd(), 'dist');
 assertCaseStudyRouteSources({ htaccess: readFileSync(path.join(process.cwd(), 'public/.htaccess'), 'utf8') });
+const staticRoutes = Object.keys(routeSeo).filter((route) => route !== '/');
+assertSafeStaticOutput(distDir, staticRoutes);
 const removedStaleProjectHtml = removeStaleProjectHtml(distDir);
 const indexPath = path.join(distDir, 'index.html');
 const indexHtml = readFileSync(indexPath, 'utf8');
-const staticRoutes = Object.keys(routeSeo).filter((route) => route !== '/');
 const notFoundSeo = {
   title: 'Page Not Found | Vivek Patel',
   description: 'The requested page could not be found.',

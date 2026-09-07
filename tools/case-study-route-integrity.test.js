@@ -19,6 +19,7 @@ import {
   assertCaseStudyRouteSources,
   assertSameCaseStudySlugs,
   assertSitemapCaseStudyRoutes,
+  removeStaleProjectHtml,
 } from './case-study-route-integrity.js';
 
 const temporaryDirectories = [];
@@ -145,5 +146,49 @@ describe('case-study route integrity', () => {
     expect(() => removeStaleProjectHtml(path.join(directory, 'dist')))
       .toThrow(/must be a real directory/i);
     expect(existsSync(targetDirectory)).toBe(true);
+  });
+});
+
+
+describe('adversarial output boundaries', () => {
+  it.each([
+    (slug) => `https://attacker.invalid/project/${slug}/`,
+    (slug) => `https://www.vivekapatel.com/project/${slug}/?extra=1`,
+    (slug) => `https://www.vivekapatel.com/project/${slug}/#extra`,
+  ])('rejects noncanonical sitemap origins, queries, and fragments', (location) => {
+    const sitemap = caseStudySlugs.map((slug) => `<loc>${location(slug)}</loc>`).join('');
+    expect(() => assertSitemapCaseStudyRoutes(sitemap)).toThrow(/canonical project route/i);
+  });
+
+  it('does not clean through a symlinked dist root', () => {
+    const directory = fixture();
+    const outside = path.join(directory, 'outside');
+    mkdirSync(path.join(outside, 'project/stale'), { recursive: true });
+    const sentinel = path.join(outside, 'project/stale/index.html');
+    writeFileSync(sentinel, 'PRESERVE');
+    rmSync(path.join(directory, 'dist'), { recursive: true });
+    symlinkSync(outside, path.join(directory, 'dist'));
+    expect(() => removeStaleProjectHtml(path.join(directory, 'dist'))).toThrow(/real directory/i);
+    expect(readFileSync(sentinel, 'utf8')).toBe('PRESERVE');
+  });
+
+  it.each(['directory', 'index'])('fails before writing through a canonical route %s symlink', (kind) => {
+    const directory = fixture();
+    const outside = path.join(directory, 'outside');
+    mkdirSync(outside);
+    const sentinel = path.join(outside, 'index.html');
+    writeFileSync(sentinel, 'PRESERVE');
+    const route = path.join(directory, 'dist/project', caseStudySlugs[0]);
+    mkdirSync(path.dirname(route), { recursive: true });
+    if (kind === 'directory') {
+      symlinkSync(outside, route);
+    } else {
+      mkdirSync(route);
+      symlinkSync(sentinel, path.join(route, 'index.html'));
+    }
+    const indexBefore = readFileSync(path.join(directory, 'dist/index.html'), 'utf8');
+    expect(() => run(directory, 'generate-static-route-html')).toThrow(/symlinks or special files/i);
+    expect(readFileSync(sentinel, 'utf8')).toBe('PRESERVE');
+    expect(readFileSync(path.join(directory, 'dist/index.html'), 'utf8')).toBe(indexBefore);
   });
 });
