@@ -48,6 +48,10 @@ export default defineConfig({
   testDir,
   timeout: 60_000,
   expect: { timeout: 10_000 },
+  use: {
+    screenshot: 'only-on-failure',
+    trace: 'retain-on-failure',
+  },
   outputDir: path.join(artifactDir, 'test-results'),
   reporter: [['list'], ['json', { outputFile: path.join(artifactDir, 'qa-results.json') }]],
   projects: [...passiveProjects, ...liveProjects],
