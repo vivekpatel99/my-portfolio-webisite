@@ -6,6 +6,20 @@ const fakeSentryHost = 'telemetry.invalid';
 
 const isTelemetryRequest = (request) => /sentry|\/api\/\d+\/(?:envelope|store)/i.test(request.url());
 
+async function captureBrowserTelemetry(page, marker, { initialize = false, telemetrySourceSelector } = {}) {
+  await page.evaluate(async ({ eventMarker, shouldInitialize, sourceSelector }) => {
+    const telemetryUrl = performance.getEntriesByType('resource')
+      .map((entry) => entry.name)
+      .find((url) => url.includes('/src/lib/sentryTelemetry.js'));
+    if (!telemetryUrl) throw new Error('The app did not load the Sentry telemetry module');
+    const telemetry = await import(telemetryUrl);
+    if (shouldInitialize) await telemetry.initializeSentryTelemetry();
+    const telemetrySource = sourceSelector ? document.querySelector(sourceSelector) : undefined;
+    if (sourceSelector && !telemetrySource) throw new Error('The marked telemetry source is missing');
+    telemetry.captureException(new Error(eventMarker), telemetrySource ? { telemetrySource } : undefined);
+  }, { eventMarker: marker, shouldInitialize: initialize, sourceSelector: telemetrySourceSelector });
+}
+
 test.beforeEach(async ({ page }) => {
   convexMutationRequests.length = 0;
   telemetryRequestBodies.length = 0;
@@ -78,30 +92,15 @@ test('fake Sentry transport delivers allowed errors, blocks marked errors, and s
   await page.reload();
   await expect(page.getByLabel('Full Name *')).toBeVisible();
 
-  await page.evaluate(async (marker) => {
-    const telemetryUrl = performance.getEntriesByType('resource')
-      .map((entry) => entry.name)
-      .find((url) => url.includes('/src/lib/sentryTelemetry.js'));
-    if (!telemetryUrl) throw new Error('The app did not load the Sentry telemetry module');
-    const telemetry = await import(telemetryUrl);
-    await telemetry.initializeSentryTelemetry();
-    telemetry.captureException(new Error(marker));
-  }, allowedMarker);
+  await captureBrowserTelemetry(page, allowedMarker, { initialize: true });
   await expect.poll(() => envelopeBodies.join('\n')).toContain(allowedMarker);
 
   await page.getByLabel('Full Name *').fill(sentinelName);
   await page.getByLabel('Email Address *').fill(sentinelEmail);
   await page.getByLabel('Project Description *').fill(sentinelDescription);
-  await page.evaluate(async (marker) => {
-    const telemetryUrl = performance.getEntriesByType('resource')
-      .map((entry) => entry.name)
-      .find((url) => url.includes('/src/lib/sentryTelemetry.js'));
-    if (!telemetryUrl) throw new Error('The app did not load the Sentry telemetry module');
-    const telemetry = await import(telemetryUrl);
-    telemetry.captureException(new Error(marker), {
-      telemetrySource: document.querySelector('form[data-sensitive-telemetry]'),
-    });
-  }, sensitiveMarker);
+  await captureBrowserTelemetry(page, sensitiveMarker, {
+    telemetrySourceSelector: 'form[data-sensitive-telemetry]',
+  });
   await page.waitForTimeout(500);
 
   expect(envelopeBodies.join('\n')).not.toContain(sensitiveMarker);
@@ -116,14 +115,7 @@ test('fake Sentry transport delivers allowed errors, blocks marked errors, and s
   });
   await page.waitForTimeout(200);
   const envelopeCountAfterRevocation = envelopeBodies.length;
-  await page.evaluate(async (marker) => {
-    const telemetryUrl = performance.getEntriesByType('resource')
-      .map((entry) => entry.name)
-      .find((url) => url.includes('/src/lib/sentryTelemetry.js'));
-    if (!telemetryUrl) throw new Error('The app did not load the Sentry telemetry module');
-    const telemetry = await import(telemetryUrl);
-    telemetry.captureException(new Error(marker));
-  }, revokedMarker);
+  await captureBrowserTelemetry(page, revokedMarker);
   await page.waitForTimeout(500);
 
   expect(envelopeBodies).toHaveLength(envelopeCountAfterRevocation);

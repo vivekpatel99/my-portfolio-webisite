@@ -17,6 +17,7 @@ No Gate 3 or Gate 4 component, inquiry context, analytics provider, fingerprinti
 | Local-only SEO | Passed; JSON-LD present and no failing finding |
 | Passive preview Playwright, desktop and mobile | 157 passed, seven intentional skips, zero failures; the fake-transport case is separately enabled only for its loopback run |
 | Fake Sentry transport browser case | Passed locally (desktop): after explicit consent an unrelated synthetic error reached an intercepted `telemetry.invalid` envelope; a marked error plus synthetic name, email, and free text did not; after revocation another synthetic error did not; no Convex mutation occurred |
+| `npm run qa:telemetry-boundary` | Passed; starts a strict loopback Vite server on `127.0.0.1:4174` with a fake `telemetry.invalid` DSN, runs only the intercepted positive browser case, and always stops the server |
 | Codex browser, 1280 x 720 | Contact boundary present; synthetic invalid email stayed on-page and produced local validation only |
 | Codex browser, 390 x 844 | Responsive form and validation remained usable; synthetic invalid email stayed on-page and no valid submission was made |
 | `git diff --check` | Passed |
