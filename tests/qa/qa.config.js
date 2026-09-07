@@ -15,6 +15,7 @@ const localOnly = process.env.QA_LOCAL_ONLY === '1';
 
 const passiveSpecs = [
   'qa-a11y.spec.js',
+  'qa-local-navigation.spec.js',
   'qa-contact.spec.js',
   'qa-edge.spec.js',
   'qa-responsive.spec.js',

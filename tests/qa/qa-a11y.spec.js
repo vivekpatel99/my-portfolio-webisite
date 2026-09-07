@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './qa-test.js';
 
 test('home has exactly one main landmark', async ({ page }) => {
   await page.goto('/');
