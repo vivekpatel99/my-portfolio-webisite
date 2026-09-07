@@ -43,13 +43,8 @@ describe('Gate 1 claim ledger', () => {
       });
       expect(caseStudy.image?.src ?? '').not.toMatch(/invoice-ocr|planning-graph|football-tracking/);
       expect(caseStudy.gallery ?? []).not.toEqual(expect.arrayContaining([
-        expect.objectContaining({ src: expect.stringMatching(/invoice-ocr/) }),
+        expect.objectContaining({ src: expect.stringMatching(/invoice-ocr|planning-graph|football-tracking/) }),
       ]));
-      (caseStudy.gallery ?? []).forEach((visual) => {
-        if (/planning-graph|football-tracking/.test(visual.src)) {
-          expect(visual.caption).toMatch(/not evidence from this exact case study/i);
-        }
-      });
     });
   });
 
