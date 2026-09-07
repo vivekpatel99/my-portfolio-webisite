@@ -192,3 +192,25 @@ describe('adversarial output boundaries', () => {
     expect(readFileSync(path.join(directory, 'dist/index.html'), 'utf8')).toBe(indexBefore);
   });
 });
+
+
+describe('stale symlink parity', () => {
+  it.each(['directory', 'index'])('rejects stale %s symlinks without changing their target', (kind) => {
+    const directory = fixture();
+    const outside = path.join(directory, 'outside');
+    mkdirSync(outside);
+    const sentinel = path.join(outside, 'index.html');
+    writeFileSync(sentinel, 'PRESERVE');
+    const stale = path.join(directory, 'dist/project/stale');
+    mkdirSync(path.dirname(stale), { recursive: true });
+    if (kind === 'directory') {
+      symlinkSync(outside, stale);
+    } else {
+      mkdirSync(stale);
+      symlinkSync(sentinel, path.join(stale, 'index.html'));
+    }
+    expect(() => removeStaleProjectHtml(path.join(directory, 'dist')))
+      .toThrow(/symlinks|regular file/i);
+    expect(readFileSync(sentinel, 'utf8')).toBe('PRESERVE');
+  });
+});

@@ -110,6 +110,23 @@ export const assertCaseStudyRouteSources = ({
 export const assertSitemapCaseStudyRoutes = (sitemap, slugs = caseStudySlugs) =>
   assertSameCaseStudySlugs(slugs, projectSlugsFromSitemap(sitemap), 'Sitemap');
 
+const projectOutputDirectories = (projectDirectory) => {
+  const entries = readdirSync(projectDirectory, { withFileTypes: true });
+  for (const entry of entries) {
+    if (entry.isSymbolicLink()) {
+      throw new Error(`Static project output must not contain symlinks: ${entry.name}`);
+    }
+    if (entry.isDirectory()) {
+      const index = readdirSync(path.join(projectDirectory, entry.name), { withFileTypes: true })
+        .find((child) => child.name === 'index.html');
+      if (index && !index.isFile()) {
+        throw new Error(`Static project index must be a regular file: ${entry.name}`);
+      }
+    }
+  }
+  return entries.filter((entry) => entry.isDirectory());
+};
+
 export const removeStaleProjectHtml = (distDir, slugs = caseStudySlugs) => {
   assertUniqueSlugs(slugs, 'Case-study source');
   assertSafeSlugs(slugs);
@@ -117,8 +134,8 @@ export const removeStaleProjectHtml = (distDir, slugs = caseStudySlugs) => {
   const projectDirectory = path.join(distDir, 'project');
   if (!assertRealProjectDirectory(projectDirectory)) return [];
 
-  const staleSlugs = readdirSync(projectDirectory, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory() && !slugs.includes(entry.name))
+  const staleSlugs = projectOutputDirectories(projectDirectory)
+    .filter((entry) => !slugs.includes(entry.name))
     .flatMap((entry) => {
       const routeDirectory = path.join(projectDirectory, entry.name);
       const generatedIndex = path.join(routeDirectory, 'index.html');
@@ -163,9 +180,8 @@ export const assertSafeStaticOutput = (distDir, routes) => {
 export const assertStaticCaseStudyRoutes = (distDir, slugs = caseStudySlugs) => {
   const projectDirectory = path.join(distDir, 'project');
   const staticSlugs = assertRealProjectDirectory(projectDirectory)
-    ? readdirSync(projectDirectory, { withFileTypes: true })
-      .filter((entry) => entry.isDirectory()
-        && readdirSync(path.join(projectDirectory, entry.name), { withFileTypes: true })
+    ? projectOutputDirectories(projectDirectory)
+      .filter((entry) => readdirSync(path.join(projectDirectory, entry.name), { withFileTypes: true })
           .some((child) => child.name === 'index.html' && child.isFile()))
       .map((entry) => entry.name)
     : [];
