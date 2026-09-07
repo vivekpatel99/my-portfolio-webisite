@@ -1,7 +1,12 @@
 import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
-import { internalAction, internalMutation, mutation } from "./_generated/server";
+import {
+  internalAction,
+  internalMutation,
+  mutation,
+  type MutationCtx,
+} from "./_generated/server";
 import { validateLeadInput } from "./lib/leadValidation";
 
 const RATE_LIMIT_WINDOW_MS = 3_600_000;
@@ -62,6 +67,23 @@ type ContactEmailDependencies = {
   fetch?: typeof fetch;
   logger?: Pick<Console, "error">;
 };
+
+export function insertSubmittedLead(
+  ctx: Pick<MutationCtx, "db">,
+  lead: ReturnType<typeof validateLeadInput>,
+  createdAt: number,
+  emailNotificationUpdatedAt: number,
+) {
+  return ctx.db.insert("leads", {
+    name: lead.name,
+    email: lead.email,
+    budget: lead.budget,
+    description: lead.description,
+    createdAt,
+    emailNotificationStatus: "pending" as const,
+    emailNotificationUpdatedAt,
+  });
+}
 
 function isConvexProduction(env: Record<string, string | undefined>): boolean {
   const cloudUrl = env.CONVEX_CLOUD_URL ?? "";
@@ -194,12 +216,7 @@ export const submitLead = mutation({
       throw new ConvexError("This email already sent several messages recently. Please wait before submitting again.");
     }
 
-    const leadId = await ctx.db.insert("leads", {
-      ...lead,
-      createdAt: Date.now(),
-      emailNotificationStatus: "pending",
-      emailNotificationUpdatedAt: Date.now(),
-    });
+    const leadId = await insertSubmittedLead(ctx, lead, Date.now(), Date.now());
 
     await ctx.scheduler.runAfter(0, internal.leads.sendContactEmail, {
       leadId,
