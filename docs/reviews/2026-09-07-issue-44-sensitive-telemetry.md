@@ -2,7 +2,7 @@
 
 ## Outcome
 
-The contact form now uses one reusable `data-sensitive-telemetry` boundary. The shared telemetry helpers identify events from that boundary, Sentry drops matching UI breadcrumbs and error events, and Replay blocks and ignores the marked DOM subtree while continuing to mask all text, inputs, and media. Telemetry from outside a marked region keeps the existing consent-gated reporting path.
+The contact form now uses one reusable `data-sensitive-telemetry` boundary. The shared telemetry helpers identify events from that boundary, Sentry drops matching UI breadcrumbs and converts marked error sources to a reserved primitive event tag that `beforeSend` drops. The DOM source itself is never passed to Sentry. Replay blocks and ignores the marked DOM subtree while continuing to mask all text, inputs, and media. Telemetry from outside a marked region keeps the existing consent-gated reporting path.
 
 No Gate 3 or Gate 4 component, inquiry context, analytics provider, fingerprinting, session-recording expansion, contact-form redesign, Convex function, or production system was added or changed.
 
@@ -11,12 +11,12 @@ No Gate 3 or Gate 4 component, inquiry context, analytics provider, fingerprinti
 | Check | Result |
 | --- | --- |
 | Baseline `npm test` on remote `main` (`6b73717`) | 19 files, 160 tests passed |
-| Focused telemetry/contact unit tests | 3 files, 24 tests passed |
-| Full `npm test` | 20 files, 164 tests passed |
+| Focused telemetry/contact unit tests | 3 files, 25 tests passed |
+| Full `npm test` | 20 files, 165 tests passed |
 | `npm run build` | Passed; 2,006 modules transformed and eight static routes generated |
 | Local-only SEO | Passed; JSON-LD present and no failing finding |
-| Passive preview Playwright, desktop and mobile | 157 passed, five intentional skips, zero failures |
-| Synthetic privacy browser case | Passed at both browser projects; synthetic name, email, and free text were absent from observed telemetry request bodies, and no Convex mutation occurred |
+| Passive preview Playwright, desktop and mobile | 157 passed, seven intentional skips, zero failures; the fake-transport case is separately enabled only for its loopback run |
+| Fake Sentry transport browser case | Passed locally (desktop): after explicit consent an unrelated synthetic error reached an intercepted `telemetry.invalid` envelope; a marked error plus synthetic name, email, and free text did not; after revocation another synthetic error did not; no Convex mutation occurred |
 | Codex browser, 1280 x 720 | Contact boundary present; synthetic invalid email stayed on-page and produced local validation only |
 | Codex browser, 390 x 844 | Responsive form and validation remained usable; synthetic invalid email stayed on-page and no valid submission was made |
 | `git diff --check` | Passed |
@@ -25,6 +25,6 @@ The browser suite was run with `QA_LOCAL_ONLY=1` and both QA targets set to `htt
 
 ## Remaining manual checks
 
-Before merge, use a controlled non-production Sentry project with a configured DSN to inspect one allowed error outside the contact boundary, confirm a marked interaction produces no breadcrumb or Replay DOM detail, and confirm consent revocation stops later telemetry. The local repository has no Sentry DSN, so the adapter hooks and payload boundary are covered deterministically in unit tests while the passive browser run proves the form marker, synthetic-value handling, and no-submit constraint.
+Before merge, use a controlled non-production Sentry project with a configured DSN to inspect one allowed error outside the contact boundary and confirm a marked interaction produces no Replay DOM detail. The deterministic browser check used a syntactically valid fake DSN only for a local server run; Playwright intercepted and fulfilled every `telemetry.invalid` request, so it made no external telemetry or production request while proving the allowed, blocked, and revoked paths.
 
 Viv retains final manual verification, merge, and deployment authority.

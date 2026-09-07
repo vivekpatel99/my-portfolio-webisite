@@ -2,6 +2,7 @@ import { expect, test } from './qa-test.js';
 
 const convexMutationRequests = [];
 const telemetryRequestBodies = [];
+const fakeSentryHost = 'telemetry.invalid';
 
 const isTelemetryRequest = (request) => /sentry|\/api\/\d+\/(?:envelope|store)/i.test(request.url());
 
@@ -54,6 +55,80 @@ test('keeps synthetic contact values out of telemetry during client-side validat
     expect(body).not.toContain(sentinelDescription);
     expect(body).not.toContain('SENTRY_SENTINEL');
   }
+});
+
+test('fake Sentry transport delivers allowed errors, blocks marked errors, and stays silent after revocation', async ({ page }) => {
+  test.skip(process.env.QA_FAKE_SENTRY !== '1', 'requires the local fake-Sentry QA server mode');
+
+  const envelopeBodies = [];
+  const allowedMarker = 'QA_ALLOWED_TELEMETRY_EVENT';
+  const sensitiveMarker = 'QA_SENSITIVE_TELEMETRY_EVENT';
+  const revokedMarker = 'QA_REVOKED_TELEMETRY_EVENT';
+  const sentinelName = 'SENTRY_SENTINEL_NAME';
+  const sentinelEmail = 'sentry-sentinel@example.invalid';
+  const sentinelDescription = 'SENTRY_SENTINEL_FREE_TEXT';
+
+  await page.route(`https://${fakeSentryHost}/**`, async (route) => {
+    envelopeBodies.push(route.request().postData() ?? '');
+    await route.fulfill({ status: 200, contentType: 'text/plain', body: '' });
+  });
+  await page.evaluate(() => {
+    localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: true }));
+  });
+  await page.reload();
+  await expect(page.getByLabel('Full Name *')).toBeVisible();
+
+  await page.evaluate(async (marker) => {
+    const telemetryUrl = performance.getEntriesByType('resource')
+      .map((entry) => entry.name)
+      .find((url) => url.includes('/src/lib/sentryTelemetry.js'));
+    if (!telemetryUrl) throw new Error('The app did not load the Sentry telemetry module');
+    const telemetry = await import(telemetryUrl);
+    await telemetry.initializeSentryTelemetry();
+    telemetry.captureException(new Error(marker));
+  }, allowedMarker);
+  await expect.poll(() => envelopeBodies.join('\n')).toContain(allowedMarker);
+
+  await page.getByLabel('Full Name *').fill(sentinelName);
+  await page.getByLabel('Email Address *').fill(sentinelEmail);
+  await page.getByLabel('Project Description *').fill(sentinelDescription);
+  await page.evaluate(async (marker) => {
+    const telemetryUrl = performance.getEntriesByType('resource')
+      .map((entry) => entry.name)
+      .find((url) => url.includes('/src/lib/sentryTelemetry.js'));
+    if (!telemetryUrl) throw new Error('The app did not load the Sentry telemetry module');
+    const telemetry = await import(telemetryUrl);
+    telemetry.captureException(new Error(marker), {
+      telemetrySource: document.querySelector('form[data-sensitive-telemetry]'),
+    });
+  }, sensitiveMarker);
+  await page.waitForTimeout(500);
+
+  expect(envelopeBodies.join('\n')).not.toContain(sensitiveMarker);
+  expect(envelopeBodies.join('\n')).not.toContain(sentinelName);
+  expect(envelopeBodies.join('\n')).not.toContain(sentinelEmail);
+  expect(envelopeBodies.join('\n')).not.toContain(sentinelDescription);
+  expect(convexMutationRequests).toEqual([]);
+
+  await page.evaluate(() => {
+    localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false }));
+    window.dispatchEvent(new StorageEvent('storage', { key: 'cookie_consent_preferences' }));
+  });
+  await page.waitForTimeout(200);
+  const envelopeCountAfterRevocation = envelopeBodies.length;
+  await page.evaluate(async (marker) => {
+    const telemetryUrl = performance.getEntriesByType('resource')
+      .map((entry) => entry.name)
+      .find((url) => url.includes('/src/lib/sentryTelemetry.js'));
+    if (!telemetryUrl) throw new Error('The app did not load the Sentry telemetry module');
+    const telemetry = await import(telemetryUrl);
+    telemetry.captureException(new Error(marker));
+  }, revokedMarker);
+  await page.waitForTimeout(500);
+
+  expect(envelopeBodies).toHaveLength(envelopeCountAfterRevocation);
+  expect(envelopeBodies.join('\n')).not.toContain(revokedMarker);
+  expect(convexMutationRequests).toEqual([]);
 });
 
 test('empty submit shows custom missing-fields validation without Convex mutation', async ({ page }) => {

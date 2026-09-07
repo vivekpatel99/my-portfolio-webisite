@@ -1,6 +1,10 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { SENSITIVE_TELEMETRY_SELECTOR } from './sensitiveTelemetry';
+import {
+  SENSITIVE_TELEMETRY_SELECTOR,
+  SENSITIVE_TELEMETRY_TAG,
+  SENSITIVE_TELEMETRY_TAG_VALUE,
+} from './sensitiveTelemetry';
 
 vi.mock('@/lib/convexClient', () => ({ convexDeploymentOrigin: 'https://test.convex.cloud' }));
 
@@ -8,6 +12,7 @@ let release;
 let sdk;
 let close;
 let load;
+let scope;
 
 beforeEach(() => {
   vi.resetModules();
@@ -15,11 +20,13 @@ beforeEach(() => {
   vi.stubEnv('VITE_SENTRY_DSN', 'test-dsn');
   const gate = new Promise((resolve) => { release = resolve; });
   close = vi.fn();
+  scope = { setTag: vi.fn() };
   sdk = {
     init: vi.fn(),
     browserTracingIntegration: vi.fn(() => 'tracing'),
     replayIntegration: vi.fn(() => 'replay'),
     getCurrentHub: () => ({ getClient: () => ({ close }) }),
+    withScope: vi.fn((callback) => callback(scope)),
     captureException: vi.fn(),
   };
   load = vi.fn(async () => { await gate; return sdk; });
@@ -76,7 +83,7 @@ describe('deferred Sentry SDK', () => {
     expect(sdk.captureException).toHaveBeenCalledTimes(1);
   });
 
-  it('drops UI breadcrumbs and exception reports originating in a marked region', async () => {
+  it('drops UI breadcrumbs and tagged error events originating in a marked region', async () => {
     const telemetry = await import('./sentryTelemetry');
     const markedRegion = {
       matches: vi.fn((selector) => selector === SENSITIVE_TELEMETRY_SELECTOR),
@@ -92,12 +99,18 @@ describe('deferred Sentry SDK', () => {
     expect(options.beforeBreadcrumb({ category: 'ui.click' }, { event: { target } })).toBeNull();
     expect(options.beforeBreadcrumb({ category: 'ui.click' }, { event: { target: {} } })).toEqual({ category: 'ui.click' });
     expect(options.beforeBreadcrumb({ category: 'fetch' }, { event: { target } })).toEqual({ category: 'fetch' });
-    expect(options.beforeSend({ message: 'synthetic form error' }, { telemetrySource: target })).toBeNull();
-    expect(options.beforeSend({ message: 'synthetic background error' }, { source: 'background-task' }))
-      .toEqual({ message: 'synthetic background error' });
+    expect(options.beforeSend({
+      message: 'synthetic form error',
+      tags: { [SENSITIVE_TELEMETRY_TAG]: SENSITIVE_TELEMETRY_TAG_VALUE },
+    })).toBeNull();
+    expect(options.beforeSend({ message: 'synthetic background error', tags: {} }))
+      .toEqual({ message: 'synthetic background error', tags: {} });
 
-    telemetry.captureException(new Error('synthetic contact error'), { telemetrySource: target });
-    expect(sdk.captureException).not.toHaveBeenCalled();
+    const sensitiveError = new Error('synthetic contact error');
+    telemetry.captureException(sensitiveError, { telemetrySource: target });
+    expect(sdk.withScope).toHaveBeenCalledTimes(1);
+    expect(scope.setTag).toHaveBeenCalledWith(SENSITIVE_TELEMETRY_TAG, SENSITIVE_TELEMETRY_TAG_VALUE);
+    expect(sdk.captureException).toHaveBeenCalledWith(sensitiveError, undefined);
 
     const unrelatedError = new Error('synthetic unrelated error');
     telemetry.captureException(unrelatedError, { source: 'background-task' });
