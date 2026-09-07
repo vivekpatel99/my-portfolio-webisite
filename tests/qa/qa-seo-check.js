@@ -1,9 +1,11 @@
 import { execFileSync } from 'child_process';
 import { readFileSync, existsSync } from 'fs';
 import path from 'path';
+import { resolveLoopbackRedirectUrl, resolveQaTargets } from './qa-local-only.js';
 
 const PREVIEW = process.env.QA_PREVIEW_URL ?? 'http://127.0.0.1:3000';
 const PROD = process.env.QA_PROD_URL ?? 'https://www.vivekapatel.com';
+const localOnly = process.env.QA_LOCAL_ONLY === '1';
 
 const findings = [];
 const expectedRoutes = [
@@ -62,6 +64,37 @@ function fetchHead(url) {
   }
 }
 
+function fetchLocalHead(url) {
+  try {
+    let currentURL = url;
+    for (let redirectCount = 0; redirectCount < 10; redirectCount += 1) {
+      const headers = execFileSync('curl', [
+        '--silent', '--show-error', '--dump-header', '-', '--output', '/dev/null', '--max-redirs', '0', currentURL,
+      ], { encoding: 'utf8', timeout: 15000 });
+      const status = Number(headers.match(/^HTTP\/\S+\s+(\d{3})\b/m)?.[1]);
+      const location = headers.match(/^location:\s*(.+)\s*$/im)?.[1];
+
+      if (status >= 300 && status < 400 && location) {
+        currentURL = resolveLoopbackRedirectUrl(currentURL, location);
+        continue;
+      }
+
+      const html = execFileSync('curl', ['--fail', '--silent', '--show-error', currentURL], {
+        encoding: 'utf8',
+        timeout: 15000,
+      });
+      return html.match(/<head[^>]*>([\s\S]*?)<\/head>/i)?.[1] || '';
+    }
+  } catch (e) {
+    if (e instanceof Error && e.message.startsWith('QA_LOCAL_ONLY requires')) {
+      throw e;
+    }
+    return '';
+  }
+
+  return '';
+}
+
 function getMeta(head, name) {
   const patterns = [
     new RegExp(`<meta[^>]+name=["']${name}["'][^>]+content=["']([^"']+)`, 'i'),
@@ -100,14 +133,11 @@ function getAlternateLinks(head) {
   return alternates;
 }
 
-for (const [env, base] of [
-  ['preview', PREVIEW],
-  ['prod', PROD],
-]) {
+for (const [env, base] of resolveQaTargets({ localOnly, previewURL: PREVIEW, prodURL: PROD })) {
   for (const routeConfig of expectedRoutes) {
     const { route, path: pathSuffix, canonical: expectedCanonical, title: expectedTitle } = routeConfig;
     const url = `${base}${previewPath(pathSuffix)}`;
-    const head = fetchHead(url);
+    const head = localOnly ? fetchLocalHead(url) : fetchHead(url);
     if (!head) {
       findings.push({ env, route, issue: 'Failed to fetch page', severity: 'P0' });
       continue;
