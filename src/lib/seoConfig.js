@@ -1,4 +1,4 @@
-import { caseStudies } from '../data/caseStudies.js';
+import { caseStudySlugs, getCaseStudyBySlug } from '../data/caseStudies.js';
 
 export const SITE_URL = 'https://www.vivekapatel.com';
 export const SITE_NAME = 'Vivek Patel';
@@ -62,17 +62,20 @@ export const routeSeo = {
     image: DEFAULT_OG_IMAGE_PATH,
   },
   ...Object.fromEntries(
-    caseStudies.map((caseStudy) => [
-      `/project/${caseStudy.slug}`,
-      {
-        title: `${caseStudy.title} | AI Case Study - Vivek Patel`,
-        description: caseStudy.summary,
-        keywords: `${caseStudy.title}, ${caseStudy.category}, case study, Vivek Patel, AI automation, computer vision, data extraction`,
-        path: `/project/${caseStudy.slug}`,
-        type: 'article',
-        image: DEFAULT_OG_IMAGE_PATH,
-      },
-    ]),
+    caseStudySlugs.map((slug) => {
+      const caseStudy = getCaseStudyBySlug(slug);
+      return [
+        `/project/${slug}`,
+        {
+          title: `${caseStudy.title} | AI Case Study - Vivek Patel`,
+          description: caseStudy.summary,
+          keywords: `${caseStudy.title}, ${caseStudy.category}, case study, Vivek Patel, AI automation, computer vision, data extraction`,
+          path: `/project/${slug}`,
+          type: 'article',
+          image: DEFAULT_OG_IMAGE_PATH,
+        },
+      ];
+    }),
   ),
 };
 

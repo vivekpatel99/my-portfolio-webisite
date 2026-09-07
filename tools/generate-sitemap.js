@@ -1,6 +1,7 @@
 import { execFileSync } from 'child_process';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { absoluteUrl, routeSeo } from '../src/lib/seoConfig.js';
+import { assertCaseStudyRouteSources, assertSitemapCaseStudyRoutes } from './case-study-route-integrity.js';
 
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -50,6 +51,8 @@ const priorityForRoute = (route) => {
     return '0.50';
 };
 
+assertCaseStudyRouteSources({ htaccess: readFileSync('public/.htaccess', 'utf8') });
+
 const allPages = Object.keys(routeSeo).map((route) => ({
     loc: absoluteUrl(routeSeo[route].path ?? route),
     lastmod,
@@ -69,6 +72,8 @@ ${allPages
     .join('\n')}
 </urlset>
 `;
+
+assertSitemapCaseStudyRoutes(sitemap);
 
 try {
     writeFileSync('public/sitemap.xml', sitemap);
