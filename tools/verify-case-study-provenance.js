@@ -6,7 +6,9 @@ import { fileURLToPath } from 'node:url';
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const DEFAULT_MANIFEST_PATH = path.join(repositoryRoot, 'provenance/case-study-assets.json');
 export const CASE_STUDY_DIRECTORY = 'public/assets/case-studies';
+const identifyingWebpChunks = ['EXIF', 'XMP ', 'ICCP'];
 const identifyingMp4Atoms = ['©nam', '©cmt', '©cpy', 'titl', 'desc', 'loci', '©xyz', 'gps '];
+const nonessentialMp4MetadataMarkers = ['Lavf', 'Lavc', 'libx264', 'VideoHandler'];
 
 function issue(errors, message) {
   errors.push(message);
@@ -27,7 +29,7 @@ export function readManifest(manifestPath = DEFAULT_MANIFEST_PATH) {
   return JSON.parse(readFileSync(manifestPath, 'utf8'));
 }
 
-export function inspectAssetMetadata(assetPath, buffer, expectation) {
+export function inspectAssetMetadata(assetPath, buffer, expectation, approvalStatus = 'unresolved') {
   const errors = [];
   if (expectation?.container === 'webp') {
     if (buffer.subarray(0, 4).toString('ascii') !== 'RIFF' || buffer.subarray(8, 12).toString('ascii') !== 'WEBP') {
@@ -42,7 +44,7 @@ export function inspectAssetMetadata(assetPath, buffer, expectation) {
       offset += 8 + size + (size % 2);
     }
     if (chunks.join('|') !== expectation.chunks.join('|')) issue(errors, `${assetPath}: WebP chunks must be exactly ${expectation.chunks.join(', ')}, found ${chunks.join(', ') || 'none'}`);
-    for (const chunk of expectation.forbiddenChunks ?? []) {
+    for (const chunk of identifyingWebpChunks) {
       if (chunks.includes(chunk)) issue(errors, `${assetPath}: embedded identifying metadata chunk ${chunk} is prohibited`);
     }
     return errors;
@@ -55,11 +57,13 @@ export function inspectAssetMetadata(assetPath, buffer, expectation) {
     for (const brand of expectation.brands ?? []) {
       if (!text.includes(brand)) issue(errors, `${assetPath}: expected MP4 brand ${brand}`);
     }
-    for (const value of expectation.requiredText ?? []) {
-      if (!text.includes(value)) issue(errors, `${assetPath}: expected MP4 encoder/handler marker ${value}`);
-    }
     for (const atom of identifyingMp4Atoms) {
       if (text.includes(atom)) issue(errors, `${assetPath}: embedded identifying metadata atom ${atom} is prohibited`);
+    }
+    if (approvalStatus === 'approved') {
+      for (const marker of nonessentialMp4MetadataMarkers) {
+        if (text.includes(marker)) issue(errors, `${assetPath}: approved derivatives must omit unnecessary embedded metadata marker ${marker}`);
+      }
     }
     return errors;
   }
@@ -78,6 +82,28 @@ function isExactKaggleSourceUrl(value, owner) {
   }
 }
 
+function isHttpsUrl(value) {
+  try {
+    return new URL(value).protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+function isIsoDateTime(value) {
+  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/.test(value) && !Number.isNaN(Date.parse(value));
+}
+
+function hasPinnedUpstreamEvidence(upstream) {
+  if (!/^[a-f0-9]{40}$/.test(upstream?.commit ?? '') || !/^[a-f0-9]{64}$/.test(upstream?.sha256 ?? '')) return false;
+  try {
+    const url = new URL(upstream.url);
+    return url.protocol === 'https:' && url.hostname === 'github.com' && url.pathname.includes(`/blob/${upstream.commit}/`);
+  } catch {
+    return false;
+  }
+}
+
 function validateEntry(entry, errors) {
   const label = entry.path || '<missing path>';
   if (entry.evidenceRole !== 'demonstration') issue(errors, `${label}: evidenceRole must be demonstration`);
@@ -88,15 +114,20 @@ function validateEntry(entry, errors) {
 
   const kaggle = entry.kaggle ?? {};
   if (entry.provenanceStatus !== 'confirmed') issue(errors, `${label}: approved entries require confirmed provenance`);
+  if (entry.provenanceConfidence !== 'high') issue(errors, `${label}: approved entries require high-confidence provenance`);
+  if (typeof entry.sourceMappingEvidence !== 'string' || !entry.sourceMappingEvidence.trim()) issue(errors, `${label}: approved entries require source-mapping evidence`);
   if (entry.licenseCompatibility !== 'compatible') issue(errors, `${label}: approved entries require compatible public-display and transformed-redistribution terms`);
   if (!isExactKaggleSourceUrl(kaggle.datasetUrl, kaggle.owner)) issue(errors, `${label}: approved entries require an exact Kaggle dataset or notebook URL matching its owner`);
   if (typeof kaggle.owner !== 'string' || !kaggle.owner) issue(errors, `${label}: approved entries require a Kaggle owner`);
-  if (typeof kaggle.license?.label !== 'string' || !kaggle.license.label || !Array.isArray(kaggle.license.urls) || kaggle.license.urls.length === 0 || kaggle.license.urls.some((url) => !/^https:\/\//.test(url))) issue(errors, `${label}: approved entries require an explicit license and license URL`);
-  if (typeof entry.attribution !== 'string' || !entry.attribution) issue(errors, `${label}: approved entries require attribution`);
-  if (!Array.isArray(entry.transformationHistory) || entry.transformationHistory.length === 0) issue(errors, `${label}: approved entries require transformationHistory`);
-  if ((typeof entry.downloadedAt !== 'string' || !entry.downloadedAt) && (typeof entry.downloadedAtReason !== 'string' || !entry.downloadedAtReason)) issue(errors, `${label}: approved entries require a source download date or explicit unknown-date reason`);
-  if (typeof kaggle.exactDatasetFileVersion !== 'string' || !kaggle.exactDatasetFileVersion) issue(errors, `${label}: approved entries require an exact dataset file or version`);
-  if (typeof entry.approval?.approvedBy !== 'string' || !entry.approval.approvedBy || typeof entry.approval?.approvedAt !== 'string' || !entry.approval.approvedAt || typeof entry.approval?.evidence !== 'string' || !entry.approval.evidence) issue(errors, `${label}: approved entries require explicit approval evidence`);
+  if (typeof kaggle.license?.label !== 'string' || !kaggle.license.label.trim() || !Array.isArray(kaggle.license.urls) || kaggle.license.urls.length === 0 || kaggle.license.urls.some((url) => !isHttpsUrl(url))) issue(errors, `${label}: approved entries require an explicit license and valid HTTPS license URL`);
+  if (typeof entry.attribution !== 'string' || !entry.attribution.trim()) issue(errors, `${label}: approved entries require attribution`);
+  if (!Array.isArray(entry.transformationHistory) || entry.transformationHistory.length === 0 || entry.transformationHistory.some((step) => typeof step !== 'string' || !step.trim())) issue(errors, `${label}: approved entries require non-empty transformationHistory steps`);
+  if (entry.downloadedAt !== null && !isIsoDateTime(entry.downloadedAt)) issue(errors, `${label}: approved entries require a valid ISO source download date when supplied`);
+  if (entry.downloadedAt === null && (typeof entry.downloadedAtReason !== 'string' || !entry.downloadedAtReason.trim())) issue(errors, `${label}: approved entries require a source download date or explicit unknown-date reason`);
+  if (typeof kaggle.exactDatasetFileVersion !== 'string' || !kaggle.exactDatasetFileVersion.trim()) issue(errors, `${label}: approved entries require an exact dataset file or version`);
+  if (!hasPinnedUpstreamEvidence(entry.upstream)) issue(errors, `${label}: approved entries require an immutable GitHub blob URL, commit, and SHA-256 evidence`);
+  if (typeof entry.approval?.approvedBy !== 'string' || !entry.approval.approvedBy.trim() || !isIsoDateTime(entry.approval?.approvedAt) || !isHttpsUrl(entry.approval?.evidence)) issue(errors, `${label}: approved entries require an approver, ISO approval date, and HTTPS approval evidence URL`);
+  if (entry.resolutionNeeded != null) issue(errors, `${label}: approved entries must not retain a resolutionNeeded blocker`);
 }
 
 export function verifyCaseStudyProvenance({ root = repositoryRoot, manifest = readManifest(), mode = 'audit' } = {}) {
@@ -119,7 +150,7 @@ export function verifyCaseStudyProvenance({ root = repositoryRoot, manifest = re
     if (buffer.length !== entry.bytes) issue(errors, `${entry.path}: byte length drift (expected ${entry.bytes}, found ${buffer.length})`);
     const digest = createHash('sha256').update(buffer).digest('hex');
     if (digest !== entry.sha256) issue(errors, `${entry.path}: SHA-256 drift (expected ${entry.sha256}, found ${digest})`);
-    errors.push(...inspectAssetMetadata(entry.path, buffer, entry.metadataExpectation));
+    errors.push(...inspectAssetMetadata(entry.path, buffer, entry.metadataExpectation, entry.approvalStatus));
     if (entry.approvalStatus !== 'approved') {
       const message = `${entry.path}: approval is ${entry.approvalStatus} — ${entry.resolutionNeeded}`;
       (mode === 'deploy' ? errors : warnings).push(message);

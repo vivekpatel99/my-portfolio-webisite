@@ -56,7 +56,7 @@
         "sha256": "d754495193bcfd25ebe1c90f03fa039cb89b8f32b0bd3119128b3f5c4f6146b0"
       },
       "derivativeEvidence": "GIF 640x360, 450 frames, about 29.99s to MP4 640x360 H264, 15fps, 450 frames, 30s; SSIM 0.949071. The WebP poster first-frame SSIM is 0.950841. This is comparison evidence, not a reproducible-command claim.",
-      "metadataExpectation": { "container": "mp4", "brands": ["isom", "iso2", "avc1", "mp41"], "requiredText": ["Lavf", "Lavc", "libx264", "VideoHandler"] },
+      "metadataExpectation": { "container": "mp4", "brands": ["isom", "iso2", "avc1", "mp41"], "observedNonessentialText": ["Lavf", "Lavc", "libx264", "VideoHandler"] },
       "kaggle": {
         "sourceUrl": null,
         "sourceCandidateUrl": "https://www.kaggle.com/competitions/dfl-bundesliga-data-shootout/data",
@@ -69,6 +69,7 @@
           "label": "Subject to Competition Rules",
           "urls": [
             "https://www.kaggle.com/competitions/dfl-bundesliga-data-shootout/data",
+            "https://www.kaggle.com/competitions/dfl-bundesliga-data-shootout/rules",
             "https://www.kaggle.com/competitions/dfl-bundesliga-data-shootout/discussion/521384"
           ]
         },
@@ -78,14 +79,14 @@
       "provenanceStatus": "unresolved",
       "provenanceConfidence": "strong-candidate",
       "sourceMappingEvidence": "The exact upstream output embeds the 121364_0 clip stem, which independent mirrors associate with the DFL competition. No primary Kaggle file record or immutable download record proves the mapping.",
-      "licenseCompatibility": "incompatible-if-candidate-confirmed",
+      "licenseCompatibility": "incompatible-if-candidate-confirmed-under-section-b-7",
       "attribution": "Citation only: Deutsche Fußball Liga e.V., DFL Bundesliga Data Shootout competition data page (https://www.kaggle.com/competitions/dfl-bundesliga-data-shootout/data). This does not cure the competition-use restriction.",
       "transformationHistory": ["Converted the upstream 640x360 animated GIF to a 640x360 H.264 MP4 at 15 fps; the exact command and conversion date are not evidenced."],
       "evidenceRole": "demonstration",
       "clientOutcomeEvidence": false,
       "approvalStatus": "unresolved",
       "approval": null,
-      "resolutionNeeded": "Provide the primary Kaggle file/version record for 121364_0 and independent rights proof. If the DFL candidate is confirmed, its published competition rules prohibit later publication, so approve removal or replacement instead."
+      "resolutionNeeded": "Provide the primary Kaggle file/version record for 121364_0 and independent rights proof. If the DFL candidate is confirmed, Competition Rules section B.7, quoted by the competition host in the linked discussion, prohibits later publication, so approve removal or replacement instead."
     },
     {
       "path": "public/assets/case-studies/football-tracking.webp",
@@ -114,6 +115,7 @@
           "label": "Subject to Competition Rules",
           "urls": [
             "https://www.kaggle.com/competitions/dfl-bundesliga-data-shootout/data",
+            "https://www.kaggle.com/competitions/dfl-bundesliga-data-shootout/rules",
             "https://www.kaggle.com/competitions/dfl-bundesliga-data-shootout/discussion/521384"
           ]
         },
@@ -123,14 +125,14 @@
       "provenanceStatus": "unresolved",
       "provenanceConfidence": "strong-candidate",
       "sourceMappingEvidence": "The exact upstream output embeds the 121364_0 clip stem, which independent mirrors associate with the DFL competition. No primary Kaggle file record or immutable download record proves the mapping.",
-      "licenseCompatibility": "incompatible-if-candidate-confirmed",
+      "licenseCompatibility": "incompatible-if-candidate-confirmed-under-section-b-7",
       "attribution": "Citation only: Deutsche Fußball Liga e.V., DFL Bundesliga Data Shootout competition data page (https://www.kaggle.com/competitions/dfl-bundesliga-data-shootout/data). This does not cure the competition-use restriction.",
       "transformationHistory": ["Extracted the first frame of the upstream 640x360 animated GIF and encoded it as a same-size WebP poster; the exact command and conversion date are not evidenced."],
       "evidenceRole": "demonstration",
       "clientOutcomeEvidence": false,
       "approvalStatus": "unresolved",
       "approval": null,
-      "resolutionNeeded": "Provide the primary Kaggle file/version record for 121364_0 and independent rights proof. If the DFL candidate is confirmed, its published competition rules prohibit later publication, so approve removal or replacement instead."
+      "resolutionNeeded": "Provide the primary Kaggle file/version record for 121364_0 and independent rights proof. If the DFL candidate is confirmed, Competition Rules section B.7, quoted by the competition host in the linked discussion, prohibits later publication, so approve removal or replacement instead."
     },
     {
       "path": "public/assets/case-studies/planning-graph.webp",

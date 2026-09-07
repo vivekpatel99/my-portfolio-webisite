@@ -47,6 +47,16 @@ describe('case-study provenance verifier', () => {
       .toMatch(/embedded identifying metadata chunk EXIF/);
   });
 
+  it('keeps identifying WebP metadata prohibitions code-owned when the manifest is tampered with', () => {
+    const original = readFileSync('public/assets/case-studies/invoice-ocr.webp');
+    const injected = Buffer.concat([original, Buffer.from('EXIF\x04\x00\x00\x00name')]);
+    const expectation = manifest().assets[0].metadataExpectation;
+    expectation.chunks.push('EXIF');
+    expectation.forbiddenChunks = [];
+    expect(inspectAssetMetadata('invoice-ocr.webp', injected, expectation).join('\n'))
+      .toMatch(/embedded identifying metadata chunk EXIF/);
+  });
+
   it('fails an embedded identifying MP4 title atom', () => {
     const original = readFileSync('public/assets/case-studies/football-tracking.mp4');
     const injected = Buffer.concat([original, Buffer.from([0xa9, 0x6e, 0x61, 0x6d])]);
@@ -55,17 +65,27 @@ describe('case-study provenance verifier', () => {
       .toMatch(/embedded identifying metadata atom ©nam/);
   });
 
+  it('requires approved MP4 derivatives to omit nonessential encoder metadata', () => {
+    const original = readFileSync('public/assets/case-studies/football-tracking.mp4');
+    const football = manifest().assets.find((entry) => entry.path.endsWith('.mp4'));
+    expect(inspectAssetMetadata('football-tracking.mp4', original, football.metadataExpectation, 'approved').join('\n'))
+      .toMatch(/approved derivatives must omit unnecessary embedded metadata marker Lavf/);
+  });
+
   it('requires complete Kaggle provenance and explicit approval before an entry can be approved', () => {
     const approved = () => {
       const value = manifest();
       const entry = value.assets[0];
       entry.approvalStatus = 'approved';
       entry.provenanceStatus = 'confirmed';
+      entry.provenanceConfidence = 'high';
+      entry.sourceMappingEvidence = 'Pinned upstream derivative and exact Kaggle file/version records match.';
       entry.licenseCompatibility = 'compatible';
       entry.downloadedAt = '2026-08-30T00:00:00Z';
       entry.kaggle.exactDatasetFileVersion = 'source-file.jpg@version-1';
       entry.attribution = 'Dataset attribution recorded.';
-      entry.approval = { approvedBy: 'reviewer', approvedAt: '2026-09-07T00:00:00Z', evidence: 'approval record' };
+      entry.approval = { approvedBy: 'reviewer', approvedAt: '2026-09-07T00:00:00Z', evidence: 'https://github.com/vivekpatel99/my-portfolio-webisite/issues/50#issuecomment-1' };
+      entry.resolutionNeeded = null;
       return value;
     };
     const value = approved();
@@ -77,15 +97,19 @@ describe('case-study provenance verifier', () => {
 
     const requirements = [
       [/confirmed provenance/, (asset) => { asset.provenanceStatus = 'unresolved'; }],
+      [/high-confidence provenance/, (asset) => { asset.provenanceConfidence = 'candidate'; }],
+      [/source-mapping evidence/, (asset) => { asset.sourceMappingEvidence = ''; }],
       [/compatible public-display/, (asset) => { asset.licenseCompatibility = 'incompatible'; }],
       [/exact Kaggle dataset or notebook URL/, (asset) => { asset.kaggle.datasetUrl = 'https://www.kaggle.com/datasets/other/wrong'; }],
       [/Kaggle owner/, (asset) => { asset.kaggle.owner = ''; }],
-      [/explicit license and license URL/, (asset) => { asset.kaggle.license.urls = []; }],
+      [/explicit license and valid HTTPS license URL/, (asset) => { asset.kaggle.license.urls = []; }],
       [/require attribution/, (asset) => { asset.attribution = null; }],
-      [/require transformationHistory/, (asset) => { asset.transformationHistory = []; }],
+      [/require non-empty transformationHistory/, (asset) => { asset.transformationHistory = []; }],
       [/source download date or explicit unknown-date reason/, (asset) => { asset.downloadedAt = null; asset.downloadedAtReason = null; }],
       [/require an exact dataset file or version/, (asset) => { asset.kaggle.exactDatasetFileVersion = null; }],
-      [/require explicit approval evidence/, (asset) => { asset.approval = null; }],
+      [/immutable GitHub blob URL/, (asset) => { asset.upstream.url = asset.upstream.url.replace(`/blob/${asset.upstream.commit}/`, '/blob/main/'); }],
+      [/require an approver, ISO approval date, and HTTPS approval evidence URL/, (asset) => { asset.approval = null; }],
+      [/must not retain a resolutionNeeded blocker/, (asset) => { asset.resolutionNeeded = 'Still blocked.'; }],
     ];
     for (const [message, removeRequirement] of requirements) {
       const invalid = approved();
