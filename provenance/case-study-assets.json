@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 1,
+  "scope": "All files directly under public/assets/case-studies are covered. This record is an evidence inventory, not approval to publish or deploy these assets.",
+  "assets": [
+    {
+      "path": "public/assets/case-studies/invoice-ocr.webp",
+      "sha256": "e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4",
+      "bytes": 140194,
+      "firstPortfolioCommit": {
+        "sha": "0d7ec40ed63d89a07d9f4882bc10fe6e0e513d71",
+        "committedAt": "2026-08-30T09:40:42Z"
+      },
+      "downloadedAt": null,
+      "downloadedAtReason": "Actual download date is unknown.",
+      "upstream": {
+        "url": "https://github.com/vivekpatel99/invoice-data-extraction-using-ocr/blob/f28fd3ccaecb62b49567496d8d69ade33c384a6b/output/original_with_bboxes_demo.jpg",
+        "commit": "f28fd3ccaecb62b49567496d8d69ade33c384a6b",
+        "committedAt": "2025-08-30T07:57:43Z",
+        "sha256": "0136a64ebfd362b28d0b59572b88ebd248d605e88c38b457be2d031b9be64e97"
+      },
+      "derivativeEvidence": "JPEG to WebP; same 1654x2339 dimensions; SSIM 0.998020. This is comparison evidence, not a reproducible-command claim.",
+      "metadataExpectation": { "container": "webp", "chunks": ["VP8 "], "forbiddenChunks": ["EXIF", "XMP ", "ICCP"] },
+      "kaggle": {
+        "datasetUrl": "https://www.kaggle.com/datasets/osamahosamabdellatif/high-quality-invoice-images-for-ocr",
+        "owner": "osamahosamabdellatif",
+        "ownerDisplayName": "osama hosam Abdellatif",
+        "license": {
+          "label": "Database: Open Database, Contents: Database Contents",
+          "urls": ["https://opendatacommons.org/licenses/odbl/1-0/", "https://opendatacommons.org/licenses/dbcl/1-0/"]
+        },
+        "exactDatasetFileVersion": null
+      },
+      "provenanceStatus": "unresolved",
+      "provenanceConfidence": "candidate",
+      "sourceMappingEvidence": "The upstream repository cites this Kaggle dataset, but no dataset file/version record ties the displayed invoice to it.",
+      "licenseCompatibility": "requires-manual-confirmation",
+      "attribution": null,
+      "transformationHistory": ["Converted the upstream 1654x2339 JPEG to a same-size WebP; the exact command and conversion date are not evidenced."],
+      "evidenceRole": "demonstration",
+      "clientOutcomeEvidence": false,
+      "approvalStatus": "unresolved",
+      "approval": null,
+      "resolutionNeeded": "Prove the exact Kaggle dataset file and version lineage, confirm the applicable license manually, record attribution, and obtain explicit approval before deployment."
+    },
+    {
+      "path": "public/assets/case-studies/football-tracking.mp4",
+      "sha256": "e8f90196e5e6edcef0ad11eefb8739f8c16b936217ea84109c33fe4ca7b12369",
+      "bytes": 1399424,
+      "firstPortfolioCommit": { "sha": "0d7ec40ed63d89a07d9f4882bc10fe6e0e513d71", "committedAt": "2026-08-30T09:40:42Z" },
+      "downloadedAt": null,
+      "downloadedAtReason": "Actual download date is unknown.",
+      "upstream": {
+        "url": "https://github.com/vivekpatel99/football-players-tracking-yolo/blob/bf19d2e067657edd3fc914d02b402943a53a8e58/readme-assets/yolov12l_processed_121364_0.gif",
+        "commit": "bf19d2e067657edd3fc914d02b402943a53a8e58",
+        "committedAt": "2025-04-27T16:12:51Z",
+        "sha256": "d754495193bcfd25ebe1c90f03fa039cb89b8f32b0bd3119128b3f5c4f6146b0"
+      },
+      "derivativeEvidence": "GIF 640x360, 450 frames, about 29.99s to MP4 640x360 H264, 15fps, 450 frames, 30s; SSIM 0.949071. The WebP poster first-frame SSIM is 0.950841. This is comparison evidence, not a reproducible-command claim.",
+      "metadataExpectation": { "container": "mp4", "brands": ["isom", "iso2", "avc1", "mp41"], "requiredText": ["Lavf", "Lavc", "libx264", "VideoHandler"] },
+      "kaggle": {
+        "sourceUrl": null,
+        "sourceCandidateUrl": "https://www.kaggle.com/competitions/dfl-bundesliga-data-shootout/data",
+        "sourceKindCandidate": "competition",
+        "datasetUrl": null,
+        "owner": null,
+        "ownerCandidate": "Deutsche Fußball Liga e.V.",
+        "ownerDisplayName": null,
+        "license": {
+          "label": "Subject to Competition Rules",
+          "urls": [
+            "https://www.kaggle.com/competitions/dfl-bundesliga-data-shootout/data",
+            "https://www.kaggle.com/competitions/dfl-bundesliga-data-shootout/discussion/521384"
+          ]
+        },
+        "exactDatasetFileVersion": null,
+        "candidateDatasetFile": "clips/121364_0.mp4"
+      },
+      "provenanceStatus": "unresolved",
+      "provenanceConfidence": "strong-candidate",
+      "sourceMappingEvidence": "The exact upstream output embeds the 121364_0 clip stem, which independent mirrors associate with the DFL competition. No primary Kaggle file record or immutable download record proves the mapping.",
+      "licenseCompatibility": "incompatible-if-candidate-confirmed",
+      "attribution": "Citation only: Deutsche Fußball Liga e.V., DFL Bundesliga Data Shootout competition data page (https://www.kaggle.com/competitions/dfl-bundesliga-data-shootout/data). This does not cure the competition-use restriction.",
+      "transformationHistory": ["Converted the upstream 640x360 animated GIF to a 640x360 H.264 MP4 at 15 fps; the exact command and conversion date are not evidenced."],
+      "evidenceRole": "demonstration",
+      "clientOutcomeEvidence": false,
+      "approvalStatus": "unresolved",
+      "approval": null,
+      "resolutionNeeded": "Provide the primary Kaggle file/version record for 121364_0 and independent rights proof. If the DFL candidate is confirmed, its published competition rules prohibit later publication, so approve removal or replacement instead."
+    },
+    {
+      "path": "public/assets/case-studies/football-tracking.webp",
+      "sha256": "8b16e0d29b7ec6b933a17605fc351e87b00f1e0841db5000d4b4366957530b53",
+      "bytes": 27988,
+      "firstPortfolioCommit": { "sha": "0d7ec40ed63d89a07d9f4882bc10fe6e0e513d71", "committedAt": "2026-08-30T09:40:42Z" },
+      "downloadedAt": null,
+      "downloadedAtReason": "Actual download date is unknown.",
+      "upstream": {
+        "url": "https://github.com/vivekpatel99/football-players-tracking-yolo/blob/bf19d2e067657edd3fc914d02b402943a53a8e58/readme-assets/yolov12l_processed_121364_0.gif",
+        "commit": "bf19d2e067657edd3fc914d02b402943a53a8e58",
+        "committedAt": "2025-04-27T16:12:51Z",
+        "sha256": "d754495193bcfd25ebe1c90f03fa039cb89b8f32b0bd3119128b3f5c4f6146b0"
+      },
+      "derivativeEvidence": "First-frame WebP poster from the GIF; SSIM 0.950841. This is comparison evidence, not a reproducible-command claim.",
+      "metadataExpectation": { "container": "webp", "chunks": ["VP8 "], "forbiddenChunks": ["EXIF", "XMP ", "ICCP"] },
+      "kaggle": {
+        "sourceUrl": null,
+        "sourceCandidateUrl": "https://www.kaggle.com/competitions/dfl-bundesliga-data-shootout/data",
+        "sourceKindCandidate": "competition",
+        "datasetUrl": null,
+        "owner": null,
+        "ownerCandidate": "Deutsche Fußball Liga e.V.",
+        "ownerDisplayName": null,
+        "license": {
+          "label": "Subject to Competition Rules",
+          "urls": [
+            "https://www.kaggle.com/competitions/dfl-bundesliga-data-shootout/data",
+            "https://www.kaggle.com/competitions/dfl-bundesliga-data-shootout/discussion/521384"
+          ]
+        },
+        "exactDatasetFileVersion": null,
+        "candidateDatasetFile": "clips/121364_0.mp4"
+      },
+      "provenanceStatus": "unresolved",
+      "provenanceConfidence": "strong-candidate",
+      "sourceMappingEvidence": "The exact upstream output embeds the 121364_0 clip stem, which independent mirrors associate with the DFL competition. No primary Kaggle file record or immutable download record proves the mapping.",
+      "licenseCompatibility": "incompatible-if-candidate-confirmed",
+      "attribution": "Citation only: Deutsche Fußball Liga e.V., DFL Bundesliga Data Shootout competition data page (https://www.kaggle.com/competitions/dfl-bundesliga-data-shootout/data). This does not cure the competition-use restriction.",
+      "transformationHistory": ["Extracted the first frame of the upstream 640x360 animated GIF and encoded it as a same-size WebP poster; the exact command and conversion date are not evidenced."],
+      "evidenceRole": "demonstration",
+      "clientOutcomeEvidence": false,
+      "approvalStatus": "unresolved",
+      "approval": null,
+      "resolutionNeeded": "Provide the primary Kaggle file/version record for 121364_0 and independent rights proof. If the DFL candidate is confirmed, its published competition rules prohibit later publication, so approve removal or replacement instead."
+    },
+    {
+      "path": "public/assets/case-studies/planning-graph.webp",
+      "sha256": "483e16b2c3afb3bf6273821ce09d831d07ae5a00ffce8c2b8e24b202062e41a8",
+      "bytes": 14406,
+      "firstPortfolioCommit": { "sha": "0d7ec40ed63d89a07d9f4882bc10fe6e0e513d71", "committedAt": "2026-08-30T09:40:42Z" },
+      "downloadedAt": null,
+      "downloadedAtReason": "Actual download date is unknown.",
+      "upstream": {
+        "url": "https://github.com/vivekpatel99/project-planning-genie/blob/980f2e5a6f9445f1d0390934cc900169c57bc7e3/assets/final_graph.png",
+        "commit": "980f2e5a6f9445f1d0390934cc900169c57bc7e3",
+        "committedAt": "2025-08-13T10:55:41Z",
+        "sha256": "b7314a6d3a3ef647599d0aff92fdc50b43634b0dab3104db0201b767eefe71c1"
+      },
+      "derivativeEvidence": "PNG to WebP; same 546x958 dimensions; SSIM 0.995759. This is comparison evidence, not a reproducible-command claim.",
+      "metadataExpectation": { "container": "webp", "chunks": ["VP8 "], "forbiddenChunks": ["EXIF", "XMP ", "ICCP"] },
+      "kaggle": { "datasetUrl": null, "owner": null, "ownerDisplayName": null, "license": null, "exactDatasetFileVersion": null },
+      "provenanceStatus": "unresolved",
+      "provenanceConfidence": "none",
+      "sourceMappingEvidence": "The upstream repository identifies this as a generated architecture graph and provides no Kaggle dataset or notebook mapping.",
+      "licenseCompatibility": "unresolved",
+      "attribution": null,
+      "transformationHistory": ["Converted the upstream 546x958 PNG to a same-size WebP; the exact command and conversion date are not evidenced."],
+      "evidenceRole": "demonstration",
+      "clientOutcomeEvidence": false,
+      "approvalStatus": "unresolved",
+      "approval": null,
+      "resolutionNeeded": "Resolve provenance for this generated architecture graph; no Kaggle dataset or notebook mapping is evidenced. Record source, license, attribution, transformations, and explicit approval before deployment."
+    },
+    {
+      "path": "public/assets/case-studies/yoga-pose.webp",
+      "sha256": "a1c141cdaa34086f779a22bbc54861dd5a0b6bd6c956df38456a3313983c2c0c",
+      "bytes": 33234,
+      "firstPortfolioCommit": { "sha": "0d7ec40ed63d89a07d9f4882bc10fe6e0e513d71", "committedAt": "2026-08-30T09:40:42Z" },
+      "downloadedAt": null,
+      "downloadedAtReason": "Actual download date is unknown.",
+      "upstream": {
+        "url": "https://github.com/vivekpatel99/yoga-pose-estimation/blob/17b3a13651f76ed91bb802fa34fbaef38f7e0080/assets/demo.gif",
+        "commit": "17b3a13651f76ed91bb802fa34fbaef38f7e0080",
+        "committedAt": "2025-08-31T09:06:01Z",
+        "sha256": "1a55ca1bc6fc67da3a17475f5ee1707a569c3da40465ea2c395bcf2d705c2c66"
+      },
+      "derivativeEvidence": "Local WebP is a 960x720 upscale and first-frame derivative of a 640x480, six-frame GIF; first-frame SSIM 0.975029. This is comparison evidence, not a reproducible-command claim.",
+      "metadataExpectation": { "container": "webp", "chunks": ["VP8 "], "forbiddenChunks": ["EXIF", "XMP ", "ICCP"] },
+      "kaggle": { "datasetUrl": null, "owner": null, "ownerDisplayName": null, "license": null, "exactDatasetFileVersion": null },
+      "provenanceStatus": "unresolved",
+      "provenanceConfidence": "none",
+      "sourceMappingEvidence": "The upstream repository names a Roboflow dataset rather than a Kaggle source, and does not tie that dataset to this rendered demo.",
+      "licenseCompatibility": "unresolved",
+      "attribution": null,
+      "transformationHistory": ["Extracted the first frame of the upstream six-frame GIF, resized it from 640x480 to 960x720, and encoded it as WebP; the exact command and conversion date are not evidenced."],
+      "evidenceRole": "demonstration",
+      "clientOutcomeEvidence": false,
+      "approvalStatus": "unresolved",
+      "approval": null,
+      "resolutionNeeded": "Resolve the source mapping; the upstream README names a Roboflow dataset, but its relationship to this rendered demo is unproven. Record source, license, attribution, transformations, and explicit approval before deployment."
+    }
+  ]
+}
