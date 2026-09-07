@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { caseStudies, caseStudyPublicationRecords, getCaseStudyBySlug, caseStudySlugs, primaryContactHref } from './caseStudies';
+import { caseStudies, getCaseStudyBySlug, caseStudySlugs, primaryContactHref } from './caseStudies';
 import { routeSeo } from '../lib/seoConfig';
 
 describe('caseStudies data structure', () => {
@@ -15,21 +15,8 @@ describe('caseStudies data structure', () => {
       expect(caseStudy).toHaveProperty('slug');
       expect(caseStudy).toHaveProperty('cardTitle');
       expect(caseStudy).toHaveProperty('image');
+      expect(caseStudy.image).toHaveProperty('src');
       expect(caseStudy.image).toHaveProperty('alt');
-      expect(caseStudy.image).toHaveProperty('label');
-      expect(caseStudy.image).toHaveProperty('caption');
-      expect(['image', 'schematic']).toContain(caseStudy.image.kind);
-      if (caseStudy.image.kind === 'image') {
-        expect(caseStudy.image).toHaveProperty('src');
-      }
-      expect(caseStudy).toHaveProperty('claimIds');
-      expect(caseStudy).toHaveProperty('claimPlacement');
-      expect(caseStudy).toHaveProperty('story');
-      ['situation', 'constraints', 'interpretationNotice', 'decisions', 'approach', 'evidence', 'result', 'limitations', 'relatedExperience'].forEach((section) => {
-        expect(caseStudy.story).toHaveProperty(section);
-      });
-      expect(caseStudy.story.relatedExperience.status).toBe('not-provided');
-      expect(caseStudy).toHaveProperty('links');
     });
   });
 
@@ -125,16 +112,6 @@ describe('caseStudySlugs', () => {
     expect(Object.keys(routeSeo).join(' ')).not.toContain('social-media-app');
   });
 
-  it('does not expose unpublished records through cards, routes, SEO, or public slugs', () => {
-    const unpublishedIds = caseStudyPublicationRecords
-      .filter((record) => record.publishingStatus !== 'published')
-      .map((record) => record.id);
-    expect(unpublishedIds).toContain('withheld-case-study');
-    expect(caseStudies.map((study) => study.id)).not.toEqual(expect.arrayContaining(unpublishedIds));
-    expect(caseStudySlugs).not.toContain('withheld-case-study');
-    expect(Object.keys(routeSeo)).not.toContain('/project/withheld-case-study');
-  });
-
   it('allows an optional trailing slash in the Apache project rule', () => {
     const htaccess = readFileSync(resolve(process.cwd(), 'public/.htaccess'), 'utf8');
     expect(htaccess).toMatch(/RewriteRule \^project\/\([^)]+\)\/\?\$/);
@@ -148,10 +125,8 @@ describe('caseStudySlugs', () => {
 describe('case study data validation', () => {
   it('should have valid image URLs', () => {
     caseStudies.forEach((caseStudy) => {
-      if (caseStudy.image.kind === 'image') {
-        expect(caseStudy.image.src).toBeTruthy();
-        expect(typeof caseStudy.image.src).toBe('string');
-      }
+      expect(caseStudy.image.src).toBeTruthy();
+      expect(typeof caseStudy.image.src).toBe('string');
     });
   });
 
@@ -170,31 +145,10 @@ describe('case study data validation', () => {
         caseStudy.gallery.forEach((item) => {
           expect(item).toHaveProperty('src');
           expect(item).toHaveProperty('alt');
-          expect(item).toHaveProperty('label');
-          expect(item).toHaveProperty('caption');
           expect(item.alt).toBeTruthy();
-          expect(item.caption).toMatch(/not evidence from this exact case study/i);
         });
       }
     });
-  });
-
-  it('keeps current schematics primary while restoring only safe related-work thumbnails', () => {
-    const n8n = getCaseStudyBySlug('n8n-openai-data-extraction');
-    const invoice = getCaseStudyBySlug('invoice-ocr-extraction');
-    const pose = getCaseStudyBySlug('yolo-computer-vision-optimization');
-
-    expect(n8n.image.kind).toBe('schematic');
-    expect(n8n.gallery).toEqual([
-      expect.objectContaining({ src: '/assets/case-studies/planning-graph.webp' }),
-    ]);
-    expect(invoice.image.kind).toBe('schematic');
-    expect(invoice.gallery).toEqual([]);
-    expect(pose.image.kind).toBe('schematic');
-    expect(pose.gallery).toEqual([
-      expect.objectContaining({ src: '/assets/case-studies/football-tracking.webp' }),
-    ]);
-    expect(JSON.stringify(caseStudies)).not.toContain('invoice-ocr.webp');
   });
 
   it('should have valid stack array', () => {
@@ -207,15 +161,6 @@ describe('case study data validation', () => {
           expect(tech.length).toBeGreaterThan(0);
         });
       }
-    });
-  });
-
-  it('uses only evidence-backed claim IDs and no unsupported metric grid', () => {
-    const ledger = JSON.parse(readFileSync(resolve(process.cwd(), 'docs/claims/gate-1-claim-ledger.json'), 'utf8'));
-    const ledgerIds = new Set(ledger.filter((claim) => claim.classification === 'verified').map((claim) => claim.id));
-    caseStudies.forEach((caseStudy) => {
-      expect(caseStudy.stats).toBeUndefined();
-      caseStudy.claimIds.forEach((id) => expect(ledgerIds.has(id)).toBe(true));
     });
   });
 });

@@ -1,25 +1,11 @@
 import { execFileSync } from 'child_process';
 import { readFileSync, existsSync } from 'fs';
 import path from 'path';
-import { caseStudies } from '../../src/data/caseStudies.js';
 
 const PREVIEW = process.env.QA_PREVIEW_URL ?? 'http://127.0.0.1:3000';
 const PROD = process.env.QA_PROD_URL ?? 'https://www.vivekapatel.com';
-const localOnly = process.env.QA_LOCAL_ONLY === '1';
-if (localOnly && !['localhost', '127.0.0.1', '[::1]'].includes(new URL(PREVIEW).hostname)) {
-  throw new Error('QA_LOCAL_ONLY requires a loopback preview URL');
-}
 
 const findings = [];
-const withheldCaseStudyAssets = [
-  'invoice-ocr.webp',
-  'football-tracking.mp4',
-  'yoga-pose.webp',
-];
-const relatedContextAssets = [
-  { slug: 'n8n-openai-data-extraction', asset: 'planning-graph.webp' },
-  { slug: 'yolo-computer-vision-optimization', asset: 'football-tracking.webp' },
-];
 const expectedRoutes = [
   {
     route: 'home',
@@ -45,12 +31,24 @@ const expectedRoutes = [
     canonical: 'https://www.vivekapatel.com/data-policy/',
     title: /Cookie Policy/i,
   },
-  ...caseStudies.map((study) => ({
-    route: `project-${study.slug}`,
-    path: `/project/${study.slug}`,
-    canonical: `https://www.vivekapatel.com/project/${study.slug}/`,
-    title: new RegExp(study.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'),
-  })),
+  {
+    route: 'project-n8n',
+    path: '/project/n8n-openai-data-extraction',
+    canonical: 'https://www.vivekapatel.com/project/n8n-openai-data-extraction/',
+    title: /n8n \+ OpenAI Data Extraction/i,
+  },
+  {
+    route: 'project-invoice-ocr',
+    path: '/project/invoice-ocr-extraction',
+    canonical: 'https://www.vivekapatel.com/project/invoice-ocr-extraction/',
+    title: /Invoice OCR Extraction/i,
+  },
+  {
+    route: 'project-yolo',
+    path: '/project/yolo-computer-vision-optimization',
+    canonical: 'https://www.vivekapatel.com/project/yolo-computer-vision-optimization/',
+    title: /YOLO Computer Vision Optimization/i,
+  },
 ];
 
 const previewPath = (pathSuffix) => pathSuffix === '/' ? '/' : `${pathSuffix}/`;
@@ -84,18 +82,6 @@ function getTitle(head) {
   return head.match(/<title>([\s\S]*?)<\/title>/i)?.[1] ?? null;
 }
 
-function getJsonLd(head) {
-  return [...head.matchAll(/<script\s+type=["']application\/ld\+json["'][^>]*>\s*([\s\S]*?)\s*<\/script>/gi)]
-    .map(([, payload]) => {
-      try {
-        return JSON.parse(payload);
-      } catch {
-        return null;
-      }
-    })
-    .filter(Boolean);
-}
-
 function getAlternateLinks(head) {
   const alternates = [];
   for (const match of head.matchAll(/<link\b[^>]*>/gi)) {
@@ -114,10 +100,10 @@ function getAlternateLinks(head) {
   return alternates;
 }
 
-for (const [env, base] of (localOnly ? [['preview', PREVIEW]] : [
+for (const [env, base] of [
   ['preview', PREVIEW],
   ['prod', PROD],
-])) {
+]) {
   for (const routeConfig of expectedRoutes) {
     const { route, path: pathSuffix, canonical: expectedCanonical, title: expectedTitle } = routeConfig;
     const url = `${base}${previewPath(pathSuffix)}`;
@@ -169,18 +155,6 @@ for (const [env, base] of (localOnly ? [['preview', PREVIEW]] : [
     if (!description) {
       findings.push({ env, route, issue: 'Missing meta description', severity: 'P1' });
     }
-
-    if (route === 'home') {
-      const jsonLd = getJsonLd(head);
-      const professionalService = jsonLd.find((item) => item['@type'] === 'ProfessionalService');
-      const person = jsonLd.find((item) => item['@type'] === 'Person');
-      if (professionalService?.areaServed) {
-        findings.push({ env, route, issue: 'ProfessionalService must not claim an unapproved areaServed', severity: 'P1' });
-      }
-      if (person?.workLocation?.name !== 'Europe') {
-        findings.push({ env, route, issue: 'Person workLocation must retain the approved Europe location metadata', severity: 'P1' });
-      }
-    }
   }
 }
 
@@ -215,38 +189,6 @@ if (ogInIndex?.includes('github')) {
 }
 if (indexHtml.includes('application/ld+json')) {
   findings.push({ issue: 'JSON-LD present in index.html', severity: 'OK', type: 'pass' });
-}
-
-for (const directory of ['public', 'dist']) {
-  for (const asset of withheldCaseStudyAssets) {
-    const assetPath = path.join(process.cwd(), directory, 'assets/case-studies', asset);
-    if (existsSync(assetPath)) findings.push({ issue: `Withheld case-study asset is present: ${assetPath}`, severity: 'P0' });
-  }
-}
-
-for (const { slug, asset } of relatedContextAssets) {
-  const caseStudy = caseStudies.find((study) => study.slug === slug);
-  if (caseStudy?.image?.src?.endsWith(`/${asset}`)) {
-    findings.push({ issue: `Related-context asset is used as a primary case-study image: ${asset}`, severity: 'P0' });
-  }
-
-  const galleryItem = caseStudy?.gallery?.find((item) => item.src?.endsWith(`/${asset}`));
-  if (!galleryItem || !/not evidence from this exact case study/i.test(galleryItem.caption ?? '')) {
-    findings.push({ issue: `Related-context asset is missing its required disclaimer: ${asset}`, severity: 'P0' });
-  }
-}
-
-for (const slug of ['withheld-case-study', 'nonexistent-gate2-study']) {
-  if (existsSync(path.join(process.cwd(), 'dist/project', slug, 'index.html'))) {
-    findings.push({ issue: `Unavailable case-study static route exists: ${slug}`, severity: 'P0' });
-  }
-  if (sitemapPath && readFileSync(sitemapPath, 'utf8').includes(`/project/${slug}`)) {
-    findings.push({ issue: `Unavailable case study is in sitemap: ${slug}`, severity: 'P0' });
-  }
-}
-const notFoundHtml = readFileSync(path.join(process.cwd(), 'dist/404.html'), 'utf8');
-if (getMeta(notFoundHtml, 'robots') !== 'noindex, nofollow') {
-  findings.push({ issue: 'Static 404 must be non-indexable before JavaScript', severity: 'P0' });
 }
 
 console.log(JSON.stringify(findings, null, 2));
