@@ -1,5 +1,58 @@
-import { describe, expect, it } from 'vitest';
-import { resolveConvexClientConfig } from './convexClient';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { ConvexReactClient } from 'convex/react';
+import {
+  resolveConvexClientConfig,
+  resolveConvexClientOptions,
+} from './convexClient';
+
+vi.mock('convex/react', () => ({
+  ConvexReactClient: vi.fn(),
+}));
+
+afterEach(() => {
+  vi.clearAllMocks();
+  vi.resetModules();
+  vi.unstubAllEnvs();
+});
+
+describe('resolveConvexClientOptions', () => {
+  it('disables Convex SDK logging in production', () => {
+    expect(resolveConvexClientOptions({ isProduction: true })).toEqual({
+      logger: false,
+    });
+  });
+
+  it('keeps the Convex SDK development logger enabled by default', () => {
+    expect(resolveConvexClientOptions({ isProduction: false })).toEqual({});
+  });
+
+  it('passes logger false to the SDK constructor in production', async () => {
+    vi.stubEnv('PROD', true);
+    vi.stubEnv(
+      'VITE_CONVEX_URL',
+      'https://zealous-bear-17.convex.cloud',
+    );
+
+    await import('./convexClient');
+
+    expect(ConvexReactClient).toHaveBeenCalledWith(
+      'https://zealous-bear-17.convex.cloud',
+      { logger: false },
+    );
+  });
+
+  it('keeps SDK constructor diagnostics at their development defaults', async () => {
+    vi.stubEnv('PROD', false);
+    vi.stubEnv('VITE_CONVEX_URL', 'http://127.0.0.1:3210');
+
+    await import('./convexClient');
+
+    expect(ConvexReactClient).toHaveBeenCalledWith(
+      'http://127.0.0.1:3210',
+      {},
+    );
+  });
+});
 
 describe('resolveConvexClientConfig', () => {
   it('accepts a real Convex deployment URL', () => {
