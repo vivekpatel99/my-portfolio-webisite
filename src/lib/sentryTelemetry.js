@@ -1,3 +1,9 @@
+import {
+  SENSITIVE_TELEMETRY_SELECTOR,
+  shouldDropSensitiveTelemetry,
+  shouldDropSensitiveUiBreadcrumb,
+} from './sensitiveTelemetry';
+
 const SENTRY_DSN = import.meta.env.VITE_SENTRY_DSN?.trim();
 
 let initialized = false;
@@ -36,9 +42,18 @@ export function initializeSentryTelemetry() {
         Sentry.browserTracingIntegration(),
         Sentry.replayIntegration({
           maskAllText: true,
+          maskAllInputs: true,
           blockAllMedia: true,
+          block: [SENSITIVE_TELEMETRY_SELECTOR],
+          ignore: [SENSITIVE_TELEMETRY_SELECTOR],
         }),
       ],
+      beforeBreadcrumb: (breadcrumb, hint) => (
+        shouldDropSensitiveUiBreadcrumb(breadcrumb, hint) ? null : breadcrumb
+      ),
+      beforeSend: (event, hint) => (
+        shouldDropSensitiveTelemetry(hint) ? null : event
+      ),
       tracesSampleRate: 0.2,
       tracePropagationTargets,
       replaysSessionSampleRate: 0.05,
@@ -67,6 +82,10 @@ export function closeSentryTelemetry() {
 }
 
 export function captureException(error, context) {
+  if (shouldDropSensitiveTelemetry(context)) {
+    return;
+  }
+
   if (!initialized) {
     if (process.env.NODE_ENV !== 'production') {
       console.error('Sentry not initialized:', error, context);

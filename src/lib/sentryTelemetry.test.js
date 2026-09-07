@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { SENSITIVE_TELEMETRY_SELECTOR } from './sensitiveTelemetry';
 
 vi.mock('@/lib/convexClient', () => ({ convexDeploymentOrigin: 'https://test.convex.cloud' }));
 
@@ -59,7 +60,13 @@ describe('deferred Sentry SDK', () => {
       replaysOnErrorSampleRate: 1,
       tracePropagationTargets: ['localhost', 'https://test.convex.cloud'],
     }));
-    expect(sdk.replayIntegration).toHaveBeenCalledWith({ maskAllText: true, blockAllMedia: true });
+    expect(sdk.replayIntegration).toHaveBeenCalledWith({
+      maskAllText: true,
+      maskAllInputs: true,
+      blockAllMedia: true,
+      block: [SENSITIVE_TELEMETRY_SELECTOR],
+      ignore: [SENSITIVE_TELEMETRY_SELECTOR],
+    });
     const error = new Error('test');
     telemetry.captureException(error);
     expect(sdk.captureException).toHaveBeenCalledWith(error, undefined);
@@ -67,6 +74,34 @@ describe('deferred Sentry SDK', () => {
     expect(close).toHaveBeenCalledWith(2000);
     telemetry.captureException(error);
     expect(sdk.captureException).toHaveBeenCalledTimes(1);
+  });
+
+  it('drops UI breadcrumbs and exception reports originating in a marked region', async () => {
+    const telemetry = await import('./sentryTelemetry');
+    const markedRegion = {
+      matches: vi.fn((selector) => selector === SENSITIVE_TELEMETRY_SELECTOR),
+      closest: vi.fn((selector) => selector === SENSITIVE_TELEMETRY_SELECTOR ? markedRegion : null),
+    };
+    const target = { closest: vi.fn(() => markedRegion) };
+
+    const pending = telemetry.initializeSentryTelemetry();
+    release();
+    await pending;
+
+    const options = sdk.init.mock.calls[0][0];
+    expect(options.beforeBreadcrumb({ category: 'ui.click' }, { event: { target } })).toBeNull();
+    expect(options.beforeBreadcrumb({ category: 'ui.click' }, { event: { target: {} } })).toEqual({ category: 'ui.click' });
+    expect(options.beforeBreadcrumb({ category: 'fetch' }, { event: { target } })).toEqual({ category: 'fetch' });
+    expect(options.beforeSend({ message: 'synthetic form error' }, { telemetrySource: target })).toBeNull();
+    expect(options.beforeSend({ message: 'synthetic background error' }, { source: 'background-task' }))
+      .toEqual({ message: 'synthetic background error' });
+
+    telemetry.captureException(new Error('synthetic contact error'), { telemetrySource: target });
+    expect(sdk.captureException).not.toHaveBeenCalled();
+
+    const unrelatedError = new Error('synthetic unrelated error');
+    telemetry.captureException(unrelatedError, { source: 'background-task' });
+    expect(sdk.captureException).toHaveBeenCalledWith(unrelatedError, { source: 'background-task' });
   });
 
   it('does not initialize if consent is revoked during the download, and can retry on consent', async () => {
