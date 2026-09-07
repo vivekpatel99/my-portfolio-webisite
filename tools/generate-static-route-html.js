@@ -1,11 +1,20 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 import path from 'path';
 import { absoluteUrl, routeSeo, SITE_NAME } from '../src/lib/seoConfig.js';
+import {
+  assertCaseStudyRouteSources,
+  assertStaticCaseStudyRoutes,
+  assertSafeStaticOutput,
+  removeStaleProjectHtml,
+} from './case-study-route-integrity.js';
 
 const distDir = path.join(process.cwd(), 'dist');
+assertCaseStudyRouteSources({ htaccess: readFileSync(path.join(process.cwd(), 'public/.htaccess'), 'utf8') });
+const staticRoutes = Object.keys(routeSeo).filter((route) => route !== '/');
+assertSafeStaticOutput(distDir, staticRoutes);
+const removedStaleProjectHtml = removeStaleProjectHtml(distDir);
 const indexPath = path.join(distDir, 'index.html');
 const indexHtml = readFileSync(indexPath, 'utf8');
-const staticRoutes = Object.keys(routeSeo).filter((route) => route !== '/');
 const notFoundSeo = {
   title: 'Page Not Found | Vivek Patel',
   description: 'The requested page could not be found.',
@@ -140,4 +149,5 @@ for (const route of staticRoutes) {
 
 writeFileSync(path.join(distDir, '404.html'), stripHeroPreload(applyNoIndex(applySeo(rootHtml, notFoundSeo))));
 
-console.log(`Generated static HTML for ${staticRoutes.length + 2} routes, including 404.html.`);
+assertStaticCaseStudyRoutes(distDir);
+console.log(`Generated static HTML for ${staticRoutes.length + 2} routes, including 404.html.${removedStaleProjectHtml.length > 0 ? ` Removed stale project HTML for: ${removedStaleProjectHtml.join(', ')}.` : ''}`);

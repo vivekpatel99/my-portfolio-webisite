@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolveQaTargets } from './qa-local-only.js';
 
 const testDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(testDir, '../..');
@@ -10,9 +11,11 @@ const previewURL = process.env.QA_PREVIEW_URL ?? 'http://127.0.0.1:3000';
 const prodURL = process.env.QA_PROD_URL ?? 'https://www.vivekapatel.com';
 const liveContactURL = process.env.QA_LIVE_CONTACT_BASE_URL ?? prodURL;
 const includeLiveContactSubmit = process.env.QA_LIVE_CONTACT_SUBMIT === '1';
+const localOnly = process.env.QA_LOCAL_ONLY === '1';
 
 const passiveSpecs = [
   'qa-a11y.spec.js',
+  'qa-local-navigation.spec.js',
   'qa-contact.spec.js',
   'qa-edge.spec.js',
   'qa-responsive.spec.js',
@@ -21,26 +24,18 @@ const passiveSpecs = [
   'qa-visual.spec.js',
 ];
 
-const passiveProjects = [
+const passiveProjects = resolveQaTargets({ localOnly, previewURL, prodURL }).flatMap(([environment, baseURL]) => [
   {
-    name: 'preview-desktop',
-    use: { ...devices['Desktop Chrome'], baseURL: previewURL },
+    name: `${environment}-desktop`,
+    use: { ...devices['Desktop Chrome'], baseURL },
   },
   {
-    name: 'preview-mobile',
-    use: { ...devices['iPhone 14'], browserName: 'chromium', baseURL: previewURL },
+    name: `${environment}-mobile`,
+    use: { ...devices['iPhone 14'], browserName: 'chromium', baseURL },
   },
-  {
-    name: 'prod-desktop',
-    use: { ...devices['Desktop Chrome'], baseURL: prodURL },
-  },
-  {
-    name: 'prod-mobile',
-    use: { ...devices['iPhone 14'], browserName: 'chromium', baseURL: prodURL },
-  },
-].map((project) => ({ ...project, testMatch: passiveSpecs }));
+]).map((project) => ({ ...project, testMatch: passiveSpecs }));
 
-const liveProjects = includeLiveContactSubmit
+const liveProjects = includeLiveContactSubmit && !localOnly
   ? [
       {
         name: 'prod-live-contact-submit',
@@ -54,6 +49,10 @@ export default defineConfig({
   testDir,
   timeout: 60_000,
   expect: { timeout: 10_000 },
+  use: {
+    screenshot: 'only-on-failure',
+    trace: 'retain-on-failure',
+  },
   outputDir: path.join(artifactDir, 'test-results'),
   reporter: [['list'], ['json', { outputFile: path.join(artifactDir, 'qa-results.json') }]],
   projects: [...passiveProjects, ...liveProjects],

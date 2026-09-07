@@ -91,6 +91,10 @@ export function resolveConvexClientConfig(
   };
 }
 
+export function resolveConvexClientOptions({ isProduction = false } = {}) {
+  return isProduction ? { logger: false } : {};
+}
+
 function createDisabledConvexClient(reason = LOCAL_DEVELOPMENT_MESSAGE) {
   const error = () => new Error(reason);
   const disabledWatch = {
@@ -120,7 +124,7 @@ function createDisabledConvexClient(reason = LOCAL_DEVELOPMENT_MESSAGE) {
   };
 }
 
-function createConvexClient(config) {
+function createConvexClient(config, options) {
   if (config.issue) {
     console.warn(`${config.issue} ${LOCAL_DEVELOPMENT_MESSAGE}`);
     return createDisabledConvexClient(
@@ -128,7 +132,7 @@ function createConvexClient(config) {
     );
   }
 
-  return new ConvexReactClient(config.url);
+  return new ConvexReactClient(config.url, options);
 }
 
 export const convexRuntimeConfig = resolveConvexClientConfig(
@@ -140,6 +144,9 @@ export const convexDeploymentOrigin = convexRuntimeConfig.url
   ? new URL(convexRuntimeConfig.url).origin
   : null;
 
-const convex = createConvexClient(convexRuntimeConfig);
+const convex = createConvexClient(
+  convexRuntimeConfig,
+  resolveConvexClientOptions({ isProduction: import.meta.env.PROD }),
+);
 
 export default convex;

@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './qa-test.js';
 
 const viewports = [
   { name: 'narrow-phone', width: 320, height: 568 },
