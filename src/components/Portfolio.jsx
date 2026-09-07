@@ -2,7 +2,6 @@ import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { featuredCaseStudies } from '@/data/caseStudies';
-import CaseStudyVisual from '@/components/CaseStudyVisual';
 
 const ProjectCard = ({ project }) => {
   const secondaryLink = project.externalLinks?.[0];
@@ -14,21 +13,23 @@ const ProjectCard = ({ project }) => {
         aria-label={`Read case study: ${project.cardTitle}`}
       >
         <div className="relative aspect-[4/3] overflow-hidden">
-          <CaseStudyVisual
+          <img
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-            visual={project.image}
+            alt={project.image.alt}
+            src={project.image.src}
+            loading="lazy"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-        </div>
-        <div className="border-t border-white/10 bg-[#121316] p-5">
-          <div className="mb-3 inline-flex rounded-full border border-accent-purple/30 bg-accent-purple/15 px-3 py-1 text-xs font-semibold uppercase text-[#d8caff]">
-            {project.category}
-          </div>
-          <div className="flex items-end justify-between gap-4">
-            <h3 className="text-xl font-bold leading-tight text-white">{project.cardTitle}</h3>
-            <span className="rounded-full bg-white/10 p-3" aria-hidden="true">
-              <ArrowUpRight className="h-5 w-5 text-white" />
-            </span>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent"></div>
+          <div className="absolute bottom-0 left-0 w-full p-5">
+            <div className="mb-3 inline-flex rounded-full border border-accent-purple/30 bg-accent-purple/15 px-3 py-1 text-xs font-semibold uppercase text-[#d8caff]">
+              {project.category}
+            </div>
+            <div className="flex items-end justify-between gap-4">
+              <h3 className="text-xl font-bold leading-tight text-white">{project.cardTitle}</h3>
+              <span className="rounded-full bg-white/10 p-3 backdrop-blur-sm" aria-hidden="true">
+                <ArrowUpRight className="h-5 w-5 text-white" />
+              </span>
+            </div>
           </div>
         </div>
       </Link>
@@ -63,7 +64,7 @@ const Portfolio = () => {
               Featured <span className="text-accent-purple">Case Studies</span>
             </h2>
             <p className="text-lg text-gray-400 mt-6 mb-12">
-              Explore document extraction, workflow automation, and supporting computer vision work. Each case explains the approach and its scope.
+              Real client work in data extraction, OCR, and computer vision. Each case study shows the business problem, technical approach, and measurable outcome.
             </p>
           </div>
         </div>

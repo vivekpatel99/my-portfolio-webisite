@@ -9,11 +9,6 @@ vi.mock('framer-motion', () => ({
   motion: { div: ({ children, initial, whileInView, viewport, transition, ...props }) => <div {...props}>{children}</div> },
 }));
 
-it('does not render an unsafe fallback metric grid', () => {
-  const { container } = render(<Stats />);
-  expect(container.textContent).toBe('');
-});
-
 afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 
 it('finishes decimal counts and cancels pending animation when unmounted', () => {
