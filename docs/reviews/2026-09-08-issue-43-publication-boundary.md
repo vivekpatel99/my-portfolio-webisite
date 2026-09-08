@@ -54,9 +54,9 @@ this change.
 
 ## Local verification
 
-- `npm test`: 21 files, 172 passing tests. A disposable source fixture runs
-  three real builds in the same output directory to test draft exclusion,
-  single-record withdrawal, and withdrawal of every record.
+- `npm test`: 21 files, 174 passing tests. A disposable source fixture runs
+  published and all-drafts builds in the same output directory to test draft
+  exclusion and withdrawal. It also runs the affected unit suites in both states.
 - `npm run build`: passed; generated eight HTML routes including the 404 page.
 - Independent comparison with main: exact public case-study and SEO objects,
   all five asset SHA-256 hashes, and the existing deployment route rule match.
@@ -64,3 +64,18 @@ this change.
   local-only SEO passed. No valid contact submission was made.
 - Development HTTP checks: image MIME types, HEAD requests, prefix MP4 byte ranges, and denied case-study asset aliases passed.
 - No tracked public configuration or asset bytes changed.
+
+## PR review follow-up
+
+Both review findings were confirmed. The old data/route fixtures compared the
+active publication set with the tracked Apache template, so approved record-set
+changes failed tests before CI reached the build. These tests now validate the
+generated allowlist, and renderer/negative tests no longer require particular
+production records. Independent full-suite runs cover one withdrawal, all
+drafts, and one added approved test record. Production data and runtime code
+are unchanged by this follow-up.
+
+The build fixture now performs two builds and has a 180-second test budget,
+with a 60-second timeout for each build and a 20-second timeout for each of its
+two nonrecursive affected-suite runs. This replaces the unbounded build
+children inside a 30-second test.

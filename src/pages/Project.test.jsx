@@ -60,7 +60,8 @@ describe('Project unknown slugs', () => {
   });
 
   it('treats an uppercase valid slug as unknown', () => {
-    renderProject(`/project/${caseStudies[0].slug.toUpperCase()}`);
+    const slug = caseStudies[0]?.slug ?? 'unpublished-case-study';
+    renderProject(`/project/${slug.toUpperCase()}`);
     expect(screen.getByRole('heading', { name: 'Page Not Found' })).toBeTruthy();
   });
 });

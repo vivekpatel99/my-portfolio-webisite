@@ -14,19 +14,24 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { caseStudySlugs } from '../src/data/caseStudies.js';
-import { routeSeo } from '../src/lib/seoConfig.js';
 import {
   assertCaseStudyRouteSources,
   assertSameCaseStudySlugs,
   assertSitemapCaseStudyRoutes,
   removeStaleProjectHtml,
 } from './case-study-route-integrity.js';
+import { deploymentHtaccess } from '../plugins/vite-plugin-case-study-publication.js';
 
 const temporaryDirectories = [];
 afterEach(() => temporaryDirectories.splice(0).forEach((directory) => rmSync(directory, { recursive: true, force: true })));
 
 const projectRoute = (slug) => `/project/${slug}`;
-const htaccess = () => readFileSync('public/.htaccess', 'utf8');
+const htaccess = (slugs = caseStudySlugs) => deploymentHtaccess(readFileSync('public/.htaccess', 'utf8'), slugs);
+const scenarioSlugs = () => caseStudySlugs.length > 0 ? caseStudySlugs : ['synthetic-one', 'synthetic-two'];
+const seoFor = (slugs) => ({
+  '/': { path: '/' },
+  ...Object.fromEntries(slugs.map((slug) => [projectRoute(slug), { path: projectRoute(slug) }])),
+});
 
 function fixture() {
   const directory = mkdtempSync(path.join(tmpdir(), 'case-study-route-fixture-'));
@@ -57,7 +62,10 @@ function fixture() {
   }
   mkdirSync(path.join(directory, 'dist'), { recursive: true });
   copyFileSync('index.html', path.join(directory, 'dist/index.html'));
-  copyFileSync('public/.htaccess', path.join(directory, 'dist/.htaccess'));
+  writeFileSync(
+    path.join(directory, 'dist/.htaccess'),
+    deploymentHtaccess(readFileSync(path.join(directory, 'public/.htaccess'), 'utf8'), caseStudySlugs),
+  );
   writeFileSync(path.join(directory, 'package.json'), '{"type":"module"}');
   return directory;
 }
@@ -71,47 +79,65 @@ const run = (directory, script) =>
   });
 
 describe('case-study route integrity', () => {
+  it.each([{ slugs: [] }, { slugs: ['published-case-study'] }])('validates generated deployment routing for $slugs published slugs', ({ slugs }) => {
+    const seo = {
+      '/': { path: '/' },
+      ...Object.fromEntries(slugs.map((slug) => [`/project/${slug}`, { path: `/project/${slug}` }])),
+    };
+    expect(() => assertCaseStudyRouteSources({ slugs, seo, htaccess: htaccess(slugs) })).not.toThrow();
+    const staleSitemap = '<loc>https://www.vivekapatel.com/project/withdrawn-case-study/</loc>';
+    expect(() => assertSitemapCaseStudyRoutes(staleSitemap, slugs)).toThrow(/stale|missing/i);
+    if (slugs.length > 0) {
+      const missingSeo = { '/': { path: '/' } };
+      expect(() => assertCaseStudyRouteSources({ slugs, seo: missingSeo, htaccess: htaccess(slugs) })).toThrow(/missing/i);
+    }
+  });
+
   it('rejects duplicate source slugs before a consumer can generate routes', () => {
     expect(() => assertSameCaseStudySlugs(['one', 'one'], ['one'], 'SEO'))
       .toThrow(/duplicate case-study slugs/i);
   });
 
   it('rejects SEO routes that are missing or have a mismatched canonical path', () => {
-    const missingSeo = structuredClone(routeSeo);
-    delete missingSeo[projectRoute(caseStudySlugs[0])];
-    expect(() => assertCaseStudyRouteSources({ slugs: caseStudySlugs, seo: missingSeo, htaccess: htaccess() }))
+    const slugs = scenarioSlugs();
+    const missingSeo = seoFor(slugs);
+    delete missingSeo[projectRoute(slugs[0])];
+    expect(() => assertCaseStudyRouteSources({ slugs, seo: missingSeo, htaccess: htaccess(slugs) }))
       .toThrow(/SEO case-study routes do not match/i);
 
-    const mismatchedSeo = structuredClone(routeSeo);
-    mismatchedSeo[projectRoute(caseStudySlugs[0])].path = projectRoute(caseStudySlugs[1]);
-    expect(() => assertCaseStudyRouteSources({ slugs: caseStudySlugs, seo: mismatchedSeo, htaccess: htaccess() }))
+    const mismatchedSeo = seoFor(slugs);
+    mismatchedSeo[projectRoute(slugs[0])].path = projectRoute(slugs[1]);
+    expect(() => assertCaseStudyRouteSources({ slugs, seo: mismatchedSeo, htaccess: htaccess(slugs) }))
       .toThrow(/canonical path/i);
   });
 
   it('rejects a stale or broad deployment project regex', () => {
-    const staleRouting = htaccess().replace(caseStudySlugs[0], 'withdrawn-case-study');
-    expect(() => assertCaseStudyRouteSources({ htaccess: staleRouting }))
+    const slugs = scenarioSlugs();
+    const generatedHtaccess = htaccess(slugs);
+    const staleRouting = generatedHtaccess.replace(slugs[0], 'withdrawn-case-study');
+    expect(() => assertCaseStudyRouteSources({ slugs, seo: seoFor(slugs), htaccess: staleRouting }))
       .toThrow(/Deployment routing case-study routes do not match/i);
 
-    const broadRouting = htaccess().replace(`(${caseStudySlugs.join('|')})`, '([a-z-]+)');
-    expect(() => assertCaseStudyRouteSources({ htaccess: broadRouting }))
+    const broadRouting = generatedHtaccess.replace(`(${slugs.join('|')})`, '([a-z-]+)');
+    expect(() => assertCaseStudyRouteSources({ slugs, seo: seoFor(slugs), htaccess: broadRouting }))
       .toThrow(/Deployment routing case-study routes do not match/i);
 
-    const projectRule = htaccess().match(/^\s*RewriteRule\s+\^project\/.*$/m)[0];
-    expect(() => assertCaseStudyRouteSources({ htaccess: `${htaccess()}\n${projectRule}` }))
+    const projectRule = generatedHtaccess.match(/^\s*RewriteRule\s+\^project\/.*$/m)[0];
+    expect(() => assertCaseStudyRouteSources({ slugs, seo: seoFor(slugs), htaccess: `${generatedHtaccess}\n${projectRule}` }))
       .toThrow(/exactly one case-study allowlist rule/i);
   });
 
   it('rejects sitemap pages that are missing or stale', () => {
-    const sitemap = caseStudySlugs
+    const slugs = scenarioSlugs();
+    const sitemap = slugs
       .slice(1)
       .map((slug) => `<loc>https://www.vivekapatel.com${projectRoute(slug)}/</loc>`)
       .concat('<loc>https://www.vivekapatel.com/project/withdrawn-case-study/</loc>')
       .join('\n');
-    expect(() => assertSitemapCaseStudyRoutes(sitemap)).toThrow(/missing:|stale:/i);
+    expect(() => assertSitemapCaseStudyRoutes(sitemap, slugs)).toThrow(/missing:|stale:/i);
 
     const noncanonicalExtra = `${sitemap}\n<loc>https://www.vivekapatel.com/project/withdrawn-case-study</loc>`;
-    expect(() => assertSitemapCaseStudyRoutes(noncanonicalExtra))
+    expect(() => assertSitemapCaseStudyRoutes(noncanonicalExtra, slugs))
       .toThrow(/canonical project route/i);
   });
 
@@ -140,7 +166,7 @@ describe('case-study route integrity', () => {
   it('fails the real sitemap generator before it writes when deployment routing diverges', () => {
     const directory = fixture();
     const deploymentPath = path.join(directory, 'dist/.htaccess');
-    writeFileSync(deploymentPath, readFileSync(deploymentPath, 'utf8').replace(caseStudySlugs[0], 'withdrawn-case-study'));
+    writeFileSync(deploymentPath, deploymentHtaccess(readFileSync(path.join(directory, 'public/.htaccess'), 'utf8'), ['synthetic-case-study']));
 
     expect(() => run(directory, 'generate-sitemap')).toThrow(/Deployment routing case-study routes do not match/i);
     expect(existsSync(path.join(directory, 'dist/sitemap.xml'))).toBe(false);
@@ -167,8 +193,9 @@ describe('adversarial output boundaries', () => {
     (slug) => `https://www.vivekapatel.com/project/${slug}/?extra=1`,
     (slug) => `https://www.vivekapatel.com/project/${slug}/#extra`,
   ])('rejects noncanonical sitemap origins, queries, and fragments', (location) => {
-    const sitemap = caseStudySlugs.map((slug) => `<loc>${location(slug)}</loc>`).join('');
-    expect(() => assertSitemapCaseStudyRoutes(sitemap)).toThrow(/canonical project route/i);
+    const slugs = scenarioSlugs();
+    const sitemap = slugs.map((slug) => `<loc>${location(slug)}</loc>`).join('');
+    expect(() => assertSitemapCaseStudyRoutes(sitemap, slugs)).toThrow(/canonical project route/i);
   });
 
   it('does not clean through a symlinked dist root', () => {
@@ -189,7 +216,7 @@ describe('adversarial output boundaries', () => {
     mkdirSync(outside);
     const sentinel = path.join(outside, 'index.html');
     writeFileSync(sentinel, 'PRESERVE');
-    const route = path.join(directory, 'dist/project', caseStudySlugs[0]);
+    const route = path.join(directory, 'dist/contact');
     mkdirSync(path.dirname(route), { recursive: true });
     if (kind === 'directory') {
       symlinkSync(outside, route);
@@ -198,7 +225,7 @@ describe('adversarial output boundaries', () => {
       symlinkSync(sentinel, path.join(route, 'index.html'));
     }
     const indexBefore = readFileSync(path.join(directory, 'dist/index.html'), 'utf8');
-    expect(() => run(directory, 'generate-static-route-html')).toThrow(/symlinks or special files/i);
+    expect(() => run(directory, 'generate-static-route-html')).toThrow(/symlinks|regular file/i);
     expect(readFileSync(sentinel, 'utf8')).toBe('PRESERVE');
     expect(readFileSync(path.join(directory, 'dist/index.html'), 'utf8')).toBe(indexBefore);
   });
