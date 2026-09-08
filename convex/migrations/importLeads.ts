@@ -60,7 +60,12 @@ export const importFromRows = internalMutation({
     for (const row of rows) {
       let lead;
       try {
-        lead = validateLeadInput(row);
+        lead = validateLeadInput({
+          name: row.name,
+          email: row.email,
+          budget: row.budget,
+          description: row.description,
+        });
       } catch (error) {
         if (error instanceof ConvexError) {
           invalid += 1;

@@ -7,7 +7,7 @@ import {
   mutation,
   type MutationCtx,
 } from "./_generated/server";
-import { validateLeadInput } from "./lib/leadValidation";
+import { validateLeadInput, type ContactLeadInput } from "./lib/leadValidation";
 
 const RATE_LIMIT_WINDOW_MS = 3_600_000;
 const RATE_LIMIT_MAX_SUBMISSIONS = 3;
@@ -184,15 +184,13 @@ export async function sendContactEmailNotification(
 }
 
 export const submitLead = mutation({
-  args: {
-    name: v.string(),
-    email: v.string(),
-    budget: v.optional(v.string()),
-    description: v.string(),
-  },
+  // Validate the entire public payload in validateLeadInput so malformed shapes
+  // receive the same generic error without Convex reflecting submitted values.
+  args: v.any(),
   returns: v.object({ success: v.boolean() }),
-  handler: async (ctx, args) => {
-    const lead = validateLeadInput(args);
+  handler: async (ctx, args: ContactLeadInput) => {
+    const input: unknown = args;
+    const lead = validateLeadInput(input);
 
     const cutoff = Date.now() - RATE_LIMIT_WINDOW_MS;
     const globalCutoff = Date.now() - GLOBAL_RATE_LIMIT_WINDOW_MS;

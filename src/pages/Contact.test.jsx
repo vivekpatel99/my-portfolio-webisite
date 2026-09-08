@@ -8,6 +8,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { toast } from "@/components/ui/use-toast";
 import { captureException } from "@/lib/sentryTelemetry";
 import Contact from "./Contact";
+import { CONTACT_LEAD_VALIDATION_ERROR } from "../../convex/lib/leadValidation";
 
 const mockSubmitLead = vi.fn();
 
@@ -161,6 +162,23 @@ describe("Contact form", () => {
     expect(captureException).toHaveBeenCalledTimes(1);
     expect(captureException.mock.calls[0][1].telemetrySource.matches('[data-sensitive-telemetry]'))
       .toBe(true);
+  });
+
+  it("shows server validation failures without diagnostics or submitted text", async () => {
+    mockSubmitLead.mockRejectedValue({ data: CONTACT_LEAD_VALIDATION_ERROR });
+    const { container } = render(<Contact />);
+    fireEvent.change(screen.getByLabelText("Full Name *"), { target: { value: "Private Name" } });
+    fireEvent.change(screen.getByLabelText("Email Address *"), { target: { value: "private@example.com" } });
+    fireEvent.change(screen.getByLabelText("Project Description *"), { target: { value: "Private oversized text ".repeat(250) } });
+    fireEvent.submit(container.querySelector("form"));
+    await waitFor(() => expect(toast).toHaveBeenCalledWith({
+      title: "Submission Failed",
+      description: CONTACT_LEAD_VALIDATION_ERROR,
+      variant: "destructive",
+    }));
+    expect(mockSubmitLead).toHaveBeenCalledTimes(1);
+    expect(captureException).not.toHaveBeenCalled();
+    expect(JSON.stringify(toast.mock.calls)).not.toContain("Private");
   });
 
   it('marks the contact form as a generic sensitive telemetry region', () => {

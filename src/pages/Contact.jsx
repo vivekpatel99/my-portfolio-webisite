@@ -11,6 +11,7 @@ import { Seo, routeSeo } from '@/lib/seo';
 import { captureException } from '@/lib/sentryTelemetry';
 import { BUDGET_LABELS, BUDGET_OPTIONS } from '@/lib/budgetOptions';
 import { SENSITIVE_TELEMETRY_REGION_PROPS } from '@/lib/sensitiveTelemetry';
+import { CONTACT_LEAD_VALIDATION_ERROR } from '../../convex/lib/leadValidation';
 
 // Custom logo components for platform links
 const UpworkIcon = () => (
@@ -124,11 +125,13 @@ const Contact = () => {
         description: trimmedFormState.description,
       });
     } catch (error) {
-      captureException(error, { telemetrySource });
       const convexMessage =
         typeof error?.data === 'string'
           ? error.data
           : error?.data?.message;
+      if (convexMessage !== CONTACT_LEAD_VALIDATION_ERROR) {
+        captureException(error, { telemetrySource });
+      }
       const description =
         convexMessage ??
         error?.message?.replace(/^\[CONVEX[^\]]*\]\s*/i, '') ??
