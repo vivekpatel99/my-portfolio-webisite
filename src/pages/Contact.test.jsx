@@ -6,6 +6,7 @@ import { fireEvent, render, screen, waitFor, cleanup } from "@testing-library/re
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { toast } from "@/components/ui/use-toast";
+import { captureException } from "@/lib/sentryTelemetry";
 import Contact from "./Contact";
 
 const mockSubmitLead = vi.fn();
@@ -157,6 +158,15 @@ describe("Contact form", () => {
         }),
       );
     });
+    expect(captureException).toHaveBeenCalledTimes(1);
+    expect(captureException.mock.calls[0][1].telemetrySource.matches('[data-sensitive-telemetry]'))
+      .toBe(true);
+  });
+
+  it('marks the contact form as a generic sensitive telemetry region', () => {
+    const { container } = render(<Contact />);
+    expect(container.querySelectorAll('[data-sensitive-telemetry]')).toHaveLength(1);
+    expect(container.querySelector('form[data-sensitive-telemetry]')).toBeTruthy();
   });
 
   it('shows a field-specific inline error for each missing required field', () => {

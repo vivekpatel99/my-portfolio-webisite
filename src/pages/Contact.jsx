@@ -10,6 +10,7 @@ import { socialLinks } from '@/config/links';
 import { Seo, routeSeo } from '@/lib/seo';
 import { captureException } from '@/lib/sentryTelemetry';
 import { BUDGET_LABELS, BUDGET_OPTIONS } from '@/lib/budgetOptions';
+import { SENSITIVE_TELEMETRY_REGION_PROPS } from '@/lib/sensitiveTelemetry';
 
 // Custom logo components for platform links
 const UpworkIcon = () => (
@@ -78,6 +79,7 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const telemetrySource = e.currentTarget;
     const trimmedFormState = {
       ...formState,
       name: formState.name.trim(),
@@ -122,7 +124,7 @@ const Contact = () => {
         description: trimmedFormState.description,
       });
     } catch (error) {
-      captureException(error);
+      captureException(error, { telemetrySource });
       const convexMessage =
         typeof error?.data === 'string'
           ? error.data
@@ -229,6 +231,7 @@ const Contact = () => {
             <motion.form
               onSubmit={handleSubmit}
               noValidate
+              {...SENSITIVE_TELEMETRY_REGION_PROPS}
               className="space-y-6 bg-white/5 p-6 sm:p-8 rounded-lg border border-white/10"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
