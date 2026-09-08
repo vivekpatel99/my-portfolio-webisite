@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   assertLoopbackPreviewUrl,
+  assertLoopbackWebSocketUrl,
   resolveLoopbackRedirectUrl,
   resolveQaTargets,
 } from '../tests/qa/qa-local-only.js';
@@ -55,4 +56,18 @@ describe('QA_LOCAL_ONLY guard', () => {
       '/contact/',
     )).toBe('http://127.0.0.1:3000/contact/');
   });
+
+  it.each(['ws://localhost:3000', 'ws://127.0.0.1:3000', 'wss://[::1]:3000'])(
+    'accepts the loopback WebSocket URL %s',
+    (socketURL) => {
+      expect(() => assertLoopbackWebSocketUrl(socketURL)).not.toThrow();
+    },
+  );
+
+  it.each(['wss://external.invalid', 'http://127.0.0.1:3000'])(
+    'rejects an unsafe WebSocket URL %s',
+    (socketURL) => {
+      expect(() => assertLoopbackWebSocketUrl(socketURL)).toThrow('QA_LOCAL_ONLY requires');
+    },
+  );
 });

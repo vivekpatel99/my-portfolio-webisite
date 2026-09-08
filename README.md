@@ -227,6 +227,10 @@ Playwright:
 - Passive projects cover preview and production desktop/mobile.
 - Live contact submission is opt-in only and can create real leads and email side effects.
 
+Set `QA_LOCAL_ONLY=1` for CI-safe preview QA. It accepts only a loopback preview URL; browser routing aborts every non-loopback HTTP(S) request before transport, including subresources, `fetch` calls, beacons, and redirects originating from loopback. External CDN images are therefore omitted in local-only CI rather than requested. External WebSockets close with policy code `1008`, and service-worker registration is blocked because service-worker traffic bypasses Playwright request routes.
+
+Those controls apply only to local-only projects. Manual passive production checks and the existing opt-in live-contact workflow keep their separate, explicit controls; the fake-Sentry check fulfills its `telemetry.invalid` requests in memory at page scope.
+
 CI runs its preview-only suite with `QA_ARTIFACT_SAFE_MODE=1`. It reconstructs and retains only `qa-artifacts/summary.json` and `qa-artifacts/failure-results.json` for seven days. Those documents contain fixed suite/project labels, result-count enums, bounded source lines, test ordinals, one-based attempt/retry indices, and capped durations. The sanitizer rejects any other staged file before the upload action runs.
 
 Native screenshots, videos, storage state, Playwright trace archives, raw JSON reports, raw logs, and `error-context.md` files are intentionally excluded from retention because they cannot be proved redacted. Safe mode disables Playwright's configured screenshot, trace, video, and storage-state capture; runner-created raw files can still exist in the job workspace but are never upload candidates. Run `npm run qa:artifacts:verify` to reconstruct and inspect the synthetic hostile failure fixture locally. The CI scope uses synthetic invalid/non-deliverable test data only: it does not submit a valid contact request, visit production, deploy, or retain valid contact data, credentials, secrets, environment files, or repository source.

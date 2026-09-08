@@ -1,21 +1,29 @@
 const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]']);
 
-export function assertLoopbackPreviewUrl(previewURL) {
+function assertLoopbackUrl(url, allowedProtocols) {
   let parsed;
   try {
-    parsed = new URL(previewURL);
+    parsed = new URL(url);
   } catch {
     throw new Error('QA_LOCAL_ONLY requires a valid loopback preview URL');
   }
 
   if (
-    !['http:', 'https:'].includes(parsed.protocol)
+    !allowedProtocols.includes(parsed.protocol)
     || parsed.username
     || parsed.password
     || !LOOPBACK_HOSTS.has(parsed.hostname)
   ) {
     throw new Error('QA_LOCAL_ONLY requires a loopback preview URL');
   }
+}
+
+export function assertLoopbackPreviewUrl(previewURL) {
+  assertLoopbackUrl(previewURL, ['http:', 'https:']);
+}
+
+export function assertLoopbackWebSocketUrl(socketURL) {
+  assertLoopbackUrl(socketURL, ['ws:', 'wss:']);
 }
 
 export function resolveLoopbackRedirectUrl(requestURL, location) {

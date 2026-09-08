@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   assertSafeArtifactConfiguration,
   qaCaptureOptions,
+  qaNetworkOptions,
 } from '../tests/qa/qa.config.js';
 
 describe('sanitized CI Playwright configuration', () => {
@@ -32,5 +33,10 @@ describe('sanitized CI Playwright configuration', () => {
       localOnly: true,
       includeLiveContactSubmit: true,
     })).toThrow('QA_ARTIFACT_SAFE_MODE requires');
+  });
+
+  it('blocks service workers only in local-only QA so request routing remains enforceable', () => {
+    expect(qaNetworkOptions({ localOnly: true })).toEqual({ serviceWorkers: 'block' });
+    expect(qaNetworkOptions({ localOnly: false })).toEqual({ serviceWorkers: 'allow' });
   });
 });
