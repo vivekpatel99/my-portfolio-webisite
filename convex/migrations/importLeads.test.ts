@@ -3,6 +3,7 @@ import { convexTest } from "convex-test";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { internal } from "../_generated/api";
 import schema from "../schema";
+import { insertImportedLead } from "./importLeads";
 
 const modules = import.meta.glob("/convex/**/*.ts");
 
@@ -44,6 +45,49 @@ describe("importFromRows", () => {
     expect(second).toEqual({ inserted: 1, skipped: 0, invalid: 0 });
     const leads = await t.run(async (ctx) => ctx.db.query("leads").collect());
     expect(leads).toHaveLength(2);
+  });
+
+  it("does not persist future validation return properties", async () => {
+    const t = convexTest(schema, modules);
+    const validationResult = {
+      name: "Legacy Lead",
+      email: "legacy@example.com",
+      budget: "€10k-€25k",
+      description: "Imported from the legacy system.",
+      futureValidatorProperty: "must not persist",
+    };
+
+    const leadId = await t.run((ctx) =>
+      insertImportedLead(ctx, validationResult, 1_700_000_000_000),
+    );
+    const lead = await t.run(async (ctx) => ctx.db.get(leadId));
+
+    expect(lead).not.toHaveProperty("futureValidatorProperty");
+    expect(lead).toMatchObject({
+      name: validationResult.name,
+      email: validationResult.email,
+      budget: validationResult.budget,
+      description: validationResult.description,
+      createdAt: 1_700_000_000_000,
+    });
+  });
+
+  it("does not persist schema-valid fields outside the import allowlist", async () => {
+    const t = convexTest(schema, modules);
+    const validationResult = {
+      name: "Legacy Lead",
+      email: "legacy@example.com",
+      budget: undefined,
+      description: "Imported from the legacy system.",
+      emailNotificationError: "must not persist",
+    };
+
+    const leadId = await t.run((ctx) =>
+      insertImportedLead(ctx, validationResult, 1_700_000_000_000),
+    );
+    const lead = await t.run(async (ctx) => ctx.db.get(leadId));
+
+    expect(lead).not.toHaveProperty("emailNotificationError");
   });
 
   it("rejects import batches over the transaction limit", async () => {

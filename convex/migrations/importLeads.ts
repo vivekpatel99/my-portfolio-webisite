@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values";
-import { internalMutation } from "../_generated/server";
+import { internalMutation, type MutationCtx } from "../_generated/server";
 import { validateLeadInput } from "../lib/leadValidation";
 
 const importRowValidator = v.object({
@@ -22,6 +22,20 @@ function isValidCreatedAt(createdAt: number | undefined, now: number) {
     createdAt > 0 &&
     createdAt <= now + MAX_FUTURE_CREATED_AT_MS
   );
+}
+
+export function insertImportedLead(
+  ctx: Pick<MutationCtx, "db">,
+  lead: ReturnType<typeof validateLeadInput>,
+  createdAt: number,
+) {
+  return ctx.db.insert("leads", {
+    name: lead.name,
+    email: lead.email,
+    budget: lead.budget,
+    description: lead.description,
+    createdAt,
+  });
 }
 
 export const importFromRows = internalMutation({
@@ -60,10 +74,7 @@ export const importFromRows = internalMutation({
         continue;
       }
 
-      await ctx.db.insert("leads", {
-        ...lead,
-        createdAt: row.createdAt ?? now,
-      });
+      await insertImportedLead(ctx, lead, row.createdAt ?? now);
       inserted += 1;
     }
 
