@@ -74,6 +74,16 @@ function emptyCounts() {
   return { passed: 0, failed: 0, skipped: 0, timed_out: 0, interrupted: 0 };
 }
 
+function countAttempts(counts) {
+  return Object.values(counts).reduce((sum, count) => sum + count, 0);
+}
+
+function deriveRunStatus(totalAttempts, runnerErrorCount) {
+  if (runnerErrorCount > 0) return 'runner_error';
+  if (totalAttempts.failed || totalAttempts.timed_out || totalAttempts.interrupted) return 'failed';
+  return countAttempts(totalAttempts) > 0 ? 'passed' : 'no_attempts';
+}
+
 function addSuiteReport(suite, summary, failureResults, ordinalsBySource) {
   requireObject(suite, 'suite');
   const sourcePath = allowlistedSourceName(suite.file);
@@ -146,10 +156,7 @@ export function sanitizePlaywrightReport(report) {
 
   for (const suite of reportSuites) addSuiteReport(suite, summary, failureResults, ordinalsBySource);
 
-  const total = Object.values(summary.totalAttempts).reduce((sum, count) => sum + count, 0);
-  if (runnerErrors.length > 0) summary.runStatus = 'runner_error';
-  else if (summary.totalAttempts.failed || summary.totalAttempts.timed_out || summary.totalAttempts.interrupted) summary.runStatus = 'failed';
-  else if (total > 0) summary.runStatus = 'passed';
+  summary.runStatus = deriveRunStatus(summary.totalAttempts, runnerErrors.length);
 
   summary.suites.sort((left, right) => left.suite.localeCompare(right.suite));
   for (const suite of summary.suites) suite.projects.sort((left, right) => left.project.localeCompare(right.project));
@@ -220,6 +227,8 @@ function validateSanitizedDocuments(summary, failureResults) {
   ) fail('sanitized summary does not match the bounded schema');
 
   const labels = new Set();
+  const calculatedTotals = emptyCounts();
+  const summaryProjects = new Map();
   for (const suite of summary.suites) {
     if (!requireObject(suite, 'sanitized suite') || !hasExactKeys(suite, ['suite', 'projects']) || !Object.values(suites).some(({ label }) => label === suite.suite) || !Array.isArray(suite.projects) || labels.has(suite.suite)) {
       fail('sanitized suite does not match the bounded schema');
@@ -231,12 +240,22 @@ function validateSanitizedDocuments(summary, failureResults) {
         fail('sanitized project does not match the bounded schema');
       }
       projectNames.add(project.project);
+      const groupKey = `${suite.suite}\u0000${project.project}`;
+      summaryProjects.set(groupKey, project.attempts);
+      for (const outcome of Object.values(outcomes)) calculatedTotals[outcome] += project.attempts[outcome];
     }
   }
+
+  if (
+    JSON.stringify(calculatedTotals) !== JSON.stringify(summary.totalAttempts)
+    || summary.runStatus !== deriveRunStatus(summary.totalAttempts, summary.runnerErrorCount)
+  ) fail('sanitized documents are semantically inconsistent');
 
   if (!hasExactKeys(failureResults, ['schemaVersion', 'failures']) || failureResults.schemaVersion !== 1 || !Array.isArray(failureResults.failures)) {
     fail('sanitized failure results do not match the bounded schema');
   }
+  const failureCounts = new Map();
+  const attempts = new Set();
   for (const failure of failureResults.failures) {
     if (
       !requireObject(failure, 'sanitized failure')
@@ -249,6 +268,22 @@ function validateSanitizedDocuments(summary, failureResults) {
       || !failureOutcomes.has(failure.outcome)
       || !Number.isInteger(failure.durationMs) || failure.durationMs < 0 || failure.durationMs > maxDurationMs
     ) fail('sanitized failure does not match the bounded schema');
+
+    const groupKey = `${failure.suite}\u0000${failure.project}`;
+    if (!summaryProjects.has(groupKey)) fail('sanitized documents are semantically inconsistent');
+    const attemptKey = `${groupKey}\u0000${failure.testOrdinal}\u0000${failure.retry}`;
+    if (attempts.has(attemptKey)) fail('sanitized documents are semantically inconsistent');
+    attempts.add(attemptKey);
+    const groupFailures = failureCounts.get(groupKey) ?? { failed: 0, timed_out: 0, interrupted: 0 };
+    groupFailures[failure.outcome] += 1;
+    failureCounts.set(groupKey, groupFailures);
+  }
+
+  for (const [groupKey, counts] of summaryProjects) {
+    const failures = failureCounts.get(groupKey) ?? { failed: 0, timed_out: 0, interrupted: 0 };
+    for (const outcome of failureOutcomes) {
+      if (counts[outcome] !== failures[outcome]) fail('sanitized documents are semantically inconsistent');
+    }
   }
 }
 

@@ -177,4 +177,41 @@ describe('sanitized Playwright QA artifacts', () => {
 
     await expect(validateStagedArtifacts({ paths })).rejects.toThrow('bounded schema');
   });
+
+  it.each([
+    ['a forged passing run status', (summary) => { summary.runStatus = 'passed'; }],
+    ['totals that omit the failing attempt', (summary) => { summary.totalAttempts.failed = 0; }],
+    ['a failure result for an absent profile', (_summary, failures) => { failures.failures[0].project = 'preview-mobile'; }],
+    ['a missing failure result', (_summary, failures) => { failures.failures = []; }],
+  ])('rejects schema-valid tampering: %s', async (_description, tamper) => {
+    const paths = await temporaryPaths();
+    await writeFile(paths.rawReport, await readFile(fixturePath, 'utf8'), 'utf8');
+    await sanitizePlaywrightArtifacts({ paths });
+    const summary = JSON.parse(await readFile(paths.summary, 'utf8'));
+    const failures = JSON.parse(await readFile(paths.failureResults, 'utf8'));
+    tamper(summary, failures);
+    await Promise.all([
+      writeFile(paths.summary, JSON.stringify(summary), 'utf8'),
+      writeFile(paths.failureResults, JSON.stringify(failures), 'utf8'),
+    ]);
+
+    await expect(validateStagedArtifacts({ paths })).rejects.toThrow('semantically inconsistent');
+  });
+
+  it('rejects duplicate schema-valid failure attempts even when counts are adjusted', async () => {
+    const paths = await temporaryPaths();
+    await writeFile(paths.rawReport, await readFile(fixturePath, 'utf8'), 'utf8');
+    await sanitizePlaywrightArtifacts({ paths });
+    const summary = JSON.parse(await readFile(paths.summary, 'utf8'));
+    const failures = JSON.parse(await readFile(paths.failureResults, 'utf8'));
+    summary.totalAttempts.failed = 2;
+    summary.suites[0].projects[0].attempts.failed = 2;
+    failures.failures.push({ ...failures.failures[0], durationMs: 12 });
+    await Promise.all([
+      writeFile(paths.summary, JSON.stringify(summary), 'utf8'),
+      writeFile(paths.failureResults, JSON.stringify(failures), 'utf8'),
+    ]);
+
+    await expect(validateStagedArtifacts({ paths })).rejects.toThrow('semantically inconsistent');
+  });
 });
