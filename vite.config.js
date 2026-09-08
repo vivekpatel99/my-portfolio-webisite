@@ -5,6 +5,7 @@ import inlineEditPlugin from './plugins/visual-editor/vite-plugin-react-inline-e
 import editModeDevPlugin from './plugins/visual-editor/vite-plugin-edit-mode.js';
 import iframeRouteRestorationPlugin from './plugins/vite-plugin-iframe-route-restoration.js';
 import selectionModePlugin from './plugins/selection-mode/vite-plugin-selection-mode.js';
+import caseStudyPublicationPlugin from './plugins/vite-plugin-case-study-publication.js';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
@@ -281,6 +282,7 @@ const addTransformIndexHtml = {
 
 export default defineConfig({
 	plugins: [
+		caseStudyPublicationPlugin(),
 		...(isDev ? [inlineEditPlugin(), editModeDevPlugin(), iframeRouteRestorationPlugin(), selectionModePlugin()] : []),
 		react(),
 		addTransformIndexHtml
@@ -304,6 +306,7 @@ export default defineConfig({
 	},
 	build: {
 		minify: 'terser',
+		copyPublicDir: false,
 		rollupOptions: {
 			external: [
 				'@babel/parser',
@@ -312,5 +315,5 @@ export default defineConfig({
 				'@babel/types'
 			]
 		}
-	}
+	},
 });

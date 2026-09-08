@@ -9,6 +9,13 @@ Hostinger Horizons builds this Vite app from the GitHub `main` branch.
 - Node version: `.nvmrc`
 - Required frontend build variable: `VITE_CONVEX_URL`
 
+Case-study records are compiled from the private publication manifest on every
+Vite build and dev reload. The build copies only referenced, hash-approved
+case-study assets and emits the route allowlist and sitemap into `dist/`; do
+not manually copy a case-study file into deployable output. When this branch is
+combined with the provenance guard from PR #53, retain its additive command:
+`npm run provenance:deploy && vite build && node tools/generate-sitemap.js && node tools/generate-static-route-html.js`.
+
 `dist/` is generated output and is intentionally not tracked in git. Static assets
 that must be copied into production belong in `public/`.
 

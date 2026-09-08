@@ -27,14 +27,6 @@ export const profileImages = {
   teamCollaboration: `${BASE_URLS.hostingerCdn}/michael-t-rxri-ho62y4-unsplash-2-tvxRc.jpg`,
 };
 
-export const portfolioImages = {
-  n8nWorkflow: '/assets/case-studies/planning-graph.webp',
-  invoiceOcr: '/assets/case-studies/invoice-ocr.webp',
-  yogaPose: '/assets/case-studies/yoga-pose.webp',
-  footballTracking: '/assets/case-studies/football-tracking.mp4',
-  footballTrackingPoster: '/assets/case-studies/football-tracking.webp',
-};
-
 export const assetsLinks = {
   logo: logos.logo,
 };

@@ -35,9 +35,19 @@ function fixture() {
   for (const file of [
     'index.html',
     'public/.htaccess',
+    'public/assets/case-studies/planning-graph.webp',
+    'public/assets/case-studies/invoice-ocr.webp',
+    'public/assets/case-studies/yoga-pose.webp',
+    'public/assets/case-studies/football-tracking.mp4',
+    'public/assets/case-studies/football-tracking.webp',
     'src/config/links.js',
     'src/data/caseStudies.js',
     'src/lib/seoConfig.js',
+    'publication/case-study-manifest.js',
+    'publication/case-study-evidence.js',
+    'publication/case-study-schema.js',
+    'publication/compile-case-studies.js',
+    'publication/public-case-studies.js',
     'tools/case-study-route-integrity.js',
     'tools/generate-sitemap.js',
     'tools/generate-static-route-html.js',
@@ -47,6 +57,7 @@ function fixture() {
   }
   mkdirSync(path.join(directory, 'dist'), { recursive: true });
   copyFileSync('index.html', path.join(directory, 'dist/index.html'));
+  copyFileSync('public/.htaccess', path.join(directory, 'dist/.htaccess'));
   writeFileSync(path.join(directory, 'package.json'), '{"type":"module"}');
   return directory;
 }
@@ -121,18 +132,18 @@ describe('case-study route integrity', () => {
     expect(readFileSync(path.join(staleDirectory, 'operator-note.txt'), 'utf8')).toBe('DO_NOT_REMOVE');
     for (const slug of caseStudySlugs) {
       expect(existsSync(path.join(directory, 'dist', projectRoute(slug), 'index.html'))).toBe(true);
-      expect(readFileSync(path.join(directory, 'public/sitemap.xml'), 'utf8'))
+      expect(readFileSync(path.join(directory, 'dist/sitemap.xml'), 'utf8'))
         .toContain(`https://www.vivekapatel.com${projectRoute(slug)}/`);
     }
   });
 
   it('fails the real sitemap generator before it writes when deployment routing diverges', () => {
     const directory = fixture();
-    const deploymentPath = path.join(directory, 'public/.htaccess');
+    const deploymentPath = path.join(directory, 'dist/.htaccess');
     writeFileSync(deploymentPath, readFileSync(deploymentPath, 'utf8').replace(caseStudySlugs[0], 'withdrawn-case-study'));
 
     expect(() => run(directory, 'generate-sitemap')).toThrow(/Deployment routing case-study routes do not match/i);
-    expect(existsSync(path.join(directory, 'public/sitemap.xml'))).toBe(false);
+    expect(existsSync(path.join(directory, 'dist/sitemap.xml'))).toBe(false);
   });
 
   it('refuses to traverse a symlinked static project directory', async () => {
