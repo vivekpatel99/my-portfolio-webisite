@@ -2,6 +2,7 @@
 node_modules/
 dist/
 playwright-output/
+qa-artifacts/
 test-results/
 playwright-report/
 blob-report/

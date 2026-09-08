@@ -1,0 +1,34 @@
+{
+  "config": {
+    "rootDir": "/private/repository/QA_SECRET_SENTINEL",
+    "reporter": "json"
+  },
+  "errors": [],
+  "suites": [
+    {
+      "file": "qa-contact.spec.js",
+      "title": "Injected title QA_SECRET_SENTINEL",
+      "specs": [
+        {
+          "file": "qa-contact.spec.js",
+          "line": 53,
+          "title": "Injected title QA_SECRET_SENTINEL",
+          "tests": [
+            {
+              "projectName": "preview-desktop",
+              "results": [
+                {
+                  "status": "failed",
+                  "duration": 90001,
+                  "error": { "message": "raw stack QA_SECRET_SENTINEL" },
+                  "stdout": [{ "text": "localStorage QA_SECRET_SENTINEL" }],
+                  "attachments": [{ "path": "trace.zip" }]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
