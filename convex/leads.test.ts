@@ -81,7 +81,7 @@ describe("submitLead", () => {
       email: "jane@example.com",
       budget: undefined,
       description: "Need a CV pipeline for retail analytics.",
-      supabaseId: "legacy-id-must-not-persist",
+      emailNotificationError: "must not persist",
     };
 
     const leadId = await t.run((ctx) =>
@@ -89,7 +89,7 @@ describe("submitLead", () => {
     );
     const lead = await t.run(async (ctx) => ctx.db.get(leadId));
 
-    expect(lead).not.toHaveProperty("supabaseId");
+    expect(lead).not.toHaveProperty("emailNotificationError");
   });
 
   it("CVX-003: rejects empty name", async () => {
