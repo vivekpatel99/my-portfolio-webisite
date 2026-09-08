@@ -20,6 +20,11 @@ export function assertSafeArtifactConfiguration({ safeArtifacts, localOnly, incl
   }
 }
 
+export function qaNetworkOptions({ localOnly }) {
+  // Request routes do not see service-worker-handled traffic, so local-only QA blocks registration.
+  return { serviceWorkers: localOnly ? 'block' : 'allow' };
+}
+
 assertSafeArtifactConfiguration({ safeArtifacts: safeArtifactMode, localOnly, includeLiveContactSubmit });
 
 const passiveSpecs = [
@@ -36,11 +41,13 @@ const passiveSpecs = [
 const passiveProjects = resolveQaTargets({ localOnly, previewURL, prodURL }).flatMap(([environment, baseURL]) => [
   {
     name: `${environment}-desktop`,
-    use: { ...devices['Desktop Chrome'], baseURL },
+    use: { ...devices['Desktop Chrome'], baseURL, ...qaNetworkOptions({ localOnly }) },
   },
   {
     name: `${environment}-mobile`,
-    use: { ...devices['iPhone 14'], browserName: 'chromium', baseURL },
+    use: {
+      ...devices['iPhone 14'], browserName: 'chromium', baseURL, ...qaNetworkOptions({ localOnly }),
+    },
   },
 ]).map((project) => ({ ...project, testMatch: passiveSpecs }));
 

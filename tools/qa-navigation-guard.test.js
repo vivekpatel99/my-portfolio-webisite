@@ -1,7 +1,16 @@
 import { describe, expect, it, vi } from 'vitest';
-import { guardLocalNavigation } from '../tests/qa/qa-navigation-guard.js';
+import {
+  guardLocalNavigation,
+  guardLocalWebSocket,
+} from '../tests/qa/qa-navigation-guard.js';
 
-function navigation({ url = 'http://127.0.0.1:3000/', location, navigation = true } = {}) {
+function navigation({
+  url = 'http://127.0.0.1:3000/',
+  location,
+  navigation = true,
+  fetchError,
+  fulfillError,
+} = {}) {
   const response = {
     status: () => location ? 302 : 200,
     headers: () => location ? { location } : {},
@@ -9,8 +18,8 @@ function navigation({ url = 'http://127.0.0.1:3000/', location, navigation = tru
   };
   const route = {
     request: () => ({ url: () => url, isNavigationRequest: () => navigation }),
-    fetch: vi.fn().mockResolvedValue(response),
-    fulfill: vi.fn(),
+    fetch: fetchError ? vi.fn().mockRejectedValue(fetchError) : vi.fn().mockResolvedValue(response),
+    fulfill: fulfillError ? vi.fn().mockRejectedValue(fulfillError) : vi.fn(),
     abort: vi.fn(),
     continue: vi.fn(),
   };
@@ -42,11 +51,80 @@ describe('local-only browser navigation', () => {
     expect(route.abort).not.toHaveBeenCalled();
   });
 
-  it('preserves intentional external subresources', async () => {
+  it('blocks external subresources before making a request', async () => {
     const { route } = navigation({ url: 'https://external.invalid/image.png', navigation: false });
     await guardLocalNavigation(route);
-    expect(route.continue).toHaveBeenCalled();
+    expect(route.abort).toHaveBeenCalledWith('blockedbyclient');
     expect(route.fetch).not.toHaveBeenCalled();
-    expect(route.abort).not.toHaveBeenCalled();
+    expect(route.continue).not.toHaveBeenCalled();
+  });
+
+  it('blocks external redirects from loopback subresources before the browser follows them', async () => {
+    const { route, response } = navigation({
+      url: 'http://127.0.0.1:3000/image.png',
+      location: 'https://external.invalid/image.png',
+      navigation: false,
+    });
+    await guardLocalNavigation(route);
+    expect(route.fetch).toHaveBeenCalledWith({ maxRedirects: 0 });
+    expect(route.abort).toHaveBeenCalledWith('blockedbyclient');
+    expect(response.dispose).toHaveBeenCalled();
+  });
+
+  it('allows a browser-cancelled loopback resource to finish cleanup during rapid navigation', async () => {
+    const { route, response } = navigation({
+      navigation: false,
+      fulfillError: new Error('route.fulfill: Route is already handled!'),
+    });
+    await expect(guardLocalNavigation(route)).resolves.toBeUndefined();
+    expect(response.dispose).toHaveBeenCalled();
+  });
+
+  it('allows a browser-cancelled loopback fetch during page closure', async () => {
+    const { route, response } = navigation({
+      navigation: false,
+      fetchError: new Error('route.fetch: Target page, context or browser has been closed'),
+    });
+    await expect(guardLocalNavigation(route)).resolves.toBeUndefined();
+    expect(response.dispose).not.toHaveBeenCalled();
+  });
+
+  it('preserves unexpected fulfillment errors', async () => {
+    const { route, response } = navigation({ fulfillError: new Error('network write failed') });
+    await expect(guardLocalNavigation(route)).rejects.toThrow('network write failed');
+    expect(response.dispose).toHaveBeenCalled();
+  });
+
+  it('preserves unexpected fetch errors', async () => {
+    const { route } = navigation({ fetchError: new Error('network read failed') });
+    await expect(guardLocalNavigation(route)).rejects.toThrow('network read failed');
+  });
+});
+
+function webSocket(url) {
+  const route = {
+    url: () => url,
+    close: vi.fn(),
+    connectToServer: vi.fn(),
+  };
+  return { route };
+}
+
+describe('local-only browser WebSockets', () => {
+  it('blocks external WebSockets before connecting', async () => {
+    const { route } = webSocket('wss://external.invalid/qa-websocket-sentinel');
+    await guardLocalWebSocket(route);
+    expect(route.close).toHaveBeenCalledWith({
+      code: 1008,
+      reason: 'QA_LOCAL_ONLY permits loopback WebSockets only',
+    });
+    expect(route.connectToServer).not.toHaveBeenCalled();
+  });
+
+  it('preserves loopback WebSockets', async () => {
+    const { route } = webSocket('ws://127.0.0.1:3000/qa-websocket-sentinel');
+    await guardLocalWebSocket(route);
+    expect(route.connectToServer).toHaveBeenCalled();
+    expect(route.close).not.toHaveBeenCalled();
   });
 });
