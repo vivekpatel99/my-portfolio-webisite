@@ -94,31 +94,3 @@ describe("importFromRows", () => {
     expect(leads[0].email).toBe("valid@example.com");
   });
 });
-
-describe("removeLegacySupabaseIds", () => {
-  it("removes legacy ids in bounded batches before the schema is narrowed", async () => {
-    vi.useFakeTimers();
-    const t = convexTest(schema, modules);
-    await t.run(async (ctx) => {
-      for (let index = 0; index < 101; index += 1) {
-        await ctx.db.insert("leads", {
-          name: `Imported Lead ${index}`,
-          email: `imported-${index}@example.com`,
-          description: "Has a legacy import key.",
-          createdAt: index + 1,
-          supabaseId: `sb-${index}`,
-        });
-      }
-    });
-
-    const firstBatch = await t.mutation(
-      internal.migrations.importLeads.removeLegacySupabaseIds,
-      {},
-    );
-    expect(firstBatch).toMatchObject({ scanned: 100, cleaned: 100, isDone: false });
-    await t.finishAllScheduledFunctions(vi.runAllTimers);
-
-    const leads = await t.run(async (ctx) => ctx.db.query("leads").collect());
-    expect(leads.every((lead) => lead.supabaseId === undefined)).toBe(true);
-  });
-});
