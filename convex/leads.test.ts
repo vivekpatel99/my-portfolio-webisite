@@ -5,6 +5,7 @@ import { api, internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import {
   buildContactEmailPayload,
+  insertSubmittedLead,
   sendContactEmailNotification,
 } from "./leads";
 import schema from "./schema";
@@ -44,6 +45,51 @@ describe("submitLead", () => {
     });
     const leads = await t.run(async (ctx) => ctx.db.query("leads").collect());
     expect(leads[0].budget).toBeUndefined();
+  });
+
+  it("does not persist future validation return properties", async () => {
+    const t = convexTest(schema, modules);
+    const validationResult = {
+      name: "Jane Doe",
+      email: "jane@example.com",
+      budget: "€5k-€10k",
+      description: "Need a CV pipeline for retail analytics.",
+      futureValidatorProperty: "must not persist",
+    };
+
+    const leadId = await t.run((ctx) =>
+      insertSubmittedLead(ctx, validationResult, 1_750_000_000_000, 1_750_000_000_001),
+    );
+    const lead = await t.run(async (ctx) => ctx.db.get(leadId));
+
+    expect(lead).not.toHaveProperty("futureValidatorProperty");
+    expect(lead).toMatchObject({
+      name: validationResult.name,
+      email: validationResult.email,
+      budget: validationResult.budget,
+      description: validationResult.description,
+      createdAt: 1_750_000_000_000,
+      emailNotificationStatus: "pending",
+      emailNotificationUpdatedAt: 1_750_000_000_001,
+    });
+  });
+
+  it("does not persist schema-valid fields outside the submit allowlist", async () => {
+    const t = convexTest(schema, modules);
+    const validationResult = {
+      name: "Jane Doe",
+      email: "jane@example.com",
+      budget: undefined,
+      description: "Need a CV pipeline for retail analytics.",
+      supabaseId: "legacy-id-must-not-persist",
+    };
+
+    const leadId = await t.run((ctx) =>
+      insertSubmittedLead(ctx, validationResult, 1_750_000_000_000, 1_750_000_000_001),
+    );
+    const lead = await t.run(async (ctx) => ctx.db.get(leadId));
+
+    expect(lead).not.toHaveProperty("supabaseId");
   });
 
   it("CVX-003: rejects empty name", async () => {
