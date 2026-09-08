@@ -1,6 +1,8 @@
 /// <reference types="vite/client" />
 import { convexTest } from "convex-test";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { makeFunctionReference, type FunctionArgs } from "convex/server";
+import type { Value } from "convex/values";
+import { afterEach, describe, expect, expectTypeOf, it, vi } from "vitest";
 import { api, internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import {
@@ -8,13 +10,20 @@ import {
   insertSubmittedLead,
   sendContactEmailNotification,
 } from "./leads";
+import { CONTACT_LEAD_VALIDATION_ERROR, type ContactLeadInput } from "./lib/leadValidation";
 import schema from "./schema";
 
 const modules = import.meta.glob("./**/*.ts");
 
 describe("submitLead", () => {
+  it("retains the typed client argument contract", () => {
+    expectTypeOf<FunctionArgs<typeof api.leads.submitLead>>().toEqualTypeOf<ContactLeadInput>();
+  });
+
   afterEach(() => {
     vi.useRealTimers();
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   it("CVX-001: inserts a valid lead with budget", async () => {
@@ -100,7 +109,7 @@ describe("submitLead", () => {
         email: "jane@example.com",
         description: "Valid description.",
       }),
-    ).rejects.toThrow(/Name is required/);
+    ).rejects.toThrow(CONTACT_LEAD_VALIDATION_ERROR);
     const leads = await t.run(async (ctx) => ctx.db.query("leads").collect());
     expect(leads).toHaveLength(0);
   });
@@ -113,7 +122,7 @@ describe("submitLead", () => {
         email: "jane@example.com",
         description: "Valid description.",
       }),
-    ).rejects.toThrow(/Name is required/);
+    ).rejects.toThrow(CONTACT_LEAD_VALIDATION_ERROR);
     const leads = await t.run(async (ctx) => ctx.db.query("leads").collect());
     expect(leads).toHaveLength(0);
   });
@@ -126,7 +135,7 @@ describe("submitLead", () => {
         email: "   ",
         description: "Valid description.",
       }),
-    ).rejects.toThrow(/Email is required/);
+    ).rejects.toThrow(CONTACT_LEAD_VALIDATION_ERROR);
   });
 
   it("CVX-005: rejects missing description", async () => {
@@ -137,7 +146,7 @@ describe("submitLead", () => {
         email: "jane@example.com",
         description: "   ",
       }),
-    ).rejects.toThrow(/description is required/i);
+    ).rejects.toThrow(CONTACT_LEAD_VALIDATION_ERROR);
   });
 
   it("CVX-006: rejects invalid email formats", async () => {
@@ -149,7 +158,7 @@ describe("submitLead", () => {
           email,
           description: "Valid description.",
         }),
-      ).rejects.toThrow(/Invalid email/);
+      ).rejects.toThrow(CONTACT_LEAD_VALIDATION_ERROR);
     }
   });
 
@@ -162,7 +171,7 @@ describe("submitLead", () => {
         budget: "€999k",
         description: "Valid description.",
       }),
-    ).rejects.toThrow(/Invalid budget/);
+    ).rejects.toThrow(CONTACT_LEAD_VALIDATION_ERROR);
   });
 
   it("CVX-009: rejects oversized name", async () => {
@@ -173,7 +182,7 @@ describe("submitLead", () => {
         email: "jane@example.com",
         description: "Valid description.",
       }),
-    ).rejects.toThrow(/Name is too long/);
+    ).rejects.toThrow(CONTACT_LEAD_VALIDATION_ERROR);
   });
 
   it("CVX-010: rejects oversized description", async () => {
@@ -184,7 +193,7 @@ describe("submitLead", () => {
         email: "jane@example.com",
         description: "x".repeat(5001),
       }),
-    ).rejects.toThrow(/too long/);
+    ).rejects.toThrow(CONTACT_LEAD_VALIDATION_ERROR);
   });
 
   it("CVX-011: stores XSS-like payload as plain text", async () => {
@@ -209,6 +218,103 @@ describe("submitLead", () => {
     const leads = await t.run(async (ctx) => ctx.db.query("leads").collect());
     expect(leads[0].name).toBe("Jane 🚀");
     expect(leads[0].description).toBe("项目说明");
+  });
+
+  it("rejects malformed public requests generically before storing or scheduling", async () => {
+    const logSpies = (["log", "info", "warn", "error", "debug"] as const).map((method) =>
+      vi.spyOn(console, method).mockImplementation(() => undefined),
+    );
+    const fetchSpy = vi.fn();
+    vi.stubGlobal("fetch", fetchSpy);
+    const valid = { name: "Jane", email: "jane@example.com", description: "Private free text." };
+    // A caller without generated types can still send arbitrary Convex fields.
+    const rawSubmitLead = makeFunctionReference<"mutation", Record<string, Value>>("leads:submitLead");
+    const invalidRequests: Record<string, Value>[] = [
+      ...["name", "email", "description", "budget"].flatMap((field) =>
+        [null, false, 42, [], { private: "Wrong shape" }].map((value) => ({
+          ...valid, [field]: value,
+        })),
+      ),
+      { email: valid.email, description: valid.description },
+      { name: valid.name, description: valid.description },
+      { name: valid.name, email: valid.email },
+      { ...valid, emailNotificationStatus: "sent" },
+      { ...valid, email: `${"a".repeat(250)}@b.cd` },
+      { ...valid, budget: " ".repeat(65) },
+      { ...valid, name: "\r\nJane" },
+      { ...valid, description: "\u000BPrivate free text." },
+      { ...valid, description: "Private free text.\u000C" },
+      {
+        name: "Jane",
+        email: "jane@example.com",
+        description: "Valid description.",
+        unexpected: "private extra field",
+      },
+      {
+        name: { private: "Jane" },
+        email: "jane@example.com",
+        description: "Valid description.",
+      },
+      {
+        name: "Jane\u0000Doe",
+        email: "jane@example.com",
+        description: "Valid description.",
+      },
+      {
+        name: "Jane",
+        email: "jane@example.com",
+        description: " ".repeat(10_001),
+      },
+    ];
+
+    for (const request of invalidRequests) {
+      const t = convexTest(schema, modules);
+      const error = await t
+        .mutation(rawSubmitLead, request)
+        .then(() => undefined)
+        .catch((caught: unknown) => caught);
+
+      expect(error).toBeDefined();
+      expect(error).toMatchObject({ data: CONTACT_LEAD_VALIDATION_ERROR });
+      expect(String(error)).not.toContain("private extra field");
+      expect(String(error)).not.toContain(valid.description);
+      const leads = await t.run(async (ctx) => ctx.db.query("leads").collect());
+      const scheduled = await t.run(async (ctx) =>
+        ctx.db.system.query("_scheduled_functions").collect(),
+      );
+      expect(leads).toHaveLength(0);
+      expect(scheduled).toHaveLength(0);
+    }
+    for (const logSpy of logSpies) expect(logSpy).not.toHaveBeenCalled();
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("uses canonical values for storage, email jobs, and the email rate limit", async () => {
+    vi.useFakeTimers();
+    const t = convexTest(schema, modules);
+    const canonical = {
+      name: "Jane 👩‍💻",
+      email: "canonical@example.com",
+      budget: "€10k-€25k",
+      description: "First line\n\tSecond line\nThird line",
+    };
+    for (const email of [" CANONICAL@EXAMPLE.COM ", "Canonical@example.com", canonical.email]) {
+      await t.mutation(api.leads.submitLead, {
+        name: `  ${canonical.name}  `,
+        email,
+        budget: `  ${canonical.budget}  `,
+        description: "  First line\r\n\tSecond line\rThird line  ",
+      });
+    }
+    await expect(t.mutation(api.leads.submitLead, canonical)).rejects.toThrow(
+      /This email already sent several messages recently/,
+    );
+    const leads = await t.run((ctx) => ctx.db.query("leads").collect());
+    const jobs = await t.run((ctx) => ctx.db.system.query("_scheduled_functions").collect());
+    expect(leads).toHaveLength(3);
+    expect(jobs).toHaveLength(3);
+    for (const lead of leads) expect(lead).toMatchObject(canonical);
+    for (const job of jobs) expect(job.args).toEqual([expect.objectContaining(canonical)]);
   });
 
   it("rejects 4th submit from same email within one hour", async () => {
