@@ -108,6 +108,7 @@ jobs:
           QA_PREVIEW_URL: http://127.0.0.1:3000
           QA_PROD_URL: http://127.0.0.1:3000
           QA_LOCAL_ONLY: '1'
+          QA_ARTIFACT_SAFE_MODE: '1'
         run: |
           set -euo pipefail
 
@@ -126,10 +127,18 @@ jobs:
           npm run qa:seo
           npm run qa:playwright:ci
 
-      - name: Retain passive QA failure artifacts
+      - name: Reconstruct sanitized passive QA artifacts
+        id: sanitize-qa-artifacts
         if: always()
+        run: node tools/sanitize-playwright-artifacts.js
+
+      - name: Retain sanitized passive QA artifacts
+        if: always() && steps.sanitize-qa-artifacts.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
-          name: passive-qa
-          path: playwright-output/
+          name: passive-qa-sanitized
+          path: |
+            qa-artifacts/summary.json
+            qa-artifacts/failure-results.json
           if-no-files-found: ignore
+          retention-days: 7

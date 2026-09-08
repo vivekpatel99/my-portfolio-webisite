@@ -3,6 +3,7 @@ import path from 'path';
 
 const pages = ['/', '/contact', '/legal', '/data-policy'];
 const artifactDir = path.join(process.cwd(), 'playwright-output');
+const safeArtifactMode = process.env.QA_ARTIFACT_SAFE_MODE === '1';
 
 const routeSlug = (pagePath) =>
   pagePath === '/'
@@ -27,10 +28,12 @@ for (const pagePath of pages) {
       await page.goto(pagePath);
       await expect(page.locator('body')).toBeVisible();
 
-      const screenshot = await page.screenshot({
-        path: path.join(artifactDir, `qa-${routeSlug(pagePath)}-${label}.png`),
-        fullPage: false,
-      });
+      const screenshot = await page.screenshot(safeArtifactMode
+        ? { fullPage: false }
+        : {
+            path: path.join(artifactDir, `qa-${routeSlug(pagePath)}-${label}.png`),
+            fullPage: false,
+          });
       const dimensions = pngDimensions(screenshot);
       const devicePixelRatio = await page.evaluate(() => window.devicePixelRatio);
 
