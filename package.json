@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 3000",
-    "build": "node tools/generate-sitemap.js && vite build && node tools/generate-static-route-html.js",
+    "build": "npm run provenance:deploy && node tools/generate-sitemap.js && vite build && node tools/generate-static-route-html.js",
     "preview": "vite preview --host 127.0.0.1 --port 3000",
     "qa:playwright:passive": "playwright test -c tests/qa/qa.config.js",
     "qa:playwright:ci": "playwright test -c tests/qa/qa.config.js --project=preview-desktop --project=preview-mobile",
@@ -14,6 +14,8 @@
     "qa:seo": "node tests/qa/qa-seo-check.js",
     "convex:dev": "convex dev",
     "convex:smoke": "node tools/convex-smoke-test.mjs",
+    "provenance:audit": "node tools/verify-case-study-provenance.js --audit",
+    "provenance:deploy": "node tools/verify-case-study-provenance.js --deploy",
     "test": "vitest run"
   },
   "dependencies": {
