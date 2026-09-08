@@ -1,6 +1,7 @@
 // @vitest-environment node
 import { execFileSync } from 'node:child_process';
 import {
+  cpSync,
   copyFileSync,
   existsSync,
   mkdirSync,
@@ -40,11 +41,6 @@ function fixture() {
   for (const file of [
     'index.html',
     'public/.htaccess',
-    'public/assets/case-studies/planning-graph.webp',
-    'public/assets/case-studies/invoice-ocr.webp',
-    'public/assets/case-studies/yoga-pose.webp',
-    'public/assets/case-studies/football-tracking.mp4',
-    'public/assets/case-studies/football-tracking.webp',
     'src/config/links.js',
     'src/data/caseStudies.js',
     'src/lib/seoConfig.js',
@@ -59,6 +55,9 @@ function fixture() {
   ]) {
     mkdirSync(path.dirname(path.join(directory, file)), { recursive: true });
     copyFileSync(file, path.join(directory, file));
+  }
+  if (existsSync('public/assets/case-studies')) {
+    cpSync('public/assets/case-studies', path.join(directory, 'public/assets/case-studies'), { recursive: true });
   }
   mkdirSync(path.join(directory, 'dist'), { recursive: true });
   copyFileSync('index.html', path.join(directory, 'dist/index.html'));

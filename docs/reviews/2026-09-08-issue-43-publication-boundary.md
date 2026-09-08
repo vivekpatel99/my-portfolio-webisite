@@ -72,7 +72,9 @@ active publication set with the tracked Apache template, so approved record-set
 changes failed tests before CI reached the build. These tests now validate the
 generated allowlist, and renderer/negative tests no longer require particular
 production records. Independent full-suite runs cover one withdrawal, all
-drafts, and one added approved test record. Production data and runtime code
+drafts, a new approved asset, and removal of obsolete asset inputs. Test assets
+are generated in disposable fixtures independently of production inventory.
+Production data and runtime code
 are unchanged by this follow-up.
 
 The build fixture now performs two builds and has a 180-second test budget,
