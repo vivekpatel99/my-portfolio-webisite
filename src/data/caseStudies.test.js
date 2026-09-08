@@ -3,10 +3,11 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { caseStudies, getCaseStudyBySlug, caseStudySlugs, primaryContactHref } from './caseStudies';
 import { routeSeo } from '../lib/seoConfig';
+import { deploymentHtaccess } from '../../plugins/vite-plugin-case-study-publication.js';
 
 describe('caseStudies data structure', () => {
-  it('should have at least one case study', () => {
-    expect(caseStudies.length).toBeGreaterThan(0);
+  it('is an array, including when publication has no published records', () => {
+    expect(Array.isArray(caseStudies)).toBe(true);
   });
 
   it('should have required fields for each case study', () => {
@@ -34,11 +35,12 @@ describe('caseStudies data structure', () => {
 });
 
 describe('getCaseStudyBySlug', () => {
-  it('should return the correct case study for a valid slug', () => {
-    const firstSlug = caseStudies[0].slug;
-    const result = getCaseStudyBySlug(firstSlug);
-    expect(result).toBeDefined();
-    expect(result.slug).toBe(firstSlug);
+  it('should return the correct case study for every valid slug', () => {
+    caseStudies.forEach((caseStudy) => {
+      const result = getCaseStudyBySlug(caseStudy.slug);
+      expect(result).toBeDefined();
+      expect(result.slug).toBe(caseStudy.slug);
+    });
   });
 
   it('should return undefined for an invalid slug', () => {
@@ -57,19 +59,14 @@ describe('getCaseStudyBySlug', () => {
   });
 
   it('should be case-sensitive', () => {
-    const firstSlug = caseStudies[0].slug;
-    const uppercaseSlug = firstSlug.toUpperCase();
-    
-    if (firstSlug !== uppercaseSlug) {
-      const result = getCaseStudyBySlug(uppercaseSlug);
-      expect(result).toBeUndefined();
-    }
+    caseStudies.forEach((caseStudy) => {
+      const uppercaseSlug = caseStudy.slug.toUpperCase();
+      if (caseStudy.slug !== uppercaseSlug) expect(getCaseStudyBySlug(uppercaseSlug)).toBeUndefined();
+    });
   });
 
   it('should return the exact object from the array', () => {
-    const firstCaseStudy = caseStudies[0];
-    const result = getCaseStudyBySlug(firstCaseStudy.slug);
-    expect(result).toBe(firstCaseStudy);
+    caseStudies.forEach((caseStudy) => expect(getCaseStudyBySlug(caseStudy.slug)).toBe(caseStudy));
   });
 });
 
@@ -85,11 +82,16 @@ describe('caseStudySlugs', () => {
     });
   });
 
-  it('matches the Apache project allowlist and routeSeo keys', () => {
-    const htaccess = readFileSync(resolve(process.cwd(), 'public/.htaccess'), 'utf8');
+  it('matches the generated Apache project allowlist and routeSeo keys', () => {
+    const template = readFileSync(resolve(process.cwd(), 'public/.htaccess'), 'utf8');
+    const htaccess = deploymentHtaccess(template, caseStudySlugs);
     const match = htaccess.match(/RewriteRule \^project\/\(([^)]+)\)/);
-    expect(match).toBeTruthy();
-    expect(match[1].split('|').sort()).toEqual([...caseStudySlugs].sort());
+    if (caseStudySlugs.length === 0) {
+      expect(htaccess).toContain('RewriteRule ^project/ - [R=404,L]');
+    } else {
+      expect(match).toBeTruthy();
+      expect(match[1].split('|').sort()).toEqual([...caseStudySlugs].sort());
+    }
     expect(htaccess).not.toContain('social-media-app');
 
     const projectKeys = Object.keys(routeSeo)
@@ -112,9 +114,10 @@ describe('caseStudySlugs', () => {
     expect(Object.keys(routeSeo).join(' ')).not.toContain('social-media-app');
   });
 
-  it('allows an optional trailing slash in the Apache project rule', () => {
-    const htaccess = readFileSync(resolve(process.cwd(), 'public/.htaccess'), 'utf8');
-    expect(htaccess).toMatch(/RewriteRule \^project\/\([^)]+\)\/\?\$/);
+  it('generates an optional trailing slash in the Apache project rule', () => {
+    const htaccess = deploymentHtaccess(readFileSync(resolve(process.cwd(), 'public/.htaccess'), 'utf8'), caseStudySlugs);
+    if (caseStudySlugs.length === 0) expect(htaccess).toContain('RewriteRule ^project/ - [R=404,L]');
+    else expect(htaccess).toMatch(/RewriteRule \^project\/\([^)]+\)\/\?\$/);
   });
 
   it('uses a trailing slash on the primary contact href', () => {

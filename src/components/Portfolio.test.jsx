@@ -5,6 +5,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
+import { caseStudies } from '@/data/caseStudies';
 import Portfolio from './Portfolio';
 
 describe('Portfolio', () => {
@@ -15,12 +16,13 @@ describe('Portfolio', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByRole('link', {
-      name: /read case study: automated data extraction/i,
-    }).getAttribute('href')).toBe('/project/n8n-openai-data-extraction/');
+    caseStudies.forEach((caseStudy) => {
+      const links = screen.getAllByRole('link', {
+        name: `Read case study: ${caseStudy.cardTitle}`,
+      });
+      expect(links.some((link) => link.getAttribute('href') === `/project/${caseStudy.slug}/`)).toBe(true);
+    });
 
-    expect(screen.getByRole('link', {
-      name: /read case study: invoice ocr data extraction/i,
-    }).getAttribute('href')).toBe('/project/invoice-ocr-extraction/');
+    if (caseStudies.length === 0) expect(screen.queryAllByRole('link', { name: /read case study:/i })).toHaveLength(0);
   });
 });

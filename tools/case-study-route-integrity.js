@@ -32,6 +32,9 @@ export const projectSlugsFromDeploymentConfig = (htaccess) => {
     throw new Error('Deployment routing must contain exactly one case-study allowlist rule');
   }
 
+  if (/^\s*RewriteRule\s+\^project\/\s+-\s+\[R=404,L\]\s*$/.test(projectRules[0][0])) {
+    return [];
+  }
   const match = projectRules[0][0].match(/^\s*RewriteRule\s+\^project\/\(([^)]+)\)\/\?\$\s+index\.html\s+\[L\]\s*$/);
   if (!match) {
     throw new Error('Deployment routing must contain one explicit case-study allowlist');

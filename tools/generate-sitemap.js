@@ -35,9 +35,9 @@ const gitLastmod = () => {
 };
 
 const existingSitemapLastmod = () => {
-    if (!existsSync('public/sitemap.xml')) return null;
+    if (!existsSync('dist/sitemap.xml')) return null;
 
-    const existingSitemap = readFileSync('public/sitemap.xml', 'utf8');
+    const existingSitemap = readFileSync('dist/sitemap.xml', 'utf8');
     const match = existingSitemap.match(/<lastmod>(\d{4}-\d{2}-\d{2})<\/lastmod>/);
     return match?.[1] ?? null;
 };
@@ -51,7 +51,7 @@ const priorityForRoute = (route) => {
     return '0.50';
 };
 
-assertCaseStudyRouteSources({ htaccess: readFileSync('public/.htaccess', 'utf8') });
+assertCaseStudyRouteSources({ htaccess: readFileSync('dist/.htaccess', 'utf8') });
 
 const allPages = Object.keys(routeSeo).map((route) => ({
     loc: absoluteUrl(routeSeo[route].path ?? route),
@@ -76,7 +76,7 @@ ${allPages
 assertSitemapCaseStudyRoutes(sitemap);
 
 try {
-    writeFileSync('public/sitemap.xml', sitemap);
+    writeFileSync('dist/sitemap.xml', sitemap);
     console.log('✅ sitemap.xml generated successfully!');
 } catch (error) {
     console.error('❌ Error generating sitemap.xml:', error);

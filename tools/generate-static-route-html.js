@@ -9,7 +9,7 @@ import {
 } from './case-study-route-integrity.js';
 
 const distDir = path.join(process.cwd(), 'dist');
-assertCaseStudyRouteSources({ htaccess: readFileSync(path.join(process.cwd(), 'public/.htaccess'), 'utf8') });
+assertCaseStudyRouteSources({ htaccess: readFileSync(path.join(process.cwd(), 'dist/.htaccess'), 'utf8') });
 const staticRoutes = Object.keys(routeSeo).filter((route) => route !== '/');
 assertSafeStaticOutput(distDir, staticRoutes);
 const removedStaleProjectHtml = removeStaleProjectHtml(distDir);
