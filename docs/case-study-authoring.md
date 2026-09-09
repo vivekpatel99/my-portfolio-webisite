@@ -8,6 +8,7 @@ anything.
 ```sh
 npm run case-study:prepare -- \
   --source /path/to/case-study.md \
+  --assets-root /path/to/assets/story-id \
   --out .case-study-preview
 
 npm run case-study:preview -- \
@@ -36,10 +37,17 @@ introductory blockquotes, private notes, and all other sections stay out of the
 candidate.
 
 The parser accepts paragraphs, lists, emphasis, inline code, ordinary internal
-paths or HTTPS links, subordinate headings, blockquotes, and fenced code blocks.
-Raw HTML, executable or non-YAML frontmatter, unsafe links, and images fail with
-a file and field error. Image input is intentionally reported as unsupported in
-CS-02 and is scheduled for CS-04.
+paths or HTTPS links, subordinate headings, blockquotes, fenced code blocks, and
+PNG, JPEG, or WebP images. A cover uses `image.src`, `image.alt`, and optional
+`image.caption` frontmatter; inline images use ordinary Markdown such as
+`![Workflow screenshot](wide.png)`. Every image needs non-empty alt text. Image
+sources are resolved beneath one real assets root, rejecting traversal,
+symlink escapes, missing files, external URLs, SVG, and malformed or mismatched
+image bytes. If `--assets-root` is omitted, preparation uses the sibling
+`assets/<story-id>` directory next to the source file. Pass an explicit root when
+the hub stores assets elsewhere. Only referenced bytes are frozen into the
+ignored candidate directory and copied to the content-addressed public asset
+namespace during staging.
 
 Copy [the case-study template](templates/case-study.md) before writing a new
 story. Do not place source files, private notes, draft media, or candidate output

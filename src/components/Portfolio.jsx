@@ -5,7 +5,7 @@ import { featuredCaseStudies } from '@/data/caseStudies';
 const ProjectCard = ({ project }) => {
   return (
     <article className="group overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] transition-all duration-300 hover:border-accent-purple/50 hover:bg-white/[0.07]">
-      {project.image ? <img className="block h-auto w-full" alt={project.image.alt} src={project.image.src} loading="lazy" /> : null}
+      {project.image ? <img className="block h-auto w-full" alt={project.image.alt} src={project.image.src} width={project.image.width} height={project.image.height} loading="lazy" /> : null}
       <div className="flex min-h-[148px] flex-col justify-between gap-4 p-5">
         <div>
           {project.category ? <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-[#d8caff]">{project.category}</p> : null}

@@ -23,6 +23,8 @@
 .case-study-cover { margin: 0 0 38px; }
 .case-study-cover a { display: block; }
 .case-study-cover img { display: block; width: 100%; height: auto; border: 1px solid #303034; border-radius: 4px; }
+.case-study-inline-image-link { display: block; margin: 18px 0; }
+.case-study-sections .case-study-inline-image-link img { display: block; width: 100%; max-width: 100%; height: auto; border: 1px solid #303034; border-radius: 4px; }
 .case-study-cover figcaption { margin-top: 8px; color: #96919e; font-size: 13px; }
 .case-study-sections section { margin-top: 28px; }
 .case-study-sections h2 { margin: 0 0 9px; color: #eeedf0; font-size: 19px; font-weight: 500; line-height: 1.4; }

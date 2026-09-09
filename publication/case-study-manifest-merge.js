@@ -1,5 +1,5 @@
 const assertStore = (store, label) => {
-  if (!store || !Array.isArray(store.records) || !store.claims || typeof store.claims !== 'object' || Array.isArray(store.claims)) {
+  if (!store || !Array.isArray(store.records) || !store.claims || typeof store.claims !== 'object' || Array.isArray(store.claims) || (store.assets !== undefined && (typeof store.assets !== 'object' || Array.isArray(store.assets)))) {
     throw new Error(`${label} must contain records and claims`);
   }
 };
@@ -51,5 +51,6 @@ export const mergeCaseStudyManifest = (baseManifest, stagedStore) => {
     ...baseManifest,
     records,
     claims: { ...baseManifest.claims, ...stagedStore.claims },
+    assets: { ...(baseManifest.assets ?? {}), ...(stagedStore.assets ?? {}) },
   };
 };

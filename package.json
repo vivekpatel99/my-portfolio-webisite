@@ -34,6 +34,7 @@
     "framer-motion": "^10.16.4",
     "gray-matter": "^4.0.3",
     "he": "^1.2.0",
+    "image-size": "^2.0.2",
     "lucide-react": "^0.285.0",
     "marked": "^18.0.12",
     "react": "18.2.0",

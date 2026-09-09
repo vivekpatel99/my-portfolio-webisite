@@ -10,6 +10,9 @@ const renderInline = (nodes, keyPrefix) => nodes.map((node, index) => {
     case 'delete': return React.createElement('del', { key }, renderInline(node.children, key));
     case 'break': return React.createElement('br', { key });
     case 'link': return React.createElement('a', { key, href: node.href }, renderInline(node.children, key));
+    case 'image': return React.createElement('a', { key, className: 'case-study-inline-image-link', href: node.src }, React.createElement('img', {
+      src: node.src, alt: node.alt, width: node.width, height: node.height, loading: 'lazy',
+    }));
     default: return null;
   }
 });
@@ -40,7 +43,7 @@ export const CaseStudyArticle = ({ story, backHref = '/#portfolio' }) => React.c
   React.createElement('p', { className: 'case-study-summary' }, story.summary),
   story.image ? React.createElement('figure', { className: 'case-study-cover' },
     React.createElement('a', { href: story.image.src },
-      React.createElement('img', { src: story.image.src, alt: story.image.alt, loading: 'eager' }),
+      React.createElement('img', { src: story.image.src, alt: story.image.alt, width: story.image.width, height: story.image.height, loading: 'eager' }),
     ),
     story.image.caption ? React.createElement('figcaption', null, story.image.caption) : null,
   ) : null,

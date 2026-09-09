@@ -1,12 +1,27 @@
-import { readFileSync, renameSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { readFileSync, renameSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, existsSync, realpathSync, lstatSync } from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { imageSize } from 'image-size';
 import { digest } from './case-study-evidence.js';
 import { validatePreparedCaseStudies } from './markdown-case-study.js';
 import { mergeCaseStudyManifest } from './case-study-manifest-merge.js';
 
 const isoTimestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/;
 const sha256 = /^[a-f0-9]{64}$/;
+const publicAssetPath = /^\/assets\/case-studies\/[a-z0-9][a-z0-9._-]*$/;
+const assertAssetDestination = (root, publicPath, asset) => {
+  if (!publicAssetPath.test(publicPath) || !asset || asset.file !== `public${publicPath}`) throw new Error(`Asset ${publicPath} must use a canonical public case-study path`);
+  const resolved = path.resolve(root, asset.file);
+  if (resolved !== path.join(root, asset.file) || !resolved.startsWith(`${path.resolve(root)}${path.sep}`)) throw new Error(`Asset ${publicPath} escapes the repository root`);
+  const directory = path.join(root, 'public/assets/case-studies');
+  for (let current = directory; ; current = path.dirname(current)) {
+    let info; try { info = lstatSync(current); } catch (error) { throw new Error(`Case-study asset directory could not be read: ${error.message}`); }
+    if (!info.isDirectory() || info.isSymbolicLink()) throw new Error('Case-study asset directory and parents must be real directories');
+    if (current === path.resolve(root)) break;
+  }
+  try { const fileInfo = lstatSync(resolved); if (!fileInfo.isFile() || fileInfo.isSymbolicLink()) throw new Error('not a regular file'); }
+  catch (error) { if (error.code !== 'ENOENT') throw new Error(`Asset ${publicPath} destination must be a regular file`); }
+};
 
 const explicitApproval = (sha256Value, metadata) => ({
   kind: 'explicit',
@@ -28,6 +43,7 @@ const articleRecord = (story, metadata) => {
     summary: story.summary,
     ...(story.category === undefined ? {} : { category: story.category }),
     sections: story.sections,
+    ...(story.image === undefined ? {} : { image: story.image }),
   };
   const summaryRef = `${story.id}.summary`;
   const outcomeRef = `${story.id}.outcome`;
@@ -61,6 +77,43 @@ export async function stageReviewedCaseStudyCandidate({ candidatePath, stagedPat
   const candidate = JSON.parse(bytes.toString('utf8'));
   if (candidate?.schemaVersion !== 1) throw new Error('Reviewed candidate has an unsupported schema version');
   const stories = validatePreparedCaseStudies(candidate.stories, path.basename(candidatePath));
+  const candidateAssets = candidate.assets && typeof candidate.assets === 'object' && !Array.isArray(candidate.assets) ? candidate.assets : {};
+  const referenced = new Set();
+  const collect = (nodes) => (nodes ?? []).forEach((node) => {
+    if (node.type === 'image') referenced.add(node.src);
+    if (node.children) collect(node.children);
+    if (node.items) node.items.forEach((item) => collect(item.children));
+  });
+  for (const story of stories) { if (story.image) referenced.add(story.image.src); story.sections.forEach((section) => collect(section.nodes)); }
+  const assetEntries = {};
+  const frozenAssetBytes = new Map();
+  const candidateDirectory = realpathSync(path.resolve(path.dirname(candidatePath)));
+  for (const publicPath of referenced) {
+    const sourceAsset = candidateAssets[publicPath];
+    if (!sourceAsset || typeof sourceAsset.source !== 'string' || typeof sourceAsset.sha256 !== 'string') throw new Error(`Reviewed candidate is missing build-only asset metadata for ${publicPath}`);
+    if (path.isAbsolute(sourceAsset.source) || sourceAsset.source.includes('\\') || sourceAsset.source.split('/').includes('..')) throw new Error(`Reviewed candidate asset source must stay inside its candidate directory: ${publicPath}`);
+    const sourcePath = path.resolve(candidateDirectory, ...sourceAsset.source.split('/'));
+    let realSource;
+    try { realSource = realpathSync(sourcePath); } catch (error) { throw new Error(`Reviewed candidate asset snapshot is missing for ${publicPath}: ${error.message}`); }
+    if (!(realSource === candidateDirectory || realSource.startsWith(`${candidateDirectory}${path.sep}`))) throw new Error(`Reviewed candidate asset source escapes its candidate directory: ${publicPath}`);
+    const sourceInfo = lstatSync(realSource);
+    if (!sourceInfo.isFile()) throw new Error(`Reviewed candidate asset snapshot must be a regular file: ${publicPath}`);
+    const sourceBytes = readFileSync(realSource);
+    const actualAssetDigest = digest(sourceBytes);
+    if (actualAssetDigest !== sourceAsset.sha256) throw new Error(`Reviewed candidate asset bytes changed without approval: ${publicPath}`);
+    frozenAssetBytes.set(publicPath, sourceBytes);
+    let dimensions; try { dimensions = imageSize(sourceBytes); } catch { throw new Error(`Reviewed candidate asset is not a valid image: ${publicPath}`); }
+    const format = String(dimensions.type || '').toLowerCase();
+    if (!Number.isSafeInteger(dimensions.width) || !Number.isSafeInteger(dimensions.height) || dimensions.width < 1 || dimensions.height < 1 || dimensions.width !== sourceAsset.width || dimensions.height !== sourceAsset.height || !['png', 'jpg', 'jpeg', 'webp'].includes(format) || (sourceAsset.format === 'jpeg' ? !['jpg', 'jpeg'].includes(format) : sourceAsset.format !== format)) throw new Error(`Reviewed candidate asset dimensions or format changed without approval: ${publicPath}`);
+    const assetPath = `public${publicPath}`;
+    assetEntries[publicPath] = {
+      file: assetPath,
+      width: sourceAsset.width,
+      height: sourceAsset.height,
+      format: sourceAsset.format,
+      approval: explicitApproval(actualAssetDigest, metadata),
+    };
+  }
   const stagedSource = readFileSync(stagedPath, 'utf8');
   const stagedMatch = stagedSource.match(/export const stagedCaseStudyPublication = ([\s\S]*);\s*$/);
   if (!stagedMatch) throw new Error(`Staged publication file is malformed: ${stagedPath}`);
@@ -93,21 +146,49 @@ export async function stageReviewedCaseStudyCandidate({ candidatePath, stagedPat
     for (const claimId of Object.keys(claims)) if (claimId.startsWith(`${id}.`)) delete claims[claimId];
   }
   for (const record of stagedRecords) Object.assign(claims, record.claims);
-  const proposedStagedStore = { records, claims };
+  const proposedStagedStore = { records, claims, assets: { ...(existing.assets ?? {}), ...assetEntries } };
   // Validate the exact merged manifest before replacing the generated store.
   // This is also the path used by the default manifest import at build time.
   const proposedManifest = mergeCaseStudyManifest(baseline, proposedStagedStore);
   const { compileCaseStudyPublication } = await import('./compile-case-studies.js');
-  compileCaseStudyPublication({ manifest: proposedManifest, root: path.resolve(path.dirname(stagedPath), '..') });
-  const output = `// Generated by tools/stage-case-study-publication.js.\nexport const stagedCaseStudyPublication = ${JSON.stringify({ records, claims }, null, 2)};\n`;
-  mkdirSync(path.dirname(stagedPath), { recursive: true });
-  const temporaryDirectory = mkdtempSync(path.join(path.dirname(stagedPath), '.staged-'));
-  const temporaryPath = path.join(temporaryDirectory, path.basename(stagedPath));
+  const repositoryRoot = path.resolve(path.dirname(stagedPath), '..');
+  for (const [publicPath, asset] of Object.entries(proposedManifest.assets ?? {})) assertAssetDestination(repositoryRoot, publicPath, asset);
+  const temporaryRoot = mkdtempSync(path.join(repositoryRoot, '.case-study-assets-'));
   try {
-    writeFileSync(temporaryPath, output, 'utf8');
-    renameSync(temporaryPath, stagedPath);
-  } finally {
-    rmSync(temporaryDirectory, { recursive: true, force: true });
+    mkdirSync(path.join(temporaryRoot, 'public/assets/case-studies'), { recursive: true });
+    for (const [publicPath, asset] of Object.entries(proposedManifest.assets ?? {})) {
+      const destination = path.join(temporaryRoot, asset.file);
+      mkdirSync(path.dirname(destination), { recursive: true });
+      const existingFile = path.join(repositoryRoot, asset.file);
+      try { if (lstatSync(existingFile).isFile()) writeFileSync(destination, readFileSync(existingFile)); }
+      catch (error) { if (error.code !== 'ENOENT') throw error; }
+      if (!existsSync(destination) && frozenAssetBytes.has(publicPath)) writeFileSync(destination, frozenAssetBytes.get(publicPath));
+    }
+    compileCaseStudyPublication({ manifest: proposedManifest, root: temporaryRoot });
+  } finally { rmSync(temporaryRoot, { recursive: true, force: true }); }
+  const newlyInstalled = [];
+  try {
+    for (const [publicPath, asset] of Object.entries(assetEntries)) {
+      const destination = path.join(repositoryRoot, asset.file);
+      let destinationInfo;
+      try { destinationInfo = lstatSync(destination); } catch (error) { if (error.code !== 'ENOENT') throw error; }
+      if (!destinationInfo) { mkdirSync(path.dirname(destination), { recursive: true }); writeFileSync(destination, frozenAssetBytes.get(publicPath), { flag: 'wx' }); newlyInstalled.push(destination); }
+      else if (!destinationInfo.isFile() || destinationInfo.isSymbolicLink() || digest(readFileSync(destination)) !== asset.approval.sha256) throw new Error(`Cannot replace existing approved asset at ${publicPath}`);
+    }
+  } catch (error) {
+    for (const file of newlyInstalled) rmSync(file, { force: true });
+    throw error;
+  }
+  try {
+    const output = `// Generated by tools/stage-case-study-publication.js.\nexport const stagedCaseStudyPublication = ${JSON.stringify({ records, claims, assets: { ...(existing.assets ?? {}), ...assetEntries } }, null, 2)};\n`;
+    mkdirSync(path.dirname(stagedPath), { recursive: true });
+    const temporaryDirectory = mkdtempSync(path.join(path.dirname(stagedPath), '.staged-'));
+    const temporaryPath = path.join(temporaryDirectory, path.basename(stagedPath));
+    try { writeFileSync(temporaryPath, output, 'utf8'); renameSync(temporaryPath, stagedPath); }
+    finally { rmSync(temporaryDirectory, { recursive: true, force: true }); }
+  } catch (error) {
+    for (const file of newlyInstalled) rmSync(file, { force: true });
+    throw error;
   }
   return { candidateSha256: actualDigest, records, stagedPath };
 }

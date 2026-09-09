@@ -1,9 +1,38 @@
-import { readFileSync, renameSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, renameSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, existsSync, lstatSync, realpathSync } from 'node:fs';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 import matter from 'gray-matter';
 import he from 'he';
 import { marked } from 'marked';
+import { imageSize } from 'image-size';
 import { slugPattern } from './case-study-schema.js';
+
+const imageExtensions = new Set(['.png', '.jpg', '.jpeg', '.webp']);
+const assetDigest = (bytes) => createHash('sha256').update(bytes).digest('hex');
+const imageIssue = (filePath, message) => issue(filePath, 'image', message);
+const imageDimensions = (bytes, extension, filePath) => {
+  let dimensions;
+  try { dimensions = imageSize(bytes); } catch { imageIssue(filePath, 'is not a valid PNG, JPEG, or WebP image'); }
+  const format = String(dimensions.type || '').toLowerCase();
+  if (!imageExtensions.has(extension) || !['png', 'jpg', 'jpeg', 'webp'].includes(format) || (extension === '.png' && format !== 'png') || ((extension === '.jpg' || extension === '.jpeg') && !['jpg', 'jpeg'].includes(format)) || (extension === '.webp' && format !== 'webp')) imageIssue(filePath, `extension ${extension} does not match its actual image format`);
+  if (!Number.isSafeInteger(dimensions.width) || !Number.isSafeInteger(dimensions.height) || dimensions.width < 1 || dimensions.height < 1) imageIssue(filePath, 'has invalid intrinsic dimensions');
+  return { width: dimensions.width, height: dimensions.height, format: format === 'jpg' ? 'jpeg' : format };
+};
+const defaultAssetsRoot = (sourceFile, storyId) => path.join(path.dirname(path.resolve(sourceFile)), 'assets', storyId);
+const resolveCaseStudyAsset = ({ source, filePath, storyId, assetsRoot }) => {
+  if (typeof source !== 'string' || source.trim() === '') imageIssue(filePath, 'source must be a non-empty local file path');
+  const clean = source.trim();
+  if (clean.includes('\\') || clean.includes('\0') || path.posix.isAbsolute(clean) || /^[a-z][a-z0-9+.-]*:/i.test(clean) || clean.split('/').includes('..')) imageIssue(filePath, `source ${clean} must stay inside the story asset root`);
+  let rootInfo; try { rootInfo = lstatSync(assetsRoot); } catch (error) { imageIssue(filePath, `assets root could not be read (${error.message})`); }
+  if (!rootInfo.isDirectory() || rootInfo.isSymbolicLink()) imageIssue(filePath, 'assets root must be a real directory');
+  const root = realpathSync(assetsRoot); const candidate = path.resolve(root, ...clean.split('/')); let real;
+  try { real = realpathSync(candidate); } catch (error) { imageIssue(filePath, `source ${clean} is missing (${error.message})`); }
+  if (!(real === root || real.startsWith(`${root}${path.sep}`))) imageIssue(filePath, `source ${clean} escapes the story asset root`);
+  const info = lstatSync(real); if (!info.isFile()) imageIssue(filePath, `source ${clean} must be a regular file`);
+  const extension = path.extname(clean).toLowerCase(); if (!imageExtensions.has(extension)) imageIssue(filePath, `source ${clean} must be PNG, JPEG, or WebP`);
+  const bytes = readFileSync(real); const dimensions = imageDimensions(bytes, extension, filePath); const sha256 = assetDigest(bytes); const extensionForPath = extension === '.jpeg' ? '.jpg' : extension;
+  return { source: real, bytes, sha256, width: dimensions.width, height: dimensions.height, format: dimensions.format, publicPath: `/assets/case-studies/${storyId}-${sha256}${extensionForPath}` };
+};
 
 const PUBLIC_HEADINGS = [
   ['problem', 'The problem'],
@@ -36,6 +65,8 @@ const safeUrl = (value, filePath, field) => {
   return url;
 };
 
+const tokenContainsImage = (tokens) => (tokens ?? []).some((token) => token.type === 'image' || tokenContainsImage(token.tokens));
+
 const inlineNodes = (tokens, filePath, field) => (tokens ?? []).flatMap((token) => {
   switch (token.type) {
     case 'text':
@@ -45,8 +76,13 @@ const inlineNodes = (tokens, filePath, field) => (tokens ?? []).flatMap((token) 
     case 'em': return [{ type: 'emphasis', children: inlineNodes(token.tokens, filePath, field) }];
     case 'del': return [{ type: 'delete', children: inlineNodes(token.tokens, filePath, field) }];
     case 'br': return [{ type: 'break' }];
-    case 'link': return [{ type: 'link', href: safeUrl(token.href, filePath, `${field} link`), children: inlineNodes(token.tokens, filePath, field) }];
-    case 'image': issue(filePath, field, 'contains an image; image input is unsupported in CS-02 and will be added in CS-04'); break;
+    case 'link':
+      if (tokenContainsImage(token.tokens)) issue(filePath, field, 'contains an image nested inside a link; image links are created automatically');
+      return [{ type: 'link', href: safeUrl(token.href, filePath, `${field} link`), children: inlineNodes(token.tokens, filePath, field) }];
+    case 'image': {
+      const alt = nonEmptyString(token.text, filePath, `${field} image alt`);
+      return [{ type: 'image', src: nonEmptyString(token.href, filePath, `${field} image source`), alt, ...(token.title ? { caption: nonEmptyString(token.title, filePath, `${field} image caption`) } : {}) }];
+    }
     case 'html': issue(filePath, field, 'contains raw HTML, which is not allowed'); break;
     case 'space': return [];
     default: issue(filePath, field, `contains unsupported Markdown token ${token.type}`);
@@ -71,7 +107,7 @@ const blockNodes = (tokens, filePath, field) => (tokens ?? []).flatMap((token) =
       items: token.items.map((item) => ({ type: 'listItem', children: blockNodes(item.tokens, filePath, field) })),
     }];
     case 'html': issue(filePath, field, 'contains raw HTML, which is not allowed'); break;
-    case 'image': issue(filePath, field, 'contains an image; image input is unsupported in CS-02 and will be added in CS-04'); break;
+    case 'image': issue(filePath, field, 'contains an image outside a paragraph'); break;
     default: issue(filePath, field, `contains unsupported Markdown token ${token.type}`);
   }
   return [];
@@ -79,11 +115,13 @@ const blockNodes = (tokens, filePath, field) => (tokens ?? []).flatMap((token) =
 
 const validateImageMetadata = (image, filePath) => {
   if (image == null) return;
-  if (typeof image === 'string') issue(filePath, 'image', 'must include alt text and is unsupported in CS-02');
+  if (typeof image === 'string') issue(filePath, 'image', 'must include alt text');
   if (!image || typeof image !== 'object' || Array.isArray(image)) issue(filePath, 'image', 'must be an object');
+  const unexpected = Object.keys(image).filter((key) => !['src', 'alt', 'caption'].includes(key));
+  if (unexpected.length) issue(filePath, 'image', `contains unsupported fields: ${unexpected.join(', ')}`);
   nonEmptyString(image.src, filePath, 'image.src');
   nonEmptyString(image.alt, filePath, 'image.alt');
-  issue(filePath, 'image', 'is unsupported in CS-02 and will be added in CS-04');
+  if (image.caption !== undefined) nonEmptyString(image.caption, filePath, 'image.caption');
 };
 
 const parseFrontmatter = (data, filePath) => {
@@ -96,7 +134,8 @@ const parseFrontmatter = (data, filePath) => {
   const summary = nonEmptyString(data.summary, filePath, 'summary');
   const category = data.category == null ? undefined : nonEmptyString(data.category, filePath, 'category');
   validateImageMetadata(data.image, filePath);
-  return { id, slug, title, summary, ...(category ? { category } : {}) };
+  const image = data.image;
+  return { id, slug, title, summary, ...(category ? { category } : {}), ...(image ? { image: { src: image.src.trim(), alt: image.alt.trim(), ...(image.caption === undefined ? {} : { caption: image.caption.trim() }) } } : {}) };
 };
 
 const candidateIssue = (label, message) => { throw new Error(`${label}: ${message}`); };
@@ -112,6 +151,7 @@ const candidateNonEmptyString = (value, label) => {
   candidateString(value, label);
   if (value.trim() === '') candidateIssue(label, 'must be a non-empty string');
 };
+const candidateContainsImage = (nodes) => (nodes ?? []).some((node) => node.type === 'image' || candidateContainsImage(node.children));
 
 const validateCandidateInline = (node, label) => {
   if (!node || typeof node !== 'object' || Array.isArray(node)) candidateIssue(label, 'must be an object');
@@ -128,7 +168,16 @@ const validateCandidateInline = (node, label) => {
     case 'link':
       candidateObject(node, ['type', 'href', 'children'], label);
       safeUrl(node.href, label, 'href');
+      if (candidateContainsImage(node.children)) candidateIssue(label, 'cannot contain an image inside a link; image links are created automatically');
       validateCandidateInlineChildren(node.children, `${label}.children`);
+      break;
+    case 'image':
+      candidateObject(node, ['type', 'src', 'alt', 'caption', 'width', 'height'], label);
+      candidateNonEmptyString(node.src, `${label}.src`); candidateNonEmptyString(node.alt, `${label}.alt`);
+      if (!/^\/assets\/case-studies\/[a-z0-9][a-z0-9._-]*$/.test(node.src)) candidateIssue(`${label}.src`, 'must use a safe public case-study asset path');
+      if (node.caption !== undefined) candidateNonEmptyString(node.caption, `${label}.caption`);
+      if (!Number.isSafeInteger(node.width) || node.width < 1) candidateIssue(`${label}.width`, 'must be a positive integer');
+      if (!Number.isSafeInteger(node.height) || node.height < 1) candidateIssue(`${label}.height`, 'must be a positive integer');
       break;
     default: candidateIssue(label, `has unsupported inline node type ${node.type}`);
   }
@@ -174,7 +223,7 @@ export const validatePreparedCaseStudies = (stories, label = 'candidate') => {
   const slugs = new Set();
   stories.forEach((story, index) => {
     const storyLabel = `${label}.stories[${index}]`;
-    candidateObject(story, ['id', 'slug', 'title', 'summary', 'category', 'sections'], storyLabel);
+    candidateObject(story, ['id', 'slug', 'title', 'summary', 'category', 'image', 'sections'], storyLabel);
     candidateString(story.id, `${storyLabel}.id`); candidateString(story.slug, `${storyLabel}.slug`);
     if (!slugPattern.test(story.id) || !slugPattern.test(story.slug)) candidateIssue(storyLabel, 'id and slug must be safe lowercase hyphenated values');
     if (ids.has(story.id)) candidateIssue(storyLabel, `id ${story.id} is duplicated`);
@@ -182,6 +231,14 @@ export const validatePreparedCaseStudies = (stories, label = 'candidate') => {
     ids.add(story.id); slugs.add(story.slug);
     candidateNonEmptyString(story.title, `${storyLabel}.title`); candidateNonEmptyString(story.summary, `${storyLabel}.summary`);
     if (story.category !== undefined) candidateNonEmptyString(story.category, `${storyLabel}.category`);
+    if (story.image !== undefined) {
+      candidateObject(story.image, ['src', 'alt', 'caption', 'width', 'height'], `${storyLabel}.image`);
+      candidateNonEmptyString(story.image.src, `${storyLabel}.image.src`); candidateNonEmptyString(story.image.alt, `${storyLabel}.image.alt`);
+      if (!/^\/assets\/case-studies\/[a-z0-9][a-z0-9._-]*$/.test(story.image.src)) candidateIssue(`${storyLabel}.image.src`, 'must use a safe public case-study asset path');
+      if (story.image.caption !== undefined) candidateNonEmptyString(story.image.caption, `${storyLabel}.image.caption`);
+      if (!Number.isSafeInteger(story.image.width) || story.image.width < 1) candidateIssue(`${storyLabel}.image.width`, 'must be a positive integer');
+      if (!Number.isSafeInteger(story.image.height) || story.image.height < 1) candidateIssue(`${storyLabel}.image.height`, 'must be a positive integer');
+    }
     if (!Array.isArray(story.sections) || story.sections.length !== PUBLIC_HEADINGS.length) candidateIssue(`${storyLabel}.sections`, 'must contain exactly the three public sections');
     story.sections.forEach((section, sectionIndex) => {
       const sectionLabel = `${storyLabel}.sections[${sectionIndex}]`;
@@ -225,13 +282,32 @@ export function parseMarkdownCaseStudy({ source, filePath = 'source.md' }) {
   for (const [, heading] of PUBLIC_HEADINGS) {
     if (!sections.has(PUBLIC_HEADINGS.find(([, expected]) => expected === heading)[0])) issue(filePath, heading, 'is required exactly once');
   }
-  return {
+  const story = {
     ...identity,
     sections: PUBLIC_HEADINGS.map(([key]) => sections.get(key)),
   };
+  return story;
 }
 
-export function prepareMarkdownCaseStudies({ sourceFiles, outputDirectory }) {
+const mapStoryAssets = (story, filePath, assetsRoot) => {
+  const assets = {};
+  const resolve = (media) => {
+    const resolved = resolveCaseStudyAsset({ source: media.src, filePath, storyId: story.id, assetsRoot });
+    assets[resolved.publicPath] = {
+      source: resolved.source, bytes: resolved.bytes, sha256: resolved.sha256, width: resolved.width, height: resolved.height, format: resolved.format,
+    };
+    return { src: resolved.publicPath, alt: media.alt, ...(media.caption ? { caption: media.caption } : {}), width: resolved.width, height: resolved.height };
+  };
+  const mapInline = (nodes) => nodes.map((node) => ({
+    ...node,
+    ...(node.type === 'image' ? resolve(node) : {}),
+    ...(node.children ? { children: mapInline(node.children) } : {}),
+    ...(node.items ? { items: node.items.map((item) => ({ ...item, children: mapInline(item.children) })) } : {}),
+  }));
+  return { story: { ...story, ...(story.image ? { image: resolve(story.image) } : {}), sections: story.sections.map((section) => ({ ...section, nodes: mapInline(section.nodes) })) }, assets };
+};
+
+export function prepareMarkdownCaseStudies({ sourceFiles, outputDirectory, assetsRoot }) {
   if (!Array.isArray(sourceFiles) || sourceFiles.length === 0) throw new Error('Preparation requires at least one explicit --source file');
   if (typeof outputDirectory !== 'string' || outputDirectory.trim() === '') throw new Error('Preparation requires an output directory');
   const parsedSources = sourceFiles.map((filePath) => {
@@ -250,10 +326,38 @@ export function prepareMarkdownCaseStudies({ sourceFiles, outputDirectory }) {
     firstById.set(story.id, filePath);
     firstBySlug.set(story.slug, filePath);
   }
-  const stories = parsedSources.map(({ story }) => story);
-  validatePreparedCaseStudies(stories, 'prepared candidate');
-  const candidate = `${JSON.stringify({ schemaVersion: 1, stories }, null, 2)}\n`;
+  const stories = [];
+  const assets = {};
   mkdirSync(outputDirectory, { recursive: true });
+  const outputRoot = realpathSync(outputDirectory);
+  const snapshotDirectory = path.join(outputRoot, 'assets');
+  if (existsSync(snapshotDirectory) && lstatSync(snapshotDirectory).isSymbolicLink()) throw new Error('Candidate asset directory must not be a symlink');
+  mkdirSync(snapshotDirectory, { recursive: true });
+  if (realpathSync(snapshotDirectory) !== snapshotDirectory) throw new Error('Candidate asset directory must remain inside the preview output');
+  const newSnapshots = [];
+  try {
+    for (const { filePath, story } of parsedSources) {
+      const mapped = mapStoryAssets(story, filePath, assetsRoot ?? defaultAssetsRoot(filePath, story.id));
+      stories.push(mapped.story);
+      for (const [publicPath, asset] of Object.entries(mapped.assets)) {
+        const extension = asset.format === 'jpeg' ? '.jpg' : `.${asset.format}`;
+        const snapshotSource = path.posix.join('assets', `${asset.sha256}${extension}`);
+        const snapshotPath = path.join(outputRoot, snapshotSource);
+        mkdirSync(path.dirname(snapshotPath), { recursive: true });
+        let snapshotInfo; try { snapshotInfo = lstatSync(snapshotPath); } catch (error) { if (error.code !== 'ENOENT') throw error; }
+        if (snapshotInfo) {
+          if (!snapshotInfo.isFile() || snapshotInfo.isSymbolicLink()) imageIssue(filePath, `candidate snapshot ${snapshotSource} must be a regular file`);
+          if (assetDigest(readFileSync(snapshotPath)) !== asset.sha256) imageIssue(filePath, `candidate snapshot ${snapshotSource} has changed bytes`);
+        } else { writeFileSync(snapshotPath, asset.bytes); newSnapshots.push(snapshotPath); }
+        assets[publicPath] = { source: snapshotSource, sha256: asset.sha256, width: asset.width, height: asset.height, format: asset.format };
+      }
+    }
+  } catch (error) {
+    for (const snapshotPath of newSnapshots) rmSync(snapshotPath, { force: true });
+    throw error;
+  }
+  try { validatePreparedCaseStudies(stories, 'prepared candidate'); } catch (error) { for (const snapshotPath of newSnapshots) rmSync(snapshotPath, { force: true }); throw error; }
+  const candidate = `${JSON.stringify({ schemaVersion: 1, stories, assets }, null, 2)}\n`;
   const candidatePath = path.join(outputDirectory, 'candidate.json');
   const temporaryDirectory = mkdtempSync(path.join(outputDirectory, '.candidate-'));
   const temporaryPath = path.join(temporaryDirectory, 'candidate.json');
@@ -263,7 +367,7 @@ export function prepareMarkdownCaseStudies({ sourceFiles, outputDirectory }) {
   } finally {
     rmSync(temporaryDirectory, { recursive: true, force: true });
   }
-  return { candidatePath, stories };
+  return { candidatePath, stories, assets };
 }
 
 export const readPreparedCaseStudies = (candidatePath) => {

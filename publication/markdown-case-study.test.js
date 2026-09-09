@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -68,7 +68,6 @@ describe('Markdown case-study preparation', () => {
       [source().replace('/contact/', 'javascript:alert(1)'), /fixture\.md: What I built link must be an internal path or HTTPS URL/],
       [source().replace('/contact/', '/\\\\evil.test'), /fixture\.md: What I built link contains unsafe URL characters/],
       [source().replace('The **problem**', 'The <script>alert(1)<\/script>'), /fixture\.md: The problem contains raw HTML/],
-      [source().replace('category: Automation', 'image:\n  src: cover.png\n  alt: Cover'), /fixture\.md: image is unsupported in CS-02/],
     ];
     for (const [invalidSource, error] of cases) expect(() => parseMarkdownCaseStudy({ source: invalidSource, filePath: '/private/fixture.md' })).toThrow(error);
   });
@@ -117,5 +116,23 @@ describe('Markdown case-study preparation', () => {
     expect(readFileSync(firstResult.candidatePath, 'utf8')).toBe(prior);
     const unchanged = prepareMarkdownCaseStudies({ sourceFiles: [first], outputDirectory });
     expect(readFileSync(unchanged.candidatePath, 'utf8')).toBe(prior);
+  });
+
+  it('freezes referenced screenshots with intrinsic dimensions and relative candidate paths', () => {
+    const directory = mkdtempSync(path.join(tmpdir(), 'markdown-case-study-images-'));
+    temporaryDirectories.push(directory);
+    const assetsRoot = path.join(directory, 'assets', 'image-story');
+    mkdirSync(assetsRoot, { recursive: true });
+    copyFileSync(path.join(process.cwd(), 'public/assets/case-studies/planning-graph.webp'), path.join(assetsRoot, 'workflow.webp'));
+    const sourcePath = path.join(directory, 'image-story.md');
+    writeFileSync(sourcePath, `---\nid: image-story\ntitle: Image story\nsummary: Screenshot summary.\nimage:\n  src: workflow.webp\n  alt: Workflow screenshot\n  caption: Reviewed screenshot\n---\n## The problem\nA problem.\n## What I built\nInline:\n\n![Portrait alternative](workflow.webp)\n## The outcome\nAn outcome.\n`);
+    const result = prepareMarkdownCaseStudies({ sourceFiles: [sourcePath], outputDirectory: path.join(directory, 'preview'), assetsRoot });
+    const candidate = JSON.parse(readFileSync(result.candidatePath, 'utf8'));
+    const story = candidate.stories[0];
+    expect(story.image.src).toMatch(/^\/assets\/case-studies\/image-story-[a-f0-9]{64}\.webp$/);
+    expect(story.image.width).toBeGreaterThan(0);
+    expect(story.sections[1].nodes[1].children[0].src).toBe(story.image.src);
+    expect(Object.values(candidate.assets)[0].source).toMatch(/^assets\/[a-f0-9]{64}\.webp$/);
+    expect(Object.values(candidate.assets)[0].source).not.toContain(directory);
   });
 });

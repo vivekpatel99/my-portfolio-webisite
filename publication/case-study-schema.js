@@ -9,9 +9,12 @@ export const assertString = (value, label) => {
   if (typeof value !== 'string' || !value) fail(`${label} must be a non-empty string`);
 };
 export const assertMedia = (media, label) => {
-  exactKeys(media, ['src', 'alt', 'poster'], label);
+  exactKeys(media, ['src', 'alt', 'poster', 'caption', 'width', 'height'], label);
   assertString(media.src, `${label} src`); assertString(media.alt, `${label} alt`);
   if (media.poster != null) assertString(media.poster, `${label} poster`);
+  if (media.caption != null) assertString(media.caption, `${label} caption`);
+  if (media.width != null && (!Number.isSafeInteger(media.width) || media.width < 1)) fail(`${label} width must be a positive integer`);
+  if (media.height != null && (!Number.isSafeInteger(media.height) || media.height < 1)) fail(`${label} height must be a positive integer`);
 };
 export const assertStat = (stat, label) => {
   exactKeys(stat, ['value', 'suffix', 'label', 'description'], label);

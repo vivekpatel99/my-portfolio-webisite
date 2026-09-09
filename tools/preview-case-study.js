@@ -1,6 +1,8 @@
 import { createServer } from 'node:http';
-import { readFileSync } from 'node:fs';
+import { readFileSync, realpathSync, lstatSync } from 'node:fs';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
+import { imageSize } from 'image-size';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import CaseStudyArticle from '../src/components/CaseStudyArticle.js';
@@ -33,14 +35,33 @@ const page = (story) => `<!doctype html>
 
 const escapeHtml = (value) => String(value).replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character]));
 
-export function createCaseStudyPreviewServer({ stories, port = 4173 } = {}) {
+export function createCaseStudyPreviewServer({ stories, assets = {}, candidateDirectory, port = 4173 } = {}) {
   if (!previewIsAllowed()) throw new Error('Case-study preview is refused in CI or production');
   if (!Array.isArray(stories) || stories.length === 0) throw new Error('Case-study preview requires at least one prepared story');
   const bySlug = new Map(stories.map((story) => [story.slug, story]));
+  const referenced = new Set();
+  const collect = (nodes) => (nodes ?? []).forEach((node) => { if (node.type === 'image') referenced.add(node.src); if (node.children) collect(node.children); if (node.items) node.items.forEach((item) => collect(item.children)); });
+  stories.forEach((story) => { if (story.image) referenced.add(story.image.src); story.sections?.forEach((section) => collect(section.nodes)); });
   const server = createServer((request, response) => {
     if (request.method !== 'GET') { response.statusCode = 405; return response.end(); }
     let pathname;
     try { pathname = decodeURIComponent(new URL(request.url ?? '/', `http://${previewHost}`).pathname); } catch { response.statusCode = 400; return response.end('Bad request'); }
+    if (pathname.startsWith('/assets/case-studies/')) {
+      const asset = assets[pathname];
+      if (!referenced.has(pathname) || !candidateDirectory || !asset || typeof asset.source !== 'string' || path.isAbsolute(asset.source) || asset.source.includes('\\') || asset.source.split('/').includes('..')) { response.statusCode = 404; return response.end('Not found'); }
+      try {
+        const candidateRoot = realpathSync(path.resolve(candidateDirectory));
+        const realSource = realpathSync(path.resolve(candidateRoot, ...asset.source.split('/')));
+        if (!realSource.startsWith(`${candidateRoot}${path.sep}`) || !lstatSync(realSource).isFile()) throw new Error('outside candidate');
+        const bytes = readFileSync(realSource);
+        if (createHash('sha256').update(bytes).digest('hex') !== asset.sha256) throw new Error('changed candidate asset');
+        const dimensions = imageSize(bytes);
+        if (dimensions.width !== asset.width || dimensions.height !== asset.height) throw new Error('changed candidate dimensions');
+        response.statusCode = 200;
+        response.setHeader('Content-Type', asset.format === 'png' ? 'image/png' : asset.format === 'jpeg' ? 'image/jpeg' : 'image/webp');
+        return response.end(bytes);
+      } catch { response.statusCode = 404; return response.end('Not found'); }
+    }
     const projectMatch = pathname.match(/^\/project\/([^/]+)\/?$/);
     const story = pathname === '/' ? stories[0] : projectMatch ? bySlug.get(projectMatch[1]) : undefined;
     if (!story) { response.statusCode = 404; return response.end('Not found'); }
@@ -62,13 +83,15 @@ export async function runPreview(argumentsList = process.argv.slice(2)) {
   if (!previewIsAllowed()) throw new Error('Case-study preview is refused in CI or production');
   const outputDirectory = assertLocalPreviewDirectory(oneArgument(argumentsList, '--out', defaultOutputDirectory));
   const sourceFiles = argumentValues(argumentsList, '--source');
+  const assetsRoot = oneArgument(argumentsList, '--assets-root');
   const candidatePath = oneArgument(argumentsList, '--candidate', path.join(outputDirectory, 'candidate.json'));
-  const { stories } = sourceFiles.length > 0
-    ? prepareMarkdownCaseStudies({ sourceFiles, outputDirectory })
-    : { stories: readPreparedCaseStudies(candidatePath) };
+  const prepared = sourceFiles.length > 0
+    ? prepareMarkdownCaseStudies({ sourceFiles, outputDirectory, assetsRoot })
+    : (() => { const candidate = JSON.parse(readFileSync(candidatePath, 'utf8')); return { candidatePath, stories: readPreparedCaseStudies(candidatePath), assets: candidate.assets ?? {} }; })();
+  const { stories, assets = {} } = prepared;
   const port = Number(oneArgument(argumentsList, '--port', '4173'));
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('--port must be a valid TCP port');
-  const server = await createCaseStudyPreviewServer({ stories, port });
+  const server = await createCaseStudyPreviewServer({ stories, assets, candidateDirectory: path.dirname(prepared.candidatePath), port });
   console.log(`Case-study preview: http://${previewHost}:${port}/`);
   console.log('Preview is loopback-only, noindex, and excluded from production inputs. Press Ctrl-C to stop.');
   return server;

@@ -5,13 +5,14 @@ import { assertLocalPreviewDirectory } from './preview-path.js';
 const args = process.argv.slice(2);
 const sourceFiles = args.flatMap((value, index) => value === '--source' && args[index + 1] ? [args[index + 1]] : []);
 const outputDirectory = args.find((value, index) => value === '--out' && args[index + 1]) ? args[args.indexOf('--out') + 1] : '.case-study-preview';
+const assetsRoot = args.find((value, index) => value === '--assets-root' && args[index + 1]) ? args[args.indexOf('--assets-root') + 1] : undefined;
 
 if (sourceFiles.length === 0) {
   console.error('Usage: npm run case-study:prepare -- --source path/to/story.md [--source path/to/another.md] [--out .case-study-preview]');
   process.exitCode = 1;
 } else {
   try {
-    const result = prepareMarkdownCaseStudies({ sourceFiles, outputDirectory: assertLocalPreviewDirectory(outputDirectory) });
+    const result = prepareMarkdownCaseStudies({ sourceFiles, outputDirectory: assertLocalPreviewDirectory(outputDirectory), assetsRoot });
     console.log(`Prepared ${result.stories.length} case stud${result.stories.length === 1 ? 'y' : 'ies'} at ${result.candidatePath}`);
   } catch (error) {
     console.error(error.message);
