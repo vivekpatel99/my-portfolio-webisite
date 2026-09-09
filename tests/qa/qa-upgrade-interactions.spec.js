@@ -2,22 +2,19 @@ import { expect, test } from './qa-test.js';
 
 const caseStudies = [
   {
-    cardName: /Read case study: Automated Data Extraction/i,
+    cardName: /Read case study: n8n \+ OpenAI Data Extraction/i,
     path: '/project/n8n-openai-data-extraction',
     heading: /n8n \+ OpenAI Data Extraction/i,
-    stack: ['n8n', 'OpenAI', 'Web Scraping', 'Data Validation'],
   },
   {
-    cardName: /Read case study: Invoice OCR Data Extraction/i,
+    cardName: /Read case study: Invoice OCR Extraction/i,
     path: '/project/invoice-ocr-extraction',
     heading: /Invoice OCR Extraction/i,
-    stack: ['OCR', 'Python', 'Image Processing', 'Structured Extraction'],
   },
   {
-    cardName: /Read case study: Real-Time Pose Detection/i,
+    cardName: /Read case study: YOLO Computer Vision Optimization/i,
     path: '/project/yolo-computer-vision-optimization',
     heading: /YOLO Computer Vision Optimization/i,
-    stack: ['YOLO', 'Python', 'Computer Vision', 'Real-time Inference'],
   },
 ];
 
@@ -113,21 +110,12 @@ test('all featured case-study cards and detail CTAs work', async ({ page }) => {
     await expect(page).toHaveURL(new RegExp(`${caseStudy.path}/$`));
     await expect(page.getByRole('heading', { name: caseStudy.heading })).toBeVisible();
 
-    for (const stackItem of caseStudy.stack) {
-      await expect(page.getByText(stackItem, { exact: true }).first()).toBeVisible();
-    }
-
     await expect(page.getByText(/Next-Gen Banking UI/i)).toHaveCount(0);
-    await expect(page.getByRole('link', { name: /Upwork project/i }).first()).toHaveAttribute(
-      'href',
-      /upwork\.com/,
-    );
-
     await page.getByRole('link', { name: 'View Case Studies' }).first().click();
     await expect(page).toHaveURL(/\/#portfolio$/);
 
     await page.goto(caseStudy.path);
-    await page.getByRole('link', { name: 'Request a Project Estimate' }).click();
+    await page.getByRole('link', { name: /Discuss a similar project/ }).click();
     await expect(page).toHaveURL(/\/contact\/?$/);
   }
 });

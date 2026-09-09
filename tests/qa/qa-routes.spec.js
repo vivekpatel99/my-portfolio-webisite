@@ -102,7 +102,7 @@ test('portfolio cards navigate to internal case studies', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/#portfolio');
   await page.locator('#portfolio').scrollIntoViewIfNeeded();
-  await page.getByRole('link', { name: /Read case study: Automated Data Extraction/i }).click();
+  await page.getByRole('link', { name: /Read case study: n8n \+ OpenAI Data Extraction/i }).click();
   await expect(page).toHaveURL(/\/project\/n8n-openai-data-extraction/);
   await expect(page.getByRole('heading', { name: /n8n \+ OpenAI Data Extraction/i })).toBeVisible();
 });

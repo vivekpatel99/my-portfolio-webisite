@@ -3,6 +3,8 @@ import path from 'node:path';
 import { compileCaseStudyPublication, renderPublicCaseStudyModule } from '../publication/compile-case-studies.js';
 
 const normalize = (value) => path.resolve(value).split(path.sep).join('/');
+const referencedAssetUrls = (publication) => publication.flatMap((record) => [record.image, ...(record.gallery ?? [])]
+  .flatMap((media) => [media?.src, media?.poster].filter(Boolean)));
 
 const copyPublicFiles = (plugin, directory, relative = '') => {
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
@@ -48,7 +50,7 @@ export default function caseStudyPublicationPlugin({ root = process.cwd() } = {}
             || (pathname.startsWith('/@fs/') && pathname.includes('/public/assets/case-studies/'));
           if (pathname.startsWith('/assets/case-studies/') || rawCaseStudyAlias) {
             const publication = compileCaseStudyPublication({ root: projectRoot });
-            const referenced = new Set(publication.flatMap((record) => [record.image, ...record.gallery].flatMap((media) => [media.src, media.poster].filter(Boolean))));
+            const referenced = new Set(referencedAssetUrls(publication));
             if (rawCaseStudyAlias || !referenced.has(pathname)) {
               response.statusCode = 404;
               return response.end();
@@ -76,7 +78,7 @@ export default function caseStudyPublicationPlugin({ root = process.cwd() } = {}
       }
       copyPublicFiles(this, publicDirectory);
       const publication = compileCaseStudyPublication({ root: projectRoot });
-      const referencedAssets = new Set(publication.flatMap((record) => [record.image, ...record.gallery].flatMap((media) => [media.src, media.poster].filter(Boolean))));
+      const referencedAssets = new Set(referencedAssetUrls(publication));
       for (const publicPath of referencedAssets) {
         const relative = publicPath.replace(/^\//, '');
         this.emitFile({ type: 'asset', fileName: relative, source: readFileSync(path.join(publicDirectory, relative)) });

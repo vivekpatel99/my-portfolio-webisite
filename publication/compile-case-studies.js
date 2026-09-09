@@ -3,11 +3,13 @@ import { fileURLToPath } from 'node:url';
 import { caseStudyPublicationManifest } from './case-study-manifest.js';
 import { assertApprovedAsset, assertApproval, baselineApprovalHashes, digest } from './case-study-evidence.js';
 import { assertMedia, assertSafeExternalUrl, assertStat, assertString, exactKeys, fail, slugPattern } from './case-study-schema.js';
+import { validatePreparedCaseStudies } from './markdown-case-study.js';
 
 export const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const caseStudyAssetPrefix = '/assets/case-studies/';
 
 const publicRecordFields = new Set(['title', 'cardTitle', 'category', 'summary', 'challenge', 'solution', 'outcome', 'stats', 'image', 'gallery', 'stack', 'externalLinks']);
+const articleRecordFields = new Set(['title', 'summary', 'category', 'sections', 'image']);
 
 const caseStudyAssetUrls = (content) => [content.image, ...(content.gallery ?? [])]
   .flatMap((item) => [item?.src, item?.poster].filter(Boolean));
@@ -18,6 +20,52 @@ const assertContentClaim = (manifest, record, claimRef, placement, value) => {
   const claim = manifest.claims?.[claimRef];
   if (!claim || claim.type !== 'content' || claim.recordId !== record.id || claim.placement !== placement || JSON.stringify(claim.value) !== JSON.stringify(value)) fail(`claim ${claimRef} must bind ${record.id} ${placement} to its exact value`);
   assertApproval(claim.approval, claimHash(claimRef, claim), baselineApprovalHashes.claims[claimRef], `claim ${claimRef}`);
+};
+
+const articleSection = (key, heading, value) => ({
+  key,
+  heading,
+  nodes: [{ type: 'paragraph', children: [{ type: 'text', value }] }],
+});
+
+const legacySections = (content) => [
+  articleSection('problem', 'The problem', content.challenge),
+  articleSection('built', 'What I built', content.solution),
+  articleSection('outcome', 'The outcome', content.outcome),
+];
+
+const compiledArticle = (manifest, record, root) => {
+  const content = record.content;
+  exactKeys(content, [...articleRecordFields], `published ${record.slug} article content`);
+  for (const field of ['title', 'summary']) assertString(content[field], `published ${record.slug} ${field}`);
+  if (content.category !== undefined) assertString(content.category, `published ${record.slug} category`);
+  validatePreparedCaseStudies([{
+    id: record.id,
+    slug: record.slug,
+    title: content.title,
+    summary: content.summary,
+    ...(content.category === undefined ? {} : { category: content.category }),
+    sections: content.sections,
+  }], `published ${record.slug}`);
+  if (content.image !== undefined) assertMedia(content.image, `published ${record.slug} image`);
+  for (const assetUrl of content.image ? [content.image.src, content.image.poster].filter(Boolean) : []) {
+    if (!/^\/assets\/case-studies\/[A-Za-z0-9][A-Za-z0-9._-]*$/.test(assetUrl)) fail(`published ${record.slug} has an unsafe case-study asset path`);
+    const asset = manifest.assets?.[assetUrl];
+    if (!asset || typeof asset.file !== 'string') fail(`published ${record.slug} references an unapproved asset: ${assetUrl}`);
+    assertApprovedAsset({ root, publicPath: assetUrl, asset, approval: asset.approval });
+  }
+  exactKeys(record.claimRefs, ['summary', 'outcome'], `published ${record.slug} claim references`);
+  assertContentClaim(manifest, record, record.claimRefs.summary, 'summary', content.summary);
+  assertContentClaim(manifest, record, record.claimRefs.outcome, 'outcome', content.sections[2]);
+  return {
+    id: record.id,
+    slug: record.slug,
+    title: content.title,
+    summary: content.summary,
+    ...(content.category === undefined ? {} : { category: content.category }),
+    sections: content.sections,
+    ...(content.image === undefined ? {} : { image: { ...content.image } }),
+  };
 };
 
 export function compileCaseStudyPublication({ manifest = caseStudyPublicationManifest, root = repositoryRoot } = {}) {
@@ -35,6 +83,12 @@ export function compileCaseStudyPublication({ manifest = caseStudyPublicationMan
       continue;
     }
     if (record.status !== 'published') fail(`${record.slug} has an unsupported status`);
+    if (record.variant === 'article') {
+      exactKeys(record, ['id', 'slug', 'status', 'variant', 'approval', 'claimRefs', 'content'], `published ${record.slug}`);
+      assertApproval(record.approval, digest({ id: record.id, slug: record.slug, content: record.content }), undefined, `published ${record.slug}`);
+      publicRecords.push(compiledArticle(manifest, record, root));
+      continue;
+    }
     exactKeys(record, ['id', 'slug', 'status', 'approval', 'claimRefs', 'content'], `published ${record.slug}`);
     exactKeys(record.content, [...publicRecordFields], `published ${record.slug} content`);
     assertApproval(record.approval, digest({ id: record.id, slug: record.slug, content: record.content }), baselineApprovalHashes.records[record.id], `published ${record.slug}`);
@@ -68,13 +122,10 @@ export function compileCaseStudyPublication({ manifest = caseStudyPublicationMan
       assertApprovedAsset({ root, publicPath: assetUrl, asset, approval: asset.approval });
     }
     publicRecords.push({
-      id: record.id, slug: record.slug, title: record.content.title, cardTitle: record.content.cardTitle,
-      category: record.content.category, summary: record.content.summary, challenge: record.content.challenge,
-      solution: record.content.solution, outcome: record.content.outcome,
-      stats: record.content.stats.map(({ value, suffix, label, description }) => ({ value, suffix, label, description })),
+      id: record.id, slug: record.slug, title: record.content.title,
+      category: record.content.category, summary: record.content.summary,
+      sections: legacySections(record.content),
       image: { src: record.content.image.src, alt: record.content.image.alt, ...(record.content.image.poster ? { poster: record.content.image.poster } : {}) },
-      gallery: record.content.gallery.map(({ src, alt, poster }) => ({ src, alt, ...(poster ? { poster } : {}) })),
-      stack: [...record.content.stack], externalLinks,
     });
   }
   return publicRecords;

@@ -69,10 +69,10 @@ export const routeSeo = {
         {
           title: `${caseStudy.title} | AI Case Study - Vivek Patel`,
           description: caseStudy.summary,
-          keywords: `${caseStudy.title}, ${caseStudy.category}, case study, Vivek Patel, AI automation, computer vision, data extraction`,
+          keywords: `${caseStudy.title}${caseStudy.category ? `, ${caseStudy.category}` : ''}, case study, Vivek Patel, AI automation, computer vision, data extraction`,
           path: `/project/${slug}`,
           type: 'article',
-          image: DEFAULT_OG_IMAGE_PATH,
+          image: caseStudy.image?.src ?? DEFAULT_OG_IMAGE_PATH,
         },
       ];
     }),

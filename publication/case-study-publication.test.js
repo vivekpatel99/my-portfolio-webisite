@@ -100,6 +100,23 @@ const runAffectedTests = (directory) => execFileSync(path.join(directory, 'node_
   killSignal: 'SIGTERM',
 });
 
+const runCaseStudyPrepare = (directory, sourceFiles) => execFileSync('node', [
+  path.join(directory, 'tools/prepare-case-study.js'),
+  ...sourceFiles.flatMap((source) => ['--source', source]),
+], { cwd: directory, encoding: 'utf8', stdio: 'pipe', timeout: 20_000 });
+
+const runCaseStudyStage = (directory, candidatePath) => {
+  const candidateSha256 = digest(readFileSync(candidatePath));
+  return execFileSync('node', [
+    path.join(directory, 'tools/stage-case-study-publication.js'),
+    '--candidate', candidatePath,
+    '--sha256', candidateSha256,
+    '--approved-by', 'Fixture reviewer',
+    '--approved-at', '2026-09-09T00:00:00Z',
+    '--evidence', 'https://example.invalid/review/cs03',
+  ], { cwd: directory, encoding: 'utf8', stdio: 'pipe', timeout: 20_000 });
+};
+
 const fixtureManifestSetup = `
 const [{ createHash: fixtureCreateHash }, { readFileSync: fixtureReadFileSync }] = await Promise.all([import('node:crypto'), import('node:fs')]);
 const fixtureDigest = (value) => fixtureCreateHash('sha256').update(JSON.stringify(value)).digest('hex');
@@ -132,7 +149,25 @@ const fixtureRecord = { id: fixtureId, slug: fixtureId, status: 'published', con
   stats: [fixtureClaim('stats.0', fixtureContent.stats[0])],
 } };
 fixtureRecord.approval = fixtureApproval(fixtureDigest({ id: fixtureRecord.id, slug: fixtureRecord.slug, content: fixtureRecord.content }));
-caseStudyPublicationManifest.records.splice(0, caseStudyPublicationManifest.records.length, fixtureRecord);
+const articleStories = ['text-story-one', 'text-story-two'].map((id) => ({
+  id, slug: id, title: id + ' title', summary: id + ' summary',
+  sections: [
+    { key: 'problem', heading: 'The problem', nodes: [{ type: 'paragraph', children: [{ type: 'text', value: id + ' problem' }] }] },
+    { key: 'built', heading: 'What I built', nodes: [{ type: 'paragraph', children: [{ type: 'text', value: id + ' build' }] }] },
+    { key: 'outcome', heading: 'The outcome', nodes: [{ type: 'paragraph', children: [{ type: 'text', value: id + ' outcome' }] }] },
+  ],
+}));
+const articleRecords = articleStories.map((story) => {
+  const summaryRef = story.id + '.summary';
+  const outcomeRef = story.id + '.outcome';
+  const content = { title: story.title, summary: story.summary, sections: story.sections };
+  caseStudyPublicationManifest.claims[summaryRef] = { type: 'content', recordId: story.id, placement: 'summary', value: story.summary, approval: fixtureApproval(fixtureDigest({ id: summaryRef, type: 'content', recordId: story.id, placement: 'summary', value: story.summary })) };
+  caseStudyPublicationManifest.claims[outcomeRef] = { type: 'content', recordId: story.id, placement: 'outcome', value: story.sections[2], approval: fixtureApproval(fixtureDigest({ id: outcomeRef, type: 'content', recordId: story.id, placement: 'outcome', value: story.sections[2] })) };
+  const record = { id: story.id, slug: story.slug, status: 'published', variant: 'article', content, claimRefs: { summary: summaryRef, outcome: outcomeRef } };
+  record.approval = fixtureApproval(fixtureDigest({ id: record.id, slug: record.slug, content }));
+  return record;
+});
+caseStudyPublicationManifest.records.splice(0, caseStudyPublicationManifest.records.length, fixtureRecord, ...articleRecords);
 `;
 
 describe('case-study publication boundary', () => {
@@ -205,6 +240,13 @@ describe('case-study publication boundary', () => {
     expect(existsSync(path.join(dist, 'assets/case-studies/fixture-approved.webp'))).toBe(true);
     expect(existsSync(path.join(dist, 'assets/case-studies/obsolete-approved.webp'))).toBe(false);
     expect(existsSync(path.join(dist, 'project/fixture-case-study/index.html'))).toBe(true);
+    for (const storyId of ['text-story-one', 'text-story-two']) {
+      const articleHtml = readFileSync(path.join(dist, `project/${storyId}/index.html`), 'utf8');
+      expect(articleHtml).toContain(`<h1>${storyId} title</h1>`);
+      expect(articleHtml).toContain(`${storyId} outcome`);
+      expect(articleHtml).toContain('href="/#portfolio"');
+      expect(articleHtml).toContain('href="/contact/"');
+    }
 
     writeFileSync(manifestPath, `${readFileSync(manifestPath, 'utf8')}\ncaseStudyPublicationManifest.records.splice(0, caseStudyPublicationManifest.records.length, { id: 'fixture-case-study', slug: 'fixture-case-study', status: 'draft' }, { id: 'private-sentinel', slug: 'private-sentinel', status: 'draft' });\n`);
     rmSync(path.join(directory, 'public/assets/case-studies/obsolete-approved.webp'));
@@ -222,5 +264,45 @@ describe('case-study publication boundary', () => {
     expect(readFileSync(path.join(dist, '.htaccess'), 'utf8')).toContain('RewriteRule ^project/ - [R=404,L]');
     expect(readFileSync(path.join(dist, 'sitemap.xml'), 'utf8')).not.toContain('/project/');
     expect(existsSync(path.join(dist, 'project'))).toBe(false);
+  }, 180_000);
+
+  it('prepares, stages, and builds two text stories with safe literal-dollar SEO and revisions', () => {
+    const directory = buildFixture();
+    cpSync('public/assets/case-studies', path.join(directory, 'public/assets/case-studies'), { recursive: true, force: true });
+    const sourceOne = path.join(directory, 'story-one.md');
+    const sourceTwo = path.join(directory, 'story-two.md');
+    const writeStory = (filePath, id, title, summary, outcome) => writeFileSync(filePath, `---\nid: ${id}\ntitle: "${title}"\nsummary: "${summary}"\n---\n\n## The problem\n\nThe ${id} problem uses **bold** language.\n\n- First item\n- Second item\n\n## What I built\n\nI built a small workflow for the ${id} story.\n\n1. Prepare the input.\n2. Review the output.\n\n## The outcome\n\n${outcome}\n`);
+    writeStory(sourceOne, 'text-story-one', 'Text story $& one', "A summary with $' replacement markers.", "Outcome with $& and $' markers.");
+    writeStory(sourceTwo, 'text-story-two', 'Text story two', 'Second story summary.', 'Second story outcome.');
+
+    runCaseStudyPrepare(directory, [sourceOne, sourceTwo]);
+    const candidatePath = path.join(directory, '.case-study-preview/candidate.json');
+    runCaseStudyStage(directory, candidatePath);
+    runPublicationBuild(directory);
+    const firstHtml = readFileSync(path.join(directory, 'dist/project/text-story-one/index.html'), 'utf8');
+    expect(firstHtml).toContain('<h1>Text story $&amp; one</h1>');
+    expect(firstHtml).toContain('content="Text story $&amp; one | AI Case Study - Vivek Patel"');
+    expect(firstHtml).toContain("content=\"A summary with $' replacement markers.\"");
+    expect(firstHtml).toContain('Outcome with $&amp; and $&#x27; markers.');
+    expect(firstHtml).toContain('<ul>');
+    expect(firstHtml).toContain('<ol>');
+    expect(firstHtml).not.toContain('private');
+    const secondBeforeRevision = readFileSync(path.join(directory, 'dist/project/text-story-two/index.html'), 'utf8');
+
+    writeStory(sourceOne, 'text-story-one', 'Text story $& one revised', "A revised summary with $' markers.", "A revised outcome with $& and $' markers.");
+    runCaseStudyPrepare(directory, [sourceOne]);
+    runCaseStudyStage(directory, candidatePath);
+    runPublicationBuild(directory);
+    const revisedHtml = readFileSync(path.join(directory, 'dist/project/text-story-one/index.html'), 'utf8');
+    expect(revisedHtml).toContain('<h1>Text story $&amp; one revised</h1>');
+    expect(revisedHtml).toContain('A revised summary with $\' markers.');
+    expect(revisedHtml).toContain('A revised outcome with $&amp; and $&#x27; markers.');
+    expect(revisedHtml).not.toContain('A summary with $\' replacement markers.');
+    const secondAfterRevision = readFileSync(path.join(directory, 'dist/project/text-story-two/index.html'), 'utf8');
+    expect(secondAfterRevision).toContain('<h1>Text story two</h1>');
+    expect(secondAfterRevision).toContain('Second story outcome.');
+    expect(secondAfterRevision.replace(/index-[A-Za-z0-9_-]+\.js/g, 'index-HASH.js')).toBe(
+      secondBeforeRevision.replace(/index-[A-Za-z0-9_-]+\.js/g, 'index-HASH.js'),
+    );
   }, 180_000);
 });

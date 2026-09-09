@@ -3,9 +3,9 @@ import { Routes, Route } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import Home from '@/pages/Home';
 import NotFound from '@/pages/NotFound';
+import Project from '@/pages/Project';
 
 const Contact = lazy(() => import('@/pages/ContactRoute'));
-const Project = lazy(() => import('@/pages/Project'));
 const Legal = lazy(() => import('@/pages/Legal'));
 const DataPolicy = lazy(() => import('@/pages/DataPolicy'));
 

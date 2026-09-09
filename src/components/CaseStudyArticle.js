@@ -38,6 +38,12 @@ export const CaseStudyArticle = ({ story, backHref = '/#portfolio' }) => React.c
   story.category ? React.createElement('p', { className: 'case-study-category' }, story.category) : null,
   React.createElement('h1', null, story.title),
   React.createElement('p', { className: 'case-study-summary' }, story.summary),
+  story.image ? React.createElement('figure', { className: 'case-study-cover' },
+    React.createElement('a', { href: story.image.src },
+      React.createElement('img', { src: story.image.src, alt: story.image.alt, loading: 'eager' }),
+    ),
+    story.image.caption ? React.createElement('figcaption', null, story.image.caption) : null,
+  ) : null,
   React.createElement('div', { className: 'case-study-sections' }, story.sections.map((section) => React.createElement(
     'section', { key: section.key },
     React.createElement('h2', null, section.heading),

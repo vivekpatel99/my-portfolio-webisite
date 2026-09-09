@@ -18,7 +18,7 @@ describe('Portfolio', () => {
 
     caseStudies.forEach((caseStudy) => {
       const links = screen.getAllByRole('link', {
-        name: `Read case study: ${caseStudy.cardTitle}`,
+        name: `Read case study: ${caseStudy.title}`,
       });
       expect(links.some((link) => link.getAttribute('href') === `/project/${caseStudy.slug}/`)).toBe(true);
     });

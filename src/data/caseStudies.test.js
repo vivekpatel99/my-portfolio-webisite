@@ -14,10 +14,9 @@ describe('caseStudies data structure', () => {
     caseStudies.forEach((caseStudy) => {
       expect(caseStudy).toHaveProperty('id');
       expect(caseStudy).toHaveProperty('slug');
-      expect(caseStudy).toHaveProperty('cardTitle');
-      expect(caseStudy).toHaveProperty('image');
-      expect(caseStudy.image).toHaveProperty('src');
-      expect(caseStudy.image).toHaveProperty('alt');
+      expect(caseStudy).toHaveProperty('title');
+      expect(caseStudy).toHaveProperty('summary');
+      expect(caseStudy.sections).toHaveLength(3);
     });
   });
 
@@ -128,42 +127,16 @@ describe('caseStudySlugs', () => {
 describe('case study data validation', () => {
   it('should have valid image URLs', () => {
     caseStudies.forEach((caseStudy) => {
-      expect(caseStudy.image.src).toBeTruthy();
-      expect(typeof caseStudy.image.src).toBe('string');
+      if (caseStudy.image) {
+        expect(caseStudy.image.src).toBeTruthy();
+        expect(typeof caseStudy.image.src).toBe('string');
+      }
     });
   });
 
   it('should have non-empty alt text for images', () => {
     caseStudies.forEach((caseStudy) => {
-      expect(caseStudy.image.alt).toBeTruthy();
-      expect(typeof caseStudy.image.alt).toBe('string');
-      expect(caseStudy.image.alt.length).toBeGreaterThan(0);
-    });
-  });
-
-  it('should have gallery items if gallery exists', () => {
-    caseStudies.forEach((caseStudy) => {
-      if (caseStudy.gallery) {
-        expect(Array.isArray(caseStudy.gallery)).toBe(true);
-        caseStudy.gallery.forEach((item) => {
-          expect(item).toHaveProperty('src');
-          expect(item).toHaveProperty('alt');
-          expect(item.alt).toBeTruthy();
-        });
-      }
-    });
-  });
-
-  it('should have valid stack array', () => {
-    caseStudies.forEach((caseStudy) => {
-      if (caseStudy.stack) {
-        expect(Array.isArray(caseStudy.stack)).toBe(true);
-        expect(caseStudy.stack.length).toBeGreaterThan(0);
-        caseStudy.stack.forEach((tech) => {
-          expect(typeof tech).toBe('string');
-          expect(tech.length).toBeGreaterThan(0);
-        });
-      }
+      if (caseStudy.image) expect(caseStudy.image.alt).toBeTruthy();
     });
   });
 });

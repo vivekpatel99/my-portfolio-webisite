@@ -1,3 +1,6 @@
+import { stagedCaseStudyPublication } from './staged-case-study-publication.js';
+import { mergeCaseStudyManifest } from './case-study-manifest-merge.js';
+
 // This file is build-only. Do not import it from application code.
 //
 // `baseline-retention` is deliberately narrow: issue #43 authorizes retaining
@@ -13,7 +16,7 @@ const baselineRetention = (hash) => ({
   authorization: 'Issue #43 unchanged-content retention authorization',
 });
 
-export const caseStudyPublicationManifest = {
+export const caseStudyPublicationBaseline = {
   schemaVersion: 1,
   claims: {
     'n8n-openai-data-extraction.upwork-project': {
@@ -126,3 +129,7 @@ export const caseStudyPublicationManifest = {
     },
   ],
 };
+
+// Staged records are generated mechanically from a reviewed candidate. Merge
+// them into this manifest so the compiler remains the one source of truth.
+export const caseStudyPublicationManifest = mergeCaseStudyManifest(caseStudyPublicationBaseline, stagedCaseStudyPublication);
