@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { digest } from './case-study-evidence.js';
-import { stageReviewedCaseStudyCandidate } from './stage-case-study-publication.js';
+import { stageReviewedCaseStudyCandidate, withdrawStagedCaseStudy } from './stage-case-study-publication.js';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -97,5 +97,41 @@ describe('reviewed case-study staging', () => {
     const before = readFileSync(fixture.stagedPath, 'utf8');
     await expect(stageReviewedCaseStudyCandidate({ ...fixture, metadata: metadata(fixture.candidatePath) })).rejects.toThrow(/duplicate/i);
     expect(readFileSync(fixture.stagedPath, 'utf8')).toBe(before);
+  });
+
+  it('withdraws one selected identity with a draft tombstone and preserves unrelated order and claims', async () => {
+    const fixture = setup([story('first-story'), story('second-story')]);
+    await stageReviewedCaseStudyCandidate({ ...fixture, metadata: metadata(fixture.candidatePath) });
+    const before = JSON.parse(readFileSync(fixture.stagedPath, 'utf8').match(/= ([\s\S]*);\s*$/)[1]);
+    const result = await withdrawStagedCaseStudy({ id: 'first-story', stagedPath: fixture.stagedPath });
+    expect(result).toMatchObject({ id: 'first-story', slug: 'first-story', changed: true });
+    const afterSource = readFileSync(fixture.stagedPath, 'utf8');
+    const after = JSON.parse(afterSource.match(/= ([\s\S]*);\s*$/)[1]);
+    expect(after.records).toEqual([
+      { id: 'first-story', slug: 'first-story', status: 'draft' },
+      before.records[1],
+    ]);
+    expect(Object.keys(after.claims)).not.toContain('first-story.summary');
+    expect(after.claims['second-story.summary']).toEqual(before.claims['second-story.summary']);
+    const unchanged = afterSource;
+    await withdrawStagedCaseStudy({ id: 'first-story', stagedPath: fixture.stagedPath });
+    expect(readFileSync(fixture.stagedPath, 'utf8')).toBe(unchanged);
+  });
+
+  it('rejects an unknown withdrawal without changing staged bytes', async () => {
+    const fixture = setup([story('known-story')]);
+    await stageReviewedCaseStudyCandidate({ ...fixture, metadata: metadata(fixture.candidatePath) });
+    const before = readFileSync(fixture.stagedPath, 'utf8');
+    await expect(withdrawStagedCaseStudy({ id: 'missing-story', stagedPath: fixture.stagedPath })).rejects.toThrow(/unknown.*missing-story/i);
+    expect(readFileSync(fixture.stagedPath, 'utf8')).toBe(before);
+  });
+
+  it('writes an explicit tombstone for a baseline identity even when the candidate omits it', async () => {
+    const fixture = setup([], [{ id: 'baseline-story', slug: 'baseline-story', status: 'draft' }]);
+    const before = readFileSync(fixture.stagedPath, 'utf8');
+    await withdrawStagedCaseStudy({ id: 'baseline-story', stagedPath: fixture.stagedPath });
+    const after = JSON.parse(readFileSync(fixture.stagedPath, 'utf8').match(/= ([\s\S]*);\s*$/)[1]);
+    expect(after.records).toEqual([{ id: 'baseline-story', slug: 'baseline-story', status: 'draft' }]);
+    expect(readFileSync(fixture.stagedPath, 'utf8')).not.toBe(before);
   });
 });

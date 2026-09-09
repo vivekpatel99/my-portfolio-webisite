@@ -15,6 +15,7 @@
     "qa:seo": "node tests/qa/qa-seo-check.js",
     "case-study:prepare": "node tools/prepare-case-study.js",
     "case-study:stage": "node tools/stage-case-study-publication.js",
+    "case-study:withdraw": "node tools/withdraw-case-study.js",
     "case-study:preview": "node tools/preview-case-study.js",
     "convex:dev": "convex dev",
     "convex:smoke": "node tools/convex-smoke-test.mjs",

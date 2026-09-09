@@ -64,6 +64,8 @@ const outputFiles = (directory) => readdirSync(directory, { withFileTypes: true 
   const file = path.join(directory, entry.name);
   return entry.isDirectory() ? outputFiles(file) : [file];
 });
+const validFixturePng = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64');
+const validFixtureWebp = Buffer.from('UklGRiIAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEALAAAAAABAAgAAQUxQSDIAAA=', 'base64');
 
 function buildFixture() {
   const directory = mkdtempSync(path.join(realpathSync(tmpdir()), 'case-study-publication-fixture-'));
@@ -105,8 +107,7 @@ const runCaseStudyPrepare = (directory, sourceFiles) => execFileSync('node', [
   ...sourceFiles.flatMap((source) => ['--source', source]),
 ], { cwd: directory, encoding: 'utf8', stdio: 'pipe', timeout: 20_000 });
 
-const runCaseStudyStage = (directory, candidatePath) => {
-  const candidateSha256 = digest(readFileSync(candidatePath));
+const runCaseStudyStageWithDigest = (directory, candidatePath, candidateSha256) => {
   return execFileSync('node', [
     path.join(directory, 'tools/stage-case-study-publication.js'),
     '--candidate', candidatePath,
@@ -116,6 +117,10 @@ const runCaseStudyStage = (directory, candidatePath) => {
     '--evidence', 'https://example.invalid/review/cs03',
   ], { cwd: directory, encoding: 'utf8', stdio: 'pipe', timeout: 20_000 });
 };
+const runCaseStudyStage = (directory, candidatePath) => runCaseStudyStageWithDigest(directory, candidatePath, digest(readFileSync(candidatePath)));
+const runCaseStudyWithdraw = (directory, id) => execFileSync('node', [
+  path.join(directory, 'tools/withdraw-case-study.js'), '--id', id,
+], { cwd: directory, encoding: 'utf8', stdio: 'pipe', timeout: 20_000 });
 
 const fixtureManifestSetup = `
 const [{ createHash: fixtureCreateHash }, { readFileSync: fixtureReadFileSync }] = await Promise.all([import('node:crypto'), import('node:fs')]);
@@ -271,14 +276,26 @@ describe('case-study publication boundary', () => {
     cpSync('public/assets/case-studies', path.join(directory, 'public/assets/case-studies'), { recursive: true, force: true });
     const sourceOne = path.join(directory, 'story-one.md');
     const sourceTwo = path.join(directory, 'story-two.md');
-    const writeStory = (filePath, id, title, summary, outcome) => writeFileSync(filePath, `---\nid: ${id}\ntitle: "${title}"\nsummary: "${summary}"\n---\n\n## The problem\n\nThe ${id} problem uses **bold** language.\n\n- First item\n- Second item\n\n## What I built\n\nI built a small workflow for the ${id} story.\n\n1. Prepare the input.\n2. Review the output.\n\n## The outcome\n\n${outcome}\n`);
-    writeStory(sourceOne, 'text-story-one', 'Text story $& one', "A summary with $' replacement markers.", "Outcome with $& and $' markers.");
+    mkdirSync(path.join(directory, 'assets/text-story-one'), { recursive: true });
+    writeFileSync(path.join(directory, 'assets/text-story-one/cover.png'), validFixturePng);
+    writeFileSync(path.join(directory, 'assets/text-story-one/cover-revised.webp'), validFixtureWebp);
+    const writeStory = (filePath, id, title, summary, outcome, image) => writeFileSync(filePath, `---\nid: ${id}\ntitle: "${title}"\nsummary: "${summary}"\n${image ? `image:\n  src: ${image}\n  alt: ${id} reviewed cover\n` : ''}---\n\n## The problem\n\nThe ${id} problem uses **bold** language.\n\n- First item\n- Second item\n\n## What I built\n\nI built a small workflow for the ${id} story.\n\n1. Prepare the input.\n2. Review the output.\n\n## The outcome\n\n${outcome}\n\n## Private notes\n\nPRIVATE_CASE_STUDY_SENTINEL and DRAFT_CASE_STUDY_SENTINEL\n`);
+    writeStory(sourceOne, 'text-story-one', 'Text story $& one', "A summary with $' replacement markers.", "Outcome with $& and $' markers.", 'cover.png');
     writeStory(sourceTwo, 'text-story-two', 'Text story two', 'Second story summary.', 'Second story outcome.');
 
     runCaseStudyPrepare(directory, [sourceOne, sourceTwo]);
     const candidatePath = path.join(directory, '.case-study-preview/candidate.json');
     runCaseStudyStage(directory, candidatePath);
+    const stagedAfterInitial = JSON.parse(readFileSync(path.join(directory, 'publication/staged-case-study-publication.js'), 'utf8').match(/= ([\s\S]*);\s*$/)[1]);
+    const secondRecordBeforeRevision = structuredClone(stagedAfterInitial.records.find((record) => record.id === 'text-story-two'));
     runPublicationBuild(directory);
+    const assertNoSentinels = () => {
+      const output = Buffer.concat(outputFiles(path.join(directory, 'dist')).map((file) => readFileSync(file))).toString('utf8');
+      expect(output).not.toContain('PRIVATE_CASE_STUDY_SENTINEL');
+      expect(output).not.toContain('DRAFT_CASE_STUDY_SENTINEL');
+    };
+    assertNoSentinels();
+    expect(outputFiles(path.join(directory, 'dist')).some((file) => /assets\/case-studies\/text-story-one-.*\.png$/.test(file))).toBe(true);
     const firstHtml = readFileSync(path.join(directory, 'dist/project/text-story-one/index.html'), 'utf8');
     expect(firstHtml).toContain('<h1>Text story $&amp; one</h1>');
     expect(firstHtml).toContain('content="Text story $&amp; one | AI Case Study - Vivek Patel"');
@@ -289,20 +306,115 @@ describe('case-study publication boundary', () => {
     expect(firstHtml).not.toContain('private');
     const secondBeforeRevision = readFileSync(path.join(directory, 'dist/project/text-story-two/index.html'), 'utf8');
 
-    writeStory(sourceOne, 'text-story-one', 'Text story $& one revised', "A revised summary with $' markers.", "A revised outcome with $& and $' markers.");
+    const staleDigest = digest(readFileSync(path.join(directory, '.case-study-preview/candidate.json')));
+    const stagedBeforeInvalidRevision = readFileSync(path.join(directory, 'publication/staged-case-study-publication.js'), 'utf8');
+    const candidateBeforeFailedBatch = readFileSync(path.join(directory, '.case-study-preview/candidate.json'), 'utf8');
+    writeFileSync(sourceTwo, '---\nid: text-story-two\ntitle: Broken story\nsummary: Broken summary\n---\n\n## Missing heading\n\nThis batch is intentionally invalid.\n');
+    expect(() => runCaseStudyPrepare(directory, [sourceOne, sourceTwo])).toThrow(/The problem|image|heading|required/i);
+    expect(readFileSync(path.join(directory, '.case-study-preview/candidate.json'), 'utf8')).toBe(candidateBeforeFailedBatch);
+    writeStory(sourceTwo, 'text-story-two', 'Text story two', 'Second story summary.', 'Second story outcome.');
+    writeStory(sourceOne, 'text-story-one', 'Text story $& one revised', "A revised summary with $' markers.", "A revised outcome with $& and $' markers.", 'cover-revised.webp');
     runCaseStudyPrepare(directory, [sourceOne]);
+    expect(() => runCaseStudyStageWithDigest(directory, candidatePath, staleDigest)).toThrow(/digest mismatch/i);
+    expect(readFileSync(path.join(directory, 'publication/staged-case-study-publication.js'), 'utf8')).toBe(stagedBeforeInvalidRevision);
     runCaseStudyStage(directory, candidatePath);
     runPublicationBuild(directory);
     const revisedHtml = readFileSync(path.join(directory, 'dist/project/text-story-one/index.html'), 'utf8');
     expect(revisedHtml).toContain('<h1>Text story $&amp; one revised</h1>');
     expect(revisedHtml).toContain('A revised summary with $\' markers.');
     expect(revisedHtml).toContain('A revised outcome with $&amp; and $&#x27; markers.');
+    expect(revisedHtml).toContain('<meta data-react-helmet="true" property="og:title" content="Text story $&amp; one revised | AI Case Study - Vivek Patel" />');
+    expect(revisedHtml).toContain('<meta data-react-helmet="true" property="og:description" content="A revised summary with $\' markers." />');
+    const revisedOgImage = revisedHtml.match(/<meta[^>]+property="og:image"[^>]+>/i)?.[0] ?? '';
+    expect(revisedOgImage).toContain('https://www.vivekapatel.com/assets/case-studies/text-story-one-');
+    expect(revisedOgImage).toMatch(/\.webp"/);
+    expect(outputFiles(path.join(directory, 'dist')).some((file) => /assets\/case-studies\/text-story-one-.*\.webp$/.test(file))).toBe(true);
+    expect(outputFiles(path.join(directory, 'dist')).some((file) => /assets\/case-studies\/text-story-one-.*\.png$/.test(file))).toBe(false);
+    assertNoSentinels();
     expect(revisedHtml).not.toContain('A summary with $\' replacement markers.');
+    const stagedAfterRevision = JSON.parse(readFileSync(path.join(directory, 'publication/staged-case-study-publication.js'), 'utf8').match(/= ([\s\S]*);\s*$/)[1]);
+    expect(stagedAfterRevision.records.find((record) => record.id === 'text-story-two')).toEqual(secondRecordBeforeRevision);
+    runAffectedTests(directory);
     const secondAfterRevision = readFileSync(path.join(directory, 'dist/project/text-story-two/index.html'), 'utf8');
     expect(secondAfterRevision).toContain('<h1>Text story two</h1>');
     expect(secondAfterRevision).toContain('Second story outcome.');
     expect(secondAfterRevision.replace(/index-[A-Za-z0-9_-]+\.js/g, 'index-HASH.js')).toBe(
       secondBeforeRevision.replace(/index-[A-Za-z0-9_-]+\.js/g, 'index-HASH.js'),
     );
+
+    const entryBeforeWithdrawal = outputFiles(path.join(directory, 'dist')).find((file) => /\/assets\/index-[A-Za-z0-9_-]+\.js$/.test(file));
+    expect(entryBeforeWithdrawal).toBeTruthy();
+    const stagedBeforeWithdrawal = readFileSync(path.join(directory, 'publication/staged-case-study-publication.js'), 'utf8');
+    expect(runCaseStudyWithdraw(directory, 'text-story-two')).toContain('text-story-two');
+    const withdrawalOutput = readFileSync(path.join(directory, 'publication/staged-case-study-publication.js'), 'utf8');
+    expect(withdrawalOutput).toContain('"id": "text-story-two"');
+    expect(withdrawalOutput).toContain('"status": "draft"');
+    expect(withdrawalOutput).not.toContain('Second story outcome.');
+    expect(withdrawalOutput).toContain('text-story-one');
+    expect(withdrawalOutput).not.toBe(stagedBeforeWithdrawal);
+    runPublicationBuild(directory);
+    expect(existsSync(path.join(directory, 'dist/project/text-story-two'))).toBe(false);
+    expect(existsSync(path.join(directory, 'dist/project/text-story-one/index.html'))).toBe(true);
+    expect(existsSync(entryBeforeWithdrawal)).toBe(false);
+    assertNoSentinels();
+    expect(readFileSync(path.join(directory, 'dist/.htaccess'), 'utf8')).toContain('RewriteRule ^project/(n8n-openai-data-extraction|invoice-ocr-extraction|yolo-computer-vision-optimization|text-story-one)/?$ index.html [L]');
+    expect(readFileSync(path.join(directory, 'dist/sitemap.xml'), 'utf8')).not.toContain('/project/text-story-two/');
+  }, 180_000);
+
+  it('withdraws baseline identities through the CLI while retaining a genuinely shared public asset', () => {
+    const directory = buildFixture();
+    const sharedBytes = Buffer.from('UklGRiIAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEALAAAAAABAAgAAQUxQSDIAAA=', 'base64');
+    const sharedPath = path.join(directory, 'public/assets/case-studies/shared-fixture.webp');
+    writeFileSync(sharedPath, sharedBytes);
+    const manifestPath = path.join(directory, 'publication/case-study-manifest.js');
+    const sharedPublicPath = '/assets/case-studies/shared-fixture.webp';
+    const sharedImage = { src: sharedPublicPath, alt: 'Shared synthetic fixture image.', width: 1, height: 1 };
+    const sharedStory = (id) => ({
+      id, slug: id, status: 'published', variant: 'article',
+      content: {
+        title: `${id} title`, summary: `${id} summary`, image: sharedImage,
+        sections: [
+          { key: 'problem', heading: 'The problem', nodes: [{ type: 'paragraph', children: [{ type: 'text', value: `${id} problem` }] }] },
+          { key: 'built', heading: 'What I built', nodes: [{ type: 'paragraph', children: [{ type: 'text', value: `${id} build` }] }] },
+          { key: 'outcome', heading: 'The outcome', nodes: [{ type: 'paragraph', children: [{ type: 'text', value: `${id} outcome` }] }] },
+        ],
+      },
+      claimRefs: { summary: `${id}.summary`, outcome: `${id}.outcome` },
+    });
+    const sharedRecords = ['text-story-one', 'text-story-two'].map((id) => {
+      const record = sharedStory(id);
+      record.approval = explicitApproval(digest({ id, slug: id, content: record.content }));
+      return record;
+    });
+    const sharedClaims = Object.fromEntries(sharedRecords.flatMap((record) => [
+      [record.claimRefs.summary, { type: 'content', recordId: record.id, placement: 'summary', value: record.content.summary, approval: explicitApproval(digest({ id: record.claimRefs.summary, type: 'content', recordId: record.id, placement: 'summary', value: record.content.summary })) }],
+      [record.claimRefs.outcome, { type: 'content', recordId: record.id, placement: 'outcome', value: record.content.sections[2], approval: explicitApproval(digest({ id: record.claimRefs.outcome, type: 'content', recordId: record.id, placement: 'outcome', value: record.content.sections[2] })) }],
+    ]));
+    const sharedBaseline = {
+      schemaVersion: 1, claims: sharedClaims,
+      assets: { [sharedPublicPath]: { file: 'public/assets/case-studies/shared-fixture.webp', width: 1, height: 1, format: 'webp', approval: explicitApproval(digest(sharedBytes)) } },
+      records: sharedRecords,
+    };
+    writeFileSync(manifestPath, `import { stagedCaseStudyPublication } from './staged-case-study-publication.js';\nimport { mergeCaseStudyManifest } from './case-study-manifest-merge.js';\nexport const caseStudyPublicationBaseline = ${JSON.stringify(sharedBaseline)};\nexport const caseStudyPublicationManifest = mergeCaseStudyManifest(caseStudyPublicationBaseline, stagedCaseStudyPublication);\n`);
+
+    runPublicationBuild(directory);
+    expect(existsSync(path.join(directory, 'dist/project/text-story-one/index.html'))).toBe(true);
+    expect(existsSync(path.join(directory, 'dist/project/text-story-two/index.html'))).toBe(true);
+    expect(existsSync(path.join(directory, 'dist/assets/case-studies/shared-fixture.webp'))).toBe(true);
+
+    expect(runCaseStudyWithdraw(directory, 'text-story-one')).toContain('text-story-one');
+    runPublicationBuild(directory);
+    expect(existsSync(path.join(directory, 'dist/project/text-story-one'))).toBe(false);
+    expect(existsSync(path.join(directory, 'dist/project/text-story-two/index.html'))).toBe(true);
+    expect(existsSync(path.join(directory, 'dist/assets/case-studies/shared-fixture.webp'))).toBe(true);
+    expect(readFileSync(path.join(directory, 'dist/.htaccess'), 'utf8')).toContain('RewriteRule ^project/(text-story-two)/?$ index.html [L]');
+
+    expect(runCaseStudyWithdraw(directory, 'text-story-two')).toContain('text-story-two');
+    runPublicationBuild(directory);
+    runAffectedTests(directory);
+    expect(existsSync(path.join(directory, 'dist/project'))).toBe(false);
+    expect(existsSync(path.join(directory, 'dist/assets/case-studies/shared-fixture.webp'))).toBe(false);
+    expect(readFileSync(path.join(directory, 'dist/.htaccess'), 'utf8')).toContain('RewriteRule ^project/ - [R=404,L]');
+    expect(readFileSync(path.join(directory, 'dist/sitemap.xml'), 'utf8')).not.toContain('/project/');
   }, 180_000);
 });

@@ -24,7 +24,8 @@ if (!candidatePath || !candidateSha256 || !approvedBy || !approvedAt || !evidenc
     stagedPath: path.resolve(stagedPath),
     metadata: { candidateSha256, approvedBy, approvedAt, evidence },
   }).then((result) => {
-    console.log(`Staged ${result.records.length} reviewed case stud${result.records.length === 1 ? 'y' : 'ies'} from candidate ${result.candidateSha256}.`);
+    console.log(`Staged ${result.affected.length} reviewed case stud${result.affected.length === 1 ? 'y' : 'ies'} from candidate ${result.candidateSha256}.`);
+    console.log(`Affected identities: ${result.affected.map(({ id, slug }) => `${id} (${slug})`).join(', ')}.`);
     console.log(`Updated ${result.stagedPath}; release and deployment remain separate.`);
   }).catch((error) => {
     console.error(error.message);

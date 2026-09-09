@@ -47,10 +47,20 @@ export const mergeCaseStudyManifest = (baseManifest, stagedStore) => {
     ...stagedStore.records.filter((record) => !baseById.has(record.id)),
   ];
   validateUniqueIdentities(records, 'Merged manifest');
+  const claims = { ...baseManifest.claims, ...stagedStore.claims };
+  // A draft record is an explicit tombstone. Remove its claims from the
+  // effective manifest as well as its public record so baseline data cannot
+  // leak through a withdrawn identity.
+  for (const record of stagedStore.records) {
+    if (record.status !== 'draft') continue;
+    for (const [claimId, claim] of Object.entries(claims)) {
+      if (claim?.recordId === record.id || claimId.startsWith(`${record.id}.`)) delete claims[claimId];
+    }
+  }
   return {
     ...baseManifest,
     records,
-    claims: { ...baseManifest.claims, ...stagedStore.claims },
+    claims,
     assets: { ...(baseManifest.assets ?? {}), ...(stagedStore.assets ?? {}) },
   };
 };
