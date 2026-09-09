@@ -33,6 +33,7 @@ const setup = (stories = [], baselineRecords = []) => {
 const metadata = (candidatePath) => ({
   candidateSha256: digest(readFileSync(candidatePath)), approvedBy: 'Fixture', approvedAt: '2026-09-09T00:00:00Z', evidence: 'https://example.invalid/review',
 });
+const validPng = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64');
 
 describe('reviewed case-study staging', () => {
   it('stages article records mechanically and rejects a stale slug without changing bytes', async () => {
@@ -64,6 +65,31 @@ describe('reviewed case-study staging', () => {
     writeFileSync(fixture.candidatePath, JSON.stringify({ schemaVersion: 1, stories: [story('first-story', 'first-story-v2')] }));
     await expect(stageReviewedCaseStudyCandidate({ ...fixture, metadata: reviewedMetadata })).rejects.toThrow(/digest mismatch/i);
     expect(readFileSync(fixture.stagedPath, 'utf8')).toContain('records": []');
+  });
+
+  it('rejects unsupported and mismatched new-article image extensions before changing the staged store', async () => {
+    const stageImage = async (publicPath) => {
+      const fixture = setup([{
+        ...story('image-story'),
+        image: { src: publicPath, alt: 'Fixture image.', width: 1, height: 1 },
+      }]);
+      const snapshotSource = 'assets/fixture.png';
+      mkdirSync(path.join(fixture.directory, 'assets'), { recursive: true });
+      writeFileSync(path.join(fixture.directory, snapshotSource), validPng);
+      writeFileSync(fixture.candidatePath, JSON.stringify({ schemaVersion: 1, stories: [{
+        ...story('image-story'),
+        image: { src: publicPath, alt: 'Fixture image.', width: 1, height: 1 },
+      }], assets: {
+        [publicPath]: { source: snapshotSource, sha256: digest(validPng), width: 1, height: 1, format: 'png' },
+      }}));
+      const before = readFileSync(fixture.stagedPath, 'utf8');
+      await expect(stageReviewedCaseStudyCandidate({ ...fixture, metadata: metadata(fixture.candidatePath) })).rejects.toThrow(
+        publicPath.endsWith('.html') ? /safe public case-study image path/i : /extension does not match its actual png format/i,
+      );
+      expect(readFileSync(fixture.stagedPath, 'utf8')).toBe(before);
+    };
+    await stageImage('/assets/case-studies/format-probe.html');
+    await stageImage('/assets/case-studies/format-probe.jpg');
   });
 
   it('rejects a slug collision with an unrelated staged identity before replacement', async () => {

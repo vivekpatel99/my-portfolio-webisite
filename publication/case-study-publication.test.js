@@ -14,7 +14,7 @@ afterEach(() => outputDirectories.splice(0).forEach((directory) => rmSync(direct
 
 const explicitApproval = (sha256) => ({ kind: 'explicit', sha256, approvedBy: 'Viv', approvedAt: '2026-09-08T00:00:00Z', evidence: 'https://example.invalid/approval/43' });
 const unitAssetPath = '/assets/case-studies/fixture-unit.webp';
-const unitAssetBytes = Buffer.from('FIXTURE_UNIT_ASSET');
+const unitAssetBytes = Buffer.from('UklGRiIAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEALAAAAAABAAgAAQUxQSDIAAA=', 'base64');
 const fixtureContent = (id) => ({
   title: `${id} title`, cardTitle: `${id} card`, category: 'Fixture', summary: `${id} summary`,
   challenge: `${id} challenge`, solution: `${id} solution`, outcome: `${id} outcome`,
@@ -74,7 +74,7 @@ function buildFixture() {
   const assetDirectory = path.join(directory, 'public/assets/case-studies');
   rmSync(assetDirectory, { recursive: true, force: true });
   mkdirSync(assetDirectory, { recursive: true });
-  writeFileSync(path.join(assetDirectory, 'fixture-approved.webp'), 'FIXTURE_APPROVED_ASSET');
+  writeFileSync(path.join(assetDirectory, 'fixture-approved.webp'), validFixtureWebp);
   writeFileSync(path.join(assetDirectory, 'obsolete-approved.webp'), 'OBSOLETE_FIXTURE_ASSET');
   for (const source of ['index.html', 'package.json', 'vite.config.js', 'vitest.config.ts']) cpSync(source, path.join(directory, source));
   symlinkSync(path.join(process.cwd(), 'node_modules'), path.join(directory, 'node_modules'));
@@ -221,6 +221,43 @@ describe('case-study publication boundary', () => {
     invalidLabel.records[0].content.externalLinks[0].label = { unsupported: true };
     invalidLabel.records[0].approval = explicitApproval(digest({ id: invalidLabel.records[0].id, slug: invalidLabel.records[0].slug, content: invalidLabel.records[0].content }));
     expect(() => compileFixture(invalidLabel)).toThrow(/label must be a non-empty string/i);
+  });
+
+  it('rejects new-article image paths with unsupported or mismatched extensions', () => {
+    const articleManifest = (publicPath) => {
+      const manifest = manifestCopy();
+      const root = unitRoots.get(manifest);
+      const id = `article-${publicPath.slice(publicPath.lastIndexOf('/') + 1).split('.')[1] ?? 'fixture'}`;
+      const content = {
+        title: 'Article fixture', summary: 'Article summary.',
+        image: { src: publicPath, alt: 'Article fixture image.', width: 1, height: 1 },
+        sections: [
+          { key: 'problem', heading: 'The problem', nodes: [{ type: 'paragraph', children: [{ type: 'text', value: 'Problem.' }] }] },
+          { key: 'built', heading: 'What I built', nodes: [{ type: 'paragraph', children: [{ type: 'text', value: 'Built.' }] }] },
+          { key: 'outcome', heading: 'The outcome', nodes: [{ type: 'paragraph', children: [{ type: 'text', value: 'Outcome.' }] }] },
+        ],
+      };
+      const summaryRef = `${id}.summary`;
+      const outcomeRef = `${id}.outcome`;
+      const claimApproval = (claimId, placement, value) => ({
+        type: 'content', recordId: id, placement, value,
+        approval: explicitApproval(digest({ id: claimId, type: 'content', recordId: id, placement, value })),
+      });
+      manifest.claims[summaryRef] = claimApproval(summaryRef, 'summary', content.summary);
+      manifest.claims[outcomeRef] = claimApproval(outcomeRef, 'outcome', content.sections[2]);
+      manifest.records.push({
+        id, slug: id, status: 'published', variant: 'article', content,
+        approval: explicitApproval(digest({ id, slug: id, content })),
+        claimRefs: { summary: summaryRef, outcome: outcomeRef },
+      });
+      const file = `public${publicPath}`;
+      writeFileSync(path.join(root, file), validFixturePng);
+      manifest.assets[publicPath] = { file, width: 1, height: 1, format: 'png', approval: explicitApproval(digest(validFixturePng)) };
+      return manifest;
+    };
+
+    expect(() => compileFixture(articleManifest('/assets/case-studies/format-probe.html'))).toThrow(/safe public case-study image path.*\.png.*\.jpg.*\.jpeg.*\.webp/i);
+    expect(() => compileFixture(articleManifest('/assets/case-studies/format-probe.jpg'))).toThrow(/extension.*does not match its actual png format/i);
   });
 
   it('renders a deny-all deployment rule when every case study is withdrawn', () => {

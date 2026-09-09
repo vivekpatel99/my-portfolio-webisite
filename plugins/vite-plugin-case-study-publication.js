@@ -3,13 +3,16 @@ import path from 'node:path';
 import { compileCaseStudyPublication, renderPublicCaseStudyModule } from '../publication/compile-case-studies.js';
 
 const normalize = (value) => path.resolve(value).split(path.sep).join('/');
-const referencedAssetUrls = (publication) => publication.flatMap((record) => [record.image, ...(record.gallery ?? [])]
-  .flatMap((media) => [media?.src, media?.poster].filter(Boolean)).concat(publication.flatMap((record) => {
-    const urls = [];
-    const walk = (nodes) => (nodes ?? []).forEach((node) => { if (node.type === 'image') urls.push(node.src); if (node.children) walk(node.children); if (node.items) node.items.forEach((item) => walk(item.children)); });
-    (record.sections ?? []).forEach((section) => walk(section.nodes));
-    return urls;
-  })));
+const referencedAssetUrls = (publication) => publication.flatMap((record) => {
+  const urls = record.image?.src ? [record.image.src] : [];
+  const walk = (nodes) => (nodes ?? []).forEach((node) => {
+    if (node.type === 'image') urls.push(node.src);
+    if (node.children) walk(node.children);
+    if (node.items) node.items.forEach((item) => walk(item.children));
+  });
+  (record.sections ?? []).forEach((section) => walk(section.nodes));
+  return urls;
+});
 
 const copyPublicFiles = (plugin, directory, relative = '') => {
   for (const entry of readdirSync(directory, { withFileTypes: true })) {

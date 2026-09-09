@@ -48,7 +48,7 @@ Routes are centralized in `src/App.jsx` and animated with Framer Motion:
 | --- | --- | --- |
 | `/` | `src/pages/Home.jsx` | Main section-based portfolio page. |
 | `/contact` | `src/pages/Contact.jsx` | Contact form backed by Convex. |
-| `/project/:projectId` | `src/pages/Project.jsx` | Case-study route; unknown IDs toast and redirect home. |
+| `/project/:projectId` | `src/pages/Project.jsx` | Case-study route rendered from the validated publication projection. |
 | `/legal` | `src/pages/Legal.jsx` | Privacy/legal content. |
 | `/data-policy` | `src/pages/DataPolicy.jsx` | Cookie/data policy content. |
 | `*` | redirect to `/` | SPA fallback inside React Router. |
@@ -66,7 +66,6 @@ The home page is composed in `src/pages/Home.jsx`:
 - `Experience`
 - `Portfolio`
 - `Testimonials`
-- `Stats`
 - `Connect`
 - `CTA`
 
@@ -79,11 +78,10 @@ Important frontend files:
 | `src/components/Header.jsx` | Fixed desktop/mobile navigation, hash navigation, contact CTA. |
 | `src/components/Footer.jsx` | Footer links, cookie manager trigger, contact/social links. |
 | `src/components/Services.jsx` | Local accordion state for service copy. |
-| `src/components/Portfolio.jsx` | Portfolio cards and external project links. |
+| `src/components/Portfolio.jsx` | Published case-study cards, optional covers, summaries, and article links. |
 | `src/components/Experience.jsx` | Timeline/collapsible experience section. |
-| `src/components/Stats.jsx` | Animated counters; accepts `customStats` for project pages. |
 | `src/pages/Contact.jsx` | Contact form state, client-side validation, Convex mutation call, toasts, Sentry capture. |
-| `src/pages/Project.jsx` | Hardcoded project case-study data and missing-project redirect. |
+| `src/pages/Project.jsx` | Case-study route lookup, SEO, article rendering, and missing-project handling. |
 | `src/config/links.js` | Centralized social links, remote image URLs, logos, backgrounds, tech icons, gallery images. |
 | `src/lib/seoConfig.js` | Site URL, default SEO, route-specific SEO config. |
 | `src/lib/seo.js` | React Helmet SEO component. |

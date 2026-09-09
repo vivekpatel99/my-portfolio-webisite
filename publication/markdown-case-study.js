@@ -5,7 +5,7 @@ import matter from 'gray-matter';
 import he from 'he';
 import { marked } from 'marked';
 import { imageSize } from 'image-size';
-import { slugPattern } from './case-study-schema.js';
+import { caseStudyImageFormatForPath, slugPattern } from './case-study-schema.js';
 
 const imageExtensions = new Set(['.png', '.jpg', '.jpeg', '.webp']);
 const assetDigest = (bytes) => createHash('sha256').update(bytes).digest('hex');
@@ -174,7 +174,7 @@ const validateCandidateInline = (node, label) => {
     case 'image':
       candidateObject(node, ['type', 'src', 'alt', 'caption', 'width', 'height'], label);
       candidateNonEmptyString(node.src, `${label}.src`); candidateNonEmptyString(node.alt, `${label}.alt`);
-      if (!/^\/assets\/case-studies\/[a-z0-9][a-z0-9._-]*$/.test(node.src)) candidateIssue(`${label}.src`, 'must use a safe public case-study asset path');
+      if (!/^\/assets\/case-studies\/[a-z0-9][a-z0-9._-]*$/.test(node.src) || !caseStudyImageFormatForPath(node.src)) candidateIssue(`${label}.src`, 'must use a safe public case-study image path ending in .png, .jpg, .jpeg, or .webp');
       if (node.caption !== undefined) candidateNonEmptyString(node.caption, `${label}.caption`);
       if (!Number.isSafeInteger(node.width) || node.width < 1) candidateIssue(`${label}.width`, 'must be a positive integer');
       if (!Number.isSafeInteger(node.height) || node.height < 1) candidateIssue(`${label}.height`, 'must be a positive integer');
@@ -234,7 +234,7 @@ export const validatePreparedCaseStudies = (stories, label = 'candidate') => {
     if (story.image !== undefined) {
       candidateObject(story.image, ['src', 'alt', 'caption', 'width', 'height'], `${storyLabel}.image`);
       candidateNonEmptyString(story.image.src, `${storyLabel}.image.src`); candidateNonEmptyString(story.image.alt, `${storyLabel}.image.alt`);
-      if (!/^\/assets\/case-studies\/[a-z0-9][a-z0-9._-]*$/.test(story.image.src)) candidateIssue(`${storyLabel}.image.src`, 'must use a safe public case-study asset path');
+      if (!/^\/assets\/case-studies\/[a-z0-9][a-z0-9._-]*$/.test(story.image.src) || !caseStudyImageFormatForPath(story.image.src)) candidateIssue(`${storyLabel}.image.src`, 'must use a safe public case-study image path ending in .png, .jpg, .jpeg, or .webp');
       if (story.image.caption !== undefined) candidateNonEmptyString(story.image.caption, `${storyLabel}.image.caption`);
       if (!Number.isSafeInteger(story.image.width) || story.image.width < 1) candidateIssue(`${storyLabel}.image.width`, 'must be a positive integer');
       if (!Number.isSafeInteger(story.image.height) || story.image.height < 1) candidateIssue(`${storyLabel}.image.height`, 'must be a positive integer');

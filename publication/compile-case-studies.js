@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { caseStudyPublicationManifest } from './case-study-manifest.js';
 import { assertApprovedAsset, assertApproval, baselineApprovalHashes, digest } from './case-study-evidence.js';
 import { imageSize } from 'image-size';
-import { assertMedia, assertSafeExternalUrl, assertStat, assertString, exactKeys, fail, slugPattern } from './case-study-schema.js';
+import { assertMedia, assertSafeExternalUrl, assertStat, assertString, caseStudyImagePathMatchesFormat, exactKeys, fail, slugPattern } from './case-study-schema.js';
 import { validatePreparedCaseStudies } from './markdown-case-study.js';
 
 export const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -25,13 +25,16 @@ const articleAssetUrls = (sections) => {
   (sections ?? []).forEach((section) => walk(section.nodes));
   return urls;
 };
-const assertAssetBinding = ({ root, publicPath, asset, media, label, requireDimensions = false }) => {
+const assertAssetBinding = ({ root, publicPath, asset, media, label, requireDimensions = false, deriveDimensions = false }) => {
   assertApprovedAsset({ root, publicPath, asset, approval: asset.approval });
-  if (asset.width === undefined && asset.height === undefined) { if (requireDimensions) fail(`${label} is missing intrinsic dimensions`); return; }
+  if (requireDimensions && (asset.width === undefined || asset.height === undefined)) fail(`${label} is missing intrinsic dimensions`);
+  if (asset.width === undefined && asset.height === undefined && !requireDimensions && !deriveDimensions) return;
   let dimensions; try { dimensions = imageSize(requireAssetBytes(root, asset)); } catch { fail(`${label} is not a valid PNG, JPEG, or WebP image`); }
   const format = String(dimensions.type || '').toLowerCase();
-  if (dimensions.width !== asset.width || dimensions.height !== asset.height || !['png', 'jpg', 'jpeg', 'webp'].includes(format)) fail(`${label} has invalid intrinsic dimensions or format`);
+  const normalizedFormat = format === 'jpg' ? 'jpeg' : format;
+  if ((asset.width !== undefined && dimensions.width !== asset.width) || (asset.height !== undefined && dimensions.height !== asset.height) || !['png', 'jpg', 'jpeg', 'webp'].includes(format) || (asset.format !== undefined && asset.format !== normalizedFormat)) fail(`${label} has invalid intrinsic dimensions or format`);
   for (const item of media ?? []) if (item.width !== dimensions.width || item.height !== dimensions.height) fail(`${label} dimensions do not match the approved asset`);
+  return { width: dimensions.width, height: dimensions.height, format: normalizedFormat };
 };
 const requireAssetBytes = (root, asset) => readFileSync(path.join(root, asset.file));
 
@@ -79,7 +82,8 @@ const compiledArticle = (manifest, record, root) => {
     if (!/^\/assets\/case-studies\/[A-Za-z0-9][A-Za-z0-9._-]*$/.test(assetUrl)) fail(`published ${record.slug} has an unsafe case-study asset path`);
     const asset = manifest.assets?.[assetUrl];
     if (!asset || typeof asset.file !== 'string') fail(`published ${record.slug} references an unapproved asset: ${assetUrl}`);
-    assertAssetBinding({ root, publicPath: assetUrl, asset, media: mediaByUrl.get(assetUrl), requireDimensions: true, label: `published ${record.slug} asset ${assetUrl}` });
+    const binding = assertAssetBinding({ root, publicPath: assetUrl, asset, media: mediaByUrl.get(assetUrl), requireDimensions: true, label: `published ${record.slug} asset ${assetUrl}` });
+    if (!caseStudyImagePathMatchesFormat(assetUrl, binding.format)) fail(`published ${record.slug} image asset ${assetUrl} has a filename extension that does not match its actual ${binding.format} format`);
   }
   exactKeys(record.claimRefs, ['summary', 'outcome'], `published ${record.slug} claim references`);
   assertContentClaim(manifest, record, record.claimRefs.summary, 'summary', content.summary);
@@ -131,7 +135,7 @@ export function compileCaseStudyPublication({ manifest = caseStudyPublicationMan
     assertContentClaim(manifest, record, record.claimRefs.outcome, 'outcome', record.content.outcome);
     if (!Array.isArray(record.claimRefs.stats) || record.claimRefs.stats.length !== record.content.stats.length) fail(`published ${record.slug} needs one stat claim per rendered stat`);
     record.claimRefs.stats.forEach((claimRef, index) => assertContentClaim(manifest, record, claimRef, `stats.${index}`, record.content.stats[index]));
-    const externalLinks = record.content.externalLinks.map((link, index) => {
+    record.content.externalLinks.forEach((link, index) => {
       exactKeys(link, ['label', 'claimRef'], `published ${record.slug} external link ${index + 1}`);
       assertString(link.label, `published ${record.slug} external link ${index + 1} label`);
       assertString(link.claimRef, `published ${record.slug} external link ${index + 1} claim reference`);
@@ -140,7 +144,6 @@ export function compileCaseStudyPublication({ manifest = caseStudyPublicationMan
       if (claim.recordId !== record.id || claim.placement !== `externalLinks.${index}`) fail(`claim ${link.claimRef} has an invalid record placement`);
       assertApproval(claim.approval, claimHash(link.claimRef, claim), baselineApprovalHashes.claims[link.claimRef], `claim ${link.claimRef}`);
       assertSafeExternalUrl(claim.value, `claim ${link.claimRef}`);
-      return { label: link.label, href: claim.value };
     });
     for (const assetUrl of caseStudyAssetUrls(record.content)) {
       if (!/^\/assets\/case-studies\/[A-Za-z0-9][A-Za-z0-9._-]*$/.test(assetUrl)) fail(`published ${record.slug} has an unsafe case-study asset path`);
@@ -149,11 +152,12 @@ export function compileCaseStudyPublication({ manifest = caseStudyPublicationMan
       assertAssetBinding({ root, publicPath: assetUrl, asset, media: undefined, label: `published ${record.slug} asset ${assetUrl}` });
     }
     const legacyImageAsset = manifest.assets?.[record.content.image.src];
+    const legacyImageDimensions = assertAssetBinding({ root, publicPath: record.content.image.src, asset: legacyImageAsset, deriveDimensions: true, label: `published ${record.slug} cover asset ${record.content.image.src}` });
     publicRecords.push({
       id: record.id, slug: record.slug, title: record.content.title,
       category: record.content.category, summary: record.content.summary,
       sections: legacySections(record.content),
-      image: { src: record.content.image.src, alt: record.content.image.alt, ...(legacyImageAsset?.width ? { width: legacyImageAsset.width, height: legacyImageAsset.height } : {}), ...(record.content.image.poster ? { poster: record.content.image.poster } : {}) },
+      image: { src: record.content.image.src, alt: record.content.image.alt, width: legacyImageDimensions.width, height: legacyImageDimensions.height },
     });
   }
   return publicRecords;

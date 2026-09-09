@@ -1,4 +1,16 @@
 export const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const caseStudyImageFormats = new Map([
+  ['.png', 'png'],
+  ['.jpg', 'jpeg'],
+  ['.jpeg', 'jpeg'],
+  ['.webp', 'webp'],
+]);
+export const caseStudyImageFormatForPath = (publicPath) => caseStudyImageFormats.get(
+  publicPath.slice(publicPath.lastIndexOf('.')).toLowerCase(),
+);
+export const caseStudyImagePathMatchesFormat = (publicPath, format) => (
+  caseStudyImageFormatForPath(publicPath) === (format === 'jpg' ? 'jpeg' : format)
+);
 export const fail = (message) => { throw new Error(`Case-study publication manifest: ${message}`); };
 export const exactKeys = (value, allowed, label) => {
   if (!value || typeof value !== 'object' || Array.isArray(value)) fail(`${label} must be an object`);

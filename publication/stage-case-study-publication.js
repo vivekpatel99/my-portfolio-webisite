@@ -5,7 +5,7 @@ import { imageSize } from 'image-size';
 import { digest } from './case-study-evidence.js';
 import { validatePreparedCaseStudies } from './markdown-case-study.js';
 import { mergeCaseStudyManifest } from './case-study-manifest-merge.js';
-import { slugPattern } from './case-study-schema.js';
+import { caseStudyImagePathMatchesFormat, slugPattern } from './case-study-schema.js';
 
 const isoTimestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/;
 const sha256 = /^[a-f0-9]{64}$/;
@@ -154,6 +154,7 @@ export async function stageReviewedCaseStudyCandidate({ candidatePath, stagedPat
     let dimensions; try { dimensions = imageSize(sourceBytes); } catch { throw new Error(`Reviewed candidate asset is not a valid image: ${publicPath}`); }
     const format = String(dimensions.type || '').toLowerCase();
     if (!Number.isSafeInteger(dimensions.width) || !Number.isSafeInteger(dimensions.height) || dimensions.width < 1 || dimensions.height < 1 || dimensions.width !== sourceAsset.width || dimensions.height !== sourceAsset.height || !['png', 'jpg', 'jpeg', 'webp'].includes(format) || (sourceAsset.format === 'jpeg' ? !['jpg', 'jpeg'].includes(format) : sourceAsset.format !== format)) throw new Error(`Reviewed candidate asset dimensions or format changed without approval: ${publicPath}`);
+    if (!caseStudyImagePathMatchesFormat(publicPath, format)) throw new Error(`Reviewed candidate image path extension does not match its actual ${format} format: ${publicPath}`);
     const assetPath = `public${publicPath}`;
     assetEntries[publicPath] = {
       file: assetPath,
