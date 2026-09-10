@@ -105,7 +105,8 @@ test('all featured case-study cards and detail CTAs work', async ({ page }) => {
 
     await expect(page.getByText(/Next-Gen Banking UI/i)).toHaveCount(0);
     await page.getByRole('link', { name: 'View Case Studies' }).first().click();
-    await expect(page).toHaveURL(/\/#portfolio$/);
+    await expect(page).toHaveURL(/\/case-studies\/\?resume=1$/);
+    await expect(page.getByRole('heading', { name: /Selected Case Studies/i })).toBeVisible();
 
     await page.goto(caseStudy.path);
     await page.getByRole('link', { name: /Discuss a similar project/ }).click();

@@ -9,6 +9,7 @@ const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
+    if (pathname === '/case-studies' || pathname === '/case-studies/') return undefined;
     if (hash) {
       const id = decodeURIComponent(hash.slice(1));
       let attempts = 0;

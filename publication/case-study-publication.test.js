@@ -372,7 +372,7 @@ describe('case-study publication boundary', () => {
       const articleHtml = readFileSync(path.join(dist, `project/${storyId}/index.html`), 'utf8');
       expect(articleHtml).toContain(`<h1>${storyId} title</h1>`);
       expect(articleHtml).toContain(`${storyId} outcome`);
-      expect(articleHtml).toContain('href="/#portfolio"');
+      expect(articleHtml).toContain('href="/case-studies/?resume=1"');
       expect(articleHtml).toContain('href="/contact/"');
     }
 

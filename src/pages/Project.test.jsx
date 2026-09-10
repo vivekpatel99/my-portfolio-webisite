@@ -61,3 +61,15 @@ describe('Project unknown slugs', () => {
     expect(screen.getByRole('heading', { name: 'Page Not Found' })).toBeTruthy();
   });
 });
+
+describe('Project collection return link', () => {
+  beforeEach(() => cleanup());
+
+  it('returns article readers to the resumable collection entry', () => {
+    const project = caseStudies[0];
+    if (!project) return;
+
+    renderProject(`/project/${project.slug}`);
+    expect(screen.getByRole('link', { name: '← View case studies' }).getAttribute('href')).toBe('/case-studies/?resume=1');
+  });
+});

@@ -15,7 +15,7 @@ const Project = () => {
   return (
     <>
       <Seo {...routeSeo[`/project/${project.slug}`]} />
-      <CaseStudyArticle story={project} />
+      <CaseStudyArticle story={project} backHref="/case-studies/?resume=1" />
     </>
   );
 };

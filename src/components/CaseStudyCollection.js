@@ -1,14 +1,42 @@
-import React, { useId, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
+import { useLocation, useNavigationType } from 'react-router-dom';
 import { collectionCaseStudies } from '../data/caseStudies.js';
+import {
+  getInitialBrowsingState,
+  saveBrowsingState,
+} from '../lib/caseStudyBrowsing.js';
 import CaseStudyCard from './CaseStudyCard.js';
 
 const PAGE_SIZE = 6;
 
 const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
-  const [visibleCount, setVisibleCount] = useState(() => Math.min(PAGE_SIZE, stories.length));
+  const location = useLocation();
+  const navigationType = useNavigationType();
+  const resumeRequested = new URLSearchParams(location.search).get('resume') === '1';
+  const restorableEntry = resumeRequested || (
+    navigationType === 'POP'
+    && typeof window !== 'undefined'
+    && Boolean(window.history.state?.caseStudyCollection)
+  );
+  const [initialState] = useState(() => getInitialBrowsingState({
+    eligibleCount: stories.length,
+    navigationType: restorableEntry ? 'POP' : 'PUSH',
+    resume: restorableEntry,
+    snapshot: !resumeRequested && typeof window !== 'undefined' ? window.history.state?.caseStudyCollection : undefined,
+  }));
+  const [visibleCount, setVisibleCount] = useState(initialState.loadedCount);
   const gridId = `case-study-grid-${useId()}`;
   const visibleStories = stories.slice(0, visibleCount);
   const hasMore = visibleCount < stories.length;
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    window.history.replaceState({ ...window.history.state, caseStudyCollection: initialState }, '');
+    const frame = window.requestAnimationFrame(() => {
+      window.scrollTo({ top: initialState.scrollY, left: 0, behavior: 'auto' });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [initialState.scrollY]);
 
   if (stories.length === 0) {
     return React.createElement(
@@ -20,6 +48,15 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
   }
 
   const loadMore = () => setVisibleCount((count) => Math.min(count + PAGE_SIZE, stories.length));
+  const saveBeforeArticle = () => {
+    const savedState = saveBrowsingState(
+      { loadedCount: visibleCount, scrollY: typeof window === 'undefined' ? 0 : window.scrollY },
+      { eligibleCount: stories.length },
+    );
+    if (typeof window !== 'undefined') {
+      window.history.replaceState({ ...window.history.state, caseStudyCollection: savedState }, '');
+    }
+  };
   const status = React.createElement(
     'p',
     { role: 'status', 'aria-live': 'polite', className: 'mb-6 text-sm text-gray-400' },
@@ -28,7 +65,11 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
   const grid = React.createElement(
     'div',
     { id: gridId, className: 'grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3' },
-    visibleStories.map((story) => React.createElement(CaseStudyCard, { key: story.slug, project: story })),
+    visibleStories.map((story) => React.createElement(CaseStudyCard, {
+      key: story.slug,
+      project: story,
+      onClickCapture: saveBeforeArticle,
+    })),
   );
   const loadMoreButton = stories.length > PAGE_SIZE
     ? React.createElement(

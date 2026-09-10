@@ -100,6 +100,21 @@ describe('CaseStudyCollection', () => {
     expect(screen.getByRole('button', { name: 'All case studies shown' }).disabled).toBe(true);
   });
 
+  it('keeps a numeric history snapshot across collection rerenders', async () => {
+    const user = userEvent.setup();
+    const stories20 = Array.from({ length: 20 }, (_, index) => ({
+      slug: `snapshot-${index}`,
+      title: `Snapshot synthetic story ${index}`,
+      summary: 'Synthetic summary',
+      completedAt: '2025-01',
+    }));
+    render(<MemoryRouter><CaseStudyCollection stories={stories20} /></MemoryRouter>);
+
+    expect(window.history.state.caseStudyCollection).toEqual({ loadedCount: 6, scrollY: 0 });
+    await user.click(screen.getByRole('button', { name: 'Load more' }));
+    expect(window.history.state.caseStudyCollection).toEqual({ loadedCount: 6, scrollY: 0 });
+  });
+
   it('renders through a StaticRouter for server generated markup', () => {
     const markup = renderToStaticMarkup(
       <StaticRouter location="/case-studies">

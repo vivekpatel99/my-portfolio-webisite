@@ -44,6 +44,7 @@ function fixture() {
     'src/config/links.js',
     'src/data/caseStudies.js',
     'src/lib/caseStudyCollection.js',
+    'src/lib/caseStudyBrowsing.js',
     'src/lib/featuredCaseStudies.js',
     'src/lib/seoConfig.js',
     'publication/case-study-manifest.js',
