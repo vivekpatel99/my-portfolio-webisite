@@ -5,7 +5,8 @@
 ## Target branch
 
 - [ ] `develop` for integration and user-acceptance testing
-- [ ] `main` for an explicitly approved production release or urgent hotfix
+- [ ] `main` for an explicitly approved production release, urgent hotfix, or
+      reviewed production rollback
 
 ## Verification
 
