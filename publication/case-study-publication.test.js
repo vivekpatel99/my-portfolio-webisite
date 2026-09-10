@@ -199,6 +199,10 @@ describe('case-study publication boundary', () => {
     delete missingApproval.records[0].approval;
     expect(() => compileFixture(missingApproval)).toThrow(/requires an approval/i);
 
+    const invalidEvidence = manifestCopy();
+    invalidEvidence.records[0].approval.evidence = 'https://:';
+    expect(() => compileFixture(invalidEvidence)).toThrow(/requires explicit approval/i);
+
     const unsafeLink = manifestCopy();
     unsafeLink.claims['fixture-one.external'].value = 'https://user@example.invalid/\\path';
     unsafeLink.claims['fixture-one.external'].approval = explicitApproval(digest({ id: 'fixture-one.external', type: 'external-link', recordId: 'fixture-one', placement: 'externalLinks.0', value: unsafeLink.claims['fixture-one.external'].value }));

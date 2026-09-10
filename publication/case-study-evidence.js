@@ -42,6 +42,13 @@ export const baselineApprovalHashes = {
 
 export const digest = (value) => createHash('sha256').update(Buffer.isBuffer(value) ? value : typeof value === 'string' ? value : JSON.stringify(value)).digest('hex');
 
+export const isValidApprovalEvidenceUrl = (value) => {
+  if (typeof value !== 'string' || value.trim() !== value || /[\\\x00-\x1f\x7f]/.test(value)) return false;
+  let url;
+  try { url = new URL(value); } catch { return false; }
+  return url.protocol === 'https:' && Boolean(url.hostname) && !url.username && !url.password;
+};
+
 export const assertApproval = (approval, expectedHash, baselineHash, label) => {
   if (!approval || typeof approval !== 'object') throw new Error(`Case-study publication manifest: ${label} requires an approval record`);
   if (approval.kind === 'baseline-retention') {
@@ -49,7 +56,7 @@ export const assertApproval = (approval, expectedHash, baselineHash, label) => {
     return;
   }
   const validDate = typeof approval.approvedAt === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/.test(approval.approvedAt) && !Number.isNaN(Date.parse(approval.approvedAt));
-  const validEvidence = typeof approval.evidence === 'string' && approval.evidence.trim() === approval.evidence && /^https:\/\/[^\s\\]+$/.test(approval.evidence);
+  const validEvidence = isValidApprovalEvidenceUrl(approval.evidence);
   if (approval.kind !== 'explicit' || approval.sha256 !== expectedHash || typeof approval.approvedBy !== 'string' || !approval.approvedBy.trim() || approval.approvedBy.trim() !== approval.approvedBy || !validDate || !validEvidence) throw new Error(`Case-study publication manifest: ${label} requires explicit approval with a matching hash`);
 };
 
