@@ -4,6 +4,7 @@
 export {
   caseStudies,
   eligibleCaseStudies,
+  collectionCaseStudies,
   eligibleCaseStudyCount,
   featuredCaseStudies,
   getCaseStudyBySlug,

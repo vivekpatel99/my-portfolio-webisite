@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { caseStudies, eligibleCaseStudies, eligibleCaseStudyCount, getCaseStudyBySlug, caseStudySlugs, primaryContactHref } from './caseStudies';
+import { caseStudies, eligibleCaseStudies, collectionCaseStudies, eligibleCaseStudyCount, featuredCaseStudies, getCaseStudyBySlug, caseStudySlugs, primaryContactHref } from './caseStudies';
 import { routeSeo } from '../lib/seoConfig';
 import { deploymentHtaccess } from '../../plugins/vite-plugin-case-study-publication.js';
 
@@ -14,6 +14,15 @@ describe('caseStudies data structure', () => {
     expect(eligibleCaseStudyCount).toBe(eligibleCaseStudies.length);
     expect(eligibleCaseStudies).toEqual(caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed' && caseStudy.completedAt));
     expect(eligibleCaseStudies.every((caseStudy) => caseStudy.projectStatus === 'completed' && caseStudy.completedAt)).toBe(true);
+  });
+
+  it('sorts the collection projection while preserving homepage feature order', () => {
+    expect(collectionCaseStudies).toEqual(eligibleCaseStudies.slice().sort((left, right) => {
+      const leftMonth = left.completedAt.replace('-', '');
+      const rightMonth = right.completedAt.replace('-', '');
+      return rightMonth.localeCompare(leftMonth) || left.slug.localeCompare(right.slug);
+    }));
+    expect(featuredCaseStudies).toEqual(eligibleCaseStudies);
   });
 
   it('should have required fields for each case study', () => {

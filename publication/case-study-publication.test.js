@@ -179,13 +179,21 @@ caseStudyPublicationManifest.records.splice(0, caseStudyPublicationManifest.reco
 describe('case-study publication boundary', () => {
   it('generates one completed-only collection set for browser consumers', async () => {
     const rendered = renderPublicCaseStudyModule([
-      { id: 'completed-story', slug: 'completed-story', projectStatus: 'completed', completedAt: '2026-08' },
+      { id: 'recently-published-older-project', slug: 'recently-published-older-project', projectStatus: 'completed', completedAt: '2024-02' },
+      { id: 'older-published-newer-project', slug: 'older-published-newer-project', projectStatus: 'completed', completedAt: '2026-08' },
       { id: 'ongoing-story', slug: 'ongoing-story', projectStatus: 'ongoing' },
     ]);
     const module = await import(`data:text/javascript;base64,${Buffer.from(rendered).toString('base64')}`);
-    expect(module.caseStudies).toHaveLength(2);
-    expect(module.eligibleCaseStudies.map(({ id }) => id)).toEqual(['completed-story']);
-    expect(module.eligibleCaseStudyCount).toBe(1);
+    expect(module.caseStudies.map(({ id }) => id)).toEqual([
+      'recently-published-older-project', 'older-published-newer-project', 'ongoing-story',
+    ]);
+    expect(module.eligibleCaseStudies.map(({ id }) => id)).toEqual([
+      'recently-published-older-project', 'older-published-newer-project',
+    ]);
+    expect(module.collectionCaseStudies.map(({ id }) => id)).toEqual([
+      'older-published-newer-project', 'recently-published-older-project',
+    ]);
+    expect(module.eligibleCaseStudyCount).toBe(2);
     expect(module.featuredCaseStudies).toEqual(module.eligibleCaseStudies);
   });
 
