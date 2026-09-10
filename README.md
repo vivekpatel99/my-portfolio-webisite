@@ -241,12 +241,16 @@ Production is hosted by Hostinger Horizons and built from GitHub `main`.
 
 Expected deployment flow:
 
-1. Open a branch.
-2. Push and open a PR into `main`.
-3. Let GitHub CI pass.
-4. Merge to `main`.
-5. Hostinger Horizons builds with `npm run build`.
-6. Verify `/`, `/contact`, `/robots.txt`, and `/sitemap.xml` on the live domain.
+1. Open a short-lived branch from `develop`.
+2. Push and open a PR into `develop`.
+3. Let GitHub CI pass, merge, and test the integrated site from `develop`.
+4. After explicit release approval, open a PR from `develop` into `main`.
+5. Let the final GitHub CI run pass and merge to `main`.
+6. Hostinger Horizons builds with `npm run build`.
+7. Verify `/`, `/contact`, `/robots.txt`, and `/sitemap.xml` on the live domain.
+
+Urgent production hotfixes may branch from `main`, but the merged hotfix must
+also be synchronized back into `develop`. See `docs/git-workflow.md`.
 
 CI in `.github/workflows/ci.yml`:
 
