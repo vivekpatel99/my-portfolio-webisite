@@ -9,7 +9,7 @@ const directories = [];
 afterEach(() => directories.splice(0).forEach((directory) => rmSync(directory, { recursive: true, force: true })));
 
 const story = (id, slug = id) => ({
-  id, slug, title: `${id} title`, summary: `${id} summary`,
+  id, slug, title: `${id} title`, summary: `${id} summary`, projectStatus: 'completed',
   sections: [
     { key: 'problem', heading: 'The problem', nodes: [{ type: 'paragraph', children: [{ type: 'text', value: `${id} problem` }] }] },
     { key: 'built', heading: 'What I built', nodes: [{ type: 'paragraph', children: [{ type: 'text', value: `${id} build` }] }] },
@@ -62,6 +62,8 @@ describe('reviewed case-study staging', () => {
   it('stages article records mechanically and rejects a stale slug without changing bytes', async () => {
     const fixture = setup([story('first-story')]);
     await stageReviewedCaseStudyCandidate({ ...fixture, metadata: metadata(fixture.candidatePath) });
+    const staged = JSON.parse(readFileSync(fixture.stagedPath, 'utf8').match(/= ([\s\S]*);\s*$/)[1]);
+    expect(staged.records[0].content.projectStatus).toBe('completed');
     const before = readFileSync(fixture.stagedPath, 'utf8');
     writeFileSync(fixture.candidatePath, JSON.stringify({ schemaVersion: 1, stories: [story('first-story', 'renamed-story')] }));
     await expect(stageReviewedCaseStudyCandidate({ ...fixture, metadata: metadata(fixture.candidatePath) })).rejects.toThrow(/preserve.*slug/i);
