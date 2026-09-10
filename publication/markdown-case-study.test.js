@@ -73,10 +73,12 @@ describe('Markdown case-study preparation', () => {
   });
 
   it('carries an explicit project status into the prepared story and rejects unknown values', () => {
-    const completed = source().replace('category: Automation', 'category: Automation\nproject_status: completed');
-    expect(parseMarkdownCaseStudy({ source: completed, filePath: '/private/fixture.md' }).projectStatus).toBe('completed');
+    const completed = source().replace('category: Automation', 'category: Automation\nproject_status: completed\ncompleted_at: 2026-08');
+    expect(parseMarkdownCaseStudy({ source: completed, filePath: '/private/fixture.md' })).toMatchObject({ projectStatus: 'completed', completedAt: '2026-08' });
     const invalid = completed.replace('project_status: completed', 'project_status: paused');
     expect(() => parseMarkdownCaseStudy({ source: invalid, filePath: '/private/fixture.md' })).toThrow(/project_status.*completed.*ongoing/i);
+    expect(() => parseMarkdownCaseStudy({ source: completed.replace('completed_at: 2026-08', 'completed_at: 2026-13'), filePath: '/private/fixture.md' })).toThrow(/completed_at.*valid YYYY-MM/i);
+    expect(() => parseMarkdownCaseStudy({ source: completed.replace('\ncompleted_at: 2026-08', ''), filePath: '/private/fixture.md' })).toThrow(/completed_at.*required.*project_status.*completed/i);
   });
 
   it('rejects non-YAML frontmatter and duplicate YAML keys', () => {

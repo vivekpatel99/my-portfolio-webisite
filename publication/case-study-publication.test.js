@@ -17,7 +17,7 @@ const unitAssetPath = '/assets/case-studies/fixture-unit.webp';
 const unitAssetBytes = Buffer.from('UklGRiIAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEALAAAAAABAAgAAQUxQSDIAAA=', 'base64');
 const fixtureContent = (id) => ({
   title: `${id} title`, cardTitle: `${id} card`, category: 'Fixture', summary: `${id} summary`,
-  projectStatus: 'completed',
+  projectStatus: 'completed', completedAt: '2026-08',
   challenge: `${id} challenge`, solution: `${id} solution`, outcome: `${id} outcome`,
   stats: [{ value: 1, suffix: '', label: `${id} stat`, description: `${id} statistic` }],
   image: { src: unitAssetPath, alt: `${id} image` },
@@ -166,7 +166,7 @@ const articleStories = ['text-story-one', 'text-story-two'].map((id) => ({
 const articleRecords = articleStories.map((story) => {
   const summaryRef = story.id + '.summary';
   const outcomeRef = story.id + '.outcome';
-  const content = { title: story.title, summary: story.summary, projectStatus: 'completed', sections: story.sections };
+  const content = { title: story.title, summary: story.summary, projectStatus: 'completed', completedAt: '2026-08', sections: story.sections };
   caseStudyPublicationManifest.claims[summaryRef] = { type: 'content', recordId: story.id, placement: 'summary', value: story.summary, approval: fixtureApproval(fixtureDigest({ id: summaryRef, type: 'content', recordId: story.id, placement: 'summary', value: story.summary })) };
   caseStudyPublicationManifest.claims[outcomeRef] = { type: 'content', recordId: story.id, placement: 'outcome', value: story.sections[2], approval: fixtureApproval(fixtureDigest({ id: outcomeRef, type: 'content', recordId: story.id, placement: 'outcome', value: story.sections[2] })) };
   const record = { id: story.id, slug: story.slug, status: 'published', variant: 'article', content, claimRefs: { summary: summaryRef, outcome: outcomeRef } };
@@ -179,7 +179,7 @@ caseStudyPublicationManifest.records.splice(0, caseStudyPublicationManifest.reco
 describe('case-study publication boundary', () => {
   it('generates one completed-only collection set for browser consumers', async () => {
     const rendered = renderPublicCaseStudyModule([
-      { id: 'completed-story', slug: 'completed-story', projectStatus: 'completed' },
+      { id: 'completed-story', slug: 'completed-story', projectStatus: 'completed', completedAt: '2026-08' },
       { id: 'ongoing-story', slug: 'ongoing-story', projectStatus: 'ongoing' },
     ]);
     const module = await import(`data:text/javascript;base64,${Buffer.from(rendered).toString('base64')}`);
@@ -195,7 +195,8 @@ describe('case-study publication boundary', () => {
     const content = {
       title: 'Article fixture',
       summary: 'Article summary',
-      projectStatus: 'ongoing',
+      projectStatus: 'completed',
+      completedAt: '2026-08',
       sections: [
         { key: 'problem', heading: 'The problem', nodes: [{ type: 'paragraph', children: [{ type: 'text', value: 'Problem.' }] }] },
         { key: 'built', heading: 'What I built', nodes: [{ type: 'paragraph', children: [{ type: 'text', value: 'Built.' }] }] },
@@ -210,7 +211,7 @@ describe('case-study publication boundary', () => {
     manifest.claims['fixture-one.outcome'].value = content.sections[2];
     manifest.claims['fixture-one.outcome'].approval = explicitApproval(digest({ id: 'fixture-one.outcome', type: 'content', recordId: 'fixture-one', placement: 'outcome', value: content.sections[2] }));
     record.approval = explicitApproval(digest({ id: record.id, slug: record.slug, content }));
-    expect(compileFixture(manifest)[0].projectStatus).toBe('ongoing');
+    expect(compileFixture(manifest)[0]).toMatchObject({ projectStatus: 'completed', completedAt: '2026-08' });
   });
 
   it('keeps published articles available while eligible collection data requires completed status', () => {
@@ -232,6 +233,14 @@ describe('case-study publication boundary', () => {
     invalid.records[0].content.projectStatus = 'unknown';
     invalid.records[0].approval = explicitApproval(digest({ id: invalid.records[0].id, slug: invalid.records[0].slug, content: invalid.records[0].content }));
     expect(() => compileFixture(invalid)).toThrow(/project status.*completed.*ongoing/i);
+
+    const invalidMonth = manifestCopy();
+    invalidMonth.records[0].content.completedAt = '2026-13';
+    expect(() => compileFixture(invalidMonth)).toThrow(/completedAt.*valid YYYY-MM/i);
+
+    const changedDate = manifestCopy();
+    changedDate.records[0].content.completedAt = '2026-09';
+    expect(() => compileFixture(changedDate)).toThrow(/requires explicit approval/i);
   });
 
   it('rejects draft payloads, changed baseline identity, and moved approved claims', () => {

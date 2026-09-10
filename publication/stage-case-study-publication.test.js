@@ -9,7 +9,7 @@ const directories = [];
 afterEach(() => directories.splice(0).forEach((directory) => rmSync(directory, { recursive: true, force: true })));
 
 const story = (id, slug = id) => ({
-  id, slug, title: `${id} title`, summary: `${id} summary`, projectStatus: 'completed',
+  id, slug, title: `${id} title`, summary: `${id} summary`, projectStatus: 'completed', completedAt: '2026-08',
   sections: [
     { key: 'problem', heading: 'The problem', nodes: [{ type: 'paragraph', children: [{ type: 'text', value: `${id} problem` }] }] },
     { key: 'built', heading: 'What I built', nodes: [{ type: 'paragraph', children: [{ type: 'text', value: `${id} build` }] }] },
@@ -64,6 +64,12 @@ describe('reviewed case-study staging', () => {
     await stageReviewedCaseStudyCandidate({ ...fixture, metadata: metadata(fixture.candidatePath) });
     const staged = JSON.parse(readFileSync(fixture.stagedPath, 'utf8').match(/= ([\s\S]*);\s*$/)[1]);
     expect(staged.records[0].content.projectStatus).toBe('completed');
+    expect(staged.records[0].content.completedAt).toBe('2026-08');
+    expect(staged.records[0].approval.sha256).toBe(digest({
+      id: staged.records[0].id,
+      slug: staged.records[0].slug,
+      content: staged.records[0].content,
+    }));
     const before = readFileSync(fixture.stagedPath, 'utf8');
     writeFileSync(fixture.candidatePath, JSON.stringify({ schemaVersion: 1, stories: [story('first-story', 'renamed-story')] }));
     await expect(stageReviewedCaseStudyCandidate({ ...fixture, metadata: metadata(fixture.candidatePath) })).rejects.toThrow(/preserve.*slug/i);
