@@ -18,9 +18,12 @@ describe('Portfolio', () => {
 
     caseStudies.forEach((caseStudy) => {
       const links = screen.getAllByRole('link', {
-        name: `Read case study: ${caseStudy.cardTitle}`,
+        name: `Read case study: ${caseStudy.title}`,
       });
-      expect(links.some((link) => link.getAttribute('href') === `/project/${caseStudy.slug}/`)).toBe(true);
+      const cardLink = links.find((link) => link.getAttribute('href') === `/project/${caseStudy.slug}/`);
+      expect(cardLink).toBeDefined();
+      expect(cardLink.contains(screen.getByRole('heading', { name: caseStudy.title }))).toBe(true);
+      if (caseStudy.image) expect(cardLink.contains(screen.getByAltText(caseStudy.image.alt))).toBe(true);
     });
 
     if (caseStudies.length === 0) expect(screen.queryAllByRole('link', { name: /read case study:/i })).toHaveLength(0);

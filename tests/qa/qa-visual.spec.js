@@ -65,9 +65,10 @@ test('cookie customize panel expands', async ({ page }) => {
   await expect(page.getByLabel(/Analytics and Diagnostics Cookies/i)).toBeVisible();
 });
 
-test('stats ticker preserves decimal values', async ({ page }) => {
+test('case-study article renders sober sections without legacy stats panels', async ({ page }) => {
   await page.goto('/project/yolo-computer-vision-optimization');
-  const statsSection = page.locator('#stats-section');
-  await statsSection.scrollIntoViewIfNeeded();
-  await expect(statsSection).toContainText(/2\.5/, { timeout: 5000 });
+  await expect(page.getByRole('heading', { name: 'The problem' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'What I built' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'The outcome' })).toBeVisible();
+  await expect(page.locator('#stats-section')).toHaveCount(0);
 });

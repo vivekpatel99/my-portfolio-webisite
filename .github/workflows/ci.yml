@@ -100,7 +100,10 @@ jobs:
           fi
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        # ubuntu-latest already provides Chromium's system libraries. Avoid
+        # --with-deps here: it runs apt update and can fail on the runner's
+        # unrelated Google Chrome package mirror before QA begins.
+        run: npx playwright install chromium
 
       - name: Run passive Playwright QA against preview
         shell: bash

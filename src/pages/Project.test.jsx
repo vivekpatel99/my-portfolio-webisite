@@ -21,10 +21,6 @@ vi.mock('@/components/SectionAnimator', () => ({
   default: ({ children }) => <div>{children}</div>,
 }));
 
-vi.mock('@/components/Stats', () => ({
-  default: () => null,
-}));
-
 vi.mock('framer-motion', () => {
   const motion = new Proxy(
     {},
