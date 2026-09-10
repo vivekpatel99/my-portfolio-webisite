@@ -61,6 +61,14 @@ export const routeSeo = {
     type: 'website',
     image: DEFAULT_OG_IMAGE_PATH,
   },
+  '/case-studies': {
+    title: 'Case Studies | Vivek Patel, AI & Computer Vision Engineer',
+    description: 'Explore selected AI, automation, data extraction, and computer vision case studies by Vivek Patel.',
+    keywords: 'AI case studies, automation case studies, computer vision, data extraction, Vivek Patel',
+    path: '/case-studies',
+    type: 'website',
+    image: DEFAULT_OG_IMAGE_PATH,
+  },
   ...Object.fromEntries(
     caseStudySlugs.map((slug) => {
       const caseStudy = getCaseStudyBySlug(slug);
