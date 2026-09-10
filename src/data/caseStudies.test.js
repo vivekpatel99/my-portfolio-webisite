@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { caseStudies, eligibleCaseStudies, collectionCaseStudies, eligibleCaseStudyCount, featuredCaseStudies, getCaseStudyBySlug, caseStudySlugs, primaryContactHref } from './caseStudies';
 import { routeSeo } from '../lib/seoConfig';
+import { selectFeaturedCaseStudies } from '../lib/featuredCaseStudies';
 import { deploymentHtaccess } from '../../plugins/vite-plugin-case-study-publication.js';
 
 describe('caseStudies data structure', () => {
@@ -22,7 +23,7 @@ describe('caseStudies data structure', () => {
       const rightMonth = right.completedAt.replace('-', '');
       return rightMonth.localeCompare(leftMonth) || left.slug.localeCompare(right.slug);
     }));
-    expect(featuredCaseStudies).toEqual(eligibleCaseStudies);
+    expect(featuredCaseStudies).toEqual(selectFeaturedCaseStudies(eligibleCaseStudies));
   });
 
   it('should have required fields for each case study', () => {

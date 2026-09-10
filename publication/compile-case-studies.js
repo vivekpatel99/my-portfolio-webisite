@@ -6,25 +6,15 @@ import { assertApprovedAsset, assertApproval, baselineApprovalHashes, digest } f
 import { imageSize } from 'image-size';
 import { assertCompletionMonth, assertMedia, assertProjectStatus, assertSafeExternalUrl, assertStat, assertString, caseStudyImagePathMatchesFormat, exactKeys, fail, slugPattern } from './case-study-schema.js';
 import { validatePreparedCaseStudies } from './markdown-case-study.js';
+import { featuredCaseStudySlugs } from './case-study-featured.js';
+import { sortCaseStudiesByCompletion } from '../src/lib/caseStudyCollection.js';
+import { selectFeaturedCaseStudies } from '../src/lib/featuredCaseStudies.js';
 
 export const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const caseStudyAssetPrefix = '/assets/case-studies/';
 
 const publicRecordFields = new Set(['title', 'cardTitle', 'category', 'summary', 'challenge', 'solution', 'outcome', 'stats', 'image', 'gallery', 'stack', 'externalLinks', 'projectStatus', 'completedAt']);
 const articleRecordFields = new Set(['title', 'summary', 'category', 'sections', 'image', 'projectStatus', 'completedAt']);
-const completionMonthValue = (completedAt) => {
-  const match = typeof completedAt === 'string' ? completedAt.match(/^(\d{4})-(0[1-9]|1[0-2])$/) : null;
-  return match ? Number(match[1]) * 12 + Number(match[2]) : null;
-};
-export const sortCaseStudiesByCompletion = (stories) => [...stories].sort((left, right) => {
-  const leftMonth = completionMonthValue(left.completedAt);
-  const rightMonth = completionMonthValue(right.completedAt);
-  if (leftMonth === null && rightMonth !== null) return 1;
-  if (leftMonth !== null && rightMonth === null) return -1;
-  if (leftMonth !== null && rightMonth !== null && leftMonth !== rightMonth) return rightMonth - leftMonth;
-  return String(left.slug ?? '').localeCompare(String(right.slug ?? ''));
-});
-
 const caseStudyAssetUrls = (content) => [content.image, ...(content.gallery ?? [])]
   .flatMap((item) => [item?.src, item?.poster].filter(Boolean));
 const articleAssetUrls = (sections) => {
@@ -185,8 +175,9 @@ export function compileCaseStudyPublication({ manifest = caseStudyPublicationMan
   return publicRecords;
 }
 
-export const renderPublicCaseStudyModule = (publication = compileCaseStudyPublication()) => {
+export const renderPublicCaseStudyModule = (publication = compileCaseStudyPublication(), configuredSlugs = featuredCaseStudySlugs) => {
   const eligibleCaseStudies = publication.filter((caseStudy) => caseStudy.projectStatus === 'completed' && caseStudy.completedAt);
   const collectionIndices = sortCaseStudiesByCompletion(eligibleCaseStudies).map((caseStudy) => publication.indexOf(caseStudy));
-  return `// Generated in-memory by vite-plugin-case-study-publication.\nexport const caseStudies = ${JSON.stringify(publication)};\nexport const eligibleCaseStudies = caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed' && caseStudy.completedAt);\nexport const collectionCaseStudies = ${JSON.stringify(collectionIndices)}.map((index) => caseStudies[index]);\nexport const eligibleCaseStudyCount = eligibleCaseStudies.length;\nexport const featuredCaseStudies = eligibleCaseStudies;\nexport const getCaseStudyBySlug = (slug) => caseStudies.find((caseStudy) => caseStudy.slug === slug);\nexport const caseStudySlugs = caseStudies.map((caseStudy) => caseStudy.slug);\nexport const primaryContactHref = '/contact/';\nexport const directEmailHref = 'mailto:contact@vivekpatel.com';\n`;
+  const featuredIndices = selectFeaturedCaseStudies(eligibleCaseStudies, configuredSlugs).map((caseStudy) => publication.indexOf(caseStudy));
+  return `// Generated in-memory by vite-plugin-case-study-publication.\nexport const caseStudies = ${JSON.stringify(publication)};\nexport const eligibleCaseStudies = caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed' && caseStudy.completedAt);\nexport const collectionCaseStudies = ${JSON.stringify(collectionIndices)}.map((index) => caseStudies[index]);\nexport const eligibleCaseStudyCount = eligibleCaseStudies.length;\nexport const featuredCaseStudies = ${JSON.stringify(featuredIndices)}.map((index) => caseStudies[index]);\nexport const getCaseStudyBySlug = (slug) => caseStudies.find((caseStudy) => caseStudy.slug === slug);\nexport const caseStudySlugs = caseStudies.map((caseStudy) => caseStudy.slug);\nexport const primaryContactHref = '/contact/';\nexport const directEmailHref = 'mailto:contact@vivekpatel.com';\n`;
 };

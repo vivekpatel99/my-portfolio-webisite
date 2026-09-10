@@ -5,7 +5,8 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
-import { eligibleCaseStudies, featuredCaseStudies } from '@/data/caseStudies';
+import { eligibleCaseStudies, eligibleCaseStudyCount, featuredCaseStudies } from '@/data/caseStudies';
+import { selectFeaturedCaseStudies } from '@/lib/featuredCaseStudies';
 import Portfolio from './Portfolio';
 
 describe('Portfolio', () => {
@@ -17,7 +18,8 @@ describe('Portfolio', () => {
     );
 
     expect(screen.queryAllByRole('link', { name: /Read case study:/i })).toHaveLength(featuredCaseStudies.length);
-    expect(featuredCaseStudies).toEqual(eligibleCaseStudies);
+    expect(featuredCaseStudies).toEqual(selectFeaturedCaseStudies(eligibleCaseStudies));
+    expect(screen.getByRole('link', { name: `View all case studies (${eligibleCaseStudyCount})` }).getAttribute('href')).toBe('/case-studies/');
 
     featuredCaseStudies.forEach((caseStudy) => {
       const links = screen.getAllByRole('link', {

@@ -77,6 +77,7 @@ function buildFixture() {
   mkdirSync(assetDirectory, { recursive: true });
   writeFileSync(path.join(assetDirectory, 'fixture-approved.webp'), validFixtureWebp);
   writeFileSync(path.join(assetDirectory, 'obsolete-approved.webp'), 'OBSOLETE_FIXTURE_ASSET');
+  writeFileSync(path.join(directory, 'publication/case-study-featured.js'), "export const featuredCaseStudySlugs = ['fixture-case-study', 'text-story-one', 'text-story-two'];\n");
   for (const source of ['index.html', 'package.json', 'vite.config.js', 'vitest.config.ts']) cpSync(source, path.join(directory, source));
   symlinkSync(path.join(process.cwd(), 'node_modules'), path.join(directory, 'node_modules'));
   return directory;
@@ -182,7 +183,7 @@ describe('case-study publication boundary', () => {
       { id: 'recently-published-older-project', slug: 'recently-published-older-project', projectStatus: 'completed', completedAt: '2024-02' },
       { id: 'older-published-newer-project', slug: 'older-published-newer-project', projectStatus: 'completed', completedAt: '2026-08' },
       { id: 'ongoing-story', slug: 'ongoing-story', projectStatus: 'ongoing' },
-    ]);
+    ], ['recently-published-older-project', 'older-published-newer-project']);
     const module = await import(`data:text/javascript;base64,${Buffer.from(rendered).toString('base64')}`);
     expect(module.caseStudies.map(({ id }) => id)).toEqual([
       'recently-published-older-project', 'older-published-newer-project', 'ongoing-story',
@@ -194,7 +195,9 @@ describe('case-study publication boundary', () => {
       'older-published-newer-project', 'recently-published-older-project',
     ]);
     expect(module.eligibleCaseStudyCount).toBe(2);
-    expect(module.featuredCaseStudies).toEqual(module.eligibleCaseStudies);
+    expect(module.featuredCaseStudies.map(({ id }) => id)).toEqual([
+      'recently-published-older-project', 'older-published-newer-project',
+    ]);
   });
 
   it('projects project status from approved article content', () => {

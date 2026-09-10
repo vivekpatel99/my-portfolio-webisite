@@ -134,6 +134,12 @@ and whose public `completedAt` is a valid `YYYY-MM` value; missing metadata and
 `ongoing` records remain available for article and withdrawal controls but are
 excluded from collection cards and homepage counts.
 
+Homepage cards use the build-only `publication/case-study-featured.js` slug
+configuration. The selector keeps configured order, ignores unavailable or
+ineligible slugs, removes duplicates, and caps the result at three stories.
+Configuration chooses existing eligible public records; it does not publish a
+story or add metadata. The `/case-studies/` link uses the full eligible count.
+
 The small legacy adapter in `publication/compile-case-studies.js` remains
 because `n8n-openai-data-extraction`, `invoice-ocr-extraction`, and
 `yolo-computer-vision-optimization` are retained records whose exact identity,
