@@ -1,4 +1,5 @@
 import React from 'react';
+import CaseStudyGallery, { collectGalleryImages } from './CaseStudyGallery.js';
 
 const renderInline = (nodes, keyPrefix) => nodes.map((node, index) => {
   const key = `${keyPrefix}-inline-${index}`;
@@ -44,12 +45,7 @@ export const CaseStudyArticle = ({ story, backHref = '/#portfolio' }) => React.c
   story.category ? React.createElement('p', { className: 'case-study-category' }, story.category) : null,
   React.createElement('h1', null, story.title),
   React.createElement('p', { className: 'case-study-summary' }, story.summary),
-  story.image ? React.createElement('figure', { className: 'case-study-cover' },
-    React.createElement('a', { href: story.image.src },
-      React.createElement('img', { src: story.image.src, alt: story.image.alt, width: story.image.width, height: story.image.height, loading: 'eager' }),
-    ),
-    story.image.caption ? React.createElement('figcaption', null, story.image.caption) : null,
-  ) : null,
+  React.createElement(CaseStudyGallery, { key: story.slug || story.id, images: collectGalleryImages(story) }),
   React.createElement('div', { className: 'case-study-sections' }, story.sections.map((section) => React.createElement(
     'section', { key: section.key },
     React.createElement('h2', null, section.heading),
