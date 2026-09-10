@@ -17,14 +17,18 @@ Convex agent skills for common tasks can be installed by running
 - `main` is the production branch. Never commit or push directly to it.
 - `develop` is the integration and user-acceptance branch. Never commit or
   push directly to it.
-- Start feature, fix, revert, and documentation branches from `develop`, then
-  merge them into `develop` through a pull request after required checks pass.
+- Start feature, ordinary fix, unreleased revert, and documentation branches
+  from `develop`, then merge them into `develop` through a pull request after
+  required checks pass.
 - Promote a tested release with a pull request from `develop` to `main` only
   after explicit user approval. A local pass or a green integration PR does not
   authorize production release.
 - Repair rejected changes with a follow-up branch and pull request. Revert a
   merged change with a dedicated revert branch and pull request; do not rewrite
   shared history.
+- For a production rollback, branch from `main`, merge the reviewed revert into
+  `main`, then immediately synchronize that rollback back into `develop`
+  through a pull request.
 - For an urgent production hotfix, branch from `main`, merge the reviewed fix
   into `main`, then immediately synchronize the same commit back into `develop`
   through a pull request.

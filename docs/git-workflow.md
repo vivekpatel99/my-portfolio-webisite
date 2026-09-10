@@ -15,6 +15,9 @@ reviewed changes are combined and tested together before release.
 
 ## Normal change flow
 
+Ordinary feature, fix, documentation, and unreleased-revert work targets
+`develop`; it must not bypass integration testing by targeting `main` directly.
+
 1. Update local `develop` from `origin/develop` without rewriting history.
 2. Create a short-lived branch from `develop`.
 3. Implement one coherent issue and add proportionate tests.
@@ -47,8 +50,9 @@ the audit trail for why the integration changed.
 - If an unreleased change is rejected on `develop`, create a revert or repair
   branch from `develop` and merge the corrective pull request into `develop`.
 - If production must be rolled back, create a revert branch from `main`, verify
-  it, and merge a pull request into `main`. Never force-push or reset shared
-  branches.
+  it, and merge a pull request into `main`. Then synchronize the same rollback
+  into `develop` through a pull request so the reverted change cannot return in
+  the next release. Never force-push or reset shared branches.
 - For an urgent production hotfix, branch from `main`. After the fix is merged
   into `main`, merge `main` back into `develop` through a pull request so the
   branches do not silently diverge.
