@@ -37,6 +37,20 @@ describe('case-study preview renderer', () => {
     expect(html).not.toContain('undefined');
   });
 
+  it('renders an approved inline-image caption', () => {
+    const imageStory = structuredClone(story);
+    imageStory.sections[1].nodes.push({
+      type: 'paragraph',
+      children: [{
+        type: 'image', src: '/assets/case-studies/fixture.webp', alt: 'Workflow diagram',
+        width: 1200, height: 800, caption: 'Reviewed workflow caption',
+      }],
+    });
+    const html = renderToStaticMarkup(React.createElement(CaseStudyArticle, { story: imageStory }));
+    expect(html).toContain('class="case-study-inline-image-caption"');
+    expect(html).toContain('Reviewed workflow caption');
+  });
+
   it('allows local development but refuses CI and production environments', () => {
     expect(previewIsAllowed({})).toBe(true);
     expect(previewIsAllowed({ CI: '1' })).toBe(false);

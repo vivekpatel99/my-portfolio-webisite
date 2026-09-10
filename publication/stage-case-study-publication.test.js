@@ -36,6 +36,16 @@ const metadata = (candidatePath) => ({
 const validPng = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64');
 
 describe('reviewed case-study staging', () => {
+  it('rejects a calendar-invalid approval timestamp before changing staged bytes', async () => {
+    const fixture = setup([story('first-story')]);
+    const before = readFileSync(fixture.stagedPath, 'utf8');
+    await expect(stageReviewedCaseStudyCandidate({
+      ...fixture,
+      metadata: { ...metadata(fixture.candidatePath), approvedAt: '2026-02-30T00:00:00Z' },
+    })).rejects.toThrow(/real ISO UTC timestamp/i);
+    expect(readFileSync(fixture.stagedPath, 'utf8')).toBe(before);
+  });
+
   it.each(['https://:', 'https://user@example.invalid/review', 'http://example.invalid/review'])(
     'rejects invalid approval evidence URL %s before changing staged bytes',
     async (evidence) => {

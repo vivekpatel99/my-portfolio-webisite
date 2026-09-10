@@ -203,6 +203,10 @@ describe('case-study publication boundary', () => {
     invalidEvidence.records[0].approval.evidence = 'https://:';
     expect(() => compileFixture(invalidEvidence)).toThrow(/requires explicit approval/i);
 
+    const invalidApprovalDate = manifestCopy();
+    invalidApprovalDate.records[0].approval.approvedAt = '2026-02-30T00:00:00Z';
+    expect(() => compileFixture(invalidApprovalDate)).toThrow(/requires explicit approval/i);
+
     const unsafeLink = manifestCopy();
     unsafeLink.claims['fixture-one.external'].value = 'https://user@example.invalid/\\path';
     unsafeLink.claims['fixture-one.external'].approval = explicitApproval(digest({ id: 'fixture-one.external', type: 'external-link', recordId: 'fixture-one', placement: 'externalLinks.0', value: unsafeLink.claims['fixture-one.external'].value }));

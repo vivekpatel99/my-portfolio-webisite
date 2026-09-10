@@ -49,13 +49,21 @@ export const isValidApprovalEvidenceUrl = (value) => {
   return url.protocol === 'https:' && Boolean(url.hostname) && !url.username && !url.password;
 };
 
+export const isValidApprovalTimestamp = (value) => {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/.test(value)) return false;
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return false;
+  const canonical = parsed.toISOString();
+  return value === canonical || value === canonical.replace('.000Z', 'Z');
+};
+
 export const assertApproval = (approval, expectedHash, baselineHash, label) => {
   if (!approval || typeof approval !== 'object') throw new Error(`Case-study publication manifest: ${label} requires an approval record`);
   if (approval.kind === 'baseline-retention') {
     if (approval.baselineCommit !== BASELINE_COMMIT || approval.authorization !== 'Issue #43 unchanged-content retention authorization' || baselineHash !== expectedHash || approval.sha256 !== baselineHash) throw new Error(`Case-study publication manifest: ${label} is not an exact baseline retention`);
     return;
   }
-  const validDate = typeof approval.approvedAt === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/.test(approval.approvedAt) && !Number.isNaN(Date.parse(approval.approvedAt));
+  const validDate = isValidApprovalTimestamp(approval.approvedAt);
   const validEvidence = isValidApprovalEvidenceUrl(approval.evidence);
   if (approval.kind !== 'explicit' || approval.sha256 !== expectedHash || typeof approval.approvedBy !== 'string' || !approval.approvedBy.trim() || approval.approvedBy.trim() !== approval.approvedBy || !validDate || !validEvidence) throw new Error(`Case-study publication manifest: ${label} requires explicit approval with a matching hash`);
 };

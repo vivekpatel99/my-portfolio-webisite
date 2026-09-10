@@ -10,9 +10,12 @@ const renderInline = (nodes, keyPrefix) => nodes.map((node, index) => {
     case 'delete': return React.createElement('del', { key }, renderInline(node.children, key));
     case 'break': return React.createElement('br', { key });
     case 'link': return React.createElement('a', { key, href: node.href }, renderInline(node.children, key));
-    case 'image': return React.createElement('a', { key, className: 'case-study-inline-image-link', href: node.src }, React.createElement('img', {
-      src: node.src, alt: node.alt, width: node.width, height: node.height, loading: 'lazy',
-    }));
+    case 'image': return React.createElement(React.Fragment, { key },
+      React.createElement('a', { className: 'case-study-inline-image-link', href: node.src }, React.createElement('img', {
+        src: node.src, alt: node.alt, width: node.width, height: node.height, loading: 'lazy',
+      })),
+      node.caption ? React.createElement('span', { className: 'case-study-inline-image-caption' }, node.caption) : null,
+    );
     default: return null;
   }
 });

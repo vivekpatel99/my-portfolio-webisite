@@ -2,12 +2,11 @@ import { readFileSync, renameSync, mkdirSync, mkdtempSync, rmSync, writeFileSync
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { imageSize } from 'image-size';
-import { digest, isValidApprovalEvidenceUrl } from './case-study-evidence.js';
+import { digest, isValidApprovalEvidenceUrl, isValidApprovalTimestamp } from './case-study-evidence.js';
 import { validatePreparedCaseStudies } from './markdown-case-study.js';
 import { mergeCaseStudyManifest } from './case-study-manifest-merge.js';
 import { caseStudyImagePathMatchesFormat, slugPattern } from './case-study-schema.js';
 
-const isoTimestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/;
 const sha256 = /^[a-f0-9]{64}$/;
 const publicAssetPath = /^\/assets\/case-studies\/[a-z0-9][a-z0-9._-]*$/;
 const assertAssetDestination = (root, publicPath, asset) => {
@@ -66,7 +65,7 @@ const articleRecord = (story, metadata) => {
 const validateMetadata = (metadata) => {
   if (!sha256.test(metadata.candidateSha256)) throw new Error('Staging requires a 64-character lowercase candidate SHA-256 digest');
   if (typeof metadata.approvedBy !== 'string' || metadata.approvedBy.trim() !== metadata.approvedBy || metadata.approvedBy.trim() === '') throw new Error('Staging requires a non-empty --approved-by value');
-  if (!isoTimestamp.test(metadata.approvedAt) || Number.isNaN(Date.parse(metadata.approvedAt))) throw new Error('Staging requires --approved-at as an ISO UTC timestamp');
+  if (!isValidApprovalTimestamp(metadata.approvedAt)) throw new Error('Staging requires --approved-at as a real ISO UTC timestamp');
   if (!isValidApprovalEvidenceUrl(metadata.evidence)) throw new Error('Staging requires an HTTPS --evidence URL without credentials');
 };
 
