@@ -39,6 +39,7 @@ describe('CaseStudyCard', () => {
 
     const cardLink = screen.getByRole('link', { name: `Read case study: ${project.title}` });
     expect(cardLink.getAttribute('href')).toBe(`/project/${project.slug}/`);
+    expect(cardLink.getAttribute('href')).not.toContain('from=collection');
     expect(cardLink.contains(screen.getByRole('heading', { name: project.title }))).toBe(true);
     expect(cardLink.contains(screen.getByAltText(project.image.alt))).toBe(true);
     expect(screen.getAllByRole('link')).toHaveLength(1);
@@ -68,7 +69,7 @@ describe('CaseStudyCard', () => {
     expect(screen.getByRole('time', { name: 'Completed Mar 2025' }).textContent).toContain('Mar 2025');
   });
 
-  it('marks collection-origin navigation in history state', async () => {
+  it('marks collection-origin navigation in the href and history state', async () => {
     const user = userEvent.setup();
     render(
       <MemoryRouter initialEntries={['/']}>
@@ -79,6 +80,9 @@ describe('CaseStudyCard', () => {
       </MemoryRouter>,
     );
 
+    expect(screen.getByRole('link', { name: `Read case study: ${project.title}` }).getAttribute('href')).toBe(
+      `/project/${project.slug}/?from=collection`,
+    );
     await user.click(screen.getByRole('link', { name: `Read case study: ${project.title}` }));
     expect(JSON.parse(screen.getByText(/fromCollection/).textContent)).toEqual({ fromCollection: true });
   });

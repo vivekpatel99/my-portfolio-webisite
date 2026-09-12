@@ -392,7 +392,7 @@ const assertArticleReturnAndBack = async (page, total) => {
   await target.scrollIntoViewIfNeeded();
   const beforeScroll = await page.evaluate(() => window.scrollY);
   await target.click();
-  await expect(page).toHaveURL(/\/project\/qa-story-\d+\/?$/);
+  await expect(page).toHaveURL(/\/project\/qa-story-\d+\/?(?:\?from=collection)?$/);
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   const returnLink = page.getByRole('link', { name: /view case studies/i }).first();
   await expect(returnLink).toBeVisible();
