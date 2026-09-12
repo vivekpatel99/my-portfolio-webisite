@@ -3,9 +3,9 @@ import { execFileSync } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { caseStudyPublicationManifest } from './case-study-manifest.js';
-import { compileCaseStudyPublication, renderPublicCaseStudyModule } from './compile-case-studies.js';
+import { compileCaseStudyPublication, renderPublicCaseStudyModule, sortCaseStudiesByCompletion } from './compile-case-studies.js';
 import { digest } from './case-study-evidence.js';
 import { deploymentHtaccess } from '../plugins/vite-plugin-case-study-publication.js';
 
@@ -195,6 +195,36 @@ describe('case-study publication boundary', () => {
     ]);
     expect(module.eligibleCaseStudyCount).toBe(2);
     expect(module.featuredCaseStudies).toEqual(module.eligibleCaseStudies);
+  });
+
+  it('breaks equal-month ties by ASCII slug order, independent of runtime locale', () => {
+    const localeCompare = vi.spyOn(String.prototype, 'localeCompare');
+    try {
+      const sorted = sortCaseStudiesByCompletion([
+        { slug: 'hat-bot', completedAt: '2026-08' },
+        { slug: 'chat-bot', completedAt: '2026-08' },
+        { slug: 'alpha', completedAt: '2026-08' },
+        { slug: 'Bravo', completedAt: '2026-08' },
+      ]);
+      expect(sorted.map(({ slug }) => slug)).toEqual(['Bravo', 'alpha', 'chat-bot', 'hat-bot']);
+      expect(localeCompare).not.toHaveBeenCalled();
+    } finally {
+      localeCompare.mockRestore();
+    }
+  });
+
+  it('rejects legacy completed records that omit completedAt', () => {
+    const manifest = manifestCopy();
+    const record = manifest.records[0];
+    delete record.content.completedAt;
+    record.approval = explicitApproval(digest({ id: record.id, slug: record.slug, content: record.content }));
+    expect(() => compileFixture(manifest)).toThrow(/completedAt is required when projectStatus is completed/i);
+
+    const ongoing = manifestCopy();
+    delete ongoing.records[0].content.completedAt;
+    ongoing.records[0].content.projectStatus = 'ongoing';
+    ongoing.records[0].approval = explicitApproval(digest({ id: ongoing.records[0].id, slug: ongoing.records[0].slug, content: ongoing.records[0].content }));
+    expect(compileFixture(ongoing)[0]).not.toHaveProperty('completedAt');
   });
 
   it('projects project status from approved article content', () => {

@@ -20,7 +20,9 @@ describe('caseStudies data structure', () => {
     expect(collectionCaseStudies).toEqual(eligibleCaseStudies.slice().sort((left, right) => {
       const leftMonth = left.completedAt.replace('-', '');
       const rightMonth = right.completedAt.replace('-', '');
-      return rightMonth.localeCompare(leftMonth) || left.slug.localeCompare(right.slug);
+      // ASCII comparison on purpose: matches compareSlugs in src/lib/caseStudyCollection.js, not locale collation.
+      const ascii = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
+      return ascii(rightMonth, leftMonth) || ascii(left.slug, right.slug);
     }));
     expect(featuredCaseStudies).toEqual(eligibleCaseStudies);
   });

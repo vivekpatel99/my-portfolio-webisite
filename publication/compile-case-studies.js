@@ -22,7 +22,10 @@ export const sortCaseStudiesByCompletion = (stories) => [...stories].sort((left,
   if (leftMonth === null && rightMonth !== null) return 1;
   if (leftMonth !== null && rightMonth === null) return -1;
   if (leftMonth !== null && rightMonth !== null && leftMonth !== rightMonth) return rightMonth - leftMonth;
-  return String(left.slug ?? '').localeCompare(String(right.slug ?? ''));
+  // ASCII slug tie-break (same as src/lib/caseStudyCollection.js compareSlugs) so build output does not depend on runtime locale.
+  const leftSlug = String(left.slug ?? '');
+  const rightSlug = String(right.slug ?? '');
+  return leftSlug < rightSlug ? -1 : leftSlug > rightSlug ? 1 : 0;
 });
 
 const caseStudyAssetUrls = (content) => [content.image, ...(content.gallery ?? [])]
@@ -142,6 +145,7 @@ export function compileCaseStudyPublication({ manifest = caseStudyPublicationMan
     exactKeys(record.content, [...publicRecordFields], `published ${record.slug} content`);
     if (record.content.projectStatus !== undefined) assertProjectStatus(record.content.projectStatus, `published ${record.slug} project status`);
     if (record.content.completedAt !== undefined) assertCompletionMonth(record.content.completedAt, `published ${record.slug} completedAt`);
+    if (record.content.projectStatus === 'completed' && record.content.completedAt === undefined) fail(`published ${record.slug} completedAt is required when projectStatus is completed`);
     assertApproval(record.approval, digest({ id: record.id, slug: record.slug, content: record.content }), baselineApprovalHashes.records[record.id], `published ${record.slug}`);
     if (!Array.isArray(record.content.externalLinks) || !Array.isArray(record.content.gallery)) fail(`published ${record.slug} requires external links and gallery arrays`);
     for (const field of ['title', 'cardTitle', 'category', 'summary', 'challenge', 'solution', 'outcome']) assertString(record.content[field], `published ${record.slug} ${field}`);
