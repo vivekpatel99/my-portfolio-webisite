@@ -8,6 +8,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { CASE_STUDY_BROWSING_STORAGE_KEY, clearBrowsingState } from '../lib/caseStudyBrowsing.js';
 import CaseStudyCollection from './CaseStudyCollection.js';
 
 const stories = [
@@ -25,6 +26,7 @@ const manyStories = (count) => Array.from({ length: count }, (_, index) => ({
 describe('CaseStudyCollection', () => {
   afterEach(() => {
     cleanup();
+    clearBrowsingState({ storage: window.sessionStorage });
     history.replaceState(null, '');
   });
 
@@ -111,6 +113,74 @@ describe('CaseStudyCollection', () => {
     expect(screen.getByRole('button', { name: 'All case studies shown' }).getAttribute('aria-disabled')).toBe('true');
   });
 
+  it('keeps a numeric history snapshot across collection rerenders', async () => {
+    const user = userEvent.setup();
+    const stories20 = Array.from({ length: 20 }, (_, index) => ({
+      slug: `snapshot-${index}`,
+      title: `Snapshot synthetic story ${index}`,
+      summary: 'Synthetic summary',
+      completedAt: '2025-01',
+    }));
+    render(<MemoryRouter><CaseStudyCollection stories={stories20} /></MemoryRouter>);
+
+    expect(window.history.state.caseStudyCollection).toEqual({ loadedCount: 6, scrollY: 0 });
+    await user.click(screen.getByRole('button', { name: 'Load more' }));
+    expect(window.history.state.caseStudyCollection).toEqual({ loadedCount: 12, scrollY: 0 });
+    expect(JSON.parse(window.sessionStorage.getItem(CASE_STUDY_BROWSING_STORAGE_KEY))).toEqual({ loadedCount: 12, scrollY: 0 });
+  });
+
+  it('resume=1 with history snapshot prefers snapshot over stale session', () => {
+    const stories20 = Array.from({ length: 20 }, (_, index) => ({
+      slug: `resume-${index}`,
+      title: `Resume synthetic story ${index}`,
+      summary: 'Synthetic summary',
+      completedAt: '2025-01',
+    }));
+    window.sessionStorage.setItem(
+      CASE_STUDY_BROWSING_STORAGE_KEY,
+      JSON.stringify({ loadedCount: 18, scrollY: 900 }),
+    );
+    window.history.replaceState({ caseStudyCollection: { loadedCount: 12, scrollY: 420 } }, '');
+
+    render(
+      <MemoryRouter initialEntries={['/case-studies/?resume=1']}>
+        <CaseStudyCollection stories={stories20} />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getAllByRole('article')).toHaveLength(12);
+    expect(window.history.state.caseStudyCollection).toEqual({ loadedCount: 12, scrollY: 420 });
+  });
+
+  it('persists browsing state on pointerdown and auxclick before navigation', () => {
+    const stories20 = Array.from({ length: 20 }, (_, index) => ({
+      slug: `persist-${index}`,
+      title: `Persist synthetic story ${index}`,
+      summary: 'Synthetic summary',
+      completedAt: '2025-01',
+    }));
+    render(<MemoryRouter><CaseStudyCollection stories={stories20} /></MemoryRouter>);
+    const link = screen.getAllByRole('link', { name: /read case study/i })[0];
+
+    link.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true }));
+    expect(JSON.parse(window.sessionStorage.getItem(CASE_STUDY_BROWSING_STORAGE_KEY))).toEqual({ loadedCount: 6, scrollY: 0 });
+
+    link.dispatchEvent(new MouseEvent('auxclick', { bubbles: true, cancelable: true, button: 1 }));
+    expect(JSON.parse(window.sessionStorage.getItem(CASE_STUDY_BROWSING_STORAGE_KEY))).toEqual({ loadedCount: 6, scrollY: 0 });
+  });
+
+  it('does not write history on scroll', () => {
+    const replaceState = vi.spyOn(window.history, 'replaceState');
+    render(<MemoryRouter><CaseStudyCollection stories={manyStories(20)} /></MemoryRouter>);
+    replaceState.mockClear();
+
+    window.dispatchEvent(new Event('scroll'));
+    window.dispatchEvent(new Event('scroll'));
+
+    expect(replaceState).not.toHaveBeenCalled();
+    replaceState.mockRestore();
+  });
+
   it('renders through a StaticRouter for server generated markup', () => {
     const markup = renderToStaticMarkup(
       <StaticRouter location="/case-studies">
@@ -129,7 +199,7 @@ describe('CaseStudyCollection', () => {
     expect(screen.getAllByRole('article')).toHaveLength(6);
     await user.click(screen.getByRole('button', { name: 'Load more' }));
     expect(screen.getAllByRole('article')).toHaveLength(12);
-    expect(history.state).toEqual({ loadedCount: 12 });
+    expect(history.state.loadedCount).toBe(12);
     first.unmount();
 
     render(<MemoryRouter><CaseStudyCollection stories={stories12} /></MemoryRouter>);
@@ -150,7 +220,8 @@ describe('CaseStudyCollection', () => {
     expect(scrollTo).not.toHaveBeenCalled();
 
     await user.click(screen.getByRole('button', { name: 'Load more' }));
-    expect(history.state).toEqual({ loadedCount: 18, other: 'kept' });
+    expect(history.state.loadedCount).toBe(18);
+    expect(history.state.other).toBe('kept');
     expect(scrollTo).not.toHaveBeenCalled();
     scrollTo.mockRestore();
   });

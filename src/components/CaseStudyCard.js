@@ -24,7 +24,12 @@ const formatCompletionDate = (completedAt) => {
   return `${MONTH_NAMES[Number(month) - 1]} ${year}`;
 };
 
-const CaseStudyCard = ({ project }) => {
+const CaseStudyCard = ({
+  project,
+  onClickCapture,
+  onPointerDownCapture,
+  onAuxClickCapture,
+}) => {
   const completionDate = formatCompletionDate(project.completedAt);
   const image = project.image
     ? React.createElement('img', {
@@ -46,6 +51,9 @@ const CaseStudyCard = ({ project }) => {
         to: `/project/${project.slug}/`,
         className: 'group flex h-full flex-col overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] transition-all duration-300 hover:border-accent-purple/50 hover:bg-white/[0.07] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple focus-visible:ring-offset-2 focus-visible:ring-offset-[#0C0D0D]',
         'aria-label': `Read case study: ${project.title}`,
+        onClickCapture,
+        onPointerDownCapture,
+        onAuxClickCapture,
       },
       image,
       React.createElement(

@@ -1,5 +1,10 @@
-import React, { useId, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
+import { useLocation, useNavigationType } from 'react-router-dom';
 import { collectionCaseStudies } from '../data/caseStudies.js';
+import {
+  getInitialBrowsingState,
+  saveBrowsingState,
+} from '../lib/caseStudyBrowsing.js';
 import CaseStudyCard from './CaseStudyCard.js';
 
 const PAGE_SIZE = 6;
@@ -23,7 +28,25 @@ const persistLoadedPage = (loadedCount) => {
 };
 
 const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
-  const [visibleCount, setVisibleCount] = useState(() => initialVisibleCount(stories.length));
+  const location = useLocation();
+  const navigationType = useNavigationType();
+  const resumeRequested = new URLSearchParams(location.search).get('resume') === '1';
+  const restorableEntry = resumeRequested || (
+    navigationType === 'POP'
+    && typeof window !== 'undefined'
+    && Boolean(window.history.state?.caseStudyCollection)
+  );
+  const [initialState] = useState(() => (
+    restorableEntry
+      ? getInitialBrowsingState({
+        eligibleCount: stories.length,
+        navigationType: 'POP',
+        resume: restorableEntry,
+        snapshot: typeof window !== 'undefined' ? window.history.state?.caseStudyCollection : undefined,
+      })
+      : { loadedCount: initialVisibleCount(stories.length), scrollY: 0 }
+  ));
+  const [visibleCount, setVisibleCount] = useState(initialState.loadedCount);
   const gridId = `case-study-grid-${useId()}`;
   // Static HTML is generated in Node (no `window`). It keeps the same six-card layout as the
   // enhanced page (so nothing shifts when React mounts) and adds a <noscript> list of the
@@ -31,6 +54,31 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
   const isStaticRender = typeof window === 'undefined';
   const visibleStories = stories.slice(0, visibleCount);
   const hasMore = visibleCount < stories.length;
+
+  const persistBrowsingState = (loadedCount = visibleCount) => {
+    const savedState = saveBrowsingState(
+      { loadedCount, scrollY: 0 },
+      { eligibleCount: stories.length },
+    );
+    if (typeof window !== 'undefined') {
+      window.history.replaceState({
+        ...window.history.state,
+        loadedCount,
+        caseStudyCollection: savedState,
+      }, '');
+    }
+    return savedState;
+  };
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    window.history.replaceState({
+      ...window.history.state,
+      loadedCount: initialState.loadedCount,
+      caseStudyCollection: initialState,
+    }, '');
+    return undefined;
+  }, [initialState]);
 
   if (stories.length === 0) {
     return React.createElement(
@@ -47,9 +95,11 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
     setVisibleCount((count) => {
       const next = Math.min(count + PAGE_SIZE, stories.length);
       persistLoadedPage(next);
+      persistBrowsingState(next);
       return next;
     });
   };
+  const saveBeforeArticle = () => persistBrowsingState();
   const status = React.createElement(
     'p',
     { role: 'status', 'aria-live': 'polite', className: 'mb-6 text-sm text-gray-400' },
@@ -58,7 +108,13 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
   const grid = React.createElement(
     'div',
     { id: gridId, className: 'grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3' },
-    visibleStories.map((story) => React.createElement(CaseStudyCard, { key: story.slug, project: story })),
+    visibleStories.map((story) => React.createElement(CaseStudyCard, {
+      key: story.slug,
+      project: story,
+      onClickCapture: saveBeforeArticle,
+      onPointerDownCapture: saveBeforeArticle,
+      onAuxClickCapture: saveBeforeArticle,
+    })),
   );
   const noscriptLinks = isStaticRender && hasMore
     ? React.createElement(
