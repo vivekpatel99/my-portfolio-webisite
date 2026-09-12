@@ -41,11 +41,15 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
     );
   }
 
-  const loadMore = () => setVisibleCount((count) => {
-    const next = Math.min(count + PAGE_SIZE, stories.length);
-    persistLoadedPage(next);
-    return next;
-  });
+  const loadMore = () => {
+    // The exhausted control stays focusable (aria-disabled, not disabled), so guard clicks.
+    if (!hasMore) return;
+    setVisibleCount((count) => {
+      const next = Math.min(count + PAGE_SIZE, stories.length);
+      persistLoadedPage(next);
+      return next;
+    });
+  };
   const status = React.createElement(
     'p',
     { role: 'status', 'aria-live': 'polite', className: 'mb-6 text-sm text-gray-400' },
@@ -72,10 +76,13 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
       'button',
       {
         type: 'button',
-        className: 'mt-10 inline-flex min-h-11 items-center rounded-full border border-accent-purple px-5 text-sm font-semibold text-white transition-colors hover:bg-accent-purple disabled:cursor-default disabled:opacity-70',
+        className: 'mt-10 inline-flex min-h-11 items-center rounded-full border border-accent-purple px-5 text-sm font-semibold text-white transition-colors hover:bg-accent-purple disabled:cursor-default disabled:opacity-70 aria-disabled:cursor-default aria-disabled:opacity-70',
         onClick: loadMore,
         // Without JavaScript the button cannot work, so the static markup ships it disabled.
-        disabled: !hasMore || isStaticRender,
+        // Once exhausted it stays focusable via aria-disabled: natively disabling a focused
+        // control drops browser focus to the body.
+        disabled: isStaticRender,
+        'aria-disabled': !hasMore || isStaticRender,
         'aria-controls': gridId,
       },
       hasMore ? 'Load more' : 'All case studies shown',

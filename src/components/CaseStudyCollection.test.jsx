@@ -88,7 +88,8 @@ describe('CaseStudyCollection', () => {
     expect(screen.getAllByRole('article')).toHaveLength(20);
     expect(screen.getByRole('status').textContent).toBe('Showing 20 of 20 case studies');
     expect(screen.getByRole('button', { name: 'All case studies shown' })).toBe(button);
-    expect(button.disabled).toBe(true);
+    expect(button.disabled).toBe(false);
+    expect(button.getAttribute('aria-disabled')).toBe('true');
     expect(document.activeElement).toBe(button);
   });
 
@@ -107,7 +108,7 @@ describe('CaseStudyCollection', () => {
       await user.click(button);
       expect(screen.getAllByRole('article')).toHaveLength(expected);
     }
-    expect(screen.getByRole('button', { name: 'All case studies shown' }).disabled).toBe(true);
+    expect(screen.getByRole('button', { name: 'All case studies shown' }).getAttribute('aria-disabled')).toBe('true');
   });
 
   it('renders through a StaticRouter for server generated markup', () => {
