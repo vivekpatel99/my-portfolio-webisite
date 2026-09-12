@@ -53,6 +53,20 @@ describe('case-study preview renderer', () => {
     expect(html).toContain('Reviewed workflow caption');
   });
 
+  it('keeps the heading for a section containing only a gallery image', () => {
+    const imageStory = structuredClone(story);
+    imageStory.sections[1].nodes = [{
+      type: 'paragraph',
+      children: [{
+        type: 'image', src: '/assets/case-studies/fixture.webp', alt: 'Workflow diagram',
+        width: 1200, height: 800,
+      }],
+    }];
+    const html = renderToStaticMarkup(React.createElement(CaseStudyArticle, { story: imageStory }));
+    expect(html).toContain('<h2>What I built</h2>');
+    expect(html).toContain('src="/assets/case-studies/fixture.webp"');
+  });
+
   it('allows local development but refuses CI and production environments', () => {
     expect(previewIsAllowed({})).toBe(true);
     expect(previewIsAllowed({ CI: '1' })).toBe(false);

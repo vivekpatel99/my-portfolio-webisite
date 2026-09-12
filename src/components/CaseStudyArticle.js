@@ -55,7 +55,7 @@ export const CaseStudyArticle = ({ story, backHref = '/#portfolio' }) => React.c
   React.createElement('h1', null, story.title),
   React.createElement('p', { className: 'case-study-summary' }, story.summary),
   React.createElement(CaseStudyGallery, { key: story.slug || story.id, images: collectGalleryImages(story) }),
-  React.createElement('div', { className: 'case-study-sections' }, story.sections.map((section) => ({ ...section, nodes: withoutImages(section.nodes) })).filter((section) => section.nodes.length).map((section) => React.createElement(
+  React.createElement('div', { className: 'case-study-sections' }, story.sections.map((section) => ({ ...section, nodes: withoutImages(section.nodes) })).map((section) => React.createElement(
     'section', { key: section.key },
     React.createElement('h2', null, section.heading),
     renderBlocks(section.nodes, section.key),
