@@ -2,9 +2,11 @@ import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 import path from 'path';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { StaticRouter } from 'react-router-dom/server.js';
 import { absoluteUrl, routeSeo, SITE_NAME } from '../src/lib/seoConfig.js';
 import { getCaseStudyBySlug } from '../src/data/caseStudies.js';
 import CaseStudyArticle from '../src/components/CaseStudyArticle.js';
+import CaseStudiesContent from '../src/components/CaseStudiesContent.js';
 import {
   assertCaseStudyRouteSources,
   assertStaticCaseStudyRoutes,
@@ -144,6 +146,14 @@ writeFileSync(indexPath, rootHtml);
 
 const renderStaticRoute = (route) => {
   const html = applySeo(rootHtml, routeSeo[route]);
+  if (route === '/case-studies') {
+    const collection = renderToStaticMarkup(
+      React.createElement(StaticRouter, { location: route }, React.createElement(CaseStudiesContent)),
+    );
+    const rootMarker = '<div id="root"></div>';
+    if (html.split(rootMarker).length !== 2) throw new Error('Static route shell must contain exactly one empty root element');
+    return html.replace(rootMarker, () => `<div id="root">${collection}</div>`);
+  }
   if (!route.startsWith('/project/')) return html;
   const slug = route.slice('/project/'.length);
   const story = getCaseStudyBySlug(slug);

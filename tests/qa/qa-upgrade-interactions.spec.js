@@ -158,14 +158,10 @@ test('mobile navigation menu links and CTA work', async ({ page }) => {
   await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
   await expect(page.getByRole('dialog', { name: 'Navigation menu' })).toBeVisible();
   await page.waitForTimeout(600);
-  await page.getByRole('dialog', { name: 'Navigation menu' }).getByRole('link', { name: 'Portfolio' }).click();
+  await page.getByRole('dialog', { name: 'Navigation menu' }).getByRole('link', { name: 'Case Studies' }).click();
   await expect(page.getByRole('dialog', { name: 'Navigation menu' })).toBeHidden();
-  await expect
-    .poll(async () => {
-      const box = await page.locator('#portfolio').boundingBox();
-      return box && box.y >= -120 && box.y < 320;
-    })
-    .toBeTruthy();
+  await expect(page).toHaveURL(/\/case-studies\/?$/);
+  await expect(page.getByRole('heading', { name: /Selected Case Studies/i })).toBeVisible();
 
   await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
   await expect(page.getByRole('dialog', { name: 'Navigation menu' })).toBeVisible();
