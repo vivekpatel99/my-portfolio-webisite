@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import CaseStudyCollection from './CaseStudyCollection.js';
 
 const stories = [
@@ -139,16 +139,27 @@ describe('CaseStudyCollection', () => {
     expect(screen.getAllByRole('article')).toHaveLength(12);
   });
 
-  it('includes every story href in static markup when more than six stories exist', () => {
+  it('shows every story visibly in no-JS static markup when more than six stories exist', () => {
+    // The static generator runs in Node without `window`; no-JS visitors must see and use every link.
+    vi.stubGlobal('window', undefined);
     const stories8 = manyStories(8);
-    const markup = renderToStaticMarkup(
-      <StaticRouter location="/case-studies">
-        <CaseStudyCollection stories={stories8} />
-      </StaticRouter>,
-    );
+    let markup;
+    try {
+      markup = renderToStaticMarkup(
+        <StaticRouter location="/case-studies">
+          <CaseStudyCollection stories={stories8} />
+        </StaticRouter>,
+      );
+    } finally {
+      vi.unstubAllGlobals();
+    }
     const hrefs = [...markup.matchAll(/href="\/project\/([^"]+)\/"/g)].map((match) => match[1]);
 
-    expect(new Set(hrefs).size).toBeGreaterThan(6);
+    expect(new Set(hrefs).size).toBe(8);
     stories8.forEach((story) => expect(markup).toContain(`href="/project/${story.slug}/"`));
+    expect(markup).not.toMatch(/<nav|\bhidden=/);
+    expect(markup).toContain('Showing 8 of 8 case studies');
+    expect(markup).not.toContain('<button');
+    expect(markup.match(/<article/g)).toHaveLength(8);
   });
 });

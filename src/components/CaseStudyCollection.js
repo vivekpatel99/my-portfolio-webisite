@@ -27,9 +27,11 @@ const persistLoadedPage = (loadedCount) => {
 const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
   const [visibleCount, setVisibleCount] = useState(() => initialVisibleCount(stories.length));
   const gridId = `case-study-grid-${useId()}`;
-  const visibleStories = stories.slice(0, visibleCount);
-  const extraStories = stories.slice(visibleCount);
-  const hasMore = visibleCount < stories.length;
+  // Static HTML is generated in Node (no `window`). Without JavaScript the Load more button
+  // cannot work, so that markup shows every card instead of paginating.
+  const isStaticRender = typeof window === 'undefined';
+  const visibleStories = isStaticRender ? stories : stories.slice(0, visibleCount);
+  const hasMore = visibleStories.length < stories.length;
 
   useEffect(() => {
     const scrollY = historyRecord().scrollY;
@@ -60,14 +62,7 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
     { id: gridId, className: 'grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3' },
     visibleStories.map((story) => React.createElement(CaseStudyCard, { key: story.slug, project: story })),
   );
-  const extraLinks = extraStories.length === 0
-    ? null
-    : React.createElement(
-      'nav',
-      { hidden: true, 'aria-label': 'All case studies' },
-      extraStories.map((story) => React.createElement('a', { key: story.slug, href: `/project/${story.slug}/` }, story.title)),
-    );
-  const loadMoreButton = stories.length > PAGE_SIZE
+  const loadMoreButton = stories.length > PAGE_SIZE && !isStaticRender
     ? React.createElement(
       'button',
       {
@@ -81,7 +76,7 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
     )
     : null;
 
-  return React.createElement(React.Fragment, null, status, grid, extraLinks, loadMoreButton);
+  return React.createElement(React.Fragment, null, status, grid, loadMoreButton);
 };
 
 export default CaseStudyCollection;
