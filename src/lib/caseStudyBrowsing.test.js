@@ -74,4 +74,40 @@ describe('case study browsing state', () => {
     expect(getInitialBrowsingState({ storage: session, eligibleCount: 20, navigationType: 'PUSH', resume: true })).toEqual({ loadedCount: 12, scrollY: 300 });
     expect(getInitialBrowsingState({ storage: session, eligibleCount: 20, navigationType: 'PUSH' })).toEqual({ loadedCount: 6, scrollY: 0 });
   });
+
+  it('resume with snapshot prefers entry snapshot over stale session', () => {
+    const session = storage();
+    saveBrowsingState({ loadedCount: 18, scrollY: 900 }, { storage: session, eligibleCount: 20 });
+
+    expect(getInitialBrowsingState({
+      storage: session,
+      eligibleCount: 20,
+      navigationType: 'PUSH',
+      resume: true,
+      snapshot: { loadedCount: 12, scrollY: 420 },
+    })).toEqual({ loadedCount: 12, scrollY: 420 });
+  });
+
+  it('resume without snapshot falls back to session storage', () => {
+    const session = storage();
+    saveBrowsingState({ loadedCount: 18, scrollY: 900 }, { storage: session, eligibleCount: 20 });
+
+    expect(getInitialBrowsingState({
+      storage: session,
+      eligibleCount: 20,
+      navigationType: 'PUSH',
+      resume: true,
+    })).toEqual({ loadedCount: 18, scrollY: 900 });
+  });
+
+  it('resume with no snapshot and no session defaults to first page', () => {
+    const session = storage();
+
+    expect(getInitialBrowsingState({
+      storage: session,
+      eligibleCount: 20,
+      navigationType: 'PUSH',
+      resume: true,
+    })).toEqual({ loadedCount: 6, scrollY: 0 });
+  });
 });

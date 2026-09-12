@@ -22,12 +22,23 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
     eligibleCount: stories.length,
     navigationType: restorableEntry ? 'POP' : 'PUSH',
     resume: restorableEntry,
-    snapshot: !resumeRequested && typeof window !== 'undefined' ? window.history.state?.caseStudyCollection : undefined,
+    snapshot: typeof window !== 'undefined' ? window.history.state?.caseStudyCollection : undefined,
   }));
   const [visibleCount, setVisibleCount] = useState(initialState.loadedCount);
   const gridId = `case-study-grid-${useId()}`;
   const visibleStories = stories.slice(0, visibleCount);
   const hasMore = visibleCount < stories.length;
+
+  const persistBrowsingState = (loadedCount = visibleCount) => {
+    const savedState = saveBrowsingState(
+      { loadedCount, scrollY: typeof window === 'undefined' ? 0 : window.scrollY },
+      { eligibleCount: stories.length },
+    );
+    if (typeof window !== 'undefined') {
+      window.history.replaceState({ ...window.history.state, caseStudyCollection: savedState }, '');
+    }
+    return savedState;
+  };
 
   useEffect(() => {
     if (typeof window === 'undefined') return undefined;
@@ -38,6 +49,13 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
     return () => window.cancelAnimationFrame(frame);
   }, [initialState.scrollY]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const onScroll = () => persistBrowsingState();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [visibleCount, stories.length]);
+
   if (stories.length === 0) {
     return React.createElement(
       React.Fragment,
@@ -47,16 +65,14 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
     );
   }
 
-  const loadMore = () => setVisibleCount((count) => Math.min(count + PAGE_SIZE, stories.length));
-  const saveBeforeArticle = () => {
-    const savedState = saveBrowsingState(
-      { loadedCount: visibleCount, scrollY: typeof window === 'undefined' ? 0 : window.scrollY },
-      { eligibleCount: stories.length },
-    );
-    if (typeof window !== 'undefined') {
-      window.history.replaceState({ ...window.history.state, caseStudyCollection: savedState }, '');
-    }
+  const loadMore = () => {
+    setVisibleCount((count) => {
+      const next = Math.min(count + PAGE_SIZE, stories.length);
+      persistBrowsingState(next);
+      return next;
+    });
   };
+  const saveBeforeArticle = () => persistBrowsingState();
   const status = React.createElement(
     'p',
     { role: 'status', 'aria-live': 'polite', className: 'mb-6 text-sm text-gray-400' },
@@ -69,6 +85,8 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
       key: story.slug,
       project: story,
       onClickCapture: saveBeforeArticle,
+      onPointerDownCapture: saveBeforeArticle,
+      onAuxClickCapture: saveBeforeArticle,
     })),
   );
   const loadMoreButton = stories.length > PAGE_SIZE
