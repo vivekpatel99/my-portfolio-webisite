@@ -75,6 +75,9 @@ describe('Markdown case-study preparation', () => {
   it('carries an explicit project status into the prepared story and rejects unknown values', () => {
     const completed = source().replace('category: Automation', 'category: Automation\nproject_status: completed\ncompleted_at: 2026-08');
     expect(parseMarkdownCaseStudy({ source: completed, filePath: '/private/fixture.md' })).toMatchObject({ projectStatus: 'completed', completedAt: '2026-08' });
+    expect(parseMarkdownCaseStudy({ source: source(), filePath: '/private/fixture.md' })).not.toHaveProperty('completedAt');
+    expect(() => parseMarkdownCaseStudy({ source: source().replace('category: Automation', 'category: Automation\ncompleted_at: 2026-08'), filePath: '/private/fixture.md' })).toThrow(/completed_at.*requires.*project_status.*completed/i);
+    expect(() => parseMarkdownCaseStudy({ source: completed.replace('project_status: completed', 'project_status: ongoing'), filePath: '/private/fixture.md' })).toThrow(/completed_at.*requires.*project_status.*completed/i);
     const invalid = completed.replace('project_status: completed', 'project_status: paused');
     expect(() => parseMarkdownCaseStudy({ source: invalid, filePath: '/private/fixture.md' })).toThrow(/project_status.*completed.*ongoing/i);
     expect(() => parseMarkdownCaseStudy({ source: completed.replace('completed_at: 2026-08', 'completed_at: 2026-13'), filePath: '/private/fixture.md' })).toThrow(/completed_at.*valid YYYY-MM/i);
@@ -104,6 +107,19 @@ describe('Markdown case-study preparation', () => {
     maliciousStory.sections[0].nodes[0].children = [{ type: 'unknown' }];
     writeFileSync(candidatePath, JSON.stringify({ schemaVersion: 1, stories: [maliciousStory] }));
     expect(() => readPreparedCaseStudies(candidatePath)).toThrow(/unsupported inline node type/);
+
+    const completedWithoutDate = { ...validStory, projectStatus: 'completed' };
+    writeFileSync(candidatePath, JSON.stringify({ schemaVersion: 1, stories: [completedWithoutDate] }));
+    expect(() => readPreparedCaseStudies(candidatePath)).toThrow(/completedAt.*required.*projectStatus.*completed/i);
+    const dateWithoutCompleted = { ...validStory, completedAt: '2026-08' };
+    writeFileSync(candidatePath, JSON.stringify({ schemaVersion: 1, stories: [dateWithoutCompleted] }));
+    expect(() => readPreparedCaseStudies(candidatePath)).toThrow(/completedAt.*requires.*projectStatus.*completed/i);
+    writeFileSync(candidatePath, JSON.stringify({ schemaVersion: 1, stories: [{ ...dateWithoutCompleted, projectStatus: 'ongoing' }] }));
+    expect(() => readPreparedCaseStudies(candidatePath)).toThrow(/completedAt.*requires.*projectStatus.*completed/i);
+    writeFileSync(candidatePath, JSON.stringify({ schemaVersion: 1, stories: [{ ...dateWithoutCompleted, projectStatus: 'completed' }] }));
+    expect(readPreparedCaseStudies(candidatePath)[0]).toMatchObject({ projectStatus: 'completed', completedAt: '2026-08' });
+    writeFileSync(candidatePath, JSON.stringify({ schemaVersion: 1, stories: [validStory] }));
+    expect(readPreparedCaseStudies(candidatePath)[0]).not.toHaveProperty('completedAt');
   });
 
   it('validates every explicit file before replacing an existing candidate', () => {
