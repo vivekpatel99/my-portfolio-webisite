@@ -1,4 +1,20 @@
 import React from 'react';
+import CaseStudyGallery, { collectGalleryImages } from './CaseStudyGallery.js';
+
+// Images belong to the top gallery; prune their now-empty text containers.
+const withoutImages = (nodes) => nodes.flatMap((node) => {
+  if (node.type === 'image') return [];
+  const copy = { ...node };
+  if (node.children) {
+    copy.children = withoutImages(node.children);
+    if (!copy.children.length) return [];
+  }
+  if (node.items) {
+    copy.items = withoutImages(node.items);
+    if (!copy.items.length) return [];
+  }
+  return [copy];
+});
 
 const renderInline = (nodes, keyPrefix) => nodes.map((node, index) => {
   const key = `${keyPrefix}-inline-${index}`;
@@ -10,12 +26,6 @@ const renderInline = (nodes, keyPrefix) => nodes.map((node, index) => {
     case 'delete': return React.createElement('del', { key }, renderInline(node.children, key));
     case 'break': return React.createElement('br', { key });
     case 'link': return React.createElement('a', { key, href: node.href }, renderInline(node.children, key));
-    case 'image': return React.createElement(React.Fragment, { key },
-      React.createElement('a', { className: 'case-study-inline-image-link', href: node.src }, React.createElement('img', {
-        src: node.src, alt: node.alt, width: node.width, height: node.height, loading: 'lazy',
-      })),
-      node.caption ? React.createElement('span', { className: 'case-study-inline-image-caption' }, node.caption) : null,
-    );
     default: return null;
   }
 });
@@ -44,13 +54,8 @@ export const CaseStudyArticle = ({ story, backHref = '/#portfolio' }) => React.c
   story.category ? React.createElement('p', { className: 'case-study-category' }, story.category) : null,
   React.createElement('h1', null, story.title),
   React.createElement('p', { className: 'case-study-summary' }, story.summary),
-  story.image ? React.createElement('figure', { className: 'case-study-cover' },
-    React.createElement('a', { href: story.image.src },
-      React.createElement('img', { src: story.image.src, alt: story.image.alt, width: story.image.width, height: story.image.height, loading: 'eager' }),
-    ),
-    story.image.caption ? React.createElement('figcaption', null, story.image.caption) : null,
-  ) : null,
-  React.createElement('div', { className: 'case-study-sections' }, story.sections.map((section) => React.createElement(
+  React.createElement(CaseStudyGallery, { key: story.slug || story.id, images: collectGalleryImages(story) }),
+  React.createElement('div', { className: 'case-study-sections' }, story.sections.map((section) => ({ ...section, nodes: withoutImages(section.nodes) })).map((section) => React.createElement(
     'section', { key: section.key },
     React.createElement('h2', null, section.heading),
     renderBlocks(section.nodes, section.key),
