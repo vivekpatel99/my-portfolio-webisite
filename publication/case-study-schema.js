@@ -1,4 +1,5 @@
 export const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+export const projectStatuses = ['completed', 'ongoing'];
 const caseStudyImageFormats = new Map([
   ['.png', 'png'],
   ['.jpg', 'jpeg'],
@@ -19,6 +20,9 @@ export const exactKeys = (value, allowed, label) => {
 };
 export const assertString = (value, label) => {
   if (typeof value !== 'string' || !value) fail(`${label} must be a non-empty string`);
+};
+export const assertProjectStatus = (value, label) => {
+  if (!projectStatuses.includes(value)) fail(`${label} must be one of: ${projectStatuses.join(', ')}`);
 };
 export const assertMedia = (media, label) => {
   exactKeys(media, ['src', 'alt', 'poster', 'caption', 'width', 'height'], label);

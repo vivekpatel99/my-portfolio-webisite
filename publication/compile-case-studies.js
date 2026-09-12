@@ -4,14 +4,14 @@ import { fileURLToPath } from 'node:url';
 import { caseStudyPublicationManifest } from './case-study-manifest.js';
 import { assertApprovedAsset, assertApproval, baselineApprovalHashes, digest } from './case-study-evidence.js';
 import { imageSize } from 'image-size';
-import { assertMedia, assertSafeExternalUrl, assertStat, assertString, caseStudyImagePathMatchesFormat, exactKeys, fail, slugPattern } from './case-study-schema.js';
+import { assertMedia, assertProjectStatus, assertSafeExternalUrl, assertStat, assertString, caseStudyImagePathMatchesFormat, exactKeys, fail, slugPattern } from './case-study-schema.js';
 import { validatePreparedCaseStudies } from './markdown-case-study.js';
 
 export const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const caseStudyAssetPrefix = '/assets/case-studies/';
 
-const publicRecordFields = new Set(['title', 'cardTitle', 'category', 'summary', 'challenge', 'solution', 'outcome', 'stats', 'image', 'gallery', 'stack', 'externalLinks']);
-const articleRecordFields = new Set(['title', 'summary', 'category', 'sections', 'image']);
+const publicRecordFields = new Set(['title', 'cardTitle', 'category', 'summary', 'challenge', 'solution', 'outcome', 'stats', 'image', 'gallery', 'stack', 'externalLinks', 'projectStatus']);
+const articleRecordFields = new Set(['title', 'summary', 'category', 'sections', 'image', 'projectStatus']);
 
 const caseStudyAssetUrls = (content) => [content.image, ...(content.gallery ?? [])]
   .flatMap((item) => [item?.src, item?.poster].filter(Boolean));
@@ -62,12 +62,14 @@ const compiledArticle = (manifest, record, root) => {
   const content = record.content;
   exactKeys(content, [...articleRecordFields], `published ${record.slug} article content`);
   for (const field of ['title', 'summary']) assertString(content[field], `published ${record.slug} ${field}`);
+  if (content.projectStatus !== undefined) assertProjectStatus(content.projectStatus, `published ${record.slug} project status`);
   if (content.category !== undefined) assertString(content.category, `published ${record.slug} category`);
   validatePreparedCaseStudies([{
     id: record.id,
     slug: record.slug,
     title: content.title,
     summary: content.summary,
+    ...(content.projectStatus === undefined ? {} : { projectStatus: content.projectStatus }),
     ...(content.category === undefined ? {} : { category: content.category }),
     ...(content.image === undefined ? {} : { image: content.image }),
     sections: content.sections,
@@ -93,6 +95,7 @@ const compiledArticle = (manifest, record, root) => {
     slug: record.slug,
     title: content.title,
     summary: content.summary,
+    ...(content.projectStatus === undefined ? {} : { projectStatus: content.projectStatus }),
     ...(content.category === undefined ? {} : { category: content.category }),
     sections: content.sections,
     ...(content.image === undefined ? {} : { image: { ...content.image } }),
@@ -122,6 +125,7 @@ export function compileCaseStudyPublication({ manifest = caseStudyPublicationMan
     }
     exactKeys(record, ['id', 'slug', 'status', 'approval', 'claimRefs', 'content'], `published ${record.slug}`);
     exactKeys(record.content, [...publicRecordFields], `published ${record.slug} content`);
+    if (record.content.projectStatus !== undefined) assertProjectStatus(record.content.projectStatus, `published ${record.slug} project status`);
     assertApproval(record.approval, digest({ id: record.id, slug: record.slug, content: record.content }), baselineApprovalHashes.records[record.id], `published ${record.slug}`);
     if (!Array.isArray(record.content.externalLinks) || !Array.isArray(record.content.gallery)) fail(`published ${record.slug} requires external links and gallery arrays`);
     for (const field of ['title', 'cardTitle', 'category', 'summary', 'challenge', 'solution', 'outcome']) assertString(record.content[field], `published ${record.slug} ${field}`);
@@ -156,6 +160,7 @@ export function compileCaseStudyPublication({ manifest = caseStudyPublicationMan
     publicRecords.push({
       id: record.id, slug: record.slug, title: record.content.title,
       category: record.content.category, summary: record.content.summary,
+      ...(record.content.projectStatus === undefined ? {} : { projectStatus: record.content.projectStatus }),
       sections: legacySections(record.content),
       image: { src: record.content.image.src, alt: record.content.image.alt, width: legacyImageDimensions.width, height: legacyImageDimensions.height },
     });
@@ -163,4 +168,4 @@ export function compileCaseStudyPublication({ manifest = caseStudyPublicationMan
   return publicRecords;
 }
 
-export const renderPublicCaseStudyModule = (publication = compileCaseStudyPublication()) => `// Generated in-memory by vite-plugin-case-study-publication.\nexport const caseStudies = ${JSON.stringify(publication)};\nexport const featuredCaseStudies = caseStudies;\nexport const getCaseStudyBySlug = (slug) => caseStudies.find((caseStudy) => caseStudy.slug === slug);\nexport const caseStudySlugs = caseStudies.map((caseStudy) => caseStudy.slug);\nexport const primaryContactHref = '/contact/';\nexport const directEmailHref = 'mailto:contact@vivekpatel.com';\n`;
+export const renderPublicCaseStudyModule = (publication = compileCaseStudyPublication()) => `// Generated in-memory by vite-plugin-case-study-publication.\nexport const caseStudies = ${JSON.stringify(publication)};\nexport const eligibleCaseStudies = caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed');\nexport const eligibleCaseStudyCount = eligibleCaseStudies.length;\nexport const featuredCaseStudies = eligibleCaseStudies;\nexport const getCaseStudyBySlug = (slug) => caseStudies.find((caseStudy) => caseStudy.slug === slug);\nexport const caseStudySlugs = caseStudies.map((caseStudy) => caseStudy.slug);\nexport const primaryContactHref = '/contact/';\nexport const directEmailHref = 'mailto:contact@vivekpatel.com';\n`;

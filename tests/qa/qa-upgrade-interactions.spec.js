@@ -1,22 +1,11 @@
 import { expect, test } from './qa-test.js';
+import { caseStudies, featuredCaseStudies } from '../../src/data/caseStudies.js';
 
-const caseStudies = [
-  {
-    cardName: /Read case study: n8n \+ OpenAI Data Extraction/i,
-    path: '/project/n8n-openai-data-extraction',
-    heading: /n8n \+ OpenAI Data Extraction/i,
-  },
-  {
-    cardName: /Read case study: Invoice OCR Extraction/i,
-    path: '/project/invoice-ocr-extraction',
-    heading: /Invoice OCR Extraction/i,
-  },
-  {
-    cardName: /Read case study: YOLO Computer Vision Optimization/i,
-    path: '/project/yolo-computer-vision-optimization',
-    heading: /YOLO Computer Vision Optimization/i,
-  },
-];
+const cardFor = (caseStudy) => ({
+  cardName: `Read case study: ${caseStudy.title}`,
+  path: `/project/${caseStudy.slug}`,
+  heading: caseStudy.title,
+});
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
@@ -52,6 +41,7 @@ test('homepage upgrade flow exposes proof, case studies, offers, testimonials, a
   }
 
   await expect(page.getByText(/Next-Gen Banking UI/i)).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /Read case study:/i })).toHaveCount(featuredCaseStudies.length);
 });
 
 test('hero and header CTAs activate the expected routes and sections', async ({ page }) => {
@@ -103,10 +93,13 @@ test('service offer accordions are keyboard and click operable', async ({ page }
 });
 
 test('all featured case-study cards and detail CTAs work', async ({ page }) => {
-  for (const caseStudy of caseStudies) {
+  await page.goto('/#portfolio');
+  await page.locator('#portfolio').scrollIntoViewIfNeeded();
+  await expect(page.getByRole('link', { name: /Read case study:/i })).toHaveCount(featuredCaseStudies.length);
+  for (const caseStudy of featuredCaseStudies.map(cardFor)) {
     await page.goto('/#portfolio');
     await page.locator('#portfolio').scrollIntoViewIfNeeded();
-    await page.getByRole('link', { name: caseStudy.cardName }).click();
+    await page.getByRole('link', { name: caseStudy.cardName, exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`${caseStudy.path}/$`));
     await expect(page.getByRole('heading', { name: caseStudy.heading })).toBeVisible();
 
@@ -115,6 +108,15 @@ test('all featured case-study cards and detail CTAs work', async ({ page }) => {
     await expect(page).toHaveURL(/\/#portfolio$/);
 
     await page.goto(caseStudy.path);
+    await page.getByRole('link', { name: /Discuss a similar project/ }).click();
+    await expect(page).toHaveURL(/\/contact\/?$/);
+  }
+});
+
+test('all published case-study routes and detail CTAs remain reachable', async ({ page }) => {
+  for (const caseStudy of caseStudies.map(cardFor)) {
+    await page.goto(caseStudy.path);
+    await expect(page.getByRole('heading', { name: caseStudy.heading })).toBeVisible();
     await page.getByRole('link', { name: /Discuss a similar project/ }).click();
     await expect(page).toHaveURL(/\/contact\/?$/);
   }

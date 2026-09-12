@@ -41,6 +41,7 @@ const articleRecord = (story, metadata) => {
   const content = {
     title: story.title,
     summary: story.summary,
+    ...(story.projectStatus === undefined ? {} : { projectStatus: story.projectStatus }),
     ...(story.category === undefined ? {} : { category: story.category }),
     sections: story.sections,
     ...(story.image === undefined ? {} : { image: story.image }),
