@@ -20,6 +20,7 @@ export function collectGalleryImages(story) {
     if (node.items) visit(node.items);
   });
   add(story.image);
+  story.gallery?.forEach((media) => add(media.poster ? { ...media, src: media.poster } : media));
   story.sections.forEach((section) => visit(section.nodes));
   return images;
 }
