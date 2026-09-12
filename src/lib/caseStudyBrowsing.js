@@ -81,6 +81,32 @@ export const clearBrowsingState = ({ storage = browserStorage() } = {}) => {
   }
 };
 
+export const isCollectionArticleOrigin = (location) => {
+  if (location?.state?.fromCollection === true) return true;
+  if (typeof location?.search === 'string' && new URLSearchParams(location.search).get('from') === 'collection') {
+    return true;
+  }
+  return false;
+};
+
+export const collectionReturnHref = (location) => (
+  isCollectionArticleOrigin(location) ? '/case-studies/?resume=1' : '/case-studies/'
+);
+
+export const consumeCollectionOriginLocation = (location) => {
+  const params = new URLSearchParams(location?.search ?? '');
+  if (params.get('from') !== 'collection') return null;
+  params.delete('from');
+  const search = params.toString();
+  const priorState = location?.state && typeof location.state === 'object' && !Array.isArray(location.state)
+    ? location.state
+    : {};
+  return {
+    search: search ? `?${search}` : '',
+    state: { ...priorState, fromCollection: true },
+  };
+};
+
 export const getInitialBrowsingState = ({
   storage = browserStorage(),
   eligibleCount = 0,

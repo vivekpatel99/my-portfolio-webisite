@@ -26,6 +26,7 @@ const formatCompletionDate = (completedAt) => {
 
 const CaseStudyCard = ({
   project,
+  fromCollection = false,
   onClickCapture,
   onPointerDownCapture,
   onAuxClickCapture,
@@ -48,7 +49,8 @@ const CaseStudyCard = ({
     React.createElement(
       Link,
       {
-        to: `/project/${project.slug}/`,
+        to: fromCollection ? `/project/${project.slug}/?from=collection` : `/project/${project.slug}/`,
+        state: fromCollection ? { fromCollection: true } : undefined,
         className: 'group flex h-full flex-col overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] transition-all duration-300 hover:border-accent-purple/50 hover:bg-white/[0.07] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple focus-visible:ring-offset-2 focus-visible:ring-offset-[#0C0D0D]',
         'aria-label': `Read case study: ${project.title}`,
         onClickCapture,

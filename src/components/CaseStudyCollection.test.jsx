@@ -189,7 +189,7 @@ describe('CaseStudyCollection', () => {
     );
 
     expect(markup).toContain('Newer synthetic story');
-    expect(markup).toContain('href="/project/newer/"');
+    expect(markup).toContain('href="/project/newer/?from=collection"');
   });
 
   it('restores twelve cards after load more remount or back', async () => {
@@ -241,10 +241,10 @@ describe('CaseStudyCollection', () => {
     } finally {
       vi.unstubAllGlobals();
     }
-    const hrefs = [...markup.matchAll(/href="\/project\/([^"]+)\/"/g)].map((match) => match[1]);
+    const hrefs = [...markup.matchAll(/href="\/project\/([^"/?]+)\/(?:\?from=collection)?"/g)].map((match) => match[1]);
 
     expect(new Set(hrefs).size).toBe(8);
-    stories8.forEach((story) => expect(markup).toContain(`href="/project/${story.slug}/"`));
+    stories8.forEach((story) => expect(markup).toContain(`href="/project/${story.slug}/`));
     expect(markup).not.toMatch(/\bhidden=/);
     expect(markup).toContain('Showing 6 of 8 case studies');
     expect(markup.match(/<article/g)).toHaveLength(6);
