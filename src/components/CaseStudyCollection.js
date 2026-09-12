@@ -27,11 +27,12 @@ const persistLoadedPage = (loadedCount) => {
 const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
   const [visibleCount, setVisibleCount] = useState(() => initialVisibleCount(stories.length));
   const gridId = `case-study-grid-${useId()}`;
-  // Static HTML is generated in Node (no `window`). Without JavaScript the Load more button
-  // cannot work, so that markup shows every card instead of paginating.
+  // Static HTML is generated in Node (no `window`). It keeps the same six-card layout as the
+  // enhanced page (so nothing shifts when React mounts) and adds a <noscript> list of the
+  // remaining links, which browsers show only when JavaScript is off.
   const isStaticRender = typeof window === 'undefined';
-  const visibleStories = isStaticRender ? stories : stories.slice(0, visibleCount);
-  const hasMore = visibleStories.length < stories.length;
+  const visibleStories = stories.slice(0, visibleCount);
+  const hasMore = visibleCount < stories.length;
 
   useEffect(() => {
     const scrollY = historyRecord().scrollY;
@@ -67,21 +68,33 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
     },
     visibleStories.map((story) => React.createElement(CaseStudyCard, { key: story.slug, project: story })),
   );
-  const loadMoreButton = stories.length > PAGE_SIZE && !isStaticRender
+  const noscriptLinks = isStaticRender && hasMore
+    ? React.createElement(
+      'noscript',
+      null,
+      React.createElement(
+        'nav',
+        { 'aria-label': 'More case studies' },
+        stories.slice(visibleCount).map((story) => React.createElement('a', { key: story.slug, href: `/project/${story.slug}/` }, story.title)),
+      ),
+    )
+    : null;
+  const loadMoreButton = stories.length > PAGE_SIZE
     ? React.createElement(
       'button',
       {
         type: 'button',
         className: 'mt-10 inline-flex min-h-11 items-center rounded-full border border-accent-purple px-5 text-sm font-semibold text-white transition-colors hover:bg-accent-purple disabled:cursor-default disabled:opacity-70',
         onClick: loadMore,
-        disabled: !hasMore,
+        // Without JavaScript the button cannot work, so the static markup ships it disabled.
+        disabled: !hasMore || isStaticRender,
         'aria-controls': gridId,
       },
       hasMore ? 'Load more' : 'All case studies shown',
     )
     : null;
 
-  return React.createElement(React.Fragment, null, status, grid, loadMoreButton);
+  return React.createElement(React.Fragment, null, status, grid, noscriptLinks, loadMoreButton);
 };
 
 export default CaseStudyCollection;

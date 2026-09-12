@@ -152,8 +152,9 @@ describe('CaseStudyCollection', () => {
     expect(history.state).toMatchObject({ loadedCount: 12, scrollY: 640 });
   });
 
-  it('shows every story visibly in no-JS static markup when more than six stories exist', () => {
-    // The static generator runs in Node without `window`; no-JS visitors must see and use every link.
+  it('keeps the six-card layout in static markup and lists the rest in a visible noscript nav', () => {
+    // The static generator runs in Node without `window`. The layout must match the enhanced page
+    // (no shift when React mounts), yet no-JS visitors must still see and use every link.
     vi.stubGlobal('window', undefined);
     const stories8 = manyStories(8);
     let markup;
@@ -170,9 +171,19 @@ describe('CaseStudyCollection', () => {
 
     expect(new Set(hrefs).size).toBe(8);
     stories8.forEach((story) => expect(markup).toContain(`href="/project/${story.slug}/"`));
-    expect(markup).not.toMatch(/<nav|\bhidden=/);
-    expect(markup).toContain('Showing 8 of 8 case studies');
-    expect(markup).not.toContain('<button');
-    expect(markup.match(/<article/g)).toHaveLength(8);
+    expect(markup).not.toMatch(/\bhidden=/);
+    expect(markup).toContain('Showing 6 of 8 case studies');
+    expect(markup.match(/<article/g)).toHaveLength(6);
+    const noscript = markup.match(/<noscript>(.*?)<\/noscript>/)[1];
+    expect(noscript).toMatch(/^<nav /);
+    expect([...noscript.matchAll(/href="\/project\/([^"]+)\/"/g)].map((m) => m[1])).toEqual(['many-6', 'many-7']);
+    // A Load more button that cannot work without JavaScript must not look clickable.
+    expect(markup).toMatch(/<button[^>]*\bdisabled=""/);
+  });
+
+  it('omits the noscript nav from the interactive render', () => {
+    const { container } = render(<MemoryRouter><CaseStudyCollection stories={manyStories(8)} /></MemoryRouter>);
+    expect(container.querySelector('noscript')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Load more' }).disabled).toBe(false);
   });
 });
