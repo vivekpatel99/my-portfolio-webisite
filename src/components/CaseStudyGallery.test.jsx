@@ -31,11 +31,12 @@ describe('case study gallery', () => {
     const duplicate = { type: 'image', ...images[0], caption: 'Later caption' };
     expect(collectGalleryImages({ image: first, sections: [{ nodes: [duplicate] }] })[0].caption).toBe('First caption');
   });
-  it('renders every image and caption in the non-interactive fallback', () => {
+  it('uses stage geometry and exposes every image URL in static markup', () => {
     const staticImages = images.map((image, i) => ({ ...image, caption: `Caption ${i + 1}` }));
-    render(<Gallery images={staticImages} interactive={false} />);
-    expect(screen.getAllByRole('img').map((image) => image.getAttribute('src'))).toEqual(staticImages.map((image) => image.src));
-    staticImages.forEach((image) => expect(screen.getByText(image.caption)).toBeTruthy());
+    const html = renderToStaticMarkup(<Gallery images={staticImages} interactive={false} />);
+    expect(html).toContain('case-gallery-stage');
+    expect(html).not.toContain('case-study-cover');
+    staticImages.forEach((image) => expect(html).toContain(`href="${image.src}"`));
   });
   it('uses gallery stage geometry on the first client render', () => {
     const html = renderToStaticMarkup(<Gallery images={images} />);
@@ -46,6 +47,18 @@ describe('case study gallery', () => {
     render(<Gallery images={[images[0]]} />);
     expect(screen.queryByRole('button')).toBeNull();
     expect(screen.getByRole('link').getAttribute('href')).toBe(images[0].src);
+  });
+  it('preserves and renders video sources while using the poster as a preview', () => {
+    const video = {
+      src: '/football-tracking.mp4',
+      poster: '/football-tracking.webp',
+      alt: 'Tracked football players',
+    };
+    expect(collectGalleryImages({ gallery: [video], sections: [] })[0]).toEqual(video);
+    const { container } = render(<Gallery images={[video]} />);
+    const renderedVideo = container.querySelector('video');
+    expect(renderedVideo?.getAttribute('src')).toBe(video.src);
+    expect(renderedVideo?.getAttribute('poster')).toBe(video.poster);
   });
   it('loops and selects thumbnails using accessible controls', () => {
     render(<Gallery images={images} />);

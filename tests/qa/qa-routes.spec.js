@@ -6,6 +6,7 @@ const routes = [
   { path: '/contact', heading: /Request a Project Estimate/i },
   { path: '/legal', heading: 'Privacy Policy' },
   { path: '/data-policy', heading: 'Cookie Policy' },
+  { path: '/case-studies', heading: /Selected Case Studies/i },
   ...caseStudies.map((caseStudy) => ({ path: `/project/${caseStudy.slug}`, heading: caseStudy.title })),
 ];
 
@@ -109,6 +110,23 @@ test('portfolio cards navigate to internal case studies', async ({ page }) => {
     await expect(page).toHaveURL(new RegExp(`/project/${featuredCaseStudies[0].slug}/?$`));
     await expect(page.getByRole('heading', { name: featuredCaseStudies[0].title, exact: true })).toBeVisible();
   }
+});
+
+test('header links to the case studies collection', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto('/');
+  await page.getByRole('navigation').getByRole('link', { name: 'Case Studies', exact: true }).click();
+  await expect(page).toHaveURL(/\/case-studies\/?$/);
+  await expect(page.getByRole('heading', { name: /Selected Case Studies/i })).toBeVisible();
+});
+
+test('case studies collection reload preserves route and canonical metadata', async ({ page }) => {
+  await page.goto('/case-studies/');
+  await expect(page.getByRole('heading', { name: /Selected Case Studies/i })).toBeVisible();
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://www.vivekapatel.com/case-studies/');
+  await page.reload();
+  await expect(page).toHaveURL(/\/case-studies\/?$/);
+  await expect(page.getByRole('heading', { name: /Selected Case Studies/i })).toBeVisible();
 });
 
 test('back navigation restores contact page', async ({ page }) => {
