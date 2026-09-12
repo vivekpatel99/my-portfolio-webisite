@@ -70,7 +70,12 @@ is refused when `CI` is set or `NODE_ENV=production`.
 
 Each source needs YAML frontmatter with `id`, `title`, and `summary`; add an
 explicit `project_status` of `completed` or `ongoing` when the project status is
-known; `slug` and `category` are optional. IDs and slugs use lowercase
+known. A completed story also requires `completed_at` in `YYYY-MM` form. Use the
+known completion month when supported by evidence; when the exact month is
+unavailable, obtain Viv's best month/year estimate and record the source or
+estimate evidence in private authoring notes. Do not substitute the publication
+date or invent a date. The public format is the same for known and estimated
+months, with no approximation marker. `slug` and `category` are optional. IDs and slugs use lowercase
 hyphenated words. The body
 must contain exactly one level-two heading for each of `The problem`, `What I
 built`, and `The outcome`. Only those sections are projected. Source H1 text,
@@ -124,9 +129,10 @@ projection.
 
 Only records with publication status `published` enter the validated public
 projection used by article routes. The shared `eligibleCaseStudies` export
-contains only records whose public `projectStatus` is explicitly `completed`;
-missing project status and `ongoing` records remain available for article and
-withdrawal controls but are excluded from collection cards and homepage counts.
+contains only records whose public `projectStatus` is explicitly `completed`
+and whose public `completedAt` is a valid `YYYY-MM` value; missing metadata and
+`ongoing` records remain available for article and withdrawal controls but are
+excluded from collection cards and homepage counts.
 
 The small legacy adapter in `publication/compile-case-studies.js` remains
 because `n8n-openai-data-extraction`, `invoice-ocr-extraction`, and

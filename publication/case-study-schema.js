@@ -1,5 +1,6 @@
 export const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export const projectStatuses = ['completed', 'ongoing'];
+export const completionMonthPattern = /^(?:[1-9][0-9]{3})-(?:0[1-9]|1[0-2])$/;
 const caseStudyImageFormats = new Map([
   ['.png', 'png'],
   ['.jpg', 'jpeg'],
@@ -23,6 +24,9 @@ export const assertString = (value, label) => {
 };
 export const assertProjectStatus = (value, label) => {
   if (!projectStatuses.includes(value)) fail(`${label} must be one of: ${projectStatuses.join(', ')}`);
+};
+export const assertCompletionMonth = (value, label) => {
+  if (typeof value !== 'string' || !completionMonthPattern.test(value)) fail(`${label} must be a valid YYYY-MM completion month`);
 };
 export const assertMedia = (media, label) => {
   exactKeys(media, ['src', 'alt', 'poster', 'caption', 'width', 'height'], label);

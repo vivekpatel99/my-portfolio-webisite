@@ -4,7 +4,7 @@
 import { compileCaseStudyPublication } from './compile-case-studies.js';
 
 export const caseStudies = compileCaseStudyPublication();
-export const eligibleCaseStudies = caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed');
+export const eligibleCaseStudies = caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed' && caseStudy.completedAt);
 export const eligibleCaseStudyCount = eligibleCaseStudies.length;
 export const featuredCaseStudies = eligibleCaseStudies;
 export const getCaseStudyBySlug = (slug) => caseStudies.find((caseStudy) => caseStudy.slug === slug);
