@@ -15,8 +15,18 @@ const stories = [
   { slug: 'older', title: 'Older synthetic story', summary: 'Older summary', completedAt: '2024-01' },
 ];
 
+const manyStories = (count) => Array.from({ length: count }, (_, index) => ({
+  slug: `many-${index}`,
+  title: `Many synthetic story ${index}`,
+  summary: 'Synthetic summary',
+  completedAt: '2025-01',
+}));
+
 describe('CaseStudyCollection', () => {
-  afterEach(cleanup);
+  afterEach(() => {
+    cleanup();
+    history.replaceState(null, '');
+  });
 
   it('renders the supplied stories in completion order in a responsive grid', () => {
     const { container } = render(
@@ -109,5 +119,36 @@ describe('CaseStudyCollection', () => {
 
     expect(markup).toContain('Newer synthetic story');
     expect(markup).toContain('href="/project/newer/"');
+  });
+
+  it('restores twelve cards after load more remount or back', async () => {
+    const user = userEvent.setup();
+    const stories12 = manyStories(12);
+    const first = render(<MemoryRouter><CaseStudyCollection stories={stories12} /></MemoryRouter>);
+    expect(screen.getAllByRole('article')).toHaveLength(6);
+    await user.click(screen.getByRole('button', { name: 'Load more' }));
+    expect(screen.getAllByRole('article')).toHaveLength(12);
+    expect(history.state).toMatchObject({ loadedCount: 12 });
+    expect(typeof history.state.scrollY).toBe('number');
+    first.unmount();
+
+    render(<MemoryRouter><CaseStudyCollection stories={stories12} /></MemoryRouter>);
+    expect(screen.getAllByRole('article')).toHaveLength(12);
+    expect(screen.getByRole('status').textContent).toBe('Showing 12 of 12 case studies');
+    window.dispatchEvent(new PopStateEvent('popstate', { state: history.state }));
+    expect(screen.getAllByRole('article')).toHaveLength(12);
+  });
+
+  it('includes every story href in static markup when more than six stories exist', () => {
+    const stories8 = manyStories(8);
+    const markup = renderToStaticMarkup(
+      <StaticRouter location="/case-studies">
+        <CaseStudyCollection stories={stories8} />
+      </StaticRouter>,
+    );
+    const hrefs = [...markup.matchAll(/href="\/project\/([^"]+)\/"/g)].map((match) => match[1]);
+
+    expect(new Set(hrefs).size).toBeGreaterThan(6);
+    stories8.forEach((story) => expect(markup).toContain(`href="/project/${story.slug}/"`));
   });
 });
