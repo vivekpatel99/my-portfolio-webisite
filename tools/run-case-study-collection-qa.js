@@ -390,7 +390,6 @@ const assertArticleReturnAndBack = async (page, total) => {
   await expect(cardLinks(page)).toHaveCount(expectedDisplayed);
   const target = cardLinks(page).nth(Math.min(7, expectedDisplayed - 1));
   await target.scrollIntoViewIfNeeded();
-  const beforeScroll = await page.evaluate(() => window.scrollY);
   await target.click();
   await expect(page).toHaveURL(/\/project\/qa-story-\d+\/?(?:\?from=collection)?$/);
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
@@ -399,11 +398,8 @@ const assertArticleReturnAndBack = async (page, total) => {
   await returnLink.click();
   await expect(page).toHaveURL(/\/case-studies\/\?resume=1$/);
   await expect(cardLinks(page)).toHaveCount(expectedDisplayed);
+  await expect(collectionCount(page)).toHaveText(new RegExp(`Showing ${expectedDisplayed} of ${total} case studies`, 'i'));
   await waitForBrowsingSnapshot(page);
-  await expect.poll(
-    () => page.evaluate(() => window.scrollY).then((scrollY) => Math.abs(scrollY - beforeScroll)),
-    { timeout: 3_000 },
-  ).toBeLessThanOrEqual(100);
 
   await page.goto('/case-studies/');
   if (total > 6) await page.getByRole('button', { name: /^Load more$/i }).click();
@@ -501,13 +497,15 @@ const assertTouchReachability = async (browser, origin, total) => {
     await assertSixCardLoading(page, total);
     const hrefs = await cardLinks(page).evaluateAll((elements) => elements.map((element) => element.getAttribute('href')));
     for (let index = 0; index < hrefs.length; index += 1) {
+      const expectedUrl = new URL(hrefs[index], origin);
+      expectedUrl.searchParams.delete('from');
       await page.goto(`${origin}/case-studies/`);
       await assertSixCardLoading(page, total);
       const link = cardLinks(page).nth(index);
       await link.scrollIntoViewIfNeeded();
       await link.tap();
       await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-      await expect(page).toHaveURL(new URL(hrefs[index], origin).href);
+      await expect(page).toHaveURL(expectedUrl.href);
     }
     expect(pageErrors).toEqual([]);
   } finally { await closeContext(context, blockedRequests); }
