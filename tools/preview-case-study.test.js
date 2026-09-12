@@ -37,7 +37,7 @@ describe('case-study preview renderer', () => {
     expect(html).not.toContain('undefined');
   });
 
-  it('renders an approved inline-image caption', () => {
+  it('moves an approved inline image and its caption into the top gallery', () => {
     const imageStory = structuredClone(story);
     imageStory.sections[1].nodes.push({
       type: 'paragraph',
@@ -47,8 +47,24 @@ describe('case-study preview renderer', () => {
       }],
     });
     const html = renderToStaticMarkup(React.createElement(CaseStudyArticle, { story: imageStory }));
-    expect(html).toContain('class="case-study-inline-image-caption"');
+    expect(html).toContain('<figcaption>Reviewed workflow caption</figcaption>');
+    expect(html.match(/<img /g)).toHaveLength(1);
+    expect(html).not.toContain('case-study-inline-image-link');
     expect(html).toContain('Reviewed workflow caption');
+  });
+
+  it('keeps the heading for a section containing only a gallery image', () => {
+    const imageStory = structuredClone(story);
+    imageStory.sections[1].nodes = [{
+      type: 'paragraph',
+      children: [{
+        type: 'image', src: '/assets/case-studies/fixture.webp', alt: 'Workflow diagram',
+        width: 1200, height: 800,
+      }],
+    }];
+    const html = renderToStaticMarkup(React.createElement(CaseStudyArticle, { story: imageStory }));
+    expect(html).toContain('<h2>What I built</h2>');
+    expect(html).toContain('src="/assets/case-studies/fixture.webp"');
   });
 
   it('allows local development but refuses CI and production environments', () => {

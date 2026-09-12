@@ -174,6 +174,7 @@ export function compileCaseStudyPublication({ manifest = caseStudyPublicationMan
       ...(record.content.completedAt === undefined ? {} : { completedAt: record.content.completedAt }),
       sections: legacySections(record.content),
       image: { src: record.content.image.src, alt: record.content.image.alt, width: legacyImageDimensions.width, height: legacyImageDimensions.height },
+      gallery: record.content.gallery.map((media) => ({ ...media })),
     });
   }
   return publicRecords;
