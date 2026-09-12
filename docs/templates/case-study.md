@@ -3,6 +3,7 @@ id: your-stable-id
 title: A clear case-study title
 summary: One sentence describing the project and its useful result.
 project_status: completed # Use completed only after the project is finished; ongoing projects stay out of the public collection.
+completed_at: YYYY-MM # Required with project_status: completed; keep date evidence in private authoring notes.
 category: Optional category
 ---
 

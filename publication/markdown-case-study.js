@@ -5,7 +5,7 @@ import matter from 'gray-matter';
 import he from 'he';
 import { marked } from 'marked';
 import { imageSize } from 'image-size';
-import { caseStudyImageFormatForPath, projectStatuses, slugPattern } from './case-study-schema.js';
+import { caseStudyImageFormatForPath, completionMonthPattern, projectStatuses, slugPattern } from './case-study-schema.js';
 
 const imageExtensions = new Set(['.png', '.jpg', '.jpeg', '.webp']);
 const assetDigest = (bytes) => createHash('sha256').update(bytes).digest('hex');
@@ -134,10 +134,13 @@ const parseFrontmatter = (data, filePath) => {
   const summary = nonEmptyString(data.summary, filePath, 'summary');
   const projectStatus = data.project_status == null ? undefined : nonEmptyString(data.project_status, filePath, 'project_status');
   if (projectStatus !== undefined && !projectStatuses.includes(projectStatus)) issue(filePath, 'project_status', `must be one of: ${projectStatuses.join(', ')}`);
+  const completedAt = data.completed_at == null ? undefined : nonEmptyString(data.completed_at, filePath, 'completed_at');
+  if (completedAt !== undefined && !completionMonthPattern.test(completedAt)) issue(filePath, 'completed_at', 'must be a valid YYYY-MM completion month');
+  if (projectStatus === 'completed' && completedAt === undefined) issue(filePath, 'completed_at', 'is required when project_status is completed');
   const category = data.category == null ? undefined : nonEmptyString(data.category, filePath, 'category');
   validateImageMetadata(data.image, filePath);
   const image = data.image;
-  return { id, slug, title, summary, ...(projectStatus === undefined ? {} : { projectStatus }), ...(category ? { category } : {}), ...(image ? { image: { src: image.src.trim(), alt: image.alt.trim(), ...(image.caption === undefined ? {} : { caption: image.caption.trim() }) } } : {}) };
+  return { id, slug, title, summary, ...(projectStatus === undefined ? {} : { projectStatus }), ...(completedAt === undefined ? {} : { completedAt }), ...(category ? { category } : {}), ...(image ? { image: { src: image.src.trim(), alt: image.alt.trim(), ...(image.caption === undefined ? {} : { caption: image.caption.trim() }) } } : {}) };
 };
 
 const candidateIssue = (label, message) => { throw new Error(`${label}: ${message}`); };
@@ -225,7 +228,7 @@ export const validatePreparedCaseStudies = (stories, label = 'candidate') => {
   const slugs = new Set();
   stories.forEach((story, index) => {
     const storyLabel = `${label}.stories[${index}]`;
-    candidateObject(story, ['id', 'slug', 'title', 'summary', 'projectStatus', 'category', 'image', 'sections'], storyLabel);
+    candidateObject(story, ['id', 'slug', 'title', 'summary', 'projectStatus', 'completedAt', 'category', 'image', 'sections'], storyLabel);
     candidateString(story.id, `${storyLabel}.id`); candidateString(story.slug, `${storyLabel}.slug`);
     if (!slugPattern.test(story.id) || !slugPattern.test(story.slug)) candidateIssue(storyLabel, 'id and slug must be safe lowercase hyphenated values');
     if (ids.has(story.id)) candidateIssue(storyLabel, `id ${story.id} is duplicated`);
@@ -236,6 +239,11 @@ export const validatePreparedCaseStudies = (stories, label = 'candidate') => {
       candidateNonEmptyString(story.projectStatus, `${storyLabel}.projectStatus`);
       if (!projectStatuses.includes(story.projectStatus)) candidateIssue(`${storyLabel}.projectStatus`, `must be one of: ${projectStatuses.join(', ')}`);
     }
+    if (story.completedAt !== undefined) {
+      candidateNonEmptyString(story.completedAt, `${storyLabel}.completedAt`);
+      if (!completionMonthPattern.test(story.completedAt)) candidateIssue(`${storyLabel}.completedAt`, 'must be a valid YYYY-MM completion month');
+    }
+    if (story.projectStatus === 'completed' && story.completedAt === undefined) candidateIssue(`${storyLabel}.completedAt`, 'is required when projectStatus is completed');
     if (story.category !== undefined) candidateNonEmptyString(story.category, `${storyLabel}.category`);
     if (story.image !== undefined) {
       candidateObject(story.image, ['src', 'alt', 'caption', 'width', 'height'], `${storyLabel}.image`);

@@ -12,8 +12,8 @@ describe('caseStudies data structure', () => {
 
   it('derives the collection set and count from completed project status', () => {
     expect(eligibleCaseStudyCount).toBe(eligibleCaseStudies.length);
-    expect(eligibleCaseStudies).toEqual(caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed'));
-    expect(eligibleCaseStudies.every((caseStudy) => caseStudy.projectStatus === 'completed')).toBe(true);
+    expect(eligibleCaseStudies).toEqual(caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed' && caseStudy.completedAt));
+    expect(eligibleCaseStudies.every((caseStudy) => caseStudy.projectStatus === 'completed' && caseStudy.completedAt)).toBe(true);
   });
 
   it('should have required fields for each case study', () => {
