@@ -111,6 +111,7 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
     visibleStories.map((story) => React.createElement(CaseStudyCard, {
       key: story.slug,
       project: story,
+      fromCollection: true,
       onClickCapture: saveBeforeArticle,
       onPointerDownCapture: saveBeforeArticle,
       onAuxClickCapture: saveBeforeArticle,

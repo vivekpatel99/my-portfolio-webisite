@@ -15,6 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import { chromium, expect } from '@playwright/test';
 import { digest } from '../publication/case-study-evidence.js';
+import { CASE_STUDY_BROWSING_STORAGE_KEY } from '../src/lib/caseStudyBrowsing.js';
 import { guardLocalNavigation, guardLocalWebSocket } from '../tests/qa/qa-navigation-guard.js';
 
 const execFileAsync = promisify(execFile);
@@ -396,7 +397,7 @@ const assertArticleReturnAndBack = async (page, total) => {
   const returnLink = page.getByRole('link', { name: /view case studies/i }).first();
   await expect(returnLink).toBeVisible();
   await returnLink.click();
-  await expect(page).toHaveURL(/\/case-studies\/?/);
+  await expect(page).toHaveURL(/\/case-studies\/\?resume=1$/);
   await expect(cardLinks(page)).toHaveCount(expectedDisplayed);
   await waitForBrowsingSnapshot(page);
   await expect.poll(
@@ -433,8 +434,11 @@ const assertDirectArticleDefault = async (browser, origin, total) => {
     page.on('pageerror', (error) => pageErrors.push(error.message));
     await page.goto('/project/qa-story-01/');
     await expect(page.getByRole('heading', { level: 1, name: 'Synthetic case study 1' })).toBeVisible();
+    await page.evaluate((key) => {
+      window.sessionStorage.setItem(key, JSON.stringify({ loadedCount: 18, scrollY: 900 }));
+    }, CASE_STUDY_BROWSING_STORAGE_KEY);
     await page.getByRole('link', { name: /view case studies/i }).first().click();
-    await expect(page).toHaveURL(/\/case-studies\/?/);
+    await expect(page).toHaveURL(/\/case-studies\/?$/);
     await expect(cardLinks(page)).toHaveCount(Math.min(6, total));
     await expect(collectionCount(page)).toHaveText(new RegExp(`Showing ${Math.min(6, total)} of ${total} case studies`, 'i'));
     expect(pageErrors).toEqual([]);

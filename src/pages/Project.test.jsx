@@ -34,9 +34,9 @@ vi.mock('framer-motion', () => {
   return { motion };
 });
 
-const renderProject = (path) =>
+const renderProject = (entry) =>
   render(
-    <MemoryRouter initialEntries={[path]}>
+    <MemoryRouter initialEntries={[entry]}>
       <Routes>
         <Route path="/project/:projectId" element={<Project />} />
       </Routes>
@@ -63,13 +63,33 @@ describe('Project unknown slugs', () => {
 });
 
 describe('Project collection return link', () => {
-  beforeEach(() => cleanup());
+  beforeEach(() => {
+    cleanup();
+    window.sessionStorage.clear();
+  });
 
-  it('returns article readers to the resumable collection entry', () => {
+  it('keeps the default collection entry for direct article visits', () => {
     const project = caseStudies[0];
     if (!project) return;
 
+    window.sessionStorage.setItem('case-studies-browsing', JSON.stringify({ loadedCount: 18, scrollY: 900 }));
     renderProject(`/project/${project.slug}`);
+    expect(screen.getByRole('link', { name: '← View case studies' }).getAttribute('href')).toBe('/case-studies/');
+  });
+
+  it('resumes the collection when history state marks a collection origin', () => {
+    const project = caseStudies[0];
+    if (!project) return;
+
+    renderProject({ pathname: `/project/${project.slug}`, state: { fromCollection: true } });
+    expect(screen.getByRole('link', { name: '← View case studies' }).getAttribute('href')).toBe('/case-studies/?resume=1');
+  });
+
+  it('resumes the collection when the article URL carries a collection origin query', () => {
+    const project = caseStudies[0];
+    if (!project) return;
+
+    renderProject(`/project/${project.slug}?from=collection`);
     expect(screen.getByRole('link', { name: '← View case studies' }).getAttribute('href')).toBe('/case-studies/?resume=1');
   });
 });

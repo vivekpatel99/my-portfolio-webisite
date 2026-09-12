@@ -81,6 +81,18 @@ export const clearBrowsingState = ({ storage = browserStorage() } = {}) => {
   }
 };
 
+export const isCollectionArticleOrigin = (location) => {
+  if (location?.state?.fromCollection === true) return true;
+  if (typeof location?.search === 'string' && new URLSearchParams(location.search).get('from') === 'collection') {
+    return true;
+  }
+  return false;
+};
+
+export const collectionReturnHref = (location) => (
+  isCollectionArticleOrigin(location) ? '/case-studies/?resume=1' : '/case-studies/'
+);
+
 export const getInitialBrowsingState = ({
   storage = browserStorage(),
   eligibleCount = 0,

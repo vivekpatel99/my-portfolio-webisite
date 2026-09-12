@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import {
   CASE_STUDY_BROWSING_STORAGE_KEY,
   clearBrowsingState,
+  collectionReturnHref,
   getInitialBrowsingState,
+  isCollectionArticleOrigin,
   readBrowsingState,
   saveBrowsingState,
 } from './caseStudyBrowsing';
@@ -109,5 +111,24 @@ describe('case study browsing state', () => {
       navigationType: 'PUSH',
       resume: true,
     })).toEqual({ loadedCount: 6, scrollY: 0 });
+  });
+});
+
+describe('collection article return href', () => {
+  it('resumes only when the article location carries a collection-origin marker', () => {
+    expect(isCollectionArticleOrigin()).toBe(false);
+    expect(isCollectionArticleOrigin(null)).toBe(false);
+    expect(isCollectionArticleOrigin({})).toBe(false);
+    expect(isCollectionArticleOrigin({ state: null })).toBe(false);
+    expect(isCollectionArticleOrigin({ state: { fromCollection: 1 } })).toBe(false);
+    expect(isCollectionArticleOrigin({ state: { fromCollection: true }, search: '' })).toBe(true);
+    expect(isCollectionArticleOrigin({ state: null, search: '?from=collection' })).toBe(true);
+    expect(isCollectionArticleOrigin({ search: '?from=collection&other=1' })).toBe(true);
+    expect(isCollectionArticleOrigin({ search: '?from=homepage' })).toBe(false);
+
+    expect(collectionReturnHref({ state: { fromCollection: true } })).toBe('/case-studies/?resume=1');
+    expect(collectionReturnHref({ search: '?from=collection' })).toBe('/case-studies/?resume=1');
+    expect(collectionReturnHref({ pathname: '/project/bookmark/' })).toBe('/case-studies/');
+    expect(collectionReturnHref()).toBe('/case-studies/');
   });
 });
