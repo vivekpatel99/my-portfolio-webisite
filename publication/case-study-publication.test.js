@@ -253,19 +253,36 @@ describe('case-study publication boundary', () => {
   });
 
   it('keeps published articles available while eligible collection data requires completed status', () => {
+    expect(compileFixture(manifestCopy())).toHaveLength(2);
+
     const ongoing = manifestCopy();
     ongoing.records[0].content.projectStatus = 'ongoing';
+    delete ongoing.records[0].content.completedAt;
     ongoing.records[0].approval = explicitApproval(digest({ id: ongoing.records[0].id, slug: ongoing.records[0].slug, content: ongoing.records[0].content }));
     const compiledOngoing = compileFixture(ongoing);
     expect(compiledOngoing).toHaveLength(2);
     expect(compiledOngoing[0].projectStatus).toBe('ongoing');
 
-    const missing = manifestCopy();
-    delete missing.records[0].content.projectStatus;
-    missing.records[0].approval = explicitApproval(digest({ id: missing.records[0].id, slug: missing.records[0].slug, content: missing.records[0].content }));
-    const compiledMissing = compileFixture(missing);
-    expect(compiledMissing).toHaveLength(2);
-    expect(compiledMissing[0]).not.toHaveProperty('projectStatus');
+    const dateWithoutStatus = manifestCopy();
+    delete dateWithoutStatus.records[0].content.projectStatus;
+    dateWithoutStatus.records[0].approval = explicitApproval(digest({ id: dateWithoutStatus.records[0].id, slug: dateWithoutStatus.records[0].slug, content: dateWithoutStatus.records[0].content }));
+    expect(() => compileFixture(dateWithoutStatus)).toThrow(/completedAt.*requires.*project status.*completed/i);
+
+    const ongoingWithDate = manifestCopy();
+    ongoingWithDate.records[0].content.projectStatus = 'ongoing';
+    ongoingWithDate.records[0].approval = explicitApproval(digest({ id: ongoingWithDate.records[0].id, slug: ongoingWithDate.records[0].slug, content: ongoingWithDate.records[0].content }));
+    expect(() => compileFixture(ongoingWithDate)).toThrow(/completedAt.*requires.*project status.*completed/i);
+
+    const missingPair = manifestCopy();
+    delete missingPair.records[0].content.projectStatus;
+    delete missingPair.records[0].content.completedAt;
+    missingPair.records[0].approval = explicitApproval(digest({ id: missingPair.records[0].id, slug: missingPair.records[0].slug, content: missingPair.records[0].content }));
+    expect(compileFixture(missingPair)[0]).not.toHaveProperty('completedAt');
+
+    const missingCompletedAt = manifestCopy();
+    delete missingCompletedAt.records[0].content.completedAt;
+    missingCompletedAt.records[0].approval = explicitApproval(digest({ id: missingCompletedAt.records[0].id, slug: missingCompletedAt.records[0].slug, content: missingCompletedAt.records[0].content }));
+    expect(() => compileFixture(missingCompletedAt)).toThrow(/completedAt.*required.*completed/i);
 
     const invalid = manifestCopy();
     invalid.records[0].content.projectStatus = 'unknown';
@@ -279,6 +296,57 @@ describe('case-study publication boundary', () => {
     const changedDate = manifestCopy();
     changedDate.records[0].content.completedAt = '2026-09';
     expect(() => compileFixture(changedDate)).toThrow(/requires explicit approval/i);
+  });
+
+  it('rejects completed legacy content that omits completedAt as a pairing error', () => {
+    const missing = manifestCopy();
+    delete missing.records[0].content.completedAt;
+    missing.records[0].approval = explicitApproval(digest({
+      id: missing.records[0].id,
+      slug: missing.records[0].slug,
+      content: missing.records[0].content,
+    }));
+    expect(() => compileFixture(missing)).toThrow(/completedAt.*required.*completed/i);
+  });
+
+  it('still compiles the default fixture with completed status and 2026-08', () => {
+    expect(compileFixture(manifestCopy())[0]).toMatchObject({ projectStatus: 'completed', completedAt: '2026-08' });
+  });
+
+  it('still compiles when both projectStatus and completedAt are omitted', () => {
+    const omitted = manifestCopy();
+    delete omitted.records[0].content.projectStatus;
+    delete omitted.records[0].content.completedAt;
+    omitted.records[0].approval = explicitApproval(digest({
+      id: omitted.records[0].id,
+      slug: omitted.records[0].slug,
+      content: omitted.records[0].content,
+    }));
+    const compiled = compileFixture(omitted)[0];
+    expect(compiled).not.toHaveProperty('projectStatus');
+    expect(compiled).not.toHaveProperty('completedAt');
+  });
+
+  it('rejects ongoing status with a valid completion month', () => {
+    const ongoing = manifestCopy();
+    ongoing.records[0].content.projectStatus = 'ongoing';
+    ongoing.records[0].approval = explicitApproval(digest({
+      id: ongoing.records[0].id,
+      slug: ongoing.records[0].slug,
+      content: ongoing.records[0].content,
+    }));
+    expect(() => compileFixture(ongoing)).toThrow(/completedAt.*requires.*project status.*completed/i);
+  });
+
+  it('fails closed when a sibling valid record does not hide a completed record missing completedAt', () => {
+    const mixed = manifestCopy();
+    delete mixed.records[1].content.completedAt;
+    mixed.records[1].approval = explicitApproval(digest({
+      id: mixed.records[1].id,
+      slug: mixed.records[1].slug,
+      content: mixed.records[1].content,
+    }));
+    expect(() => compileFixture(mixed)).toThrow(/completedAt.*required.*completed/i);
   });
 
   it('rejects draft payloads, changed baseline identity, and moved approved claims', () => {
