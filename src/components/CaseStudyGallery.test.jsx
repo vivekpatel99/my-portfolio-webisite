@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { readFileSync } from 'node:fs';
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { compileCaseStudyPublication } from '../../publication/compile-case-studies.js';
@@ -37,6 +38,10 @@ describe('case study gallery', () => {
     expect(html).toContain('case-gallery-stage');
     expect(html).not.toContain('case-study-cover');
     staticImages.forEach((image) => expect(html).toContain(`href="${image.src}"`));
+    staticImages.forEach((image) => expect(html).toContain(image.caption));
+    expect(html.match(/class="case-gallery-thumbnail"/g)).toHaveLength(staticImages.length);
+    expect(readFileSync('src/components/CaseStudyArticle.css', 'utf8'))
+      .toMatch(/\.case-gallery-thumbnails (?:button, \.case-gallery-thumbnails )?a/);
   });
   it('uses gallery stage geometry on the first client render', () => {
     const html = renderToStaticMarkup(<Gallery images={images} />);
@@ -59,6 +64,13 @@ describe('case study gallery', () => {
     const renderedVideo = container.querySelector('video');
     expect(renderedVideo?.getAttribute('src')).toBe(video.src);
     expect(renderedVideo?.getAttribute('poster')).toBe(video.poster);
+  });
+  it('leaves arrow keys to focused video controls', () => {
+    const video = { src: '/football-tracking.mp4', poster: '/football-tracking.webp', alt: 'Tracked football players' };
+    render(<Gallery images={[images[0], video]} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show image 2: Tracked football players' }));
+    fireEvent.keyDown(screen.getByLabelText(video.alt), { key: 'ArrowRight' });
+    expect(screen.getByText('2 of 2')).toBeTruthy();
   });
   it('loops and selects thumbnails using accessible controls', () => {
     render(<Gallery images={images} />);

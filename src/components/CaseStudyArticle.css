@@ -65,7 +65,7 @@
 .case-gallery-next { right: 8px; }
 .case-gallery-count { margin: 10px 0 !important; text-align: center; font-size: 13px; color: #eeedf0; }
 .case-gallery-thumbnails { position: relative; display: flex; gap: 10px; overflow-x: auto; padding: 5px 3px 10px; scrollbar-width: thin; scrollbar-color: #70647e #19191c; }
-.case-gallery-thumbnails button { flex: 0 0 72px; width: 72px; height: 72px; border-radius: 6px; padding: 3px; border: 2px solid #303034; }
+.case-gallery-thumbnails button, .case-gallery-thumbnails a { display: block; flex: 0 0 72px; width: 72px; height: 72px; border-radius: 6px; padding: 3px; border: 2px solid #303034; }
 .case-gallery-thumbnails button[aria-pressed="true"] { border-color: #c8abea; }
 .case-gallery-thumbnails img { width: 100%; height: 100%; object-fit: cover; border-radius: 3px; }
 .case-gallery-caption { color: #96919e; font-size: 13px; margin: 8px 0 0; }
@@ -78,7 +78,7 @@
 .case-gallery-zoom button { font-size: 22px; }
 .case-gallery-zoom button:disabled { opacity: .4; cursor: default; }
 @media (max-width: 450px) {
-  .case-gallery-thumbnails button { flex-basis: 64px; width: 64px; height: 64px; }
+  .case-gallery-thumbnails button, .case-gallery-thumbnails a { flex-basis: 64px; width: 64px; height: 64px; }
   .case-gallery-overlay { padding: 8px; }
   .case-gallery-dialog { padding: 10px; }
   .case-gallery-dialog .case-gallery-stage { height: 50dvh; }

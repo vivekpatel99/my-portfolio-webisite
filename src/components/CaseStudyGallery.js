@@ -90,6 +90,7 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
   if (images.length === 1) return cover(selected);
   const button = (label, action, content, props = {}) => h('button', { type: 'button', 'aria-label': label, onClick: action, ...props }, content);
   const keyboard = (event) => {
+    if (event.target.closest?.('video, audio')) return;
     const inspectingZoom = zoom > 1 && event.target.classList.contains('case-gallery-viewport');
     if (!inspectingZoom && (event.key === 'ArrowRight' || event.key === 'ArrowLeft')) {
       event.preventDefault(); select(index + (event.key === 'ArrowRight' ? 1 : -1));
@@ -125,9 +126,9 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
       h('span', null, `${zoom * 100}%`),
       button('Zoom in', () => setZoom(Math.min(3, zoom + 0.5)), '+', { disabled: zoom === 3 })) : null,
     h('div', { className: 'case-gallery-thumbnails', ref: large ? expandedStrip : inlineStrip, 'aria-label': 'Choose an image' }, images.map((image, i) => interactive
-      ? button(`Show image ${i + 1}: ${image.alt}`, () => select(i), preview(image), { key: image.src, 'aria-pressed': i === index })
-      : h('a', { href: image.src, key: image.src, 'aria-label': `Open media ${i + 1}: ${image.alt}` }, preview(image)))),
-    selected.caption ? h('p', { className: 'case-gallery-caption' }, selected.caption) : null);
+      ? button(`Show image ${i + 1}: ${image.alt}`, () => select(i), preview(image), { key: image.src, className: 'case-gallery-thumbnail', 'aria-pressed': i === index })
+      : h('a', { href: image.src, key: image.src, className: 'case-gallery-thumbnail', 'aria-label': `Open media ${i + 1}: ${image.alt}` }, preview(image)))),
+    images.map((image) => image.caption ? h('p', { className: 'case-gallery-caption', key: `${image.src}-caption` }, image.caption) : null));
   return h(React.Fragment, null,
     h('section', { className: 'case-gallery', 'aria-label': 'Case study images', onKeyDown: keyboard, inert: expanded ? '' : undefined }, gallery(false)),
     expanded ? createPortal(h('div', { className: 'case-gallery-overlay', onClick: (event) => { if (event.target === event.currentTarget) close(); } },
