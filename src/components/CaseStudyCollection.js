@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useState } from 'react';
+import React, { useId, useState } from 'react';
 import { collectionCaseStudies } from '../data/caseStudies.js';
 import CaseStudyCard from './CaseStudyCard.js';
 
@@ -15,13 +15,11 @@ const initialVisibleCount = (storyCount) => {
   return Math.min(loadedCount, storyCount);
 };
 
+// Only the page count is remembered. Scroll position is left to the browser: a position saved
+// here would be stale as soon as the visitor scrolls on and leaves by another route.
 const persistLoadedPage = (loadedCount) => {
   if (typeof history === 'undefined' || typeof history.replaceState !== 'function') return;
-  history.replaceState({
-    ...historyRecord(),
-    loadedCount,
-    scrollY: typeof window === 'undefined' ? 0 : window.scrollY,
-  }, '');
+  history.replaceState({ ...historyRecord(), loadedCount }, '');
 };
 
 const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
@@ -33,11 +31,6 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
   const isStaticRender = typeof window === 'undefined';
   const visibleStories = stories.slice(0, visibleCount);
   const hasMore = visibleCount < stories.length;
-
-  useEffect(() => {
-    const scrollY = historyRecord().scrollY;
-    if (typeof scrollY === 'number') window.scrollTo(0, scrollY);
-  }, []);
 
   if (stories.length === 0) {
     return React.createElement(
@@ -60,12 +53,7 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
   );
   const grid = React.createElement(
     'div',
-    {
-      id: gridId,
-      className: 'grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3',
-      // Capture phase runs before the card Link navigates, so the saved scroll position is current.
-      onClickCapture: () => persistLoadedPage(visibleCount),
-    },
+    { id: gridId, className: 'grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3' },
     visibleStories.map((story) => React.createElement(CaseStudyCard, { key: story.slug, project: story })),
   );
   const noscriptLinks = isStaticRender && hasMore

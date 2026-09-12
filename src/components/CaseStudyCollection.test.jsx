@@ -128,8 +128,7 @@ describe('CaseStudyCollection', () => {
     expect(screen.getAllByRole('article')).toHaveLength(6);
     await user.click(screen.getByRole('button', { name: 'Load more' }));
     expect(screen.getAllByRole('article')).toHaveLength(12);
-    expect(history.state).toMatchObject({ loadedCount: 12 });
-    expect(typeof history.state.scrollY).toBe('number');
+    expect(history.state).toEqual({ loadedCount: 12 });
     first.unmount();
 
     render(<MemoryRouter><CaseStudyCollection stories={stories12} /></MemoryRouter>);
@@ -139,17 +138,20 @@ describe('CaseStudyCollection', () => {
     expect(screen.getAllByRole('article')).toHaveLength(12);
   });
 
-  it('saves the scroll position at the moment a card is opened, not at the last Load more click', async () => {
+  it('restores the loaded count without overriding native scroll restoration', async () => {
+    // Only the page count is remembered. Scroll position is left to the browser, because a
+    // position saved at Load more time is stale once the visitor scrolls on and leaves another way.
     const user = userEvent.setup();
-    render(<MemoryRouter><CaseStudyCollection stories={manyStories(12)} /></MemoryRouter>);
-    Object.defineProperty(window, 'scrollY', { value: 100, configurable: true });
-    await user.click(screen.getByRole('button', { name: 'Load more' }));
-    expect(history.state).toMatchObject({ loadedCount: 12, scrollY: 100 });
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    history.replaceState({ loadedCount: 12, other: 'kept' }, '');
+    render(<MemoryRouter><CaseStudyCollection stories={manyStories(20)} /></MemoryRouter>);
+    expect(screen.getAllByRole('article')).toHaveLength(12);
+    expect(scrollTo).not.toHaveBeenCalled();
 
-    // User scrolls down to a newly revealed card and opens it.
-    Object.defineProperty(window, 'scrollY', { value: 640, configurable: true });
-    await user.click(screen.getByRole('link', { name: 'Read case study: Many synthetic story 10' }));
-    expect(history.state).toMatchObject({ loadedCount: 12, scrollY: 640 });
+    await user.click(screen.getByRole('button', { name: 'Load more' }));
+    expect(history.state).toEqual({ loadedCount: 18, other: 'kept' });
+    expect(scrollTo).not.toHaveBeenCalled();
+    scrollTo.mockRestore();
   });
 
   it('keeps the six-card layout in static markup and lists the rest in a visible noscript nav', () => {
