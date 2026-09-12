@@ -137,6 +137,7 @@ const parseFrontmatter = (data, filePath) => {
   const completedAt = data.completed_at == null ? undefined : nonEmptyString(data.completed_at, filePath, 'completed_at');
   if (completedAt !== undefined && !completionMonthPattern.test(completedAt)) issue(filePath, 'completed_at', 'must be a valid YYYY-MM completion month');
   if (projectStatus === 'completed' && completedAt === undefined) issue(filePath, 'completed_at', 'is required when project_status is completed');
+  if (completedAt !== undefined && projectStatus !== 'completed') issue(filePath, 'completed_at', 'requires project_status to be completed');
   const category = data.category == null ? undefined : nonEmptyString(data.category, filePath, 'category');
   validateImageMetadata(data.image, filePath);
   const image = data.image;
@@ -244,6 +245,7 @@ export const validatePreparedCaseStudies = (stories, label = 'candidate') => {
       if (!completionMonthPattern.test(story.completedAt)) candidateIssue(`${storyLabel}.completedAt`, 'must be a valid YYYY-MM completion month');
     }
     if (story.projectStatus === 'completed' && story.completedAt === undefined) candidateIssue(`${storyLabel}.completedAt`, 'is required when projectStatus is completed');
+    if (story.completedAt !== undefined && story.projectStatus !== 'completed') candidateIssue(`${storyLabel}.completedAt`, 'requires projectStatus to be completed');
     if (story.category !== undefined) candidateNonEmptyString(story.category, `${storyLabel}.category`);
     if (story.image !== undefined) {
       candidateObject(story.image, ['src', 'alt', 'caption', 'width', 'height'], `${storyLabel}.image`);
