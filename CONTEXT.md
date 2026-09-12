@@ -16,6 +16,12 @@ _Avoid_: README, project, feature
 The explicit state in a Case Study that controls its visibility on the public website. Only `published` Case Studies are eligible for synchronisation and deployment.
 _Avoid_: done, ready
 
+**Project Status**:
+The explicit state describing whether the underlying project is `completed` or
+`ongoing`. A published Case Study enters the completed collection only when its
+Project Status is `completed`; missing status is excluded from that collection.
+_Avoid_: published, ready
+
 **Portfolio-safe Content**:
 The text, images, links, and claims explicitly selected for public publication. It excludes source code, credentials, client data, and unapproved implementation details.
 _Avoid_: repository contents, project files

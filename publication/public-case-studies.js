@@ -4,7 +4,9 @@
 import { compileCaseStudyPublication } from './compile-case-studies.js';
 
 export const caseStudies = compileCaseStudyPublication();
-export const featuredCaseStudies = caseStudies;
+export const eligibleCaseStudies = caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed');
+export const eligibleCaseStudyCount = eligibleCaseStudies.length;
+export const featuredCaseStudies = eligibleCaseStudies;
 export const getCaseStudyBySlug = (slug) => caseStudies.find((caseStudy) => caseStudy.slug === slug);
 export const caseStudySlugs = caseStudies.map((caseStudy) => caseStudy.slug);
 export const primaryContactHref = '/contact/';

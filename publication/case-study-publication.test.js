@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { caseStudyPublicationManifest } from './case-study-manifest.js';
-import { compileCaseStudyPublication } from './compile-case-studies.js';
+import { compileCaseStudyPublication, renderPublicCaseStudyModule } from './compile-case-studies.js';
 import { digest } from './case-study-evidence.js';
 import { deploymentHtaccess } from '../plugins/vite-plugin-case-study-publication.js';
 
@@ -17,6 +17,7 @@ const unitAssetPath = '/assets/case-studies/fixture-unit.webp';
 const unitAssetBytes = Buffer.from('UklGRiIAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEALAAAAAABAAgAAQUxQSDIAAA=', 'base64');
 const fixtureContent = (id) => ({
   title: `${id} title`, cardTitle: `${id} card`, category: 'Fixture', summary: `${id} summary`,
+  projectStatus: 'completed',
   challenge: `${id} challenge`, solution: `${id} solution`, outcome: `${id} outcome`,
   stats: [{ value: 1, suffix: '', label: `${id} stat`, description: `${id} statistic` }],
   image: { src: unitAssetPath, alt: `${id} image` },
@@ -165,7 +166,7 @@ const articleStories = ['text-story-one', 'text-story-two'].map((id) => ({
 const articleRecords = articleStories.map((story) => {
   const summaryRef = story.id + '.summary';
   const outcomeRef = story.id + '.outcome';
-  const content = { title: story.title, summary: story.summary, sections: story.sections };
+  const content = { title: story.title, summary: story.summary, projectStatus: 'completed', sections: story.sections };
   caseStudyPublicationManifest.claims[summaryRef] = { type: 'content', recordId: story.id, placement: 'summary', value: story.summary, approval: fixtureApproval(fixtureDigest({ id: summaryRef, type: 'content', recordId: story.id, placement: 'summary', value: story.summary })) };
   caseStudyPublicationManifest.claims[outcomeRef] = { type: 'content', recordId: story.id, placement: 'outcome', value: story.sections[2], approval: fixtureApproval(fixtureDigest({ id: outcomeRef, type: 'content', recordId: story.id, placement: 'outcome', value: story.sections[2] })) };
   const record = { id: story.id, slug: story.slug, status: 'published', variant: 'article', content, claimRefs: { summary: summaryRef, outcome: outcomeRef } };
@@ -176,6 +177,63 @@ caseStudyPublicationManifest.records.splice(0, caseStudyPublicationManifest.reco
 `;
 
 describe('case-study publication boundary', () => {
+  it('generates one completed-only collection set for browser consumers', async () => {
+    const rendered = renderPublicCaseStudyModule([
+      { id: 'completed-story', slug: 'completed-story', projectStatus: 'completed' },
+      { id: 'ongoing-story', slug: 'ongoing-story', projectStatus: 'ongoing' },
+    ]);
+    const module = await import(`data:text/javascript;base64,${Buffer.from(rendered).toString('base64')}`);
+    expect(module.caseStudies).toHaveLength(2);
+    expect(module.eligibleCaseStudies.map(({ id }) => id)).toEqual(['completed-story']);
+    expect(module.eligibleCaseStudyCount).toBe(1);
+    expect(module.featuredCaseStudies).toEqual(module.eligibleCaseStudies);
+  });
+
+  it('projects project status from approved article content', () => {
+    const manifest = manifestCopy();
+    const record = manifest.records[0];
+    const content = {
+      title: 'Article fixture',
+      summary: 'Article summary',
+      projectStatus: 'ongoing',
+      sections: [
+        { key: 'problem', heading: 'The problem', nodes: [{ type: 'paragraph', children: [{ type: 'text', value: 'Problem.' }] }] },
+        { key: 'built', heading: 'What I built', nodes: [{ type: 'paragraph', children: [{ type: 'text', value: 'Built.' }] }] },
+        { key: 'outcome', heading: 'The outcome', nodes: [{ type: 'paragraph', children: [{ type: 'text', value: 'Outcome.' }] }] },
+      ],
+    };
+    record.variant = 'article';
+    record.content = content;
+    record.claimRefs = { summary: 'fixture-one.summary', outcome: 'fixture-one.outcome' };
+    manifest.claims['fixture-one.summary'].value = content.summary;
+    manifest.claims['fixture-one.summary'].approval = explicitApproval(digest({ id: 'fixture-one.summary', type: 'content', recordId: 'fixture-one', placement: 'summary', value: content.summary }));
+    manifest.claims['fixture-one.outcome'].value = content.sections[2];
+    manifest.claims['fixture-one.outcome'].approval = explicitApproval(digest({ id: 'fixture-one.outcome', type: 'content', recordId: 'fixture-one', placement: 'outcome', value: content.sections[2] }));
+    record.approval = explicitApproval(digest({ id: record.id, slug: record.slug, content }));
+    expect(compileFixture(manifest)[0].projectStatus).toBe('ongoing');
+  });
+
+  it('keeps published articles available while eligible collection data requires completed status', () => {
+    const ongoing = manifestCopy();
+    ongoing.records[0].content.projectStatus = 'ongoing';
+    ongoing.records[0].approval = explicitApproval(digest({ id: ongoing.records[0].id, slug: ongoing.records[0].slug, content: ongoing.records[0].content }));
+    const compiledOngoing = compileFixture(ongoing);
+    expect(compiledOngoing).toHaveLength(2);
+    expect(compiledOngoing[0].projectStatus).toBe('ongoing');
+
+    const missing = manifestCopy();
+    delete missing.records[0].content.projectStatus;
+    missing.records[0].approval = explicitApproval(digest({ id: missing.records[0].id, slug: missing.records[0].slug, content: missing.records[0].content }));
+    const compiledMissing = compileFixture(missing);
+    expect(compiledMissing).toHaveLength(2);
+    expect(compiledMissing[0]).not.toHaveProperty('projectStatus');
+
+    const invalid = manifestCopy();
+    invalid.records[0].content.projectStatus = 'unknown';
+    invalid.records[0].approval = explicitApproval(digest({ id: invalid.records[0].id, slug: invalid.records[0].slug, content: invalid.records[0].content }));
+    expect(() => compileFixture(invalid)).toThrow(/project status.*completed.*ongoing/i);
+  });
+
   it('rejects draft payloads, changed baseline identity, and moved approved claims', () => {
     const draft = manifestCopy();
     draft.records.push({ id: 'private-sentinel', slug: 'private-sentinel', status: 'draft', content: { secret: 'DO_NOT_PUBLISH' } });

@@ -72,6 +72,13 @@ describe('Markdown case-study preparation', () => {
     for (const [invalidSource, error] of cases) expect(() => parseMarkdownCaseStudy({ source: invalidSource, filePath: '/private/fixture.md' })).toThrow(error);
   });
 
+  it('carries an explicit project status into the prepared story and rejects unknown values', () => {
+    const completed = source().replace('category: Automation', 'category: Automation\nproject_status: completed');
+    expect(parseMarkdownCaseStudy({ source: completed, filePath: '/private/fixture.md' }).projectStatus).toBe('completed');
+    const invalid = completed.replace('project_status: completed', 'project_status: paused');
+    expect(() => parseMarkdownCaseStudy({ source: invalid, filePath: '/private/fixture.md' })).toThrow(/project_status.*completed.*ongoing/i);
+  });
+
   it('rejects non-YAML frontmatter and duplicate YAML keys', () => {
     expect(() => parseMarkdownCaseStudy({ source: '---js\nmodule.exports = { id: "bad" }\n---\n', filePath: '/private/executable.md' })).toThrow(/executable\.md: frontmatter/);
     expect(() => parseMarkdownCaseStudy({ source: source().replace('id: fixture-story', 'id: fixture-story\nid: duplicate'), filePath: '/private/duplicate.md' })).toThrow(/duplicate\.md: frontmatter/);
