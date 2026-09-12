@@ -5,7 +5,7 @@ import matter from 'gray-matter';
 import he from 'he';
 import { marked } from 'marked';
 import { imageSize } from 'image-size';
-import { caseStudyImageFormatForPath, slugPattern } from './case-study-schema.js';
+import { caseStudyImageFormatForPath, projectStatuses, slugPattern } from './case-study-schema.js';
 
 const imageExtensions = new Set(['.png', '.jpg', '.jpeg', '.webp']);
 const assetDigest = (bytes) => createHash('sha256').update(bytes).digest('hex');
@@ -132,10 +132,12 @@ const parseFrontmatter = (data, filePath) => {
   if (!slugPattern.test(slug)) issue(filePath, 'slug', 'must contain lowercase letters, numbers, and hyphens only');
   const title = nonEmptyString(data.title, filePath, 'title');
   const summary = nonEmptyString(data.summary, filePath, 'summary');
+  const projectStatus = data.project_status == null ? undefined : nonEmptyString(data.project_status, filePath, 'project_status');
+  if (projectStatus !== undefined && !projectStatuses.includes(projectStatus)) issue(filePath, 'project_status', `must be one of: ${projectStatuses.join(', ')}`);
   const category = data.category == null ? undefined : nonEmptyString(data.category, filePath, 'category');
   validateImageMetadata(data.image, filePath);
   const image = data.image;
-  return { id, slug, title, summary, ...(category ? { category } : {}), ...(image ? { image: { src: image.src.trim(), alt: image.alt.trim(), ...(image.caption === undefined ? {} : { caption: image.caption.trim() }) } } : {}) };
+  return { id, slug, title, summary, ...(projectStatus === undefined ? {} : { projectStatus }), ...(category ? { category } : {}), ...(image ? { image: { src: image.src.trim(), alt: image.alt.trim(), ...(image.caption === undefined ? {} : { caption: image.caption.trim() }) } } : {}) };
 };
 
 const candidateIssue = (label, message) => { throw new Error(`${label}: ${message}`); };
@@ -223,13 +225,17 @@ export const validatePreparedCaseStudies = (stories, label = 'candidate') => {
   const slugs = new Set();
   stories.forEach((story, index) => {
     const storyLabel = `${label}.stories[${index}]`;
-    candidateObject(story, ['id', 'slug', 'title', 'summary', 'category', 'image', 'sections'], storyLabel);
+    candidateObject(story, ['id', 'slug', 'title', 'summary', 'projectStatus', 'category', 'image', 'sections'], storyLabel);
     candidateString(story.id, `${storyLabel}.id`); candidateString(story.slug, `${storyLabel}.slug`);
     if (!slugPattern.test(story.id) || !slugPattern.test(story.slug)) candidateIssue(storyLabel, 'id and slug must be safe lowercase hyphenated values');
     if (ids.has(story.id)) candidateIssue(storyLabel, `id ${story.id} is duplicated`);
     if (slugs.has(story.slug)) candidateIssue(storyLabel, `slug ${story.slug} is duplicated`);
     ids.add(story.id); slugs.add(story.slug);
     candidateNonEmptyString(story.title, `${storyLabel}.title`); candidateNonEmptyString(story.summary, `${storyLabel}.summary`);
+    if (story.projectStatus !== undefined) {
+      candidateNonEmptyString(story.projectStatus, `${storyLabel}.projectStatus`);
+      if (!projectStatuses.includes(story.projectStatus)) candidateIssue(`${storyLabel}.projectStatus`, `must be one of: ${projectStatuses.join(', ')}`);
+    }
     if (story.category !== undefined) candidateNonEmptyString(story.category, `${storyLabel}.category`);
     if (story.image !== undefined) {
       candidateObject(story.image, ['src', 'alt', 'caption', 'width', 'height'], `${storyLabel}.image`);

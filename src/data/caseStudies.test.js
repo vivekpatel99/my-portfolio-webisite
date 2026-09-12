@@ -1,13 +1,19 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { caseStudies, getCaseStudyBySlug, caseStudySlugs, primaryContactHref } from './caseStudies';
+import { caseStudies, eligibleCaseStudies, eligibleCaseStudyCount, getCaseStudyBySlug, caseStudySlugs, primaryContactHref } from './caseStudies';
 import { routeSeo } from '../lib/seoConfig';
 import { deploymentHtaccess } from '../../plugins/vite-plugin-case-study-publication.js';
 
 describe('caseStudies data structure', () => {
   it('is an array, including when publication has no published records', () => {
     expect(Array.isArray(caseStudies)).toBe(true);
+  });
+
+  it('derives the collection set and count from completed project status', () => {
+    expect(eligibleCaseStudyCount).toBe(eligibleCaseStudies.length);
+    expect(eligibleCaseStudies).toEqual(caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed'));
+    expect(eligibleCaseStudies.every((caseStudy) => caseStudy.projectStatus === 'completed')).toBe(true);
   });
 
   it('should have required fields for each case study', () => {

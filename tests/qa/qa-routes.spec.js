@@ -1,13 +1,12 @@
 import { expect, test } from './qa-test.js';
+import { caseStudies, featuredCaseStudies } from '../../src/data/caseStudies.js';
 
 const routes = [
   { path: '/', heading: /Vivek Patel/i },
   { path: '/contact', heading: /Request a Project Estimate/i },
   { path: '/legal', heading: 'Privacy Policy' },
   { path: '/data-policy', heading: 'Cookie Policy' },
-  { path: '/project/n8n-openai-data-extraction', heading: /n8n \+ OpenAI Data Extraction/i },
-  { path: '/project/invoice-ocr-extraction', heading: /Invoice OCR Extraction/i },
-  { path: '/project/yolo-computer-vision-optimization', heading: /YOLO Computer Vision Optimization/i },
+  ...caseStudies.map((caseStudy) => ({ path: `/project/${caseStudy.slug}`, heading: caseStudy.title })),
 ];
 
 test.describe('Route rendering', () => {
@@ -102,9 +101,14 @@ test('portfolio cards navigate to internal case studies', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/#portfolio');
   await page.locator('#portfolio').scrollIntoViewIfNeeded();
-  await page.getByRole('link', { name: /Read case study: n8n \+ OpenAI Data Extraction/i }).click();
-  await expect(page).toHaveURL(/\/project\/n8n-openai-data-extraction/);
-  await expect(page.getByRole('heading', { name: /n8n \+ OpenAI Data Extraction/i })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Read case study:/i })).toHaveCount(featuredCaseStudies.length);
+  if (featuredCaseStudies.length > 0) {
+    const firstFeaturedCard = page.getByRole('link', { name: `Read case study: ${featuredCaseStudies[0].title}`, exact: true });
+    await expect(firstFeaturedCard).toBeVisible();
+    await firstFeaturedCard.click();
+    await expect(page).toHaveURL(new RegExp(`/project/${featuredCaseStudies[0].slug}/?$`));
+    await expect(page.getByRole('heading', { name: featuredCaseStudies[0].title, exact: true })).toBeVisible();
+  }
 });
 
 test('back navigation restores contact page', async ({ page }) => {
