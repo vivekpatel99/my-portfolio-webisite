@@ -74,6 +74,27 @@ describe('case study gallery', () => {
     fireEvent.keyDown(screen.getByLabelText(video.alt), { key: 'ArrowRight' });
     expect(screen.getByText('2 of 2')).toBeTruthy();
   });
+  it('still closes the dialog with Escape while native video controls hold focus', () => {
+    const video = { src: '/football-tracking.mp4', poster: '/football-tracking.webp', alt: 'Tracked football players' };
+    render(<Gallery images={[images[0], video]} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Enlarge image: Input' }));
+    const dialog = screen.getByRole('dialog');
+    fireEvent.click(dialog.querySelector('[aria-label="Show image 2: Tracked football players"]'));
+    fireEvent.keyDown(dialog.querySelector('video'), { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+  it('restores focus to a remaining control when the opener is replaced by a video', () => {
+    const video = { src: '/football-tracking.mp4', poster: '/football-tracking.webp', alt: 'Tracked football players' };
+    render(<Gallery images={[images[0], video]} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Enlarge image: Input' }));
+    const dialog = screen.getByRole('dialog');
+    fireEvent.click(dialog.querySelector('[aria-label="Show image 2: Tracked football players"]'));
+    fireEvent.click(screen.getByRole('button', { name: 'Close enlarged image' }));
+    const gallery = screen.getByRole('region', { name: 'Case study images' });
+    expect(screen.queryByRole('button', { name: 'Enlarge image: Tracked football players' })).toBeNull();
+    expect(gallery.contains(document.activeElement)).toBe(true);
+    expect(document.activeElement.getAttribute('aria-label')).toBe('Show image 2: Tracked football players');
+  });
   it('shows only the selected caption in the interactive gallery', () => {
     const captioned = images.slice(0, 2).map((image, i) => ({ ...image, caption: `Caption ${i + 1}` }));
     render(<Gallery images={captioned} />);
@@ -159,5 +180,18 @@ describe('case study gallery', () => {
     fireEvent.click(close);
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(screen.getByRole('region', { name: 'Case study images' }).hasAttribute('inert')).toBe(false);
+  });
+  it('keeps the portal dialog inside the overlay by sizing it with the border box', () => {
+    // The portal renders outside `.case-study-article`, so it cannot inherit that subtree's border-box rule.
+    const style = document.createElement('style');
+    style.textContent = readFileSync('src/components/CaseStudyArticle.css', 'utf8');
+    document.head.append(style);
+    render(<Gallery images={images} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Enlarge image: Input' }));
+    const dialog = screen.getByRole('dialog');
+    expect(getComputedStyle(dialog.parentElement).boxSizing).toBe('border-box');
+    expect(getComputedStyle(dialog).boxSizing).toBe('border-box');
+    expect(getComputedStyle(dialog.querySelector('.case-gallery-thumbnail')).boxSizing).toBe('border-box');
+    style.remove();
   });
 });

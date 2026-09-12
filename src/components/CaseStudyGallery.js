@@ -62,7 +62,10 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
     return () => {
       background.forEach((element, i) => { element.inert = previousInert[i]; });
       document.body.style.overflow = previousOverflow;
-      opener.current?.focus();
+      // The opener button is replaced by a <video> when the dialog switches to a video, so fall back to the inline strip.
+      const restore = opener.current?.isConnected ? opener.current
+        : inlineStrip.current?.querySelector('[aria-pressed="true"]') || inlineStrip.current?.querySelector('button');
+      restore?.focus();
     };
   }, [expanded]);
   if (!selected) return null;
@@ -90,9 +93,9 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
   if (images.length === 1) return cover(selected);
   const button = (label, action, content, props = {}) => h('button', { type: 'button', 'aria-label': label, onClick: action, ...props }, content);
   const keyboard = (event) => {
-    if (event.target.closest?.('video, audio')) return;
+    const seekingMedia = Boolean(event.target.closest?.('video, audio'));
     const inspectingZoom = zoom > 1 && event.target.classList.contains('case-gallery-viewport');
-    if (!inspectingZoom && (event.key === 'ArrowRight' || event.key === 'ArrowLeft')) {
+    if (!seekingMedia && !inspectingZoom && (event.key === 'ArrowRight' || event.key === 'ArrowLeft')) {
       event.preventDefault(); select(index + (event.key === 'ArrowRight' ? 1 : -1));
     }
     if (event.key === 'Escape') close();
@@ -116,7 +119,7 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
         : large ? h('div', { className: 'case-gallery-viewport', tabIndex: 0, 'aria-label': 'Enlarged image; scroll to inspect when zoomed' },
         h('img', { src: selected.src, alt: selected.alt, style: { width: `${zoom * 100}%`, maxWidth: 'none', height: `${zoom * 100}%` } }))
         : interactive
-          ? button(`Enlarge image: ${selected.alt}`, () => setExpanded(true), h('img', { src: selected.src, alt: selected.alt, width: selected.width, height: selected.height }), { className: 'case-gallery-open', ref: opener })
+          ? button(`Enlarge image: ${selected.alt}`, (event) => { opener.current = event.currentTarget; setExpanded(true); }, h('img', { src: selected.src, alt: selected.alt, width: selected.width, height: selected.height }), { className: 'case-gallery-open' })
           : h('a', { href: selected.src, className: 'case-gallery-open', style: { display: 'block', width: '100%', height: '100%', padding: '12px' } }, h('img', { src: selected.src, alt: selected.alt, width: selected.width, height: selected.height })),
       interactive ? button('Previous image', () => select(index - 1), '‹', { className: 'case-gallery-arrow case-gallery-prev' }) : null,
       interactive ? button('Next image', () => select(index + 1), '›', { className: 'case-gallery-arrow case-gallery-next' }) : null),
