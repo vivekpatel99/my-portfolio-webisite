@@ -460,7 +460,7 @@ const assertRemovedPublication = async ({ browser, directory, preview }) => {
     await page.goto('/case-studies/');
     await assertSixCardLoading(page, 30);
     await page.getByRole('link', { name: /Synthetic case study 30/i }).click();
-    await expect(page).toHaveURL(/\/project\/qa-story-30\/?$/);
+    await expect(page).toHaveURL(/\/project\/qa-story-30\/?(?:\?from=collection)?$/);
     await expect(page.getByRole('heading', { level: 1, name: /Synthetic case study 30/i })).toBeVisible();
 
     // Keep the article open while rebuilding the same disposable preview from

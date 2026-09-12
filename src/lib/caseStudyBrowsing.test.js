@@ -3,6 +3,7 @@ import {
   CASE_STUDY_BROWSING_STORAGE_KEY,
   clearBrowsingState,
   collectionReturnHref,
+  consumeCollectionOriginLocation,
   getInitialBrowsingState,
   isCollectionArticleOrigin,
   readBrowsingState,
@@ -130,5 +131,18 @@ describe('collection article return href', () => {
     expect(collectionReturnHref({ search: '?from=collection' })).toBe('/case-studies/?resume=1');
     expect(collectionReturnHref({ pathname: '/project/bookmark/' })).toBe('/case-studies/');
     expect(collectionReturnHref()).toBe('/case-studies/');
+  });
+
+  it('consumes from=collection into history state and leaves other search params', () => {
+    expect(consumeCollectionOriginLocation({ pathname: '/project/bookmark/' })).toBeNull();
+    expect(consumeCollectionOriginLocation({ search: '?from=homepage' })).toBeNull();
+    expect(consumeCollectionOriginLocation({ search: '?from=collection', state: { keep: true } })).toEqual({
+      search: '',
+      state: { keep: true, fromCollection: true },
+    });
+    expect(consumeCollectionOriginLocation({ search: '?from=collection&utm=1' })).toEqual({
+      search: '?utm=1',
+      state: { fromCollection: true },
+    });
   });
 });

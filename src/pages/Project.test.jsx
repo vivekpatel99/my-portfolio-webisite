@@ -3,8 +3,9 @@
  */
 import React from 'react';
 import { render, screen, cleanup } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { waitFor } from '@testing-library/react';
 import { toast } from '@/components/ui/use-toast';
 import { caseStudies } from '@/data/caseStudies';
 import Project from './Project';
@@ -34,11 +35,16 @@ vi.mock('framer-motion', () => {
   return { motion };
 });
 
+const LocationSearch = () => {
+  const location = useLocation();
+  return <pre>{location.search || '(empty)'}</pre>;
+};
+
 const renderProject = (entry) =>
   render(
     <MemoryRouter initialEntries={[entry]}>
       <Routes>
-        <Route path="/project/:projectId" element={<Project />} />
+        <Route path="/project/:projectId" element={<><Project /><LocationSearch /></>} />
       </Routes>
     </MemoryRouter>,
   );
@@ -85,11 +91,13 @@ describe('Project collection return link', () => {
     expect(screen.getByRole('link', { name: '← View case studies' }).getAttribute('href')).toBe('/case-studies/?resume=1');
   });
 
-  it('resumes the collection when the article URL carries a collection origin query', () => {
+  it('consumes the collection query into history state and cleans the URL', async () => {
     const project = caseStudies[0];
     if (!project) return;
 
     renderProject(`/project/${project.slug}?from=collection`);
+    expect(screen.getByRole('link', { name: '← View case studies' }).getAttribute('href')).toBe('/case-studies/?resume=1');
+    await waitFor(() => expect(screen.getByText('(empty)')).toBeTruthy());
     expect(screen.getByRole('link', { name: '← View case studies' }).getAttribute('href')).toBe('/case-studies/?resume=1');
   });
 });
