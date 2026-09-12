@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import Gallery, { collectGalleryImages } from './CaseStudyGallery.js';
@@ -8,6 +9,29 @@ const images = ['Input', 'Output', 'Workflow'].map((alt, i) => ({ src: `/image-$
 describe('case study gallery', () => {
   it('collects only story images in order and deduplicates by source', () => {
     expect(collectGalleryImages({ image: images[0], sections: [{ nodes: [{ children: [{ type: 'image', ...images[0] }, { type: 'image', ...images[1] }] }] }] })).toEqual(images.slice(0, 2));
+  });
+  it('merges missing metadata from a later duplicate source', () => {
+    const first = { ...images[0], alt: undefined };
+    const duplicate = { type: 'image', ...images[0], alt: 'Later alt', caption: 'Later caption' };
+    expect(collectGalleryImages({ image: first, sections: [{ nodes: [duplicate] }] })[0]).toMatchObject({
+      src: images[0].src, alt: 'Later alt', caption: 'Later caption',
+    });
+  });
+  it('keeps the first caption when duplicate sources both have captions', () => {
+    const first = { ...images[0], caption: 'First caption' };
+    const duplicate = { type: 'image', ...images[0], caption: 'Later caption' };
+    expect(collectGalleryImages({ image: first, sections: [{ nodes: [duplicate] }] })[0].caption).toBe('First caption');
+  });
+  it('renders every image and caption in the non-interactive fallback', () => {
+    const staticImages = images.map((image, i) => ({ ...image, caption: `Caption ${i + 1}` }));
+    render(<Gallery images={staticImages} interactive={false} />);
+    expect(screen.getAllByRole('img').map((image) => image.getAttribute('src'))).toEqual(staticImages.map((image) => image.src));
+    staticImages.forEach((image) => expect(screen.getByText(image.caption)).toBeTruthy());
+  });
+  it('uses gallery stage geometry on the first client render', () => {
+    const html = renderToStaticMarkup(<Gallery images={images} />);
+    expect(html).toContain('case-gallery-stage');
+    expect(html).not.toContain('case-study-cover');
   });
   it('preserves a single cover without gallery controls', () => {
     render(<Gallery images={[images[0]]} />);

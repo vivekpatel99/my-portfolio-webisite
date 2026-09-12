@@ -4,7 +4,16 @@ const h = React.createElement;
 
 export function collectGalleryImages(story) {
   const images = [];
-  const add = (image) => { if (image && !images.some((entry) => entry.src === image.src)) images.push({ src: image.src, alt: image.alt, width: image.width, height: image.height, ...(image.caption ? { caption: image.caption } : {}) }); };
+  const add = (image) => {
+    if (!image) return;
+    const existing = images.find((entry) => entry.src === image.src);
+    if (existing) {
+      if (!existing.alt && image.alt) existing.alt = image.alt;
+      if (!existing.caption && image.caption) existing.caption = image.caption;
+      return;
+    }
+    images.push({ src: image.src, alt: image.alt, width: image.width, height: image.height, ...(image.caption ? { caption: image.caption } : {}) });
+  };
   const visit = (nodes = []) => nodes.forEach((node) => {
     if (node.type === 'image') add(node);
     if (node.children) visit(node.children);
@@ -15,9 +24,7 @@ export function collectGalleryImages(story) {
   return images;
 }
 
-export default function CaseStudyGallery({ images }) {
-  const [interactive, setInteractive] = useState(false);
-  useEffect(() => setInteractive(true), []);
+export default function CaseStudyGallery({ images, interactive = typeof window !== 'undefined' }) {
   const [index, setIndex] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const [zoom, setZoom] = useState(1);
@@ -50,9 +57,11 @@ export default function CaseStudyGallery({ images }) {
     };
   }, [expanded]);
   if (!selected) return null;
-  if (images.length === 1 || !interactive) return h('figure', { className: 'case-study-cover' },
-    h('a', { href: selected.src }, h('img', { src: selected.src, alt: selected.alt, width: selected.width, height: selected.height, loading: 'eager' })),
-    selected.caption ? h('figcaption', null, selected.caption) : null);
+  const cover = (image, loading = 'eager') => h('figure', { className: 'case-study-cover', key: image.src },
+    h('a', { href: image.src }, h('img', { src: image.src, alt: image.alt, width: image.width, height: image.height, loading })),
+    image.caption ? h('figcaption', null, image.caption) : null);
+  if (images.length === 1) return cover(selected);
+  if (!interactive) return h(React.Fragment, null, images.map((image, i) => cover(image, i ? 'lazy' : 'eager')));
   const button = (label, action, content, props = {}) => h('button', { type: 'button', 'aria-label': label, onClick: action, ...props }, content);
   const keyboard = (event) => {
     const inspectingZoom = zoom > 1 && event.target.classList.contains('case-gallery-viewport');
