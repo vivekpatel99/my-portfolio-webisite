@@ -37,6 +37,8 @@ describe('case study gallery', () => {
     const html = renderToStaticMarkup(<Gallery images={staticImages} interactive={false} />);
     expect(html).toContain('case-gallery-stage');
     expect(html).not.toContain('case-study-cover');
+    expect(html).not.toContain('aria-label="Previous image"');
+    expect(html).not.toContain('aria-label="Next image"');
     staticImages.forEach((image) => expect(html).toContain(`href="${image.src}"`));
     staticImages.forEach((image) => expect(html).toContain(image.caption));
     expect(html.match(/class="case-gallery-thumbnail"/g)).toHaveLength(staticImages.length);
@@ -71,6 +73,23 @@ describe('case study gallery', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Show image 2: Tracked football players' }));
     fireEvent.keyDown(screen.getByLabelText(video.alt), { key: 'ArrowRight' });
     expect(screen.getByText('2 of 2')).toBeTruthy();
+  });
+  it('shows only the selected caption in the interactive gallery', () => {
+    const captioned = images.slice(0, 2).map((image, i) => ({ ...image, caption: `Caption ${i + 1}` }));
+    render(<Gallery images={captioned} />);
+    expect(screen.getByText('Caption 1')).toBeTruthy();
+    expect(screen.queryByText('Caption 2')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Show image 2: Output' }));
+    expect(screen.queryByText('Caption 1')).toBeNull();
+    expect(screen.getByText('Caption 2')).toBeTruthy();
+  });
+  it('hides image zoom controls when a video is selected in the dialog', () => {
+    const video = { src: '/football-tracking.mp4', poster: '/football-tracking.webp', alt: 'Tracked football players' };
+    render(<Gallery images={[images[0], video]} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Enlarge image: Input' }));
+    const dialog = screen.getByRole('dialog');
+    fireEvent.click(dialog.querySelector('[aria-label="Show image 2: Tracked football players"]'));
+    expect(screen.queryByRole('button', { name: 'Zoom in' })).toBeNull();
   });
   it('loops and selects thumbnails using accessible controls', () => {
     render(<Gallery images={images} />);
