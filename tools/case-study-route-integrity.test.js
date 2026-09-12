@@ -57,6 +57,7 @@ function fixture() {
     'publication/public-case-studies.js',
     'publication/case-study-featured.js',
     'src/components/CaseStudyArticle.js',
+    'src/components/CaseStudyGallery.js',
     'src/components/CaseStudyCard.js',
     'src/components/CaseStudyCollection.js',
     'src/components/CaseStudiesContent.js',

@@ -7,9 +7,10 @@ import { imageSize } from 'image-size';
 import { assertCompletionMonth, assertMedia, assertProjectStatus, assertSafeExternalUrl, assertStat, assertString, caseStudyImagePathMatchesFormat, exactKeys, fail, slugPattern } from './case-study-schema.js';
 import { validatePreparedCaseStudies } from './markdown-case-study.js';
 import { featuredCaseStudySlugs } from './case-study-featured.js';
-import { sortCaseStudiesByCompletion } from '../src/lib/caseStudyCollection.js';
 import { selectFeaturedCaseStudies } from '../src/lib/featuredCaseStudies.js';
+import { sortCaseStudiesByCompletion } from '../src/lib/caseStudyCollection.js';
 
+export { sortCaseStudiesByCompletion };
 export const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const caseStudyAssetPrefix = '/assets/case-studies/';
 
@@ -66,6 +67,7 @@ const compiledArticle = (manifest, record, root) => {
   for (const field of ['title', 'summary']) assertString(content[field], `published ${record.slug} ${field}`);
   if (content.projectStatus !== undefined) assertProjectStatus(content.projectStatus, `published ${record.slug} project status`);
   if (content.completedAt !== undefined) assertCompletionMonth(content.completedAt, `published ${record.slug} completedAt`);
+  if (content.projectStatus === 'completed' && content.completedAt === undefined) fail(`published ${record.slug} completedAt is required when projectStatus is completed`);
   if (content.category !== undefined) assertString(content.category, `published ${record.slug} category`);
   validatePreparedCaseStudies([{
     id: record.id,
@@ -132,6 +134,8 @@ export function compileCaseStudyPublication({ manifest = caseStudyPublicationMan
     exactKeys(record.content, [...publicRecordFields], `published ${record.slug} content`);
     if (record.content.projectStatus !== undefined) assertProjectStatus(record.content.projectStatus, `published ${record.slug} project status`);
     if (record.content.completedAt !== undefined) assertCompletionMonth(record.content.completedAt, `published ${record.slug} completedAt`);
+    if (record.content.projectStatus === 'completed' && record.content.completedAt === undefined) fail(`published ${record.slug} completedAt is required when projectStatus is completed`);
+    if (record.content.completedAt !== undefined && record.content.projectStatus !== 'completed') fail(`published ${record.slug} completedAt requires project status to be completed`);
     assertApproval(record.approval, digest({ id: record.id, slug: record.slug, content: record.content }), baselineApprovalHashes.records[record.id], `published ${record.slug}`);
     if (!Array.isArray(record.content.externalLinks) || !Array.isArray(record.content.gallery)) fail(`published ${record.slug} requires external links and gallery arrays`);
     for (const field of ['title', 'cardTitle', 'category', 'summary', 'challenge', 'solution', 'outcome']) assertString(record.content[field], `published ${record.slug} ${field}`);
@@ -170,6 +174,7 @@ export function compileCaseStudyPublication({ manifest = caseStudyPublicationMan
       ...(record.content.completedAt === undefined ? {} : { completedAt: record.content.completedAt }),
       sections: legacySections(record.content),
       image: { src: record.content.image.src, alt: record.content.image.alt, width: legacyImageDimensions.width, height: legacyImageDimensions.height },
+      gallery: record.content.gallery.map((media) => ({ ...media })),
     });
   }
   return publicRecords;
