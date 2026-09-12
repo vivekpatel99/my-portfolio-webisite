@@ -51,6 +51,13 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
     if (thumbnail) strip.scrollLeft = Math.max(0, thumbnail.offsetLeft - strip.clientWidth / 2 + thumbnail.clientWidth / 2);
   }, [index, expanded]);
   useEffect(() => {
+    // `object-fit: contain` centres the pixels in the scaled box, so letterboxing can fill the top-left corner.
+    const viewport = dialog.current?.querySelector('.case-gallery-viewport');
+    if (!viewport) return;
+    viewport.scrollLeft = (viewport.scrollWidth - viewport.clientWidth) / 2;
+    viewport.scrollTop = (viewport.scrollHeight - viewport.clientHeight) / 2;
+  }, [zoom]);
+  useEffect(() => {
     if (!expanded) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';

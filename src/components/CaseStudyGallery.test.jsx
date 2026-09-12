@@ -172,6 +172,17 @@ describe('case study gallery', () => {
     fireEvent.touchEnd(stage, { changedTouches: [{ clientX: 190, clientY: 250 }] });
     expect(screen.getByText('2 of 3')).toBeTruthy();
   });
+  it('recenters the zoomed viewport so letterboxed media stays in view', () => {
+    render(<Gallery images={images} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Enlarge image: Input' }));
+    const viewport = screen.getByLabelText('Enlarged image; scroll to inspect when zoomed');
+    // jsdom has no layout, so stand in for a 3x content box inside a 400x300 viewport.
+    Object.entries({ clientWidth: 400, clientHeight: 300, scrollWidth: 1200, scrollHeight: 900 })
+      .forEach(([key, value]) => Object.defineProperty(viewport, key, { value, configurable: true }));
+    fireEvent.click(screen.getByRole('button', { name: 'Zoom in' }));
+    expect(viewport.scrollLeft).toBe(400);
+    expect(viewport.scrollTop).toBe(300);
+  });
   it('allows touch and keyboard panning when enlarged and zoomed', () => {
     render(<Gallery images={images} />);
     fireEvent.click(screen.getByRole('button', { name: 'Enlarge image: Input' }));
