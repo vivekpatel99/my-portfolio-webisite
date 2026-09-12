@@ -12,3 +12,4 @@ horizons-website/screenshots/
 .env.local
 .env*.local
 .case-study-preview/
+.scratch/

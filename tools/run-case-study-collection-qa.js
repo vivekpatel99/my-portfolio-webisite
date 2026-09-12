@@ -37,8 +37,14 @@ const fixtureImageBytes = Buffer.from(
 );
 
 export const assertLocalQaEnvironment = (environment = process.env) => {
-  if (environment.CI === 'true' || environment.NODE_ENV === 'production') {
+  if (environment.CI || environment.NODE_ENV === 'production') {
     throw new Error('Collection QA harness is local-only and refused in CI or production');
+  }
+};
+
+export const assertNoBlockedRequests = (blockedRequests) => {
+  if (blockedRequests.length > 0) {
+    throw new Error(`Collection QA recorded blocked external requests: ${blockedRequests.join(', ')}`);
   }
 };
 
@@ -258,12 +264,15 @@ const installLoopbackGuard = async (context, blockedRequests) => {
   });
 };
 
-const closeContext = async (context) => {
+const closeContext = async (context, blockedRequests) => {
   // Playwright route callbacks may still be inside route.fetch when a page
   // assertion fails. Wait for them before closing so TargetClosedError cannot
   // hide the original QA failure.
-  try { await context.unrouteAll({ behavior: 'wait' }); } catch { /* context is already closing */ }
-  try { await context.close(); } catch { /* preserve the original assertion */ }
+  try { assertNoBlockedRequests(blockedRequests); }
+  finally {
+    try { await context.unrouteAll({ behavior: 'wait' }); } catch { /* context is already closing */ }
+    try { await context.close(); } catch { /* preserve the original assertion */ }
+  }
 };
 
 const cardLinks = (page) => page.getByRole('link', { name: /^Read case study:/i });
@@ -429,7 +438,7 @@ const assertDirectArticleDefault = async (browser, origin, total) => {
     await expect(cardLinks(page)).toHaveCount(Math.min(6, total));
     await expect(collectionCount(page)).toHaveText(new RegExp(`Showing ${Math.min(6, total)} of ${total} case studies`, 'i'));
     expect(pageErrors).toEqual([]);
-  } finally { await closeContext(context); }
+  } finally { await closeContext(context, blockedRequests); }
 };
 
 const assertRemovedPublication = async ({ browser, directory, preview }) => {
@@ -471,7 +480,7 @@ const assertRemovedPublication = async ({ browser, directory, preview }) => {
     transferredPreview = true;
     return updatedPreview;
   } finally {
-    await closeContext(context);
+    await closeContext(context, blockedRequests);
     if (updatedPreview && !transferredPreview) await stopPreview(updatedPreview);
   }
 };
@@ -497,7 +506,7 @@ const assertTouchReachability = async (browser, origin, total) => {
       await expect(page).toHaveURL(new URL(hrefs[index], origin).href);
     }
     expect(pageErrors).toEqual([]);
-  } finally { await closeContext(context); }
+  } finally { await closeContext(context, blockedRequests); }
 };
 
 export async function runScenario({ eligibleCount, browser }) {
@@ -519,7 +528,7 @@ export async function runScenario({ eligibleCount, browser }) {
           await captureScaleScreenshot(page, eligibleCount, viewportName);
           await assertArticleReturnAndBack(page, eligibleCount);
           expect(pageErrors).toEqual([]);
-        } finally { await closeContext(context); }
+        } finally { await closeContext(context, blockedRequests); }
       }
       await assertDirectArticleDefault(browser, preview.origin, eligibleCount);
       await assertTouchReachability(browser, preview.origin, eligibleCount);
