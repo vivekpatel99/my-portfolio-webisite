@@ -59,7 +59,12 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
   );
   const grid = React.createElement(
     'div',
-    { id: gridId, className: 'grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3' },
+    {
+      id: gridId,
+      className: 'grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3',
+      // Capture phase runs before the card Link navigates, so the saved scroll position is current.
+      onClickCapture: () => persistLoadedPage(visibleCount),
+    },
     visibleStories.map((story) => React.createElement(CaseStudyCard, { key: story.slug, project: story })),
   );
   const loadMoreButton = stories.length > PAGE_SIZE && !isStaticRender

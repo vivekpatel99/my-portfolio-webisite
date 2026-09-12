@@ -139,6 +139,19 @@ describe('CaseStudyCollection', () => {
     expect(screen.getAllByRole('article')).toHaveLength(12);
   });
 
+  it('saves the scroll position at the moment a card is opened, not at the last Load more click', async () => {
+    const user = userEvent.setup();
+    render(<MemoryRouter><CaseStudyCollection stories={manyStories(12)} /></MemoryRouter>);
+    Object.defineProperty(window, 'scrollY', { value: 100, configurable: true });
+    await user.click(screen.getByRole('button', { name: 'Load more' }));
+    expect(history.state).toMatchObject({ loadedCount: 12, scrollY: 100 });
+
+    // User scrolls down to a newly revealed card and opens it.
+    Object.defineProperty(window, 'scrollY', { value: 640, configurable: true });
+    await user.click(screen.getByRole('link', { name: 'Read case study: Many synthetic story 10' }));
+    expect(history.state).toMatchObject({ loadedCount: 12, scrollY: 640 });
+  });
+
   it('shows every story visibly in no-JS static markup when more than six stories exist', () => {
     // The static generator runs in Node without `window`; no-JS visitors must see and use every link.
     vi.stubGlobal('window', undefined);
