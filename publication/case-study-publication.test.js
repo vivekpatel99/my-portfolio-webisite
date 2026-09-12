@@ -219,17 +219,21 @@ describe('case-study publication boundary', () => {
 
     const ongoing = manifestCopy();
     ongoing.records[0].content.projectStatus = 'ongoing';
+    delete ongoing.records[0].content.completedAt;
     ongoing.records[0].approval = explicitApproval(digest({ id: ongoing.records[0].id, slug: ongoing.records[0].slug, content: ongoing.records[0].content }));
     const compiledOngoing = compileFixture(ongoing);
     expect(compiledOngoing).toHaveLength(2);
     expect(compiledOngoing[0].projectStatus).toBe('ongoing');
 
-    const missing = manifestCopy();
-    delete missing.records[0].content.projectStatus;
-    missing.records[0].approval = explicitApproval(digest({ id: missing.records[0].id, slug: missing.records[0].slug, content: missing.records[0].content }));
-    const compiledMissing = compileFixture(missing);
-    expect(compiledMissing).toHaveLength(2);
-    expect(compiledMissing[0]).not.toHaveProperty('projectStatus');
+    const dateWithoutStatus = manifestCopy();
+    delete dateWithoutStatus.records[0].content.projectStatus;
+    dateWithoutStatus.records[0].approval = explicitApproval(digest({ id: dateWithoutStatus.records[0].id, slug: dateWithoutStatus.records[0].slug, content: dateWithoutStatus.records[0].content }));
+    expect(() => compileFixture(dateWithoutStatus)).toThrow(/completedAt.*requires.*project status.*completed/i);
+
+    const ongoingWithDate = manifestCopy();
+    ongoingWithDate.records[0].content.projectStatus = 'ongoing';
+    ongoingWithDate.records[0].approval = explicitApproval(digest({ id: ongoingWithDate.records[0].id, slug: ongoingWithDate.records[0].slug, content: ongoingWithDate.records[0].content }));
+    expect(() => compileFixture(ongoingWithDate)).toThrow(/completedAt.*requires.*project status.*completed/i);
 
     const missingPair = manifestCopy();
     delete missingPair.records[0].content.projectStatus;
