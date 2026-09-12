@@ -108,7 +108,7 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
     }
   };
   const gallery = (large) => h(React.Fragment, null,
-    h('div', { className: 'case-gallery-stage', style: large && zoom > 1 ? { touchAction: 'auto' } : undefined, onTouchStart: (event) => { touch.current = event.touches.length === 1 ? { x: event.touches[0].clientX, y: event.touches[0].clientY } : null; }, onTouchEnd: (event) => {
+    h('div', { className: 'case-gallery-stage', style: large && zoom > 1 ? { touchAction: 'auto' } : undefined, onTouchStart: (event) => { touch.current = event.touches.length === 1 && !event.target.closest?.('video, audio') ? { x: event.touches[0].clientX, y: event.touches[0].clientY } : null; }, onTouchEnd: (event) => {
       if (!touch.current || zoom > 1) return;
       const dx = event.changedTouches[0].clientX - touch.current.x;
       const dy = event.changedTouches[0].clientY - touch.current.y;
@@ -131,9 +131,11 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
     h('div', { className: 'case-gallery-thumbnails', ref: large ? expandedStrip : inlineStrip, 'aria-label': 'Choose an image' }, images.map((image, i) => interactive
       ? button(`Show image ${i + 1}: ${image.alt}`, () => select(i), preview(image), { key: image.src, className: 'case-gallery-thumbnail', 'aria-pressed': i === index })
       : h('a', { href: image.src, key: image.src, className: 'case-gallery-thumbnail', 'aria-label': `Open media ${i + 1}: ${image.alt}` }, preview(image)))),
-    interactive
-      ? selected.caption ? h('p', { className: 'case-gallery-caption' }, selected.caption) : null
-      : images.map((image) => image.caption ? h('p', { className: 'case-gallery-caption', key: `${image.src}-caption` }, image.caption) : null));
+    selected.caption ? h('p', { className: 'case-gallery-caption' }, selected.caption) : null,
+    // Without scripts the other captions are the only way to read them; <noscript> keeps them out of the
+    // scripted flow height so client takeover does not shift the article below the gallery.
+    interactive ? null : h('noscript', null, images.filter((image) => image !== selected && image.caption)
+      .map((image) => h('p', { className: 'case-gallery-caption', key: `${image.src}-caption` }, image.caption))));
   return h(React.Fragment, null,
     h('section', { className: 'case-gallery', 'aria-label': 'Case study images', onKeyDown: keyboard, inert: expanded ? '' : undefined }, gallery(false)),
     expanded ? createPortal(h('div', { className: 'case-gallery-overlay', onClick: (event) => { if (event.target === event.currentTarget) close(); } },

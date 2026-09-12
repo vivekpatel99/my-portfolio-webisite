@@ -74,6 +74,24 @@ describe('case study gallery', () => {
     fireEvent.keyDown(screen.getByLabelText(video.alt), { key: 'ArrowRight' });
     expect(screen.getByText('2 of 2')).toBeTruthy();
   });
+  it('ignores swipes that start on native video controls', () => {
+    const video = { src: '/football-tracking.mp4', poster: '/football-tracking.webp', alt: 'Tracked football players' };
+    const { container } = render(<Gallery images={[video, images[0]]} />);
+    const controls = container.querySelector('video');
+    fireEvent.touchStart(controls, { touches: [{ clientX: 240, clientY: 100 }] });
+    fireEvent.touchEnd(controls, { changedTouches: [{ clientX: 100, clientY: 105 }] });
+    expect(screen.getByText('1 of 2')).toBeTruthy();
+  });
+  it('keeps the caption flow height unchanged when the client takes over a static render', () => {
+    const captioned = images.map((image, i) => ({ ...image, caption: `Caption ${i + 1}` }));
+    // Captions inside <noscript> are the no-JS fallback: present in the markup, but no flow height once scripts run.
+    const visibleCaptions = (html) => (html.replace(/<noscript>[\s\S]*?<\/noscript>/g, '').match(/case-gallery-caption/g) || []).length;
+    const staticHtml = renderToStaticMarkup(<Gallery images={captioned} interactive={false} />);
+    const clientHtml = renderToStaticMarkup(<Gallery images={captioned} />);
+    captioned.forEach((image) => expect(staticHtml).toContain(image.caption));
+    expect(visibleCaptions(staticHtml)).toBe(visibleCaptions(clientHtml));
+    expect(visibleCaptions(staticHtml)).toBe(1);
+  });
   it('still closes the dialog with Escape while native video controls hold focus', () => {
     const video = { src: '/football-tracking.mp4', poster: '/football-tracking.webp', alt: 'Tracked football players' };
     render(<Gallery images={[images[0], video]} />);
