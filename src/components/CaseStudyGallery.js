@@ -87,7 +87,7 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
       touch.current = null;
     }, onTouchCancel: () => { touch.current = null; } },
       large ? h('div', { className: 'case-gallery-viewport', tabIndex: 0, 'aria-label': 'Enlarged image; scroll to inspect when zoomed' },
-        h('img', { src: selected.src, alt: selected.alt, style: { width: `${zoom * 100}%`, maxWidth: 'none', height: zoom === 1 ? '100%' : 'auto' } }))
+        h('img', { src: selected.src, alt: selected.alt, style: { width: `${zoom * 100}%`, maxWidth: 'none', height: `${zoom * 100}%` } }))
         : button(`Enlarge image: ${selected.alt}`, () => setExpanded(true), h('img', { src: selected.src, alt: selected.alt, width: selected.width, height: selected.height }), { className: 'case-gallery-open', ref: opener }),
       button('Previous image', () => select(index - 1), '‹', { className: 'case-gallery-arrow case-gallery-prev' }),
       button('Next image', () => select(index + 1), '›', { className: 'case-gallery-arrow case-gallery-next' })),

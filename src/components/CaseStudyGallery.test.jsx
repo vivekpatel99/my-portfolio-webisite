@@ -71,6 +71,14 @@ describe('case study gallery', () => {
     expect(document.activeElement).toBe(opener);
     expect(document.body.style.overflow).toBe('');
   });
+  it('scales zoom from the fitted image size, not the viewport width alone', () => {
+    render(<Gallery images={images} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Enlarge image: Input' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Zoom in' }));
+    const enlarged = screen.getByLabelText('Enlarged image; scroll to inspect when zoomed').querySelector('img');
+    expect(enlarged.style.width).toBe('150%');
+    expect(enlarged.style.height).toBe('150%');
+  });
   it('swipes horizontally without treating vertical scrolling as navigation', () => {
     const { container } = render(<Gallery images={images} />);
     const stage = container.querySelector('.case-gallery-stage');
