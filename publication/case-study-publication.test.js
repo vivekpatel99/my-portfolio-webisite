@@ -254,6 +254,24 @@ describe('case-study publication boundary', () => {
     expect(() => compileFixture(changedDate)).toThrow(/requires explicit approval/i);
   });
 
+  it('requires a completion month when a legacy record is completed', () => {
+    const missingMonth = manifestCopy();
+    delete missingMonth.records[0].content.completedAt;
+    missingMonth.records[0].approval = explicitApproval(digest({ id: missingMonth.records[0].id, slug: missingMonth.records[0].slug, content: missingMonth.records[0].content }));
+    expect(() => compileFixture(missingMonth)).toThrow(/completedAt is required when project status is completed/i);
+
+    expect(compileFixture(manifestCopy())).toHaveLength(2);
+
+    const neitherField = manifestCopy();
+    delete neitherField.records[0].content.projectStatus;
+    delete neitherField.records[0].content.completedAt;
+    neitherField.records[0].approval = explicitApproval(digest({ id: neitherField.records[0].id, slug: neitherField.records[0].slug, content: neitherField.records[0].content }));
+    const compiled = compileFixture(neitherField);
+    expect(compiled).toHaveLength(2);
+    expect(compiled[0]).not.toHaveProperty('projectStatus');
+    expect(compiled[0]).not.toHaveProperty('completedAt');
+  });
+
   it('rejects draft payloads, changed baseline identity, and moved approved claims', () => {
     const draft = manifestCopy();
     draft.records.push({ id: 'private-sentinel', slug: 'private-sentinel', status: 'draft', content: { secret: 'DO_NOT_PUBLISH' } });
