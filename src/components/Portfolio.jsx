@@ -1,30 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { featuredCaseStudies } from '@/data/caseStudies';
-
-const ProjectCard = ({ project }) => {
-  return (
-    <article>
-      <Link
-        to={`/project/${project.slug}/`}
-        className="group block h-full overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] transition-all duration-300 hover:border-accent-purple/50 hover:bg-white/[0.07] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple focus-visible:ring-offset-2 focus-visible:ring-offset-[#0C0D0D]"
-        aria-label={`Read case study: ${project.title}`}
-      >
-        {project.image ? <img className="block h-auto w-full" alt={project.image.alt} src={project.image.src} width={project.image.width} height={project.image.height} loading="lazy" /> : null}
-        <div className="flex min-h-[148px] flex-col justify-between gap-4 p-5">
-          <div>
-            {project.category ? <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-[#d8caff]">{project.category}</p> : null}
-            <h3 className="text-xl font-bold leading-tight text-white">{project.title}</h3>
-            <p className="mt-3 text-sm leading-relaxed text-gray-400">{project.summary}</p>
-          </div>
-          <span className="inline-flex min-h-11 items-center text-sm font-semibold text-accent-purple group-hover:text-white">
-            Read case study →
-          </span>
-        </div>
-      </Link>
-    </article>
-  );
-};
+import CaseStudyCard from './CaseStudyCard.js';
 
 const Portfolio = () => {
   return (
@@ -46,7 +22,7 @@ const Portfolio = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {featuredCaseStudies.map((project) => (
-            <ProjectCard
+            <CaseStudyCard
               key={project.id}
               project={project}
             />

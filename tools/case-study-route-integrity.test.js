@@ -43,6 +43,7 @@ function fixture() {
     'public/.htaccess',
     'src/config/links.js',
     'src/data/caseStudies.js',
+    'src/lib/caseStudyCollection.js',
     'src/lib/seoConfig.js',
     'publication/case-study-manifest.js',
     'publication/case-study-evidence.js',

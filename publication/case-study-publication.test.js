@@ -3,9 +3,9 @@ import { execFileSync } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { caseStudyPublicationManifest } from './case-study-manifest.js';
-import { compileCaseStudyPublication, renderPublicCaseStudyModule } from './compile-case-studies.js';
+import { compileCaseStudyPublication, renderPublicCaseStudyModule, sortCaseStudiesByCompletion } from './compile-case-studies.js';
 import { digest } from './case-study-evidence.js';
 import { deploymentHtaccess } from '../plugins/vite-plugin-case-study-publication.js';
 
@@ -179,14 +179,52 @@ caseStudyPublicationManifest.records.splice(0, caseStudyPublicationManifest.reco
 describe('case-study publication boundary', () => {
   it('generates one completed-only collection set for browser consumers', async () => {
     const rendered = renderPublicCaseStudyModule([
-      { id: 'completed-story', slug: 'completed-story', projectStatus: 'completed', completedAt: '2026-08' },
+      { id: 'recently-published-older-project', slug: 'recently-published-older-project', projectStatus: 'completed', completedAt: '2024-02' },
+      { id: 'older-published-newer-project', slug: 'older-published-newer-project', projectStatus: 'completed', completedAt: '2026-08' },
       { id: 'ongoing-story', slug: 'ongoing-story', projectStatus: 'ongoing' },
     ]);
     const module = await import(`data:text/javascript;base64,${Buffer.from(rendered).toString('base64')}`);
-    expect(module.caseStudies).toHaveLength(2);
-    expect(module.eligibleCaseStudies.map(({ id }) => id)).toEqual(['completed-story']);
-    expect(module.eligibleCaseStudyCount).toBe(1);
+    expect(module.caseStudies.map(({ id }) => id)).toEqual([
+      'recently-published-older-project', 'older-published-newer-project', 'ongoing-story',
+    ]);
+    expect(module.eligibleCaseStudies.map(({ id }) => id)).toEqual([
+      'recently-published-older-project', 'older-published-newer-project',
+    ]);
+    expect(module.collectionCaseStudies.map(({ id }) => id)).toEqual([
+      'older-published-newer-project', 'recently-published-older-project',
+    ]);
+    expect(module.eligibleCaseStudyCount).toBe(2);
     expect(module.featuredCaseStudies).toEqual(module.eligibleCaseStudies);
+  });
+
+  it('breaks equal-month ties by ASCII slug order, independent of runtime locale', () => {
+    const localeCompare = vi.spyOn(String.prototype, 'localeCompare');
+    try {
+      const sorted = sortCaseStudiesByCompletion([
+        { slug: 'hat-bot', completedAt: '2026-08' },
+        { slug: 'chat-bot', completedAt: '2026-08' },
+        { slug: 'alpha', completedAt: '2026-08' },
+        { slug: 'Bravo', completedAt: '2026-08' },
+      ]);
+      expect(sorted.map(({ slug }) => slug)).toEqual(['Bravo', 'alpha', 'chat-bot', 'hat-bot']);
+      expect(localeCompare).not.toHaveBeenCalled();
+    } finally {
+      localeCompare.mockRestore();
+    }
+  });
+
+  it('rejects legacy completed records that omit completedAt', () => {
+    const manifest = manifestCopy();
+    const record = manifest.records[0];
+    delete record.content.completedAt;
+    record.approval = explicitApproval(digest({ id: record.id, slug: record.slug, content: record.content }));
+    expect(() => compileFixture(manifest)).toThrow(/completedAt is required when projectStatus is completed/i);
+
+    const ongoing = manifestCopy();
+    delete ongoing.records[0].content.completedAt;
+    ongoing.records[0].content.projectStatus = 'ongoing';
+    ongoing.records[0].approval = explicitApproval(digest({ id: ongoing.records[0].id, slug: ongoing.records[0].slug, content: ongoing.records[0].content }));
+    expect(compileFixture(ongoing)[0]).not.toHaveProperty('completedAt');
   });
 
   it('projects project status from approved article content', () => {
@@ -215,19 +253,36 @@ describe('case-study publication boundary', () => {
   });
 
   it('keeps published articles available while eligible collection data requires completed status', () => {
+    expect(compileFixture(manifestCopy())).toHaveLength(2);
+
     const ongoing = manifestCopy();
     ongoing.records[0].content.projectStatus = 'ongoing';
+    delete ongoing.records[0].content.completedAt;
     ongoing.records[0].approval = explicitApproval(digest({ id: ongoing.records[0].id, slug: ongoing.records[0].slug, content: ongoing.records[0].content }));
     const compiledOngoing = compileFixture(ongoing);
     expect(compiledOngoing).toHaveLength(2);
     expect(compiledOngoing[0].projectStatus).toBe('ongoing');
 
-    const missing = manifestCopy();
-    delete missing.records[0].content.projectStatus;
-    missing.records[0].approval = explicitApproval(digest({ id: missing.records[0].id, slug: missing.records[0].slug, content: missing.records[0].content }));
-    const compiledMissing = compileFixture(missing);
-    expect(compiledMissing).toHaveLength(2);
-    expect(compiledMissing[0]).not.toHaveProperty('projectStatus');
+    const dateWithoutStatus = manifestCopy();
+    delete dateWithoutStatus.records[0].content.projectStatus;
+    dateWithoutStatus.records[0].approval = explicitApproval(digest({ id: dateWithoutStatus.records[0].id, slug: dateWithoutStatus.records[0].slug, content: dateWithoutStatus.records[0].content }));
+    expect(() => compileFixture(dateWithoutStatus)).toThrow(/completedAt.*requires.*project status.*completed/i);
+
+    const ongoingWithDate = manifestCopy();
+    ongoingWithDate.records[0].content.projectStatus = 'ongoing';
+    ongoingWithDate.records[0].approval = explicitApproval(digest({ id: ongoingWithDate.records[0].id, slug: ongoingWithDate.records[0].slug, content: ongoingWithDate.records[0].content }));
+    expect(() => compileFixture(ongoingWithDate)).toThrow(/completedAt.*requires.*project status.*completed/i);
+
+    const missingPair = manifestCopy();
+    delete missingPair.records[0].content.projectStatus;
+    delete missingPair.records[0].content.completedAt;
+    missingPair.records[0].approval = explicitApproval(digest({ id: missingPair.records[0].id, slug: missingPair.records[0].slug, content: missingPair.records[0].content }));
+    expect(compileFixture(missingPair)[0]).not.toHaveProperty('completedAt');
+
+    const missingCompletedAt = manifestCopy();
+    delete missingCompletedAt.records[0].content.completedAt;
+    missingCompletedAt.records[0].approval = explicitApproval(digest({ id: missingCompletedAt.records[0].id, slug: missingCompletedAt.records[0].slug, content: missingCompletedAt.records[0].content }));
+    expect(() => compileFixture(missingCompletedAt)).toThrow(/completedAt.*required.*completed/i);
 
     const invalid = manifestCopy();
     invalid.records[0].content.projectStatus = 'unknown';
@@ -272,7 +327,7 @@ describe('case-study publication boundary', () => {
     expect(compiled).not.toHaveProperty('completedAt');
   });
 
-  it('still compiles ongoing status with a valid completion month', () => {
+  it('rejects ongoing status with a valid completion month', () => {
     const ongoing = manifestCopy();
     ongoing.records[0].content.projectStatus = 'ongoing';
     ongoing.records[0].approval = explicitApproval(digest({
@@ -280,7 +335,7 @@ describe('case-study publication boundary', () => {
       slug: ongoing.records[0].slug,
       content: ongoing.records[0].content,
     }));
-    expect(compileFixture(ongoing)[0]).toMatchObject({ projectStatus: 'ongoing', completedAt: '2026-08' });
+    expect(() => compileFixture(ongoing)).toThrow(/completedAt.*requires.*project status.*completed/i);
   });
 
   it('fails closed when a sibling valid record does not hide a completed record missing completedAt', () => {

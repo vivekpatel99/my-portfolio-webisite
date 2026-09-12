@@ -12,6 +12,21 @@ export const caseStudyAssetPrefix = '/assets/case-studies/';
 
 const publicRecordFields = new Set(['title', 'cardTitle', 'category', 'summary', 'challenge', 'solution', 'outcome', 'stats', 'image', 'gallery', 'stack', 'externalLinks', 'projectStatus', 'completedAt']);
 const articleRecordFields = new Set(['title', 'summary', 'category', 'sections', 'image', 'projectStatus', 'completedAt']);
+const completionMonthValue = (completedAt) => {
+  const match = typeof completedAt === 'string' ? completedAt.match(/^(\d{4})-(0[1-9]|1[0-2])$/) : null;
+  return match ? Number(match[1]) * 12 + Number(match[2]) : null;
+};
+export const sortCaseStudiesByCompletion = (stories) => [...stories].sort((left, right) => {
+  const leftMonth = completionMonthValue(left.completedAt);
+  const rightMonth = completionMonthValue(right.completedAt);
+  if (leftMonth === null && rightMonth !== null) return 1;
+  if (leftMonth !== null && rightMonth === null) return -1;
+  if (leftMonth !== null && rightMonth !== null && leftMonth !== rightMonth) return rightMonth - leftMonth;
+  // ASCII slug tie-break (same as src/lib/caseStudyCollection.js compareSlugs) so build output does not depend on runtime locale.
+  const leftSlug = String(left.slug ?? '');
+  const rightSlug = String(right.slug ?? '');
+  return leftSlug < rightSlug ? -1 : leftSlug > rightSlug ? 1 : 0;
+});
 
 const caseStudyAssetUrls = (content) => [content.image, ...(content.gallery ?? [])]
   .flatMap((item) => [item?.src, item?.poster].filter(Boolean));
@@ -132,6 +147,7 @@ export function compileCaseStudyPublication({ manifest = caseStudyPublicationMan
     if (record.content.projectStatus !== undefined) assertProjectStatus(record.content.projectStatus, `published ${record.slug} project status`);
     if (record.content.completedAt !== undefined) assertCompletionMonth(record.content.completedAt, `published ${record.slug} completedAt`);
     if (record.content.projectStatus === 'completed' && record.content.completedAt === undefined) fail(`published ${record.slug} completedAt is required when projectStatus is completed`);
+    if (record.content.completedAt !== undefined && record.content.projectStatus !== 'completed') fail(`published ${record.slug} completedAt requires project status to be completed`);
     assertApproval(record.approval, digest({ id: record.id, slug: record.slug, content: record.content }), baselineApprovalHashes.records[record.id], `published ${record.slug}`);
     if (!Array.isArray(record.content.externalLinks) || !Array.isArray(record.content.gallery)) fail(`published ${record.slug} requires external links and gallery arrays`);
     for (const field of ['title', 'cardTitle', 'category', 'summary', 'challenge', 'solution', 'outcome']) assertString(record.content[field], `published ${record.slug} ${field}`);
@@ -176,4 +192,8 @@ export function compileCaseStudyPublication({ manifest = caseStudyPublicationMan
   return publicRecords;
 }
 
-export const renderPublicCaseStudyModule = (publication = compileCaseStudyPublication()) => `// Generated in-memory by vite-plugin-case-study-publication.\nexport const caseStudies = ${JSON.stringify(publication)};\nexport const eligibleCaseStudies = caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed' && caseStudy.completedAt);\nexport const eligibleCaseStudyCount = eligibleCaseStudies.length;\nexport const featuredCaseStudies = eligibleCaseStudies;\nexport const getCaseStudyBySlug = (slug) => caseStudies.find((caseStudy) => caseStudy.slug === slug);\nexport const caseStudySlugs = caseStudies.map((caseStudy) => caseStudy.slug);\nexport const primaryContactHref = '/contact/';\nexport const directEmailHref = 'mailto:contact@vivekpatel.com';\n`;
+export const renderPublicCaseStudyModule = (publication = compileCaseStudyPublication()) => {
+  const eligibleCaseStudies = publication.filter((caseStudy) => caseStudy.projectStatus === 'completed' && caseStudy.completedAt);
+  const collectionIndices = sortCaseStudiesByCompletion(eligibleCaseStudies).map((caseStudy) => publication.indexOf(caseStudy));
+  return `// Generated in-memory by vite-plugin-case-study-publication.\nexport const caseStudies = ${JSON.stringify(publication)};\nexport const eligibleCaseStudies = caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed' && caseStudy.completedAt);\nexport const collectionCaseStudies = ${JSON.stringify(collectionIndices)}.map((index) => caseStudies[index]);\nexport const eligibleCaseStudyCount = eligibleCaseStudies.length;\nexport const featuredCaseStudies = eligibleCaseStudies;\nexport const getCaseStudyBySlug = (slug) => caseStudies.find((caseStudy) => caseStudy.slug === slug);\nexport const caseStudySlugs = caseStudies.map((caseStudy) => caseStudy.slug);\nexport const primaryContactHref = '/contact/';\nexport const directEmailHref = 'mailto:contact@vivekpatel.com';\n`;
+};
