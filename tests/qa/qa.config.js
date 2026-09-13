@@ -5,7 +5,18 @@ import { resolveQaTargets } from './qa-local-only.js';
 
 const testDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(testDir, '../..');
-const artifactDir = path.join(repoRoot, 'playwright-output');
+
+export function resolveQaArtifactDir({
+  repoRoot: root,
+  fakeSentry = process.env.QA_FAKE_SENTRY === '1',
+}) {
+  const defaultDir = fakeSentry
+    ? path.join('playwright-output', 'telemetry-boundary')
+    : 'playwright-output';
+  return path.resolve(root, defaultDir);
+}
+
+const artifactDir = resolveQaArtifactDir({ repoRoot });
 
 const previewURL = process.env.QA_PREVIEW_URL ?? 'http://127.0.0.1:3000';
 const prodURL = process.env.QA_PROD_URL ?? 'https://www.vivekapatel.com';

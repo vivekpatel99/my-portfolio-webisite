@@ -4,6 +4,23 @@ import { describe, expect, it } from 'vitest';
 const workflowPath = new URL('../.github/workflows/ci.yml', import.meta.url);
 
 describe('sanitized QA artifact workflow', () => {
+  it('runs the isolated fake telemetry boundary after browser installation in safe local-only mode', async () => {
+    const workflow = await readFile(workflowPath, 'utf8');
+    const browserInstall = workflow.indexOf('name: Install Playwright browsers');
+    const telemetryQa = workflow.indexOf('name: Run fake telemetry boundary QA');
+    const passiveQa = workflow.indexOf('name: Run passive Playwright QA against preview');
+    const sanitizer = workflow.indexOf('name: Reconstruct sanitized passive QA artifacts');
+
+    expect(browserInstall).toBeGreaterThanOrEqual(0);
+    expect(telemetryQa).toBeGreaterThan(browserInstall);
+    expect(telemetryQa).toBeGreaterThan(passiveQa);
+
+    const telemetrySection = workflow.slice(telemetryQa, sanitizer);
+    expect(telemetrySection).toContain("QA_LOCAL_ONLY: '1'");
+    expect(telemetrySection).toContain("QA_ARTIFACT_SAFE_MODE: '1'");
+    expect(telemetrySection).toContain('run: npm run qa:telemetry-boundary');
+  });
+
   it('enables only the safe local capture mode and uploads two explicit JSON paths for seven days', async () => {
     const workflow = await readFile(workflowPath, 'utf8');
 

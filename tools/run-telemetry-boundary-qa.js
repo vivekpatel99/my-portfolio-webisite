@@ -91,6 +91,7 @@ try {
       env: {
         ...process.env,
         QA_LOCAL_ONLY: '1',
+        QA_ARTIFACT_SAFE_MODE: '1',
         QA_PREVIEW_URL: previewUrl,
         QA_FAKE_SENTRY: '1',
       },
