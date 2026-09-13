@@ -69,11 +69,11 @@ describe('case study gallery', () => {
   });
   it('uses bounded case-study derivatives for previews and keeps synthetic URLs unchanged', () => {
     expect(galleryThumbnailSrc({ src: '/assets/case-studies/n8n-excel-to-json.png' }))
-      .toBe('/assets/case-studies/n8n-excel-to-json-thumb.jpg');
+      .toBe('/assets/case-studies/n8n-excel-to-json-thumb-7d0eae27bff6.jpg');
     expect(galleryThumbnailSrc({ src: '/assets/case-studies/yoga-pose.webp' }))
-      .toBe('/assets/case-studies/yoga-pose-thumb.jpg');
+      .toBe('/assets/case-studies/yoga-pose-thumb-734c037c9f53.jpg');
     expect(galleryThumbnailSrc({ src: '/assets/case-studies/n8n-excel-to-json.png', poster: '/preview.webp' }))
-      .toBe('/assets/case-studies/n8n-excel-to-json-thumb.jpg');
+      .toBe('/assets/case-studies/n8n-excel-to-json-thumb-7d0eae27bff6.jpg');
     expect(galleryThumbnailSrc({ src: '/image-0.png', poster: '/preview.webp' })).toBe('/preview.webp');
     expect(galleryThumbnailSrc({ src: '/image-0.png' })).toBe('/image-0.png');
   });
@@ -84,8 +84,8 @@ describe('case study gallery', () => {
     expect(container.querySelector('.case-gallery-open img')?.getAttribute('src')).toBe(selected.src);
     expect([...container.querySelectorAll('.case-gallery-thumbnail img')].map((image) => image.getAttribute('src')))
       .toEqual([
-        '/assets/case-studies/n8n-excel-to-json-thumb.jpg',
-        '/assets/case-studies/n8n-table-to-json-thumb.jpg',
+        '/assets/case-studies/n8n-excel-to-json-thumb-7d0eae27bff6.jpg',
+        '/assets/case-studies/n8n-table-to-json-thumb-a03edc14e212.jpg',
       ]);
     fireEvent.click(screen.getByRole('button', { name: 'Show image 2: Table workflow' }));
     expect(container.querySelector('.case-gallery-open img')?.getAttribute('src')).toBe(other.src);

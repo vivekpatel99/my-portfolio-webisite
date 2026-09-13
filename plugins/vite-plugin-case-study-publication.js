@@ -18,10 +18,15 @@ export const assertThumbnailDimensions = (dimensions, thumbnailPath) => {
     throw new Error(`Case-study thumbnail must be a JPEG no larger than 320px on either edge: ${thumbnailPath}`);
   }
 };
+export const assertThumbnailFilenameHash = (thumbnailPath, thumbnailSha256) => {
+  const filenameHash = path.posix.basename(thumbnailPath).match(/-thumb-([a-f0-9]{12})\.jpg$/i)?.[1]?.toLowerCase();
+  if (filenameHash !== thumbnailSha256.slice(0, 12)) throw new Error(`Case-study thumbnail filename must contain its derivative hash: ${thumbnailPath}`);
+};
 export const assertThumbnailBinding = (publicDirectory, thumbnailPath) => {
   const sourcePath = thumbnailSourceFor(thumbnailPath);
   if (!sourcePath) return;
   const entry = caseStudyThumbnailRegistry[sourcePath];
+  assertThumbnailFilenameHash(thumbnailPath, entry.thumbnailSha256);
   const sourceFile = path.join(publicDirectory, sourcePath.replace(/^\//, ''));
   const thumbnailFile = path.join(publicDirectory, thumbnailPath.replace(/^\//, ''));
   assertRegularAsset(sourceFile, sourcePath);
