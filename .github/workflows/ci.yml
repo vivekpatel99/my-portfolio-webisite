@@ -130,6 +130,12 @@ jobs:
           npm run qa:seo
           npm run qa:playwright:ci
 
+      - name: Run fake telemetry boundary QA
+        env:
+          QA_LOCAL_ONLY: '1'
+          QA_ARTIFACT_SAFE_MODE: '1'
+        run: npm run qa:telemetry-boundary
+
       - name: Reconstruct sanitized passive QA artifacts
         id: sanitize-qa-artifacts
         if: always()

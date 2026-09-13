@@ -3,9 +3,17 @@ import {
   assertSafeArtifactConfiguration,
   qaCaptureOptions,
   qaNetworkOptions,
+  resolveQaArtifactDir,
 } from '../tests/qa/qa.config.js';
 
 describe('sanitized CI Playwright configuration', () => {
+  it('isolates fake telemetry reports from the passive QA report', () => {
+    const repoRoot = '/repo';
+
+    expect(resolveQaArtifactDir({ repoRoot, fakeSentry: false })).toBe('/repo/playwright-output');
+    expect(resolveQaArtifactDir({ repoRoot, fakeSentry: true })).toBe('/repo/playwright-output/telemetry-boundary');
+  });
+
   it('disables raw browser capture classes in safe artifact mode', () => {
     expect(qaCaptureOptions({ safeArtifacts: true })).toEqual({
       screenshot: 'off',
