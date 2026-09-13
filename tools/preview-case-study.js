@@ -26,7 +26,7 @@ const page = (story) => `<!doctype html>
     <style>body{margin:0;background:#0c0d0d;color:#eeedf0;font-family:Arial,Helvetica,sans-serif}.preview-header,.preview-footer{padding:22px 6%;border-bottom:1px solid #29292d}.preview-header strong{font-size:16px;font-weight:500}.preview-header span{float:right;color:#a5a1ad;font-size:12px}.preview-footer{border-top:1px solid #29292d;border-bottom:0;color:#88848e;font-size:12px}@media(max-width:450px){.preview-header span{display:none}}</style>
   </head>
   <body>
-    <header class="preview-header"><strong>Vivek Patel</strong><span>Local case-study preview</span></header>
+    <header class="preview-header"><a href="/" style="color:inherit">All review candidates</a><span>Local case-study preview</span></header>
     ${renderToStaticMarkup(React.createElement(CaseStudyArticle, { story }))}
     <footer class="preview-footer">Local preview · This candidate is not published.</footer>
   </body>
@@ -34,6 +34,13 @@ const page = (story) => `<!doctype html>
 `;
 
 const escapeHtml = (value) => String(value).replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character]));
+
+export const libraryPreviewPage = (stories) => `<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow"><title>Case-study review library</title>
+<style>body{background:#0c0d0d;color:#eee;font:16px/1.6 system-ui;margin:0}main{max-width:1050px;margin:auto;padding:48px 24px}h1{line-height:1.2}ul{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px}li{border:1px solid #34313d;border-radius:12px;padding:24px;background:#151419}a{color:#cbb5ff}h2{font-size:21px;line-height:1.3}.meta{color:#b7b2c1;font-size:14px}</style></head><body><main>
+<h1>Case-study review library</h1><p>${stories.length} prepared stories. These candidates are not published. This order is for review; client-attractiveness ranking comes later.</p>
+<ul>${stories.map((story) => `<li><h2><a href="/project/${encodeURIComponent(story.slug)}/">${escapeHtml(story.title)}</a></h2><p>${escapeHtml(story.summary)}</p><p class="meta">${escapeHtml(story.category || 'Case study')} · ${story.projectStatus === 'completed' && story.completedAt ? `Completed ${escapeHtml(story.completedAt)}` : 'Completion details need review'}</p></li>`).join('')}</ul>
+</main></body></html>`;
 
 export function createCaseStudyPreviewServer({ stories, assets = {}, candidateDirectory, port = 4173 } = {}) {
   if (!previewIsAllowed()) throw new Error('Case-study preview is refused in CI or production');
@@ -61,6 +68,11 @@ export function createCaseStudyPreviewServer({ stories, assets = {}, candidateDi
         response.setHeader('Content-Type', asset.format === 'png' ? 'image/png' : asset.format === 'jpeg' ? 'image/jpeg' : 'image/webp');
         return response.end(bytes);
       } catch { response.statusCode = 404; return response.end('Not found'); }
+    }
+    if (pathname === '/' && stories.length > 1) {
+      response.setHeader('Content-Type', 'text/html; charset=utf-8');
+      response.setHeader('Cache-Control', 'no-store');
+      return response.end(libraryPreviewPage(stories));
     }
     const projectMatch = pathname.match(/^\/project\/([^/]+)\/?$/);
     const story = pathname === '/' ? stories[0] : projectMatch ? bySlug.get(projectMatch[1]) : undefined;
