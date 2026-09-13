@@ -13,7 +13,7 @@ const NotFound = () => (
       noindex
     />
     <div className="container mx-auto px-6 max-w-3xl">
-      <p className="text-accent-purple font-semibold uppercase tracking-wide mb-4">404</p>
+      <p className="text-accent-purple-text font-semibold uppercase tracking-wide mb-4">404</p>
       <h1 className="text-4xl md:text-6xl font-bold mb-6">Page Not Found</h1>
       <p className="text-lg text-gray-300 mb-8">
         This page does not exist or has moved. Use the homepage to find services,

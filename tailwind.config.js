@@ -42,6 +42,7 @@ module.exports = {
           default: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
           purple: '#7C3AED',
+          'purple-text': '#A78BFA',
         },
         popover: {
           default: 'hsl(var(--popover))',
