@@ -82,8 +82,8 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 0.5 }}
             className="flex flex-col items-center gap-3 mb-10"
           >
-            <div className="inline-flex items-center gap-4 px-5 py-2.5 bg-white/5 border border-white/10 rounded-full">
-              <span className="text-accent-purple font-semibold">Starting at €80/hour</span>
+            <div className="inline-flex items-center gap-4 px-5 py-2.5 bg-[#0C0D0D] border border-white/10 rounded-full">
+              <span className="text-accent-purple-text font-semibold">Starting at €80/hour</span>
               <span className="text-gray-400">•</span>
               <span className="text-gray-300">Based in Europe</span>
             </div>
