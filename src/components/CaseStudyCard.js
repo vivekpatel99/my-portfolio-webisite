@@ -75,9 +75,9 @@ const CaseStudyCard = ({
         'div', { className: 'mt-auto flex flex-wrap items-end justify-between gap-x-4 gap-y-2' },
         upworkLink ? React.createElement('a', {
           href: upworkLink.href, target: '_blank', rel: 'noopener noreferrer',
-          className: 'relative z-10 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-accent-purple hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-purple',
+          className: 'relative z-10 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-accent-purple-text hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-purple',
         }, 'Upwork project', React.createElement('span', { 'aria-hidden': true }, '↗'))
-          : React.createElement('span', { className: 'inline-flex min-h-11 items-center text-sm font-semibold text-accent-purple' }, 'Read case study →'),
+          : React.createElement('span', { className: 'inline-flex min-h-11 items-center text-sm font-semibold text-accent-purple-text' }, 'Read case study →'),
         completionDate ? React.createElement('time', {
           dateTime: project.completedAt, 'aria-label': `Completed ${completionDate}`,
           className: 'ml-auto shrink-0 text-right text-xs leading-tight text-gray-400',

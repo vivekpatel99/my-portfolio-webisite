@@ -32,7 +32,7 @@ const Portfolio = () => {
         <div className="mt-8">
           <Link
             to="/case-studies/"
-            className="min-h-11 inline-flex items-center text-accent-purple hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple focus-visible:ring-offset-2 focus-visible:ring-offset-[#0C0D0D]"
+            className="min-h-11 inline-flex items-center text-accent-purple-text hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple focus-visible:ring-offset-2 focus-visible:ring-offset-[#0C0D0D]"
           >
             View all case studies ({eligibleCaseStudyCount})
           </Link>
