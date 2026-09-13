@@ -134,7 +134,8 @@ export function compileCaseStudyPublication({ manifest = caseStudyPublicationMan
     exactKeys(record.content, [...publicRecordFields], `published ${record.slug} content`);
     if (record.content.projectStatus !== undefined) assertProjectStatus(record.content.projectStatus, `published ${record.slug} project status`);
     if (record.content.completedAt !== undefined) assertCompletionMonth(record.content.completedAt, `published ${record.slug} completedAt`);
-    if (record.content.projectStatus === 'completed' && record.content.completedAt === undefined) fail(`published ${record.slug} completedAt is required when projectStatus is completed`);
+    // Retained legacy stories may be owner-confirmed complete without a known month.
+    // New Markdown articles still require completion dates through their authoring schema.
     if (record.content.completedAt !== undefined && record.content.projectStatus !== 'completed') fail(`published ${record.slug} completedAt requires project status to be completed`);
     assertApproval(record.approval, digest({ id: record.id, slug: record.slug, content: record.content }), baselineApprovalHashes.records[record.id], `published ${record.slug}`);
     if (!Array.isArray(record.content.externalLinks) || !Array.isArray(record.content.gallery)) fail(`published ${record.slug} requires external links and gallery arrays`);
@@ -169,6 +170,8 @@ export function compileCaseStudyPublication({ manifest = caseStudyPublicationMan
     const legacyImageDimensions = assertAssetBinding({ root, publicPath: record.content.image.src, asset: legacyImageAsset, deriveDimensions: true, label: `published ${record.slug} cover asset ${record.content.image.src}` });
     publicRecords.push({
       id: record.id, slug: record.slug, title: record.content.title,
+      cardTitle: record.content.cardTitle,
+      externalLinks: record.content.externalLinks.map((link) => ({ label: link.label, href: manifest.claims[link.claimRef].value })),
       category: record.content.category, summary: record.content.summary,
       ...(record.content.projectStatus === undefined ? {} : { projectStatus: record.content.projectStatus }),
       ...(record.content.completedAt === undefined ? {} : { completedAt: record.content.completedAt }),
@@ -181,8 +184,8 @@ export function compileCaseStudyPublication({ manifest = caseStudyPublicationMan
 }
 
 export const renderPublicCaseStudyModule = (publication = compileCaseStudyPublication(), configuredSlugs = featuredCaseStudySlugs) => {
-  const eligibleCaseStudies = publication.filter((caseStudy) => caseStudy.projectStatus === 'completed' && caseStudy.completedAt);
+  const eligibleCaseStudies = publication.filter((caseStudy) => caseStudy.projectStatus === 'completed');
   const collectionIndices = sortCaseStudiesByCompletion(eligibleCaseStudies).map((caseStudy) => publication.indexOf(caseStudy));
   const featuredIndices = selectFeaturedCaseStudies(eligibleCaseStudies, configuredSlugs).map((caseStudy) => publication.indexOf(caseStudy));
-  return `// Generated in-memory by vite-plugin-case-study-publication.\nexport const caseStudies = ${JSON.stringify(publication)};\nexport const eligibleCaseStudies = caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed' && caseStudy.completedAt);\nexport const collectionCaseStudies = ${JSON.stringify(collectionIndices)}.map((index) => caseStudies[index]);\nexport const eligibleCaseStudyCount = eligibleCaseStudies.length;\nexport const featuredCaseStudies = ${JSON.stringify(featuredIndices)}.map((index) => caseStudies[index]);\nexport const getCaseStudyBySlug = (slug) => caseStudies.find((caseStudy) => caseStudy.slug === slug);\nexport const caseStudySlugs = caseStudies.map((caseStudy) => caseStudy.slug);\nexport const primaryContactHref = '/contact/';\nexport const directEmailHref = 'mailto:contact@vivekpatel.com';\n`;
+  return `// Generated in-memory by vite-plugin-case-study-publication.\nexport const caseStudies = ${JSON.stringify(publication)};\nexport const eligibleCaseStudies = caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed');\nexport const collectionCaseStudies = ${JSON.stringify(collectionIndices)}.map((index) => caseStudies[index]);\nexport const eligibleCaseStudyCount = eligibleCaseStudies.length;\nexport const featuredCaseStudies = ${JSON.stringify(featuredIndices)}.map((index) => caseStudies[index]);\nexport const getCaseStudyBySlug = (slug) => caseStudies.find((caseStudy) => caseStudy.slug === slug);\nexport const caseStudySlugs = caseStudies.map((caseStudy) => caseStudy.slug);\nexport const primaryContactHref = '/contact/';\nexport const directEmailHref = 'mailto:contact@vivekpatel.com';\n`;
 };

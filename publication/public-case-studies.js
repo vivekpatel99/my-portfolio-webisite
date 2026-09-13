@@ -6,7 +6,7 @@ import { sortCaseStudiesByCompletion } from '../src/lib/caseStudyCollection.js';
 import { selectFeaturedCaseStudies } from '../src/lib/featuredCaseStudies.js';
 
 export const caseStudies = compileCaseStudyPublication();
-export const eligibleCaseStudies = caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed' && caseStudy.completedAt);
+export const eligibleCaseStudies = caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed');
 export const collectionCaseStudies = sortCaseStudiesByCompletion(eligibleCaseStudies);
 export const eligibleCaseStudyCount = eligibleCaseStudies.length;
 export const featuredCaseStudies = selectFeaturedCaseStudies(eligibleCaseStudies);

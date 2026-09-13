@@ -245,7 +245,7 @@ describe('CaseStudyCollection', () => {
 
     expect(new Set(hrefs).size).toBe(8);
     stories8.forEach((story) => expect(markup).toContain(`href="/project/${story.slug}/`));
-    expect(markup).not.toMatch(/\bhidden=/);
+    expect(markup).not.toMatch(/\shidden=/);
     expect(markup).toContain('Showing 6 of 8 case studies');
     expect(markup.match(/<article/g)).toHaveLength(6);
     const noscript = markup.match(/<noscript>(.*?)<\/noscript>/)[1];

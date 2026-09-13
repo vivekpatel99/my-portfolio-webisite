@@ -30,7 +30,7 @@ const project = {
 describe('CaseStudyCard', () => {
   afterEach(cleanup);
 
-  it('renders one accessible router link with an unobstructed cover and aligned footer', () => {
+  it('renders one accessible router link containing the cover and title', () => {
     render(
       <MemoryRouter>
         <CaseStudyCard project={project} />
@@ -46,7 +46,18 @@ describe('CaseStudyCard', () => {
     expect(screen.getByText('Read case study →')).toBeTruthy();
   });
 
-  it('renders completion as readable semantic time text', () => {
+  it('keeps the Upwork destination separate from the full-card article link', () => {
+    render(<MemoryRouter><CaseStudyCard project={{ ...project, cardTitle: 'Reference card title', externalLinks: [{ label: 'Upwork project', href: 'https://www.upwork.com/example' }] }} /></MemoryRouter>);
+    const articleLink = screen.getByRole('link', { name: 'Read case study: Reference card title' });
+    const upwork = screen.getByRole('link', { name: 'Upwork project' });
+    expect(screen.getByRole('heading', { name: 'Reference card title' })).toBeTruthy();
+    expect(articleLink.contains(upwork)).toBe(false);
+    expect(upwork.getAttribute('href')).toBe('https://www.upwork.com/example');
+    expect(upwork.getAttribute('rel')).toContain('noopener');
+    expect(screen.getAllByRole('link')).toHaveLength(2);
+  });
+
+  it('renders completion as readable semantic time text' , () => {
     render(
       <MemoryRouter>
         <CaseStudyCard project={project} />

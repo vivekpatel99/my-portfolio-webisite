@@ -216,12 +216,12 @@ describe('case-study publication boundary', () => {
     }
   });
 
-  it('rejects legacy completed records that omit completedAt', () => {
+  it('accepts approved legacy completion without inventing a month', () => {
     const manifest = manifestCopy();
     const record = manifest.records[0];
     delete record.content.completedAt;
     record.approval = explicitApproval(digest({ id: record.id, slug: record.slug, content: record.content }));
-    expect(() => compileFixture(manifest)).toThrow(/completedAt is required when projectStatus is completed/i);
+    expect(compileFixture(manifest)[0]).not.toHaveProperty('completedAt');
 
     const ongoing = manifestCopy();
     delete ongoing.records[0].content.completedAt;
@@ -285,7 +285,7 @@ describe('case-study publication boundary', () => {
     const missingCompletedAt = manifestCopy();
     delete missingCompletedAt.records[0].content.completedAt;
     missingCompletedAt.records[0].approval = explicitApproval(digest({ id: missingCompletedAt.records[0].id, slug: missingCompletedAt.records[0].slug, content: missingCompletedAt.records[0].content }));
-    expect(() => compileFixture(missingCompletedAt)).toThrow(/completedAt.*required.*completed/i);
+    expect(compileFixture(missingCompletedAt)[0]).not.toHaveProperty('completedAt');
 
     const invalid = manifestCopy();
     invalid.records[0].content.projectStatus = 'unknown';
@@ -301,7 +301,7 @@ describe('case-study publication boundary', () => {
     expect(() => compileFixture(changedDate)).toThrow(/requires explicit approval/i);
   });
 
-  it('rejects completed legacy content that omits completedAt as a pairing error', () => {
+  it('keeps the completion month absent for approved legacy content', () => {
     const missing = manifestCopy();
     delete missing.records[0].content.completedAt;
     missing.records[0].approval = explicitApproval(digest({
@@ -309,7 +309,7 @@ describe('case-study publication boundary', () => {
       slug: missing.records[0].slug,
       content: missing.records[0].content,
     }));
-    expect(() => compileFixture(missing)).toThrow(/completedAt.*required.*completed/i);
+    expect(compileFixture(missing)[0]).not.toHaveProperty('completedAt');
   });
 
   it('still compiles the default fixture with completed status and 2026-08', () => {
@@ -341,7 +341,7 @@ describe('case-study publication boundary', () => {
     expect(() => compileFixture(ongoing)).toThrow(/completedAt.*requires.*project status.*completed/i);
   });
 
-  it('fails closed when a sibling valid record does not hide a completed record missing completedAt', () => {
+  it('retains dated and undated completed legacy records together', () => {
     const mixed = manifestCopy();
     delete mixed.records[1].content.completedAt;
     mixed.records[1].approval = explicitApproval(digest({
@@ -349,7 +349,7 @@ describe('case-study publication boundary', () => {
       slug: mixed.records[1].slug,
       content: mixed.records[1].content,
     }));
-    expect(() => compileFixture(mixed)).toThrow(/completedAt.*required.*completed/i);
+    expect(compileFixture(mixed)[1]).not.toHaveProperty('completedAt');
   });
 
   it('rejects draft payloads, changed baseline identity, and moved approved claims', () => {

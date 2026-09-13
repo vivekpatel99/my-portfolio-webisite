@@ -78,9 +78,10 @@ export const caseStudyPublicationBaseline = {
   records: [
     {
       id: 'n8n-openai-data-extraction', slug: 'n8n-openai-data-extraction', status: 'published',
-      approval: baselineRetention('1453b422960569b0f5cadbac841d1eb6f8ec9cdf0164312d4ac0786d579cf43c'),
+      approval: { kind: 'explicit', sha256: 'f51f1e245b2e26adf761ed6a902757ab3c8d87fd31592cfdfbc0f45b8f656949', approvedBy: 'Viv', approvedAt: '2026-09-13T07:13:17.895Z', evidence: 'https://github.com/vivekpatel99/my-portfolio-webisite/blob/fix/restore-completed-case-study-cards/docs/decisions/retained-case-study-completion.md' },
       claimRefs: { summary: 'n8n-openai-data-extraction.summary', outcome: 'n8n-openai-data-extraction.outcome', stats: ['n8n-openai-data-extraction.stats.0', 'n8n-openai-data-extraction.stats.1'] },
       content: {
+        projectStatus: 'completed',
         title: 'n8n + OpenAI Data Extraction', cardTitle: 'Automated Data Extraction - n8n + OpenAI', category: 'AI Workflow Automation',
         summary: 'A production-ready workflow that extracts structured data from German websites, validates it, and prepares it for downstream operations.',
         challenge: 'The client needed to turn inconsistent web pages into reliable business records without spending hours manually copying, cleaning, and checking every field.',
@@ -95,9 +96,10 @@ export const caseStudyPublicationBaseline = {
     },
     {
       id: 'invoice-ocr-extraction', slug: 'invoice-ocr-extraction', status: 'published',
-      approval: baselineRetention('9a67de633d2827499987bff8593f87d3f875cb33580d43bebdf16aa11c758b2e'),
+      approval: { kind: 'explicit', sha256: '3986b2d9c05aa09bc2c9c407805eb3e10173d8eac721c1efc4796e6c30938a07', approvedBy: 'Viv', approvedAt: '2026-09-13T07:13:17.896Z', evidence: 'https://github.com/vivekpatel99/my-portfolio-webisite/blob/fix/restore-completed-case-study-cards/docs/decisions/retained-case-study-completion.md' },
       claimRefs: { summary: 'invoice-ocr-extraction.summary', outcome: 'invoice-ocr-extraction.outcome', stats: ['invoice-ocr-extraction.stats.0', 'invoice-ocr-extraction.stats.1'] },
       content: {
+        projectStatus: 'completed',
         title: 'Invoice OCR Extraction', cardTitle: 'Invoice OCR Data Extraction', category: 'Document AI',
         summary: 'An OCR extraction workflow for pulling seller and client information from invoice photos and returning structured fields for review.',
         challenge: 'Invoice photos vary in lighting, layout, rotation, and field naming. The client needed a dependable way to extract key parties and reduce manual review time.',
@@ -112,9 +114,10 @@ export const caseStudyPublicationBaseline = {
     },
     {
       id: 'yolo-computer-vision-optimization', slug: 'yolo-computer-vision-optimization', status: 'published',
-      approval: baselineRetention('d7979798a13b84abf63d2eb47a109e183a475183fea4592ed32b81928ac98910'),
+      approval: { kind: 'explicit', sha256: '38137e8c2b389e09b76483c81d05ee2b8c75164fb7fe2e4fd9be6b2dbd9d7391', approvedBy: 'Viv', approvedAt: '2026-09-13T07:13:17.896Z', evidence: 'https://github.com/vivekpatel99/my-portfolio-webisite/blob/fix/restore-completed-case-study-cards/docs/decisions/retained-case-study-completion.md' },
       claimRefs: { summary: 'yolo-computer-vision-optimization.summary', outcome: 'yolo-computer-vision-optimization.outcome', stats: ['yolo-computer-vision-optimization.stats.0', 'yolo-computer-vision-optimization.stats.1', 'yolo-computer-vision-optimization.stats.2'] },
       content: {
+        projectStatus: 'completed',
         title: 'YOLO Computer Vision Optimization', cardTitle: 'Real-Time Pose Detection - YOLO', category: 'Computer Vision',
         summary: 'A YOLO-based computer-vision project focused on reliable pose detection and the production concerns around fast, usable inference.',
         challenge: 'The client needed computer-vision results that were usable in an application context, where slow inference and unstable predictions can break the user experience.',
