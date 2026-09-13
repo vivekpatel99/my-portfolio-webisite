@@ -77,6 +77,25 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
       restore?.focus();
     };
   }, [expanded]);
+  useEffect(() => {
+    if (!expanded) return;
+    const handleExpandedKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        close();
+        return;
+      }
+      if (event.key === 'Tab' && dialog.current && !dialog.current.contains(document.activeElement)) {
+        event.preventDefault();
+        const controls = [...dialog.current.querySelectorAll('button:not([disabled]), [tabindex="0"]')];
+        controls[event.shiftKey ? controls.length - 1 : 0]?.focus();
+      }
+    };
+    // Pointer interactions in WebKit can leave activeElement on BODY. A
+    // window listener keeps Escape and the next focus move inside the modal.
+    window.addEventListener('keydown', handleExpandedKeyDown);
+    return () => window.removeEventListener('keydown', handleExpandedKeyDown);
+  }, [expanded]);
   if (!selected) return null;
   const isVideo = (media) => /\.(?:mp4|webm|ogv)$/i.test(media.src);
   const media = (item, fitted = true) => isVideo(item)

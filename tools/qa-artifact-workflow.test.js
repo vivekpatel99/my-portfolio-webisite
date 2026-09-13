@@ -4,6 +4,13 @@ import { describe, expect, it } from 'vitest';
 const workflowPath = new URL('../.github/workflows/ci.yml', import.meta.url);
 
 describe('sanitized QA artifact workflow', () => {
+  it('keeps the browser container aligned with the locked Playwright version', async () => {
+    const workflow = await readFile(workflowPath, 'utf8');
+    const lockfile = JSON.parse(await readFile(new URL('../package-lock.json', import.meta.url), 'utf8'));
+    const browserVersion = lockfile.packages['node_modules/@playwright/test'].version;
+    expect(workflow).toContain(`container: mcr.microsoft.com/playwright:v${browserVersion}-noble`);
+  });
+
   it('runs the isolated fake telemetry boundary after browser installation in safe local-only mode', async () => {
     const workflow = await readFile(workflowPath, 'utf8');
     const browserInstall = workflow.indexOf('name: Install Playwright browsers');
