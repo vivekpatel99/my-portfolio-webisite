@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process';
+import { stripVTControlCharacters } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -16,7 +17,7 @@ function start(command, args, options) {
   };
   child.stdout.on('data', write);
   child.stderr.on('data', write);
-  return { child, getOutput: () => output };
+  return { child, getOutput: () => stripVTControlCharacters(output) };
 }
 
 function waitForLoopbackServer(server) {
@@ -91,6 +92,7 @@ try {
       env: {
         ...process.env,
         QA_LOCAL_ONLY: '1',
+        QA_ARTIFACT_SAFE_MODE: '1',
         QA_PREVIEW_URL: previewUrl,
         QA_FAKE_SENTRY: '1',
       },
