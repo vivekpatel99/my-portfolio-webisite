@@ -150,8 +150,13 @@ test('holds one pending submit, blocks duplicates, exposes failure, then retries
   });
 
   transport.releasePending('failure');
-  await expect(page.getByText('Submission Failed', { exact: true })).toBeVisible();
-  await expect(page.getByText(SYNTHETIC_FAILURE)).toBeVisible();
+  // Radix also copies the description to an off-screen live announcer.
+  // The visible toast contains a distinct title element; the announcer does not.
+  const failureToast = page.getByRole('status').filter({
+    has: page.getByText('Submission Failed', { exact: true }),
+  });
+  await expect(failureToast).toBeVisible();
+  await expect(failureToast).toContainText(SYNTHETIC_FAILURE);
   await expect(submit).toBeEnabled();
   await expect(page.getByLabel('Full Name *')).toHaveValue('Synthetic QA Contact');
   await expect(page.getByLabel('Email Address *')).toHaveValue('qa-contact@example.invalid');
