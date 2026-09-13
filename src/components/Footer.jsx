@@ -61,7 +61,7 @@ const Footer = () => {
                                         <Link
                                             to={link.href}
                                             onClick={link.onClick}
-                                            className="text-gray-400 hover:text-accent-purple transition-colors duration-300"
+                                            className="text-gray-400 hover:text-accent-purple-text transition-colors duration-300"
                                         >
                                             {link.name}
                                         </Link>
