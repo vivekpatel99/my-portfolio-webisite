@@ -173,8 +173,8 @@ still uses the existing compiler and ignored candidate directory.
 The 2026-09-13 library contains twelve reviewed-source drafts: three replacement
 stories preserving current website IDs and nine additional stories. Ten have
 historical completion months; invoice-core and healthcare identity/date mapping
-need confirmation. Four stories have source-project media; eight have clearly labelled workflow
-illustrations using synthetic data. These illustrations are not delivery evidence. The hub library's `docs/INVENTORY.md` and `catalog.json`
+need confirmation. Eight stories have source-project media; four have clearly labelled workflow
+illustrations using synthetic data. The library records exact original-media provenance. These illustrations are not delivery evidence. The hub library's `docs/INVENTORY.md` and `catalog.json`
 record coverage and open questions. No batch publication is implied.
 
 A multi-story local preview presents a review index at `/`, with each story at
