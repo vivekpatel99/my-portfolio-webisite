@@ -19,6 +19,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Trust the mounted checkout for repository checks
+        # Container Git sees the runner-mounted checkout under a different owner.
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
