@@ -1,8 +1,39 @@
+import { createHash } from 'node:crypto';
 import { lstatSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
+import { imageSize } from 'image-size';
 import { compileCaseStudyPublication, renderPublicCaseStudyModule } from '../publication/compile-case-studies.js';
+import { caseStudyThumbnailRegistry } from '../src/lib/caseStudyThumbnails.js';
 
 const normalize = (value) => path.resolve(value).split(path.sep).join('/');
+const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
+const thumbnailSourceFor = (thumbnailPath) => Object.entries(caseStudyThumbnailRegistry)
+  .find(([, entry]) => entry.src === thumbnailPath)?.[0];
+const assertRegularAsset = (assetPath, publicPath) => {
+  const info = lstatSync(assetPath);
+  if (!info.isFile() || info.isSymbolicLink()) throw new Error(`Case-study delivery asset must be a regular file: ${publicPath}`);
+};
+export const assertThumbnailDimensions = (dimensions, thumbnailPath) => {
+  if (String(dimensions.type).toLowerCase() !== 'jpg' || dimensions.width > 320 || dimensions.height > 320) {
+    throw new Error(`Case-study thumbnail must be a JPEG no larger than 320px on either edge: ${thumbnailPath}`);
+  }
+};
+export const assertThumbnailBinding = (publicDirectory, thumbnailPath) => {
+  const sourcePath = thumbnailSourceFor(thumbnailPath);
+  if (!sourcePath) return;
+  const entry = caseStudyThumbnailRegistry[sourcePath];
+  const sourceFile = path.join(publicDirectory, sourcePath.replace(/^\//, ''));
+  const thumbnailFile = path.join(publicDirectory, thumbnailPath.replace(/^\//, ''));
+  assertRegularAsset(sourceFile, sourcePath);
+  assertRegularAsset(thumbnailFile, thumbnailPath);
+  const sourceBytes = readFileSync(sourceFile);
+  const thumbnailBytes = readFileSync(thumbnailFile);
+  if (digest(sourceBytes) !== entry.sourceSha256) throw new Error(`Case-study thumbnail source changed without updating its registry: ${sourcePath}`);
+  if (digest(thumbnailBytes) !== entry.thumbnailSha256) throw new Error(`Case-study thumbnail changed without updating its registry: ${thumbnailPath}`);
+  let dimensions;
+  try { dimensions = imageSize(thumbnailBytes); } catch { throw new Error(`Case-study thumbnail is not a valid image: ${thumbnailPath}`); }
+  assertThumbnailDimensions(dimensions, thumbnailPath);
+};
 const referencedAssetUrls = (publication) => publication.flatMap((record) => {
   const urls = [record.image, ...(record.gallery ?? [])]
     .flatMap((media) => [media?.src, media?.poster].filter(Boolean));
@@ -14,6 +45,13 @@ const referencedAssetUrls = (publication) => publication.flatMap((record) => {
   (record.sections ?? []).forEach((section) => walk(section.nodes));
   return urls;
 });
+const referencedDeliveryUrls = (publication) => {
+  const referenced = referencedAssetUrls(publication);
+  return new Set([
+    ...referenced,
+    ...referenced.map((publicPath) => caseStudyThumbnailRegistry[publicPath]?.src).filter(Boolean),
+  ]);
+};
 
 const copyPublicFiles = (plugin, directory, relative = '') => {
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
@@ -59,11 +97,12 @@ export default function caseStudyPublicationPlugin({ root = process.cwd() } = {}
             || (pathname.startsWith('/@fs/') && pathname.includes('/public/assets/case-studies/'));
           if (pathname.startsWith('/assets/case-studies/') || rawCaseStudyAlias) {
             const publication = compileCaseStudyPublication({ root: projectRoot });
-            const referenced = new Set(referencedAssetUrls(publication));
+            const referenced = referencedDeliveryUrls(publication);
             if (rawCaseStudyAlias || !referenced.has(pathname)) {
               response.statusCode = 404;
               return response.end();
             }
+            assertThumbnailBinding(path.join(projectRoot, 'public'), pathname);
           }
           next();
         } catch (error) { next(error); }
@@ -87,10 +126,13 @@ export default function caseStudyPublicationPlugin({ root = process.cwd() } = {}
       }
       copyPublicFiles(this, publicDirectory);
       const publication = compileCaseStudyPublication({ root: projectRoot });
-      const referencedAssets = new Set(referencedAssetUrls(publication));
+      const referencedAssets = referencedDeliveryUrls(publication);
       for (const publicPath of referencedAssets) {
         const relative = publicPath.replace(/^\//, '');
-        this.emitFile({ type: 'asset', fileName: relative, source: readFileSync(path.join(publicDirectory, relative)) });
+        const assetPath = path.join(publicDirectory, relative);
+        assertRegularAsset(assetPath, publicPath);
+        assertThumbnailBinding(publicDirectory, publicPath);
+        this.emitFile({ type: 'asset', fileName: relative, source: readFileSync(assetPath) });
       }
       const template = readFileSync(path.join(publicDirectory, '.htaccess'), 'utf8');
       this.emitFile({ type: 'asset', fileName: '.htaccess', source: deploymentHtaccess(template, publication.map((record) => record.slug)) });

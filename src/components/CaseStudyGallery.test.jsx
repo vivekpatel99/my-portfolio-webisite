@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { compileCaseStudyPublication } from '../../publication/compile-case-studies.js';
-import Gallery, { collectGalleryImages } from './CaseStudyGallery.js';
+import Gallery, { collectGalleryImages, galleryThumbnailSrc } from './CaseStudyGallery.js';
 afterEach(cleanup);
 const images = ['Input', 'Output', 'Workflow'].map((alt, i) => ({ src: `/image-${i}.png`, alt, width: 800, height: 600 }));
 describe('case study gallery', () => {
@@ -66,6 +66,29 @@ describe('case study gallery', () => {
     const renderedVideo = container.querySelector('video');
     expect(renderedVideo?.getAttribute('src')).toBe(video.src);
     expect(renderedVideo?.getAttribute('poster')).toBe(video.poster);
+  });
+  it('uses bounded case-study derivatives for previews and keeps synthetic URLs unchanged', () => {
+    expect(galleryThumbnailSrc({ src: '/assets/case-studies/n8n-excel-to-json.png' }))
+      .toBe('/assets/case-studies/n8n-excel-to-json-thumb.jpg');
+    expect(galleryThumbnailSrc({ src: '/assets/case-studies/yoga-pose.webp' }))
+      .toBe('/assets/case-studies/yoga-pose-thumb.jpg');
+    expect(galleryThumbnailSrc({ src: '/assets/case-studies/n8n-excel-to-json.png', poster: '/preview.webp' }))
+      .toBe('/assets/case-studies/n8n-excel-to-json-thumb.jpg');
+    expect(galleryThumbnailSrc({ src: '/image-0.png', poster: '/preview.webp' })).toBe('/preview.webp');
+    expect(galleryThumbnailSrc({ src: '/image-0.png' })).toBe('/image-0.png');
+  });
+  it('keeps the selected stage on the original while thumbnails use derivatives', () => {
+    const selected = { src: '/assets/case-studies/n8n-excel-to-json.png', alt: 'Excel workflow', width: 3400, height: 955 };
+    const other = { src: '/assets/case-studies/n8n-table-to-json.png', alt: 'Table workflow', width: 2645, height: 967 };
+    const { container } = render(<Gallery images={[selected, other]} />);
+    expect(container.querySelector('.case-gallery-open img')?.getAttribute('src')).toBe(selected.src);
+    expect([...container.querySelectorAll('.case-gallery-thumbnail img')].map((image) => image.getAttribute('src')))
+      .toEqual([
+        '/assets/case-studies/n8n-excel-to-json-thumb.jpg',
+        '/assets/case-studies/n8n-table-to-json-thumb.jpg',
+      ]);
+    fireEvent.click(screen.getByRole('button', { name: 'Show image 2: Table workflow' }));
+    expect(container.querySelector('.case-gallery-open img')?.getAttribute('src')).toBe(other.src);
   });
   it('leaves arrow keys to focused video controls', () => {
     const video = { src: '/football-tracking.mp4', poster: '/football-tracking.webp', alt: 'Tracked football players' };

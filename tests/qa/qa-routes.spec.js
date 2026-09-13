@@ -23,6 +23,40 @@ test.describe('Route rendering', () => {
   }
 });
 
+test('multi-image gallery uses bounded previews and loads selected originals on demand', async ({ page }) => {
+  const requests = [];
+  page.on('request', (request) => requests.push(request.url()));
+  await page.goto('/project/n8n-openai-data-extraction/');
+
+  const gallery = page.getByRole('region', { name: 'Case study images' });
+  const thumbnails = gallery.locator('.case-gallery-thumbnail img');
+  await expect(thumbnails).toHaveCount(6);
+  for (let i = 0; i < await thumbnails.count(); i++) await thumbnails.nth(i).scrollIntoViewIfNeeded();
+  await expect.poll(() => thumbnails.evaluateAll((elements) => elements.every((element) => element.complete && element.naturalWidth > 0))).toBe(true);
+  const thumbnailSources = await thumbnails.evaluateAll((elements) => elements.map((element) => element.currentSrc || element.src));
+  const thumbnailWidths = await thumbnails.evaluateAll((elements) => elements.map((element) => element.naturalWidth));
+  expect(thumbnailWidths.every((width) => width > 0 && width <= 320)).toBe(true);
+  expect(thumbnailSources).toEqual([
+    '/assets/case-studies/n8n-data-extraction-thumb.jpg',
+    '/assets/case-studies/n8n-data-processor-thumb.jpg',
+    '/assets/case-studies/n8n-excel-to-json-thumb.jpg',
+    '/assets/case-studies/n8n-table-to-json-thumb.jpg',
+    '/assets/case-studies/n8n-error-handler-thumb.jpg',
+    '/assets/case-studies/n8n-error-notifier-thumb.jpg',
+  ].map((source) => new URL(source, page.url()).href));
+
+  const originals = [
+    'n8n-data-extraction.png', 'n8n-data-processor.png', 'n8n-excel-to-json.png',
+    'n8n-table-to-json.png', 'n8n-error-handler.png', 'n8n-error-notifier.png',
+  ].map((name) => new URL(`/assets/case-studies/${name}`, page.url()).href);
+  const requestedOriginals = () => [...new Set(requests.filter((url) => originals.includes(url)))];
+  await expect.poll(requestedOriginals).toEqual([originals[0]]);
+
+  await gallery.getByRole('button', { name: 'Show image 2: Data processor routing Excel, CSV and HTML tables' }).click();
+  await expect(gallery.locator('.case-gallery-open img')).toHaveAttribute('src', '/assets/case-studies/n8n-data-processor.png');
+  await expect.poll(requestedOriginals).toEqual([originals[0], originals[1]]);
+});
+
 test('unknown route renders a noindex 404 page', async ({ page }) => {
   await page.goto('/foo-bar-baz');
   await expect(page).toHaveURL(/\/foo-bar-baz$/);
