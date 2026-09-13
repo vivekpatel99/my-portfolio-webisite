@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { galleryThumbnailSrc } from '../lib/caseStudyThumbnails.js';
 const h = React.createElement;
+export { galleryThumbnailSrc };
 
 export function collectGalleryImages(story) {
   const images = [];
@@ -88,7 +90,7 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
     })
     : h('img', { src: item.src, alt: item.alt, width: item.width, height: item.height });
   const preview = (item, loading = 'lazy') => h('img', {
-    src: item.poster || item.src,
+    src: galleryThumbnailSrc(item),
     alt: item.poster ? item.alt : '',
     width: item.width,
     height: item.height,
