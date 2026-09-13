@@ -2,7 +2,7 @@ import { expect, test } from './qa-test.js';
 import { caseStudies, featuredCaseStudies } from '../../src/data/caseStudies.js';
 
 const cardFor = (caseStudy) => ({
-  cardName: `Read case study: ${caseStudy.title}`,
+  cardName: `Read case study: ${caseStudy.cardTitle || caseStudy.title}`,
   path: `/project/${caseStudy.slug}`,
   heading: caseStudy.title,
 });
