@@ -1,6 +1,6 @@
 # Case-study authoring and local preview
 
-Author a story in the hub's `case-studies/` directory, then pass each selected
+Author a story in the hub's `website-case-studies/` library, then pass each selected
 file explicitly to the preparation command. Preparation writes only the ignored
 `.case-study-preview/candidate.json` candidate; it does not approve or publish
 anything.
@@ -129,10 +129,10 @@ projection.
 
 Only records with publication status `published` enter the validated public
 projection used by article routes. The shared `eligibleCaseStudies` export
-contains only records whose public `projectStatus` is explicitly `completed`
-and whose public `completedAt` is a valid `YYYY-MM` value; missing metadata and
-`ongoing` records remain available for article and withdrawal controls but are
-excluded from collection cards and homepage counts.
+contains only records whose public `projectStatus` is explicitly `completed`; `ongoing` and status-unknown records remain available for article and withdrawal controls but are
+excluded from collection cards and homepage counts. The retained legacy records
+may be owner-confirmed completed without a month. New Markdown articles still
+require a valid `completed_at` month with completed status.
 
 Homepage cards use the build-only `publication/case-study-featured.js` slug
 configuration. The selector keeps configured order, ignores unavailable or
@@ -159,3 +159,25 @@ release verification must check the withdrawn URL, its assets, sitemap, and
 route status. Do not treat a successful preparation or build as proof that a
 live URL changed. If deployment outcome is uncertain, inspect the actual
 hosting state before retrying.
+
+
+## Library shortcuts and current preparation batch
+
+Use `npm run case-study:library -- list --directory /path/to/website-case-studies`
+to discover editable stories. `new` creates an ID-named Markdown template and
+its assets directory without overwriting existing stories. `prepare --id ID`
+selects one story, repeated IDs select a batch, and `prepare --all` validates
+the whole directory. Sources must be outside the website repository; preparation
+still uses the existing compiler and ignored candidate directory.
+
+The 2026-09-13 library contains twelve reviewed-source drafts: three replacement
+stories preserving current website IDs and nine additional stories. Ten have
+historical completion months; invoice-core and healthcare identity/date mapping
+need confirmation. Eight stories have source-project media; four have clearly labelled workflow
+illustrations using synthetic data. The library records exact original-media provenance. These illustrations are not delivery evidence. The hub library's `docs/INVENTORY.md` and `catalog.json`
+record coverage and open questions. No batch publication is implied.
+
+A multi-story local preview presents a review index at `/`, with each story at
+`/project/<slug>/`. The review index is noindex and is not the public collection.
+Client-attractiveness ranking will be decided in a separate session; the current
+public ordering is unchanged by preparing this library.

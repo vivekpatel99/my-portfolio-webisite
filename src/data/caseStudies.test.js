@@ -13,14 +13,14 @@ describe('caseStudies data structure', () => {
 
   it('derives the collection set and count from completed project status', () => {
     expect(eligibleCaseStudyCount).toBe(eligibleCaseStudies.length);
-    expect(eligibleCaseStudies).toEqual(caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed' && caseStudy.completedAt));
-    expect(eligibleCaseStudies.every((caseStudy) => caseStudy.projectStatus === 'completed' && caseStudy.completedAt)).toBe(true);
+    expect(eligibleCaseStudies).toEqual(caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed'));
+    expect(eligibleCaseStudies.every((caseStudy) => caseStudy.projectStatus === 'completed')).toBe(true);
   });
 
   it('sorts the collection projection while preserving homepage feature order', () => {
     expect(collectionCaseStudies).toEqual(eligibleCaseStudies.slice().sort((left, right) => {
-      const leftMonth = left.completedAt.replace('-', '');
-      const rightMonth = right.completedAt.replace('-', '');
+      const leftMonth = (left.completedAt ?? '').replace('-', '');
+      const rightMonth = (right.completedAt ?? '').replace('-', '');
       // ASCII comparison on purpose: matches compareSlugs in src/lib/caseStudyCollection.js, not locale collation.
       const ascii = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
       return ascii(rightMonth, leftMonth) || ascii(left.slug, right.slug);

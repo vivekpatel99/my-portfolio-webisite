@@ -104,7 +104,7 @@ test('portfolio cards navigate to internal case studies', async ({ page }) => {
   await page.locator('#portfolio').scrollIntoViewIfNeeded();
   await expect(page.getByRole('link', { name: /Read case study:/i })).toHaveCount(featuredCaseStudies.length);
   if (featuredCaseStudies.length > 0) {
-    const firstFeaturedCard = page.getByRole('link', { name: `Read case study: ${featuredCaseStudies[0].title}`, exact: true });
+    const firstFeaturedCard = page.getByRole('link', { name: `Read case study: ${featuredCaseStudies[0].cardTitle || featuredCaseStudies[0].title}`, exact: true });
     await expect(firstFeaturedCard).toBeVisible();
     await firstFeaturedCard.click();
     await expect(page).toHaveURL(new RegExp(`/project/${featuredCaseStudies[0].slug}/?$`));

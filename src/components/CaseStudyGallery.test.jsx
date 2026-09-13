@@ -14,7 +14,7 @@ describe('case study gallery', () => {
     expect(story.gallery).toHaveLength(2);
     expect(collectGalleryImages(story).map(({ src }) => src)).toEqual([
       '/assets/case-studies/invoice-ocr.webp',
-      '/assets/case-studies/planning-graph.webp',
+      '/assets/case-studies/invoice-ocr-excel-results.png',
     ]);
   });
   it('collects only story images in order and deduplicates by source', () => {

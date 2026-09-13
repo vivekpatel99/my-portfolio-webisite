@@ -19,7 +19,8 @@
     "case-study:preview": "node tools/preview-case-study.js",
     "convex:dev": "convex dev",
     "convex:smoke": "node tools/convex-smoke-test.mjs",
-    "test": "vitest run"
+    "test": "vitest run",
+    "case-study:library": "node tools/case-study-library.js"
   },
   "dependencies": {
     "@babel/traverse": "^7.26.4",

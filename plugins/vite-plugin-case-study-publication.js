@@ -4,7 +4,8 @@ import { compileCaseStudyPublication, renderPublicCaseStudyModule } from '../pub
 
 const normalize = (value) => path.resolve(value).split(path.sep).join('/');
 const referencedAssetUrls = (publication) => publication.flatMap((record) => {
-  const urls = record.image?.src ? [record.image.src] : [];
+  const urls = [record.image, ...(record.gallery ?? [])]
+    .flatMap((media) => [media?.src, media?.poster].filter(Boolean));
   const walk = (nodes) => (nodes ?? []).forEach((node) => {
     if (node.type === 'image') urls.push(node.src);
     if (node.children) walk(node.children);
