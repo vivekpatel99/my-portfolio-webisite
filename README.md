@@ -26,7 +26,8 @@ Set `VITE_CONVEX_URL` in `.env.local` when you want the contact form to talk to 
 | `npm test` | Run Vitest unit tests, including Convex tests through `convex-test`. |
 | `npm run qa:seo` | Check route SEO metadata for preview and production targets. |
 | `npm run qa:playwright:passive` | Run passive Playwright QA across configured preview and production projects. |
-| `npm run qa:playwright:ci` | Run the preview desktop/mobile Playwright subset used by CI. |
+| `npm run qa:playwright:ci` | Run Chromium preview QA plus desktop/mobile WebKit focus regressions (set `QA_LOCAL_ONLY=1`). |
+| `npm run qa:contact-lifecycle` | Start an isolated local server and test contact pending/failure/retry with an in-memory transport. |
 | `npm run qa:playwright:live-contact` | Opt-in live contact-form QA. This can create real Convex leads and send email. |
 | `npm run convex:dev` | Start Convex local/dev workflow. |
 | `npm run convex:smoke` | Submit a marked smoke-test lead to `VITE_CONVEX_URL`. This can trigger email if Resend is configured. |
@@ -229,6 +230,13 @@ Set `QA_LOCAL_ONLY=1` for CI-safe preview QA. It accepts only a loopback preview
 
 Those controls apply only to local-only projects. Manual passive production checks and the existing opt-in live-contact workflow keep their separate, explicit controls; the fake-Sentry check fulfills its `telemetry.invalid` requests in memory at page scope.
 
+`npm run qa:contact-lifecycle` always blocks external HTTP traffic and fulfills its
+synthetic Convex WebSocket in memory. It starts its own server on loopback port
+4192 in development mode, refuses to reuse an occupied port, and keeps a separate Vite cache. Its
+report goes to `playwright-output/contact-lifecycle/`, which is not uploaded and
+does not overwrite the passive report. This test verifies the browser's form
+lifecycle; backend validation and email delivery remain separate checks.
+
 CI runs its preview-only suite with `QA_ARTIFACT_SAFE_MODE=1`. It reconstructs and retains only `qa-artifacts/summary.json` and `qa-artifacts/failure-results.json` for seven days. Those documents contain fixed suite/project labels, result-count enums, bounded source lines, test ordinals, one-based attempt/retry indices, and capped durations. The sanitizer rejects any other staged file before the upload action runs.
 
 Native screenshots, videos, storage state, Playwright trace archives, raw JSON reports, raw logs, and `error-context.md` files are intentionally excluded from retention because they cannot be proved redacted. Safe mode disables Playwright's configured screenshot, trace, video, and storage-state capture; runner-created raw files can still exist in the job workspace but are never upload candidates. Run `npm run qa:artifacts:verify` to reconstruct and inspect the synthetic hostile failure fixture locally. The CI scope uses synthetic invalid/non-deliverable test data only: it does not submit a valid contact request, visit production, deploy, or retain valid contact data, credentials, secrets, environment files, or repository source.
@@ -262,8 +270,10 @@ CI in `.github/workflows/ci.yml`:
 - Validates fresh build output.
 - Checks that built files do not contain Supabase, local backend, or placeholder backend strings.
 - Ensures `dist/` is not tracked.
-- Installs Chromium.
-- Runs SEO and passive Playwright QA against preview.
+- Uses a Playwright container matched to the locked test version for browser libraries, then installs Chromium and WebKit without updating runner package mirrors.
+- Runs SEO, Chromium preview QA, and focused WebKit regressions against preview.
+- Runs isolated fake telemetry boundary QA.
+- Runs `npm run qa:contact-lifecycle` against an isolated local server with an in-memory contact transport; this checks pending, duplicate submission, failure, retry, and form reset without delivering a lead.
 
 `dist/` is generated output and should not be committed.
 

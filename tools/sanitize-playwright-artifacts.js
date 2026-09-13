@@ -17,6 +17,7 @@ const suites = Object.freeze({
   'qa-a11y.spec.js': { label: 'accessibility' },
   'qa-contact.spec.js': { label: 'contact-validation' },
   'qa-edge.spec.js': { label: 'edge-behavior' },
+  'qa-focus.spec.js': { label: 'focus-regressions' },
   'qa-local-navigation.spec.js': { label: 'local-navigation' },
   'qa-responsive.spec.js': { label: 'responsive-layout' },
   'qa-routes.spec.js': { label: 'routing' },
@@ -27,6 +28,8 @@ const suites = Object.freeze({
 const projects = Object.freeze({
   'preview-desktop': 'preview-desktop',
   'preview-mobile': 'preview-mobile',
+  'preview-webkit-desktop': 'preview-webkit-desktop',
+  'preview-webkit-mobile': 'preview-webkit-mobile',
 });
 
 const outcomes = Object.freeze({
