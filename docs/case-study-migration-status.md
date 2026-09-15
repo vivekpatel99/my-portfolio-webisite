@@ -1,5 +1,7 @@
 # Case-study migration status
 
+> Historical six-story batch: superseded by the twelve-story library staged for local review on 2026-09-15 under issue #112. Production release remains separate. See [the owner guide](case-study-owner-guide.md).
+
 CS06 batch A and CS07 batch B have normalized local copies and patches prepared through the existing Markdown pipeline. The live hub sources remain unchanged. These records are drafts pending content/publication approval; no screenshot is selected, and optional later media would require separate approval.
 
 | Source | Proposed ID / slug | Image choice | Draft preview | Publication readiness |
