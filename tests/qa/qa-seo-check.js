@@ -1,6 +1,7 @@
 import { execFileSync } from 'child_process';
 import { readFileSync, existsSync } from 'fs';
 import path from 'path';
+import { caseStudies } from '../../publication/public-case-studies.js';
 import { resolveLoopbackRedirectUrl, resolveQaTargets } from './qa-local-only.js';
 
 const PREVIEW = process.env.QA_PREVIEW_URL ?? 'http://127.0.0.1:3000';
@@ -33,24 +34,12 @@ const expectedRoutes = [
     canonical: 'https://www.vivekapatel.com/data-policy/',
     title: /Cookie Policy/i,
   },
-  {
-    route: 'project-n8n',
-    path: '/project/n8n-openai-data-extraction',
-    canonical: 'https://www.vivekapatel.com/project/n8n-openai-data-extraction/',
-    title: /n8n \+ OpenAI Data Extraction/i,
-  },
-  {
-    route: 'project-invoice-ocr',
-    path: '/project/invoice-ocr-extraction',
-    canonical: 'https://www.vivekapatel.com/project/invoice-ocr-extraction/',
-    title: /Invoice OCR Extraction/i,
-  },
-  {
-    route: 'project-yolo',
-    path: '/project/yolo-computer-vision-optimization',
-    canonical: 'https://www.vivekapatel.com/project/yolo-computer-vision-optimization/',
-    title: /YOLO Computer Vision Optimization/i,
-  },
+  ...caseStudies.map((story) => ({
+    route: `project-${story.slug}`,
+    path: `/project/${story.slug}`,
+    canonical: `https://www.vivekapatel.com/project/${story.slug}/`,
+    title: new RegExp(story.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'),
+  })),
 ];
 
 const previewPath = (pathSuffix) => pathSuffix === '/' ? '/' : `${pathSuffix}/`;

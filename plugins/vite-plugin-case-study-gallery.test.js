@@ -2,8 +2,15 @@
 import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import publicationPlugin, { assertThumbnailBinding, assertThumbnailDimensions, assertThumbnailFilenameHash } from './vite-plugin-case-study-publication.js';
+
+// Legacy asset fixtures stay independent of the current staged content library.
+vi.mock('../publication/compile-case-studies.js', async (importOriginal) => {
+  const actual = await importOriginal();
+  const { caseStudyPublicationBaseline } = await import('../publication/case-study-manifest.js');
+  return { ...actual, compileCaseStudyPublication: (options = {}) => actual.compileCaseStudyPublication({ ...options, manifest: caseStudyPublicationBaseline }) };
+});
 
 describe('gallery asset delivery', () => {
   it('emits gallery-only images and excludes unrelated retained assets', () => {

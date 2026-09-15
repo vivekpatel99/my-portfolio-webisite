@@ -5,12 +5,13 @@ import { readFileSync } from 'node:fs';
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { compileCaseStudyPublication } from '../../publication/compile-case-studies.js';
+import { caseStudyPublicationBaseline } from '../../publication/case-study-manifest.js';
 import Gallery, { collectGalleryImages, galleryThumbnailSrc } from './CaseStudyGallery.js';
 afterEach(cleanup);
 const images = ['Input', 'Output', 'Workflow'].map((alt, i) => ({ src: `/image-${i}.png`, alt, width: 800, height: 600 }));
 describe('case study gallery', () => {
   it('collects approved legacy gallery images from the public record', () => {
-    const story = compileCaseStudyPublication().find(({ slug }) => slug === 'invoice-ocr-extraction');
+    const story = compileCaseStudyPublication({ manifest: caseStudyPublicationBaseline }).find(({ slug }) => slug === 'invoice-ocr-extraction');
     expect(story.gallery).toHaveLength(2);
     expect(collectGalleryImages(story).map(({ src }) => src)).toEqual([
       '/assets/case-studies/invoice-ocr.webp',
