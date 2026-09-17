@@ -263,3 +263,25 @@ test('case-study article renders sober sections without legacy stats panels', as
   await expect(page.getByRole('heading', { name: 'The outcome' })).toBeVisible();
   await expect(page.locator('#stats-section')).toHaveCount(0);
 });
+
+test('contact validation notice leaves cookie controls visible on tablet and desktop', async ({ page }) => {
+  await reducedMotion(page);
+  for (const width of [640, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/contact/');
+    await page.addStyleTag({ content: '*, *::before, *::after { animation: none !important; transition: none !important; }' });
+    const cookie = page.getByRole('dialog', { name: 'We value your privacy' });
+    await expect(cookie).toBeVisible();
+    await page.getByRole('button', { name: 'Request a Project Estimate', exact: true }).click();
+    const message = page.getByText('Uh oh! Missing fields.', { exact: true }).first();
+    await expect(message).toBeVisible();
+    const notice = message.locator('xpath=ancestor::li[1]');
+    await settleLayout(page);
+    assertVisualLayout({
+      label: 'contact validation notice',
+      box: await notice.boundingBox(),
+      viewport: viewportBox(page),
+      avoid: [{ label: 'cookie consent controls', box: await cookie.boundingBox() }],
+    });
+  }
+});
