@@ -20,8 +20,8 @@ const initialVisibleCount = (storyCount) => {
   return Math.min(loadedCount, storyCount);
 };
 
-// Only the page count is remembered. Scroll position is left to the browser: a position saved
-// here would be stale as soon as the visitor scrolls on and leaves by another route.
+// Native back/forward keeps browser scroll restoration. Explicit article returns use
+// a position captured at article navigation, rather than the earlier Load more position.
 const persistLoadedPage = (loadedCount) => {
   if (typeof history === 'undefined' || typeof history.replaceState !== 'function') return;
   history.replaceState({ ...historyRecord(), loadedCount }, '');
@@ -55,9 +55,9 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
   const visibleStories = stories.slice(0, visibleCount);
   const hasMore = visibleCount < stories.length;
 
-  const persistBrowsingState = (loadedCount = visibleCount) => {
+  const persistBrowsingState = (loadedCount = visibleCount, scrollY = 0) => {
     const savedState = saveBrowsingState(
-      { loadedCount, scrollY: 0 },
+      { loadedCount, scrollY },
       { eligibleCount: stories.length },
     );
     if (typeof window !== 'undefined') {
@@ -80,6 +80,11 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
     return undefined;
   }, [initialState]);
 
+  useEffect(() => {
+    if (!resumeRequested) return;
+    window.scrollTo({ top: initialState.scrollY, left: 0, behavior: 'instant' });
+  }, [initialState, resumeRequested]);
+
   if (stories.length === 0) {
     return React.createElement(
       React.Fragment,
@@ -99,7 +104,7 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
       return next;
     });
   };
-  const saveBeforeArticle = () => persistBrowsingState();
+  const saveBeforeArticle = () => persistBrowsingState(visibleCount, window.scrollY);
   const status = React.createElement(
     'p',
     { role: 'status', 'aria-live': 'polite', className: 'mb-6 text-sm text-gray-400' },

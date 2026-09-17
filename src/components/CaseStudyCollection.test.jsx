@@ -130,6 +130,7 @@ describe('CaseStudyCollection', () => {
   });
 
   it('resume=1 with history snapshot prefers snapshot over stale session', () => {
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
     const stories20 = Array.from({ length: 20 }, (_, index) => ({
       slug: `resume-${index}`,
       title: `Resume synthetic story ${index}`,
@@ -150,6 +151,8 @@ describe('CaseStudyCollection', () => {
 
     expect(screen.getAllByRole('article')).toHaveLength(12);
     expect(window.history.state.caseStudyCollection).toEqual({ loadedCount: 12, scrollY: 420 });
+    expect(scrollTo).toHaveBeenCalledWith({ top: 420, left: 0, behavior: 'instant' });
+    scrollTo.mockRestore();
   });
 
   it('persists browsing state on pointerdown and auxclick before navigation', () => {
@@ -167,6 +170,21 @@ describe('CaseStudyCollection', () => {
 
     link.dispatchEvent(new MouseEvent('auxclick', { bubbles: true, cancelable: true, button: 1 }));
     expect(JSON.parse(window.sessionStorage.getItem(CASE_STUDY_BROWSING_STORAGE_KEY))).toEqual({ loadedCount: 6, scrollY: 0 });
+  });
+
+  it('captures the current position when opening a card and restores it on explicit return', () => {
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    const scrollY = vi.spyOn(window, 'scrollY', 'get').mockReturnValue(1260);
+    const first = render(<MemoryRouter><CaseStudyCollection stories={manyStories(12)} /></MemoryRouter>);
+    const link = screen.getAllByRole('link', { name: /read case study/i })[0];
+    link.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+    expect(JSON.parse(sessionStorage.getItem(CASE_STUDY_BROWSING_STORAGE_KEY)).scrollY).toBe(1260);
+    first.unmount();
+    history.replaceState({}, '');
+    render(<MemoryRouter initialEntries={['/case-studies/?resume=1']}><CaseStudyCollection stories={manyStories(12)} /></MemoryRouter>);
+    expect(scrollTo).toHaveBeenCalledWith({ top: 1260, left: 0, behavior: 'instant' });
+    scrollY.mockRestore();
+    scrollTo.mockRestore();
   });
 
   it('does not write history on scroll', () => {
