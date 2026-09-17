@@ -50,7 +50,10 @@ const renderBlocks = (nodes, keyPrefix) => nodes.map((node, index) => {
 
 export const CaseStudyArticle = ({ story, backHref = '/#portfolio' }) => React.createElement(
   'article', { className: 'case-study-article' },
-  React.createElement('a', { className: 'case-study-back', href: backHref }, '← View case studies'),
+  React.createElement('nav', { className: 'case-study-navigation', 'aria-label': 'Case study navigation' },
+    React.createElement('a', { className: 'case-study-back', href: backHref }, '← View case studies'),
+    React.createElement('a', { className: 'case-study-home', href: '/' }, 'Back to home'),
+  ),
   story.category ? React.createElement('p', { className: 'case-study-category' }, story.category) : null,
   React.createElement('h1', null, story.title),
   React.createElement('p', { className: 'case-study-summary' }, story.summary),

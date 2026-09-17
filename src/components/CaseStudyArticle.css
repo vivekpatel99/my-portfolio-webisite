@@ -14,7 +14,11 @@
 
 .case-study-back,
 .case-study-article a { color: #c8abea; text-decoration: none; }
-.case-study-back { display: inline-block; margin-bottom: 34px; font-size: 13px; }
+.case-study-navigation { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-bottom: 32px; }
+.case-study-article .case-study-back { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 20px; border: 1px solid rgb(124 58 237 / .4); border-radius: 9999px; color: #fff; font-size: 14px; font-weight: 500; transition: background-color .2s, border-color .2s; }
+.case-study-article .case-study-back:hover { background: rgb(124 58 237 / .1); border-color: #7c3aed; text-decoration: none; }
+.case-study-article .case-study-home { display: inline-flex; align-items: center; min-height: 44px; color: #a78bfa; font-size: 14px; }
+.case-study-navigation a:focus-visible { outline: 2px solid #a78bfa; outline-offset: 4px; }
 .case-study-article a:hover,
 .case-study-article a:focus-visible { color: #eee5ff; text-decoration: underline; }
 .case-study-category { margin: 0 0 12px; color: #bca2db; font-size: 12px; letter-spacing: .4px; }
