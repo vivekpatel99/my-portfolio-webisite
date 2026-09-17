@@ -4,7 +4,7 @@
 import React from 'react';
 import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, useLocation } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -184,6 +184,22 @@ describe('CaseStudyCollection', () => {
     render(<MemoryRouter initialEntries={['/case-studies/?resume=1']}><CaseStudyCollection stories={manyStories(12)} /></MemoryRouter>);
     expect(scrollTo).toHaveBeenCalledWith({ top: 1260, left: 0, behavior: 'instant' });
     scrollY.mockRestore();
+    scrollTo.mockRestore();
+  });
+
+  it('consumes explicit resume without losing unrelated URL parameters', () => {
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    sessionStorage.setItem(CASE_STUDY_BROWSING_STORAGE_KEY, JSON.stringify({ loadedCount: 12, scrollY: 1260 }));
+    const Location = () => {
+      const location = useLocation();
+      return <output data-testid="collection-location">{location.pathname}{location.search}{location.hash}</output>;
+    };
+    render(<MemoryRouter initialEntries={['/case-studies/?resume=1&source=test#collection']}>
+      <CaseStudyCollection stories={manyStories(12)} /><Location />
+    </MemoryRouter>);
+    expect(screen.getByTestId('collection-location').textContent).toBe('/case-studies/?source=test#collection');
+    expect(scrollTo).toHaveBeenCalledTimes(1);
+    expect(history.state.loadedCount).toBe(12);
     scrollTo.mockRestore();
   });
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useState } from 'react';
-import { useLocation, useNavigationType } from 'react-router-dom';
+import { useLocation, useNavigate, useNavigationType } from 'react-router-dom';
 import { collectionCaseStudies } from '../data/caseStudies.js';
 import {
   getInitialBrowsingState,
@@ -29,6 +29,7 @@ const persistLoadedPage = (loadedCount) => {
 
 const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const navigationType = useNavigationType();
   const resumeRequested = new URLSearchParams(location.search).get('resume') === '1';
   const restorableEntry = resumeRequested || (
@@ -83,7 +84,12 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
   useEffect(() => {
     if (!resumeRequested) return;
     window.scrollTo({ top: initialState.scrollY, left: 0, behavior: 'instant' });
-  }, [initialState, resumeRequested]);
+    const params = new URLSearchParams(location.search);
+    params.delete('resume');
+    const search = params.toString();
+    navigate({ pathname: location.pathname, search: search ? `?${search}` : '', hash: location.hash }, { replace: true, state: location.state });
+    window.history.replaceState({ ...window.history.state, loadedCount: initialState.loadedCount, caseStudyCollection: initialState }, '');
+  }, [initialState, resumeRequested, location, navigate]);
 
   if (stories.length === 0) {
     return React.createElement(
