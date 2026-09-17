@@ -116,6 +116,11 @@ test('form inputs have associated labels', async ({ page }) => {
 });
 
 test('normal-size purple text and links meet contrast in rendered states', async ({ page }) => {
+  // Consent geometry is tested separately; its delayed appearance must not move
+  // the pointer off the link whose hover colour this test measures.
+  await page.addInitScript(() => {
+    localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false }));
+  });
   await page.goto('/');
   const price = page.getByText('Starting at €80/hour', { exact: true });
   const priceBackground = await price.evaluate((element) => {
@@ -132,11 +137,14 @@ test('normal-size purple text and links meet contrast in rendered states', async
   expect(priceBackground?.alpha, 'Hero price badge should be opaque over the image').toBe(1);
   await expectRenderedContrast(price, 'Hero price');
 
-  const cardLink = page.locator('a.text-accent-purple-text').first();
-  await expectRenderedContrast(cardLink, 'Case study card link');
-  await cardLink.hover();
-  await expectRenderedForeground(cardLink, 'Case study card link should finish its hover transition', '255,255,255');
-  await expectRenderedContrast(cardLink, 'Case study card link on hover');
+  const cardLabel = page.locator('#portfolio article').first().locator('a.text-accent-purple-text, span.text-accent-purple-text').first();
+  await expectRenderedContrast(cardLabel, 'Case study card action label');
+  // Private client projects may use a static Read case study label instead of an external link.
+  if (await cardLabel.evaluate((element) => element.tagName === 'A')) {
+    await cardLabel.hover();
+    await expectRenderedForeground(cardLabel, 'Case study card link should finish its hover transition', '255,255,255');
+    await expectRenderedContrast(cardLabel, 'Case study card link on hover');
+  }
 
   const portfolioLink = page.getByRole('link', { name: /View all case studies/ });
   await expectRenderedContrast(portfolioLink, 'Portfolio collection link');
