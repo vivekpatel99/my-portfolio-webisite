@@ -79,3 +79,19 @@ describe('case-study preview renderer', () => {
     expect(assertLocalPreviewDirectory('.case-study-preview/test-output')).toContain('.case-study-preview/test-output');
   });
 });
+
+ it('removes an empty screenshot heading when its images move to the gallery', () => {
+  const image = { type: 'image', src: '/screenshot.png', alt: 'Sample project screenshot', width: 800, height: 600 };
+  const heading = (value) => ({ type: 'heading', level: 3, children: [{ type: 'text', value }] });
+  const article = { ...story, sections: [{ key: 'outcome', heading: 'The outcome', nodes: [
+    heading('Useful details'),
+    { type: 'paragraph', children: [{ type: 'text', value: 'Delivered workflow details.' }] },
+    heading('Project screenshots'),
+    { type: 'paragraph', children: [image] },
+  ] }] };
+  const html = renderToStaticMarkup(React.createElement(CaseStudyArticle, { story: article }));
+  expect(html).not.toContain('Project screenshots');
+  expect(html).toContain('Useful details');
+  expect(html).toContain('Delivered workflow details.');
+  expect(html).toContain('/screenshot.png');
+ });

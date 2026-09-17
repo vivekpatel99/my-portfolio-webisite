@@ -14,7 +14,10 @@ const withoutImages = (nodes) => nodes.flatMap((node) => {
     if (!copy.items.length) return [];
   }
   return [copy];
-});
+}).filter((node, index, remaining) => (
+  node.type !== 'heading'
+  || (index + 1 < remaining.length && (remaining[index + 1].type !== 'heading' || remaining[index + 1].level > node.level))
+));
 
 const renderInline = (nodes, keyPrefix) => nodes.map((node, index) => {
   const key = `${keyPrefix}-inline-${index}`;
