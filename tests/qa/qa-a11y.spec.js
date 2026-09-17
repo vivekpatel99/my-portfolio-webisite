@@ -148,8 +148,15 @@ test('normal-size purple text and links meet contrast in rendered states', async
 
   const portfolioLink = page.getByRole('link', { name: /View all case studies/ });
   await expectRenderedContrast(portfolioLink, 'Portfolio collection link');
-  await portfolioLink.hover();
-  await expectRenderedForeground(portfolioLink, 'Portfolio collection link should finish its hover transition', '255,255,255');
+  await expect.poll(async () => {
+    // Reacquire the actual link after scrolling/layout settles on the CI browser.
+    await portfolioLink.hover();
+    return {
+      hovered: await portfolioLink.evaluate((element) => element.matches(':hover')),
+      foreground: (await renderedContrast(portfolioLink)).foreground.join(','),
+    };
+  }, { message: 'Portfolio collection link must be hovered and finish its colour transition' })
+    .toEqual({ hovered: true, foreground: '255,255,255' });
   await expectRenderedContrast(portfolioLink, 'Portfolio collection link on hover');
   await page.mouse.move(0, 0);
   await portfolioLink.focus();
