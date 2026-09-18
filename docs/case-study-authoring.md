@@ -1,5 +1,7 @@
 # Case-study authoring and local preview
 
+For everyday editing, start with [the step-by-step owner guide](case-study-owner-guide.md).
+
 Author a story in the hub's `website-case-studies/` library, then pass each selected
 file explicitly to the preparation command. Preparation writes only the ignored
 `.case-study-preview/candidate.json` candidate; it does not approve or publish

@@ -14,7 +14,10 @@ const withoutImages = (nodes) => nodes.flatMap((node) => {
     if (!copy.items.length) return [];
   }
   return [copy];
-});
+}).filter((node, index, remaining) => (
+  node.type !== 'heading'
+  || (index + 1 < remaining.length && (remaining[index + 1].type !== 'heading' || remaining[index + 1].level > node.level))
+));
 
 const renderInline = (nodes, keyPrefix) => nodes.map((node, index) => {
   const key = `${keyPrefix}-inline-${index}`;
@@ -50,7 +53,10 @@ const renderBlocks = (nodes, keyPrefix) => nodes.map((node, index) => {
 
 export const CaseStudyArticle = ({ story, backHref = '/#portfolio' }) => React.createElement(
   'article', { className: 'case-study-article' },
-  React.createElement('a', { className: 'case-study-back', href: backHref }, '← View case studies'),
+  React.createElement('nav', { className: 'case-study-navigation', 'aria-label': 'Case study navigation' },
+    React.createElement('a', { className: 'case-study-back', href: backHref }, '← View case studies'),
+    React.createElement('a', { className: 'case-study-home', href: '/' }, 'Back to home'),
+  ),
   story.category ? React.createElement('p', { className: 'case-study-category' }, story.category) : null,
   React.createElement('h1', null, story.title),
   React.createElement('p', { className: 'case-study-summary' }, story.summary),

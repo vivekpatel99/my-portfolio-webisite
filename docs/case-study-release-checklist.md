@@ -1,5 +1,7 @@
 # Case-study release checklist
 
+> Historical six-story batch: superseded by the twelve-story library staged for local review on 2026-09-15 under issue #112. Production release remains separate. See [the owner guide](case-study-owner-guide.md).
+
 This is a finite handoff for a separately authorized production release. The
 current six local stories are metadata-only draft dispositions; none has
 publication approval or a live URL.

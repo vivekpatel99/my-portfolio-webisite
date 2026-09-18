@@ -72,6 +72,7 @@ function buildFixture() {
   const directory = mkdtempSync(path.join(realpathSync(tmpdir()), 'case-study-publication-fixture-'));
   outputDirectories.push(directory);
   for (const source of ['src', 'public', 'publication', 'plugins', 'tools', 'convex']) cpSync(source, path.join(directory, source), { recursive: true });
+  writeFileSync(path.join(directory, 'publication/staged-case-study-publication.js'), 'export const stagedCaseStudyPublication = { "records": [], "claims": {}, "assets": {} };\n');
   const assetDirectory = path.join(directory, 'public/assets/case-studies');
   rmSync(assetDirectory, { recursive: true, force: true });
   mkdirSync(assetDirectory, { recursive: true });

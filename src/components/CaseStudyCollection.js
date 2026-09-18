@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useState } from 'react';
-import { useLocation, useNavigationType } from 'react-router-dom';
+import { useLocation, useNavigate, useNavigationType } from 'react-router-dom';
 import { collectionCaseStudies } from '../data/caseStudies.js';
 import {
   getInitialBrowsingState,
@@ -20,8 +20,8 @@ const initialVisibleCount = (storyCount) => {
   return Math.min(loadedCount, storyCount);
 };
 
-// Only the page count is remembered. Scroll position is left to the browser: a position saved
-// here would be stale as soon as the visitor scrolls on and leaves by another route.
+// Native back/forward keeps browser scroll restoration. Explicit article returns use
+// a position captured at article navigation, rather than the earlier Load more position.
 const persistLoadedPage = (loadedCount) => {
   if (typeof history === 'undefined' || typeof history.replaceState !== 'function') return;
   history.replaceState({ ...historyRecord(), loadedCount }, '');
@@ -29,6 +29,7 @@ const persistLoadedPage = (loadedCount) => {
 
 const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const navigationType = useNavigationType();
   const resumeRequested = new URLSearchParams(location.search).get('resume') === '1';
   const restorableEntry = resumeRequested || (
@@ -55,9 +56,9 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
   const visibleStories = stories.slice(0, visibleCount);
   const hasMore = visibleCount < stories.length;
 
-  const persistBrowsingState = (loadedCount = visibleCount) => {
+  const persistBrowsingState = (loadedCount = visibleCount, scrollY = 0) => {
     const savedState = saveBrowsingState(
-      { loadedCount, scrollY: 0 },
+      { loadedCount, scrollY },
       { eligibleCount: stories.length },
     );
     if (typeof window !== 'undefined') {
@@ -80,6 +81,16 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
     return undefined;
   }, [initialState]);
 
+  useEffect(() => {
+    if (!resumeRequested) return;
+    window.scrollTo({ top: initialState.scrollY, left: 0, behavior: 'instant' });
+    const params = new URLSearchParams(location.search);
+    params.delete('resume');
+    const search = params.toString();
+    navigate({ pathname: location.pathname, search: search ? `?${search}` : '', hash: location.hash }, { replace: true, state: location.state });
+    window.history.replaceState({ ...window.history.state, loadedCount: initialState.loadedCount, caseStudyCollection: initialState }, '');
+  }, [initialState, resumeRequested, location, navigate]);
+
   if (stories.length === 0) {
     return React.createElement(
       React.Fragment,
@@ -99,7 +110,7 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
       return next;
     });
   };
-  const saveBeforeArticle = () => persistBrowsingState();
+  const saveBeforeArticle = () => persistBrowsingState(visibleCount, window.scrollY);
   const status = React.createElement(
     'p',
     { role: 'status', 'aria-live': 'polite', className: 'mb-6 text-sm text-gray-400' },

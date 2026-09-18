@@ -4,7 +4,7 @@
 import React from 'react';
 import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, useLocation } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -130,6 +130,7 @@ describe('CaseStudyCollection', () => {
   });
 
   it('resume=1 with history snapshot prefers snapshot over stale session', () => {
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
     const stories20 = Array.from({ length: 20 }, (_, index) => ({
       slug: `resume-${index}`,
       title: `Resume synthetic story ${index}`,
@@ -150,6 +151,8 @@ describe('CaseStudyCollection', () => {
 
     expect(screen.getAllByRole('article')).toHaveLength(12);
     expect(window.history.state.caseStudyCollection).toEqual({ loadedCount: 12, scrollY: 420 });
+    expect(scrollTo).toHaveBeenCalledWith({ top: 420, left: 0, behavior: 'instant' });
+    scrollTo.mockRestore();
   });
 
   it('persists browsing state on pointerdown and auxclick before navigation', () => {
@@ -167,6 +170,37 @@ describe('CaseStudyCollection', () => {
 
     link.dispatchEvent(new MouseEvent('auxclick', { bubbles: true, cancelable: true, button: 1 }));
     expect(JSON.parse(window.sessionStorage.getItem(CASE_STUDY_BROWSING_STORAGE_KEY))).toEqual({ loadedCount: 6, scrollY: 0 });
+  });
+
+  it('captures the current position when opening a card and restores it on explicit return', () => {
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    const scrollY = vi.spyOn(window, 'scrollY', 'get').mockReturnValue(1260);
+    const first = render(<MemoryRouter><CaseStudyCollection stories={manyStories(12)} /></MemoryRouter>);
+    const link = screen.getAllByRole('link', { name: /read case study/i })[0];
+    link.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+    expect(JSON.parse(sessionStorage.getItem(CASE_STUDY_BROWSING_STORAGE_KEY)).scrollY).toBe(1260);
+    first.unmount();
+    history.replaceState({}, '');
+    render(<MemoryRouter initialEntries={['/case-studies/?resume=1']}><CaseStudyCollection stories={manyStories(12)} /></MemoryRouter>);
+    expect(scrollTo).toHaveBeenCalledWith({ top: 1260, left: 0, behavior: 'instant' });
+    scrollY.mockRestore();
+    scrollTo.mockRestore();
+  });
+
+  it('consumes explicit resume without losing unrelated URL parameters', () => {
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    sessionStorage.setItem(CASE_STUDY_BROWSING_STORAGE_KEY, JSON.stringify({ loadedCount: 12, scrollY: 1260 }));
+    const Location = () => {
+      const location = useLocation();
+      return <output data-testid="collection-location">{location.pathname}{location.search}{location.hash}</output>;
+    };
+    render(<MemoryRouter initialEntries={['/case-studies/?resume=1&source=test#collection']}>
+      <CaseStudyCollection stories={manyStories(12)} /><Location />
+    </MemoryRouter>);
+    expect(screen.getByTestId('collection-location').textContent).toBe('/case-studies/?source=test#collection');
+    expect(scrollTo).toHaveBeenCalledTimes(1);
+    expect(history.state.loadedCount).toBe(12);
+    scrollTo.mockRestore();
   });
 
   it('does not write history on scroll', () => {
