@@ -85,3 +85,18 @@ describe('case-study screenshot publication', () => {
     expect(readFileSync(path.join(outputDirectory, 'candidate.json'), 'utf8')).toBe(prior);
   });
 });
+
+it('keeps capture metadata out of staged public PNG screenshots', async () => {
+  const { stagedCaseStudyPublication } = await import('./staged-case-study-publication.js');
+  const pngs = Object.values(stagedCaseStudyPublication.assets).filter((asset) => asset.format === 'png');
+  expect(pngs.length).toBeGreaterThan(0);
+  for (const asset of pngs) {
+    const bytes = readFileSync(asset.file);
+    for (let offset = 8; offset < bytes.length;) {
+      const length = bytes.readUInt32BE(offset);
+      const type = bytes.toString('ascii', offset + 4, offset + 8);
+      expect(['tEXt', 'zTXt', 'iTXt', 'eXIf', 'tIME'], asset.file).not.toContain(type);
+      offset += length + 12;
+    }
+  }
+});

@@ -675,11 +675,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "22f1ddf53438268b278a2555a0ad0b9c80ade39ddd6e092449c588d20789b27a",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "sha256": "eb1253544d890ea6c9b96195fe60db69f1d72d58ba134a59495ba29a575d0068",
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
       },
       "claimRefs": {
         "summary": "healthcare-document-intelligence.summary",
@@ -830,7 +830,7 @@ export const stagedCaseStudyPublication = {
           }
         ],
         "image": {
-          "src": "/assets/case-studies/healthcare-document-intelligence-b251586b0b3f44c95d309a31e58782ec98357246ca84f97691fadbd2dcf41aa5.png",
+          "src": "/assets/case-studies/healthcare-document-intelligence-1973dd984be94a7a4a1ec9581d8ef3499be61acaa93d44680156e0f3c3d60151.png",
           "alt": "Original schedule PDF extractor implementation",
           "caption": "Original schedule PDF extractor implementation",
           "width": 1098,
@@ -845,11 +845,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "6030a57105095d2e1bf10c907044627118375fe555da86e8c7ea9f5bbcc36b54",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "sha256": "79ef286a17849a6bf3340e56e1dfcda2b4c8b106253dfbbb362845be94a3ac0c",
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
       },
       "claimRefs": {
         "summary": "invoice-ocr-extraction.summary",
@@ -972,7 +972,7 @@ export const stagedCaseStudyPublication = {
                 "children": [
                   {
                     "type": "image",
-                    "src": "/assets/case-studies/invoice-ocr-extraction-30d08f427ad9dd6098464b4c1d28d180232ec3531b3e016853a3c605083fa9ad.png",
+                    "src": "/assets/case-studies/invoice-ocr-extraction-95e609aecb33ad070dee910b85f165354eabe1f4bb078fb909ff467552183d4d.png",
                     "alt": "Spreadsheet output with source filenames and extracted client fields",
                     "width": 1068,
                     "height": 436
@@ -1012,11 +1012,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "79b8b8fa362fa44b480bccf10d263a3b131bf6f88c22787351c1d9db60a75426",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "sha256": "748f6bbacf0fb845a8edba5ffdc023cb719c01974871a215d079b3151aa26ebf",
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
       },
       "claimRefs": {
         "summary": "n8n-openai-data-extraction.summary",
@@ -1139,7 +1139,7 @@ export const stagedCaseStudyPublication = {
                 "children": [
                   {
                     "type": "image",
-                    "src": "/assets/case-studies/n8n-openai-data-extraction-72c334f819d00fb872bea5cdb429e07a540b18794a627f758d0c8e092cb84636.png",
+                    "src": "/assets/case-studies/n8n-openai-data-extraction-7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b.png",
                     "alt": "Data processor routing Excel, CSV and HTML tables",
                     "width": 1679,
                     "height": 981
@@ -1151,7 +1151,7 @@ export const stagedCaseStudyPublication = {
                 "children": [
                   {
                     "type": "image",
-                    "src": "/assets/case-studies/n8n-openai-data-extraction-ab7acc351c8af2d032a4d05ae75422e15cf54d079409eed67150dc28dd352178.png",
+                    "src": "/assets/case-studies/n8n-openai-data-extraction-ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338.png",
                     "alt": "Excel workbook extraction and conversion to JSON",
                     "width": 3400,
                     "height": 955
@@ -1163,7 +1163,7 @@ export const stagedCaseStudyPublication = {
                 "children": [
                   {
                     "type": "image",
-                    "src": "/assets/case-studies/n8n-openai-data-extraction-bfb52b84274b63e55d99682c1ecaebcee0a1498b63dc6b9590c295b2b57f040c.png",
+                    "src": "/assets/case-studies/n8n-openai-data-extraction-f60a6d00c4e80b105fe22f03ddd6d500689c0d956a85ff4457e6f11cd14d27f7.png",
                     "alt": "Table normalization, schema generation and tagging workflow",
                     "width": 2645,
                     "height": 967
@@ -1175,7 +1175,7 @@ export const stagedCaseStudyPublication = {
                 "children": [
                   {
                     "type": "image",
-                    "src": "/assets/case-studies/n8n-openai-data-extraction-753a3e00357784381e121fd6593d4a054f0f6380cfb172eccd4702665ad9856e.png",
+                    "src": "/assets/case-studies/n8n-openai-data-extraction-3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66.png",
                     "alt": "Error classification and structured logging workflow",
                     "width": 1142,
                     "height": 923
@@ -1187,7 +1187,7 @@ export const stagedCaseStudyPublication = {
                 "children": [
                   {
                     "type": "image",
-                    "src": "/assets/case-studies/n8n-openai-data-extraction-7ceb0c200e091088b91c199e7f4eb910deb8e83ce796644c3efce238ebca5b80.png",
+                    "src": "/assets/case-studies/n8n-openai-data-extraction-489e4160aa64c5141e750196c0de330320839b345c2f9aaa28137cce795f9275.png",
                     "alt": "Fatal workflow error notification setup",
                     "width": 1702,
                     "height": 1063
@@ -1213,7 +1213,7 @@ export const stagedCaseStudyPublication = {
           }
         ],
         "image": {
-          "src": "/assets/case-studies/n8n-openai-data-extraction-e6fbcc7caa954b217adfa063990d460059e44d08808ad85c9e8988418920104c.png",
+          "src": "/assets/case-studies/n8n-openai-data-extraction-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png",
           "alt": "Main n8n workflow for discovering and extracting website datasets",
           "width": 2984,
           "height": 874
@@ -1397,11 +1397,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "63b0f93b01c70ced9f02ecf085835efa78a83058422138469341572f11f160d0",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "sha256": "52a044a115545038a6197e98b200329e1f1e76b8424219556b2d978639ee8048",
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
       },
       "claimRefs": {
         "summary": "python-ci-workflow-automation.summary",
@@ -1530,7 +1530,7 @@ export const stagedCaseStudyPublication = {
                 "children": [
                   {
                     "type": "text",
-                    "value": "The toolkit makes code-quality workflow logic easier to inspect and test as ordinary Python. It demonstrates developer-tooling and workflow integration work. It does not establish an independently measured coverage rate, productivity gain or autonomous review accuracy. Client source remains private; publication approval for this anonymous description is still a separate review step."
+                    "value": "The toolkit makes code-quality workflow logic easier to inspect and test as ordinary Python. It demonstrates developer-tooling and workflow integration work. It does not establish an independently measured coverage rate, productivity gain or autonomous review accuracy. Client source remains private."
                   }
                 ]
               }
@@ -2315,132 +2315,6 @@ export const stagedCaseStudyPublication = {
         "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
       }
     },
-    "healthcare-document-intelligence.summary": {
-      "type": "content",
-      "recordId": "healthcare-document-intelligence",
-      "placement": "summary",
-      "value": "A Python document extractor converts calendar grids and highlight colors into structured scheduling-preference rows.",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "507f2088f0c322e7f1ad94c24b09dd455f97083602a165faf39dccd016b45fde",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "healthcare-document-intelligence.outcome": {
-      "type": "content",
-      "recordId": "healthcare-document-intelligence",
-      "placement": "outcome",
-      "value": {
-        "key": "outcome",
-        "heading": "The outcome",
-        "nodes": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "text",
-                "value": "The extractor produces rows a scheduling coordinator can compare with the source calendar. Unknown colors and unreadable cells are not guessed. This is operational document processing, not a clinical decision system. No measured accuracy figure is claimed."
-              }
-            ]
-          }
-        ]
-      },
-      "approval": {
-        "kind": "explicit",
-        "sha256": "e033e0063a84b397e0b5d70ced6a0283088d31b4cb2e8bbf5a5333340b475519",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "invoice-ocr-extraction.summary": {
-      "type": "content",
-      "recordId": "invoice-ocr-extraction",
-      "placement": "summary",
-      "value": "A local Python OCR tool that reads client details from invoice photos and exports spreadsheet rows linked to the original files.",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "dd25204959450f8575efc8c57f57ddb5334c0b7f3af887d0cb9d606bfc8f6fd3",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "invoice-ocr-extraction.outcome": {
-      "type": "content",
-      "recordId": "invoice-ocr-extraction",
-      "placement": "outcome",
-      "value": {
-        "key": "outcome",
-        "heading": "The outcome",
-        "nodes": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "text",
-                "value": "The handoff turns invoice photos into structured client-field rows that a person can check against the original image. It is useful for a repeatable document layout and a local batch workflow. It is not a general invoice platform: new layouts need parser changes, and the delivered scope does not include automated seller-block extraction or a measured accuracy guarantee."
-              }
-            ]
-          }
-        ]
-      },
-      "approval": {
-        "kind": "explicit",
-        "sha256": "d3d9fcb084dd3941ee0541a5d9bfd919cc6f3c6a27809fdfd2828a9da08fcee9",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "n8n-openai-data-extraction.summary": {
-      "type": "content",
-      "recordId": "n8n-openai-data-extraction",
-      "placement": "summary",
-      "value": "A website-data extraction workflow that discovers downloadable datasets, normalizes their structure, and produces JSON for downstream use.",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "7f7d64db8d23a194ff49b6941f1a5324bb673734f926f07bae68930eb3493828",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "n8n-openai-data-extraction.outcome": {
-      "type": "content",
-      "recordId": "n8n-openai-data-extraction",
-      "placement": "outcome",
-      "value": {
-        "key": "outcome",
-        "heading": "The outcome",
-        "nodes": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "text",
-                "value": "The project provides a reusable path from website sources to structured datasets, with processing and error-handling steps that can be inspected and adapted. It fits teams collecting recurring external data for analysis or internal tools. Source-specific changes can still require adjustment; no measured coverage, accuracy or time-saving figure is claimed."
-              }
-            ]
-          }
-        ]
-      },
-      "approval": {
-        "kind": "explicit",
-        "sha256": "77885ae5fb59f7570f1943b26397370b15b80ae99a1750d92d221141ab0679fd",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
     "n8n-python-ai-agents.summary": {
       "type": "content",
       "recordId": "n8n-python-ai-agents",
@@ -2477,48 +2351,6 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "184db62cb14392483d107afd580d2d9893fc8b18c1f738a2935374c5caddb78d",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "python-ci-workflow-automation.summary": {
-      "type": "content",
-      "recordId": "python-ci-workflow-automation",
-      "placement": "summary",
-      "value": "A Python toolkit organizes linting, review generation and repository workflow steps behind reusable commands.",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "e86e7c40d4bc19a7294dd1284d3ab8b50d70900682c8d31380ae5f0691261880",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "python-ci-workflow-automation.outcome": {
-      "type": "content",
-      "recordId": "python-ci-workflow-automation",
-      "placement": "outcome",
-      "value": {
-        "key": "outcome",
-        "heading": "The outcome",
-        "nodes": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "text",
-                "value": "The toolkit makes code-quality workflow logic easier to inspect and test as ordinary Python. It demonstrates developer-tooling and workflow integration work. It does not establish an independently measured coverage rate, productivity gain or autonomous review accuracy. Client source remains private; publication approval for this anonymous description is still a separate review step."
-              }
-            ]
-          }
-        ]
-      },
-      "approval": {
-        "kind": "explicit",
-        "sha256": "53612c20235c482a5829adadb3f8e1d5c07f264689c2e98b7ad92970d7df28c0",
         "approvedBy": "Viv",
         "approvedAt": "2026-09-15T08:45:57.100Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
@@ -2650,6 +2482,174 @@ export const stagedCaseStudyPublication = {
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
         "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
       }
+    },
+    "healthcare-document-intelligence.summary": {
+      "type": "content",
+      "recordId": "healthcare-document-intelligence",
+      "placement": "summary",
+      "value": "A Python document extractor converts calendar grids and highlight colors into structured scheduling-preference rows.",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "507f2088f0c322e7f1ad94c24b09dd455f97083602a165faf39dccd016b45fde",
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+      }
+    },
+    "healthcare-document-intelligence.outcome": {
+      "type": "content",
+      "recordId": "healthcare-document-intelligence",
+      "placement": "outcome",
+      "value": {
+        "key": "outcome",
+        "heading": "The outcome",
+        "nodes": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "text",
+                "value": "The extractor produces rows a scheduling coordinator can compare with the source calendar. Unknown colors and unreadable cells are not guessed. This is operational document processing, not a clinical decision system. No measured accuracy figure is claimed."
+              }
+            ]
+          }
+        ]
+      },
+      "approval": {
+        "kind": "explicit",
+        "sha256": "e033e0063a84b397e0b5d70ced6a0283088d31b4cb2e8bbf5a5333340b475519",
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+      }
+    },
+    "invoice-ocr-extraction.summary": {
+      "type": "content",
+      "recordId": "invoice-ocr-extraction",
+      "placement": "summary",
+      "value": "A local Python OCR tool that reads client details from invoice photos and exports spreadsheet rows linked to the original files.",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "dd25204959450f8575efc8c57f57ddb5334c0b7f3af887d0cb9d606bfc8f6fd3",
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+      }
+    },
+    "invoice-ocr-extraction.outcome": {
+      "type": "content",
+      "recordId": "invoice-ocr-extraction",
+      "placement": "outcome",
+      "value": {
+        "key": "outcome",
+        "heading": "The outcome",
+        "nodes": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "text",
+                "value": "The handoff turns invoice photos into structured client-field rows that a person can check against the original image. It is useful for a repeatable document layout and a local batch workflow. It is not a general invoice platform: new layouts need parser changes, and the delivered scope does not include automated seller-block extraction or a measured accuracy guarantee."
+              }
+            ]
+          }
+        ]
+      },
+      "approval": {
+        "kind": "explicit",
+        "sha256": "d3d9fcb084dd3941ee0541a5d9bfd919cc6f3c6a27809fdfd2828a9da08fcee9",
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+      }
+    },
+    "n8n-openai-data-extraction.summary": {
+      "type": "content",
+      "recordId": "n8n-openai-data-extraction",
+      "placement": "summary",
+      "value": "A website-data extraction workflow that discovers downloadable datasets, normalizes their structure, and produces JSON for downstream use.",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "7f7d64db8d23a194ff49b6941f1a5324bb673734f926f07bae68930eb3493828",
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+      }
+    },
+    "n8n-openai-data-extraction.outcome": {
+      "type": "content",
+      "recordId": "n8n-openai-data-extraction",
+      "placement": "outcome",
+      "value": {
+        "key": "outcome",
+        "heading": "The outcome",
+        "nodes": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "text",
+                "value": "The project provides a reusable path from website sources to structured datasets, with processing and error-handling steps that can be inspected and adapted. It fits teams collecting recurring external data for analysis or internal tools. Source-specific changes can still require adjustment; no measured coverage, accuracy or time-saving figure is claimed."
+              }
+            ]
+          }
+        ]
+      },
+      "approval": {
+        "kind": "explicit",
+        "sha256": "77885ae5fb59f7570f1943b26397370b15b80ae99a1750d92d221141ab0679fd",
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+      }
+    },
+    "python-ci-workflow-automation.summary": {
+      "type": "content",
+      "recordId": "python-ci-workflow-automation",
+      "placement": "summary",
+      "value": "A Python toolkit organizes linting, review generation and repository workflow steps behind reusable commands.",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "e86e7c40d4bc19a7294dd1284d3ab8b50d70900682c8d31380ae5f0691261880",
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+      }
+    },
+    "python-ci-workflow-automation.outcome": {
+      "type": "content",
+      "recordId": "python-ci-workflow-automation",
+      "placement": "outcome",
+      "value": {
+        "key": "outcome",
+        "heading": "The outcome",
+        "nodes": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "text",
+                "value": "The toolkit makes code-quality workflow logic easier to inspect and test as ordinary Python. It demonstrates developer-tooling and workflow integration work. It does not establish an independently measured coverage rate, productivity gain or autonomous review accuracy. Client source remains private."
+              }
+            ]
+          }
+        ]
+      },
+      "approval": {
+        "kind": "explicit",
+        "sha256": "b7d4661d69d44582e6c5dbc0ddc20f9dcd9c8c88f856647ef9f08230a55cb831",
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+      }
     }
   },
   "assets": {
@@ -2709,20 +2709,6 @@ export const stagedCaseStudyPublication = {
         "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
       }
     },
-    "/assets/case-studies/healthcare-document-intelligence-b251586b0b3f44c95d309a31e58782ec98357246ca84f97691fadbd2dcf41aa5.png": {
-      "file": "public/assets/case-studies/healthcare-document-intelligence-b251586b0b3f44c95d309a31e58782ec98357246ca84f97691fadbd2dcf41aa5.png",
-      "width": 1098,
-      "height": 1524,
-      "format": "png",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "b251586b0b3f44c95d309a31e58782ec98357246ca84f97691fadbd2dcf41aa5",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
     "/assets/case-studies/invoice-ocr-extraction-e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4.webp": {
       "file": "public/assets/case-studies/invoice-ocr-extraction-e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4.webp",
       "width": 1654,
@@ -2731,108 +2717,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "/assets/case-studies/invoice-ocr-extraction-30d08f427ad9dd6098464b4c1d28d180232ec3531b3e016853a3c605083fa9ad.png": {
-      "file": "public/assets/case-studies/invoice-ocr-extraction-30d08f427ad9dd6098464b4c1d28d180232ec3531b3e016853a3c605083fa9ad.png",
-      "width": 1068,
-      "height": 436,
-      "format": "png",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "30d08f427ad9dd6098464b4c1d28d180232ec3531b3e016853a3c605083fa9ad",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "/assets/case-studies/n8n-openai-data-extraction-e6fbcc7caa954b217adfa063990d460059e44d08808ad85c9e8988418920104c.png": {
-      "file": "public/assets/case-studies/n8n-openai-data-extraction-e6fbcc7caa954b217adfa063990d460059e44d08808ad85c9e8988418920104c.png",
-      "width": 2984,
-      "height": 874,
-      "format": "png",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "e6fbcc7caa954b217adfa063990d460059e44d08808ad85c9e8988418920104c",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "/assets/case-studies/n8n-openai-data-extraction-72c334f819d00fb872bea5cdb429e07a540b18794a627f758d0c8e092cb84636.png": {
-      "file": "public/assets/case-studies/n8n-openai-data-extraction-72c334f819d00fb872bea5cdb429e07a540b18794a627f758d0c8e092cb84636.png",
-      "width": 1679,
-      "height": 981,
-      "format": "png",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "72c334f819d00fb872bea5cdb429e07a540b18794a627f758d0c8e092cb84636",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "/assets/case-studies/n8n-openai-data-extraction-ab7acc351c8af2d032a4d05ae75422e15cf54d079409eed67150dc28dd352178.png": {
-      "file": "public/assets/case-studies/n8n-openai-data-extraction-ab7acc351c8af2d032a4d05ae75422e15cf54d079409eed67150dc28dd352178.png",
-      "width": 3400,
-      "height": 955,
-      "format": "png",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "ab7acc351c8af2d032a4d05ae75422e15cf54d079409eed67150dc28dd352178",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "/assets/case-studies/n8n-openai-data-extraction-bfb52b84274b63e55d99682c1ecaebcee0a1498b63dc6b9590c295b2b57f040c.png": {
-      "file": "public/assets/case-studies/n8n-openai-data-extraction-bfb52b84274b63e55d99682c1ecaebcee0a1498b63dc6b9590c295b2b57f040c.png",
-      "width": 2645,
-      "height": 967,
-      "format": "png",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "bfb52b84274b63e55d99682c1ecaebcee0a1498b63dc6b9590c295b2b57f040c",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "/assets/case-studies/n8n-openai-data-extraction-753a3e00357784381e121fd6593d4a054f0f6380cfb172eccd4702665ad9856e.png": {
-      "file": "public/assets/case-studies/n8n-openai-data-extraction-753a3e00357784381e121fd6593d4a054f0f6380cfb172eccd4702665ad9856e.png",
-      "width": 1142,
-      "height": 923,
-      "format": "png",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "753a3e00357784381e121fd6593d4a054f0f6380cfb172eccd4702665ad9856e",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "/assets/case-studies/n8n-openai-data-extraction-7ceb0c200e091088b91c199e7f4eb910deb8e83ce796644c3efce238ebca5b80.png": {
-      "file": "public/assets/case-studies/n8n-openai-data-extraction-7ceb0c200e091088b91c199e7f4eb910deb8e83ce796644c3efce238ebca5b80.png",
-      "width": 1702,
-      "height": 1063,
-      "format": "png",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "7ceb0c200e091088b91c199e7f4eb910deb8e83ce796644c3efce238ebca5b80",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
       }
     },
     "/assets/case-studies/n8n-python-ai-agents-e542384f4f7532d230440cb9a68e0e7e66d951996959221225633fc5304b08b7.png": {
@@ -2857,10 +2745,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "56604f4ca9c885dd7813eeae3f980cd4a41adec78bd54bf1f0b0cc6afefe4379",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
       }
     },
     "/assets/case-studies/resumable-listing-data-extraction-33538185e8421a6764d2dfea45ce0491c255c37346b372d5efd7c99c75dc53be.png": {
@@ -3029,6 +2917,118 @@ export const stagedCaseStudyPublication = {
         "approvedAt": "2026-09-15T08:45:57.100Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
         "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+      }
+    },
+    "/assets/case-studies/healthcare-document-intelligence-1973dd984be94a7a4a1ec9581d8ef3499be61acaa93d44680156e0f3c3d60151.png": {
+      "file": "public/assets/case-studies/healthcare-document-intelligence-1973dd984be94a7a4a1ec9581d8ef3499be61acaa93d44680156e0f3c3d60151.png",
+      "width": 1098,
+      "height": 1524,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "1973dd984be94a7a4a1ec9581d8ef3499be61acaa93d44680156e0f3c3d60151",
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+      }
+    },
+    "/assets/case-studies/invoice-ocr-extraction-95e609aecb33ad070dee910b85f165354eabe1f4bb078fb909ff467552183d4d.png": {
+      "file": "public/assets/case-studies/invoice-ocr-extraction-95e609aecb33ad070dee910b85f165354eabe1f4bb078fb909ff467552183d4d.png",
+      "width": 1068,
+      "height": 436,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "95e609aecb33ad070dee910b85f165354eabe1f4bb078fb909ff467552183d4d",
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+      }
+    },
+    "/assets/case-studies/n8n-openai-data-extraction-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png": {
+      "file": "public/assets/case-studies/n8n-openai-data-extraction-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png",
+      "width": 2984,
+      "height": 874,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82",
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+      }
+    },
+    "/assets/case-studies/n8n-openai-data-extraction-7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b.png": {
+      "file": "public/assets/case-studies/n8n-openai-data-extraction-7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b.png",
+      "width": 1679,
+      "height": 981,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b",
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+      }
+    },
+    "/assets/case-studies/n8n-openai-data-extraction-ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338.png": {
+      "file": "public/assets/case-studies/n8n-openai-data-extraction-ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338.png",
+      "width": 3400,
+      "height": 955,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338",
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+      }
+    },
+    "/assets/case-studies/n8n-openai-data-extraction-f60a6d00c4e80b105fe22f03ddd6d500689c0d956a85ff4457e6f11cd14d27f7.png": {
+      "file": "public/assets/case-studies/n8n-openai-data-extraction-f60a6d00c4e80b105fe22f03ddd6d500689c0d956a85ff4457e6f11cd14d27f7.png",
+      "width": 2645,
+      "height": 967,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "f60a6d00c4e80b105fe22f03ddd6d500689c0d956a85ff4457e6f11cd14d27f7",
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+      }
+    },
+    "/assets/case-studies/n8n-openai-data-extraction-3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66.png": {
+      "file": "public/assets/case-studies/n8n-openai-data-extraction-3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66.png",
+      "width": 1142,
+      "height": 923,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66",
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+      }
+    },
+    "/assets/case-studies/n8n-openai-data-extraction-489e4160aa64c5141e750196c0de330320839b345c2f9aaa28137cce795f9275.png": {
+      "file": "public/assets/case-studies/n8n-openai-data-extraction-489e4160aa64c5141e750196c0de330320839b345c2f9aaa28137cce795f9275.png",
+      "width": 1702,
+      "height": 1063,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "489e4160aa64c5141e750196c0de330320839b345c2f9aaa28137cce795f9275",
+        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
+        "approvedAt": "2026-09-18T05:09:30.263Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
       }
     }
   }
