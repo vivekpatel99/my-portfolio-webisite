@@ -1,6 +1,12 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 import path from 'path';
+import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { StaticRouter } from 'react-router-dom/server.js';
 import { absoluteUrl, routeSeo, SITE_NAME } from '../src/lib/seoConfig.js';
+import { getCaseStudyBySlug } from '../src/data/caseStudies.js';
+import CaseStudyArticle from '../src/components/CaseStudyArticle.js';
+import CaseStudiesContent from '../src/components/CaseStudiesContent.js';
 import {
   assertCaseStudyRouteSources,
   assertStaticCaseStudyRoutes,
@@ -38,9 +44,9 @@ const escapeText = (value) =>
 
 function replaceOrInsert(html, pattern, tag) {
   if (pattern.test(html)) {
-    return html.replace(pattern, tag);
+    return html.replace(pattern, () => tag);
   }
-  return html.replace('</head>', `  ${tag}\n</head>`);
+  return html.replace('</head>', () => `  ${tag}\n</head>`);
 }
 
 function applySeo(html, seo) {
@@ -138,13 +144,33 @@ function applyNoIndex(html) {
 const rootHtml = applySeo(indexHtml, routeSeo['/']);
 writeFileSync(indexPath, rootHtml);
 
+const renderStaticRoute = (route) => {
+  const html = applySeo(rootHtml, routeSeo[route]);
+  if (route === '/case-studies') {
+    const collection = renderToStaticMarkup(
+      React.createElement(StaticRouter, { location: route }, React.createElement(CaseStudiesContent)),
+    );
+    const rootMarker = '<div id="root"></div>';
+    if (html.split(rootMarker).length !== 2) throw new Error('Static route shell must contain exactly one empty root element');
+    return html.replace(rootMarker, () => `<div id="root">${collection}</div>`);
+  }
+  if (!route.startsWith('/project/')) return html;
+  const slug = route.slice('/project/'.length);
+  const story = getCaseStudyBySlug(slug);
+  if (!story) throw new Error(`Static case-study route has no public story: ${route}`);
+  const article = renderToStaticMarkup(React.createElement(CaseStudyArticle, { story, backHref: '/case-studies/' }));
+  const rootMarker = '<div id="root"></div>';
+  if (html.split(rootMarker).length !== 2) throw new Error('Static route shell must contain exactly one empty root element');
+  return html.replace(rootMarker, () => `<div id="root">${article}</div>`);
+};
+
 const stripHeroPreload = (html) =>
   html.replace(/<link\b(?=[^>]*\brel=["']preload["'])(?=[^>]*\bas=["']image["'])[^>]*>\s*/i, '');
 
 for (const route of staticRoutes) {
   const routeDir = path.join(distDir, route);
   mkdirSync(routeDir, { recursive: true });
-  writeFileSync(path.join(routeDir, 'index.html'), stripHeroPreload(applySeo(rootHtml, routeSeo[route])));
+  writeFileSync(path.join(routeDir, 'index.html'), stripHeroPreload(renderStaticRoute(route)));
 }
 
 writeFileSync(path.join(distDir, '404.html'), stripHeroPreload(applyNoIndex(applySeo(rootHtml, notFoundSeo))));

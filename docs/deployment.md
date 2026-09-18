@@ -46,22 +46,28 @@ Convex backend email variables are set in the Convex dashboard:
 
 ## Push Workflow
 
-1. Open a branch for changes.
-2. Push the branch and open a PR into `main`.
-3. Wait for GitHub CI to pass.
-4. Merge to `main`.
-5. Hostinger Horizons auto-builds and refreshes the site.
-6. Purge the Hostinger/CDN cache after the new build is live, especially after
+1. Open a short-lived branch from `develop`.
+2. Push the branch and open a PR into `develop`.
+3. Wait for GitHub CI to pass, merge, and complete integrated user-acceptance
+   testing from `develop`.
+4. After explicit production-release approval, open a PR from `develop` into
+   `main` and wait for the final GitHub CI run.
+5. Merge the approved PR into `main`.
+6. Hostinger Horizons auto-builds and refreshes the site.
+7. Purge the Hostinger/CDN cache after the new build is live, especially after
    Vite bundle changes. HTML is configured to revalidate, while hashed
    `/assets/` files are cached long-term.
-7. Verify both apex HTTP and HTTPS redirects preserve paths and query strings
+8. Verify both apex HTTP and HTTPS redirects preserve paths and query strings
    after the purge:
    - `curl -sSI 'http://vivekapatel.com/contact?source=test'`
    - `curl -sSI 'https://vivekapatel.com/contact?source=test'`
    - Confirm both responses include `Location: https://www.vivekapatel.com/contact?source=test`.
-8. Verify `/`, `/contact`, `/robots.txt`, and `/sitemap.xml` on the live domain.
-9. Verify a missing asset such as `/assets/not-a-real-bundle.js` returns `404`
+9. Verify `/`, `/contact`, `/robots.txt`, and `/sitemap.xml` on the live domain.
+10. Verify a missing asset such as `/assets/not-a-real-bundle.js` returns `404`
    instead of rewriting to the homepage.
+
+Urgent production hotfixes may branch from `main`, but the merged hotfix must
+also be synchronized back into `develop` through a PR. See `git-workflow.md`.
 
 For contact-form changes, submit one clearly marked QA lead only after explicit
 approval for live side effects, then confirm that the lead and email

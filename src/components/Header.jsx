@@ -15,6 +15,7 @@ const Header = () => {
   const headerRef = useRef(null);
   const menuRef = useRef(null);
   const closeButtonRef = useRef(null);
+  const toggleButtonRef = useRef(null);
   const previousFocusRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -22,7 +23,7 @@ const Header = () => {
   const navLinks = [
     { name: 'Services', href: '/#services' },
     { name: 'About', href: '/#about' },
-    { name: 'Portfolio', href: '/#portfolio' },
+    { name: 'Case Studies', href: '/case-studies/' },
     { name: 'Testimonials', href: '/#testimonials' },
   ];
 
@@ -46,7 +47,10 @@ const Header = () => {
       return undefined;
     }
 
-    previousFocusRef.current = document.activeElement;
+    // Pointer activation does not focus the toggle in every browser. Always
+    // restore to the control that opened the menu rather than BODY or a stale
+    // element from the page's previous focus sequence.
+    previousFocusRef.current = toggleButtonRef.current;
     closeButtonRef.current?.focus();
 
     const backgroundElements = [
@@ -82,23 +86,27 @@ const Header = () => {
         return;
       }
 
-      const focusableElements = menuRef.current.querySelectorAll(
+      const focusableElements = [...menuRef.current.querySelectorAll(
         'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
-      );
-      const firstElement = focusableElements[0];
-      const lastElement = focusableElements[focusableElements.length - 1];
+      )].filter((element) => {
+        const style = window.getComputedStyle(element);
+        return !element.hidden && style.display !== 'none' && style.visibility !== 'hidden';
+      });
 
-      if (!firstElement || !lastElement) {
+      if (!focusableElements.length) {
         return;
       }
 
-      if (event.shiftKey && document.activeElement === firstElement) {
-        event.preventDefault();
-        lastElement.focus();
-      } else if (!event.shiftKey && document.activeElement === lastElement) {
-        event.preventDefault();
-        firstElement.focus();
-      }
+      // Move explicitly through the complete menu sequence. This keeps links
+      // reachable when WebKit's default keyboard setting skips them and also
+      // gives pointer-opened menus a deterministic BODY fallback.
+      const currentIndex = focusableElements.indexOf(document.activeElement);
+      const direction = event.shiftKey ? -1 : 1;
+      const nextIndex = currentIndex === -1
+        ? (event.shiftKey ? focusableElements.length - 1 : 0)
+        : (currentIndex + direction + focusableElements.length) % focusableElements.length;
+      event.preventDefault();
+      focusableElements[nextIndex].focus();
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -188,6 +196,7 @@ const Header = () => {
           </div>
           <div className="md:hidden">
             <button
+              ref={toggleButtonRef}
               onClick={() => setIsOpen(!isOpen)}
               className="min-h-11 min-w-11 inline-flex items-center justify-center text-white"
               aria-label="Toggle navigation menu"

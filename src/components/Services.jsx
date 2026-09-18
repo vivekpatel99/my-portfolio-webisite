@@ -49,7 +49,7 @@ const Services = () => {
             aria-controls={`service-content-${index}`}
           >
             <div className="flex items-center gap-4">
-              <h3 className={`text-xl sm:text-2xl md:text-5xl font-bold transition-colors duration-300 break-words ${activeIndex === index ? 'text-white' : 'text-gray-600 group-hover:text-gray-400'}`}>
+              <h3 className={`text-xl sm:text-2xl md:text-5xl font-bold transition-colors duration-300 break-words ${activeIndex === index ? 'text-white' : 'text-gray-400'}`}>
                 {service.title}
               </h3>
               {activeIndex === index && <motion.div className="w-4 h-4 bg-accent-purple rounded-full" initial={{
@@ -65,7 +65,7 @@ const Services = () => {
               transition={{
                 duration: 0.3
               }}>
-              <Plus size={40} className={`${activeIndex === index ? 'text-accent-purple' : 'text-gray-600 group-hover:text-gray-400'} transition-colors`} />
+              <Plus size={40} className={`${activeIndex === index ? 'text-accent-purple' : 'text-gray-400'} transition-colors`} />
             </motion.div>
           </div>
 

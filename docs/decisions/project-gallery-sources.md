@@ -1,0 +1,11 @@
+# Project-specific gallery sources
+
+On 2026-09-13, Viv identified the unrelated planning graph in the invoice OCR gallery and instructed: “fix it and check for other case studies and add all the available images for that project.” This authorizes these local gallery corrections and additions; production release remains separate.
+
+## Source selection
+
+- **n8n + OpenAI data extraction:** six nonblank PNG workflow exports from `vivekpatel99/pia-stephan-n8n-data-extraction`, `docs/`. The matching completed-project checkout describes URL discovery, German website datasets, CSV/Excel/HTML processing and JSON output; the main screenshot is titled “Automated Data Extraction Workflow using OpenAI.” This source matches the displayed project scope. Added the main workflow, data processor, Excel conversion, table transformation, error logger and fatal-error notifier. Excluded `data_flow.excalidraw.png`, a blank 20-by-20 image. Replaced the unrelated `project-planning-genie` cover and gallery graph.
+- **Invoice OCR:** `vivekpatel99/invoice-data-extraction-using-ocr`, `output/original_with_bboxes_demo.jpg` and `output/exel_demo.png`. The first is already represented by the retained invoice WebP; added the Excel screenshot and removed the unrelated planning graph. The repository README and completed-project checkout identify the photo-to-client-fields OCR workflow. The screenshots contain names, addresses and tax identifiers, as disclosed to Viv before this instruction. They are repository demonstration outputs; this change does not assert that their contents are synthetic or independently privacy-cleared.
+- **Yoga pose:** `vivekpatel99/yoga-pose-estimation`, `assets/image0.jpg` through `image5.jpg`. The retained yoga WebP represents image5; added image0–image4. Removed the football-tracking video because it belongs to a different project. Use the individual images rather than duplicating the demonstration slideshow.
+
+The galleries contain 6, 2 and 6 unique images respectively. Source bytes are copied without editing; each new asset and changed record has an explicit SHA-256 approval binding. Existing claim approvals and prose are unchanged. These source matches identify visual material, not independent verification of every outcome claim in the retained prose.

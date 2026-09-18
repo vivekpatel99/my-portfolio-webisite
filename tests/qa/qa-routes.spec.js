@@ -1,13 +1,14 @@
+import { collectGalleryImages, galleryThumbnailSrc } from '../../src/components/CaseStudyGallery.js';
 import { expect, test } from './qa-test.js';
+import { caseStudies, featuredCaseStudies } from '../../src/data/caseStudies.js';
 
 const routes = [
   { path: '/', heading: /Vivek Patel/i },
   { path: '/contact', heading: /Request a Project Estimate/i },
   { path: '/legal', heading: 'Privacy Policy' },
   { path: '/data-policy', heading: 'Cookie Policy' },
-  { path: '/project/n8n-openai-data-extraction', heading: /n8n \+ OpenAI Data Extraction/i },
-  { path: '/project/invoice-ocr-extraction', heading: /Invoice OCR Extraction/i },
-  { path: '/project/yolo-computer-vision-optimization', heading: /YOLO Computer Vision Optimization/i },
+  { path: '/case-studies', heading: /Selected Case Studies/i },
+  ...caseStudies.map((caseStudy) => ({ path: `/project/${caseStudy.slug}`, heading: caseStudy.title })),
 ];
 
 test.describe('Route rendering', () => {
@@ -21,6 +22,30 @@ test.describe('Route rendering', () => {
       expect(errors).toEqual([]);
     });
   }
+});
+
+test('multi-image gallery uses bounded previews and loads selected originals on demand', async ({ page }) => {
+  const requests = [];
+  page.on('request', (request) => requests.push(request.url()));
+  await page.goto('/project/n8n-openai-data-extraction/');
+
+  const gallery = page.getByRole('region', { name: 'Case study images' });
+  const thumbnails = gallery.locator('.case-gallery-thumbnail img');
+  await expect(thumbnails).toHaveCount(6);
+  for (let i = 0; i < await thumbnails.count(); i++) await thumbnails.nth(i).scrollIntoViewIfNeeded();
+  await expect.poll(() => thumbnails.evaluateAll((elements) => elements.every((element) => element.complete && element.naturalWidth > 0))).toBe(true);
+  const thumbnailSources = await thumbnails.evaluateAll((elements) => elements.map((element) => element.currentSrc || element.src));
+  const thumbnailWidths = await thumbnails.evaluateAll((elements) => elements.map((element) => element.naturalWidth));
+  expect(thumbnailWidths.every((width) => width > 0 && width <= 320)).toBe(true);
+  const images = collectGalleryImages(caseStudies.find((story) => story.slug === 'n8n-openai-data-extraction'));
+  expect(thumbnailSources).toEqual(images.map((image) => new URL(galleryThumbnailSrc(image), page.url()).href));
+  const originals = images.map((image) => new URL(image.src, page.url()).href);
+  const requestedOriginals = () => [...new Set(requests.filter((url) => originals.includes(url)))];
+  await expect.poll(requestedOriginals).toEqual([originals[0]]);
+
+  await gallery.getByRole('button', { name: `Show image 2: ${images[1].alt}` }).click();
+  await expect(gallery.locator('.case-gallery-open img')).toHaveAttribute('src', images[1].src);
+  await expect.poll(requestedOriginals).toEqual([originals[0], originals[1]]);
 });
 
 test('unknown route renders a noindex 404 page', async ({ page }) => {
@@ -102,9 +127,31 @@ test('portfolio cards navigate to internal case studies', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/#portfolio');
   await page.locator('#portfolio').scrollIntoViewIfNeeded();
-  await page.getByRole('link', { name: /Read case study: Automated Data Extraction/i }).click();
-  await expect(page).toHaveURL(/\/project\/n8n-openai-data-extraction/);
-  await expect(page.getByRole('heading', { name: /n8n \+ OpenAI Data Extraction/i })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Read case study:/i })).toHaveCount(featuredCaseStudies.length);
+  if (featuredCaseStudies.length > 0) {
+    const firstFeaturedCard = page.getByRole('link', { name: `Read case study: ${featuredCaseStudies[0].cardTitle || featuredCaseStudies[0].title}`, exact: true });
+    await expect(firstFeaturedCard).toBeVisible();
+    await firstFeaturedCard.click();
+    await expect(page).toHaveURL(new RegExp(`/project/${featuredCaseStudies[0].slug}/?$`));
+    await expect(page.getByRole('heading', { name: featuredCaseStudies[0].title, exact: true })).toBeVisible();
+  }
+});
+
+test('header links to the case studies collection', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto('/');
+  await page.getByRole('navigation').getByRole('link', { name: 'Case Studies', exact: true }).click();
+  await expect(page).toHaveURL(/\/case-studies\/?$/);
+  await expect(page.getByRole('heading', { name: /Selected Case Studies/i })).toBeVisible();
+});
+
+test('case studies collection reload preserves route and canonical metadata', async ({ page }) => {
+  await page.goto('/case-studies/');
+  await expect(page.getByRole('heading', { name: /Selected Case Studies/i })).toBeVisible();
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://www.vivekapatel.com/case-studies/');
+  await page.reload();
+  await expect(page).toHaveURL(/\/case-studies\/?$/);
+  await expect(page.getByRole('heading', { name: /Selected Case Studies/i })).toBeVisible();
 });
 
 test('back navigation restores contact page', async ({ page }) => {

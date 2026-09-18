@@ -5,7 +5,18 @@ import { resolveQaTargets } from './qa-local-only.js';
 
 const testDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(testDir, '../..');
-const artifactDir = path.join(repoRoot, 'playwright-output');
+
+export function resolveQaArtifactDir({
+  repoRoot: root,
+  fakeSentry = process.env.QA_FAKE_SENTRY === '1',
+}) {
+  const defaultDir = fakeSentry
+    ? path.join('playwright-output', 'telemetry-boundary')
+    : 'playwright-output';
+  return path.resolve(root, defaultDir);
+}
+
+const artifactDir = resolveQaArtifactDir({ repoRoot });
 
 const previewURL = process.env.QA_PREVIEW_URL ?? 'http://127.0.0.1:3000';
 const prodURL = process.env.QA_PROD_URL ?? 'https://www.vivekapatel.com';
@@ -32,6 +43,7 @@ const passiveSpecs = [
   'qa-local-navigation.spec.js',
   'qa-contact.spec.js',
   'qa-edge.spec.js',
+  ...(localOnly ? ['qa-focus.spec.js'] : []),
   'qa-responsive.spec.js',
   'qa-routes.spec.js',
   'qa-upgrade-interactions.spec.js',
@@ -61,6 +73,21 @@ const liveProjects = includeLiveContactSubmit && !localOnly
     ]
   : [];
 
+// Keep the additional browser family bounded to the interactions that regressed.
+// These projects are never pointed at the public deployment.
+const focusProjects = localOnly ? [
+  {
+    name: 'preview-webkit-desktop',
+    testMatch: 'qa-focus.spec.js',
+    use: { ...devices['Desktop Safari'], baseURL: previewURL, ...qaNetworkOptions({ localOnly }) },
+  },
+  {
+    name: 'preview-webkit-mobile',
+    testMatch: 'qa-focus.spec.js',
+    use: { ...devices['iPhone 14'], baseURL: previewURL, ...qaNetworkOptions({ localOnly }) },
+  },
+] : [];
+
 export function qaCaptureOptions({ safeArtifacts = safeArtifactMode } = {}) {
   if (safeArtifacts) {
     return {
@@ -86,5 +113,5 @@ export default defineConfig({
   use: qaCaptureOptions(),
   outputDir: path.join(artifactDir, 'test-results'),
   reporter: [['list'], ['json', { outputFile: path.join(artifactDir, 'qa-results.json') }]],
-  projects: [...passiveProjects, ...liveProjects],
+  projects: [...passiveProjects, ...focusProjects, ...liveProjects],
 });

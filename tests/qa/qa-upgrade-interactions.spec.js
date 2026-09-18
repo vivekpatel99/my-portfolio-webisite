@@ -1,25 +1,11 @@
 import { expect, test } from './qa-test.js';
+import { caseStudies, featuredCaseStudies } from '../../src/data/caseStudies.js';
 
-const caseStudies = [
-  {
-    cardName: /Read case study: Automated Data Extraction/i,
-    path: '/project/n8n-openai-data-extraction',
-    heading: /n8n \+ OpenAI Data Extraction/i,
-    stack: ['n8n', 'OpenAI', 'Web Scraping', 'Data Validation'],
-  },
-  {
-    cardName: /Read case study: Invoice OCR Data Extraction/i,
-    path: '/project/invoice-ocr-extraction',
-    heading: /Invoice OCR Extraction/i,
-    stack: ['OCR', 'Python', 'Image Processing', 'Structured Extraction'],
-  },
-  {
-    cardName: /Read case study: Real-Time Pose Detection/i,
-    path: '/project/yolo-computer-vision-optimization',
-    heading: /YOLO Computer Vision Optimization/i,
-    stack: ['YOLO', 'Python', 'Computer Vision', 'Real-time Inference'],
-  },
-];
+const cardFor = (caseStudy) => ({
+  cardName: `Read case study: ${caseStudy.cardTitle || caseStudy.title}`,
+  path: `/project/${caseStudy.slug}`,
+  heading: caseStudy.title,
+});
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
@@ -55,6 +41,7 @@ test('homepage upgrade flow exposes proof, case studies, offers, testimonials, a
   }
 
   await expect(page.getByText(/Next-Gen Banking UI/i)).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /Read case study:/i })).toHaveCount(featuredCaseStudies.length);
 });
 
 test('hero and header CTAs activate the expected routes and sections', async ({ page }) => {
@@ -106,28 +93,32 @@ test('service offer accordions are keyboard and click operable', async ({ page }
 });
 
 test('all featured case-study cards and detail CTAs work', async ({ page }) => {
-  for (const caseStudy of caseStudies) {
+  await page.goto('/#portfolio');
+  await page.locator('#portfolio').scrollIntoViewIfNeeded();
+  await expect(page.getByRole('link', { name: /Read case study:/i })).toHaveCount(featuredCaseStudies.length);
+  for (const caseStudy of featuredCaseStudies.map(cardFor)) {
     await page.goto('/#portfolio');
     await page.locator('#portfolio').scrollIntoViewIfNeeded();
-    await page.getByRole('link', { name: caseStudy.cardName }).click();
+    await page.getByRole('link', { name: caseStudy.cardName, exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`${caseStudy.path}/$`));
     await expect(page.getByRole('heading', { name: caseStudy.heading })).toBeVisible();
 
-    for (const stackItem of caseStudy.stack) {
-      await expect(page.getByText(stackItem, { exact: true }).first()).toBeVisible();
-    }
-
     await expect(page.getByText(/Next-Gen Banking UI/i)).toHaveCount(0);
-    await expect(page.getByRole('link', { name: /Upwork project/i }).first()).toHaveAttribute(
-      'href',
-      /upwork\.com/,
-    );
-
     await page.getByRole('link', { name: 'View Case Studies' }).first().click();
-    await expect(page).toHaveURL(/\/#portfolio$/);
+    await expect(page).toHaveURL(/\/case-studies\/?$/);
+    await expect(page.getByRole('heading', { name: /Selected Case Studies/i })).toBeVisible();
 
     await page.goto(caseStudy.path);
-    await page.getByRole('link', { name: 'Request a Project Estimate' }).click();
+    await page.getByRole('link', { name: /Discuss a similar project/ }).click();
+    await expect(page).toHaveURL(/\/contact\/?$/);
+  }
+});
+
+test('all published case-study routes and detail CTAs remain reachable', async ({ page }) => {
+  for (const caseStudy of caseStudies.map(cardFor)) {
+    await page.goto(caseStudy.path);
+    await expect(page.getByRole('heading', { name: caseStudy.heading })).toBeVisible();
+    await page.getByRole('link', { name: /Discuss a similar project/ }).click();
     await expect(page).toHaveURL(/\/contact\/?$/);
   }
 });
@@ -168,14 +159,10 @@ test('mobile navigation menu links and CTA work', async ({ page }) => {
   await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
   await expect(page.getByRole('dialog', { name: 'Navigation menu' })).toBeVisible();
   await page.waitForTimeout(600);
-  await page.getByRole('dialog', { name: 'Navigation menu' }).getByRole('link', { name: 'Portfolio' }).click();
+  await page.getByRole('dialog', { name: 'Navigation menu' }).getByRole('link', { name: 'Case Studies' }).click();
   await expect(page.getByRole('dialog', { name: 'Navigation menu' })).toBeHidden();
-  await expect
-    .poll(async () => {
-      const box = await page.locator('#portfolio').boundingBox();
-      return box && box.y >= -120 && box.y < 320;
-    })
-    .toBeTruthy();
+  await expect(page).toHaveURL(/\/case-studies\/?$/);
+  await expect(page.getByRole('heading', { name: /Selected Case Studies/i })).toBeVisible();
 
   await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
   await expect(page.getByRole('dialog', { name: 'Navigation menu' })).toBeVisible();

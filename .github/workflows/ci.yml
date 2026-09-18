@@ -2,19 +2,26 @@ name: CI
 
 on:
   push:
-    branches: [main, "codex/**", "cursor/**"]
+    branches: [main, develop, "codex/**", "cursor/**"]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
 
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
+    # Keep this version aligned with @playwright/test in package-lock.json.
+    # The image includes browser libraries without apt update on runner mirrors.
+    container: mcr.microsoft.com/playwright:v1.60.0-noble
     env:
       CI: true
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       VITE_CONVEX_URL: ${{ vars.VITE_CONVEX_URL || vars.PRODUCTION_CONVEX_URL || vars.CONVEX_URL || secrets.VITE_CONVEX_URL || secrets.PRODUCTION_CONVEX_URL || secrets.CONVEX_URL }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Trust the mounted checkout for repository checks
+        # Container Git sees the runner-mounted checkout under a different owner.
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - uses: actions/setup-node@v4
         with:
@@ -100,7 +107,7 @@ jobs:
           fi
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium webkit
 
       - name: Run passive Playwright QA against preview
         shell: bash
@@ -126,6 +133,18 @@ jobs:
           curl --fail --silent --show-error "$QA_PREVIEW_URL" >/dev/null
           npm run qa:seo
           npm run qa:playwright:ci
+
+      - name: Run mocked contact lifecycle QA
+        env:
+          QA_LOCAL_ONLY: '1'
+          QA_ARTIFACT_SAFE_MODE: '1'
+        run: npm run qa:contact-lifecycle
+
+      - name: Run fake telemetry boundary QA
+        env:
+          QA_LOCAL_ONLY: '1'
+          QA_ARTIFACT_SAFE_MODE: '1'
+        run: npm run qa:telemetry-boundary
 
       - name: Reconstruct sanitized passive QA artifacts
         id: sanitize-qa-artifacts

@@ -43,12 +43,25 @@ function fixture() {
     'public/.htaccess',
     'src/config/links.js',
     'src/data/caseStudies.js',
+    'src/lib/caseStudyCollection.js',
+    'src/lib/caseStudyBrowsing.js',
+    'src/lib/caseStudyThumbnails.js',
+    'src/lib/featuredCaseStudies.js',
     'src/lib/seoConfig.js',
     'publication/case-study-manifest.js',
     'publication/case-study-evidence.js',
     'publication/case-study-schema.js',
+    'publication/markdown-case-study.js',
     'publication/compile-case-studies.js',
+    'publication/staged-case-study-publication.js',
+    'publication/case-study-manifest-merge.js',
     'publication/public-case-studies.js',
+    'publication/case-study-featured.js',
+    'src/components/CaseStudyArticle.js',
+    'src/components/CaseStudyGallery.js',
+    'src/components/CaseStudyCard.js',
+    'src/components/CaseStudyCollection.js',
+    'src/components/CaseStudiesContent.js',
     'tools/case-study-route-integrity.js',
     'tools/generate-sitemap.js',
     'tools/generate-static-route-html.js',
@@ -66,6 +79,7 @@ function fixture() {
     deploymentHtaccess(readFileSync(path.join(directory, 'public/.htaccess'), 'utf8'), caseStudySlugs),
   );
   writeFileSync(path.join(directory, 'package.json'), '{"type":"module"}');
+  symlinkSync(path.join(process.cwd(), 'node_modules'), path.join(directory, 'node_modules'));
   return directory;
 }
 

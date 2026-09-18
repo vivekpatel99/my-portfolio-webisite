@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { caseStudies, getCaseStudyBySlug, caseStudySlugs, primaryContactHref } from './caseStudies';
+import { caseStudies, eligibleCaseStudies, collectionCaseStudies, eligibleCaseStudyCount, featuredCaseStudies, getCaseStudyBySlug, caseStudySlugs, primaryContactHref } from './caseStudies';
 import { routeSeo } from '../lib/seoConfig';
+import { selectFeaturedCaseStudies } from '../lib/featuredCaseStudies';
 import { deploymentHtaccess } from '../../plugins/vite-plugin-case-study-publication.js';
 
 describe('caseStudies data structure', () => {
@@ -10,14 +11,30 @@ describe('caseStudies data structure', () => {
     expect(Array.isArray(caseStudies)).toBe(true);
   });
 
+  it('derives the collection set and count from completed project status', () => {
+    expect(eligibleCaseStudyCount).toBe(eligibleCaseStudies.length);
+    expect(eligibleCaseStudies).toEqual(caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed'));
+    expect(eligibleCaseStudies.every((caseStudy) => caseStudy.projectStatus === 'completed')).toBe(true);
+  });
+
+  it('sorts the collection projection while preserving homepage feature order', () => {
+    expect(collectionCaseStudies).toEqual(eligibleCaseStudies.slice().sort((left, right) => {
+      const leftMonth = (left.completedAt ?? '').replace('-', '');
+      const rightMonth = (right.completedAt ?? '').replace('-', '');
+      // ASCII comparison on purpose: matches compareSlugs in src/lib/caseStudyCollection.js, not locale collation.
+      const ascii = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
+      return ascii(rightMonth, leftMonth) || ascii(left.slug, right.slug);
+    }));
+    expect(featuredCaseStudies).toEqual(selectFeaturedCaseStudies(eligibleCaseStudies));
+  });
+
   it('should have required fields for each case study', () => {
     caseStudies.forEach((caseStudy) => {
       expect(caseStudy).toHaveProperty('id');
       expect(caseStudy).toHaveProperty('slug');
-      expect(caseStudy).toHaveProperty('cardTitle');
-      expect(caseStudy).toHaveProperty('image');
-      expect(caseStudy.image).toHaveProperty('src');
-      expect(caseStudy.image).toHaveProperty('alt');
+      expect(caseStudy).toHaveProperty('title');
+      expect(caseStudy).toHaveProperty('summary');
+      expect(caseStudy.sections).toHaveLength(3);
     });
   });
 
@@ -128,42 +145,16 @@ describe('caseStudySlugs', () => {
 describe('case study data validation', () => {
   it('should have valid image URLs', () => {
     caseStudies.forEach((caseStudy) => {
-      expect(caseStudy.image.src).toBeTruthy();
-      expect(typeof caseStudy.image.src).toBe('string');
+      if (caseStudy.image) {
+        expect(caseStudy.image.src).toBeTruthy();
+        expect(typeof caseStudy.image.src).toBe('string');
+      }
     });
   });
 
   it('should have non-empty alt text for images', () => {
     caseStudies.forEach((caseStudy) => {
-      expect(caseStudy.image.alt).toBeTruthy();
-      expect(typeof caseStudy.image.alt).toBe('string');
-      expect(caseStudy.image.alt.length).toBeGreaterThan(0);
-    });
-  });
-
-  it('should have gallery items if gallery exists', () => {
-    caseStudies.forEach((caseStudy) => {
-      if (caseStudy.gallery) {
-        expect(Array.isArray(caseStudy.gallery)).toBe(true);
-        caseStudy.gallery.forEach((item) => {
-          expect(item).toHaveProperty('src');
-          expect(item).toHaveProperty('alt');
-          expect(item.alt).toBeTruthy();
-        });
-      }
-    });
-  });
-
-  it('should have valid stack array', () => {
-    caseStudies.forEach((caseStudy) => {
-      if (caseStudy.stack) {
-        expect(Array.isArray(caseStudy.stack)).toBe(true);
-        expect(caseStudy.stack.length).toBeGreaterThan(0);
-        caseStudy.stack.forEach((tech) => {
-          expect(typeof tech).toBe('string');
-          expect(tech.length).toBeGreaterThan(0);
-        });
-      }
+      if (caseStudy.image) expect(caseStudy.image.alt).toBeTruthy();
     });
   });
 });

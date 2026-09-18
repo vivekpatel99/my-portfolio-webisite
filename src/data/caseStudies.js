@@ -3,6 +3,9 @@
 // records, drafts, claim references, and approval metadata cannot be emitted.
 export {
   caseStudies,
+  eligibleCaseStudies,
+  collectionCaseStudies,
+  eligibleCaseStudyCount,
   featuredCaseStudies,
   getCaseStudyBySlug,
   caseStudySlugs,

@@ -224,7 +224,7 @@ const Contact = () => {
               </div>
               <div className="mt-8 rounded-lg border border-accent-purple/20 bg-accent-purple/10 p-4">
                 <p className="text-sm text-gray-300">Prefer email?</p>
-                <a href={socialLinks.emailHref} className="mt-1 inline-flex items-center gap-2 font-semibold text-white hover:text-accent-purple">
+                <a href={socialLinks.emailHref} className="mt-1 inline-flex items-center gap-2 font-semibold text-white hover:text-accent-purple-text">
                   <Mail className="h-4 w-4" aria-hidden="true" />
                   {socialLinks.contactEmail}
                 </a>

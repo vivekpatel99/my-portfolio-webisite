@@ -1,5 +1,56 @@
 import { expect, test } from './qa-test.js';
 
+const renderedContrast = async (locator) => locator.evaluate((element) => {
+  const parseColor = (value) => {
+    const match = value.match(/rgba?\(([^)]+)\)/);
+    if (!match) return null;
+    const channels = match[1].replaceAll('/', ' ').trim().split(/[ ,]+/).filter(Boolean);
+    const rgb = channels.slice(0, 3).map(Number);
+    const alpha = channels[3] === undefined ? 1 : Number(channels[3]);
+    return rgb.every(Number.isFinite) && Number.isFinite(alpha) ? { rgb, alpha } : null;
+  };
+  const composite = (foreground, background) => {
+    const alpha = foreground.alpha;
+    return foreground.rgb.map((channel, index) => channel * alpha + background[index] * (1 - alpha));
+  };
+  const luminance = (rgb) => rgb.map((channel) => {
+    const normalized = channel / 255;
+    return normalized <= 0.04045 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+  }).reduce((sum, channel, index) => sum + channel * [0.2126, 0.7152, 0.0722][index], 0);
+
+  const ancestors = [];
+  for (let node = element; node; node = node.parentElement) ancestors.unshift(node);
+  let background = [0, 0, 0];
+  for (const node of ancestors) {
+    const color = parseColor(getComputedStyle(node).backgroundColor);
+    if (!color || color.alpha === 0) continue;
+    background = composite(color, background);
+  }
+  const foreground = parseColor(getComputedStyle(element).color)?.rgb;
+  if (!foreground) throw new Error('Could not parse rendered foreground color');
+  const foregroundLuminance = luminance(foreground);
+  const backgroundLuminance = luminance(background);
+  return {
+    ratio: (Math.max(foregroundLuminance, backgroundLuminance) + 0.05)
+      / (Math.min(foregroundLuminance, backgroundLuminance) + 0.05),
+    foreground,
+    background,
+  };
+});
+
+const expectRenderedContrast = async (locator, label, minimum = 4.5) => {
+  const result = await renderedContrast(locator);
+  expect(result.ratio, `${label}: ${JSON.stringify(result)}`).toBeGreaterThanOrEqual(minimum);
+  return result;
+};
+
+const expectRenderedForeground = async (locator, label, expected) => {
+  await expect.poll(
+    async () => (await renderedContrast(locator)).foreground.join(','),
+    { message: label },
+  ).toBe(expected);
+};
+
 test('home has exactly one main landmark', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('main')).toHaveCount(1);
@@ -62,6 +113,81 @@ test('form inputs have associated labels', async ({ page }) => {
     const label = page.locator(`label[for="${id}"]`);
     await expect(label).toBeVisible();
   }
+});
+
+test('normal-size purple text and links meet contrast in rendered states', async ({ page }) => {
+  // Consent geometry is tested separately; its delayed appearance must not move
+  // the pointer off the link whose hover colour this test measures.
+  await page.addInitScript(() => {
+    localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false }));
+  });
+  await page.goto('/');
+  const price = page.getByText('Starting at €80/hour', { exact: true });
+  const priceBackground = await price.evaluate((element) => {
+    const badge = element.parentElement;
+    const style = badge ? getComputedStyle(badge) : null;
+    return style ? {
+      backgroundColor: style.backgroundColor,
+      alpha: style.backgroundColor.startsWith('rgba(')
+        ? Number(style.backgroundColor.split(',')[3].replace(')', '').trim())
+        : 1,
+    } : null;
+  });
+  expect(priceBackground?.backgroundColor, 'Hero price badge should have a stable dark background').toBe('rgb(12, 13, 13)');
+  expect(priceBackground?.alpha, 'Hero price badge should be opaque over the image').toBe(1);
+  await expectRenderedContrast(price, 'Hero price');
+
+  const cardLabel = page.locator('#portfolio article').first().locator('a.text-accent-purple-text, span.text-accent-purple-text').first();
+  await expectRenderedContrast(cardLabel, 'Case study card action label');
+  // Private client projects may use a static Read case study label instead of an external link.
+  if (await cardLabel.evaluate((element) => element.tagName === 'A')) {
+    await cardLabel.hover();
+    await expectRenderedForeground(cardLabel, 'Case study card link should finish its hover transition', '255,255,255');
+    await expectRenderedContrast(cardLabel, 'Case study card link on hover');
+  }
+
+  const portfolioLink = page.getByRole('link', { name: /View all case studies/ });
+  await expectRenderedContrast(portfolioLink, 'Portfolio collection link');
+  await expect.poll(async () => {
+    // Reacquire the actual link after scrolling/layout settles on the CI browser.
+    await portfolioLink.hover();
+    return {
+      hovered: await portfolioLink.evaluate((element) => element.matches(':hover')),
+      foreground: (await renderedContrast(portfolioLink)).foreground.join(','),
+    };
+  }, { message: 'Portfolio collection link must be hovered and finish its colour transition' })
+    .toEqual({ hovered: true, foreground: '255,255,255' });
+  await expectRenderedContrast(portfolioLink, 'Portfolio collection link on hover');
+  await page.mouse.move(0, 0);
+  await portfolioLink.focus();
+  await expect(portfolioLink).toBeFocused();
+  await expectRenderedForeground(portfolioLink, 'Portfolio collection link focus state', '167,139,250');
+  await expectRenderedContrast(portfolioLink, 'Portfolio collection link on focus');
+});
+
+test('policy, contact, footer, and not-found accent states meet contrast', async ({ page }) => {
+  await page.goto('/legal/');
+  for (const name of ['Cookie Policy', 'Resend', 'Convex', 'Sentry']) {
+    await expectRenderedContrast(page.locator('main').getByRole('link', { name, exact: true }), `Legal ${name}`);
+  }
+
+  await page.goto('/data-policy/');
+  await expectRenderedContrast(page.locator('main').getByRole('link', { name: 'Privacy Policy', exact: true }), 'Data policy link');
+
+  await page.goto('/contact/');
+  const email = page.getByRole('link', { name: /@/ }).first();
+  await email.hover();
+  await expectRenderedForeground(email, 'Contact email should finish its hover transition', '167,139,250');
+  await expectRenderedContrast(email, 'Contact email on hover');
+
+  await page.goto('/');
+  const footerLink = page.locator('footer').getByRole('link', { name: 'Home', exact: true });
+  await footerLink.hover();
+  await expectRenderedForeground(footerLink, 'Footer navigation link should finish its hover transition', '167,139,250');
+  await expectRenderedContrast(footerLink, 'Footer navigation link on hover');
+
+  await page.goto('/missing-page/');
+  await expectRenderedContrast(page.getByText('404', { exact: true }), 'Not-found status');
 });
 
 test('services section exists for anchor target', async ({ page }) => {
