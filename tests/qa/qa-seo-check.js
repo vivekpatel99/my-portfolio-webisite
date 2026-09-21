@@ -2,6 +2,7 @@ import { execFileSync } from 'child_process';
 import { readFileSync, existsSync } from 'fs';
 import path from 'path';
 import { caseStudies } from '../../publication/public-case-studies.js';
+import { defaultSeo, routeSeo } from '../../src/lib/seoConfig.js';
 import { resolveLoopbackRedirectUrl, resolveQaTargets } from './qa-local-only.js';
 
 const PREVIEW = process.env.QA_PREVIEW_URL ?? 'http://127.0.0.1:3000';
@@ -173,6 +174,15 @@ for (const [env, base] of resolveQaTargets({ localOnly, previewURL: PREVIEW, pro
 
     if (!description) {
       findings.push({ env, route, issue: 'Missing meta description', severity: 'P1' });
+    } else if (env !== 'prod' && route === 'home') {
+      if (!description.includes('Linz') || !description.includes('Austria') || /based\s+in\s+europe/i.test(description)) {
+        findings.push({
+          env,
+          route,
+          issue: `Home description missing Linz, Austria: ${description}`,
+          severity: 'P1',
+        });
+      }
     }
   }
 }
@@ -254,6 +264,14 @@ if (!hero.includes('Starting at €45/hour')) {
 }
 
 const leftoverRate = /€80|\$45\/hour/;
+const leftoverBase = /based\s*-?\s*in\s+europe/i;
+const inventedCity =
+  /Vienna|Wien|Berlin|Munich|München|Zurich|Graz|Salzburg|Innsbruck|Wels|Leonding|Prague|Praha|Budapest|Linz an der Donau|Oberösterreich|Upper Austria/;
+const keywordTokens = (keywords) => keywords.split(',').map((token) => token.trim());
+const pin = (issue, ref, ok) => {
+  if (!ok) findings.push({ issue, severity: 'P1', ref });
+};
+
 for (const [ref, source] of [['index.html', indexHtml], ['src/lib/seoConfig.js', seoConfig], ['src/components/Hero.jsx', hero]]) {
   if (leftoverRate.test(source)) {
     findings.push({
@@ -269,40 +287,137 @@ for (const [ref, source] of [['index.html', indexHtml], ['src/lib/seoConfig.js',
       ref,
     });
   }
+  if (leftoverBase.test(source) || source.includes('Engineer in Europe') || source.includes('Freelance AI Engineer in Europe')) {
+    findings.push({
+      issue: `${ref} still contains Europe-only base copy`,
+      severity: 'P1',
+      ref,
+    });
+  }
 }
 
-if (hero.includes('Based in Europe')) {
-  findings.push({
-    issue: 'Hero.jsx still contains Based in Europe',
-    severity: 'P1',
-    ref: 'src/components/Hero.jsx',
-  });
-}
+pin('Hero.jsx missing Based in Linz, Austria', 'src/components/Hero.jsx', hero.includes('Based in Linz, Austria'));
+pin(
+  'defaultSeo.description is not the locked Linz sentence',
+  'src/lib/seoConfig.js',
+  defaultSeo.description ===
+    'Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients across Europe. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. 94% performance improvements. €45/hour.',
+);
+pin(
+  'contact SEO description is not the locked Linz sentence',
+  'src/lib/seoConfig.js',
+  routeSeo['/contact'].description ===
+    'Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Linz, Austria, serving Europe. Get a quote within 24 hours. €45/hour.',
+);
 
-const workLocationName = indexHtml.match(/"workLocation"\s*:\s*\{[^}]*"name":\s*"([^"]+)"/)?.[1] ?? '';
-if (workLocationName !== 'Linz, Austria') {
+const homeTokens = keywordTokens(defaultSeo.keywords);
+const contactTokens = keywordTokens(routeSeo['/contact'].keywords);
+pin('home keywords missing AI Engineer Linz Austria', 'src/lib/seoConfig.js', homeTokens.includes('AI Engineer Linz Austria'));
+pin('home keywords missing Python Developer Europe', 'src/lib/seoConfig.js', homeTokens.includes('Python Developer Europe'));
+pin('home keywords still contain AI Engineer Europe', 'src/lib/seoConfig.js', !homeTokens.includes('AI Engineer Europe'));
+pin(
+  'contact keywords missing Hire AI Engineer Linz Austria',
+  'src/lib/seoConfig.js',
+  contactTokens.includes('Hire AI Engineer Linz Austria'),
+);
+pin(
+  'contact keywords still contain Hire AI Engineer Europe',
+  'src/lib/seoConfig.js',
+  !contactTokens.includes('Hire AI Engineer Europe'),
+);
+
+let jsonLd = [];
+try {
+  jsonLd = [...indexHtml.matchAll(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)].map((match) =>
+    JSON.parse(match[1]),
+  );
+} catch (error) {
   findings.push({
-    issue: `Person workLocation.name is not Linz, Austria: ${workLocationName}`,
+    issue: `index.html JSON-LD failed to parse: ${error instanceof Error ? error.message : error}`,
     severity: 'P1',
     ref: 'index.html',
   });
 }
 
-const areaServedName = indexHtml.match(/"areaServed"\s*:\s*\{[^}]*"name":\s*"([^"]+)"/)?.[1] ?? '';
-if (areaServedName !== 'Linz, Austria and Europe') {
-  findings.push({
-    issue: `ProfessionalService areaServed.name is not Linz, Austria and Europe: ${areaServedName}`,
-    severity: 'P1',
-    ref: 'index.html',
-  });
-}
+const person = jsonLd.find((node) => node['@type'] === 'Person');
+const service = jsonLd.find((node) => node['@type'] === 'ProfessionalService');
+const workLocation = person?.workLocation;
+const areaServed = service?.areaServed;
+pin('Person workLocation.name is not Linz, Austria', 'index.html', workLocation?.name === 'Linz, Austria');
+pin(
+  'ProfessionalService areaServed.name is not Linz, Austria and Europe',
+  'index.html',
+  areaServed?.name === 'Linz, Austria and Europe',
+);
+pin('workLocation and areaServed must stay different Place names', 'index.html', workLocation?.name !== areaServed?.name);
+pin('areaServed must be a Place object, not an array', 'index.html', Boolean(areaServed) && !Array.isArray(areaServed));
+pin('Person name must stay Vivek Patel', 'index.html', person?.name === 'Vivek Patel');
+pin('parsed ProfessionalService priceRange is not €45/hour', 'index.html', service?.priceRange === '€45/hour');
+pin('JSON-LD Place name must not be Europe-only', 'index.html', workLocation?.name !== 'Europe' && areaServed?.name !== 'Europe');
 
-if (/streetAddress|PostalAddress|"address"\s*:/.test(indexHtml)) {
+if (/streetAddress|PostalAddress|postalCode|addressLocality|addressCountry|postOfficeBoxNumber|"geo"|latitude|longitude|"address"\s*:/.test(indexHtml)) {
   findings.push({
     issue: 'index.html JSON-LD must not include streetAddress, PostalAddress, or address',
     severity: 'P1',
     ref: 'index.html',
   });
+}
+
+const legal = readFileSync(path.join(process.cwd(), 'src/pages/Legal.jsx'), 'utf8');
+const footer = readFileSync(path.join(process.cwd(), 'src/components/Footer.jsx'), 'utf8');
+const contact = readFileSync(path.join(process.cwd(), 'src/pages/Contact.jsx'), 'utf8');
+const dataPolicy = readFileSync(path.join(process.cwd(), 'src/pages/DataPolicy.jsx'), 'utf8');
+pin(
+  'Legal.jsx missing EEA GDPR sentences',
+  'src/pages/Legal.jsx',
+  legal.includes('European Economic Area (EEA)') && legal.includes('General Data Protection Regulation (GDPR)'),
+);
+pin('Legal.jsx must not name Linz or Austria', 'src/pages/Legal.jsx', !/Linz|Austria|Based in/.test(legal));
+pin(
+  'Footer.jsx must not invent an office location',
+  'src/components/Footer.jsx',
+  !/Linz|Austria|Europe|Headquarters|Based in|Hauptplatz|PostalAddress/.test(footer),
+);
+pin(
+  'Contact.jsx body must not name a city',
+  'src/pages/Contact.jsx',
+  !/Linz|Austria|Europe|Based in/.test(contact) && contact.includes('within 24 hours'),
+);
+pin('DataPolicy.jsx must stay city-free', 'src/pages/DataPolicy.jsx', !/Linz|Austria|Europe/.test(dataPolicy));
+
+for (const [ref, source] of [
+  ['src/components/Hero.jsx', hero],
+  ['src/lib/seoConfig.js', seoConfig],
+  ['index.html', indexHtml],
+  ['src/components/Footer.jsx', footer],
+  ['src/pages/Contact.jsx', contact],
+]) {
+  if (inventedCity.test(source)) {
+    findings.push({
+      issue: `${ref} invents a second city`,
+      severity: 'P1',
+      ref,
+    });
+  }
+}
+
+const distHomePath = path.join(process.cwd(), 'dist/index.html');
+if (existsSync(distHomePath)) {
+  const distHome = readFileSync(distHomePath, 'utf8');
+  const distContact = readFileSync(path.join(process.cwd(), 'dist/contact/index.html'), 'utf8');
+  const distLegal = readFileSync(path.join(process.cwd(), 'dist/legal/index.html'), 'utf8');
+  pin(
+    'dist home description missing Linz serving Europe',
+    'dist/index.html',
+    getMeta(distHome, 'description')?.includes('based in Linz, Austria, serving clients across Europe'),
+  );
+  pin(
+    'dist contact description missing Linz serving Europe',
+    'dist/contact/index.html',
+    getMeta(distContact, 'description')?.includes('based in Linz, Austria, serving Europe')
+      && !leftoverBase.test(getMeta(distContact, 'description') ?? ''),
+  );
+  pin('dist legal description must stay GDPR-only', 'dist/legal/index.html', !getMeta(distLegal, 'description')?.includes('Linz'));
 }
 
 console.log(JSON.stringify(findings, null, 2));
