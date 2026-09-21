@@ -98,7 +98,7 @@ const Services = () => {
                     <h4 className="text-white font-semibold mb-3">Out of scope</h4>
                     <ul className="space-y-2">
                       {service.outOfScope.map((item) => (
-                        <li key={item} className="text-gray-500 text-sm">{item}</li>
+                        <li key={item} className="text-gray-400 text-sm">{item}</li>
                       ))}
                     </ul>
                   </div>

@@ -55,6 +55,10 @@ describe('Services offers', () => {
     expect(text.indexOf('In scope')).toBeLessThan(text.indexOf(offer.summary));
     expect(text.indexOf('Out of scope')).toBeLessThan(text.indexOf(offer.summary));
     expect(text.indexOf('Typically')).toBeLessThan(text.indexOf(offer.summary));
+    [...panel.querySelectorAll('li')].forEach((item) => {
+      expect(item.className).toContain('text-gray-400');
+      expect(item.className).not.toContain('text-gray-500');
+    });
   });
 
   it('keeps the catalog rate visible when every row is closed', async () => {
