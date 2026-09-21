@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- The schedule-PDF case study at `/project/healthcare-document-intelligence/` now states it is not clinical EHR or medical records.
 - Homepage, meta, and JSON-LD now show Starting at €45/hour.
 
 ### Fixed
