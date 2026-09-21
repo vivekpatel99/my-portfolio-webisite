@@ -96,6 +96,22 @@ describe('homepage blocked', () => {
     expect(result.rejected[0].status).toBe('blocked');
     expect(result.rejected[0].untilIssues).toEqual([119]);
   });
+
+  it.each(['See vivekapatel.com', 'See www.vivekapatel.com', 'See vivekapatel.com.'])(
+    'fails audit for scheme-less homepage %j',
+    (draft) => {
+      const result = auditProposalText(draft);
+      expect(result.ok).toBe(false);
+      expect(result.rejected).toEqual([
+        {
+          href: `${BASE}/`,
+          status: 'blocked',
+          path: '/',
+          untilIssues: [119],
+        },
+      ]);
+    },
+  );
 });
 
 describe('excluded paths', () => {
@@ -274,6 +290,58 @@ describe('host allowlist', () => {
     const audit = auditProposalText(`See ${evil}`);
     expect(audit.ok).toBe(true);
     expect(audit.links).toEqual([]);
+  });
+
+  it('does not treat scheme-less evil host as the homepage', () => {
+    const audit = auditProposalText(
+      'See vivekapatel.com.evil.com/project/n8n-openai-data-extraction/',
+    );
+    expect(audit.ok).toBe(true);
+    expect(audit.links).toEqual([]);
+    expect(audit.rejected).toEqual([]);
+  });
+});
+
+describe('protocol-relative URLs', () => {
+  it('fails audit for a blocked protocol-relative project URL', () => {
+    const result = auditProposalText(
+      'See //www.vivekapatel.com/project/n8n-python-ai-agents/',
+    );
+    expect(result.ok).toBe(false);
+    expect(result.rejected).toEqual([
+      {
+        href: `${BASE}/project/n8n-python-ai-agents/`,
+        status: 'blocked',
+        path: '/project/n8n-python-ai-agents/',
+        untilIssues: [121],
+      },
+    ]);
+  });
+
+  it('counts a ready protocol-relative project URL', () => {
+    const result = auditProposalText(
+      'See //www.vivekapatel.com/project/invoice-ocr-extraction/',
+    );
+    expect(result.ok).toBe(true);
+    expect(result.links).toEqual([`${BASE}/project/invoice-ocr-extraction/`]);
+  });
+
+  it('fails audit for protocol-relative homepage', () => {
+    const result = auditProposalText('See //www.vivekapatel.com');
+    expect(result.ok).toBe(false);
+    expect(result.rejected[0]).toMatchObject({
+      status: 'blocked',
+      path: '/',
+      untilIssues: [119],
+    });
+  });
+
+  it('classifies protocol-relative blocked slug', () => {
+    expect(classify('//www.vivekapatel.com/project/n8n-python-ai-agents/')).toEqual({
+      status: 'blocked',
+      path: '/project/n8n-python-ai-agents/',
+      untilIssues: [121],
+    });
   });
 });
 

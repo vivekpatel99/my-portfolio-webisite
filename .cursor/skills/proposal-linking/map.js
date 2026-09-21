@@ -65,7 +65,7 @@ function sitePathname(raw) {
   const stripped = stripWrappers(raw);
   if (!stripped) return null;
 
-  if (stripped.startsWith('/')) {
+  if (stripped.startsWith('/') && !stripped.startsWith('//')) {
     return stripped.split(/[?#]/)[0];
   }
 
@@ -143,7 +143,7 @@ function extractCandidates(text) {
   const patterns = [
     /https?:\/\/(?:www\.)?vivekapatel\.com[^\s)\]"'<>]*/gi,
     /(?<![.\w])\/\/(?:www\.)?vivekapatel\.com[^\s)\]"'<>]*/gi,
-    /(?<![.\w/])(?:www\.)?vivekapatel\.com\/[^\s)\]"'<>]*/gi,
+    /(?<![.\w/])(?:www\.)?vivekapatel\.com(?=\/|[^\w.]|$|\.(?!\w))(?:\/[^\s)\]"'<>]*)?/gi,
     /(?:^|[\s("'=<])(\/project\/[^\s)\]"'<>]+|\/case-studies\/?)/g,
   ];
 
