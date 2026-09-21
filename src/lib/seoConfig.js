@@ -7,9 +7,9 @@ export const DEFAULT_OG_IMAGE_PATH = '/og-image.png';
 export const defaultSeo = {
   title: 'Vivek Patel - Expert AI & Computer Vision Engineer',
   description:
-    'Hire Vivek Patel - Freelance AI & Computer Vision Engineer in Europe. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. 94% performance improvements. €45/hour.',
+    'Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients across Europe. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. 94% performance improvements. €45/hour.',
   keywords:
-    'Vivek Patel, AI Engineer Europe, Computer Vision Freelancer, n8n Automation, Web Scraping Expert, YOLO, PyTorch, LangChain, Data Extraction, Python Developer Europe',
+    'Vivek Patel, AI Engineer Linz Austria, Computer Vision Freelancer, n8n Automation, Web Scraping Expert, YOLO, PyTorch, LangChain, Data Extraction, Python Developer Europe',
   path: '/',
   type: 'website',
   image: DEFAULT_OG_IMAGE_PATH,
@@ -38,9 +38,9 @@ export const routeSeo = {
   '/contact': {
     title: 'Contact | Vivek Patel, AI & Computer Vision Engineer',
     description:
-      'Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Europe. Get a quote within 24 hours. €45/hour.',
+      'Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Linz, Austria, serving Europe. Get a quote within 24 hours. €45/hour.',
     keywords:
-      'Hire AI Engineer Europe, Computer Vision Freelancer, n8n Developer, Web Scraping Expert, Project Quote, LangChain Developer, YOLO Expert',
+      'Hire AI Engineer Linz Austria, Computer Vision Freelancer, n8n Developer, Web Scraping Expert, Project Quote, LangChain Developer, YOLO Expert',
     path: '/contact',
     type: 'website',
     image: DEFAULT_OG_IMAGE_PATH,

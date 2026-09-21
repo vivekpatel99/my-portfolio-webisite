@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Homepage, meta, and JSON-LD now show Starting at €45/hour.
+- Homepage, meta, and JSON-LD now say based in Linz, Austria.
 
 ### Fixed
 - Size case-study galleries to wide workflow screenshots so n8n canvases no longer sit in a tall empty 4:3 box

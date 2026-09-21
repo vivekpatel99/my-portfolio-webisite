@@ -262,6 +262,47 @@ for (const [ref, source] of [['index.html', indexHtml], ['src/lib/seoConfig.js',
       ref,
     });
   }
+  if (!source.includes('Linz') || !source.includes('Austria')) {
+    findings.push({
+      issue: `${ref} missing Linz, Austria`,
+      severity: 'P1',
+      ref,
+    });
+  }
+}
+
+if (hero.includes('Based in Europe')) {
+  findings.push({
+    issue: 'Hero.jsx still contains Based in Europe',
+    severity: 'P1',
+    ref: 'src/components/Hero.jsx',
+  });
+}
+
+const workLocationName = indexHtml.match(/"workLocation"\s*:\s*\{[^}]*"name":\s*"([^"]+)"/)?.[1] ?? '';
+if (workLocationName !== 'Linz, Austria') {
+  findings.push({
+    issue: `Person workLocation.name is not Linz, Austria: ${workLocationName}`,
+    severity: 'P1',
+    ref: 'index.html',
+  });
+}
+
+const areaServedName = indexHtml.match(/"areaServed"\s*:\s*\{[^}]*"name":\s*"([^"]+)"/)?.[1] ?? '';
+if (areaServedName !== 'Linz, Austria and Europe') {
+  findings.push({
+    issue: `ProfessionalService areaServed.name is not Linz, Austria and Europe: ${areaServedName}`,
+    severity: 'P1',
+    ref: 'index.html',
+  });
+}
+
+if (/streetAddress|PostalAddress|"address"\s*:/.test(indexHtml)) {
+  findings.push({
+    issue: 'index.html JSON-LD must not include streetAddress, PostalAddress, or address',
+    severity: 'P1',
+    ref: 'index.html',
+  });
 }
 
 console.log(JSON.stringify(findings, null, 2));
