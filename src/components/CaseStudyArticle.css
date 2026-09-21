@@ -58,6 +58,7 @@
 }
 
 .case-gallery { margin: 0 0 38px; }
+/* 4:3 is the floor. Wide screenshots set a wider inline ratio from CaseStudyGallery. */
 .case-gallery-stage { position: relative; height: auto; aspect-ratio: 4 / 3; border: 1px solid #303034; border-radius: 4px; background: #111214; touch-action: pan-y; }
 .case-gallery button, .case-gallery-dialog button { color: #eeedf0; background: #18191c; border: 1px solid #626168; border-radius: 50%; cursor: pointer; min-width: 44px; min-height: 44px; font: inherit; }
 .case-gallery button:focus-visible, .case-gallery-dialog button:focus-visible, .case-gallery-viewport:focus-visible { outline: 3px solid #c8abea; outline-offset: 3px; }
