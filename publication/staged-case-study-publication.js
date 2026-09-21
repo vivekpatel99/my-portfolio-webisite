@@ -1397,11 +1397,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "52a044a115545038a6197e98b200329e1f1e76b8424219556b2d978639ee8048",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+        "sha256": "87c4d2f4eaf4e7bf2dd66c97313fd3b7d42d01197a0ea5a6775a77736d490a56",
+        "approvedBy": "Cloud Agent (Issue #125 synthetic hero removal)",
+        "approvedAt": "2026-09-21T17:04:00.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/125",
+        "candidateSha256": "52a044a115545038a6197e98b200329e1f1e76b8424219556b2d978639ee8048"
       },
       "claimRefs": {
         "summary": "python-ci-workflow-automation.summary",
@@ -1536,14 +1536,7 @@ export const stagedCaseStudyPublication = {
               }
             ]
           }
-        ],
-        "image": {
-          "src": "/assets/case-studies/python-ci-workflow-automation-56604f4ca9c885dd7813eeae3f980cd4a41adec78bd54bf1f0b0cc6afefe4379.png",
-          "alt": "Illustration of code quality pipeline; synthetic example, not a delivered-product screenshot",
-          "caption": "Workflow illustration with synthetic data; not a screenshot of the delivered product.",
-          "width": 1200,
-          "height": 800
-        }
+        ]
       }
     },
     {
@@ -2735,20 +2728,6 @@ export const stagedCaseStudyPublication = {
         "approvedAt": "2026-09-15T08:45:57.100Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
         "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "/assets/case-studies/python-ci-workflow-automation-56604f4ca9c885dd7813eeae3f980cd4a41adec78bd54bf1f0b0cc6afefe4379.png": {
-      "file": "public/assets/case-studies/python-ci-workflow-automation-56604f4ca9c885dd7813eeae3f980cd4a41adec78bd54bf1f0b0cc6afefe4379.png",
-      "width": 1200,
-      "height": 800,
-      "format": "png",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "56604f4ca9c885dd7813eeae3f980cd4a41adec78bd54bf1f0b0cc6afefe4379",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
       }
     },
     "/assets/case-studies/resumable-listing-data-extraction-33538185e8421a6764d2dfea45ce0491c255c37346b372d5efd7c99c75dc53be.png": {
