@@ -175,11 +175,6 @@ export const caseStudyThumbnailRegistry = Object.freeze({
   "sourceSha256": "483e16b2c3afb3bf6273821ce09d831d07ae5a00ffce8c2b8e24b202062e41a8",
   "thumbnailSha256": "6da3b41644aaf7e2961c5c52410ab355bf189c1384cbdfec9315055ef7ebe34a"
 }),
-  "/assets/case-studies/browser-search-to-spreadsheet-9ec23dd3d88e872e69136f02c3e8dcf5f4fa16f853591f7bff1417780711534c.png": Object.freeze({
-  "src": "/assets/case-studies/browser-search-to-spreadsheet-9ec23dd3d88e872e69136f02c3e8dcf5f4fa16f853591f7bff1417780711534c-thumb-4e197d56ac0d.jpg",
-  "sourceSha256": "9ec23dd3d88e872e69136f02c3e8dcf5f4fa16f853591f7bff1417780711534c",
-  "thumbnailSha256": "4e197d56ac0dd8cd51ae07ecf3e64755a5c0176f92ba9f501a638e96941015de"
-}),
   "/assets/case-studies/depth-based-distance-estimation-6cff31a07362f0483bf43298af0366ffb4c8f40137291202506a8924b0d24957.png": Object.freeze({
   "src": "/assets/case-studies/depth-based-distance-estimation-6cff31a07362f0483bf43298af0366ffb4c8f40137291202506a8924b0d24957-thumb-a79322dffc8a.jpg",
   "sourceSha256": "6cff31a07362f0483bf43298af0366ffb4c8f40137291202506a8924b0d24957",
@@ -199,16 +194,6 @@ export const caseStudyThumbnailRegistry = Object.freeze({
   "src": "/assets/case-studies/python-ci-workflow-automation-56604f4ca9c885dd7813eeae3f980cd4a41adec78bd54bf1f0b0cc6afefe4379-thumb-f4ff8bf77bbf.jpg",
   "sourceSha256": "56604f4ca9c885dd7813eeae3f980cd4a41adec78bd54bf1f0b0cc6afefe4379",
   "thumbnailSha256": "f4ff8bf77bbfe7359f262d568f18b7b0d6e0176bff5694cd9f4717f02d878126"
-}),
-  "/assets/case-studies/resumable-listing-data-extraction-33538185e8421a6764d2dfea45ce0491c255c37346b372d5efd7c99c75dc53be.png": Object.freeze({
-  "src": "/assets/case-studies/resumable-listing-data-extraction-33538185e8421a6764d2dfea45ce0491c255c37346b372d5efd7c99c75dc53be-thumb-aa76be082879.jpg",
-  "sourceSha256": "33538185e8421a6764d2dfea45ce0491c255c37346b372d5efd7c99c75dc53be",
-  "thumbnailSha256": "aa76be0828796c5ff52d67520b1a1cfa5c1feb19c10113e198f862ef1c967223"
-}),
-  "/assets/case-studies/sports-video-analytics-yolo-9a74c900f91b2c81d095d82ec7b1ca2ccad2d5a09935d88ccdcaaf714d3a5761.png": Object.freeze({
-  "src": "/assets/case-studies/sports-video-analytics-yolo-9a74c900f91b2c81d095d82ec7b1ca2ccad2d5a09935d88ccdcaaf714d3a5761-thumb-a87998fc78f0.jpg",
-  "sourceSha256": "9a74c900f91b2c81d095d82ec7b1ca2ccad2d5a09935d88ccdcaaf714d3a5761",
-  "thumbnailSha256": "a87998fc78f06f12e07394fbf6fde4eac26509edb3c77afa71e55069adaf3de9"
 }),
 });
 
