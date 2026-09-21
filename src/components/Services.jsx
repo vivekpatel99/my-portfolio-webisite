@@ -52,7 +52,7 @@ const services = [{
   ]
 }];
 const Services = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(null);
   const handleServiceClick = index => {
     setActiveIndex(activeIndex === index ? null : index);
   };
