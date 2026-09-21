@@ -68,6 +68,23 @@ describe('Project unknown slugs', () => {
   });
 });
 
+describe('Project other-work routes', () => {
+  beforeEach(() => {
+    cleanup();
+  });
+
+  it.each([
+    'ai-project-planning-assistant',
+    'python-ci-workflow-automation',
+  ])('still renders %s instead of a 404', (slug) => {
+    const project = caseStudies.find((story) => story.slug === slug);
+    expect(project).toBeDefined();
+    renderProject(`/project/${slug}`);
+    expect(screen.getByRole('heading', { name: project.title })).toBeTruthy();
+    expect(screen.queryByRole('heading', { name: 'Page Not Found' })).toBeNull();
+  });
+});
+
 describe('Project collection return link', () => {
   beforeEach(() => {
     cleanup();
