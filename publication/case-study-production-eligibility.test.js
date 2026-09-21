@@ -26,7 +26,9 @@ describe('retained completed case studies', () => {
     expect(story.id).toBe(slug);
     expect(story.title).toBe('Recorded Match Video to Reviewable Tracks and Event Tags');
     expect(story.summary).toBe(summary);
+    expect(story).not.toHaveProperty('subtitle');
     expect(publication.filter((record) => record.slug === slug)).toHaveLength(1);
+    expect(publication.map((record) => record.slug)).not.toContain('sports-live-scoring');
 
     const seo = routeSeo[`/project/${slug}`];
     expect(seo.description).toBe(summary);
@@ -35,28 +37,34 @@ describe('retained completed case studies', () => {
 
     const problem = JSON.stringify(story.sections.find((section) => section.key === 'problem'));
     const built = JSON.stringify(story.sections.find((section) => section.key === 'built'));
-    const outcome = JSON.stringify(story.sections.find((section) => section.key === 'outcome'));
+    const outcomeText = story.sections.find((section) => section.key === 'outcome').nodes[0].children[0].value;
     const beforeOutcome = `${story.category} ${story.title} ${story.summary} ${problem} ${built}`;
+    expect(story.sections[0].key).toBe('problem');
+    expect(story.sections[2].key).toBe('outcome');
     expect(beforeOutcome).toMatch(/batch/i);
-    expect(beforeOutcome).toMatch(/recorded/i);
+    expect(beforeOutcome).toMatch(/recorded match footage/i);
     expect(beforeOutcome).toMatch(/human review/i);
-    expect(story.summary).toMatch(/Not live scoring/);
-    expect(problem).toMatch(/not live scoring/i);
+    expect(story.summary).toContain('Not live scoring.');
+    expect(problem).toContain('This is batch review of recorded footage, not live scoring.');
 
-    expect(outcome).toMatch(/not real-time broadcasting or autonomous officiating/i);
-    expect(outcome).toContain('No public tracking-accuracy, latency or time-saving figure is claimed.');
+    expect(outcomeText).toBe('The handoff links video analysis to reviewable events and exports. A person still checks the proposed tags before treating them as final. The scope is batch analysis of recorded footage, not real-time broadcasting or autonomous officiating. No public tracking-accuracy, latency or time-saving figure is claimed.');
 
-    expect(story.title).not.toMatch(/live scoring|60\s*FPS|real-?time/i);
-    expect(seo.title).not.toMatch(/live scoring|60\s*FPS|real-?time/i);
-    expect(story.summary).not.toMatch(/60\s*FPS|real-?time/i);
+    const headingMetaCaption = `${story.title} ${story.category} ${seo.title} ${story.image.alt} ${story.image.caption}`;
+    expect(headingMetaCaption).not.toMatch(/60\s*FPS/i);
+    expect(headingMetaCaption).not.toMatch(/\baccuracy\b/i);
+    expect(headingMetaCaption).not.toMatch(/\blatency\b/i);
+    expect(headingMetaCaption).not.toMatch(/broadcast/i);
+    expect(`${story.title} ${story.summary} ${story.image.alt} ${story.image.caption}`).not.toMatch(/real-?time/i);
+    expect(`${headingMetaCaption} ${story.summary} ${problem}`.replace(/not live scoring\.?/gi, '')).not.toMatch(/live scoring/i);
     expect(story.image.src).toBe(coverSrc);
-    expect(story.image.alt).not.toMatch(/live scoring|60\s*FPS|real-?time/i);
-    expect(story.image.caption).not.toMatch(/live scoring|60\s*FPS|real-?time/i);
+    expect(story.image.alt).toBe('Illustration of match analysis; synthetic example, not a delivered-product screenshot');
+    expect(story.image.caption).toBe('Workflow illustration with synthetic data; not a screenshot of the delivered product.');
 
     const module = await import(`data:text/javascript;base64,${Buffer.from(renderPublicCaseStudyModule(publication)).toString('base64')}`);
     const card = module.collectionCaseStudies.find((record) => record.slug === slug);
     expect(card.summary).toBe(summary);
     expect(card.image.src).toBe(coverSrc);
+    expect(module.featuredCaseStudies.map((record) => record.slug)).not.toContain(slug);
   });
 
   it('makes all three owner-confirmed stories discoverable without inventing completion months', async () => {
