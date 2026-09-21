@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Homepage, meta, and JSON-LD now show Starting at €45/hour.
+- The depth case study at `/project/depth-based-distance-estimation/` now states it is a lab demo, not a benchmark, and not for proposals.
 
 ### Fixed
 - Size case-study galleries to wide workflow screenshots so n8n canvases no longer sit in a tall empty 4:3 box
