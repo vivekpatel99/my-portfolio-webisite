@@ -195,10 +195,23 @@ describe('case-study publication boundary', () => {
     expect(module.collectionCaseStudies.map(({ id }) => id)).toEqual([
       'older-published-newer-project', 'recently-published-older-project',
     ]);
+    expect(module.otherWorkCaseStudies).toEqual([]);
     expect(module.eligibleCaseStudyCount).toBe(2);
     expect(module.featuredCaseStudies.map(({ id }) => id)).toEqual([
       'recently-published-older-project', 'older-published-newer-project',
     ]);
+  });
+
+  it('drops a completed fixture slug from the collection when it is marked other-work', async () => {
+    const rendered = renderPublicCaseStudyModule([
+      { id: 'fixture-one', slug: 'fixture-one', projectStatus: 'completed', completedAt: '2026-08' },
+      { id: 'fixture-two', slug: 'fixture-two', projectStatus: 'completed', completedAt: '2024-01' },
+    ], ['fixture-one', 'fixture-two'], ['fixture-two']);
+    const module = await import(`data:text/javascript;base64,${Buffer.from(rendered).toString('base64')}`);
+    expect(module.collectionCaseStudies.map(({ slug }) => slug)).toEqual(['fixture-one']);
+    expect(module.otherWorkCaseStudies.map(({ slug }) => slug)).toEqual(['fixture-two']);
+    expect(module.eligibleCaseStudies).toHaveLength(2);
+    expect(module.eligibleCaseStudyCount).toBe(2);
   });
 
   it('breaks equal-month ties by ASCII slug order, independent of runtime locale', () => {

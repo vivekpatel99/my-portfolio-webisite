@@ -140,7 +140,7 @@ Homepage cards use the build-only `publication/case-study-featured.js` slug
 configuration. The selector keeps configured order, ignores unavailable or
 ineligible slugs, removes duplicates, and caps the result at three stories.
 Configuration chooses existing eligible public records; it does not publish a
-story or add metadata. The `/case-studies/` link uses the full eligible count.
+story or add metadata. The `/case-studies/` homepage count uses the main collection, not every completed story. Other-work slugs live in `publication/case-study-other-work.js`. Those articles stay on their `/project/<slug>/` routes and must not be auto-linked in proposals.
 
 The small legacy adapter in `publication/compile-case-studies.js` remains
 because `n8n-openai-data-extraction`, `invoice-ocr-extraction`, and

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { caseStudies, eligibleCaseStudies, collectionCaseStudies, eligibleCaseStudyCount, featuredCaseStudies, getCaseStudyBySlug, caseStudySlugs, primaryContactHref } from './caseStudies';
+import { caseStudies, eligibleCaseStudies, collectionCaseStudies, otherWorkCaseStudies, otherWorkCaseStudySlugs, eligibleCaseStudyCount, featuredCaseStudies, getCaseStudyBySlug, caseStudySlugs, primaryContactHref } from './caseStudies';
 import { routeSeo } from '../lib/seoConfig';
 import { selectFeaturedCaseStudies } from '../lib/featuredCaseStudies';
 import { deploymentHtaccess } from '../../plugins/vite-plugin-case-study-publication.js';
@@ -18,14 +18,42 @@ describe('caseStudies data structure', () => {
   });
 
   it('sorts the collection projection while preserving homepage feature order', () => {
-    expect(collectionCaseStudies).toEqual(eligibleCaseStudies.slice().sort((left, right) => {
+    const otherWorkSlugSet = new Set(otherWorkCaseStudySlugs);
+    const byCompletion = (left, right) => {
       const leftMonth = (left.completedAt ?? '').replace('-', '');
       const rightMonth = (right.completedAt ?? '').replace('-', '');
       // ASCII comparison on purpose: matches compareSlugs in src/lib/caseStudyCollection.js, not locale collation.
       const ascii = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
       return ascii(rightMonth, leftMonth) || ascii(left.slug, right.slug);
-    }));
+    };
+    expect(collectionCaseStudies).toEqual(
+      eligibleCaseStudies.filter((caseStudy) => !otherWorkSlugSet.has(caseStudy.slug)).slice().sort(byCompletion),
+    );
+    expect(otherWorkCaseStudies).toEqual(
+      eligibleCaseStudies.filter((caseStudy) => otherWorkSlugSet.has(caseStudy.slug)).slice().sort(byCompletion),
+    );
     expect(featuredCaseStudies).toEqual(selectFeaturedCaseStudies(eligibleCaseStudies));
+  });
+
+  it('keeps configured other-work stories published but out of the main collection', () => {
+    const configured = ['ai-project-planning-assistant', 'python-ci-workflow-automation'];
+    expect([...otherWorkCaseStudySlugs].sort()).toEqual([...configured].sort());
+    expect(eligibleCaseStudyCount).toBe(eligibleCaseStudies.length);
+    expect(featuredCaseStudies.filter((story) => configured.includes(story.slug))).toEqual([]);
+
+    const publishedConfigured = configured.filter((slug) => getCaseStudyBySlug(slug));
+    if (publishedConfigured.length === configured.length) {
+      expect(collectionCaseStudies).toHaveLength(10);
+      expect(otherWorkCaseStudies).toHaveLength(2);
+      expect(eligibleCaseStudies).toHaveLength(12);
+      expect(otherWorkCaseStudies.map((story) => story.slug).sort()).toEqual([...configured].sort());
+    }
+
+    publishedConfigured.forEach((slug) => {
+      expect(getCaseStudyBySlug(slug).slug).toBe(slug);
+      expect(caseStudySlugs).toContain(slug);
+      expect(collectionCaseStudies.map((story) => story.slug)).not.toContain(slug);
+    });
   });
 
   it('should have required fields for each case study', () => {
