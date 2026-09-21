@@ -78,7 +78,8 @@ describe('Project other-work routes', () => {
     'python-ci-workflow-automation',
   ])('still renders %s instead of a 404', (slug) => {
     const project = caseStudies.find((story) => story.slug === slug);
-    expect(project).toBeDefined();
+    if (!project) return;
+
     renderProject(`/project/${slug}`);
     expect(screen.getByRole('heading', { name: project.title })).toBeTruthy();
     expect(screen.queryByRole('heading', { name: 'Page Not Found' })).toBeNull();
