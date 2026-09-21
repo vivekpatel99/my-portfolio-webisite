@@ -165,6 +165,59 @@ test('case study gallery keeps its stage, selected media, and thumbnails in usab
   });
 });
 
+const measureGalleryStage = async (page) => page.evaluate(() => {
+  const stage = document.querySelector('.case-gallery-stage');
+  const img = stage?.querySelector('img');
+  if (!stage || !img) return null;
+  const stageBox = stage.getBoundingClientRect();
+  const imageBox = img.getBoundingClientRect();
+  return {
+    stageRatio: stageBox.width / stageBox.height,
+    fill: imageBox.height / stageBox.height,
+    natural: img.naturalWidth / img.naturalHeight,
+    complete: img.complete && img.naturalWidth > 0,
+  };
+});
+
+test('wide case-study galleries fill the stage without a 4:3 empty band', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await reducedMotion(page);
+  const cases = [
+    { slug: 'n8n-openai-data-extraction', ratio: 2984 / 874 },
+    { slug: 'ai-invoice-processing-automation', ratio: 2448 / 684 },
+    { slug: 'yolo-computer-vision-optimization', ratio: 4 / 3 },
+    { slug: 'invoice-ocr-extraction', ratio: 4 / 3 },
+  ];
+  for (const { slug, ratio } of cases) {
+    await page.goto(`/project/${slug}/`);
+    await settleLayout(page);
+    const gallery = page.getByRole('region', { name: 'Case study images' });
+    const stage = gallery.locator('.case-gallery-stage').first();
+    await stage.scrollIntoViewIfNeeded();
+    await expect(stage.locator('img').first()).toBeVisible();
+    await expect.poll(async () => (await measureGalleryStage(page))?.complete).toBe(true);
+    const metrics = await measureGalleryStage(page);
+    expect(metrics.stageRatio, slug).toBeCloseTo(ratio, 1);
+    expect(metrics.fill, slug).toBeGreaterThan(0.65);
+  }
+
+  await page.goto('/project/ai-invoice-processing-automation/');
+  await settleLayout(page);
+  const invoiceGallery = page.getByRole('region', { name: 'Case study images' });
+  await invoiceGallery.locator('.case-gallery-stage').first().scrollIntoViewIfNeeded();
+  await invoiceGallery.getByRole('button', { name: /Show image 3:/ }).click();
+  await expect.poll(async () => (await measureGalleryStage(page))?.complete).toBe(true);
+  const shortWide = await measureGalleryStage(page);
+  expect(shortWide.stageRatio).toBeCloseTo(2140 / 458, 1);
+  expect(shortWide.fill).toBeGreaterThan(0.65);
+
+  await invoiceGallery.getByRole('button', { name: /Enlarge image:/ }).click();
+  const dialog = page.getByRole('dialog', { name: 'Enlarged case study images' });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('button', { name: 'Close enlarged image' }).click();
+  await expect(dialog).toHaveCount(0);
+});
+
 test('contact form stays horizontally contained with visible fields and submit control', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await reducedMotion(page);

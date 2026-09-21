@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { compileCaseStudyPublication } from '../../publication/compile-case-studies.js';
 import { caseStudyPublicationBaseline } from '../../publication/case-study-manifest.js';
-import Gallery, { collectGalleryImages, galleryThumbnailSrc } from './CaseStudyGallery.js';
+import Gallery, { collectGalleryImages, galleryStageAspectRatio, galleryThumbnailSrc } from './CaseStudyGallery.js';
 afterEach(cleanup);
 const images = ['Input', 'Output', 'Workflow'].map((alt, i) => ({ src: `/image-${i}.png`, alt, width: 800, height: 600 }));
 describe('case study gallery', () => {
@@ -33,6 +33,36 @@ describe('case study gallery', () => {
     const duplicate = { type: 'image', ...images[0], caption: 'Later caption' };
     expect(collectGalleryImages({ image: first, sections: [{ nodes: [duplicate] }] })[0].caption).toBe('First caption');
   });
+  it('sizes the inline stage to wide canvases and keeps 4:3 for taller media', () => {
+    expect(galleryStageAspectRatio({ width: 2984, height: 874 })).toBe('2984 / 874');
+    expect(galleryStageAspectRatio({ width: 2448, height: 684 })).toBe('2448 / 684');
+    expect(galleryStageAspectRatio({ width: 2140, height: 458 })).toBe('2140 / 458');
+    expect(galleryStageAspectRatio({ width: 960, height: 720 })).toBe('4 / 3');
+    expect(galleryStageAspectRatio({ width: 1654, height: 2339 })).toBe('4 / 3');
+    expect(galleryStageAspectRatio({ width: 1068, height: 436 })).toBe('1068 / 436');
+    expect(galleryStageAspectRatio({})).toBe('4 / 3');
+    expect(galleryStageAspectRatio()).toBe('4 / 3');
+    expect(galleryStageAspectRatio({ width: 0, height: 100 })).toBe('4 / 3');
+    expect(galleryStageAspectRatio({ width: '2984', height: '874' })).toBe('2984 / 874');
+  });
+  it('applies the selected image ratio to the inline stage only', () => {
+    const wide = { src: '/wide.png', alt: 'Wide', width: 2984, height: 874 };
+    const portrait = { src: '/tall.png', alt: 'Tall', width: 1654, height: 2339 };
+    const { container } = render(<Gallery images={[wide, portrait]} />);
+    expect(container.querySelector('.case-gallery-stage').style.aspectRatio).toBe('2984 / 874');
+    fireEvent.click(screen.getByRole('button', { name: 'Show image 2: Tall' }));
+    expect(container.querySelector('.case-gallery-stage').style.aspectRatio).toBe('4 / 3');
+    fireEvent.click(screen.getByRole('button', { name: 'Enlarge image: Tall' }));
+    expect(screen.getByRole('dialog').querySelector('.case-gallery-stage').style.aspectRatio).toBe('');
+  });
+  it('keeps 4:3 for video with no dimensions and still exposes stage geometry', () => {
+    const video = { src: '/football-tracking.mp4', poster: '/football-tracking.webp', alt: 'Tracked football players' };
+    const other = { src: '/wide.png', alt: 'Wide', width: 2140, height: 458 };
+    const { container } = render(<Gallery images={[video, other]} />);
+    expect(container.querySelector('.case-gallery-stage').style.aspectRatio).toBe('4 / 3');
+    fireEvent.click(screen.getByRole('button', { name: 'Show image 2: Wide' }));
+    expect(container.querySelector('.case-gallery-stage').style.aspectRatio).toBe('2140 / 458');
+  });
   it('uses stage geometry and exposes every image URL in static markup', () => {
     const staticImages = images.map((image, i) => ({ ...image, caption: `Caption ${i + 1}` }));
     const html = renderToStaticMarkup(<Gallery images={staticImages} interactive={false} />);
@@ -43,6 +73,13 @@ describe('case study gallery', () => {
     staticImages.forEach((image) => expect(html).toContain(`href="${image.src}"`));
     staticImages.forEach((image) => expect(html).toContain(image.caption));
     expect(html.match(/class="case-gallery-thumbnail"/g)).toHaveLength(staticImages.length);
+    expect(html).toContain('aspect-ratio:4 / 3');
+    expect(renderToStaticMarkup(<Gallery images={[{ src: '/wide.png', alt: 'Wide', width: 2984, height: 874 }, staticImages[1]]} interactive={false} />))
+      .toContain('aspect-ratio:2984 / 874');
+    expect(readFileSync('src/components/CaseStudyArticle.css', 'utf8'))
+      .toMatch(/\.case-gallery-stage \{[^}]*aspect-ratio: 4 \/ 3/);
+    expect(readFileSync('src/components/CaseStudyArticle.css', 'utf8'))
+      .toMatch(/\.case-gallery-dialog \.case-gallery-stage \{[^}]*aspect-ratio: auto/);
     expect(readFileSync('src/components/CaseStudyArticle.css', 'utf8'))
       .toMatch(/\.case-gallery-thumbnails (?:button, \.case-gallery-thumbnails )?a/);
   });
