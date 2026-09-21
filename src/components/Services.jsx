@@ -61,7 +61,7 @@ const Services = () => {
             </motion.div>
           </div>
 
-          <AnimatePresence>
+          <AnimatePresence initial={false}>
             {activeIndex === index && <motion.div
               id={`service-content-${service.id}`}
               initial={{
