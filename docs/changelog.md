@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Service offers now show buyable details: price bands, duration, and in-scope vs out-of-scope items for all three packages
+
 ### Changed
 - Homepage, meta, and JSON-LD now show Starting at €45/hour.
 

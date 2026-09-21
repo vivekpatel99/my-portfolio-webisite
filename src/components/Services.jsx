@@ -4,13 +4,52 @@ import { Plus } from 'lucide-react'; // Changed import from ArrowRight, ArrowDow
 
 const services = [{
   title: 'DATA EXTRACTION AUTOMATION SPRINT',
-  description: 'A focused buildout for teams stuck copying information from websites, PDFs, invoices, or messy internal sources. I map the workflow, build the extractor, add validation, and deliver a reusable automation your team can actually operate.'
+  description: 'A focused buildout for teams stuck copying information from websites, PDFs, invoices, or messy internal sources. I map the workflow, build the extractor, add validation, and deliver a reusable automation your team can actually operate.',
+  price: '€3,600–€7,200',
+  duration: '1–2 weeks',
+  inScope: [
+    'Workflow mapping and validation rules',
+    'Extractor build (web scraping, PDF parsing, or OCR)',
+    'Output format and delivery integration',
+    'Runbook and handoff documentation'
+  ],
+  outOfScope: [
+    'Ongoing maintenance or support contracts',
+    'Training your team to modify the code',
+    'Infrastructure hosting or setup'
+  ]
 }, {
   title: 'COMPUTER VISION PRODUCTION OPTIMIZATION',
-  description: 'For existing YOLO, OCR, OpenCV, ONNX, or edge-AI systems that need to become faster and more reliable. I profile the bottlenecks, improve inference flow, and prepare the pipeline for production constraints.'
+  description: 'For existing YOLO, OCR, OpenCV, ONNX, or edge-AI systems that need to become faster and more reliable. I profile the bottlenecks, improve inference flow, and prepare the pipeline for production constraints.',
+  price: '€3,600–€7,200',
+  duration: '1–2 weeks',
+  inScope: [
+    'Performance profiling and bottleneck analysis',
+    'Inference optimization (batching, quantization, format conversion)',
+    'Production readiness review (error handling, logging)',
+    'Before/after metrics and deployment notes'
+  ],
+  outOfScope: [
+    'Retraining models or gathering new datasets',
+    'Building the initial CV system from scratch',
+    'Infrastructure provisioning or MLOps setup'
+  ]
 }, {
   title: 'AI WORKFLOW BUILDOUT',
-  description: 'A complete workflow build for operations teams that need LLMs, n8n, APIs, scraping, and human review connected into one dependable system. Best for replacing repeatable decisions and handoffs without hiring multiple specialists.'
+  description: 'A complete workflow build for operations teams that need LLMs, n8n, APIs, scraping, and human review connected into one dependable system. Best for replacing repeatable decisions and handoffs without hiring multiple specialists.',
+  price: '€7,200–€14,400',
+  duration: '2–4 weeks',
+  inScope: [
+    'End-to-end workflow design and integration',
+    'LLM prompting, API connections, and data pipeline',
+    'Human review checkpoints and error handling',
+    'Testing, documentation, and team handoff'
+  ],
+  outOfScope: [
+    'Ongoing prompt tuning or model selection',
+    'Replacing your internal dev team',
+    'Legal review of third-party API terms'
+  ]
 }];
 const Services = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -88,8 +127,46 @@ const Services = () => {
                 duration: 0.4,
                 ease: "easeInOut"
               }} className="overflow-hidden">
-              <div className="pb-8 pr-4 sm:pr-8 md:pr-16">
+              <div className="pb-8 pr-4 sm:pr-8 md:pr-16 space-y-6">
                 <p className="text-lg text-gray-400 max-w-2xl">{service.description}</p>
+                
+                <div className="flex flex-wrap gap-4 text-white">
+                  <div className="flex items-center gap-2 px-4 py-2 bg-accent-purple/10 border border-accent-purple/20 rounded-lg">
+                    <span className="font-semibold">{service.price}</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg">
+                    <span className="text-gray-300">{service.duration}</span>
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-6 max-w-4xl">
+                  <div>
+                    <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
+                      <span className="text-green-400">✓</span> In Scope
+                    </h4>
+                    <ul className="space-y-2">
+                      {service.inScope.map((item, i) => (
+                        <li key={i} className="text-gray-400 text-sm flex items-start gap-2">
+                          <span className="text-green-400 mt-0.5">•</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
+                      <span className="text-gray-500">✗</span> Out of Scope
+                    </h4>
+                    <ul className="space-y-2">
+                      {service.outOfScope.map((item, i) => (
+                        <li key={i} className="text-gray-500 text-sm flex items-start gap-2">
+                          <span className="text-gray-600 mt-0.5">•</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
               </div>
             </motion.div>}
           </AnimatePresence>
