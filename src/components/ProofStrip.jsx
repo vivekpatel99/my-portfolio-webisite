@@ -1,5 +1,5 @@
 import React from 'react';
-import { Award, CheckCircle2, Clock3, Gauge, Sparkles } from 'lucide-react';
+import { Award, CheckCircle2 } from 'lucide-react';
 
 const proofItems = [
   {
@@ -12,28 +12,13 @@ const proofItems = [
     detail: 'Client delivery record',
     icon: CheckCircle2,
   },
-  {
-    label: '21+ Projects',
-    detail: 'AI and automation work',
-    icon: Sparkles,
-  },
-  {
-    label: '300+ Hours',
-    detail: 'Solutions delivered',
-    icon: Clock3,
-  },
-  {
-    label: '94% Faster',
-    detail: 'Inference improvement',
-    icon: Gauge,
-  },
 ];
 
 const ProofStrip = () => (
   <section className="bg-[#0C0D0D] border-y border-white/10" aria-labelledby="proof-heading">
     <div className="container mx-auto px-6 py-8">
       <h2 id="proof-heading" className="sr-only">Professional Credentials and Achievements</h2>
-      <ul className="grid grid-cols-2 gap-3 md:grid-cols-5">
+      <ul className="grid grid-cols-2 gap-3 max-w-2xl mx-auto">
         {proofItems.map(({ label, detail, icon: Icon }) => (
           <li
             key={label}
