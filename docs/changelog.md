@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Homepage, meta, and JSON-LD now show Starting at €45/hour.
+- Homepage proof chips, About, and SEO no longer claim unsourced 94% savings or 21+ projects.
+
+### Removed
+- 300+ Hours chip from the homepage proof strip.
 
 ### Fixed
 - Size case-study galleries to wide workflow screenshots so n8n canvases no longer sit in a tall empty 4:3 box
