@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import { caseStudies, eligibleCaseStudies, collectionCaseStudies, otherWorkCaseStudies, otherWorkCaseStudySlugs, eligibleCaseStudyCount, featuredCaseStudies, getCaseStudyBySlug, caseStudySlugs, primaryContactHref } from './caseStudies';
 import { routeSeo } from '../lib/seoConfig';
 import { selectFeaturedCaseStudies } from '../lib/featuredCaseStudies';
+import { selectCoreCollectionCaseStudies, selectOtherWorkCaseStudies } from '../lib/caseStudyCollection';
 import { deploymentHtaccess } from '../../plugins/vite-plugin-case-study-publication.js';
 
 describe('caseStudies data structure', () => {
@@ -18,20 +19,8 @@ describe('caseStudies data structure', () => {
   });
 
   it('sorts the collection projection while preserving homepage feature order', () => {
-    const otherWorkSlugSet = new Set(otherWorkCaseStudySlugs);
-    const byCompletion = (left, right) => {
-      const leftMonth = (left.completedAt ?? '').replace('-', '');
-      const rightMonth = (right.completedAt ?? '').replace('-', '');
-      // ASCII comparison on purpose: matches compareSlugs in src/lib/caseStudyCollection.js, not locale collation.
-      const ascii = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
-      return ascii(rightMonth, leftMonth) || ascii(left.slug, right.slug);
-    };
-    expect(collectionCaseStudies).toEqual(
-      eligibleCaseStudies.filter((caseStudy) => !otherWorkSlugSet.has(caseStudy.slug)).slice().sort(byCompletion),
-    );
-    expect(otherWorkCaseStudies).toEqual(
-      eligibleCaseStudies.filter((caseStudy) => otherWorkSlugSet.has(caseStudy.slug)).slice().sort(byCompletion),
-    );
+    expect(collectionCaseStudies).toEqual(selectCoreCollectionCaseStudies(eligibleCaseStudies));
+    expect(otherWorkCaseStudies).toEqual(selectOtherWorkCaseStudies(eligibleCaseStudies));
     expect(featuredCaseStudies).toEqual(selectFeaturedCaseStudies(eligibleCaseStudies));
   });
 
