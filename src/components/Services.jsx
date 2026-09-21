@@ -155,12 +155,12 @@ const Services = () => {
                   </div>
                   <div>
                     <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
-                      <span className="text-gray-500">✗</span> Out of Scope
+                      <span className="text-gray-400">✗</span> Out of Scope
                     </h4>
                     <ul className="space-y-2">
                       {service.outOfScope.map((item, i) => (
-                        <li key={i} className="text-gray-500 text-sm flex items-start gap-2">
-                          <span className="text-gray-600 mt-0.5">•</span>
+                        <li key={i} className="text-gray-400 text-sm flex items-start gap-2">
+                          <span className="text-gray-400 mt-0.5">•</span>
                           <span>{item}</span>
                         </li>
                       ))}
