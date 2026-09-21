@@ -122,7 +122,7 @@ test('normal-size purple text and links meet contrast in rendered states', async
     localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false }));
   });
   await page.goto('/');
-  const price = page.getByText('Starting at €45/hour', { exact: true });
+  const price = page.getByText('Starting at $45/hour', { exact: true });
   const priceBackground = await price.evaluate((element) => {
     const badge = element.parentElement;
     const style = badge ? getComputedStyle(badge) : null;

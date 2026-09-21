@@ -212,48 +212,48 @@ if (indexHtml.includes('application/ld+json')) {
 
 const draftDescription = getMeta(indexHtml, 'description');
 const draftTwitter = getMeta(indexHtml, 'twitter:description');
-if (!draftDescription?.includes('€45/hour')) {
+if (!draftDescription?.includes('$45/hour')) {
   findings.push({
-    issue: `index.html meta description missing €45/hour: ${draftDescription}`,
+    issue: `index.html meta description missing $45/hour: ${draftDescription}`,
     severity: 'P1',
     ref: 'index.html',
   });
 }
-if (!draftTwitter?.includes('€45/hour')) {
+if (!draftTwitter?.includes('$45/hour')) {
   findings.push({
-    issue: `index.html twitter:description missing €45/hour: ${draftTwitter}`,
+    issue: `index.html twitter:description missing $45/hour: ${draftTwitter}`,
     severity: 'P1',
     ref: 'index.html',
   });
 }
 const priceRange = indexHtml.match(/"priceRange":\s*"([^"]+)"/)?.[1] ?? '';
-if (priceRange !== '€45/hour') {
+if (priceRange !== '$45/hour') {
   findings.push({
-    issue: `ProfessionalService priceRange is not €45/hour: ${priceRange}`,
+    issue: `ProfessionalService priceRange is not $45/hour: ${priceRange}`,
     severity: 'P1',
     ref: 'index.html',
   });
 }
 
 const seoConfig = readFileSync(path.join(process.cwd(), 'src/lib/seoConfig.js'), 'utf8');
-if (!seoConfig.includes('€45/hour')) {
+if (!seoConfig.includes('$45/hour')) {
   findings.push({
-    issue: 'seoConfig.js missing €45/hour',
+    issue: 'seoConfig.js missing $45/hour',
     severity: 'P1',
     ref: 'src/lib/seoConfig.js',
   });
 }
 
 const hero = readFileSync(path.join(process.cwd(), 'src/components/Hero.jsx'), 'utf8');
-if (!hero.includes('Starting at €45/hour')) {
+if (!hero.includes('Starting at $45/hour')) {
   findings.push({
-    issue: 'Hero.jsx missing Starting at €45/hour',
+    issue: 'Hero.jsx missing Starting at $45/hour',
     severity: 'P1',
     ref: 'src/components/Hero.jsx',
   });
 }
 
-const leftoverRate = /€80|\$45\/hour/;
+const leftoverRate = /€80|€45\/hour/;
 for (const [ref, source] of [['index.html', indexHtml], ['src/lib/seoConfig.js', seoConfig], ['src/components/Hero.jsx', hero]]) {
   if (leftoverRate.test(source)) {
     findings.push({
