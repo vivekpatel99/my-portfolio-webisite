@@ -1227,11 +1227,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "3f3e774af60f0e8df4f43cf42bdaa6ccf18d5edf9fc2382dee8f406a96836b56",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "sha256": "9c0b07d0ef66f2faa4fa025f0a8b5b852855452d13c3e3451edfdbf3a0b9a0f5",
+        "approvedBy": "Cloud Agent (issue #121)",
+        "approvedAt": "2026-09-21T13:59:17.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
+        "candidateSha256": "a641ebfe0c939e9622c97c95f1da199b7f0a3838cd0b40ef1f66b0fec572fc16"
       },
       "claimRefs": {
         "summary": "n8n-python-ai-agents.summary",
@@ -1337,20 +1337,6 @@ export const stagedCaseStudyPublication = {
                         ]
                       }
                     ]
-                  },
-                  {
-                    "type": "listItem",
-                    "children": [
-                      {
-                        "type": "paragraph",
-                        "children": [
-                          {
-                            "type": "text",
-                            "value": "Postgres conversation memory and handoff documentation."
-                          }
-                        ]
-                      }
-                    ]
                   }
                 ]
               },
@@ -1358,8 +1344,71 @@ export const stagedCaseStudyPublication = {
                 "type": "paragraph",
                 "children": [
                   {
-                    "type": "text",
-                    "value": "These are related engagements in one case study. The SQL restrictions apply to the question-answering agent, not to the separate data-synchronization workflow."
+                    "type": "image",
+                    "src": "/assets/case-studies/n8n-python-ai-agents-e6fbcc7caa954b217adfa063990d460059e44d08808ad85c9e8988418920104c.png",
+                    "alt": "Representative n8n data extraction workflow from other portfolio work; temporary stand-in for Andrew engagement screenshots",
+                    "width": 2984,
+                    "height": 874
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "type": "image",
+                    "src": "/assets/case-studies/n8n-python-ai-agents-72c334f819d00fb872bea5cdb429e07a540b18794a627f758d0c8e092cb84636.png",
+                    "alt": "Representative n8n data processor workflow from other portfolio work; temporary stand-in for Andrew engagement screenshots",
+                    "width": 1679,
+                    "height": 981
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "type": "image",
+                    "src": "/assets/case-studies/n8n-python-ai-agents-753a3e00357784381e121fd6593d4a054f0f6380cfb172eccd4702665ad9856e.png",
+                    "alt": "Representative n8n error handler workflow from other portfolio work; temporary stand-in for Andrew engagement screenshots",
+                    "width": 1142,
+                    "height": 923
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "type": "image",
+                    "src": "/assets/case-studies/n8n-python-ai-agents-ab7acc351c8af2d032a4d05ae75422e15cf54d079409eed67150dc28dd352178.png",
+                    "alt": "Representative n8n Excel-to-JSON processor from other portfolio work; temporary stand-in for Andrew engagement screenshots",
+                    "width": 3400,
+                    "height": 955
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "type": "image",
+                    "src": "/assets/case-studies/n8n-python-ai-agents-f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png",
+                    "alt": "Representative invoice orchestrator workflow from other portfolio work; temporary stand-in for Andrew engagement screenshots",
+                    "width": 2448,
+                    "height": 684
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "type": "image",
+                    "src": "/assets/case-studies/n8n-python-ai-agents-c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9.png",
+                    "alt": "Representative invoice extractor workflow from other portfolio work; temporary stand-in for Andrew engagement screenshots",
+                    "width": 1862,
+                    "height": 800
                   }
                 ]
               }
@@ -2315,48 +2364,6 @@ export const stagedCaseStudyPublication = {
         "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
       }
     },
-    "n8n-python-ai-agents.summary": {
-      "type": "content",
-      "recordId": "n8n-python-ai-agents",
-      "placement": "summary",
-      "value": "Repeat automation work moved scripted data flows into n8n and added a database-question agent with an explicit SQL execution boundary.",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "499d8ae36b021db6cbe9889582e577808b1b1d0d101e3c47d380f2f0badc8bfe",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "n8n-python-ai-agents.outcome": {
-      "type": "content",
-      "recordId": "n8n-python-ai-agents",
-      "placement": "outcome",
-      "value": {
-        "key": "outcome",
-        "heading": "The outcome",
-        "nodes": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "text",
-                "value": "The result is an inspectable n8n pipeline and a constrained way to ask operational database questions. Uncertain enrichment and empty query results remain visible. The local archive includes evaluation plans, not a scored agent-accuracy result. No standalone Python service or measured savings figure is claimed from these artifacts."
-              }
-            ]
-          }
-        ]
-      },
-      "approval": {
-        "kind": "explicit",
-        "sha256": "184db62cb14392483d107afd580d2d9893fc8b18c1f738a2935374c5caddb78d",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
     "resumable-listing-data-extraction.summary": {
       "type": "content",
       "recordId": "resumable-listing-data-extraction",
@@ -2650,6 +2657,48 @@ export const stagedCaseStudyPublication = {
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
         "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
       }
+    },
+    "n8n-python-ai-agents.summary": {
+      "type": "content",
+      "recordId": "n8n-python-ai-agents",
+      "placement": "summary",
+      "value": "Repeat automation work moved scripted data flows into n8n and added a database-question agent with an explicit SQL execution boundary.",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "499d8ae36b021db6cbe9889582e577808b1b1d0d101e3c47d380f2f0badc8bfe",
+        "approvedBy": "Cloud Agent (issue #121)",
+        "approvedAt": "2026-09-21T13:59:17.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
+        "candidateSha256": "a641ebfe0c939e9622c97c95f1da199b7f0a3838cd0b40ef1f66b0fec572fc16"
+      }
+    },
+    "n8n-python-ai-agents.outcome": {
+      "type": "content",
+      "recordId": "n8n-python-ai-agents",
+      "placement": "outcome",
+      "value": {
+        "key": "outcome",
+        "heading": "The outcome",
+        "nodes": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "text",
+                "value": "The result is an inspectable n8n pipeline and a constrained way to ask operational database questions. Uncertain enrichment and empty query results remain visible. The local archive includes evaluation plans, not a scored agent-accuracy result. No standalone Python service or measured savings figure is claimed from these artifacts."
+              }
+            ]
+          }
+        ]
+      },
+      "approval": {
+        "kind": "explicit",
+        "sha256": "184db62cb14392483d107afd580d2d9893fc8b18c1f738a2935374c5caddb78d",
+        "approvedBy": "Cloud Agent (issue #121)",
+        "approvedAt": "2026-09-21T13:59:17.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
+        "candidateSha256": "a641ebfe0c939e9622c97c95f1da199b7f0a3838cd0b40ef1f66b0fec572fc16"
+      }
     }
   },
   "assets": {
@@ -2731,10 +2780,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "e542384f4f7532d230440cb9a68e0e7e66d951996959221225633fc5304b08b7",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Cloud Agent (issue #121)",
+        "approvedAt": "2026-09-21T13:59:17.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
+        "candidateSha256": "a641ebfe0c939e9622c97c95f1da199b7f0a3838cd0b40ef1f66b0fec572fc16"
       }
     },
     "/assets/case-studies/python-ci-workflow-automation-56604f4ca9c885dd7813eeae3f980cd4a41adec78bd54bf1f0b0cc6afefe4379.png": {
@@ -3029,6 +3078,90 @@ export const stagedCaseStudyPublication = {
         "approvedAt": "2026-09-18T05:09:30.263Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
         "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+      }
+    },
+    "/assets/case-studies/n8n-python-ai-agents-e6fbcc7caa954b217adfa063990d460059e44d08808ad85c9e8988418920104c.png": {
+      "file": "public/assets/case-studies/n8n-python-ai-agents-e6fbcc7caa954b217adfa063990d460059e44d08808ad85c9e8988418920104c.png",
+      "width": 2984,
+      "height": 874,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "e6fbcc7caa954b217adfa063990d460059e44d08808ad85c9e8988418920104c",
+        "approvedBy": "Cloud Agent (issue #121)",
+        "approvedAt": "2026-09-21T13:59:17.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
+        "candidateSha256": "a641ebfe0c939e9622c97c95f1da199b7f0a3838cd0b40ef1f66b0fec572fc16"
+      }
+    },
+    "/assets/case-studies/n8n-python-ai-agents-72c334f819d00fb872bea5cdb429e07a540b18794a627f758d0c8e092cb84636.png": {
+      "file": "public/assets/case-studies/n8n-python-ai-agents-72c334f819d00fb872bea5cdb429e07a540b18794a627f758d0c8e092cb84636.png",
+      "width": 1679,
+      "height": 981,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "72c334f819d00fb872bea5cdb429e07a540b18794a627f758d0c8e092cb84636",
+        "approvedBy": "Cloud Agent (issue #121)",
+        "approvedAt": "2026-09-21T13:59:17.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
+        "candidateSha256": "a641ebfe0c939e9622c97c95f1da199b7f0a3838cd0b40ef1f66b0fec572fc16"
+      }
+    },
+    "/assets/case-studies/n8n-python-ai-agents-753a3e00357784381e121fd6593d4a054f0f6380cfb172eccd4702665ad9856e.png": {
+      "file": "public/assets/case-studies/n8n-python-ai-agents-753a3e00357784381e121fd6593d4a054f0f6380cfb172eccd4702665ad9856e.png",
+      "width": 1142,
+      "height": 923,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "753a3e00357784381e121fd6593d4a054f0f6380cfb172eccd4702665ad9856e",
+        "approvedBy": "Cloud Agent (issue #121)",
+        "approvedAt": "2026-09-21T13:59:17.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
+        "candidateSha256": "a641ebfe0c939e9622c97c95f1da199b7f0a3838cd0b40ef1f66b0fec572fc16"
+      }
+    },
+    "/assets/case-studies/n8n-python-ai-agents-ab7acc351c8af2d032a4d05ae75422e15cf54d079409eed67150dc28dd352178.png": {
+      "file": "public/assets/case-studies/n8n-python-ai-agents-ab7acc351c8af2d032a4d05ae75422e15cf54d079409eed67150dc28dd352178.png",
+      "width": 3400,
+      "height": 955,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "ab7acc351c8af2d032a4d05ae75422e15cf54d079409eed67150dc28dd352178",
+        "approvedBy": "Cloud Agent (issue #121)",
+        "approvedAt": "2026-09-21T13:59:17.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
+        "candidateSha256": "a641ebfe0c939e9622c97c95f1da199b7f0a3838cd0b40ef1f66b0fec572fc16"
+      }
+    },
+    "/assets/case-studies/n8n-python-ai-agents-f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png": {
+      "file": "public/assets/case-studies/n8n-python-ai-agents-f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png",
+      "width": 2448,
+      "height": 684,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275",
+        "approvedBy": "Cloud Agent (issue #121)",
+        "approvedAt": "2026-09-21T13:59:17.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
+        "candidateSha256": "a641ebfe0c939e9622c97c95f1da199b7f0a3838cd0b40ef1f66b0fec572fc16"
+      }
+    },
+    "/assets/case-studies/n8n-python-ai-agents-c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9.png": {
+      "file": "public/assets/case-studies/n8n-python-ai-agents-c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9.png",
+      "width": 1862,
+      "height": 800,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9",
+        "approvedBy": "Cloud Agent (issue #121)",
+        "approvedAt": "2026-09-21T13:59:17.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
+        "candidateSha256": "a641ebfe0c939e9622c97c95f1da199b7f0a3838cd0b40ef1f66b0fec572fc16"
       }
     }
   }
