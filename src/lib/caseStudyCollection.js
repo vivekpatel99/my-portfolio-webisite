@@ -1,3 +1,5 @@
+import { otherWorkCaseStudySlugs } from '../../publication/case-study-other-work.js';
+
 const COMPLETION_MONTH_PATTERN = /^(\d{4})-(0[1-9]|1[0-2])$/;
 
 const completionMonthValue = (completedAt) => {
@@ -22,3 +24,19 @@ export const sortCaseStudiesByCompletion = (stories) => [...stories].sort((left,
   if (leftMonth !== null && rightMonth !== null && leftMonth !== rightMonth) return rightMonth - leftMonth;
   return compareSlugs(left, right);
 });
+
+export const selectOtherWorkCaseStudies = (
+  eligibleStories,
+  slugs = otherWorkCaseStudySlugs,
+) => {
+  const otherWorkSlugs = new Set(slugs);
+  return sortCaseStudiesByCompletion(eligibleStories.filter((story) => otherWorkSlugs.has(story.slug)));
+};
+
+export const selectCoreCollectionCaseStudies = (
+  eligibleStories,
+  slugs = otherWorkCaseStudySlugs,
+) => {
+  const otherWorkSlugs = new Set(slugs);
+  return sortCaseStudiesByCompletion(eligibleStories.filter((story) => !otherWorkSlugs.has(story.slug)));
+};
