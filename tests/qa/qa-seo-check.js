@@ -308,7 +308,7 @@ pin(
   'defaultSeo.description is not the locked Linz sentence',
   'src/lib/seoConfig.js',
   defaultSeo.description ===
-    'Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients across Europe. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. 94% performance improvements. €45/hour.',
+    'Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients across Europe. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. Top Rated Plus on Upwork. €45/hour.',
 );
 pin(
   'contact SEO description is not the locked Linz sentence',
