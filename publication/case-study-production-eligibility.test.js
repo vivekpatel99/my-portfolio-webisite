@@ -57,7 +57,6 @@ describe('retained completed case studies', () => {
   it('states the sports article is a batch review pipeline, not live scoring', async () => {
     const slug = 'sports-video-analytics-yolo';
     const summary = 'A batch pipeline on recorded match footage produces tracks, event proposals, and JSON and CSV for human review. Not live scoring.';
-    const coverSrc = '/assets/case-studies/sports-video-analytics-yolo-9a74c900f91b2c81d095d82ec7b1ca2ccad2d5a09935d88ccdcaaf714d3a5761.png';
     const publication = compileCaseStudyPublication();
     const story = publication.find((record) => record.slug === slug);
     expect(story).toBeDefined();
@@ -87,21 +86,19 @@ describe('retained completed case studies', () => {
 
     expect(outcomeText).toBe('The handoff links video analysis to reviewable events and exports. A person still checks the proposed tags before treating them as final. The scope is batch analysis of recorded footage, not real-time broadcasting or autonomous officiating. No public tracking-accuracy, latency or time-saving figure is claimed.');
 
-    const headingMetaCaption = `${story.title} ${story.category} ${seo.title} ${story.image.alt} ${story.image.caption}`;
-    expect(headingMetaCaption).not.toMatch(/60\s*FPS/i);
-    expect(headingMetaCaption).not.toMatch(/\baccuracy\b/i);
-    expect(headingMetaCaption).not.toMatch(/\blatency\b/i);
-    expect(headingMetaCaption).not.toMatch(/broadcast/i);
-    expect(`${story.title} ${story.summary} ${story.image.alt} ${story.image.caption}`).not.toMatch(/real-?time/i);
-    expect(`${headingMetaCaption} ${story.summary} ${problem}`.replace(/not live scoring\.?/gi, '')).not.toMatch(/live scoring/i);
-    expect(story.image.src).toBe(coverSrc);
-    expect(story.image.alt).toBe('Illustration of match analysis; synthetic example, not a delivered-product screenshot');
-    expect(story.image.caption).toBe('Workflow illustration with synthetic data; not a screenshot of the delivered product.');
+    const headingMeta = `${story.title} ${story.category} ${seo.title}`;
+    expect(headingMeta).not.toMatch(/60\s*FPS/i);
+    expect(headingMeta).not.toMatch(/\baccuracy\b/i);
+    expect(headingMeta).not.toMatch(/\blatency\b/i);
+    expect(headingMeta).not.toMatch(/broadcast/i);
+    expect(`${story.title} ${story.summary}`).not.toMatch(/real-?time/i);
+    expect(`${headingMeta} ${story.summary} ${problem}`.replace(/not live scoring\.?/gi, '')).not.toMatch(/live scoring/i);
+    expect(story.image).toBeUndefined();
 
     const module = await import(`data:text/javascript;base64,${Buffer.from(renderPublicCaseStudyModule(publication)).toString('base64')}`);
     const card = module.collectionCaseStudies.find((record) => record.slug === slug);
     expect(card.summary).toBe(summary);
-    expect(card.image.src).toBe(coverSrc);
+    expect(card.image).toBeUndefined();
     expect(module.featuredCaseStudies.map((record) => record.slug)).not.toContain(slug);
   });
 

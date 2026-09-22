@@ -381,7 +381,7 @@ export const stagedCaseStudyPublication = {
         "approvedBy": "Viv",
         "approvedAt": "2026-09-21T16:54:00.000Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/124",
-        "candidateSha256": "8ff5933e61c7316210541e00dc8d275a18428937ec69cda9152a8d911755d2fe"
+        "candidateSha256": "a0a6ac99d359d7693e182cbe8d2c3e116581c5889a0c9d25de99dbf3c3d22a4e"
       },
       "claimRefs": {
         "summary": "browser-search-to-spreadsheet.summary",
@@ -1599,7 +1599,7 @@ export const stagedCaseStudyPublication = {
         "approvedBy": "Viv",
         "approvedAt": "2026-09-21T16:54:00.000Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/123",
-        "candidateSha256": "b199dde5670ebc3402592e41ab99f1712529212f7876e4e9cd534ee3aef34c96"
+        "candidateSha256": "14fc18eb9ff0e4dbaeb5acd60a669ef64496b1cbaa9d03b86d3e74b4d0e63c7e"
       },
       "claimRefs": {
         "summary": "resumable-listing-data-extraction.summary",
@@ -1744,11 +1744,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "fe7db0d06446f8f7fe0df2d76215fe7bb89c6ededc3d1626e0833d4296e2d2b0",
+        "sha256": "7b2f4ee8f598c564922673dc0b0d64bd19a7092e4dfc03670cbd8240323affe9",
         "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedAt": "2026-09-21T16:54:00.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/122",
+        "candidateSha256": "0116da5c175eff573cb925bdb1bf6f65c4b887c6ad34b7fa3cabb49dfb2bbde5"
       },
       "claimRefs": {
         "summary": "sports-video-analytics-yolo.summary",
