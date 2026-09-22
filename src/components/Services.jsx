@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import {
@@ -8,7 +9,7 @@ import {
 } from '@/data/serviceOffers';
 
 const Services = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(null);
   const handleServiceClick = index => {
     setActiveIndex(activeIndex === index ? null : index);
   };
@@ -104,6 +105,12 @@ const Services = () => {
                   </div>
                 </div>
                 <p className="text-lg text-gray-400 max-w-2xl">{service.summary}</p>
+                <Link
+                  to={`/services/${service.id}`}
+                  className="inline-block text-accent-purple hover:text-accent-purple/80 transition-colors font-semibold"
+                >
+                  View details →
+                </Link>
               </div>
             </motion.div>}
           </AnimatePresence>

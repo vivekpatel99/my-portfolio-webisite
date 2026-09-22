@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { cleanup, render, screen, within } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import Services from './Services';
@@ -30,20 +31,29 @@ afterEach(cleanup);
 
 const section = () => document.getElementById('services');
 
+const renderServices = () => render(
+  <BrowserRouter>
+    <Services />
+  </BrowserRouter>
+);
+
 describe('Services offers', () => {
-  it('starts with the first offer open and the other two closed', () => {
-    render(<Services />);
+  it('starts with all offers collapsed', () => {
+    renderServices();
     const rows = within(section()).getAllByRole('button');
     expect(rows).toHaveLength(3);
-    expect(rows[0].getAttribute('aria-expanded')).toBe('true');
+    expect(rows[0].getAttribute('aria-expanded')).toBe('false');
     expect(rows[1].getAttribute('aria-expanded')).toBe('false');
     expect(rows[2].getAttribute('aria-expanded')).toBe('false');
   });
 
-  it('shows hourly rate, typical duration, and scope above the summary', () => {
-    render(<Services />);
+  it('shows hourly rate, typical duration, and scope above the summary when expanded', async () => {
+    const user = userEvent.setup();
+    renderServices();
     const offer = serviceOffers[0];
-    const panel = document.getElementById(within(section()).getAllByRole('button')[0].getAttribute('aria-controls'));
+    const button = within(section()).getAllByRole('button')[0];
+    await user.click(button);
+    const panel = document.getElementById(button.getAttribute('aria-controls'));
     const text = panel.textContent;
     expect(text).toContain(HOURLY_FROM_LABEL);
     expect(text).toContain(typicalDurationLabel(offer));
@@ -61,10 +71,20 @@ describe('Services offers', () => {
     });
   });
 
+  it('shows "View details" link in expanded accordion', async () => {
+    const user = userEvent.setup();
+    renderServices();
+    const button = within(section()).getAllByRole('button')[0];
+    await user.click(button);
+    const panel = document.getElementById(button.getAttribute('aria-controls'));
+    const link = within(panel).getByText('View details →');
+    expect(link).toBeTruthy();
+    expect(link.getAttribute('href')).toContain('/services/');
+  });
+
   it('keeps the catalog rate visible when every row is closed', async () => {
     const user = userEvent.setup();
-    render(<Services />);
-    await user.click(within(section()).getAllByRole('button')[0]);
+    renderServices();
     within(section()).getAllByRole('button').forEach((row) => {
       expect(row.getAttribute('aria-expanded')).toBe('false');
     });
@@ -75,8 +95,9 @@ describe('Services offers', () => {
 
   it('opens only one offer at a time and never adds a fourth accordion control', async () => {
     const user = userEvent.setup();
-    render(<Services />);
+    renderServices();
     const rows = () => within(section()).getAllByRole('button');
+    await user.click(rows()[0]);
     await user.click(rows()[2]);
     expect(rows()).toHaveLength(3);
     expect(rows()[0].getAttribute('aria-expanded')).toBe('false');
@@ -88,7 +109,7 @@ describe('Services offers', () => {
   });
 
   it('drops the old fixed-scope and ROI chips', () => {
-    render(<Services />);
+    renderServices();
     expect(section().textContent).not.toMatch(/Fixed-scope builds|Automation ROI/i);
     expect(section().textContent).not.toMatch(/€80|3,600|7,200|guaranteed ROI|30-day support/i);
   });
