@@ -8,8 +8,8 @@ test.describe('keyboard focus regressions', () => {
     await page.goto('/');
 
     await page.evaluate(() => window.scrollTo({ top: 400, behavior: 'instant' }));
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
     const previousScrollY = await page.evaluate(() => window.scrollY);
-    expect(previousScrollY).toBeGreaterThan(0);
 
     const toggle = page.getByRole('button', { name: 'Toggle navigation menu' });
     await toggle.click();

@@ -1,5 +1,6 @@
 import { expect, test } from './qa-test.js';
 import { caseStudies, featuredCaseStudies } from '../../src/data/caseStudies.js';
+import { HOURLY_FROM_LABEL, serviceOffers, typicalDurationLabel } from '../../src/data/serviceOffers.js';
 
 const cardFor = (caseStudy) => ({
   cardName: `Read case study: ${caseStudy.cardTitle || caseStudy.title}`,
@@ -24,8 +25,12 @@ test.beforeEach(async ({ page }) => {
 test('homepage upgrade flow exposes proof, case studies, offers, testimonials, and CTA', async ({ page }) => {
   await page.goto('/');
 
-  for (const text of ['Top Rated Plus', '100% Job Success', '21+ Projects', '300+ Hours', '94% Faster']) {
+  for (const text of ['Top Rated Plus', '100% Job Success']) {
     await expect(page.getByText(text, { exact: true })).toBeVisible();
+  }
+
+  for (const text of ['21+ Projects', '300+ Hours', '94% Faster']) {
+    await expect(page.getByText(text, { exact: true })).toHaveCount(0);
   }
 
   const headings = [
@@ -89,6 +94,33 @@ test('service offer accordions are keyboard and click operable', async ({ page }
     await expect(row).toHaveAttribute('aria-expanded', initialExpanded === 'true' ? 'true' : 'false');
     await row.press(' ');
     await expect(row).toHaveAttribute('aria-expanded', initialExpanded === 'true' ? 'false' : 'true');
+  }
+});
+
+test('open service offers show hourly rate, typical duration, and scope', async ({ page }) => {
+  await page.goto('/#services');
+  const services = page.locator('#services');
+  await expect(services.getByRole('button')).toHaveCount(3);
+  await expect(services).toContainText(HOURLY_FROM_LABEL);
+  await expect(services).not.toContainText('€80');
+  await expect(services).not.toContainText('3,600');
+  await expect(services).not.toContainText('7,200');
+  await expect(services.getByRole('button', { name: /Request a Project Estimate/i })).toHaveCount(0);
+
+  for (const offer of serviceOffers) {
+    const row = services.getByRole('button').filter({ hasText: offer.title });
+    if ((await row.getAttribute('aria-expanded')) !== 'true') {
+      await row.click();
+    }
+    await expect(row).toHaveAttribute('aria-expanded', 'true');
+    const panel = page.locator(`#${await row.getAttribute('aria-controls')}`);
+    await expect(panel).toBeVisible();
+    await expect(panel).toContainText(HOURLY_FROM_LABEL);
+    await expect(panel).toContainText(typicalDurationLabel(offer));
+    await expect(panel).toContainText('In scope');
+    await expect(panel).toContainText('Out of scope');
+    await expect(panel).toContainText(offer.inScope[0]);
+    await expect(panel).toContainText(offer.outOfScope[0]);
   }
 });
 

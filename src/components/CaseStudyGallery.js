@@ -4,6 +4,14 @@ import { galleryThumbnailSrc } from '../lib/caseStudyThumbnails.js';
 const h = React.createElement;
 export { galleryThumbnailSrc };
 
+// Wide canvases own the inline stage; 4:3 is the floor so portrait media stay framed.
+export function galleryStageAspectRatio(media = {}) {
+  const width = Number(media.width);
+  const height = Number(media.height);
+  if (!(width > 0 && height > 0) || width / height <= 4 / 3) return '4 / 3';
+  return `${width} / ${height}`;
+}
+
 export function collectGalleryImages(story) {
   const images = [];
   const add = (image) => {
@@ -136,7 +144,7 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
     }
   };
   const gallery = (large) => h(React.Fragment, null,
-    h('div', { className: 'case-gallery-stage', style: large && zoom > 1 ? { touchAction: 'auto' } : undefined, onTouchStart: (event) => { touch.current = event.touches.length === 1 && !event.target.closest?.('video, audio') ? { x: event.touches[0].clientX, y: event.touches[0].clientY } : null; }, onTouchEnd: (event) => {
+    h('div', { className: 'case-gallery-stage', style: { ...(large ? {} : { aspectRatio: galleryStageAspectRatio(selected) }), ...(large && zoom > 1 ? { touchAction: 'auto' } : {}) }, onTouchStart: (event) => { touch.current = event.touches.length === 1 && !event.target.closest?.('video, audio') ? { x: event.touches[0].clientX, y: event.touches[0].clientY } : null; }, onTouchEnd: (event) => {
       if (!touch.current || zoom > 1) return;
       const dx = event.changedTouches[0].clientX - touch.current.x;
       const dy = event.changedTouches[0].clientY - touch.current.y;

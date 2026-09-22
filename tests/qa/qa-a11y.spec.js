@@ -122,7 +122,7 @@ test('normal-size purple text and links meet contrast in rendered states', async
     localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false }));
   });
   await page.goto('/');
-  const price = page.getByText('Starting at €80/hour', { exact: true });
+  const price = page.getByText('Starting at €45/hour', { exact: true });
   const priceBackground = await price.evaluate((element) => {
     const badge = element.parentElement;
     const style = badge ? getComputedStyle(badge) : null;
@@ -188,6 +188,18 @@ test('policy, contact, footer, and not-found accent states meet contrast', async
 
   await page.goto('/missing-page/');
   await expectRenderedContrast(page.getByText('404', { exact: true }), 'Not-found status');
+});
+
+test('open service offer scope lists meet normal-text contrast', async ({ page }) => {
+  await page.goto('/#services');
+  const panel = page.locator('#service-content-data-extraction-automation-sprint');
+  await expect(panel).toBeVisible();
+  const items = panel.locator('li');
+  await expect(items).not.toHaveCount(0);
+  const count = await items.count();
+  for (let i = 0; i < count; i += 1) {
+    await expectRenderedContrast(items.nth(i), `Service offer scope item ${i}`);
+  }
 });
 
 test('services section exists for anchor target', async ({ page }) => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { eligibleCaseStudyCount, featuredCaseStudies } from '@/data/caseStudies';
+import { collectionCaseStudies, featuredCaseStudies } from '@/data/caseStudies';
 import CaseStudyCard from './CaseStudyCard.js';
 
 const Portfolio = () => {
@@ -34,7 +34,7 @@ const Portfolio = () => {
             to="/case-studies/"
             className="min-h-11 inline-flex items-center text-accent-purple-text hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple focus-visible:ring-offset-2 focus-visible:ring-offset-[#0C0D0D]"
           >
-            View all case studies ({eligibleCaseStudyCount})
+            View all case studies ({collectionCaseStudies.length})
           </Link>
         </div>
       </div>

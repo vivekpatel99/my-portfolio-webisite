@@ -195,11 +195,6 @@ export const caseStudyThumbnailRegistry = Object.freeze({
   "sourceSha256": "e542384f4f7532d230440cb9a68e0e7e66d951996959221225633fc5304b08b7",
   "thumbnailSha256": "9937113f1a82bafcc4d0ce4e750fde1998a95d36b03f42c7bbf2c857cc9e760b"
 }),
-  "/assets/case-studies/python-ci-workflow-automation-56604f4ca9c885dd7813eeae3f980cd4a41adec78bd54bf1f0b0cc6afefe4379.png": Object.freeze({
-  "src": "/assets/case-studies/python-ci-workflow-automation-56604f4ca9c885dd7813eeae3f980cd4a41adec78bd54bf1f0b0cc6afefe4379-thumb-f4ff8bf77bbf.jpg",
-  "sourceSha256": "56604f4ca9c885dd7813eeae3f980cd4a41adec78bd54bf1f0b0cc6afefe4379",
-  "thumbnailSha256": "f4ff8bf77bbfe7359f262d568f18b7b0d6e0176bff5694cd9f4717f02d878126"
-}),
   "/assets/case-studies/resumable-listing-data-extraction-33538185e8421a6764d2dfea45ce0491c255c37346b372d5efd7c99c75dc53be.png": Object.freeze({
   "src": "/assets/case-studies/resumable-listing-data-extraction-33538185e8421a6764d2dfea45ce0491c255c37346b372d5efd7c99c75dc53be-thumb-aa76be082879.jpg",
   "sourceSha256": "33538185e8421a6764d2dfea45ce0491c255c37346b372d5efd7c99c75dc53be",
