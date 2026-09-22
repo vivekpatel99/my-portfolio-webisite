@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { defaultSeo, routeSeo } from './seoConfig.js';
 
 const HOME_DESCRIPTION =
-  'Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients across Europe. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. 94% performance improvements. €45/hour.';
+  'Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients across Europe. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. Top Rated Plus on Upwork. €45/hour.';
 const BOOTSTRAP_DESCRIPTION =
   'Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients across Europe. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. Production-ready AI systems. €45/hour.';
 const TWITTER_DESCRIPTION =
