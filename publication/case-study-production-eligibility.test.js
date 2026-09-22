@@ -16,6 +16,33 @@ describe('retained completed case studies', () => {
     expect(module.caseStudySlugs).toContain('ai-invoice-processing-automation');
   });
 
+  it('keeps the healthcare slug on schedule-PDF copy that is not clinical EHR', () => {
+    const slug = 'healthcare-document-intelligence';
+    const summary = 'A Python extractor turns color-coded schedule PDFs into Excel rows. Not clinical EHR. Not medical records.';
+    const publication = compileCaseStudyPublication();
+    const story = publication.find((record) => record.slug === slug);
+    expect(story).toBeDefined();
+    expect(story.id).toBe(slug);
+    expect(story.title).toBe('Color-Coded Schedule PDFs to Reviewable Excel Rows');
+    expect(story.summary).toBe(summary);
+    expect(publication.map((record) => record.slug)).not.toContain('schedule-pdf-to-excel');
+    expect(publication.filter((record) => record.slug === slug)).toHaveLength(1);
+
+    const seo = routeSeo[`/project/${slug}`];
+    expect(seo.description).toBe(summary);
+    expect(seo.path).toBe(`/project/${slug}`);
+    expect(seo.title).toContain(story.title);
+
+    const problem = JSON.stringify(story.sections.find((section) => section.key === 'problem'));
+    const outcome = JSON.stringify(story.sections.find((section) => section.key === 'outcome'));
+    expect(problem).toMatch(/staff schedule PDFs/i);
+    expect(problem).toMatch(/not clinical EHR or medical records/i);
+    expect(outcome).toMatch(/scheduling coordinator/i);
+    expect(outcome).toMatch(/not clinical EHR or medical records/i);
+    expect(outcome).toContain('No measured accuracy figure is claimed.');
+    expect(`${story.title} ${story.summary} ${problem} ${outcome}`).not.toMatch(/healthcare document intelligence/i);
+  });
+
   it('states the sports article is a batch review pipeline, not live scoring', async () => {
     const slug = 'sports-video-analytics-yolo';
     const summary = 'A batch pipeline on recorded match footage produces tracks, event proposals, and JSON and CSV for human review. Not live scoring.';
