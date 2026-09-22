@@ -25,8 +25,12 @@ test.beforeEach(async ({ page }) => {
 test('homepage upgrade flow exposes proof, case studies, offers, testimonials, and CTA', async ({ page }) => {
   await page.goto('/');
 
-  for (const text of ['Top Rated Plus', '100% Job Success', '21+ Projects', '300+ Hours', '94% Faster']) {
+  for (const text of ['Top Rated Plus', '100% Job Success']) {
     await expect(page.getByText(text, { exact: true })).toBeVisible();
+  }
+
+  for (const text of ['21+ Projects', '300+ Hours', '94% Faster']) {
+    await expect(page.getByText(text, { exact: true })).toHaveCount(0);
   }
 
   const headings = [
