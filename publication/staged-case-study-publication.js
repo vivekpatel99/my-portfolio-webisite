@@ -533,10 +533,10 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "2fc863176ce3ffd32c42f2f5378c24bff31548939967935033d5a6ca5931604d",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
+        "sha256": "43942cf7af2137d59e5be24a67b866299143516bc54db5b1c7119813d8731c7c",
+        "approvedBy": "Viv (issue #128)",
+        "approvedAt": "2026-09-21T14:40:00.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/128",
         "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
       },
       "claimRefs": {
@@ -544,8 +544,8 @@ export const stagedCaseStudyPublication = {
         "outcome": "depth-based-distance-estimation.outcome"
       },
       "content": {
-        "title": "Depth-Based Spatial Analysis Between Detected Objects",
-        "summary": "A Python vision component combines object detection, depth estimation and spatial-analysis logic for scene inspection.",
+        "title": "Lab Demo of Depth-Based Spatial Analysis Between Detected Objects",
+        "summary": "A Python lab demo overlays object detections and uncalibrated distances on a scene. Not a benchmark. Not for proposals.",
         "projectStatus": "completed",
         "completedAt": "2025-09",
         "category": "Computer Vision",
@@ -559,7 +559,7 @@ export const stagedCaseStudyPublication = {
                 "children": [
                   {
                     "type": "text",
-                    "value": "The task was to estimate spatial relationships between objects in a scene. Object boxes alone do not describe depth, so the processing path needed both detection and a depth estimate that could support distance and navigation-zone logic."
+                    "value": "The task was to estimate spatial relationships between objects in a scene. This is a lab demo, not client-ready evidence and not for proposals. Object boxes alone do not describe depth, so the processing path needed both detection and a depth estimate that could support distance and navigation-zone logic."
                   }
                 ]
               }
@@ -661,8 +661,8 @@ export const stagedCaseStudyPublication = {
         ],
         "image": {
           "src": "/assets/case-studies/depth-based-distance-estimation-6cff31a07362f0483bf43298af0366ffb4c8f40137291202506a8924b0d24957.png",
-          "alt": "Original depth-estimation demo showing object detections and estimated distances; displayed values are demo output, not an accuracy benchmark",
-          "caption": "Original depth-estimation demo showing object detections and estimated distances; displayed values are demo output, not an accuracy benchmark",
+          "alt": "Lab demo showing object detections and estimated distances. Displayed values are demo output, not an accuracy benchmark, and not for proposals.",
+          "caption": "Lab demo showing object detections and estimated distances. Displayed values are demo output, not an accuracy benchmark, and not for proposals.",
           "width": 1280,
           "height": 769
         }
@@ -2326,13 +2326,13 @@ export const stagedCaseStudyPublication = {
       "type": "content",
       "recordId": "depth-based-distance-estimation",
       "placement": "summary",
-      "value": "A Python vision component combines object detection, depth estimation and spatial-analysis logic for scene inspection.",
+      "value": "A Python lab demo overlays object detections and uncalibrated distances on a scene. Not a benchmark. Not for proposals.",
       "approval": {
         "kind": "explicit",
-        "sha256": "b00ef8d8bb263ecf58b390867e515ac78974319cac3353306709d135034d1549",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
+        "sha256": "a4ac5a0abf9852daea0f2e10d494901a0e8ef395616b355a115f304b5a9e4799",
+        "approvedBy": "Viv (issue #128)",
+        "approvedAt": "2026-09-21T14:40:00.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/128",
         "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
       }
     },
