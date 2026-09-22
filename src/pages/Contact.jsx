@@ -193,11 +193,6 @@ const Contact = () => {
               </li>
               <li className="hidden sm:block w-px h-12 bg-white/10" role="separator" aria-hidden="true"></li>
               <li className="flex items-center gap-2">
-                <span className="text-2xl font-bold text-accent-purple">21+</span>
-                <span className="text-gray-400 text-sm">Projects<br/>Delivered</span>
-              </li>
-              <li className="hidden sm:block w-px h-12 bg-white/10" role="separator" aria-hidden="true"></li>
-              <li className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-accent-purple">5★</span>
                 <span className="text-gray-400 text-sm">Average<br/>Rating</span>
               </li>

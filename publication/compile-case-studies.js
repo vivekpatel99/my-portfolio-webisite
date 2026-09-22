@@ -7,8 +7,13 @@ import { imageSize } from 'image-size';
 import { assertCompletionMonth, assertMedia, assertProjectStatus, assertSafeExternalUrl, assertStat, assertString, caseStudyImagePathMatchesFormat, exactKeys, fail, slugPattern } from './case-study-schema.js';
 import { validatePreparedCaseStudies } from './markdown-case-study.js';
 import { featuredCaseStudySlugs } from './case-study-featured.js';
+import { otherWorkCaseStudySlugs } from './case-study-other-work.js';
 import { selectFeaturedCaseStudies } from '../src/lib/featuredCaseStudies.js';
-import { sortCaseStudiesByCompletion } from '../src/lib/caseStudyCollection.js';
+import {
+  selectCoreCollectionCaseStudies,
+  selectOtherWorkCaseStudies,
+  sortCaseStudiesByCompletion,
+} from '../src/lib/caseStudyCollection.js';
 
 export { sortCaseStudiesByCompletion };
 export const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -183,9 +188,14 @@ export function compileCaseStudyPublication({ manifest = caseStudyPublicationMan
   return publicRecords;
 }
 
-export const renderPublicCaseStudyModule = (publication = compileCaseStudyPublication(), configuredSlugs = featuredCaseStudySlugs) => {
+export const renderPublicCaseStudyModule = (
+  publication = compileCaseStudyPublication(),
+  configuredSlugs = featuredCaseStudySlugs,
+  otherWorkSlugs = otherWorkCaseStudySlugs,
+) => {
   const eligibleCaseStudies = publication.filter((caseStudy) => caseStudy.projectStatus === 'completed');
-  const collectionIndices = sortCaseStudiesByCompletion(eligibleCaseStudies).map((caseStudy) => publication.indexOf(caseStudy));
+  const collectionIndices = selectCoreCollectionCaseStudies(eligibleCaseStudies, otherWorkSlugs).map((caseStudy) => publication.indexOf(caseStudy));
+  const otherWorkIndices = selectOtherWorkCaseStudies(eligibleCaseStudies, otherWorkSlugs).map((caseStudy) => publication.indexOf(caseStudy));
   const featuredIndices = selectFeaturedCaseStudies(eligibleCaseStudies, configuredSlugs).map((caseStudy) => publication.indexOf(caseStudy));
-  return `// Generated in-memory by vite-plugin-case-study-publication.\nexport const caseStudies = ${JSON.stringify(publication)};\nexport const eligibleCaseStudies = caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed');\nexport const collectionCaseStudies = ${JSON.stringify(collectionIndices)}.map((index) => caseStudies[index]);\nexport const eligibleCaseStudyCount = eligibleCaseStudies.length;\nexport const featuredCaseStudies = ${JSON.stringify(featuredIndices)}.map((index) => caseStudies[index]);\nexport const getCaseStudyBySlug = (slug) => caseStudies.find((caseStudy) => caseStudy.slug === slug);\nexport const caseStudySlugs = caseStudies.map((caseStudy) => caseStudy.slug);\nexport const primaryContactHref = '/contact/';\nexport const directEmailHref = 'mailto:contact@vivekpatel.com';\n`;
+  return `// Generated in-memory by vite-plugin-case-study-publication.\nexport const caseStudies = ${JSON.stringify(publication)};\nexport const eligibleCaseStudies = caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed');\nexport const collectionCaseStudies = ${JSON.stringify(collectionIndices)}.map((index) => caseStudies[index]);\nexport const otherWorkCaseStudies = ${JSON.stringify(otherWorkIndices)}.map((index) => caseStudies[index]);\nexport const eligibleCaseStudyCount = eligibleCaseStudies.length;\nexport const featuredCaseStudies = ${JSON.stringify(featuredIndices)}.map((index) => caseStudies[index]);\nexport const getCaseStudyBySlug = (slug) => caseStudies.find((caseStudy) => caseStudy.slug === slug);\nexport const caseStudySlugs = caseStudies.map((caseStudy) => caseStudy.slug);\nexport const primaryContactHref = '/contact/';\nexport const directEmailHref = 'mailto:contact@vivekpatel.com';\n`;
 };
