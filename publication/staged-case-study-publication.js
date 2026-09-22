@@ -1744,10 +1744,10 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "60ff6a4f11c29d826913d356b82780d79b3952506c23f25ae9e9fad31a35e465",
-        "approvedBy": "Viv (issue #127)",
-        "approvedAt": "2026-09-21T14:15:00.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/127",
+        "sha256": "fe7db0d06446f8f7fe0df2d76215fe7bb89c6ededc3d1626e0833d4296e2d2b0",
+        "approvedBy": "Viv",
+        "approvedAt": "2026-09-15T08:45:57.100Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
         "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
       },
       "claimRefs": {
