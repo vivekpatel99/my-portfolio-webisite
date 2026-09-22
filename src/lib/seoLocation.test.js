@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { defaultSeo, routeSeo } from './seoConfig.js';
 
 const HOME_DESCRIPTION =
-  'Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients across Europe. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. 94% performance improvements. €45/hour.';
+    'Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients across Europe. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. Top Rated Plus on Upwork. €45/hour.';
 const BOOTSTRAP_DESCRIPTION =
   'Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients across Europe. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. Production-ready AI systems. €45/hour.';
 const TWITTER_DESCRIPTION =
@@ -95,11 +95,11 @@ describe('public location copy', () => {
     expect(JSON.stringify(jsonLd)).not.toMatch(ADDRESS_KEYS);
   });
 
-  it('puts Linz in bootstrap meta without collapsing the 94% / Production-ready split', () => {
+  it('puts Linz in bootstrap meta without collapsing the Top Rated Plus / Production-ready split', () => {
     expect(metaDescription).toBe(BOOTSTRAP_DESCRIPTION);
     expect(twitterDescription).toBe(TWITTER_DESCRIPTION);
     expect(defaultSeo.description).not.toBe(metaDescription);
-    expect(defaultSeo.description).toContain('94% performance improvements');
+    expect(defaultSeo.description).toContain('Top Rated Plus on Upwork');
     expect(metaDescription).toContain('Production-ready AI systems');
     expect(getMeta(indexHtml, 'og:description')).not.toContain('Linz');
   });
@@ -148,7 +148,7 @@ describe('public location copy', () => {
     const distService = parseJsonLd(distHome).find((node) => node['@type'] === 'ProfessionalService');
 
     expect(getMeta(distHome, 'description')).toContain('based in Linz, Austria, serving clients across Europe');
-    expect(getMeta(distHome, 'description')).toContain('94%');
+    expect(getMeta(distHome, 'description')).toContain('Top Rated Plus on Upwork');
     expect(getMeta(distContact, 'description')).toContain('based in Linz, Austria, serving Europe');
     expect(getMeta(distContact, 'description')).not.toMatch(LEFTOVER_BASE);
     expect(getMeta(distLegal, 'description')).not.toContain('Linz');
