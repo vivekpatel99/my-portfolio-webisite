@@ -16,10 +16,10 @@ describe('ProofStrip component', () => {
     expect(section).toBeTruthy();
   });
 
-  it('should render all 5 proof items', () => {
+  it('should render two sourced proof items', () => {
     const { container } = render(<ProofStrip />);
     const items = container.querySelectorAll('li.flex');
-    expect(items).toHaveLength(5);
+    expect(items).toHaveLength(2);
   });
 
   it('should display Top Rated Plus label', () => {
@@ -34,22 +34,14 @@ describe('ProofStrip component', () => {
     expect(screen.getByText('Client delivery record')).toBeTruthy();
   });
 
-  it('should display 21+ Projects label', () => {
+  it('should not display unsourced metric chips', () => {
     render(<ProofStrip />);
-    expect(screen.getByText('21+ Projects')).toBeTruthy();
-    expect(screen.getByText('AI and automation work')).toBeTruthy();
-  });
-
-  it('should display 300+ Hours label', () => {
-    render(<ProofStrip />);
-    expect(screen.getByText('300+ Hours')).toBeTruthy();
-    expect(screen.getByText('Solutions delivered')).toBeTruthy();
-  });
-
-  it('should display 94% Faster label', () => {
-    render(<ProofStrip />);
-    expect(screen.getByText('94% Faster')).toBeTruthy();
-    expect(screen.getByText('Inference improvement')).toBeTruthy();
+    expect(screen.queryByText('21+ Projects')).toBeNull();
+    expect(screen.queryByText('300+ Hours')).toBeNull();
+    expect(screen.queryByText('94% Faster')).toBeNull();
+    expect(screen.queryByText('AI and automation work')).toBeNull();
+    expect(screen.queryByText('Solutions delivered')).toBeNull();
+    expect(screen.queryByText('Inference improvement')).toBeNull();
   });
 
   it('should have proper semantic structure with ul/li', () => {
@@ -80,22 +72,23 @@ describe('ProofStrip component', () => {
   it('should render icons with aria-hidden attribute', () => {
     const { container } = render(<ProofStrip />);
     const icons = container.querySelectorAll('svg[aria-hidden="true"]');
-    expect(icons.length).toBe(5);
+    expect(icons.length).toBe(2);
   });
 
-  it('should have proper grid layout classes', () => {
+  it('should have a two-column grid without leftover five-column tracks', () => {
     const { container } = render(<ProofStrip />);
     const list = container.querySelector('ul');
     expect(list.className).toContain('grid');
     expect(list.className).toContain('grid-cols-2');
-    expect(list.className).toContain('md:grid-cols-5');
+    expect(list.className).toContain('max-w-2xl');
+    expect(list.className).not.toContain('md:grid-cols-5');
   });
 
   it('should have consistent styling on all proof items', () => {
     const { container } = render(<ProofStrip />);
     const items = container.querySelectorAll('li.flex');
-    
-    expect(items.length).toBe(5);
+
+    expect(items.length).toBe(2);
     items.forEach((item) => {
       expect(item.className).toContain('flex');
       expect(item.className).toContain('min-h-[112px]');
@@ -112,8 +105,8 @@ describe('ProofStrip component', () => {
   it('should have accent-purple color on icons', () => {
     const { container } = render(<ProofStrip />);
     const icons = container.querySelectorAll('svg');
-    
-    expect(icons.length).toBe(5);
+
+    expect(icons.length).toBe(2);
     icons.forEach((icon) => {
       expect(icon.className.baseVal).toContain('text-accent-purple');
     });

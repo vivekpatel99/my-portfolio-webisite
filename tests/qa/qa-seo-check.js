@@ -253,6 +253,13 @@ if (!seoConfig.includes('€45/hour')) {
     ref: 'src/lib/seoConfig.js',
   });
 }
+if (seoConfig.includes('94%')) {
+  findings.push({
+    issue: 'seoConfig.js still contains retired 94% copy',
+    severity: 'P1',
+    ref: 'src/lib/seoConfig.js',
+  });
+}
 
 const hero = readFileSync(path.join(process.cwd(), 'src/components/Hero.jsx'), 'utf8');
 if (!hero.includes('Starting at €45/hour')) {

@@ -41,7 +41,7 @@ const About = () => {
               </div>
               <div>
                 <h3 className="text-2xl font-bold text-white mb-3">Key Differentiators</h3>
-                <p className="text-lg text-gray-400">• 94% faster inference: 37s → 2.5s (MAGNA International)<br />• CUDA, ONNX, edge deployment specialist<br />• End-to-end: vision + scraping + AI agents</p>
+                <p className="text-lg text-gray-400">• Production inference work for MAGNA International<br />• CUDA, ONNX, edge deployment specialist<br />• End-to-end: vision + scraping + AI agents</p>
               </div>
             </div>
           </motion.div>
