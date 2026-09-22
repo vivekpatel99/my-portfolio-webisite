@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The n8n case study at `/project/n8n-python-ai-agents/` now includes representative n8n workflow screenshots from other portfolio work as temporary stand-ins until Andrew engagement screenshots are available.
 - The schedule-PDF case study at `/project/healthcare-document-intelligence/` now states it is not clinical EHR or medical records.
 - Homepage, meta, and JSON-LD now show Starting at €45/hour.
+- The sports case study at `/project/sports-video-analytics-yolo/` now states it is a batch review pipeline, not live scoring.
 
 ### Fixed
 - Size case-study galleries to wide workflow screenshots so n8n canvases no longer sit in a tall empty 4:3 box

@@ -1758,10 +1758,10 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "fe7db0d06446f8f7fe0df2d76215fe7bb89c6ededc3d1626e0833d4296e2d2b0",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
+        "sha256": "60ff6a4f11c29d826913d356b82780d79b3952506c23f25ae9e9fad31a35e465",
+        "approvedBy": "Viv (issue #127)",
+        "approvedAt": "2026-09-21T14:15:00.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/127",
         "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
       },
       "claimRefs": {
@@ -1770,7 +1770,7 @@ export const stagedCaseStudyPublication = {
       },
       "content": {
         "title": "Recorded Match Video to Reviewable Tracks and Event Tags",
-        "summary": "A batch sports-video pipeline combines player tracking, ball trajectories and event proposals with outputs for human review.",
+        "summary": "A batch pipeline on recorded match footage produces tracks, event proposals, and JSON and CSV for human review. Not live scoring.",
         "projectStatus": "completed",
         "completedAt": "2026-06",
         "category": "Computer Vision",
@@ -1784,7 +1784,7 @@ export const stagedCaseStudyPublication = {
                 "children": [
                   {
                     "type": "text",
-                    "value": "The client needed recorded single-camera match footage converted into inspectable tracks and proposed events. A small moving ball, player overlap and missed detections meant a detector alone was not enough. Reviewers needed to see uncertainty and correct missed or incorrect tags."
+                    "value": "The client needed recorded single-camera match footage converted into inspectable tracks and proposed events. This is batch review of recorded footage, not live scoring. A small moving ball, player overlap and missed detections meant a detector alone was not enough. Reviewers needed to see uncertainty and correct missed or incorrect tags."
                   }
                 ]
               }
@@ -2410,13 +2410,13 @@ export const stagedCaseStudyPublication = {
       "type": "content",
       "recordId": "sports-video-analytics-yolo",
       "placement": "summary",
-      "value": "A batch sports-video pipeline combines player tracking, ball trajectories and event proposals with outputs for human review.",
+      "value": "A batch pipeline on recorded match footage produces tracks, event proposals, and JSON and CSV for human review. Not live scoring.",
       "approval": {
         "kind": "explicit",
-        "sha256": "fb641812cbfb6a0a2915da2f9dfb7b644e15e2753c02471bba98bf95e5c2fa5d",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
+        "sha256": "dc3c420992fae9a8bb66b20be70022de5ea09819f9aa6e4df595da11755e1db4",
+        "approvedBy": "Viv (issue #127)",
+        "approvedAt": "2026-09-21T14:15:00.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/127",
         "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
       }
     },
