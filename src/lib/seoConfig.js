@@ -7,7 +7,7 @@ export const DEFAULT_OG_IMAGE_PATH = '/og-image.png';
 export const defaultSeo = {
   title: 'Vivek Patel - Expert AI & Computer Vision Engineer',
   description:
-    'Hire Vivek Patel - Freelance AI & Computer Vision Engineer in Europe. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. 94% performance improvements. €45/hour.',
+    'Hire Vivek Patel - Freelance AI & Computer Vision Engineer in Europe. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. Top Rated Plus on Upwork. €45/hour.',
   keywords:
     'Vivek Patel, AI Engineer Europe, Computer Vision Freelancer, n8n Automation, Web Scraping Expert, YOLO, PyTorch, LangChain, Data Extraction, Python Developer Europe',
   path: '/',
