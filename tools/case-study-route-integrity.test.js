@@ -57,6 +57,7 @@ function fixture() {
     'publication/case-study-manifest-merge.js',
     'publication/public-case-studies.js',
     'publication/case-study-featured.js',
+    'publication/case-study-other-work.js',
     'src/components/CaseStudyArticle.js',
     'src/components/CaseStudyGallery.js',
     'src/components/CaseStudyCard.js',
