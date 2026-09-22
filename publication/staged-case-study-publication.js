@@ -377,11 +377,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "1e9cd26dec0d3750149c8f30a6a3bb0ad1069fbb0c172dfa5c8aad2dc41771ea",
+        "sha256": "8ff5933e61c7316210541e00dc8d275a18428937ec69cda9152a8d911755d2fe",
         "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedAt": "2026-09-21T16:54:00.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/124",
+        "candidateSha256": "a0a6ac99d359d7693e182cbe8d2c3e116581c5889a0c9d25de99dbf3c3d22a4e"
       },
       "claimRefs": {
         "summary": "browser-search-to-spreadsheet.summary",
@@ -516,14 +516,7 @@ export const stagedCaseStudyPublication = {
               }
             ]
           }
-        ],
-        "image": {
-          "src": "/assets/case-studies/browser-search-to-spreadsheet-9ec23dd3d88e872e69136f02c3e8dcf5f4fa16f853591f7bff1417780711534c.png",
-          "alt": "Illustration of search automation; synthetic example, not a delivered-product screenshot",
-          "caption": "Workflow illustration with synthetic data; not a screenshot of the delivered product.",
-          "width": 1200,
-          "height": 800
-        }
+        ]
       }
     },
     {
@@ -1595,11 +1588,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "9ab3f230e107f9db5e6205ecfc221bfeb1bcce52f3e6c4aebb9c62676d57e38b",
+        "sha256": "b199dde5670ebc3402592e41ab99f1712529212f7876e4e9cd534ee3aef34c96",
         "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedAt": "2026-09-21T16:54:00.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/123",
+        "candidateSha256": "14fc18eb9ff0e4dbaeb5acd60a669ef64496b1cbaa9d03b86d3e74b4d0e63c7e"
       },
       "claimRefs": {
         "summary": "resumable-listing-data-extraction.summary",
@@ -1734,14 +1727,7 @@ export const stagedCaseStudyPublication = {
               }
             ]
           }
-        ],
-        "image": {
-          "src": "/assets/case-studies/resumable-listing-data-extraction-33538185e8421a6764d2dfea45ce0491c255c37346b372d5efd7c99c75dc53be.png",
-          "alt": "Illustration of listing extraction; synthetic example, not a delivered-product screenshot",
-          "caption": "Workflow illustration with synthetic data; not a screenshot of the delivered product.",
-          "width": 1200,
-          "height": 800
-        }
+        ]
       }
     },
     {
@@ -1751,11 +1737,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "60ff6a4f11c29d826913d356b82780d79b3952506c23f25ae9e9fad31a35e465",
-        "approvedBy": "Viv (issue #127)",
-        "approvedAt": "2026-09-21T14:15:00.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/127",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "sha256": "7b2f4ee8f598c564922673dc0b0d64bd19a7092e4dfc03670cbd8240323affe9",
+        "approvedBy": "Viv",
+        "approvedAt": "2026-09-21T16:54:00.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/122",
+        "candidateSha256": "0116da5c175eff573cb925bdb1bf6f65c4b887c6ad34b7fa3cabb49dfb2bbde5"
       },
       "claimRefs": {
         "summary": "sports-video-analytics-yolo.summary",
@@ -1904,14 +1890,7 @@ export const stagedCaseStudyPublication = {
               }
             ]
           }
-        ],
-        "image": {
-          "src": "/assets/case-studies/sports-video-analytics-yolo-9a74c900f91b2c81d095d82ec7b1ca2ccad2d5a09935d88ccdcaaf714d3a5761.png",
-          "alt": "Illustration of match analysis; synthetic example, not a delivered-product screenshot",
-          "caption": "Workflow illustration with synthetic data; not a screenshot of the delivered product.",
-          "width": 1200,
-          "height": 800
-        }
+        ]
       }
     },
     {
@@ -2723,20 +2702,6 @@ export const stagedCaseStudyPublication = {
         "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
       }
     },
-    "/assets/case-studies/browser-search-to-spreadsheet-9ec23dd3d88e872e69136f02c3e8dcf5f4fa16f853591f7bff1417780711534c.png": {
-      "file": "public/assets/case-studies/browser-search-to-spreadsheet-9ec23dd3d88e872e69136f02c3e8dcf5f4fa16f853591f7bff1417780711534c.png",
-      "width": 1200,
-      "height": 800,
-      "format": "png",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "9ec23dd3d88e872e69136f02c3e8dcf5f4fa16f853591f7bff1417780711534c",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
     "/assets/case-studies/depth-based-distance-estimation-6cff31a07362f0483bf43298af0366ffb4c8f40137291202506a8924b0d24957.png": {
       "file": "public/assets/case-studies/depth-based-distance-estimation-6cff31a07362f0483bf43298af0366ffb4c8f40137291202506a8924b0d24957.png",
       "width": 1280,
@@ -2779,34 +2744,7 @@ export const stagedCaseStudyPublication = {
         "candidateSha256": "1cb28c13acc2ccd04e7cf73d8a8cf1ade7261dcff6affd991f1e76400d042213"
       }
     },
-    "/assets/case-studies/resumable-listing-data-extraction-33538185e8421a6764d2dfea45ce0491c255c37346b372d5efd7c99c75dc53be.png": {
-      "file": "public/assets/case-studies/resumable-listing-data-extraction-33538185e8421a6764d2dfea45ce0491c255c37346b372d5efd7c99c75dc53be.png",
-      "width": 1200,
-      "height": 800,
-      "format": "png",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "33538185e8421a6764d2dfea45ce0491c255c37346b372d5efd7c99c75dc53be",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "/assets/case-studies/sports-video-analytics-yolo-9a74c900f91b2c81d095d82ec7b1ca2ccad2d5a09935d88ccdcaaf714d3a5761.png": {
-      "file": "public/assets/case-studies/sports-video-analytics-yolo-9a74c900f91b2c81d095d82ec7b1ca2ccad2d5a09935d88ccdcaaf714d3a5761.png",
-      "width": 1200,
-      "height": 800,
-      "format": "png",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "9a74c900f91b2c81d095d82ec7b1ca2ccad2d5a09935d88ccdcaaf714d3a5761",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
+
     "/assets/case-studies/yolo-computer-vision-optimization-a1c141cdaa34086f779a22bbc54861dd5a0b6bd6c956df38456a3313983c2c0c.webp": {
       "file": "public/assets/case-studies/yolo-computer-vision-optimization-a1c141cdaa34086f779a22bbc54861dd5a0b6bd6c956df38456a3313983c2c0c.webp",
       "width": 960,
