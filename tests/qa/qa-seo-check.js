@@ -279,7 +279,16 @@ const pin = (issue, ref, ok) => {
   if (!ok) findings.push({ issue, severity: 'P1', ref });
 };
 
-for (const [ref, source] of [['index.html', indexHtml], ['src/lib/seoConfig.js', seoConfig], ['src/components/Hero.jsx', hero]]) {
+const serviceOffersSource = readFileSync(path.join(process.cwd(), 'src/data/serviceOffers.js'), 'utf8');
+if (!serviceOffersSource.includes('HOURLY_FROM_EUR = 45')) {
+  findings.push({
+    issue: 'serviceOffers.js missing HOURLY_FROM_EUR = 45',
+    severity: 'P1',
+    ref: 'src/data/serviceOffers.js',
+  });
+}
+
+for (const [ref, source] of [['index.html', indexHtml], ['src/lib/seoConfig.js', seoConfig], ['src/components/Hero.jsx', hero], ['src/data/serviceOffers.js', serviceOffersSource]]) {
   if (leftoverRate.test(source)) {
     findings.push({
       issue: `${ref} still contains retired rate copy`,
@@ -287,6 +296,9 @@ for (const [ref, source] of [['index.html', indexHtml], ['src/lib/seoConfig.js',
       ref,
     });
   }
+}
+
+for (const [ref, source] of [['index.html', indexHtml], ['src/lib/seoConfig.js', seoConfig], ['src/components/Hero.jsx', hero]]) {
   if (!source.includes('Linz') || !source.includes('Austria')) {
     findings.push({
       issue: `${ref} missing Linz, Austria`,

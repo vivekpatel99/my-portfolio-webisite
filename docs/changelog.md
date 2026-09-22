@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Service offers now show buyable details: price bands, duration, and in-scope vs out-of-scope items for all three packages
+- Service offers now show from €45/hour, typical duration, and in-scope vs out-of-scope lists
 
 ### Changed
 - The n8n case study at `/project/n8n-python-ai-agents/` now includes representative n8n workflow screenshots from other portfolio work as temporary stand-ins until Andrew engagement screenshots are available.
