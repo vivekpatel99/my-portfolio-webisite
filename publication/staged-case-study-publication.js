@@ -675,10 +675,10 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "eb1253544d890ea6c9b96195fe60db69f1d72d58ba134a59495ba29a575d0068",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "sha256": "02061674ea5598fd4389db9e6158d77dc23d460929a856d804085dd5bf83c883",
+        "approvedBy": "Viv (issue #126)",
+        "approvedAt": "2026-09-21T13:05:51.909Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/126",
         "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
       },
       "claimRefs": {
@@ -687,7 +687,7 @@ export const stagedCaseStudyPublication = {
       },
       "content": {
         "title": "Color-Coded Schedule PDFs to Reviewable Excel Rows",
-        "summary": "A Python document extractor converts calendar grids and highlight colors into structured scheduling-preference rows.",
+        "summary": "A Python extractor turns color-coded schedule PDFs into Excel rows. Not clinical EHR. Not medical records.",
         "projectStatus": "completed",
         "completedAt": "2026-09",
         "category": "Document AI",
@@ -701,7 +701,7 @@ export const stagedCaseStudyPublication = {
                 "children": [
                   {
                     "type": "text",
-                    "value": "Scheduling information arrived in dense PDF calendars. Dates and shifts were positioned in a grid, while highlight colors carried availability and preference information. Copying text alone lost that meaning, and some staff calendars continued across multiple pages."
+                    "value": "Scheduling information arrived in dense PDF calendars. These are staff schedule PDFs, not clinical EHR or medical records. Dates and shifts were positioned in a grid, while highlight colors carried availability and preference information. Copying text alone lost that meaning, and some staff calendars continued across multiple pages."
                   }
                 ]
               }
@@ -822,7 +822,7 @@ export const stagedCaseStudyPublication = {
                 "children": [
                   {
                     "type": "text",
-                    "value": "The extractor produces rows a scheduling coordinator can compare with the source calendar. Unknown colors and unreadable cells are not guessed. This is operational document processing, not a clinical decision system. No measured accuracy figure is claimed."
+                    "value": "The extractor produces rows a scheduling coordinator can compare with the source calendar. Unknown colors and unreadable cells are not guessed. This is operational document processing, not clinical EHR or medical records. No measured accuracy figure is claimed."
                   }
                 ]
               }
@@ -2487,13 +2487,13 @@ export const stagedCaseStudyPublication = {
       "type": "content",
       "recordId": "healthcare-document-intelligence",
       "placement": "summary",
-      "value": "A Python document extractor converts calendar grids and highlight colors into structured scheduling-preference rows.",
+      "value": "A Python extractor turns color-coded schedule PDFs into Excel rows. Not clinical EHR. Not medical records.",
       "approval": {
         "kind": "explicit",
-        "sha256": "507f2088f0c322e7f1ad94c24b09dd455f97083602a165faf39dccd016b45fde",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "sha256": "4c8dd1b65eb134e864331f5f3ed481dca51246f0268bbdddf3cb444c66cc69b6",
+        "approvedBy": "Viv (issue #126)",
+        "approvedAt": "2026-09-21T13:05:51.909Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/126",
         "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
       }
     },
@@ -2510,7 +2510,7 @@ export const stagedCaseStudyPublication = {
             "children": [
               {
                 "type": "text",
-                "value": "The extractor produces rows a scheduling coordinator can compare with the source calendar. Unknown colors and unreadable cells are not guessed. This is operational document processing, not a clinical decision system. No measured accuracy figure is claimed."
+                "value": "The extractor produces rows a scheduling coordinator can compare with the source calendar. Unknown colors and unreadable cells are not guessed. This is operational document processing, not clinical EHR or medical records. No measured accuracy figure is claimed."
               }
             ]
           }
@@ -2518,10 +2518,10 @@ export const stagedCaseStudyPublication = {
       },
       "approval": {
         "kind": "explicit",
-        "sha256": "e033e0063a84b397e0b5d70ced6a0283088d31b4cb2e8bbf5a5333340b475519",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
+        "sha256": "62e6c7fd384e8f3262f2d61134959de0ceb4061562bed67e0a0517fd8fe092d5",
+        "approvedBy": "Viv (issue #126)",
+        "approvedAt": "2026-09-21T13:05:51.909Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/126",
         "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
       }
     },
