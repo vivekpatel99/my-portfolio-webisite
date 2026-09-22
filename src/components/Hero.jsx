@@ -85,7 +85,7 @@ const Hero = () => {
             <div className="inline-flex items-center gap-4 px-5 py-2.5 bg-[#0C0D0D] border border-white/10 rounded-full">
               <span className="text-accent-purple-text font-semibold">Starting at €45/hour</span>
               <span className="text-gray-400">•</span>
-              <span className="text-gray-300">Based in Europe</span>
+              <span className="text-gray-300">Based in Linz, Austria</span>
             </div>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 border border-green-500/30 rounded-full">
               <span className={`h-2 w-2 rounded-full bg-green-500 ${reduceMotion ? '' : 'animate-pulse'}`}></span>
