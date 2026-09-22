@@ -1450,7 +1450,7 @@ export const stagedCaseStudyPublication = {
         "approvedBy": "Cloud Agent (Issue #125 synthetic hero removal)",
         "approvedAt": "2026-09-21T17:04:00.000Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/125",
-        "candidateSha256": "52a044a115545038a6197e98b200329e1f1e76b8424219556b2d978639ee8048"
+        "candidateSha256": "6ca0b9be07fc064ac452f43d7ebb5886e0c6275352bf1ce93a06625cae74d59f"
       },
       "claimRefs": {
         "summary": "python-ci-workflow-automation.summary",
@@ -2609,48 +2609,6 @@ export const stagedCaseStudyPublication = {
         "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
       }
     },
-    "python-ci-workflow-automation.summary": {
-      "type": "content",
-      "recordId": "python-ci-workflow-automation",
-      "placement": "summary",
-      "value": "A Python toolkit organizes linting, review generation and repository workflow steps behind reusable commands.",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "e86e7c40d4bc19a7294dd1284d3ab8b50d70900682c8d31380ae5f0691261880",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
-      }
-    },
-    "python-ci-workflow-automation.outcome": {
-      "type": "content",
-      "recordId": "python-ci-workflow-automation",
-      "placement": "outcome",
-      "value": {
-        "key": "outcome",
-        "heading": "The outcome",
-        "nodes": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "text",
-                "value": "The toolkit makes code-quality workflow logic easier to inspect and test as ordinary Python. It demonstrates developer-tooling and workflow integration work. It does not establish an independently measured coverage rate, productivity gain or autonomous review accuracy. Client source remains private."
-              }
-            ]
-          }
-        ]
-      },
-      "approval": {
-        "kind": "explicit",
-        "sha256": "b7d4661d69d44582e6c5dbc0ddc20f9dcd9c8c88f856647ef9f08230a55cb831",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
-      }
-    },
     "n8n-python-ai-agents.summary": {
       "type": "content",
       "recordId": "n8n-python-ai-agents",
@@ -2691,6 +2649,48 @@ export const stagedCaseStudyPublication = {
         "approvedAt": "2026-09-21T14:07:58.000Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
         "candidateSha256": "1cb28c13acc2ccd04e7cf73d8a8cf1ade7261dcff6affd991f1e76400d042213"
+      }
+    },
+    "python-ci-workflow-automation.summary": {
+      "type": "content",
+      "recordId": "python-ci-workflow-automation",
+      "placement": "summary",
+      "value": "A Python toolkit organizes linting, review generation and repository workflow steps behind reusable commands.",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "e86e7c40d4bc19a7294dd1284d3ab8b50d70900682c8d31380ae5f0691261880",
+        "approvedBy": "Cloud Agent (Issue #125 synthetic hero removal)",
+        "approvedAt": "2026-09-21T17:04:00.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/125",
+        "candidateSha256": "6ca0b9be07fc064ac452f43d7ebb5886e0c6275352bf1ce93a06625cae74d59f"
+      }
+    },
+    "python-ci-workflow-automation.outcome": {
+      "type": "content",
+      "recordId": "python-ci-workflow-automation",
+      "placement": "outcome",
+      "value": {
+        "key": "outcome",
+        "heading": "The outcome",
+        "nodes": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "text",
+                "value": "The toolkit makes code-quality workflow logic easier to inspect and test as ordinary Python. It demonstrates developer-tooling and workflow integration work. It does not establish an independently measured coverage rate, productivity gain or autonomous review accuracy. Client source remains private."
+              }
+            ]
+          }
+        ]
+      },
+      "approval": {
+        "kind": "explicit",
+        "sha256": "b7d4661d69d44582e6c5dbc0ddc20f9dcd9c8c88f856647ef9f08230a55cb831",
+        "approvedBy": "Cloud Agent (Issue #125 synthetic hero removal)",
+        "approvedAt": "2026-09-21T17:04:00.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/125",
+        "candidateSha256": "6ca0b9be07fc064ac452f43d7ebb5886e0c6275352bf1ce93a06625cae74d59f"
       }
     }
   },
