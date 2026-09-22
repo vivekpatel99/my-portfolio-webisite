@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import React from "react";
-import { fireEvent, render, screen, waitFor, cleanup } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, cleanup, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { toast } from "@/components/ui/use-toast";
@@ -350,6 +350,16 @@ describe("Contact form", () => {
     expect(budget.tagName).toBe('SELECT');
     expect(budget.value).toBe('');
     expect(container.querySelector('select')?.value).toBe('');
+  });
+
+  it('shows job success and rating without a 21+ count', () => {
+    render(<Contact />);
+    const region = screen.getByRole('region', { name: /client success metrics/i });
+    expect(within(region).getByText('100%')).toBeTruthy();
+    expect(within(region).getByText('5★')).toBeTruthy();
+    expect(within(region).queryByText('21+')).toBeNull();
+    expect(within(region).queryByText(/Projects/)).toBeNull();
+    expect(region.querySelectorAll('[role="separator"]')).toHaveLength(1);
   });
 
   it('sends a chosen budget with the lead', async () => {
