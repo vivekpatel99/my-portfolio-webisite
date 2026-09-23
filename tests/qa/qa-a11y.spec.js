@@ -95,10 +95,23 @@ test('mobile menu isolates background content while open', async ({ page }) => {
   await expect(page.locator('body')).toHaveCSS('overflow', 'hidden');
 });
 
-test('testimonial links are not duplicated for animation', async ({ page }) => {
+test('testimonial carousel structure without duplicated quotes', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('.testimonial-card-link')).toHaveCount(4);
+  
+  await expect(page.locator('#testimonials')).toBeAttached();
+  
+  await expect(page.locator('.testimonial-card-link')).toHaveCount(0);
   await expect(page.locator('.scroller-inner')).toHaveCount(0);
+  
+  await expect(page.locator('.carousel-wrap')).toHaveCount(1);
+  await expect(page.locator('.carousel-slide.is-active')).toHaveCount(1);
+  
+  const dots = page.locator('.carousel-dots[role="tablist"] button[role="tab"]');
+  const slideCount = await page.locator('.carousel-slide').count();
+  const dotCount = await dots.count();
+  
+  expect(dotCount).toBeGreaterThan(0);
+  expect(slideCount).toBe(dotCount);
 });
 
 test('reduced motion disables custom cursor', async ({ page }) => {
