@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,23 +12,23 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-[#0C0D0D]">
+    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden pt-16 pb-16 bg-[#0C0D0D]">
       {/* Warehouse scene background */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute inset-0 bg-gradient-radial-purple opacity-30" 
              style={{ background: 'radial-gradient(ellipse 80% 60% at 70% 40%, #16141c 0%, #0C0D0D 70%)' }} />
         
         {/* Warehouse shelves silhouettes */}
-        <div className="absolute left-[8%] top-[18%] w-[22%] h-[52%] bg-white/[0.015] border border-white/[0.04]" />
-        <div className="absolute left-[32%] top-[28%] w-[18%] h-[42%] bg-white/[0.015] border border-white/[0.04]" />
-        <div className="absolute right-[6%] top-[14%] w-[28%] h-[58%] bg-white/[0.015] border border-white/[0.04]" />
+        <div className="absolute left-[8%] top-[18%] w-[22%] h-[52%] bg-white/[0.025] border border-white/[0.08]" />
+        <div className="absolute left-[32%] top-[28%] w-[18%] h-[42%] bg-white/[0.025] border border-white/[0.08]" />
+        <div className="absolute right-[6%] top-[14%] w-[28%] h-[58%] bg-white/[0.025] border border-white/[0.08]" />
         
         {/* Detection bboxes overlays */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8, duration: 0.6 }}
-          className="absolute top-[22%] left-[12%] w-[14%] h-[28%] border-[1.5px] border-purple-400/50 rounded-sm"
+          className="absolute top-[22%] left-[12%] w-[14%] h-[28%] border-[1.5px] border-purple-400/50 rounded-sm z-0"
         >
           <span className="absolute -top-4 left-0 text-[9px] font-mono tracking-wider text-purple-300 bg-[#0C0D0D]/75 px-1.5 py-0.5">
             person 0.96
@@ -40,7 +39,7 @@ const Hero = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.6 }}
-          className="absolute top-[35%] left-[36%] w-[10%] h-[22%] border-[1.5px] border-[#8B5CF6]/45 rounded-sm"
+          className="absolute top-[35%] left-[36%] w-[10%] h-[22%] border-[1.5px] border-[#8B5CF6]/45 rounded-sm z-0"
         >
           <span className="absolute -top-4 left-0 text-[9px] font-mono tracking-wider text-purple-300 bg-[#0C0D0D]/75 px-1.5 py-0.5">
             forklift 0.88
@@ -51,7 +50,7 @@ const Hero = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.9, duration: 0.6 }}
-          className="absolute top-[18%] right-[14%] w-[16%] h-[36%] border-[1.5px] border-purple-300/40 rounded-sm"
+          className="absolute top-[18%] right-[14%] w-[16%] h-[36%] border-[1.5px] border-purple-300/40 rounded-sm z-0"
         >
           <span className="absolute -top-4 left-0 text-[9px] font-mono tracking-wider text-purple-200 bg-[#0C0D0D]/75 px-1.5 py-0.5">
             pallet 0.93
@@ -61,8 +60,8 @@ const Hero = () => {
         <div className="absolute left-0 right-0 bottom-0 h-[28%] bg-gradient-to-t from-black/50 to-transparent" />
       </div>
 
-      <div className="container mx-auto px-6 relative z-10 pb-24">
-        <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-16 items-center max-w-7xl mx-auto">
+      <div className="container mx-auto px-6 relative z-10 py-8">
+        <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-8 lg:gap-12 items-center max-w-7xl mx-auto">
           {/* Left column: Copy + CTAs */}
           <div className="text-left">
             <motion.div
@@ -88,16 +87,22 @@ const Hero = () => {
               </span>
             </motion.div>
 
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.05 }}
+              className="text-xs font-mono tracking-wide text-gray-500 mb-3"
+            >
+              Vivek Patel
+            </motion.div>
+
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-[clamp(1.85rem,4.2vw,3rem)] font-semibold leading-[1.15] tracking-tight mb-4"
+              className="text-[clamp(1.85rem,4.2vw,3rem)] font-semibold leading-[1.15] tracking-tight mb-4 text-white"
             >
-              Vivek Patel
-              <span className="block mt-1 text-white/95">
-                Computer Vision & AI Engineer
-              </span>
+              Computer Vision & AI Engineer
             </motion.h1>
 
             <motion.p
@@ -117,14 +122,14 @@ const Hero = () => {
             >
               <Button
                 onClick={handleCTAClick}
-                className="bg-[#8B5CF6] hover:bg-[#9B6FFF] text-white font-medium px-5 py-3 h-auto text-sm rounded-[10px]"
+                className="bg-[#8B5CF6] hover:bg-[#9B6FFF] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px]"
               >
                 Request a Project Estimate
               </Button>
               <Button
                 asChild
                 variant="outline"
-                className="border border-white/[0.14] hover:bg-[#8B5CF6]/8 hover:border-purple-400/35 text-white px-5 py-3 h-auto text-sm rounded-[10px]"
+                className="border border-white/[0.14] hover:bg-[#8B5CF6]/8 hover:border-purple-400/35 text-white px-6 py-3.5 h-auto text-base rounded-[10px]"
               >
                 <a href="#portfolio">
                   View Case Studies
@@ -138,17 +143,17 @@ const Hero = () => {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="flex flex-wrap gap-2 opacity-85"
             >
-              <span className="font-mono text-[11px] tracking-wide px-2.5 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.02]">
+              <span className="font-mono text-[11px] tracking-wide px-2.5 py-1.5 rounded-full border border-white/[0.08] bg-[#0C0D0D]">
                 <span className="text-gray-400">Starting at €45/hour</span>
               </span>
-              <span className="font-mono text-[11px] tracking-wide text-gray-400 px-2.5 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.02]">
+              <span className="font-mono text-[11px] tracking-wide text-gray-400 px-2.5 py-1.5 rounded-full border border-white/[0.08] bg-[#0C0D0D]">
                 Based in Linz, Austria
               </span>
             </motion.div>
           </div>
 
           {/* Right column: Tracked frame + artifacts */}
-          <div className="relative flex flex-col items-end gap-8 lg:gap-10">
+          <div className="relative flex flex-col items-end gap-6 lg:gap-8">
             {/* Tracked detection frame (Option B) */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -267,7 +272,7 @@ const Hero = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.7 }}
-        className="absolute left-0 right-0 bottom-0 z-20 flex flex-wrap gap-5 justify-between px-7 py-3 bg-[#08090900]/88 backdrop-blur-sm border-t border-white/[0.08] text-[11px] font-mono tracking-widest uppercase text-gray-500"
+        className="absolute left-0 right-0 bottom-0 z-20 flex flex-wrap gap-5 justify-between px-7 py-3 bg-[#080909] border-t border-white/[0.08] text-[11px] font-mono tracking-widest uppercase text-gray-500"
       >
         <div className="flex gap-5 flex-wrap">
           <span><span className="text-gray-500">Frame</span> <span className="text-gray-400">2048×1536</span></span>
