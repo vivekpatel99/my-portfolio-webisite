@@ -1,194 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { motion, useReducedMotion, AnimatePresence } from 'framer-motion';
+import React from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-
-const ArtifactCard = ({ reduceMotion }) => {
-  const [activeMode, setActiveMode] = useState('ocr');
-  
-  useEffect(() => {
-    if (reduceMotion) return;
-    
-    const interval = setInterval(() => {
-      setActiveMode(prev => {
-        if (prev === 'ocr') return 'cv';
-        if (prev === 'cv') return 'n8n';
-        return 'ocr';
-      });
-    }, 4500);
-    
-    return () => clearInterval(interval);
-  }, [reduceMotion]);
-
-  const modeConfig = {
-    ocr: {
-      header: 'OCR · INVOICE ARTIFACT',
-      confidence: '0.99'
-    },
-    cv: {
-      header: 'CV · BBOX ARTIFACT',
-      confidence: '0.94'
-    },
-    n8n: {
-      header: 'N8N · PIPELINE ARTIFACT',
-      confidence: '1.00'
-    }
-  };
-
-  const currentMode = modeConfig[activeMode];
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.15 }}
-      className="absolute left-0 top-12 w-[min(420px,90%)] md:w-[min(420px,85%)] bg-[#0A0B0B] border border-white/[0.12] rounded-xl overflow-hidden shadow-2xl z-0 max-sm:w-[min(360px,85%)] pointer-events-auto"
-    >
-      {/* Card header - stacked layout */}
-      <div className="px-4 py-2.5 border-b border-white/[0.08]">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-[10px] font-mono tracking-wider text-gray-500">live extract ·</span>
-          <span className="text-[10px] font-mono tracking-wider text-purple-300">{currentMode.confidence}</span>
-        </div>
-        <div className="text-[11px] font-mono tracking-widest uppercase text-purple-300 font-medium">
-          {currentMode.header}
-        </div>
-      </div>
-
-      {/* Card content - animated transitions */}
-      <div className="relative h-[140px] max-sm:h-[120px] bg-[#0C0D0D] p-4 max-sm:p-3">
-        <AnimatePresence mode="wait">
-          {activeMode === 'ocr' && (
-            <motion.div
-              key="ocr"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="absolute inset-4"
-            >
-              {/* OCR invoice mock */}
-              <div className="h-full relative">
-                <div className="h-2 bg-white/[0.06] rounded-sm mb-2 w-2/5" />
-                <div className="h-2 bg-white/[0.06] rounded-sm mb-3 w-3/5" />
-                <div className="h-2 bg-white/[0.06] rounded-sm mb-2 w-[85%]" />
-                <div className="h-2 bg-white/[0.06] rounded-sm mb-2 w-[70%]" />
-                <div className="h-2 bg-white/[0.06] rounded-sm mb-4 w-[60%]" />
-                <div className="h-2 bg-white/[0.06] rounded-sm w-[35%] ml-auto" />
-                
-                {/* Vendor bbox */}
-                <div className="absolute top-0 left-0 w-[45%] h-[22px] border-[1.5px] border-purple-400 rounded-sm">
-                  <span className="absolute -top-3 left-0 text-[8px] font-mono text-purple-200 bg-[#0C0D0D] px-1">
-                    vendor 0.98
-                  </span>
-                </div>
-                
-                {/* Total bbox */}
-                <div className="absolute bottom-0 right-0 w-[35%] h-[22px] border-[1.5px] border-purple-400 rounded-sm">
-                  <span className="absolute -top-3 left-0 text-[8px] font-mono text-purple-200 bg-[#0C0D0D] px-1">
-                    total 0.99
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {activeMode === 'cv' && (
-            <motion.div
-              key="cv"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="absolute inset-4"
-            >
-              {/* CV bbox detection mock */}
-              <div className="h-full relative">
-                {/* Pallet shape */}
-                <div className="absolute bottom-4 left-8 right-8 h-16 bg-white/[0.04] rounded-[4px_4px_2px_2px]" />
-                
-                {/* Box detection */}
-                <div className="absolute top-10 left-[42%] w-12 h-[60px] bg-white/[0.05] rounded-sm border border-purple-400/45">
-                  <span className="absolute -top-3 -left-1 text-[8px] font-mono text-purple-300 whitespace-nowrap">
-                    box · 0.91
-                  </span>
-                </div>
-                
-                {/* Pallet bbox */}
-                <div className="absolute inset-[22px_28px] border-[1.5px] border-purple-400 rounded-sm">
-                  <span className="absolute -top-3.5 left-0 text-[8px] font-mono text-purple-200 bg-[#0C0D0D] px-1">
-                    pallet · 0.94
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {activeMode === 'n8n' && (
-            <motion.div
-              key="n8n"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="absolute inset-4"
-            >
-              {/* N8N pipeline visualization */}
-              <svg viewBox="0 0 100 100" className="w-full h-full">
-                <defs>
-                  <marker id="arrow-pipe" markerWidth="4" markerHeight="4" refX="3" refY="2" orient="auto">
-                    <path d="M0,0 L4,2 L0,4 Z" fill="#6B6C69"/>
-                  </marker>
-                </defs>
-                {/* OCR node */}
-                <rect x="8" y="40" width="22" height="14" rx="3" fill="#1A1C1C" stroke="rgba(255,255,255,0.12)"/>
-                <text x="19" y="50" textAnchor="middle" fill="#9A9B98" fontFamily="monospace" fontSize="6">OCR</text>
-                
-                {/* Parser node */}
-                <rect x="39" y="40" width="22" height="14" rx="3" fill="#1A1C1C" stroke="rgba(139,92,246,0.55)"/>
-                <text x="50" y="50" textAnchor="middle" fill="#A78BFA" fontFamily="monospace" fontSize="5.5">Parse</text>
-                
-                {/* Slack node */}
-                <rect x="70" y="28" width="22" height="14" rx="3" fill="#1A1C1C" stroke="rgba(167,139,250,0.45)"/>
-                <text x="81" y="38" textAnchor="middle" fill="#C4B5FD" fontFamily="monospace" fontSize="5.5">Slack</text>
-                
-                {/* GCP node */}
-                <rect x="70" y="52" width="22" height="14" rx="3" fill="#1A1C1C" stroke="rgba(196,181,253,0.4)"/>
-                <text x="81" y="62" textAnchor="middle" fill="#C4B5FD" fontFamily="monospace" fontSize="6">GCP</text>
-                
-                {/* Connections */}
-                <line x1="30" y1="47" x2="39" y2="47" stroke="#6B6C69" strokeWidth="1" markerEnd="url(#arrow-pipe)"/>
-                <path d="M61 44 C66 44, 66 35, 70 35" fill="none" stroke="#6B6C69" strokeWidth="1" markerEnd="url(#arrow-pipe)"/>
-                <path d="M61 50 C66 50, 66 59, 70 59" fill="none" stroke="#6B6C69" strokeWidth="1" markerEnd="url(#arrow-pipe)"/>
-              </svg>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* Bottom mode chips */}
-      <div className="px-4 py-2.5 border-t border-white/[0.08] flex gap-2">
-        {[
-          { key: 'ocr', label: 'OCR' },
-          { key: 'cv', label: 'CV' },
-          { key: 'n8n', label: 'N8N' }
-        ].map(({ key, label }) => (
-          <button
-            key={key}
-            onClick={() => setActiveMode(key)}
-            className={`text-[10px] font-mono tracking-widest uppercase px-3 py-1.5 rounded transition-colors ${
-              activeMode === key
-                ? 'bg-[#8B5CF6]/10 text-purple-300 border border-[#8B5CF6]'
-                : 'bg-white/[0.02] text-gray-500 border border-white/[0.08] hover:border-white/[0.14]'
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-    </motion.div>
-  );
-};
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -264,102 +77,138 @@ const Hero = () => {
 
       <div className="container mx-auto px-6 relative z-10 py-8">
         <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-8 lg:gap-12 items-center max-w-7xl mx-auto">
-          {/* Left column: Copy + CTAs with artifact card behind */}
-          <div className="text-left relative">
-            {/* Artifact card behind title */}
-            <ArtifactCard reduceMotion={reduceMotion} />
-            
-            {/* Content on top of card */}
-            <div className="relative z-10 pointer-events-none">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="inline-flex items-center gap-2 mb-5 px-3 py-1.5 rounded-full border border-white/[0.14] bg-white/[0.03] pointer-events-auto"
-              >
-                <motion.span
-                  animate={{ 
-                    opacity: reduceMotion ? 1 : [1, 0.3, 1],
-                    boxShadow: reduceMotion ? '0 0 0 0 rgba(167,139,250,0.4)' : [
-                      '0 0 0 0 rgba(167,139,250,0.4)',
-                      '0 0 0 8px transparent',
-                      '0 0 0 0 transparent'
-                    ]
-                  }}
-                  transition={{ duration: 2.4, repeat: Infinity }}
-                  className="w-[7px] h-[7px] rounded-full bg-purple-400"
-                />
-                <span className="text-[11px] font-mono tracking-wider uppercase text-gray-400">
-                  Inference online
-                </span>
-              </motion.div>
+          {/* Left column: Text with detection bboxes */}
+          <div className="text-left relative max-w-[580px]">
+            {/* Status badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center gap-2 mb-7 px-3 py-1.5 rounded-full border border-white/[0.14] bg-white/[0.03]"
+            >
+              <motion.span
+                animate={{ 
+                  opacity: reduceMotion ? 1 : [1, 0.3, 1],
+                  boxShadow: reduceMotion ? '0 0 0 0 rgba(167,139,250,0.4)' : [
+                    '0 0 0 0 rgba(167,139,250,0.4)',
+                    '0 0 0 8px transparent',
+                    '0 0 0 0 transparent'
+                  ]
+                }}
+                transition={{ duration: 2.4, repeat: Infinity }}
+                className="w-[7px] h-[7px] rounded-full bg-purple-400"
+              />
+              <span className="text-[11px] font-mono tracking-wider uppercase text-gray-400">
+                Inference online
+              </span>
+            </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.05 }}
-                className="text-xs font-mono tracking-wide text-gray-400 mb-3"
-                style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}
-              >
+            {/* Eyebrow with soft detection bbox */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.05 }}
+              className="relative inline-block mb-[14px] px-[9px] py-[5px]"
+            >
+              {/* Corner brackets - soft */}
+              <span className="absolute -top-[2px] -left-[3px] w-[7px] h-[7px] border-l border-t border-purple-400/[0.42]" />
+              <span className="absolute -top-[2px] -right-[3px] w-[7px] h-[7px] border-r border-t border-purple-400/[0.42]" />
+              <span className="absolute -bottom-[2px] -left-[3px] w-[7px] h-[7px] border-l border-b border-purple-400/[0.42]" />
+              <span className="absolute -bottom-[2px] -right-[3px] w-[7px] h-[7px] border-r border-b border-purple-400/[0.42]" />
+              {/* Tag */}
+              <span className="absolute -top-[13px] left-[-4px] text-[7.5px] font-mono tracking-wide text-purple-200/55 bg-[#0C0D0D] px-1">
+                person · 0.99
+              </span>
+              <p className="font-mono text-sm tracking-wide text-gray-400 relative z-10">
                 Vivek Patel
-              </motion.div>
+              </p>
+            </motion.div>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-[clamp(1.85rem,4.2vw,3rem)] font-semibold leading-[1.15] tracking-tight mb-4 text-white"
-                style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}
+            {/* H1 with HARD detection bbox */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="relative inline-block mb-[22px] px-4 py-3 max-w-[22ch]"
+            >
+              {/* Edge line for primary strength */}
+              <span className="absolute inset-0 border border-[#8B5CF6]/[0.34] pointer-events-none z-[1]" />
+              {/* Corner brackets - HARD */}
+              <span className="absolute -top-[5px] -left-[6px] w-4 h-4 border-l-[2.5px] border-t-[2.5px] border-[#8B5CF6]" />
+              <span className="absolute -top-[5px] -right-[6px] w-4 h-4 border-r-[2.5px] border-t-[2.5px] border-[#8B5CF6]" />
+              <span className="absolute -bottom-[5px] -left-[6px] w-4 h-4 border-l-[2.5px] border-b-[2.5px] border-[#8B5CF6]" />
+              <span className="absolute -bottom-[5px] -right-[6px] w-4 h-4 border-r-[2.5px] border-b-[2.5px] border-[#8B5CF6]" />
+              {/* Tag */}
+              <span 
+                className="absolute -top-[18px] -left-[6px] text-[9.5px] font-mono tracking-wider text-purple-200 bg-[#0C0D0D] px-1.5"
+                style={{ textShadow: '0 0 12px rgba(139,92,246,0.35)' }}
               >
+                role · 0.98
+              </span>
+              <h1 className="text-[clamp(2.05rem,3.5vw,2.85rem)] font-bold leading-[1.12] tracking-tight text-white relative z-[2]">
                 Computer Vision & AI Engineer
-              </motion.h1>
+              </h1>
+            </motion.div>
 
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-[clamp(0.95rem,1.5vw,1.1rem)] text-gray-400 mb-7 max-w-[42ch] leading-relaxed"
-              >
+            {/* Subhead with soft detection bbox */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="relative inline-block mb-7 px-[11px] py-[9px] max-w-[44ch]"
+            >
+              {/* Corner brackets - soft */}
+              <span className="absolute -top-[2px] -left-[3px] w-2 h-2 border-l border-t border-purple-400/[0.38]" />
+              <span className="absolute -top-[2px] -right-[3px] w-2 h-2 border-r border-t border-purple-400/[0.38]" />
+              <span className="absolute -bottom-[2px] -left-[3px] w-2 h-2 border-l border-b border-purple-400/[0.38]" />
+              <span className="absolute -bottom-[2px] -right-[3px] w-2 h-2 border-r border-b border-purple-400/[0.38]" />
+              {/* Tag */}
+              <span className="absolute -top-[13px] left-[-4px] text-[7.5px] font-mono tracking-wide text-purple-200/[0.48] bg-[#0C0D0D] px-1">
+                brief · 0.94
+              </span>
+              <p className="text-[clamp(0.95rem,1.4vw,1.075rem)] leading-relaxed text-gray-400 relative z-[2]">
                 I build detectors, document extractors, and n8n workflows that turn camera feeds and messy files into reliable production data.
-              </motion.p>
+              </p>
+            </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="flex flex-wrap gap-3 mb-5 pointer-events-auto"
+            {/* CTAs */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="flex flex-wrap gap-3 mb-[18px]"
+            >
+              <Button
+                onClick={handleCTAClick}
+                className="bg-[#8B5CF6] hover:bg-[#9B6FFF] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px]"
               >
-                <Button
-                  onClick={handleCTAClick}
-                  className="bg-[#8B5CF6] hover:bg-[#9B6FFF] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px]"
-                >
-                  Request a Project Estimate
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="border border-white/[0.14] hover:bg-[#8B5CF6]/8 hover:border-purple-400/35 text-white px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[150px] min-h-[44px]"
-                >
-                  <a href="#portfolio">
-                    View Case Studies
-                  </a>
-                </Button>
-              </motion.div>
+                Request a Project Estimate
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                className="border border-white/[0.14] hover:bg-[#8B5CF6]/8 hover:border-purple-400/35 text-white px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[150px] min-h-[44px]"
+              >
+                <a href="#portfolio">
+                  View Case Studies
+                </a>
+              </Button>
+            </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="flex flex-wrap gap-2 opacity-85 pointer-events-auto"
-              >
-                <span className="font-mono text-[11px] tracking-wide px-2.5 py-1.5 rounded-full border border-white/[0.08] bg-[#0C0D0D]">
-                  <span className="text-gray-400">Starting at €45/hour</span>
-                </span>
-                <span className="font-mono text-[11px] tracking-wide text-gray-400 px-2.5 py-1.5 rounded-full border border-white/[0.08] bg-[#0C0D0D]">
-                  Based in Linz, Austria
-                </span>
-              </motion.div>
-            </div>
+            {/* Meta chips - NO bbox */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="flex flex-wrap gap-2"
+            >
+              <span className="font-mono text-[11px] tracking-wide px-3 py-[7px] rounded-full border border-white/[0.08] bg-transparent text-gray-400">
+                Starting at €45/hour
+              </span>
+              <span className="font-mono text-[11px] tracking-wide px-3 py-[7px] rounded-full border border-white/[0.08] bg-transparent text-gray-400">
+                Based in Linz, Austria
+              </span>
+            </motion.div>
           </div>
 
           {/* Right column: Tracked frame */}
