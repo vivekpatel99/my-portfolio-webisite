@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { cleanup, render, screen, within } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import Services from './Services';
@@ -28,11 +29,19 @@ vi.mock('framer-motion', () => {
 
 afterEach(cleanup);
 
+const renderServices = () => {
+  return render(
+    <MemoryRouter>
+      <Services />
+    </MemoryRouter>
+  );
+};
+
 const section = () => document.getElementById('services');
 
 describe('Services offers', () => {
   it('starts with the first offer open and the other two closed', () => {
-    render(<Services />);
+    renderServices();
     const rows = within(section()).getAllByRole('button');
     expect(rows).toHaveLength(3);
     expect(rows[0].getAttribute('aria-expanded')).toBe('true');
@@ -41,7 +50,7 @@ describe('Services offers', () => {
   });
 
   it('shows hourly rate, typical duration, and scope above the summary', () => {
-    render(<Services />);
+    renderServices();
     const offer = serviceOffers[0];
     const panel = document.getElementById(within(section()).getAllByRole('button')[0].getAttribute('aria-controls'));
     const text = panel.textContent;
@@ -63,7 +72,7 @@ describe('Services offers', () => {
 
   it('keeps the catalog rate visible when every row is closed', async () => {
     const user = userEvent.setup();
-    render(<Services />);
+    renderServices();
     await user.click(within(section()).getAllByRole('button')[0]);
     within(section()).getAllByRole('button').forEach((row) => {
       expect(row.getAttribute('aria-expanded')).toBe('false');
@@ -75,7 +84,7 @@ describe('Services offers', () => {
 
   it('opens only one offer at a time and never adds a fourth accordion control', async () => {
     const user = userEvent.setup();
-    render(<Services />);
+    renderServices();
     const rows = () => within(section()).getAllByRole('button');
     await user.click(rows()[2]);
     expect(rows()).toHaveLength(3);
@@ -88,8 +97,23 @@ describe('Services offers', () => {
   });
 
   it('drops the old fixed-scope and ROI chips', () => {
-    render(<Services />);
+    renderServices();
     expect(section().textContent).not.toMatch(/Fixed-scope builds|Automation ROI/i);
     expect(section().textContent).not.toMatch(/€80|3,600|7,200|guaranteed ROI|30-day support/i);
+  });
+
+  it('includes View details link in each expanded accordion', async () => {
+    const user = userEvent.setup();
+    renderServices();
+    
+    const rows = () => within(section()).getAllByRole('button');
+    const panel = document.getElementById(rows()[0].getAttribute('aria-controls'));
+    const link = within(panel).getByRole('link', { name: /View details/i });
+    expect(link.getAttribute('href')).toBe(`/services/${serviceOffers[0].id}`);
+    
+    await user.click(rows()[1]);
+    const panel1 = document.getElementById(rows()[1].getAttribute('aria-controls'));
+    const link1 = within(panel1).getByRole('link', { name: /View details/i });
+    expect(link1.getAttribute('href')).toBe(`/services/${serviceOffers[1].id}`);
   });
 });

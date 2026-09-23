@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus } from 'lucide-react';
+import { Plus, ArrowRight } from 'lucide-react';
 import {
   HOURLY_FROM_LABEL,
   serviceOffers,
@@ -104,6 +105,12 @@ const Services = () => {
                   </div>
                 </div>
                 <p className="text-lg text-gray-400 max-w-2xl">{service.summary}</p>
+                <Link
+                  to={`/services/${service.id}`}
+                  className="inline-flex items-center gap-2 text-accent-purple hover:text-accent-purple/80 transition-colors"
+                >
+                  View details <ArrowRight size={16} />
+                </Link>
               </div>
             </motion.div>}
           </AnimatePresence>
