@@ -122,14 +122,14 @@ const Hero = () => {
             >
               <Button
                 onClick={handleCTAClick}
-                className="bg-[#8B5CF6] hover:bg-[#9B6FFF] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px]"
+                className="bg-[#8B5CF6] hover:bg-[#9B6FFF] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px]"
               >
                 Request a Project Estimate
               </Button>
               <Button
                 asChild
                 variant="outline"
-                className="border border-white/[0.14] hover:bg-[#8B5CF6]/8 hover:border-purple-400/35 text-white px-6 py-3.5 h-auto text-base rounded-[10px]"
+                className="border border-white/[0.14] hover:bg-[#8B5CF6]/8 hover:border-purple-400/35 text-white px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[150px] min-h-[44px]"
               >
                 <a href="#portfolio">
                   View Case Studies
