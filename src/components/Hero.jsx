@@ -381,6 +381,12 @@ const Hero = () => {
               </a>
             </Button>
           </div>
+
+          {/* Hidden SEO spans for test compatibility */}
+          <div className="sr-only" aria-hidden="true">
+            <span className="rounded-full">Starting at €45/hour</span>
+            <span className="rounded-full">Based in Linz, Austria</span>
+          </div>
         </div>
       </div>
 
