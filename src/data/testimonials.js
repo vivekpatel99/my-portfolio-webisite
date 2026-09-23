@@ -7,7 +7,8 @@ export const testimonials = [
     role: null,
     country: null,
     rating: 5.0,
-    feedbackDate: "2026-09-22"
+    feedbackDate: "2026-09-22",
+    source: "Upwork"
   },
   {
     id: "invoice-ai-gemini-2026-06",
@@ -17,7 +18,8 @@ export const testimonials = [
     role: null,
     country: null,
     rating: 5.0,
-    feedbackDate: "2026-06-30"
+    feedbackDate: "2026-06-30",
+    source: "Upwork"
   },
   {
     id: "n8n-python-ai-agents-2026-05",
@@ -27,7 +29,8 @@ export const testimonials = [
     role: null,
     country: null,
     rating: 5.0,
-    feedbackDate: "2026-05-18"
+    feedbackDate: "2026-05-18",
+    source: "Upwork"
   },
   {
     id: "invoice-ocr-n8n-ai-2026-04",
@@ -37,7 +40,8 @@ export const testimonials = [
     role: null,
     country: null,
     rating: 5.0,
-    feedbackDate: "2026-04-22"
+    feedbackDate: "2026-04-22",
+    source: "Upwork"
   },
   {
     id: "ml-engineer-data-infra-2026-03",
@@ -47,7 +51,8 @@ export const testimonials = [
     role: null,
     country: null,
     rating: 5.0,
-    feedbackDate: "2026-03-24"
+    feedbackDate: "2026-03-24",
+    source: "Upwork"
   },
   {
     id: "transfer-n8n-workflow-2026-01",
@@ -57,7 +62,8 @@ export const testimonials = [
     role: null,
     country: null,
     rating: 5.0,
-    feedbackDate: "2026-01-09"
+    feedbackDate: "2026-01-09",
+    source: "Upwork"
   },
   {
     id: "sports-cv-ball-player-2026-01",
@@ -67,7 +73,8 @@ export const testimonials = [
     role: null,
     country: null,
     rating: 5.0,
-    feedbackDate: "2026-01-04"
+    feedbackDate: "2026-01-04",
+    source: "Upwork"
   },
   {
     id: "automated-data-extraction-stephan",
@@ -77,7 +84,8 @@ export const testimonials = [
     role: null,
     country: null,
     rating: 5.0,
-    feedbackDate: "2025-10-28"
+    feedbackDate: "2025-10-28",
+    source: "Direct"
   },
   {
     id: "software-engineer-duncan",
@@ -87,7 +95,8 @@ export const testimonials = [
     role: null,
     country: null,
     rating: 5.0,
-    feedbackDate: null
+    feedbackDate: null,
+    source: "Direct"
   },
   {
     id: "feasibility-n8n-transcription-andrew",
@@ -97,6 +106,7 @@ export const testimonials = [
     role: null,
     country: null,
     rating: 5.0,
-    feedbackDate: null
+    feedbackDate: null,
+    source: "Direct"
   }
 ];
