@@ -1,15 +1,126 @@
-.testimonial-card-link {
-  display: block;
-  min-height: 100%;
+.carousel-wrap {
+  position: relative;
+  max-width: 640px;
+  margin: 0 auto;
 }
 
-.testimonial-card-link:focus-visible {
-  outline: 3px solid #9372FF;
-  outline-offset: 4px;
+.carousel-card {
+  background: #141516;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 2.25rem 2rem;
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
 }
 
-.testimonial-grid {
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+.carousel-slides {
+  position: relative;
+}
+
+.carousel-slide {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.7s ease, visibility 0.7s;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.carousel-slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  position: relative;
+  pointer-events: auto;
+}
+
+.carousel-quote {
+  font-size: clamp(1.05rem, 2.5vw, 1.2rem);
+  font-weight: 400;
+  color: #FFFFFF;
+  margin-bottom: 1.5rem;
+  quotes: none;
+}
+
+.carousel-quote::before {
+  content: "\201C";
+  color: #8B5CF6;
+  font-size: 1.75em;
+  line-height: 0;
+  margin-right: 0.1em;
+  vertical-align: -0.25em;
+  font-weight: 500;
+}
+
+.carousel-attr {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+}
+
+.attr-name {
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.attr-meta {
+  color: #A1A1AA;
+  font-size: 0.8125rem;
+}
+
+.stars {
+  color: #A78BFA;
+  letter-spacing: 0.08em;
+  font-size: 0.875rem;
+  line-height: 1;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid #8B5CF6;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.2s;
+}
+
+.carousel-dot:hover {
+  transform: scale(1.15);
+}
+
+.carousel-dot.is-active {
+  background: #8B5CF6;
+}
+
+.carousel-dot:focus-visible {
+  outline: 2px solid #A78BFA;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel-slide {
+    transition: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .carousel-card {
+    padding: 1.75rem 1.25rem;
+    min-height: 220px;
+  }
 }
