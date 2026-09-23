@@ -63,7 +63,7 @@ const Hero = () => {
   return (
     <section 
       ref={heroRef}
-      className="relative min-h-[900px] flex flex-col justify-center overflow-hidden pt-10 pb-12 bg-[#0C0D0D] max-md:min-h-0 max-md:h-auto max-md:pb-7"
+      className="relative min-h-[900px] flex flex-col justify-center overflow-hidden pt-10 pb-12 bg-[#0C0D0D] max-md:min-h-0 max-md:h-auto max-md:pb-16 max-md:pt-6 max-md:justify-start"
     >
       {/* Grid background */}
       <div 
@@ -117,7 +117,10 @@ const Hero = () => {
               style={{
                 animation: reduceMotion ? 'none' : `${box.pulse ? 'bg-drift-pulse' : 'bg-drift'} ${box.dur}s ease-in-out infinite`,
                 animationDelay: `${box.delay}s`,
-                willChange: reduceMotion ? 'auto' : 'transform, opacity'
+                willChange: reduceMotion ? 'auto' : 'transform, opacity',
+                '--dx': `${box.dx}px`,
+                '--dy': `${box.dy}px`,
+                '--op': box.op
               }}
             >
               {box.type === 'bracket' ? (
@@ -142,8 +145,8 @@ const Hero = () => {
         ))}
       </div>
 
-      <div className="container mx-auto px-6 md:px-12 relative z-10 py-8 max-md:px-4 max-md:py-5">
-        <div className="max-w-[1320px] mx-auto flex flex-col gap-5 max-md:gap-3">
+      <div className="container mx-auto px-6 md:px-12 relative z-10 py-8 max-md:px-4 max-md:py-3">
+        <div className="max-w-[1320px] mx-auto flex flex-col gap-5 max-md:gap-2">
           {/* Status badge */}
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/[0.12] bg-white/[0.03]">
@@ -153,11 +156,11 @@ const Hero = () => {
           </div>
 
           {/* Two columns: invoice | photo */}
-          <div className="grid lg:grid-cols-[minmax(0,1.7fr)_minmax(260px,0.72fr)] gap-7 items-center max-lg:grid-cols-1 max-lg:gap-4">
+          <div className="grid lg:grid-cols-[minmax(0,1.7fr)_minmax(260px,0.72fr)] gap-7 items-center max-lg:grid-cols-1 max-lg:gap-3">
             {/* Left: Profile Invoice */}
             <div className="flex flex-col gap-4 min-w-0 w-full max-lg:gap-0">
               <article 
-                className="relative w-full max-w-[760px] border border-[#8B5CF6]/[0.28] rounded-lg px-7 py-6 max-md:px-3.5 max-md:py-4"
+                className="relative w-full max-w-[760px] border border-[#8B5CF6]/[0.28] rounded-lg px-7 py-6 max-md:px-3 max-md:py-3"
                 style={{
                   background: 'linear-gradient(165deg, #141318 0%, #0f1012 55%, #0e0e10 100%)',
                   boxShadow: '0 0 0 1px rgba(255,255,255,0.03) inset, 0 24px 64px rgba(0,0,0,0.45), 0 0 48px rgba(139,92,246,0.1)'
@@ -382,10 +385,14 @@ const Hero = () => {
             </Button>
           </div>
 
-          {/* Hidden SEO spans for test compatibility */}
-          <div className="sr-only" aria-hidden="true">
-            <span className="rounded-full">Starting at €45/hour</span>
-            <span className="rounded-full">Based in Linz, Austria</span>
+          {/* Rate and location chips for a11y */}
+          <div className="flex flex-wrap gap-2 mt-2 max-md:mt-1.5">
+            <span className="inline-flex items-center px-3 py-1.5 rounded-full border border-white/[0.08]" style={{ backgroundColor: 'rgb(12, 13, 13)' }}>
+              <span className="text-[13px] text-gray-300">Starting at €45/hour</span>
+            </span>
+            <span className="inline-flex items-center px-3 py-1.5 rounded-full border border-white/[0.08]" style={{ backgroundColor: 'rgb(12, 13, 13)' }}>
+              <span className="text-[13px] text-gray-300">Based in Linz, Austria</span>
+            </span>
           </div>
         </div>
       </div>
