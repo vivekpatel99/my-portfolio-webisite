@@ -202,10 +202,10 @@ const Hero = () => {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="flex flex-wrap gap-2"
             >
-              <span className="font-mono text-[11px] tracking-wide px-3 py-[7px] rounded-full border border-white/[0.08] bg-transparent text-gray-400">
+              <span className="font-mono text-[11px] tracking-wide px-3 py-[7px] rounded-full border border-white/[0.08] bg-[#0C0D0D] text-gray-400">
                 Starting at €45/hour
               </span>
-              <span className="font-mono text-[11px] tracking-wide px-3 py-[7px] rounded-full border border-white/[0.08] bg-transparent text-gray-400">
+              <span className="font-mono text-[11px] tracking-wide px-3 py-[7px] rounded-full border border-white/[0.08] bg-[#0C0D0D] text-gray-400">
                 Based in Linz, Austria
               </span>
             </motion.div>
