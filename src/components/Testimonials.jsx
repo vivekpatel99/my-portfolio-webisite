@@ -79,7 +79,12 @@ const Testimonials = () => {
                                                 <div className="attr-name">{testimonial.clientName}</div>
                                                 {attribution && <div className="attr-meta">{attribution}</div>}
                                             </div>
-                                            <StarRating />
+                                            <div className="attr-right">
+                                                {testimonial.source && (
+                                                    <span className="source-chip">{testimonial.source}</span>
+                                                )}
+                                                <StarRating />
+                                            </div>
                                         </footer>
                                     </blockquote>
                                 );
