@@ -42,21 +42,22 @@ const ArtifactCard = ({ reduceMotion }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.15 }}
-      className="absolute left-0 top-12 w-[min(420px,90%)] bg-[#0A0B0B] border border-white/[0.12] rounded-xl overflow-hidden shadow-2xl z-0"
+      className="absolute left-0 top-12 w-[min(420px,90%)] md:w-[min(420px,85%)] max-h-[220px] bg-[#0A0B0B] border border-white/[0.12] rounded-xl overflow-hidden shadow-2xl z-0 lg:max-h-[260px] max-sm:w-[min(360px,85%)] max-sm:max-h-[200px]"
+      style={{ clipPath: 'inset(0 0 40px 0)' }}
     >
-      {/* Card header */}
-      <div className="px-4 py-2.5 border-b border-white/[0.08] flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      {/* Card header - stacked layout */}
+      <div className="px-4 py-2.5 border-b border-white/[0.08]">
+        <div className="flex items-center gap-2 mb-1">
           <span className="text-[10px] font-mono tracking-wider text-gray-500">live extract ·</span>
           <span className="text-[10px] font-mono tracking-wider text-purple-300">{currentMode.confidence}</span>
         </div>
-        <div className="text-[10px] font-mono tracking-widest uppercase text-gray-400">
+        <div className="text-[11px] font-mono tracking-widest uppercase text-purple-300 font-medium">
           {currentMode.header}
         </div>
       </div>
 
       {/* Card content - animated transitions */}
-      <div className="relative h-[180px] bg-[#0C0D0D] p-4">
+      <div className="relative h-[180px] max-sm:h-[150px] bg-[#0C0D0D] p-4 max-sm:p-3">
         <AnimatePresence mode="wait">
           {activeMode === 'ocr' && (
             <motion.div
@@ -168,17 +169,21 @@ const ArtifactCard = ({ reduceMotion }) => {
 
       {/* Bottom mode chips */}
       <div className="px-4 py-2.5 border-t border-white/[0.08] flex gap-2">
-        {['ocr', 'cv', 'n8n'].map((mode) => (
+        {[
+          { key: 'ocr', label: 'OCR' },
+          { key: 'cv', label: 'CV' },
+          { key: 'n8n', label: 'N8N' }
+        ].map(({ key, label }) => (
           <button
-            key={mode}
-            onClick={() => setActiveMode(mode)}
+            key={key}
+            onClick={() => setActiveMode(key)}
             className={`text-[10px] font-mono tracking-widest uppercase px-3 py-1.5 rounded transition-colors ${
-              activeMode === mode
+              activeMode === key
                 ? 'bg-[#8B5CF6]/10 text-purple-300 border border-[#8B5CF6]'
                 : 'bg-white/[0.02] text-gray-500 border border-white/[0.08] hover:border-white/[0.14]'
             }`}
           >
-            {mode}
+            {label}
           </button>
         ))}
       </div>
@@ -279,7 +284,8 @@ const Hero = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.05 }}
-                className="text-xs font-mono tracking-wide text-gray-500 mb-3"
+                className="text-xs font-mono tracking-wide text-gray-400 mb-3"
+                style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8), 0 2px 8px rgba(0,0,0,0.6)' }}
               >
                 Vivek Patel
               </motion.div>
@@ -289,6 +295,7 @@ const Hero = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
                 className="text-[clamp(1.85rem,4.2vw,3rem)] font-semibold leading-[1.15] tracking-tight mb-4 text-white"
+                style={{ textShadow: '0 2px 4px rgba(0,0,0,0.9), 0 4px 12px rgba(0,0,0,0.7)' }}
               >
                 Computer Vision & AI Engineer
               </motion.h1>
