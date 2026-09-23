@@ -1,5 +1,6 @@
 import React from 'react';
 import CaseStudyGallery, { collectGalleryImages } from './CaseStudyGallery.js';
+import OwnerAlias from './OwnerAlias.js';
 
 // Images belong to the top gallery; prune their now-empty text containers.
 const withoutImages = (nodes) => nodes.flatMap((node) => {
@@ -59,6 +60,7 @@ export const CaseStudyArticle = ({ story, backHref = '/#portfolio' }) => React.c
   ),
   story.category ? React.createElement('p', { className: 'case-study-category' }, story.category) : null,
   React.createElement('h1', null, story.title),
+  React.createElement(OwnerAlias, { slug: story.slug, className: 'mb-4' }),
   React.createElement('p', { className: 'case-study-summary' }, story.summary),
   React.createElement(CaseStudyGallery, { key: story.slug || story.id, images: collectGalleryImages(story) }),
   React.createElement('div', { className: 'case-study-sections' }, story.sections.map((section) => ({ ...section, nodes: withoutImages(section.nodes) })).map((section) => React.createElement(

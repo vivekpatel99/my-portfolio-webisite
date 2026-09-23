@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import OwnerAlias from './OwnerAlias.js';
 
 const MONTH_NAMES = [
   'Jan',
@@ -63,6 +64,7 @@ const CaseStudyCard = ({
             'div', { className: 'min-w-0 flex-1' },
             project.category ? React.createElement('p', { className: 'mb-4 inline-block rounded-full border border-accent-purple/30 bg-accent-purple/15 px-3 py-1 text-xs font-semibold uppercase leading-tight text-[#d8caff]' }, project.category) : null,
             React.createElement('h3', { className: 'break-words text-xl font-bold leading-tight text-white' }, project.cardTitle || project.title),
+            React.createElement(OwnerAlias, { slug: project.slug, className: 'mt-1.5' }),
           ),
           React.createElement('span', { className: 'flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 text-xl text-white transition-colors group-hover:bg-accent-purple/60', 'aria-hidden': true }, '↗'),
         ),
