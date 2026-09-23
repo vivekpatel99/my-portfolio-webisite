@@ -200,25 +200,31 @@ const Hero = () => {
 
   return (
     <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden pt-16 pb-16 bg-[#0C0D0D]">
-      {/* Warehouse scene background */}
+      {/* Clean background with subtle grid */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute inset-0 bg-gradient-radial-purple opacity-30" 
-             style={{ background: 'radial-gradient(ellipse 80% 60% at 70% 40%, #16141c 0%, #0C0D0D 70%)' }} />
+        {/* Subtle grid pattern */}
+        <div 
+          className="absolute inset-0 opacity-[0.015]"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)',
+            backgroundSize: '80px 80px'
+          }}
+        />
         
-        {/* Warehouse shelves silhouettes */}
-        <div className="absolute left-[8%] top-[18%] w-[22%] h-[52%] bg-white/[0.025] border border-white/[0.08]" />
-        <div className="absolute left-[32%] top-[28%] w-[18%] h-[42%] bg-white/[0.025] border border-white/[0.08]" />
-        <div className="absolute right-[6%] top-[14%] w-[28%] h-[58%] bg-white/[0.025] border border-white/[0.08]" />
-        
-        {/* Detection bboxes overlays */}
+        {/* Sparse floating detection bboxes with corner brackets */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8, duration: 0.6 }}
-          className="absolute top-[22%] left-[12%] w-[14%] h-[28%] border-[1.5px] border-purple-400/50 rounded-sm z-0"
+          className="absolute top-[15%] left-[8%] w-[120px] h-[160px] z-0"
         >
-          <span className="absolute -top-4 left-0 text-[9px] font-mono tracking-wider text-purple-300 bg-[#0C0D0D]/75 px-1.5 py-0.5">
-            person 0.96
+          {/* Corner brackets only */}
+          <div className="absolute -top-0.5 -left-0.5 w-4 h-4 border-l-[1.5px] border-t-[1.5px] border-purple-400/60" />
+          <div className="absolute -top-0.5 -right-0.5 w-4 h-4 border-r-[1.5px] border-t-[1.5px] border-purple-400/60" />
+          <div className="absolute -bottom-0.5 -left-0.5 w-4 h-4 border-l-[1.5px] border-b-[1.5px] border-purple-400/60" />
+          <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 border-r-[1.5px] border-b-[1.5px] border-purple-400/60" />
+          <span className="absolute -top-5 left-0 text-[9px] font-mono tracking-wider text-purple-300 bg-[#0C0D0D] px-1.5 py-0.5">
+            person · 0.96
           </span>
         </motion.div>
         
@@ -226,10 +232,14 @@ const Hero = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.6 }}
-          className="absolute top-[35%] left-[36%] w-[10%] h-[22%] border-[1.5px] border-[#8B5CF6]/45 rounded-sm z-0"
+          className="absolute top-[55%] left-[18%] w-[100px] h-[80px] z-0"
         >
-          <span className="absolute -top-4 left-0 text-[9px] font-mono tracking-wider text-purple-300 bg-[#0C0D0D]/75 px-1.5 py-0.5">
-            forklift 0.88
+          <div className="absolute -top-0.5 -left-0.5 w-4 h-4 border-l-[1.5px] border-t-[1.5px] border-[#8B5CF6]/50" />
+          <div className="absolute -top-0.5 -right-0.5 w-4 h-4 border-r-[1.5px] border-t-[1.5px] border-[#8B5CF6]/50" />
+          <div className="absolute -bottom-0.5 -left-0.5 w-4 h-4 border-l-[1.5px] border-b-[1.5px] border-[#8B5CF6]/50" />
+          <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 border-r-[1.5px] border-b-[1.5px] border-[#8B5CF6]/50" />
+          <span className="absolute -top-5 left-0 text-[9px] font-mono tracking-wider text-purple-300 bg-[#0C0D0D] px-1.5 py-0.5">
+            package · 0.89
           </span>
         </motion.div>
         
@@ -237,14 +247,19 @@ const Hero = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.9, duration: 0.6 }}
-          className="absolute top-[18%] right-[14%] w-[16%] h-[36%] border-[1.5px] border-purple-300/40 rounded-sm z-0"
+          className="absolute top-[25%] right-[35%] w-[140px] h-[90px] z-0 max-lg:hidden"
         >
-          <span className="absolute -top-4 left-0 text-[9px] font-mono tracking-wider text-purple-200 bg-[#0C0D0D]/75 px-1.5 py-0.5">
-            pallet 0.93
+          <div className="absolute -top-0.5 -left-0.5 w-4 h-4 border-l-[1.5px] border-t-[1.5px] border-purple-300/45" />
+          <div className="absolute -top-0.5 -right-0.5 w-4 h-4 border-r-[1.5px] border-t-[1.5px] border-purple-300/45" />
+          <div className="absolute -bottom-0.5 -left-0.5 w-4 h-4 border-l-[1.5px] border-b-[1.5px] border-purple-300/45" />
+          <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 border-r-[1.5px] border-b-[1.5px] border-purple-300/45" />
+          <span className="absolute -top-5 left-0 text-[9px] font-mono tracking-wider text-purple-200 bg-[#0C0D0D] px-1.5 py-0.5">
+            vehicle · 0.92
           </span>
         </motion.div>
         
-        <div className="absolute left-0 right-0 bottom-0 h-[28%] bg-gradient-to-t from-black/50 to-transparent" />
+        {/* Subtle vignette */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20" />
       </div>
 
       <div className="container mx-auto px-6 relative z-10 py-8">
