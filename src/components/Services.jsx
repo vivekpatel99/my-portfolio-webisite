@@ -9,7 +9,7 @@ import {
 } from '@/data/serviceOffers';
 
 const Services = () => {
-  const [activeIndex, setActiveIndex] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(0);
   const handleServiceClick = index => {
     setActiveIndex(activeIndex === index ? null : index);
   };
@@ -91,7 +91,7 @@ const Services = () => {
                     <h4 className="text-white font-semibold mb-3">In scope</h4>
                     <ul className="space-y-2">
                       {service.inScope.map((item) => (
-                        <li key={item} className="text-gray-400 text-sm">{item}</li>
+                        <li key={item} className="text-gray-300 text-sm">{item}</li>
                       ))}
                     </ul>
                   </div>
@@ -99,12 +99,12 @@ const Services = () => {
                     <h4 className="text-white font-semibold mb-3">Out of scope</h4>
                     <ul className="space-y-2">
                       {service.outOfScope.map((item) => (
-                        <li key={item} className="text-gray-400 text-sm">{item}</li>
+                        <li key={item} className="text-gray-300 text-sm">{item}</li>
                       ))}
                     </ul>
                   </div>
                 </div>
-                <p className="text-lg text-gray-400 max-w-2xl">{service.summary}</p>
+                <p className="text-lg text-gray-300 max-w-2xl">{service.summary}</p>
                 <Link
                   to={`/services/${service.id}`}
                   className="inline-block text-accent-purple hover:text-accent-purple/80 transition-colors font-semibold"
