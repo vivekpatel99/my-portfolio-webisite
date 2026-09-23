@@ -42,8 +42,7 @@ const ArtifactCard = ({ reduceMotion }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.15 }}
-      className="absolute left-0 top-12 w-[min(420px,90%)] md:w-[min(420px,85%)] max-h-[220px] bg-[#0A0B0B] border border-white/[0.12] rounded-xl overflow-hidden shadow-2xl z-0 lg:max-h-[260px] max-sm:w-[min(360px,85%)] max-sm:max-h-[200px]"
-      style={{ clipPath: 'inset(0 0 40px 0)' }}
+      className="absolute left-0 top-12 w-[min(420px,90%)] md:w-[min(420px,85%)] bg-[#0A0B0B] border border-white/[0.12] rounded-xl overflow-hidden shadow-2xl z-0 max-sm:w-[min(360px,85%)] pointer-events-auto"
     >
       {/* Card header - stacked layout */}
       <div className="px-4 py-2.5 border-b border-white/[0.08]">
@@ -57,7 +56,7 @@ const ArtifactCard = ({ reduceMotion }) => {
       </div>
 
       {/* Card content - animated transitions */}
-      <div className="relative h-[180px] max-sm:h-[150px] bg-[#0C0D0D] p-4 max-sm:p-3">
+      <div className="relative h-[140px] max-sm:h-[120px] bg-[#0C0D0D] p-4 max-sm:p-3">
         <AnimatePresence mode="wait">
           {activeMode === 'ocr' && (
             <motion.div
@@ -256,12 +255,12 @@ const Hero = () => {
             <ArtifactCard reduceMotion={reduceMotion} />
             
             {/* Content on top of card */}
-            <div className="relative z-10">
+            <div className="relative z-10 pointer-events-none">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                className="inline-flex items-center gap-2 mb-5 px-3 py-1.5 rounded-full border border-white/[0.14] bg-white/[0.03]"
+                className="inline-flex items-center gap-2 mb-5 px-3 py-1.5 rounded-full border border-white/[0.14] bg-white/[0.03] pointer-events-auto"
               >
                 <motion.span
                   animate={{ 
@@ -285,7 +284,7 @@ const Hero = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.05 }}
                 className="text-xs font-mono tracking-wide text-gray-400 mb-3"
-                style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8), 0 2px 8px rgba(0,0,0,0.6)' }}
+                style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}
               >
                 Vivek Patel
               </motion.div>
@@ -295,7 +294,7 @@ const Hero = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
                 className="text-[clamp(1.85rem,4.2vw,3rem)] font-semibold leading-[1.15] tracking-tight mb-4 text-white"
-                style={{ textShadow: '0 2px 4px rgba(0,0,0,0.9), 0 4px 12px rgba(0,0,0,0.7)' }}
+                style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}
               >
                 Computer Vision & AI Engineer
               </motion.h1>
@@ -313,7 +312,7 @@ const Hero = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="flex flex-wrap gap-3 mb-5"
+                className="flex flex-wrap gap-3 mb-5 pointer-events-auto"
               >
                 <Button
                   onClick={handleCTAClick}
@@ -336,7 +335,7 @@ const Hero = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="flex flex-wrap gap-2 opacity-85"
+                className="flex flex-wrap gap-2 opacity-85 pointer-events-auto"
               >
                 <span className="font-mono text-[11px] tracking-wide px-2.5 py-1.5 rounded-full border border-white/[0.08] bg-[#0C0D0D]">
                   <span className="text-gray-400">Starting at €45/hour</span>
