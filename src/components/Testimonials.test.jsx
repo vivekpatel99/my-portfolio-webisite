@@ -83,4 +83,24 @@ describe('Testimonials Carousel', () => {
     expect(dots[2].getAttribute('aria-selected')).toBe('true');
     expect(dots[0].getAttribute('aria-selected')).toBe('false');
   });
+
+  it('renders source chip for testimonials with source field', () => {
+    const { container } = render(<Testimonials />);
+    
+    const sourceChips = container.querySelectorAll('.source-chip');
+    expect(sourceChips.length).toBeGreaterThan(0);
+    
+    const firstChip = sourceChips[0];
+    expect(['Upwork', 'Fiverr', 'Direct']).toContain(firstChip.textContent);
+  });
+
+  it('displays correct source for first testimonial', () => {
+    const { container } = render(<Testimonials />);
+    
+    const activeSlide = container.querySelector('.carousel-slide.is-active');
+    const sourceChip = activeSlide?.querySelector('.source-chip');
+    
+    expect(sourceChip).toBeTruthy();
+    expect(sourceChip.textContent).toBe(testimonials[0].source);
+  });
 });
