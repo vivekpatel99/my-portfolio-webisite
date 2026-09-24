@@ -232,3 +232,33 @@ test('section anchors include scroll-margin-top for fixed header navigation', as
     expect(margin === '0px' || margin === '', `#${id} scroll-margin-top is ${margin}`).toBeFalsy();
   }
 });
+
+test('hero invoice proof fold structure per #176', async ({ page }) => {
+  await page.goto('/');
+  
+  const hero = page.locator('section').first();
+  await expect(hero).toBeVisible();
+  
+  const h1 = page.getByRole('heading', { level: 1, name: /Computer Vision & AI Engineer/i });
+  await expect(h1).toBeVisible();
+  
+  const proofsGroup = page.locator('[role="group"][aria-label="Detected credentials"]');
+  await expect(proofsGroup).toBeVisible();
+  
+  await expect(page.getByText('Top Rated Plus', { exact: true })).toBeVisible();
+  await expect(page.getByText('100% Job Success', { exact: true })).toBeVisible();
+  await expect(page.getByText('Upwork freelancer')).toBeVisible();
+  await expect(page.getByText('Client delivery record')).toBeVisible();
+  
+  await expect(page.getByText('Detected total')).toHaveCount(0);
+  
+  await expect(page.getByText('PROOF ·')).toHaveCount(0);
+  await expect(page.getByText('DETECTED')).toHaveCount(0);
+  await expect(page.getByText('fields · 2')).toHaveCount(0);
+  
+  await expect(page.getByText('€45/hour')).toBeVisible();
+  await expect(page.getByText('Linz, Austria')).toBeVisible();
+  
+  await expect(page.getByText('doc · extract · 0.97')).toBeVisible();
+  await expect(page.getByText('INV-VP-0045')).toBeVisible();
+});
