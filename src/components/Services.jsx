@@ -35,10 +35,9 @@ const Services = () => {
 
         <div className="flex flex-col gap-[14px]">
           {serviceOffers.map((service, index) => (
-            <article 
-              key={service.id} 
+            <article
+              key={service.id}
               className={`relative border ${activeIndex === index ? 'border-[rgba(139,92,246,0.72)]' : 'border-[rgba(139,92,246,0.28)]'} bg-transparent`}
-              aria-expanded={activeIndex === index}
             >
               {/* Corner brackets */}
               <span 
