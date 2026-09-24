@@ -130,7 +130,6 @@ describe('public location copy', () => {
       'src/components/About.jsx',
       'src/components/CTA.jsx',
       'src/components/Header.jsx',
-      'src/components/ProofStrip.jsx',
       'src/pages/Home.jsx',
       'src/lib/seo.js',
     ]) {
