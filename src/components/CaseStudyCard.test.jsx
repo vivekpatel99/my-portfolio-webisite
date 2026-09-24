@@ -123,4 +123,94 @@ describe('CaseStudyCard', () => {
     expect(screen.queryByRole('time')).toBeNull();
     expect(screen.queryByText(/Completed|unavailable|approx/i)).toBeNull();
   });
+
+  describe('Detection Card design (Option A)', () => {
+    it('renders L-brackets TL purple and BR white corner registration marks', () => {
+      const { container } = render(
+        <MemoryRouter>
+          <CaseStudyCard project={project} />
+        </MemoryRouter>,
+      );
+
+      const article = container.querySelector('article');
+      expect(article).toBeTruthy();
+      const brackets = article.querySelectorAll('span[aria-hidden="true"]');
+      const tlBracket = Array.from(brackets).find((el) =>
+        el.className.includes('top-1.5') && el.className.includes('left-1.5'),
+      );
+      const brBracket = Array.from(brackets).find((el) =>
+        el.className.includes('bottom-1.5') && el.className.includes('right-1.5'),
+      );
+
+      expect(tlBracket).toBeTruthy();
+      expect(brBracket).toBeTruthy();
+      expect(tlBracket.className).toContain('border-[#8B5CF6]/85');
+      expect(brBracket.className).toContain('border-white/45');
+      expect(tlBracket.className).toContain('border-t-[1.5px]');
+      expect(tlBracket.className).toContain('border-l-[1.5px]');
+      expect(brBracket.className).toContain('border-b-[1.5px]');
+      expect(brBracket.className).toContain('border-r-[1.5px]');
+    });
+
+    it('displays category as CATEGORY · CASE STUDY meta line not rounded pill', () => {
+      const { container } = render(
+        <MemoryRouter>
+          <CaseStudyCard project={project} />
+        </MemoryRouter>,
+      );
+
+      const metaLine = container.querySelector('div[class*="border-b"][class*="border-[#8B5CF6]/45"]');
+      expect(metaLine).toBeTruthy();
+      expect(metaLine.textContent).toContain(`${project.category} ·`);
+      expect(metaLine.textContent).toContain('CASE STUDY');
+      expect(metaLine.className).toContain('font-mono');
+      expect(metaLine.className).toContain('tracking-[0.12em]');
+      expect(metaLine.className).toContain('uppercase');
+      expect(metaLine.className).toContain('border-b');
+      expect(metaLine.className).not.toContain('rounded-full');
+      const purpleSpan = metaLine.querySelector('span[class*="text-[#a78bfa]"]');
+      expect(purpleSpan).toBeTruthy();
+      expect(purpleSpan.textContent).toBe('CASE STUDY');
+    });
+
+    it('applies square corners and purple craft border to card frame', () => {
+      const { container } = render(
+        <MemoryRouter>
+          <CaseStudyCard project={project} />
+        </MemoryRouter>,
+      );
+
+      const article = container.querySelector('article');
+      expect(article.className).toContain('rounded-none');
+      expect(article.className).toContain('border-[#8B5CF6]/40');
+      expect(article.className).toContain('bg-[#0C0D0D]');
+      expect(article.className).toContain('hover:border-[#8B5CF6]');
+      expect(article.className).not.toContain('rounded-lg');
+      expect(article.className).not.toContain('border-white/10');
+    });
+
+    it('renders geometric arrow glyph as SVG not filled circle with text', () => {
+      const { container } = render(
+        <MemoryRouter>
+          <CaseStudyCard project={project} />
+        </MemoryRouter>,
+      );
+
+      const glyphContainer = Array.from(container.querySelectorAll('span[aria-hidden="true"]')).find((el) =>
+        el.className.includes('h-11') && el.className.includes('w-11'),
+      );
+      expect(glyphContainer).toBeTruthy();
+      const svg = glyphContainer.querySelector('svg');
+      expect(svg).toBeTruthy();
+      expect(svg.getAttribute('viewBox')).toBe('0 0 16 16');
+      expect(svg.getAttribute('stroke')).toBe('currentColor');
+      expect(svg.getAttribute('stroke-linecap')).toBe('square');
+      const paths = svg.querySelectorAll('path');
+      expect(paths.length).toBe(2);
+      expect(paths[0].getAttribute('d')).toContain('M5 3H13V11');
+      expect(paths[1].getAttribute('d')).toContain('M13 3L4 12');
+      expect(glyphContainer.className).toContain('border-[#8B5CF6]/35');
+      expect(glyphContainer.textContent).not.toContain('↗');
+    });
+  });
 });

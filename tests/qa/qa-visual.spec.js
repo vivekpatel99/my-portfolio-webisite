@@ -338,3 +338,61 @@ test('contact validation notice leaves cookie controls visible on tablet and des
     });
   }
 });
+
+test('portfolio section shows Detection Card craft signals on homepage', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await reducedMotion(page);
+  await page.addInitScript((key) => {
+    localStorage.setItem(key, JSON.stringify({ necessary: true, analytics: false }));
+  }, COOKIE_KEY);
+  await page.goto('/');
+  await settleLayout(page);
+
+  const portfolio = page.locator('#portfolio');
+  await portfolio.scrollIntoViewIfNeeded();
+  await expect(portfolio).toBeVisible();
+
+  await expect(portfolio.getByText(/PORTFOLIO.*CASE STUDIES/i)).toBeVisible();
+  await expect(portfolio.getByRole('heading', { name: /Featured.*Case Studies/i })).toBeVisible();
+
+  const cards = portfolio.locator('article').all();
+  expect((await cards).length).toBeGreaterThan(0);
+
+  const firstCard = portfolio.locator('article').first();
+  await expect(firstCard).toBeVisible();
+  
+  const metaLine = firstCard.locator('div').filter({ hasText: /·.*CASE STUDY/i }).first();
+  await expect(metaLine).toBeVisible();
+  
+  const svg = firstCard.locator('svg[viewBox="0 0 16 16"]').first();
+  await expect(svg).toBeVisible();
+
+  const cardBox = await firstCard.boundingBox();
+  expect(cardBox.width).toBeGreaterThan(200);
+  expect(cardBox.height).toBeGreaterThan(400);
+});
+
+test('portfolio card click navigates to case study detail', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await reducedMotion(page);
+  await page.addInitScript((key) => {
+    localStorage.setItem(key, JSON.stringify({ necessary: true, analytics: false }));
+  }, COOKIE_KEY);
+  await page.goto('/');
+  await settleLayout(page);
+
+  const portfolio = page.locator('#portfolio');
+  await portfolio.scrollIntoViewIfNeeded();
+
+  const firstCardLink = portfolio.getByRole('link', { name: /Read case study:/i }).first();
+  const href = await firstCardLink.getAttribute('href');
+  expect(href).toMatch(/^\/project\/.+\/$/);
+
+  await firstCardLink.click();
+  await page.waitForURL(href);
+  await settleLayout(page);
+
+  await expect(page.getByRole('heading', { name: /The problem/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /What I built/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /The outcome/i })).toBeVisible();
+});
