@@ -63,7 +63,7 @@ const Hero = () => {
   return (
     <section 
       ref={heroRef}
-      className="relative min-h-[820px] flex flex-col justify-center overflow-hidden pt-10 pb-10 bg-[#0C0D0D] max-md:min-h-0 max-md:h-auto max-md:pb-14 max-md:pt-6 max-md:justify-start"
+      className="relative min-h-[760px] flex flex-col justify-center overflow-hidden pt-8 pb-8 bg-[#0C0D0D] max-md:min-h-0 max-md:h-auto max-md:pb-12 max-md:pt-5 max-md:justify-start"
     >
       {/* Grid background */}
       <div 
@@ -145,8 +145,8 @@ const Hero = () => {
         ))}
       </div>
 
-      <div className="container mx-auto px-6 md:px-12 relative z-10 py-6 max-md:px-4 max-md:py-3">
-        <div className="max-w-[1320px] mx-auto flex flex-col gap-4 max-md:gap-2">
+      <div className="container mx-auto px-6 md:px-12 relative z-10 py-5 max-md:px-4 max-md:py-2">
+        <div className="max-w-[1320px] mx-auto flex flex-col gap-3 max-md:gap-2">
           {/* Status badge */}
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/[0.12] bg-white/[0.03]">
@@ -195,7 +195,7 @@ const Hero = () => {
                 </header>
 
                 {/* Name field */}
-                <div className="mb-3.5 max-md:mb-2.5">
+                <div className="mb-3 max-md:mb-2">
                   <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Name</span>
                   <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-[7px] py-[3px] rounded-[1px] bg-[#8B5CF6]/[0.07]">
                     <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4]">
@@ -206,7 +206,7 @@ const Hero = () => {
                 </div>
 
                 {/* Role field */}
-                <div className="mb-3.5 max-md:mb-3">
+                <div className="mb-3 max-md:mb-2.5">
                   <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Role</span>
                   <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-2 py-1 rounded-[1px] bg-[#8B5CF6]/[0.07]">
                     <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4]">
@@ -219,7 +219,7 @@ const Hero = () => {
                 </div>
 
                 {/* Proofs folded under role */}
-                <div className="grid grid-cols-2 gap-x-4 gap-y-3.5 mb-3.5 max-md:grid-cols-1 max-md:gap-y-3.5 max-md:mb-2.5" role="group" aria-label="Detected credentials">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-3 mb-3 max-md:grid-cols-1 max-md:gap-y-3 max-md:mb-2" role="group" aria-label="Detected credentials">
                   <div className="min-w-0">
                     <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Credential</span>
                     <span className="relative inline-flex items-center gap-[7px] border-[1.5px] border-[#8B5CF6] px-[9px] py-[5px] rounded-[1px] bg-[#8B5CF6]/[0.07] max-w-full">
@@ -253,7 +253,7 @@ const Hero = () => {
                 </div>
 
                 {/* Rate & Location columns */}
-                <div className="grid grid-cols-2 gap-x-[18px] gap-y-3.5 mb-3 max-md:mb-2.5 max-md:gap-y-2.5">
+                <div className="grid grid-cols-2 gap-x-[18px] gap-y-3 mb-2.5 max-md:mb-2 max-md:gap-y-2">
                   <div>
                     <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Rate</span>
                     <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-[7px] py-[3px] rounded-[1px] bg-[#8B5CF6]/[0.07]">
@@ -275,7 +275,7 @@ const Hero = () => {
                 </div>
 
                 {/* Bio */}
-                <div className="mb-3 max-md:mb-2.5">
+                <div className="mb-2.5 max-md:mb-2">
                   <p className="max-w-[54ch] text-[0.78rem] leading-[1.4] text-gray-400 font-normal max-md:text-[0.72rem] max-md:max-w-full">
                     I build detectors, document extractors, and n8n workflows that turn camera feeds and messy files into reliable production data.
                   </p>
