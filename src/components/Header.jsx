@@ -106,7 +106,6 @@ const Header = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-    return () => {
       document.body.style.overflow = previousOverflow;
       document.documentElement.style.overflow = previousHtmlOverflow;
       backgroundElementState.forEach(({ element, ariaHidden, hadInertAttribute, inert }) => {
