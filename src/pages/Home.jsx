@@ -1,6 +1,5 @@
 import React from 'react';
 import Hero from '@/components/Hero';
-import ProofStrip from '@/components/ProofStrip';
 import Services from '@/components/Services';
 import About from '@/components/About';
 import Portfolio from '@/components/Portfolio';
@@ -14,7 +13,6 @@ const Home = () => {
     <>
       <Seo {...defaultSeo} />
       <Hero />
-      <SectionAnimator><ProofStrip /></SectionAnimator>
       <SectionAnimator><Portfolio /></SectionAnimator>
       <SectionAnimator><Services /></SectionAnimator>
       <SectionAnimator><Testimonials /></SectionAnimator>

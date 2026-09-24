@@ -105,6 +105,95 @@ test('mobile cookie dialog and its controls remain visible and do not cover the 
   });
 });
 
+test('hero invoice proof fold design (#176): proofs visible, CTA routes correctly, no viewport clip', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await reducedMotion(page);
+  await page.addInitScript((key) => localStorage.removeItem(key), COOKIE_KEY);
+  await page.goto('/');
+  await settleLayout(page);
+
+  const h1 = page.getByRole('heading', { level: 1, name: 'Computer Vision & AI Engineer' });
+  await expect(h1).toBeVisible();
+  
+  const proofsGroup = page.locator('[role="group"][aria-label="Detected credentials"]');
+  await expect(proofsGroup).toBeVisible();
+  
+  await expect(page.getByText('Top Rated Plus', { exact: true })).toBeVisible();
+  await expect(page.getByText('100% Job Success', { exact: true })).toBeVisible();
+  
+  await expect(page.getByText('Detected total')).not.toBeVisible();
+  
+  await expect(page.getByText('PROOF ·')).not.toBeVisible();
+  await expect(page.getByText('fields · 2')).not.toBeVisible();
+  
+  const viewport = viewportBox(page);
+  const dialog = page.getByRole('dialog', { name: /we value your privacy/i });
+  await expect(dialog).toBeVisible({ timeout: 5000 });
+  const dialogBox = await dialog.boundingBox();
+  
+  const cta = page.getByRole('button', { name: 'Request a Project Estimate' }).first();
+  await expect(cta).toBeVisible();
+  const ctaBox = await cta.boundingBox();
+  
+  assertVisualLayout({
+    label: 'hero CTA with cookie dialog and proof fold',
+    box: ctaBox,
+    viewport,
+    minWidth: 220,
+    minHeight: 44,
+    avoid: [{ label: 'cookie dialog', box: dialogBox }],
+  });
+  
+  await cta.click();
+  await expect(page).toHaveURL(/\/contact\/?$/);
+  await expect(page.getByRole('heading', { name: /Request a Project Estimate/i })).toBeVisible();
+});
+
+test('desktop hero invoice proof fold: all elements visible, no clip', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await reducedMotion(page);
+  await page.addInitScript((key) => localStorage.removeItem(key), COOKIE_KEY);
+  await page.goto('/');
+  await settleLayout(page);
+  
+  const h1 = page.getByRole('heading', { level: 1, name: 'Computer Vision & AI Engineer' });
+  await expect(h1).toBeVisible();
+  
+  const proofsGroup = page.locator('[role="group"][aria-label="Detected credentials"]');
+  await expect(proofsGroup).toBeVisible();
+  
+  await expect(page.getByText('Top Rated Plus', { exact: true })).toBeVisible();
+  await expect(page.getByText('100% Job Success', { exact: true })).toBeVisible();
+  await expect(page.getByText('Upwork freelancer')).toBeVisible();
+  await expect(page.getByText('Client delivery record')).toBeVisible();
+  
+  await expect(page.getByText('€45/hour', { exact: true })).toBeVisible();
+  await expect(page.getByText('Linz, Austria', { exact: true })).toBeVisible();
+  
+  await expect(page.getByText('Detected total')).not.toBeVisible();
+  
+  const viewport = viewportBox(page);
+  const dialog = page.getByRole('dialog', { name: /we value your privacy/i });
+  await expect(dialog).toBeVisible({ timeout: 5000 });
+  const dialogBox = await dialog.boundingBox();
+  
+  const cta = page.getByRole('button', { name: 'Request a Project Estimate' }).first();
+  await expect(cta).toBeVisible();
+  const ctaBox = await cta.boundingBox();
+  
+  assertVisualLayout({
+    label: 'desktop hero CTA with cookie dialog and proof fold',
+    box: ctaBox,
+    viewport,
+    minWidth: 220,
+    minHeight: 44,
+    avoid: [{ label: 'desktop cookie dialog', box: dialogBox }],
+  });
+  
+  await cta.click();
+  await expect(page).toHaveURL(/\/contact\/?$/);
+});
+
 test('case study gallery keeps its stage, selected media, and thumbnails in usable geometry', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await reducedMotion(page);
