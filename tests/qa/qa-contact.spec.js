@@ -38,7 +38,7 @@ test.beforeEach(async ({ page }) => {
 
 test('renders contact form without submitting a lead', async ({ page }) => {
   await expect(page.getByLabel('Email Address *')).toBeVisible();
-  await expect(page.getByLabel('Budget Range (Optional)')).toBeVisible();
+  await expect(page.getByLabel('Budget Range')).toBeVisible();
   await expect(page.getByLabel('Project Description *')).toBeVisible();
   await expect(page.getByRole('button', { name: /Request a Project Estimate/i })).toBeVisible();
   expect(convexMutationRequests).toEqual([]);

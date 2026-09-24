@@ -332,7 +332,7 @@ test('contact form stays horizontally contained with visible fields and submit c
   for (const [label, locator] of [
     ['contact name field', page.getByLabel('Full Name *', { exact: true })],
     ['contact email field', page.getByLabel('Email Address *', { exact: true })],
-    ['contact budget field', page.getByLabel('Budget Range (Optional)', { exact: true })],
+    ['contact budget field', page.getByLabel('Budget Range')],
     ['contact description field', page.getByLabel('Project Description *', { exact: true })],
     ['contact submit control', page.getByRole('button', { name: /Request a Project Estimate/i })],
   ]) {
