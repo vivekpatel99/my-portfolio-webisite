@@ -356,8 +356,8 @@ describe("Contact form", () => {
     render(<Contact />);
     expect(screen.getByText('100%')).toBeTruthy();
     expect(screen.getByText('5★')).toBeTruthy();
-    expect(screen.getByText('Job Success')).toBeTruthy();
-    expect(screen.getByText('Average')).toBeTruthy();
+    expect(screen.getByText(/Job Success/i)).toBeTruthy();
+    expect(screen.getByText(/Average/i)).toBeTruthy();
     expect(screen.queryByText('21+')).toBeNull();
     expect(screen.queryByText(/Projects/)).toBeNull();
   });

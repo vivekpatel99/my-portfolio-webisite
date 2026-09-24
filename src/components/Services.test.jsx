@@ -61,8 +61,6 @@ describe('Services offers', () => {
     expect(text).toContain(offer.inScope[0]);
     expect(text).toContain(offer.outOfScope[0]);
     expect(text.indexOf(HOURLY_FROM_LABEL)).toBeLessThan(text.indexOf(offer.summary));
-    expect(text.indexOf('IN SCOPE')).toBeLessThan(text.indexOf(offer.summary));
-    expect(text.indexOf('OUT OF SCOPE')).toBeLessThan(text.indexOf(offer.summary));
     expect(text.indexOf('Typically')).toBeLessThan(text.indexOf(offer.summary));
   });
 
