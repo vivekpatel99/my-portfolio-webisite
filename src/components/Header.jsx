@@ -122,9 +122,12 @@ const Header = () => {
         }
         element.inert = inert;
       });
-      previousFocusRef.current?.focus?.();
+      // Restore scroll position after layout settles and overflow is restored
       window.requestAnimationFrame(() => {
-        window.scrollTo(0, previousScrollY);
+        window.requestAnimationFrame(() => {
+          window.scrollTo(0, previousScrollY);
+          previousFocusRef.current?.focus?.();
+        });
       });
     };
   }, [isOpen]);

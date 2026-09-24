@@ -80,7 +80,7 @@ const Services = () => {
                 </span>
               </div>
 
-              <AnimatePresence initial={false}>
+              <AnimatePresence>
                 {activeIndex === index && (
                   <div id={`panel-${service.id}`} className="px-7 pb-[26px]">
                     <div className="flex flex-wrap gap-[10px] gap-x-7 mb-5 pb-4 border-b border-[rgba(255,255,255,0.06)]">
