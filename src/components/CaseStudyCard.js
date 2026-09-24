@@ -36,7 +36,9 @@ const CaseStudyCard = ({
 
   return React.createElement(
     'article',
-    { className: 'group relative flex h-full flex-col overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] transition-colors hover:border-accent-purple/50 focus-within:ring-2 focus-within:ring-accent-purple' },
+    { className: 'group relative flex h-full flex-col overflow-hidden rounded-none border border-[#8B5CF6]/40 bg-[#0C0D0D] transition-colors hover:border-[#8B5CF6] focus-within:ring-2 focus-within:ring-accent-purple' },
+    React.createElement('span', { className: 'absolute top-1.5 left-1.5 w-[18px] h-[18px] pointer-events-none z-10 before:content-[""] before:absolute before:top-0 before:left-0 before:w-[14px] before:h-[14px] before:border-t-[1.5px] before:border-l-[1.5px] before:border-[#8B5CF6]/85', 'aria-hidden': true }),
+    React.createElement('span', { className: 'absolute bottom-1.5 right-1.5 w-[18px] h-[18px] pointer-events-none z-10 before:content-[""] before:absolute before:bottom-0 before:right-0 before:w-[14px] before:h-[14px] before:border-b-[1.5px] before:border-r-[1.5px] before:border-white/45', 'aria-hidden': true }),
     React.createElement(
       Link,
       {
@@ -61,10 +63,15 @@ const CaseStudyCard = ({
           'div', { className: 'relative flex w-full items-end gap-4' },
           React.createElement(
             'div', { className: 'min-w-0 flex-1' },
-            project.category ? React.createElement('p', { className: 'mb-4 inline-block rounded-full border border-accent-purple/30 bg-accent-purple/15 px-3 py-1 text-xs font-semibold uppercase leading-tight text-[#d8caff]' }, project.category) : null,
+            project.category ? React.createElement('div', { className: 'mb-2.5 inline-block pb-1.5 border-b border-[#8B5CF6]/45 text-[10px] font-mono tracking-[0.12em] uppercase leading-none text-[#d8caff]' }, project.category, ' · ', React.createElement('span', { className: 'text-[#a78bfa]' }, 'CASE STUDY')) : null,
             React.createElement('h3', { className: 'break-words text-xl font-bold leading-tight text-white' }, project.cardTitle || project.title),
           ),
-          React.createElement('span', { className: 'flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 text-xl text-white transition-colors group-hover:bg-accent-purple/60', 'aria-hidden': true }, '↗'),
+          React.createElement('span', { className: 'flex h-11 w-11 shrink-0 items-center justify-center border border-[#8B5CF6]/35 bg-[#0C0D0D]/55 text-[#d8caff]', 'aria-hidden': true }, 
+            React.createElement('svg', { viewBox: '0 0 16 16', fill: 'none', stroke: 'currentColor', strokeWidth: '1.5', strokeLinecap: 'square', className: 'w-4 h-4' },
+              React.createElement('path', { d: 'M5 3H13V11' }),
+              React.createElement('path', { d: 'M13 3L4 12' })
+            )
+          ),
         ),
       ),
     ),

@@ -9,8 +9,8 @@ const Portfolio = () => {
       <div className="container mx-auto px-6">
         <div className="flex flex-col lg:flex-row gap-8 items-start justify-between">
           <div className="w-full lg:w-2/3">
-            <div className="inline-block px-4 py-1.5 border border-white/20 rounded-full text-sm mb-4 uppercase">
-              Portfolio
+            <div className="inline-block pb-2 mb-4.5 border-b border-[#8B5CF6]/35 text-[10px] font-mono tracking-[0.16em] uppercase leading-none text-[#6b7280]">
+              PORTFOLIO · <span className="text-[#a78bfa]">CASE STUDIES</span>
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight uppercase">
               Featured <span className="text-accent-purple">Case Studies</span>

@@ -38,4 +38,27 @@ describe('Portfolio', () => {
     });
 
   });
+
+  describe('Detection Card design (Option A)', () => {
+    it('displays section eyebrow as PORTFOLIO · CASE STUDIES meta line', () => {
+      const { container } = render(
+        <MemoryRouter>
+          <Portfolio />
+        </MemoryRouter>,
+      );
+
+      const eyebrow = container.querySelector('div[class*="border-b"][class*="border-[#8B5CF6]/35"]');
+      expect(eyebrow).toBeTruthy();
+      expect(eyebrow.textContent).toContain('PORTFOLIO ·');
+      expect(eyebrow.textContent).toContain('CASE STUDIES');
+      expect(eyebrow.className).toContain('font-mono');
+      expect(eyebrow.className).toContain('tracking-[0.16em]');
+      expect(eyebrow.className).toContain('uppercase');
+      expect(eyebrow.className).toContain('border-b');
+      expect(eyebrow.className).not.toContain('rounded-full');
+      const purpleSpan = eyebrow.querySelector('span[class*="text-[#a78bfa]"]');
+      expect(purpleSpan).toBeTruthy();
+      expect(purpleSpan.textContent).toBe('CASE STUDIES');
+    });
+  });
 });
