@@ -95,23 +95,25 @@ test('mobile menu isolates background content while open', async ({ page }) => {
   await expect(page.locator('body')).toHaveCSS('overflow', 'hidden');
 });
 
-test('testimonial carousel structure without duplicated quotes', async ({ page }) => {
+test('testimonial Field Quote structure without soft asserts', async ({ page }) => {
   await page.goto('/');
   
   await expect(page.locator('#testimonials')).toBeAttached();
   
-  await expect(page.locator('.testimonial-card-link')).toHaveCount(0);
-  await expect(page.locator('.scroller-inner')).toHaveCount(0);
+  // New craft Field Quote structure
+  await expect(page.locator('#testimonials .field')).toHaveCount(1);
+  await expect(page.locator('#testimonials .rail')).toHaveCount(1);
+  await expect(page.locator('#testimonials .quote-area')).toHaveCount(1);
   
-  await expect(page.locator('.carousel-wrap')).toHaveCount(1);
-  await expect(page.locator('.carousel-slide.is-active')).toHaveCount(1);
-  
-  const dots = page.locator('.carousel-dots[role="tablist"] button[role="tab"]');
-  const slideCount = await page.locator('.carousel-slide').count();
+  // Diamond-shaped navigation dots (buttons, not tabs)
+  const dots = page.locator('#testimonials .dots button');
   const dotCount = await dots.count();
   
   expect(dotCount).toBeGreaterThan(0);
-  expect(slideCount).toBe(dotCount);
+  
+  // Verify structural elements
+  await expect(page.locator('#testimonials blockquote')).toHaveCount(1);
+  await expect(page.locator('#testimonials .count')).toHaveCount(1);
 });
 
 test('reduced motion disables custom cursor', async ({ page }) => {
