@@ -60,6 +60,7 @@ const Header = () => {
     }));
     const previousOverflow = document.body.style.overflow;
     const previousHtmlOverflow = document.documentElement.style.overflow;
+    const previousScrollY = window.scrollY;
 
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
@@ -121,6 +122,7 @@ const Header = () => {
         }
         element.inert = inert;
       });
+      window.scrollTo(0, previousScrollY);
       previousFocusRef.current?.focus?.();
     };
   }, [isOpen]);
