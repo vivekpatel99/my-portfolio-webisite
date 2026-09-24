@@ -257,8 +257,11 @@ test('hero invoice proof fold structure per #176', async ({ page }) => {
   await expect(page.getByText('fields · 2')).toHaveCount(0);
   
   const invoice = page.locator('article[aria-label="Profile invoice field parse"]');
-  await expect(invoice.getByText('€45/hour', { exact: true })).toBeVisible();
-  await expect(invoice.getByText('Linz, Austria', { exact: true })).toBeVisible();
+  const rateField = invoice.locator('div', { has: page.getByText('Rate') }).filter({ hasText: '€45/hour' });
+  await expect(rateField.getByText('€45/hour', { exact: true })).toBeVisible();
+  
+  const locationField = invoice.locator('div', { has: page.getByText('Location') }).filter({ hasText: 'Linz, Austria' });
+  await expect(locationField.getByText('Linz, Austria', { exact: true })).toBeVisible();
   
   await expect(page.getByText('doc · extract · 0.97')).toBeVisible();
   await expect(page.getByText('INV-VP-0045')).toBeVisible();
