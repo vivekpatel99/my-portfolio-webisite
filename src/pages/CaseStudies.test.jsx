@@ -27,12 +27,12 @@ describe('CaseStudies', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByRole('heading', { name: 'Other work' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'OTHER WORK' })).toBeTruthy();
     expect(screen.getByText('Published work outside the main extraction, OCR, and computer vision collection.')).toBeTruthy();
 
     expect(screen.getByRole('status').textContent).toMatch(/of 10 case studies/i);
 
-    const section = screen.getByRole('region', { name: 'Other work' });
+    const section = screen.getByRole('region', { name: /other work/i });
     const hrefs = within(section).getAllByRole('link', { name: /Read case study:/ }).map((link) => link.getAttribute('href'));
     expect(hrefs).toHaveLength(2);
     expect(hrefs).toEqual(expect.arrayContaining([

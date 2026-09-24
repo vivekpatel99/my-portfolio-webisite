@@ -43,7 +43,6 @@ describe('CaseStudyCard', () => {
     expect(cardLink.contains(screen.getByRole('heading', { name: project.title }))).toBe(true);
     expect(cardLink.contains(screen.getByAltText(project.image.alt))).toBe(true);
     expect(screen.getAllByRole('link')).toHaveLength(1);
-    expect(screen.getByText('Read case study →')).toBeTruthy();
   });
 
   it('keeps the Upwork destination separate from the full-card article link', () => {

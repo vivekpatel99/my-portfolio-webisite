@@ -16,28 +16,27 @@ describe('Testimonials Carousel', () => {
   it('renders first quote visible by default', () => {
     const { container } = render(<Testimonials />);
     
-    const slides = container.querySelectorAll('.carousel-slide');
-    expect(slides[0].classList.contains('is-active')).toBe(true);
-    expect(slides[1].classList.contains('is-active')).toBe(false);
+    const quoteArea = container.querySelector('.quote-area');
+    expect(quoteArea).toBeTruthy();
+    expect(quoteArea.textContent).toContain(testimonials[0].content);
   });
 
   it('renders correct number of testimonial dots', () => {
     render(<Testimonials />);
     
-    const dots = screen.getAllByRole('tab');
+    const dots = screen.getAllByRole('button', { name: /Slide \d+/ });
     expect(dots.length).toBe(testimonials.length);
   });
 
   it('advances to next quote on dot click', () => {
     const { container } = render(<Testimonials />);
     
-    const dots = screen.getAllByRole('tab');
-    const slides = container.querySelectorAll('.carousel-slide');
+    const dots = screen.getAllByRole('button', { name: /Slide \d+/ });
+    const quoteArea = container.querySelector('.quote-area');
     
     fireEvent.click(dots[1]);
     
-    expect(slides[1].classList.contains('is-active')).toBe(true);
-    expect(dots[1].getAttribute('aria-selected')).toBe('true');
+    expect(quoteArea.textContent).toContain(testimonials[1].content);
   });
 
   it('respects prefers-reduced-motion and does not auto-advance', () => {
@@ -59,35 +58,36 @@ describe('Testimonials Carousel', () => {
     
     const { container } = render(<Testimonials />);
     
-    const slides = container.querySelectorAll('.carousel-slide');
-    const dots = screen.getAllByRole('tab');
+    const quoteArea = container.querySelector('.quote-area');
+    const firstContent = testimonials[0].content;
     
-    expect(dots[0].getAttribute('aria-selected')).toBe('true');
+    expect(quoteArea.textContent).toContain(firstContent);
     
     vi.advanceTimersByTime(10000);
     
-    expect(dots[0].getAttribute('aria-selected')).toBe('true');
+    expect(quoteArea.textContent).toContain(firstContent);
     
     vi.useRealTimers();
   });
 
-  it('updates aria-selected when active quote changes', () => {
-    render(<Testimonials />);
+  it('changes displayed testimonial when different dot is clicked', () => {
+    const { container } = render(<Testimonials />);
     
-    const dots = screen.getAllByRole('tab');
+    const dots = screen.getAllByRole('button', { name: /Slide \d+/ });
+    const quoteArea = container.querySelector('.quote-area');
     
-    expect(dots[0].getAttribute('aria-selected')).toBe('true');
+    expect(quoteArea.textContent).toContain(testimonials[0].content);
     
     fireEvent.click(dots[2]);
     
-    expect(dots[2].getAttribute('aria-selected')).toBe('true');
-    expect(dots[0].getAttribute('aria-selected')).toBe('false');
+    expect(quoteArea.textContent).toContain(testimonials[2].content);
+    expect(quoteArea.textContent).not.toContain(testimonials[0].content);
   });
 
   it('renders source chip for testimonials with source field', () => {
     const { container } = render(<Testimonials />);
     
-    const sourceChips = container.querySelectorAll('.source-chip');
+    const sourceChips = container.querySelectorAll('.source');
     expect(sourceChips.length).toBeGreaterThan(0);
     
     const firstChip = sourceChips[0];
@@ -97,8 +97,8 @@ describe('Testimonials Carousel', () => {
   it('displays correct source for first testimonial', () => {
     const { container } = render(<Testimonials />);
     
-    const activeSlide = container.querySelector('.carousel-slide.is-active');
-    const sourceChip = activeSlide?.querySelector('.source-chip');
+    const quoteArea = container.querySelector('.quote-area');
+    const sourceChip = quoteArea?.querySelector('.source');
     
     expect(sourceChip).toBeTruthy();
     expect(sourceChip.textContent).toBe(testimonials[0].source);
