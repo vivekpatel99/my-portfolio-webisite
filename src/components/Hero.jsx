@@ -146,7 +146,7 @@ const Hero = () => {
       </div>
 
       <div className="container mx-auto px-6 md:px-12 relative z-10 py-5 max-md:px-4 max-md:py-2">
-        <div className="max-w-[1320px] mx-auto flex flex-col gap-3 max-md:gap-2">
+        <div className="max-w-[1320px] mx-auto flex flex-col gap-3 max-md:gap-1.5">
           {/* Status badge */}
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/[0.12] bg-white/[0.03]">
@@ -156,11 +156,11 @@ const Hero = () => {
           </div>
 
           {/* Two columns: invoice | photo */}
-          <div className="grid lg:grid-cols-[minmax(0,1.7fr)_minmax(260px,0.72fr)] gap-7 items-center max-lg:grid-cols-1 max-lg:gap-3">
+          <div className="grid lg:grid-cols-[minmax(0,1.7fr)_minmax(260px,0.72fr)] gap-7 items-center max-lg:grid-cols-1 max-lg:gap-3 max-md:gap-2">
             {/* Left: Profile Invoice */}
             <div className="flex flex-col gap-4 min-w-0 w-full max-lg:gap-0">
               <article 
-                className="relative w-full max-w-[760px] border border-[#8B5CF6]/[0.28] rounded-lg px-7 py-6 max-md:px-3 max-md:py-3"
+                className="relative w-full max-w-[760px] border border-[#8B5CF6]/[0.28] rounded-lg px-7 py-6 max-md:px-2.5 max-md:py-2"
                 style={{
                   background: 'linear-gradient(165deg, #141318 0%, #0f1012 55%, #0e0e10 100%)',
                   boxShadow: '0 0 0 1px rgba(255,255,255,0.03) inset, 0 24px 64px rgba(0,0,0,0.45), 0 0 48px rgba(139,92,246,0.1)'
@@ -183,7 +183,7 @@ const Hero = () => {
                 </div>
 
                 {/* Header */}
-                <header className="flex justify-between items-start mb-5 pb-3.5 border-b border-white/[0.08] max-md:mb-3.5 max-md:pb-2.5">
+                <header className="flex justify-between items-start mb-5 pb-3.5 border-b border-white/[0.08] max-md:mb-2 max-md:pb-1.5">
                   <div>
                     <div className="font-mono text-[11px] font-semibold tracking-[0.14em] uppercase text-purple-200/[0.78]">Profile Invoice</div>
                     <div className="mt-1 font-mono text-[10px] text-gray-500 tracking-wide">field parse</div>
@@ -195,7 +195,7 @@ const Hero = () => {
                 </header>
 
                 {/* Name field */}
-                <div className="mb-3 max-md:mb-2">
+                <div className="mb-3 max-md:mb-1.5">
                   <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Name</span>
                   <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-[7px] py-[3px] rounded-[1px] bg-[#8B5CF6]/[0.07]">
                     <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4]">
@@ -206,7 +206,7 @@ const Hero = () => {
                 </div>
 
                 {/* Role field */}
-                <div className="mb-3 max-md:mb-2.5">
+                <div className="mb-3 max-md:mb-1.5">
                   <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Role</span>
                   <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-2 py-1 rounded-[1px] bg-[#8B5CF6]/[0.07]">
                     <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4]">
@@ -219,7 +219,7 @@ const Hero = () => {
                 </div>
 
                 {/* Proofs folded under role */}
-                <div className="grid grid-cols-2 gap-x-4 gap-y-3 mb-3 max-md:grid-cols-1 max-md:gap-y-3 max-md:mb-2" role="group" aria-label="Detected credentials">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-3 mb-3 max-md:grid-cols-1 max-md:gap-y-2 max-md:mb-1.5" role="group" aria-label="Detected credentials">
                   <div className="min-w-0">
                     <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Credential</span>
                     <span className="relative inline-flex items-center gap-[7px] border-[1.5px] border-[#8B5CF6] px-[9px] py-[5px] rounded-[1px] bg-[#8B5CF6]/[0.07] max-w-full">
@@ -253,7 +253,7 @@ const Hero = () => {
                 </div>
 
                 {/* Rate & Location columns */}
-                <div className="grid grid-cols-2 gap-x-[18px] gap-y-3 mb-2.5 max-md:mb-2 max-md:gap-y-2">
+                <div className="grid grid-cols-2 gap-x-[18px] gap-y-3 mb-2.5 max-md:mb-1.5 max-md:gap-y-2">
                   <div>
                     <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Rate</span>
                     <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-[7px] py-[3px] rounded-[1px] bg-[#8B5CF6]/[0.07]">
@@ -275,7 +275,7 @@ const Hero = () => {
                 </div>
 
                 {/* Bio */}
-                <div className="mb-2.5 max-md:mb-2">
+                <div className="mb-2.5 max-md:mb-1">
                   <p className="max-w-[54ch] text-[0.78rem] leading-[1.4] text-gray-400 font-normal max-md:text-[0.72rem] max-md:max-w-full">
                     I build detectors, document extractors, and n8n workflows that turn camera feeds and messy files into reliable production data.
                   </p>
@@ -304,8 +304,8 @@ const Hero = () => {
             </div>
 
             {/* Right: Photo detection card */}
-            <div className="flex justify-center items-center max-lg:mx-auto max-lg:w-full max-lg:max-w-[220px]">
-              <div className="relative w-full max-w-[300px] p-8 overflow-visible max-md:p-6 max-md:max-w-[220px]">
+            <div className="flex justify-center items-center max-lg:mx-auto max-lg:w-full max-lg:max-w-[220px] max-md:max-w-[110px]">
+              <div className="relative w-full max-w-[300px] p-8 overflow-visible max-md:p-3 max-md:max-w-[110px]">
                 {/* Ghost trail frames behind */}
                 <div className="absolute inset-8 pointer-events-none z-[1] overflow-visible max-md:inset-6" aria-hidden="true">
                   {[
@@ -389,7 +389,7 @@ const Hero = () => {
           </div>
 
           {/* CTAs below invoice */}
-          <div className="flex flex-wrap gap-3 mt-0.5 max-md:flex-col max-md:mt-1 max-md:gap-2">
+          <div className="flex flex-wrap gap-3 mt-0.5 max-md:flex-col max-md:mt-0 max-md:gap-1.5">
             <Button
               onClick={handleCTAClick}
               className="bg-[#8B5CF6] hover:bg-[#9B6FFF] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px] max-md:min-w-0 max-md:w-full max-md:px-4 max-md:py-2.5"
@@ -408,7 +408,7 @@ const Hero = () => {
           </div>
 
           {/* Rate and location chips for a11y */}
-          <div className="flex flex-wrap gap-2 mt-2 max-md:mt-1.5">
+          <div className="flex flex-wrap gap-2 mt-2 max-md:hidden">
             <span className="inline-flex items-center px-3 py-1.5 rounded-full border border-white/[0.08]" style={{ backgroundColor: 'rgb(12, 13, 13)' }}>
               <span className="text-[13px] text-gray-300">Starting at €45/hour</span>
             </span>
