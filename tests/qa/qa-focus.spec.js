@@ -4,11 +4,20 @@ const clearFocusToBody = (page) => page.evaluate(() => document.activeElement?.b
 
 test.describe('keyboard focus regressions', () => {
   test('pointer-open mobile menu wraps focus and restores the toggle on Escape', async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 844 });
+    await page.setViewportSize({ width: 390, height: 600 });
     await page.goto('/');
+    await page.waitForLoadState('domcontentloaded');
 
-    await page.evaluate(() => window.scrollTo({ top: 400, behavior: 'instant' }));
-    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+    const scrollTarget = await page.evaluate(() => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      return Math.min(300, Math.max(150, Math.floor(maxScroll * 0.5)));
+    });
+    
+    await page.evaluate((target) => window.scrollTo({ top: target, behavior: 'instant' }), scrollTarget);
+    await expect.poll(() => page.evaluate(() => window.scrollY), { 
+      intervals: [50, 100, 100, 100, 200],
+      timeout: 3000 
+    }).toBeGreaterThan(0);
     const previousScrollY = await page.evaluate(() => window.scrollY);
 
     const toggle = page.getByRole('button', { name: 'Toggle navigation menu' });
