@@ -216,13 +216,44 @@ const Hero = () => {
                       Computer Vision & AI Engineer
                     </h1>
                   </span>
-                  <p className="mt-[5px] max-w-[46ch] text-[0.78rem] leading-[1.4] text-gray-400 font-normal max-md:text-[0.72rem] max-md:mt-1 max-md:max-w-full">
-                    I build detectors, document extractors, and n8n workflows that turn camera feeds and messy files into reliable production data.
-                  </p>
+                </div>
+
+                {/* Proofs folded under role */}
+                <div className="grid grid-cols-2 gap-x-4 gap-y-3.5 mb-4 max-md:grid-cols-1 max-md:gap-y-3.5 max-md:mb-2.5" aria-label="Detected credentials">
+                  <div className="min-w-0">
+                    <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Credential</span>
+                    <span className="relative inline-flex items-center gap-[7px] border-[1.5px] border-[#8B5CF6] px-[9px] py-[5px] rounded-[1px] bg-[#8B5CF6]/[0.07] max-w-full">
+                      <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4]">
+                        credential · 0.99
+                      </span>
+                      <span className="flex-shrink-0 w-3 h-3 text-purple-400 opacity-90" aria-hidden="true">
+                        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" className="w-full h-full">
+                          <path d="M7 1.5l1.4 2.8 3.1.45-2.25 2.2.53 3.1L7 8.6 4.22 10.05l.53-3.1L2.5 4.75l3.1-.45L7 1.5z"/>
+                        </svg>
+                      </span>
+                      <span className="text-[0.88rem] font-semibold tracking-[-0.01em] text-white leading-[1.2] whitespace-nowrap max-md:text-[0.84rem] max-md:whitespace-normal">Top Rated Plus</span>
+                    </span>
+                    <p className="mt-[5px] ml-[2px] font-mono text-[9px] leading-[1.2] tracking-[0.04em] text-gray-500">Upwork freelancer</p>
+                  </div>
+                  <div className="min-w-0">
+                    <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Success</span>
+                    <span className="relative inline-flex items-center gap-[7px] border-[1.5px] border-[#8B5CF6] px-[9px] py-[5px] rounded-[1px] bg-[#8B5CF6]/[0.07] max-w-full">
+                      <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-md:left-0 max-md:right-auto">
+                        success · 0.99
+                      </span>
+                      <span className="flex-shrink-0 w-3 h-3 text-purple-400 opacity-90" aria-hidden="true">
+                        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" className="w-full h-full">
+                          <path d="M2.5 7.2l3.2 3.1L11.5 3.8"/>
+                        </svg>
+                      </span>
+                      <span className="text-[0.88rem] font-semibold tracking-[-0.01em] text-white leading-[1.2] whitespace-nowrap max-md:text-[0.84rem] max-md:whitespace-normal">100% Job Success</span>
+                    </span>
+                    <p className="mt-[5px] ml-[2px] font-mono text-[9px] leading-[1.2] tracking-[0.04em] text-gray-500">Client delivery record</p>
+                  </div>
                 </div>
 
                 {/* Rate & Location columns */}
-                <div className="grid grid-cols-2 gap-x-[18px] gap-y-3.5 mb-4 max-md:mb-2.5 max-md:gap-y-2.5">
+                <div className="grid grid-cols-2 gap-x-[18px] gap-y-3.5 mb-3 max-md:mb-2.5 max-md:gap-y-2.5">
                   <div>
                     <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Rate</span>
                     <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-[7px] py-[3px] rounded-[1px] bg-[#8B5CF6]/[0.07]">
@@ -243,8 +274,15 @@ const Hero = () => {
                   </div>
                 </div>
 
+                {/* Bio */}
+                <div className="mb-3 max-md:mb-2.5">
+                  <p className="max-w-[54ch] text-[0.78rem] leading-[1.4] text-gray-400 font-normal max-md:text-[0.72rem] max-md:max-w-full">
+                    I build detectors, document extractors, and n8n workflows that turn camera feeds and messy files into reliable production data.
+                  </p>
+                </div>
+
                 {/* Tags field */}
-                <div className="mb-4 max-md:mb-2.5">
+                <div>
                   <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Tags</span>
                   <span className="relative inline-flex border-[1.5px] border-[#8B5CF6] px-2 py-1.5 rounded-[1px] bg-[#8B5CF6]/[0.07]">
                     <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4]">
@@ -262,22 +300,6 @@ const Hero = () => {
                     </span>
                   </span>
                 </div>
-
-                {/* Total */}
-                <footer className="flex justify-between items-center pt-3.5 border-t border-dashed border-white/[0.12]">
-                  <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-gray-500">Detected total</span>
-                  <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-[7px] py-[3px] rounded-[1px] bg-[#8B5CF6]/[0.07]">
-                    <span className="absolute -top-3 right-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4]">
-                      field · 0.97
-                    </span>
-                    <span className="font-mono text-[1.1rem] font-semibold text-white leading-none">
-                      €45<span className="font-normal text-[0.72rem] text-gray-400 ml-1">/hr</span>
-                    </span>
-                    <span className="inline-block ml-2 px-[7px] py-[2px] rounded-full font-mono text-[9px] tracking-wider uppercase text-purple-200 border border-[#8B5CF6]/[0.4] bg-[#8B5CF6]/[0.12] align-middle leading-snug">
-                      ok
-                    </span>
-                  </span>
-                </footer>
               </article>
             </div>
 
