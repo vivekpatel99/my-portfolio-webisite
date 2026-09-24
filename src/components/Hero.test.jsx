@@ -25,14 +25,18 @@ const renderHero = () =>
 describe('Hero invoice proof fold (#176)', () => {
   it('renders Top Rated Plus credential in hero invoice', () => {
     renderHero();
-    expect(screen.getByText('Top Rated Plus')).toBeTruthy();
-    expect(screen.getByText('Upwork freelancer')).toBeTruthy();
+    const credential = screen.getByText('Top Rated Plus', { exact: true });
+    const whisper = screen.getByText('Upwork freelancer');
+    expect(credential).toBeTruthy();
+    expect(whisper).toBeTruthy();
   });
 
   it('renders 100% Job Success credential in hero invoice', () => {
     renderHero();
-    expect(screen.getByText('100% Job Success')).toBeTruthy();
-    expect(screen.getByText('Client delivery record')).toBeTruthy();
+    const credential = screen.getByText('100% Job Success', { exact: true });
+    const whisper = screen.getByText('Client delivery record');
+    expect(credential).toBeTruthy();
+    expect(whisper).toBeTruthy();
   });
 
   it('does not render Detected total footer (removed per #176)', () => {
@@ -45,7 +49,7 @@ describe('Hero invoice proof fold (#176)', () => {
   it('has accessible proofs region with role=group', () => {
     const { container } = renderHero();
     const proofsGroup = container.querySelector('[role="group"][aria-label="Detected credentials"]');
-    expect(proofsGroup).toBeTruthy();
+    expect(proofsGroup).not.toBeNull();
     expect(proofsGroup.className).toContain('grid');
     expect(proofsGroup.className).toContain('grid-cols-2');
   });
@@ -56,8 +60,8 @@ describe('Hero invoice proof fold (#176)', () => {
     const roleField = roleLabel.parentElement;
     const proofsGroup = container.querySelector('[role="group"][aria-label="Detected credentials"]');
     
-    expect(roleField).toBeTruthy();
-    expect(proofsGroup).toBeTruthy();
+    expect(roleField).not.toBeNull();
+    expect(proofsGroup).not.toBeNull();
     
     const invoice = container.querySelector('article[aria-label="Profile invoice field parse"]');
     const children = Array.from(invoice.children);
@@ -67,22 +71,23 @@ describe('Hero invoice proof fold (#176)', () => {
     expect(proofsIndex).toBeGreaterThan(roleIndex);
   });
 
-  it('renders Computer Vision & AI Engineer role as H1', () => {
+  it('renders exact H1: Computer Vision & AI Engineer', () => {
     renderHero();
-    const heading = screen.getByRole('heading', { level: 1, name: /Computer Vision & AI Engineer/i });
-    expect(heading).toBeTruthy();
+    const heading = screen.getByRole('heading', { level: 1 });
+    expect(heading.textContent).toBe('Computer Vision & AI Engineer');
   });
 
-  it('displays Euro rate only (not dollar or other currencies)', () => {
+  it('displays Euro rate €45/hour only (no dollar or other currencies)', () => {
     const { container } = renderHero();
-    const euroRates = screen.getAllByText(/€45\/hour/);
-    expect(euroRates.length).toBeGreaterThanOrEqual(1);
+    const euroRate = screen.getByText('€45/hour', { exact: true });
+    expect(euroRate).toBeTruthy();
     expect(container.textContent).not.toMatch(/\$|USD|GBP|£/);
   });
 
-  it('displays Linz, Austria location', () => {
+  it('displays exact location: Linz, Austria', () => {
     renderHero();
-    expect(screen.getByText('Linz, Austria')).toBeTruthy();
+    const location = screen.getByText('Linz, Austria', { exact: true });
+    expect(location).toBeTruthy();
   });
 
   it('renders proof icons with aria-hidden', () => {
@@ -104,9 +109,12 @@ describe('Hero invoice proof fold (#176)', () => {
 
   it('renders invoice detection chrome and scan label', () => {
     renderHero();
-    expect(screen.getByText('doc · extract · 0.97')).toBeTruthy();
-    expect(screen.getByText('INV-VP-0045')).toBeTruthy();
-    expect(screen.getByText('Profile Invoice')).toBeTruthy();
+    const scanLabel = screen.getByText('doc · extract · 0.97', { exact: true });
+    const docId = screen.getByText('INV-VP-0045', { exact: true });
+    const title = screen.getByText('Profile Invoice', { exact: true });
+    expect(scanLabel).toBeTruthy();
+    expect(docId).toBeTruthy();
+    expect(title).toBeTruthy();
   });
 
   it('uses purple accent color #8B5CF6 on detection elements', () => {
@@ -118,13 +126,13 @@ describe('Hero invoice proof fold (#176)', () => {
 
   it('renders Request a Project Estimate CTA', () => {
     renderHero();
-    const cta = screen.getByRole('button', { name: /Request a Project Estimate/i });
+    const cta = screen.getByRole('button', { name: 'Request a Project Estimate' });
     expect(cta).toBeTruthy();
   });
 
   it('renders View Case Studies secondary CTA', () => {
     renderHero();
-    const cta = screen.getByRole('link', { name: /View Case Studies/i });
+    const cta = screen.getByRole('link', { name: 'View Case Studies' });
     expect(cta).toBeTruthy();
   });
 });
