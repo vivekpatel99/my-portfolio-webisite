@@ -334,7 +334,7 @@ test('contact form stays horizontally contained with visible fields and submit c
     ['contact email field', page.getByLabel('Email Address *', { exact: true })],
     ['contact budget field', page.getByLabel('Budget Range')],
     ['contact description field', page.getByLabel('Project Description *', { exact: true })],
-    ['contact submit control', page.getByRole('button', { name: /Request a Project Estimate/i })],
+    ['contact submit control', page.getByRole('button', { name: /Submit Project Estimate Request/i })],
   ]) {
     await expect(locator).toBeVisible();
     assertVisualLayout({

@@ -58,7 +58,7 @@ const Services = () => {
                 }}
                 role="button"
                 tabIndex={0}
-                aria-expanded={activeIndex === index}
+                aria-expanded={activeIndex === index ? 'true' : 'false'}
                 aria-controls={`panel-${service.id}`}
               >
                 <div className="flex-1 min-w-0">
