@@ -40,7 +40,7 @@ test('renders contact form without submitting a lead', async ({ page }) => {
   await expect(page.getByLabel('Email Address *')).toBeVisible();
   await expect(page.getByLabel('Budget Range')).toBeVisible();
   await expect(page.getByLabel('Project Description *')).toBeVisible();
-  await expect(page.getByRole('button', { name: /Request a Project Estimate/i })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Submit Project Estimate Request/i })).toBeVisible();
   expect(convexMutationRequests).toEqual([]);
 });
 
@@ -59,7 +59,7 @@ test('keeps synthetic contact values out of telemetry during client-side validat
   await page.getByLabel('Email Address *').fill(sentinelEmail);
   await page.getByLabel('Project Description *').fill(sentinelDescription);
   await page.getByLabel('Email Address *').fill('not-an-email-SENTRY_SENTINEL');
-  await page.getByRole('button', { name: /Request a Project Estimate/i }).click();
+  await page.getByRole('button', { name: /Submit Project Estimate Request/i }).click();
 
   await expect(page.getByText('Invalid email address.').first()).toBeVisible();
   expect(convexMutationRequests).toEqual([]);

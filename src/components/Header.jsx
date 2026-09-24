@@ -106,6 +106,7 @@ const Header = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+    return () => {
       document.body.style.overflow = previousOverflow;
       document.documentElement.style.overflow = previousHtmlOverflow;
       backgroundElementState.forEach(({ element, ariaHidden, hadInertAttribute, inert }) => {
@@ -122,8 +123,10 @@ const Header = () => {
         }
         element.inert = inert;
       });
-      window.scrollTo(0, previousScrollY);
       previousFocusRef.current?.focus?.();
+      window.requestAnimationFrame(() => {
+        window.scrollTo(0, previousScrollY);
+      });
     };
   }, [isOpen]);
 

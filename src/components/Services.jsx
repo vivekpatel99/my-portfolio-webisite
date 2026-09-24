@@ -48,7 +48,7 @@ const Services = () => {
               ></span>
 
               <div
-                className="flex items-start justify-between gap-4 py-[22px] px-7 cursor-default"
+                className="flex items-start justify-between gap-4 py-[22px] px-7 cursor-pointer"
                 onClick={() => handleServiceClick(index)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
