@@ -231,7 +231,7 @@ const Contact = () => {
 
               <div className="field mb-4">
                 <label htmlFor="name" className="flabel block font-mono text-[9px] tracking-[0.14em] uppercase text-[#6b7280] mb-2">
-                  NAME · <em className="not-italic text-[#a78bfa]">FIELD</em>
+                  Full Name <span className="text-[#a78bfa]">*</span>
                 </label>
                 <Input
                   type="text"
@@ -251,7 +251,7 @@ const Contact = () => {
 
               <div className="field mb-4">
                 <label htmlFor="email" className="flabel block font-mono text-[9px] tracking-[0.14em] uppercase text-[#6b7280] mb-2">
-                  EMAIL · <em className="not-italic text-[#a78bfa]">FIELD</em>
+                  Email Address <span className="text-[#a78bfa]">*</span>
                 </label>
                 <Input
                   type="email"
@@ -271,7 +271,7 @@ const Contact = () => {
 
               <div className="field mb-4">
                 <label htmlFor="budget" className="flabel block font-mono text-[9px] tracking-[0.14em] uppercase text-[#6b7280] mb-2">
-                  BUDGET · <em className="not-italic text-[#a78bfa]">OPTIONAL</em>
+                  Budget Range
                 </label>
                 <select
                   id="budget"
@@ -290,7 +290,7 @@ const Contact = () => {
 
               <div className="field mb-4">
                 <label htmlFor="description" className="flabel block font-mono text-[9px] tracking-[0.14em] uppercase text-[#6b7280] mb-2">
-                  MESSAGE · <em className="not-italic text-[#a78bfa]">FIELD</em>
+                  Project Description <span className="text-[#a78bfa]">*</span>
                 </label>
                 <Textarea
                   id="description"
@@ -323,6 +323,7 @@ const Contact = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
+                  aria-label="Request a Project Estimate"
                   className="relative inline-flex items-center justify-center gap-3 border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.12)] px-10 py-4 font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.18)] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                   {isSubmitting ? (

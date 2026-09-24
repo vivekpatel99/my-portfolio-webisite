@@ -172,7 +172,7 @@ const Header = () => {
         className="sticky top-0 z-40 bg-gradient-to-b from-[rgba(139,92,246,0.05)] to-[rgba(12,13,13,0.92)] backdrop-blur-[14px] border-b border-[rgba(139,92,246,0.38)]"
       >
         <div className="max-w-[1120px] mx-auto px-7 h-[68px] flex items-center gap-[22px]">
-          <Link to="/" onClick={handleHomeClick} className="flex items-center gap-3 flex-shrink-0">
+          <Link to="/" onClick={handleHomeClick} className="flex items-center gap-3 flex-shrink-0" aria-label="Vivek Patel Logo">
             <span className="w-[30px] h-[30px] border border-[rgba(139,92,246,0.7)] grid place-items-center font-mono text-[11px] tracking-[0.06em] text-white bg-[rgba(139,92,246,0.06)]">
               VP
             </span>
@@ -199,6 +199,7 @@ const Header = () => {
           
           <button
             onClick={handleCTA}
+            aria-label="Request a Project Estimate"
             className="hidden md:inline-flex flex-shrink-0 items-center gap-[10px] border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.05)] px-[14px] py-[10px] font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.1)] hover:text-[#d8caff] transition-colors"
           >
             Request Estimate
@@ -230,7 +231,7 @@ const Header = () => {
             className="fixed inset-0 bg-[#0C0D0D] z-50 md:hidden flex flex-col px-5 pb-7"
           >
             <div className="h-[68px] flex items-center justify-between border-b border-[rgba(139,92,246,0.38)]">
-              <Link to="/" onClick={handleHomeClick} className="flex items-center gap-3">
+              <Link to="/" onClick={handleHomeClick} className="flex items-center gap-3" aria-label="Vivek Patel Logo">
                 <span className="w-[30px] h-[30px] border border-[rgba(139,92,246,0.7)] grid place-items-center font-mono text-[11px] tracking-[0.06em] text-white bg-[rgba(139,92,246,0.06)]">
                   VP
                 </span>
@@ -264,6 +265,7 @@ const Header = () => {
             
             <button
               onClick={handleCTA}
+              aria-label="Request a Project Estimate"
               className="flex items-center justify-center gap-[10px] border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.05)] px-[14px] py-[14px] font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.1)] hover:text-[#d8caff]"
             >
               Request Estimate
