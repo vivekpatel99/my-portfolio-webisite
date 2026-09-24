@@ -59,7 +59,7 @@ const Services = () => {
                 role="button"
                 tabIndex={0}
                 aria-expanded={activeIndex === index ? 'true' : 'false'}
-                aria-controls={`panel-${service.id}`}
+                aria-controls={`service-content-${service.id}`}
               >
                 <div className="flex-1 min-w-0">
                   <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] mb-3">
@@ -82,7 +82,7 @@ const Services = () => {
 
               <AnimatePresence>
                 {activeIndex === index && (
-                  <div id={`panel-${service.id}`} className="px-7 pb-[26px]">
+                  <div id={`service-content-${service.id}`} className="px-7 pb-[26px]">
                     <div className="flex flex-wrap gap-[10px] gap-x-7 mb-5 pb-4 border-b border-[rgba(255,255,255,0.06)]">
                       <div className="font-mono text-[11px] leading-[1.4] tracking-[0.04em] text-[#6b7280]">
                         <span className="tracking-[0.08em] uppercase">RATE</span> · <strong className="font-medium text-[#d8caff] font-sans text-[0.88rem] tracking-normal">{HOURLY_FROM_LABEL}</strong>

@@ -12,7 +12,7 @@ const About = () => {
         </h2>
 
         {/* Dual field columns */}
-        <div className="grid md:grid-cols-[1fr_1.15fr] gap-[18px] mb-12">
+        <div className="dual grid md:grid-cols-[1fr_1.15fr] gap-[18px] mb-12">
           {/* Photo field */}
           <article className="field relative border border-[rgba(139,92,246,0.32)] p-[22px] px-6 pb-[26px] bg-transparent min-h-[320px]">
             <span className="f-tl absolute top-[5px] left-[5px] w-[14px] h-[14px] border-t-[1.5px] border-l-[1.5px] border-[rgba(139,92,246,0.75)] pointer-events-none"></span>

@@ -26,8 +26,8 @@ test.describe('keyboard focus regressions', () => {
     await expect(menu).toBeVisible();
     await expect(page.getByRole('button', { name: 'Close navigation menu' })).toBeFocused();
     await expect(page.locator('#main-content')).toHaveAttribute('inert', '');
-    await expect.poll(() => page.evaluate(() => [document.body.style.overflow, document.documentElement.style.overflow]))
-      .toEqual(['hidden', 'hidden']);
+    await expect.poll(() => page.evaluate(() => document.body.style.position))
+      .toBe('fixed');
 
     const focusables = menu.locator('a[href], button');
     await expect.poll(() => focusables.evaluateAll((elements) => elements.map((element) => (
@@ -59,8 +59,8 @@ test.describe('keyboard focus regressions', () => {
     await expect(toggle).toBeFocused();
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(previousScrollY);
     await expect(page.locator('#main-content')).not.toHaveAttribute('inert', '');
-    await expect.poll(() => page.evaluate(() => [document.body.style.overflow, document.documentElement.style.overflow]))
-      .toEqual(['', '']);
+    await expect.poll(() => page.evaluate(() => document.body.style.position))
+      .toBe('');
   });
 
   test('mobile menu navigation closes cleanly and keeps route navigation working', async ({ page }) => {
@@ -74,8 +74,8 @@ test.describe('keyboard focus regressions', () => {
     await expect(page.getByRole('heading', { name: /Selected Case Studies/i })).toBeVisible();
     await expect(page.getByRole('dialog', { name: 'Navigation menu' })).toBeHidden();
     await expect(page.locator('#main-content')).not.toHaveAttribute('inert', '');
-    await expect.poll(() => page.evaluate(() => [document.body.style.overflow, document.documentElement.style.overflow]))
-      .toEqual(['', '']);
+    await expect.poll(() => page.evaluate(() => document.body.style.position))
+      .toBe('');
     await expect(toggle).toBeFocused();
   });
 
@@ -101,8 +101,8 @@ test.describe('keyboard focus regressions', () => {
       await expect(opener).toBeFocused();
       await expect(gallery).not.toHaveAttribute('inert', '');
       await expect(page.locator('#root')).not.toHaveAttribute('inert', '');
-      await expect.poll(() => page.evaluate(() => [document.body.style.overflow, document.documentElement.style.overflow]))
-        .toEqual(['', '']);
+      await expect.poll(() => page.evaluate(() => document.body.style.position))
+        .toBe('');
     }
   });
 
