@@ -1,7 +1,6 @@
 import React from 'react';
-import { Github, Linkedin } from 'lucide-react'; 
 import { Link } from 'react-router-dom';
-import { socialLinks, assetsLinks } from '@/config/links'; 
+import { socialLinks } from '@/config/links'; 
 
 const Footer = () => {
     const handleManageCookies = (e) => {
@@ -9,92 +8,40 @@ const Footer = () => {
         window.dispatchEvent(new CustomEvent('manage-cookies'));
     };
 
-    const footerSections = [
-        {
-            title: 'Quick Links',
-            links: [
-                { name: 'Home', href: '/' },
-                { name: 'Services', href: '/#services' },
-                { name: 'Portfolio', href: '/#portfolio' },
-                { name: 'About', href: '/#about' },
-            ],
-        },
-        {
-            title: 'Legal',
-            links: [
-                { name: 'Privacy Policy', href: '/legal/' },
-                { name: 'Cookie Policy', href: '/data-policy/' },
-                { name: 'Manage Consent', href: '#', onClick: handleManageCookies },
-            ],
-        },
-        {
-            title: 'Work With Me',
-            links: [
-                { name: 'Contact Me', href: '/contact/' },
-            ],
-        },
-    ];
-
-    const socialIcons = [
-        { icon: <Github size={20} />, name: 'Github', href: socialLinks.github },
-        { icon: <Linkedin size={20} />, name: 'Linkedin', href: socialLinks.linkedin },
-    ];
-
-
     return (
-        <footer className="bg-[#0C0D0D] border-t border-white/10 pt-16 pb-8">
-            <div className="container mx-auto px-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-                    {/* Logo Section */}
-                    <div className="lg:col-span-1">
-                        <img src={assetsLinks.logo} alt="Vivek Patel Logo" className="h-12 mb-2" />
-                        <p className="text-gray-400">AI automation, data extraction, and computer vision systems built for production.</p>
+        <footer className="flex-shrink-0 px-7 pb-[22px] bg-[#0C0D0D]">
+            <div className="relative max-w-[1120px] mx-auto border border-[rgba(139,92,246,0.38)] bg-gradient-to-b from-[rgba(139,92,246,0.035)] to-transparent bg-[length:100%_50%] bg-no-repeat px-6 pt-[18px] pb-4">
+                {/* Corner brackets */}
+                <span className="absolute top-[5px] left-[5px] w-4 h-4 border-t-[1.5px] border-l-[1.5px] border-[#8B5CF6] pointer-events-none"></span>
+                <span className="absolute bottom-[5px] right-[5px] w-4 h-4 border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.5)] pointer-events-none"></span>
+                
+                <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] mb-[14px]">
+                    FOOTER · <em className="not-italic text-[#a78bfa]">SITE</em>
+                </div>
+                
+                <div className="flex items-center justify-between gap-4 mb-3 flex-wrap">
+                    <div className="flex flex-wrap gap-2 gap-x-[22px]">
+                        <Link to="/" className="font-mono text-[11px] tracking-[0.1em] uppercase text-[#c4c4cc] hover:text-[#a78bfa] transition-colors">Home</Link>
+                        <Link to="/#services" className="font-mono text-[11px] tracking-[0.1em] uppercase text-[#c4c4cc] hover:text-[#a78bfa] transition-colors">Services</Link>
+                        <Link to="/#portfolio" className="font-mono text-[11px] tracking-[0.1em] uppercase text-[#c4c4cc] hover:text-[#a78bfa] transition-colors">Portfolio</Link>
+                        <Link to="/#about" className="font-mono text-[11px] tracking-[0.1em] uppercase text-[#c4c4cc] hover:text-[#a78bfa] transition-colors">About</Link>
+                        <Link to="/contact/" className="font-mono text-[11px] tracking-[0.1em] uppercase text-[#c4c4cc] hover:text-[#a78bfa] transition-colors">Contact Me</Link>
                     </div>
-
-                    {/* Dynamic Sections */}
-                    {footerSections.map((section) => (
-                        <div key={section.title}>
-                            <p className="font-semibold text-white mb-6">{section.title}</p>
-                            <ul className="space-y-4">
-                                {section.links.map((link) => (
-                                    <li key={link.name}>
-                                        <Link
-                                            to={link.href}
-                                            onClick={link.onClick}
-                                            className="text-gray-400 hover:text-accent-purple-text transition-colors duration-300"
-                                        >
-                                            {link.name}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
-
-                    {/* Social Links */}
-                    <div>
-                        <p className="font-semibold text-white mb-6">Connect With Me</p>
-                        <div className="flex space-x-4">
-                            {socialIcons.map((social) => (
-                                <a
-                                    key={social.name}
-                                    href={social.href}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="min-h-11 min-w-11 inline-flex items-center justify-center text-gray-400 hover:text-accent-purple transition-colors duration-300"
-                                    title={`Visit my ${social.name}`}
-                                    aria-label={`Visit my ${social.name} profile`}
-                                >
-                                    {social.icon}
-                                </a>
-                            ))}
-                        </div>
+                    <div className="flex gap-4 font-mono text-[11px] tracking-[0.1em] uppercase text-[#9ca3af]">
+                        <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" className="hover:text-[#a78bfa] transition-colors">Github</a>
+                        <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-[#a78bfa] transition-colors">Linkedin</a>
                     </div>
                 </div>
-
-                {/* Copyright */}
-                <div className="mt-12 pt-8 border-t border-white/10 text-center text-gray-500">
-                    <p>&copy; {new Date().getFullYear()} VIVEK PATEL. All Rights Reserved.</p>
+                
+                <div className="flex items-center justify-between gap-4 pt-3 border-t border-[rgba(255,255,255,0.07)] flex-wrap">
+                    <div className="flex flex-wrap gap-2 gap-x-4">
+                        <Link to="/legal/" className="font-mono text-[10px] tracking-[0.1em] uppercase text-[#6b7280] hover:text-[#9ca3af] transition-colors">Privacy Policy</Link>
+                        <Link to="/data-policy/" className="font-mono text-[10px] tracking-[0.1em] uppercase text-[#6b7280] hover:text-[#9ca3af] transition-colors">Cookie Policy</Link>
+                        <button onClick={handleManageCookies} className="font-mono text-[10px] tracking-[0.1em] uppercase text-[#6b7280] hover:text-[#9ca3af] transition-colors">Manage Consent</button>
+                    </div>
+                    <div className="font-mono text-[10px] tracking-[0.08em] uppercase text-[#6b7280]">
+                        © {new Date().getFullYear()} Vivek Patel. All Rights Reserved.
+                    </div>
                 </div>
             </div>
         </footer>

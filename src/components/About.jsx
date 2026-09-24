@@ -1,160 +1,124 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { profileImages } from '@/config/links';
 
 const About = () => {
   return (
-    <section id="about" className="py-24 bg-[#0C0D0D] overflow-hidden">
-      <div className="container mx-auto px-6">
+    <section id="about" className="relative bg-[#0C0D0D] py-14 px-7 md:px-12 min-h-[900px]">
+      <div className="relative z-[2] max-w-[1120px] mx-auto">
+        <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] mb-4">
+          ABOUT · <em className="not-italic text-[#a78bfa]">DETECTED</em>
+        </div>
+        <h2 className="text-[clamp(1.85rem,3.4vw,2.75rem)] font-bold tracking-[-0.02em] leading-[1.1] uppercase mb-7">
+          WHO I <span className="text-[#8B5CF6]">AM</span>
+        </h2>
 
-        {/* First Section */}
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
-          >
-            <div className="rounded-2xl overflow-hidden aspect-[4/3]">
-              <img
-                className="w-full h-full object-cover object-[center_28%]"
-                alt="Vivek Patel, AI Engineer specializing in Computer Vision"
-                src={profileImages.aboutPhoto}
-                loading="lazy"
-              />
+        {/* Dual field columns */}
+        <div className="grid md:grid-cols-[1fr_1.15fr] gap-[18px] mb-12">
+          {/* Photo field */}
+          <article className="field relative border border-[rgba(139,92,246,0.32)] p-[22px] px-6 pb-[26px] bg-transparent min-h-[320px]">
+            <span className="f-tl absolute top-[5px] left-[5px] w-[14px] h-[14px] border-t-[1.5px] border-l-[1.5px] border-[rgba(139,92,246,0.75)] pointer-events-none"></span>
+            <span className="f-br absolute bottom-[5px] right-[5px] w-[14px] h-[14px] border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.4)] pointer-events-none"></span>
+            
+            <div className="field-meta font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] mb-[18px]">
+              PHOTO · <em className="not-italic text-[#a78bfa]">FIELD</em>
             </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
-          >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-white uppercase">
-              WHO I <span className="text-accent-purple">AM</span>
-            </h2>
-            <div className="space-y-8">
-              <div>
-                <h3 className="text-2xl font-bold text-white mb-3">Vivek Patel — AI Engineer specializing in Computer Vision</h3>
-                <p className="text-lg text-gray-400">I optimize complex AI systems for production. From real-time inference acceleration to automated data extraction at scale, I deliver measurable results faster than typical agency timelines.</p>
+            
+            <div className="photo-area aspect-[4/3] bg-[#161718] border border-[rgba(255,255,255,0.08)] flex flex-col items-center justify-center gap-[10px]">
+              <div className="photo-glyph w-11 h-11 relative text-[rgba(139,92,246,0.5)]">
+                <span className="absolute inset-[5px] border border-current rotate-45"></span>
+                <span className="absolute inset-[13px] border border-[rgba(255,255,255,0.25)] rotate-45"></span>
               </div>
-              <div>
-                <h3 className="text-2xl font-bold text-white mb-3">Key Differentiators</h3>
-                <p className="text-lg text-gray-400">• Production inference work for MAGNA International<br />• CUDA, ONNX, edge deployment specialist<br />• End-to-end: vision + scraping + AI agents</p>
+              <div className="photo-label font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280]">
+                PHOTO · FIELD
               </div>
             </div>
-          </motion.div>
+          </article>
+
+          {/* Bio field */}
+          <article className="field relative border border-[rgba(139,92,246,0.32)] p-[22px] px-6 pb-[26px] bg-transparent min-h-[320px]">
+            <span className="f-tl absolute top-[5px] left-[5px] w-[14px] h-[14px] border-t-[1.5px] border-l-[1.5px] border-[rgba(139,92,246,0.75)] pointer-events-none"></span>
+            <span className="f-br absolute bottom-[5px] right-[5px] w-[14px] h-[14px] border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.4)] pointer-events-none"></span>
+            
+            <div className="field-meta font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] mb-[18px]">
+              BIO · <em className="not-italic text-[#a78bfa]">FIELD</em>
+            </div>
+            
+            <div className="name-line text-[clamp(1.05rem,1.7vw,1.3rem)] font-bold leading-[1.3] tracking-[-0.015em] text-white mb-4">
+              Vivek Patel — AI Engineer specializing in Computer Vision
+            </div>
+            <p className="bio text-[0.92rem] leading-[1.55] text-[#9ca3af] mb-5">
+              I optimize complex AI systems for production. From real-time inference acceleration to automated data extraction at scale, I deliver measurable results faster than typical agency timelines.
+            </p>
+            <div className="diff-label font-mono text-[10px] tracking-[0.12em] uppercase text-[#6b7280] mb-[10px]">
+              KEY DIFFERENTIATORS
+            </div>
+            <ul className="diff-block">
+              <li className="relative pl-[14px] text-[0.88rem] leading-[1.5] text-[#9ca3af] mb-[7px] before:content-[''] before:absolute before:left-0 before:top-[0.55em] before:w-[5px] before:h-px before:bg-[rgba(139,92,246,0.65)]">
+                Production inference work for MAGNA International
+              </li>
+              <li className="relative pl-[14px] text-[0.88rem] leading-[1.5] text-[#9ca3af] mb-[7px] before:content-[''] before:absolute before:left-0 before:top-[0.55em] before:w-[5px] before:h-px before:bg-[rgba(139,92,246,0.65)]">
+                CUDA, ONNX, edge deployment specialist
+              </li>
+              <li className="relative pl-[14px] text-[0.88rem] leading-[1.5] text-[#9ca3af] before:content-[''] before:absolute before:left-0 before:top-[0.55em] before:w-[5px] before:h-px before:bg-[rgba(139,92,246,0.65)]">
+                End-to-end: vision + scraping + AI agents
+              </li>
+            </ul>
+          </article>
         </div>
 
-        {/* Second Section */}
-        <div className="grid lg:grid-cols-2 gap-16 items-center mt-24">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
-            className="lg:order-last"
-          >
-            <div className="rounded-2xl overflow-hidden aspect-[4/3]">
-              <img
-                className="w-full h-full object-cover"
-                alt="Diverse team collaborating on a project"
-                src={profileImages.teamCollaboration}
-                loading="lazy"
-              />
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
-          >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-white uppercase">
-              MY <span className="text-accent-purple">PROCESS</span>
-            </h2>
-            <div className="space-y-8">
-              <div>
-                <h3 className="text-2xl font-bold text-white mb-3">Strategy & Discovery</h3>
-                <p className="text-lg text-gray-400">We'll start by understanding your data challenges, constraints, and success metrics to define the right approach—whether it's vision system optimization, data extraction, or a custom AI workflow.</p>
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold text-white mb-3">Execution & Optimization</h3>
-                <p className="text-lg text-gray-400">I build, test, and optimize the solution with production-grade performance standards. I deliver robust, working systems, not just prototypes.</p>
-              </div>
-            </div>
-          </motion.div>
+        {/* When you hire me */}
+        <div className="hire-head mb-5">
+          <h2 className="text-[clamp(1.85rem,3.4vw,2.75rem)] font-bold tracking-[-0.02em] leading-[1.1] uppercase mb-3">
+            WHEN YOU <span className="text-[#8B5CF6]">HIRE ME</span>
+          </h2>
+          <p className="hire-blurb text-[0.95rem] leading-[1.55] text-[#9ca3af] max-w-[640px]">
+            Here's exactly what to expect. I deliver a clear process, regular updates, and production-ready results.
+          </p>
         </div>
-        {/* Third Section - When You Hire Me */}
-        <div className="mt-20 py-24">
-          <div className="mb-12">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-white uppercase">
-              WHEN YOU <span className="text-accent-purple">HIRE ME</span>
-            </h2>
-            <p className="text-lg text-gray-400 max-w-3xl">Here's exactly what to expect. I deliver a clear process, regular updates, and production-ready results.</p>
+
+        {/* Quiet numbered mono list */}
+        <div className="hire-list flex flex-col border-t border-[rgba(255,255,255,0.08)]">
+          <div className="hire-row grid md:grid-cols-[72px_200px_1fr] gap-5 items-baseline py-[18px] border-b border-[rgba(255,255,255,0.06)]">
+            <div className="hire-num font-mono text-[11px] tracking-[0.12em] text-[#a78bfa]">01</div>
+            <div className="hire-title text-[0.98rem] font-bold text-white">Detailed Roadmap</div>
+            <div className="hire-copy text-[0.88rem] leading-[1.45] text-[#9ca3af]">A clear project roadmap with milestones delivered within 24 hours of kickoff.</div>
           </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
-            {/* Step 1 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.6, ease: 'easeOut', delay: 0 }}
-            >
-              <div className="relative bg-white/5 rounded-lg p-6 border border-white/10 hover:border-accent-purple/50 transition-all h-full">
-                <div className="absolute -top-4 left-6 w-8 h-8 bg-accent-purple rounded-full flex items-center justify-center text-white font-bold text-sm">1</div>
-                <h3 className="text-xl font-bold text-white mt-4 mb-3">Detailed Roadmap</h3>
-                <p className="text-gray-400 text-sm">A clear project roadmap with milestones delivered within 24 hours of kickoff.</p>
-              </div>
-            </motion.div>
-
-            {/* Step 2 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
-            >
-              <div className="relative bg-white/5 rounded-lg p-6 border border-white/10 hover:border-accent-purple/50 transition-all h-full">
-                <div className="absolute -top-4 left-6 w-8 h-8 bg-accent-purple rounded-full flex items-center justify-center text-white font-bold text-sm">2</div>
-                <h3 className="text-xl font-bold text-white mt-4 mb-3">Regular Updates</h3>
-                <p className="text-gray-400 text-sm">Bi-weekly progress updates and proactive communication. No surprises.</p>
-              </div>
-            </motion.div>
-
-            {/* Step 3 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
-            >
-              <div className="relative bg-white/5 rounded-lg p-6 border border-white/10 hover:border-accent-purple/50 transition-all h-full">
-                <div className="absolute -top-4 left-6 w-8 h-8 bg-accent-purple rounded-full flex items-center justify-center text-white font-bold text-sm">3</div>
-                <h3 className="text-xl font-bold text-white mt-4 mb-3">Production Code</h3>
-                <p className="text-gray-400 text-sm">Production-ready code with comprehensive documentation and clear handover.</p>
-              </div>
-            </motion.div>
-
-            {/* Step 4 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.6, ease: 'easeOut', delay: 0.3 }}
-            >
-              <div className="relative bg-white/5 rounded-lg p-6 border border-white/10 hover:border-accent-purple/50 transition-all h-full">
-                <div className="absolute -top-4 left-6 w-8 h-8 bg-accent-purple rounded-full flex items-center justify-center text-white font-bold text-sm">4</div>
-                <h3 className="text-xl font-bold text-white mt-4 mb-3">Support & Optimization</h3>
-                <p className="text-gray-400 text-sm">30 days of post-delivery support and a complimentary optimization pass.</p>
-              </div>
-            </motion.div>
+          <div className="hire-row grid md:grid-cols-[72px_200px_1fr] gap-5 items-baseline py-[18px] border-b border-[rgba(255,255,255,0.06)]">
+            <div className="hire-num font-mono text-[11px] tracking-[0.12em] text-[#a78bfa]">02</div>
+            <div className="hire-title text-[0.98rem] font-bold text-white">Regular Updates</div>
+            <div className="hire-copy text-[0.88rem] leading-[1.45] text-[#9ca3af]">Bi-weekly progress updates and proactive communication. No surprises.</div>
+          </div>
+          <div className="hire-row grid md:grid-cols-[72px_200px_1fr] gap-5 items-baseline py-[18px] border-b border-[rgba(255,255,255,0.06)]">
+            <div className="hire-num font-mono text-[11px] tracking-[0.12em] text-[#a78bfa]">03</div>
+            <div className="hire-title text-[0.98rem] font-bold text-white">Production Code</div>
+            <div className="hire-copy text-[0.88rem] leading-[1.45] text-[#9ca3af]">Production-ready code with comprehensive documentation and clear handover.</div>
+          </div>
+          <div className="hire-row grid md:grid-cols-[72px_200px_1fr] gap-5 items-baseline py-[18px] border-b border-[rgba(255,255,255,0.06)]">
+            <div className="hire-num font-mono text-[11px] tracking-[0.12em] text-[#a78bfa]">04</div>
+            <div className="hire-title text-[0.98rem] font-bold text-white">Support & Optimization</div>
+            <div className="hire-copy text-[0.88rem] leading-[1.45] text-[#9ca3af]">30 days of post-delivery support and a complimentary optimization pass.</div>
           </div>
         </div>
 
+        {/* Process quiet */}
+        <div className="process-quiet mt-10 pt-7 border-t border-[rgba(255,255,255,0.06)]">
+          <h2 className="text-[1.35rem] font-bold tracking-[-0.02em] leading-[1.1] uppercase mb-[18px]">
+            MY <span className="text-[#8B5CF6]">PROCESS</span>
+          </h2>
+          <div className="process-grid grid md:grid-cols-2 gap-6">
+            <div>
+              <h3 className="text-[0.95rem] font-bold mb-2 text-[#e5e7eb]">Strategy & Discovery</h3>
+              <p className="text-[0.84rem] leading-[1.5] text-[#6b7280]">
+                We'll start by understanding your data challenges, constraints, and success metrics to define the right approach—whether it's vision system optimization, data extraction, or a custom AI workflow.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-[0.95rem] font-bold mb-2 text-[#e5e7eb]">Execution & Optimization</h3>
+              <p className="text-[0.84rem] leading-[1.5] text-[#6b7280]">
+                I build, test, and optimize the solution with production-grade performance standards. I deliver robust, working systems, not just prototypes.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
