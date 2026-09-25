@@ -49,25 +49,12 @@ const Header = () => {
       return undefined;
     }
 
-    // Use the scroll position captured BEFORE opening (synchronously on click)
-    const previousScrollY = preOpenScrollYRef.current;
+    // Ownership change: DO NOT lock body scroll. Drawer is fixed inset-0.
+    // Use overscroll-behavior on dialog to prevent scroll-through without
+    // mutating window.scrollY. Since we never touch scroll, there's nothing
+    // to restore on Escape.
 
-    // Classic scroll lock: position:fixed with negative top offset (not overflow:hidden)
-    // Saves current body position styles
-    const previousPosition = document.body.style.position;
-    const previousTop = document.body.style.top;
-    const previousLeft = document.body.style.left;
-    const previousRight = document.body.style.right;
-    const previousWidth = document.body.style.width;
-    
-    // Lock scroll by fixing body position at negative scroll offset
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${previousScrollY}px`;
-    document.body.style.left = '0';
-    document.body.style.right = '0';
-    document.body.style.width = '100%';
-
-    // Focus with preventScroll (body is already locked)
+    // Focus with preventScroll
     previousFocusRef.current = toggleButtonRef.current;
     closeButtonRef.current?.focus({ preventScroll: true });
 
@@ -127,27 +114,6 @@ const Header = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       
-      // Critical: Restore scroll with rAF to survive browser reflow and React updates
-      // Clearing position:fixed triggers immediate browser scroll reset. We must restore
-      // scroll across multiple frames to ensure it sticks through CI timing variations.
-      
-      // Clear top offset but keep position:fixed (no scroll jump yet)
-      document.body.style.top = '0';
-      
-      // Restore scroll while still locked
-      window.scrollTo(0, previousScrollY);
-      document.documentElement.scrollTop = previousScrollY;
-      
-      // Clear position:fixed (body already positioned)
-      document.body.style.position = previousPosition;
-      document.body.style.left = previousLeft;
-      document.body.style.right = previousRight;
-      document.body.style.width = previousWidth;
-      
-      // Immediately restore again after unlock
-      window.scrollTo(0, previousScrollY);
-      document.documentElement.scrollTop = previousScrollY;
-      
       // Restore inert/aria-hidden
       backgroundElementState.forEach(({ element, ariaHidden, hadInertAttribute, inert }) => {
         if (ariaHidden === null) {
@@ -164,22 +130,8 @@ const Header = () => {
         element.inert = inert;
       });
       
-      // Restore again before focus
-      window.scrollTo(0, previousScrollY);
-      document.documentElement.scrollTop = previousScrollY;
-      
       // Focus toggle with preventScroll
       previousFocusRef.current?.focus?.({ preventScroll: true });
-      
-      // Double rAF to ensure scroll sticks through browser reflow and React updates
-      requestAnimationFrame(() => {
-        window.scrollTo(0, previousScrollY);
-        document.documentElement.scrollTop = previousScrollY;
-        requestAnimationFrame(() => {
-          window.scrollTo(0, previousScrollY);
-          document.documentElement.scrollTop = previousScrollY;
-        });
-      });
     };
   }, [isOpen]);
 
@@ -285,7 +237,8 @@ const Header = () => {
             role="dialog"
             aria-modal="true"
             aria-label="Navigation menu"
-            className="fixed inset-0 bg-[#0C0D0D] z-50 md:hidden flex flex-col px-5 pb-7"
+            className="fixed inset-0 bg-[#0C0D0D] z-50 md:hidden flex flex-col px-5 pb-7 overscroll-contain touch-none"
+            style={{ overscrollBehavior: 'contain', touchAction: 'pan-y' }}
           >
             <div className="h-[68px] flex items-center justify-between border-b border-[rgba(139,92,246,0.38)]">
               <Link to="/" onClick={handleHomeClick} className="flex items-center gap-3" aria-label="Vivek Patel Logo">
