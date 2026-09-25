@@ -39,7 +39,7 @@ describe('CTA Action Field', () => {
       </MemoryRouter>,
     );
 
-    const actionField = screen.getByRole('button', { name: /request a project estimate/i });
+    const actionField = screen.getByRole('link', { name: /request a project estimate/i });
     expect(actionField).toBeTruthy();
     
     // Meta label for detection field (appears in field-meta span)
