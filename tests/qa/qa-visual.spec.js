@@ -74,14 +74,14 @@ test('mobile cookie dialog and its controls remain visible and do not cover the 
   });
 
   const close = dialog.getByRole('button', { name: /close cookie consent/i });
-  const accept = dialog.getByRole('button', { name: 'Accept All', exact: true });
-  const reject = dialog.getByRole('button', { name: 'Reject All', exact: true });
-  const customize = dialog.getByRole('button', { name: 'Customize', exact: true });
+  const accept = dialog.getByRole('button', { name: 'Accept', exact: true });
+  const reject = dialog.getByRole('button', { name: 'Reject', exact: true });
+  const options = dialog.getByRole('button', { name: 'Options', exact: true });
   for (const [label, locator] of [
     ['cookie close control', close],
     ['cookie accept control', accept],
     ['cookie reject control', reject],
-    ['cookie customize control', customize],
+    ['cookie options control', options],
   ]) {
     await expect(locator).toBeVisible();
     assertVisualLayout({
@@ -392,10 +392,10 @@ test('custom cursor mounts on desktop fine pointer', async ({ page }, testInfo) 
   await expect(page.locator('html')).toHaveClass(/custom-cursor-enabled/);
 });
 
-test('cookie customize panel expands', async ({ page }) => {
+test('cookie options panel expands', async ({ page }) => {
   await page.addInitScript((key) => localStorage.removeItem(key), COOKIE_KEY);
   await page.goto('/');
-  await page.getByRole('button', { name: /Customize/i }).click({ timeout: 5000 });
+  await page.getByRole('button', { name: /Options/i }).click({ timeout: 5000 });
   await expect(page.getByLabel(/Analytics and Diagnostics Cookies/i)).toBeVisible();
 });
 

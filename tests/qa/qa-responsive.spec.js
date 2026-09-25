@@ -121,8 +121,8 @@ test('expanded cookie settings stay reachable on a short phone', async ({ page }
   await page.setViewportSize({ width: 320, height: 568 });
   await page.addInitScript(() => localStorage.removeItem('cookie_consent_preferences'));
   await page.goto('/');
-  await expect(page.getByRole('button', { name: /Customize/i })).toBeVisible({ timeout: 5000 });
-  await page.getByRole('button', { name: /Customize/i }).click();
+  await expect(page.getByRole('button', { name: /Options/i })).toBeVisible({ timeout: 5000 });
+  await page.getByRole('button', { name: /Options/i }).click();
   await expect(page.getByRole('button', { name: /Save Preferences/i })).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
   expect(overflow).toBe(false);
