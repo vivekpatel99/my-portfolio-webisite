@@ -63,7 +63,7 @@ const Hero = () => {
   return (
     <section 
       ref={heroRef}
-      className="relative h-auto flex flex-col justify-start overflow-hidden pt-16 pb-32 bg-[#0C0D0D] max-md:pb-24 max-md:pt-6 max-md:justify-start"
+      className="relative h-auto flex flex-col justify-start overflow-hidden pt-16 pb-40 bg-[#0C0D0D] max-md:pb-36 max-md:pt-6 max-md:justify-start"
     >
       {/* Grid background */}
       <div 
