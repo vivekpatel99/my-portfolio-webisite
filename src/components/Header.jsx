@@ -124,9 +124,11 @@ const Header = () => {
         element.inert = inert;
       });
       previousFocusRef.current?.focus?.({ preventScroll: true });
-      // Restore scroll after focus (preventScroll stops focus from auto-scrolling)
+      // Restore scroll after focus and all DOM updates (preventScroll stops focus from auto-scrolling)
       window.requestAnimationFrame(() => {
-        window.scrollTo(0, scrollY);
+        window.requestAnimationFrame(() => {
+          window.scrollTo(0, scrollY);
+        });
       });
     };
   }, [isOpen]);

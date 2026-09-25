@@ -104,23 +104,23 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.15 }}
-          className="fixed inset-x-0 bottom-0 z-50 max-h-[calc(100dvh-5rem)] overflow-y-auto rounded-t-2xl p-2 sm:inset-x-auto sm:top-auto sm:bottom-6 sm:left-auto sm:right-6 sm:w-auto sm:max-w-lg sm:max-h-[calc(100dvh-3rem)] sm:rounded-2xl sm:p-6 bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl shadow-black/30"
+          className="fixed inset-x-2 bottom-2 z-50 max-h-[calc(100dvh-5rem)] overflow-y-auto rounded-2xl p-2 sm:inset-x-auto sm:top-auto sm:bottom-6 sm:left-auto sm:right-6 sm:w-auto sm:max-w-lg sm:max-h-[calc(100dvh-3rem)] sm:rounded-2xl sm:p-6 bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl shadow-black/30"
         >
-          <div className="flex items-start gap-2 sm:gap-4">
+          <div className="flex items-start gap-2 sm:gap-4 pr-8 sm:pr-0">
             <div className="hidden sm:block p-3 bg-accent-purple/20 rounded-full flex-shrink-0">
               <Cookie className="w-6 h-6 text-accent-purple" />
             </div>
-            <div className="flex-grow">
-              <h3 id="cookie-consent-title" className="text-sm sm:text-lg font-bold text-white mb-1">We value your privacy</h3>
+            <div className="flex-grow min-w-0">
+              <h3 id="cookie-consent-title" className="text-xs sm:text-lg font-bold text-white mb-1">We value your privacy</h3>
               <p className="mb-2 sm:mb-4 text-xs sm:text-sm text-gray-300 hidden sm:block">
                 We use optional analytics and diagnostics to measure traffic and understand site errors with Google Analytics and Sentry. Customize your preferences below or accept all to continue.
               </p>
               
               <Collapsible>
-                <div className="mt-2 sm:mt-4 flex flex-row flex-wrap gap-1.5 sm:gap-3">
+                <div className="mt-1.5 sm:mt-4 flex flex-row flex-wrap gap-1 sm:gap-3">
                    <Button
                     onClick={handleAcceptAll}
-                    className="min-h-9 sm:min-h-11 flex-1 text-xs sm:text-sm bg-accent-purple hover:bg-accent-purple/90 text-white rounded-full"
+                    className="min-h-8 sm:min-h-11 flex-1 text-[11px] sm:text-sm bg-accent-purple hover:bg-accent-purple/90 text-white rounded-full px-2 sm:px-4"
                     size="sm"
                   >
                     Accept All
@@ -128,15 +128,16 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
                   <Button
                     onClick={handleRejectAll}
                     variant="outline"
-                    className="min-h-9 sm:min-h-11 flex-1 text-xs sm:text-sm border-white/30 text-white hover:bg-white/10 hover:text-white rounded-full"
+                    className="min-h-8 sm:min-h-11 flex-1 text-[11px] sm:text-sm border-white/30 text-white hover:bg-white/10 hover:text-white rounded-full px-2 sm:px-4"
                     size="sm"
                   >
                     Reject All
                   </Button>
                    <CollapsibleTrigger asChild>
-                    <Button variant="ghost" size="sm" className="min-h-9 sm:min-h-11 flex-shrink-0 text-xs sm:text-sm text-white hover:bg-white/10">
-                      <Settings className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                      Customize
+                    <Button variant="ghost" size="sm" className="min-h-8 sm:min-h-11 flex-shrink-0 text-[11px] sm:text-sm text-white hover:bg-white/10 px-2 sm:px-3">
+                      <Settings className="w-3 h-3 sm:w-4 sm:h-4 mr-0.5 sm:mr-2" />
+                      <span className="hidden xs:inline">Customize</span>
+                      <span className="xs:hidden">…</span>
                     </Button>
                   </CollapsibleTrigger>
                 </div>
@@ -160,8 +161,8 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
                 </CollapsibleContent>
               </Collapsible>
             </div>
-             <button onClick={handleClose} className="absolute top-3 right-3 min-h-11 min-w-11 inline-flex items-center justify-center text-gray-400 hover:text-white transition-colors" aria-label="Close cookie consent banner and reject optional cookies">
-                <X size={18} />
+             <button onClick={handleClose} className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors z-10" aria-label="Close cookie consent banner and reject optional cookies">
+                <X size={16} />
             </button>
           </div>
         </motion.div>

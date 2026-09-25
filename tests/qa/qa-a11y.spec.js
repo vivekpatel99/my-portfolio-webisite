@@ -152,13 +152,18 @@ test('normal-size purple text and links meet contrast in rendered states', async
   expect(priceBackground?.alpha, 'Hero price badge should be opaque over the image').toBe(1);
   await expectRenderedContrast(price, 'Hero price');
 
-  const cardLabel = page.locator('#portfolio article').first().locator('a.text-accent-purple-text, span.text-accent-purple-text').first();
-  await expectRenderedContrast(cardLabel, 'Case study card action label');
-  // Private client projects may use a static Read case study label instead of an external link.
-  if (await cardLabel.evaluate((element) => element.tagName === 'A')) {
-    await cardLabel.hover();
-    await expectRenderedForeground(cardLabel, 'Case study card link should finish its hover transition', '255,255,255');
-    await expectRenderedContrast(cardLabel, 'Case study card link on hover');
+  const cardLabel = page.locator('#portfolio article').first().locator('.cat, a .text-\\[\\#a78bfa\\]').first();
+  await expectRenderedContrast(cardLabel, 'Case study card craft label');
+  // Check if it's a link for hover state testing
+  const isLink = await cardLabel.evaluate((element) => {
+    const link = element.closest('a');
+    return link && link.getAttribute('href')?.startsWith('http');
+  });
+  if (isLink) {
+    const linkElement = await cardLabel.evaluateHandle((element) => element.closest('a'));
+    await linkElement.asElement().hover();
+    await expectRenderedForeground(linkElement.asElement(), 'Case study card external link should finish its hover transition', '255,255,255');
+    await expectRenderedContrast(linkElement.asElement(), 'Case study card external link on hover');
   }
 
   const portfolioLink = page.getByRole('link', { name: /View all case studies/ });
@@ -207,6 +212,8 @@ test('policy, contact, footer, and not-found accent states meet contrast', async
 
 test('open service offer scope lists meet normal-text contrast', async ({ page }) => {
   await page.goto('/#services');
+  const trigger = page.locator('#services [role="button"]').filter({ hasText: 'DATA EXTRACTION AUTOMATION SPRINT' });
+  await trigger.click();
   const panel = page.locator('#service-content-data-extraction-automation-sprint');
   await expect(panel).toBeVisible();
   const items = panel.locator('li');

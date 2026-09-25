@@ -3,7 +3,7 @@ import { expect, test } from './qa-test.js';
 import { caseStudies, featuredCaseStudies } from '../../src/data/caseStudies.js';
 
 const routes = [
-  { path: '/', heading: /Vivek Patel/i },
+  { path: '/', heading: /Computer Vision & AI Engineer/i },
   { path: '/contact', heading: /Request a Project Estimate/i },
   { path: '/legal', heading: 'Privacy Policy' },
   { path: '/data-policy', heading: 'Cookie Policy' },

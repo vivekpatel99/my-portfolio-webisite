@@ -64,7 +64,7 @@ describe('CookieConsentBanner', () => {
     render(<CookieConsentBanner onConsent={vi.fn()} show onHide={vi.fn()} />);
     const dialog = screen.getByRole('dialog', { name: /we value your privacy/i });
     const classes = dialog.className.split(/\s+/);
-    expect(classes).toContain('bottom-0');
+    expect(classes).toContain('bottom-2');
     expect(classes).toContain('sm:bottom-6');
     expect(classes).toContain('sm:max-w-lg');
     expect(classes).toContain('sm:right-6');

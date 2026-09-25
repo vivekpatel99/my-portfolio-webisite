@@ -56,7 +56,7 @@ test('manage consent reopens banner from footer', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: /Accept All/i }).click({ timeout: 5000 });
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-  await page.getByRole('link', { name: /Manage Consent/i }).click();
+  await page.getByRole('button', { name: /Manage Consent/i }).click();
   await expect(page.getByRole('button', { name: /Accept All/i })).toBeVisible();
 });
 
