@@ -114,4 +114,13 @@ describe('Services offers', () => {
     const link1 = within(panel1).getByRole('link', { name: /View details/i });
     expect(link1.getAttribute('href')).toBe(`/services/${serviceOffers[1].id}`);
   });
+
+  it('renders SERVICE · OFFER craft markers on each accordion button', () => {
+    renderServices();
+    const rows = within(section()).getAllByRole('button');
+    rows.forEach((button, index) => {
+      expect(button.textContent).toMatch(/SERVICE · OFFER/i);
+      expect(button.textContent).toContain(String(index + 1).padStart(2, '0'));
+    });
+  });
 });

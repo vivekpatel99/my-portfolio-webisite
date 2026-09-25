@@ -174,13 +174,13 @@ test('contact guidance, budget dropdown, and validation work without submitting 
   await page.getByLabel('Budget Range').selectOption({ label: '€5,000 - €10,000' });
   await expect(page.getByLabel('Budget Range')).toContainText('€5,000 - €10,000');
 
-  await page.getByRole('button', { name: /Request a Project Estimate/i }).click();
+  await page.getByRole('button', { name: /Submit Project Estimate Request/i }).click();
   await expect(page.getByText('Uh oh! Missing fields.').first()).toBeVisible();
 
   await page.getByLabel('Full Name *').fill('QA Tester');
   await page.getByLabel('Email Address *').fill('invalid-email');
   await page.getByLabel('Project Description *').fill('Testing validation only.');
-  await page.getByRole('button', { name: /Request a Project Estimate/i }).click();
+  await page.getByRole('button', { name: /Submit Project Estimate Request/i }).click();
   await expect(page.getByText('Invalid email address.').first()).toBeVisible();
   expect(mutationRequests).toEqual([]);
 });
@@ -229,6 +229,10 @@ test('craft signal surfaces: Detection Bar nav has purple border and VP mark', a
 test('craft signal surfaces: Services Field-Row has detection boxes with meta', async ({ page }) => {
   await page.goto('/#services');
   const firstService = page.locator('#services [role="button"]').first();
+  
+  // Service button has SERVICE · OFFER meta
+  await expect(firstService.getByText(/SERVICE · OFFER \d+/i)).toBeVisible();
+  
   await firstService.click();
   await expect(firstService).toHaveAttribute('aria-expanded', 'true');
   
@@ -363,7 +367,7 @@ test('e2e: Home → Service → CTA → Contact → Fill validation', async ({ p
   await page.getByLabel('Full Name *').fill('QA Tester');
   await page.getByLabel('Email Address *').fill('invalid');
   await page.getByLabel('Project Description *').fill('Test project');
-  await page.getByRole('button', { name: /Request a Project Estimate/i }).click();
+  await page.getByRole('button', { name: /Submit Project Estimate Request/i }).click();
   
   // Validation should trigger
   await expect(page.getByText(/Invalid email/i)).toBeVisible();

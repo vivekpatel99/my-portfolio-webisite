@@ -68,4 +68,15 @@ describe('Header', () => {
 
     await waitFor(() => expect(screen.getByTestId('location').textContent).toBe('/case-studies/'));
   });
+
+  it('renders Detection Bar with NAV · SITE craft marker', () => {
+    render(
+      <MemoryRouter>
+        <Header />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText(/NAV ·/i)).toBeInTheDocument();
+    expect(screen.getByText(/SITE/i)).toBeInTheDocument();
+  });
 });
