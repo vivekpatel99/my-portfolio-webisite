@@ -12,6 +12,7 @@ import { COOKIE_CONSENT_KEY, readAnalyticsConsent } from '@/lib/consent';
 const Layout = () => {
   const [gaConsent, setGaConsent] = useState(readAnalyticsConsent);
   const [showConsentManager, setShowConsentManager] = useState(false);
+  const [needsConsent, setNeedsConsent] = useState(() => !readAnalyticsConsent());
 
   const syncAnalyticsConsent = useCallback(() => {
     setGaConsent(readAnalyticsConsent());
@@ -39,10 +40,12 @@ const Layout = () => {
 
   const handleConsent = useCallback(() => {
     setGaConsent(true);
+    setNeedsConsent(false);
   }, []);
 
   const handleHideManager = useCallback(() => {
     setShowConsentManager(false);
+    setNeedsConsent(!readAnalyticsConsent());
     syncAnalyticsConsent();
   }, [syncAnalyticsConsent]);
 
@@ -60,8 +63,8 @@ const Layout = () => {
       <div className="min-h-screen bg-[#0C0D0D] text-white overflow-x-hidden flex flex-col">
         <Header />
         {/* Cookie banner spacer - reserves vertical space when banner is visible */}
-        {(showConsentManager || !readAnalyticsConsent()) && (
-          <div className="h-14 sm:h-16" aria-hidden="true" />
+        {(needsConsent || showConsentManager) && (
+          <div className="h-[60px] sm:h-[72px]" aria-hidden="true" />
         )}
         <main id="main-content" className="flex-grow">
           <Suspense fallback={<div className="min-h-screen" role="status" aria-label="Loading page" />}>
