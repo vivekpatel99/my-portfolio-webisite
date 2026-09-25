@@ -48,7 +48,7 @@ const Header = () => {
     // restore to the control that opened the menu rather than BODY or a stale
     // element from the page's previous focus sequence.
     previousFocusRef.current = toggleButtonRef.current;
-    closeButtonRef.current?.focus();
+    closeButtonRef.current?.focus({ preventScroll: true });
 
     const backgroundElements = [
       headerRef.current,
