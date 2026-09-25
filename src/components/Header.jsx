@@ -123,8 +123,8 @@ const Header = () => {
         }
         element.inert = inert;
       });
-      previousFocusRef.current?.focus?.();
-      // Restore scroll after focus (focus may trigger scrollIntoView)
+      previousFocusRef.current?.focus?.({ preventScroll: true });
+      // Restore scroll after focus (preventScroll stops focus from auto-scrolling)
       window.requestAnimationFrame(() => {
         window.scrollTo(0, scrollY);
       });

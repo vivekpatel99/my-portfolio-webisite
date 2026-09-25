@@ -183,7 +183,7 @@ const Hero = () => {
                 </div>
 
                 {/* Header */}
-                <header className="flex justify-between items-start mb-5 pb-3.5 border-b border-white/[0.08] max-md:mb-2 max-md:pb-1.5">
+                <div className="flex justify-between items-start mb-5 pb-3.5 border-b border-white/[0.08] max-md:mb-2 max-md:pb-1.5">
                   <div>
                     <div className="font-mono text-[11px] font-semibold tracking-[0.14em] uppercase text-purple-200/[0.78]">Profile Invoice</div>
                     <div className="mt-1 font-mono text-[10px] text-gray-500 tracking-wide">field parse</div>
@@ -192,7 +192,7 @@ const Hero = () => {
                     <strong className="block text-gray-400 font-medium tracking-wider">INV-VP-0045</strong>
                     OCR surface
                   </div>
-                </header>
+                </div>
 
                 {/* Name field */}
                 <div className="mb-3 max-md:mb-1.5">
