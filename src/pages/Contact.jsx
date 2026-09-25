@@ -205,7 +205,7 @@ const Contact = () => {
               </div>
               <div className="email-note mt-[22px] border border-[rgba(139,92,246,0.22)] bg-[rgba(139,92,246,0.08)] p-[14px]">
                 <p className="q text-[0.8rem] text-[#9ca3af] mb-[6px]">Prefer email?</p>
-                <a href={socialLinks.emailHref} className="text-[0.9rem] font-semibold text-white hover:text-[#d8caff]">
+                <a href={socialLinks.emailHref} className="text-[0.9rem] font-semibold text-white hover:text-[#a78bfa]">
                   {socialLinks.contactEmail}
                 </a>
                 <div className="sub mt-2 font-mono text-[9px] leading-[1.4] tracking-[0.08em] uppercase text-[#6b7280]">

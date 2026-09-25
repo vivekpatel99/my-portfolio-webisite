@@ -115,7 +115,6 @@ const Header = () => {
       document.body.style.top = previousBodyTop;
       document.body.style.left = previousBodyLeft;
       document.body.style.width = previousBodyWidth;
-      window.scrollTo(0, scrollY);
       backgroundElementState.forEach(({ element, ariaHidden, hadInertAttribute, inert }) => {
         if (ariaHidden === null) {
           element.removeAttribute('aria-hidden');
@@ -130,6 +129,7 @@ const Header = () => {
         }
         element.inert = inert;
       });
+      window.scrollTo(0, scrollY);
       previousFocusRef.current?.focus?.();
     };
   }, [isOpen]);
