@@ -58,16 +58,12 @@ const Header = () => {
       hadInertAttribute: element.hasAttribute('inert'),
       inert: element.inert,
     }));
+    const previousOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
     const previousScrollY = window.scrollY;
-    const previousBodyPosition = document.body.style.position;
-    const previousBodyTop = document.body.style.top;
-    const previousBodyLeft = document.body.style.left;
-    const previousBodyWidth = document.body.style.width;
 
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${previousScrollY}px`;
-    document.body.style.left = '0';
-    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
     backgroundElements.forEach((element) => {
       element.setAttribute('aria-hidden', 'true');
       element.setAttribute('inert', '');
@@ -111,10 +107,8 @@ const Header = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       const scrollY = previousScrollY;
-      document.body.style.position = previousBodyPosition;
-      document.body.style.top = previousBodyTop;
-      document.body.style.left = previousBodyLeft;
-      document.body.style.width = previousBodyWidth;
+      document.body.style.overflow = previousOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
       backgroundElementState.forEach(({ element, ariaHidden, hadInertAttribute, inert }) => {
         if (ariaHidden === null) {
           element.removeAttribute('aria-hidden');
@@ -129,8 +123,11 @@ const Header = () => {
         }
         element.inert = inert;
       });
-      window.scrollTo(0, scrollY);
       previousFocusRef.current?.focus?.();
+      // Restore scroll after focus (focus may trigger scrollIntoView)
+      window.requestAnimationFrame(() => {
+        window.scrollTo(0, scrollY);
+      });
     };
   }, [isOpen]);
 
