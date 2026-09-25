@@ -59,6 +59,10 @@ const Layout = () => {
       <SentryTelemetry hasConsent={gaConsent} />
       <div className="min-h-screen bg-[#0C0D0D] text-white overflow-x-hidden flex flex-col">
         <Header />
+        {/* Cookie banner spacer - reserves vertical space when banner is visible */}
+        {(showConsentManager || !readAnalyticsConsent()) && (
+          <div className="h-14 sm:h-16" aria-hidden="true" />
+        )}
         <main id="main-content" className="flex-grow">
           <Suspense fallback={<div className="min-h-screen" role="status" aria-label="Loading page" />}>
             <Outlet />
