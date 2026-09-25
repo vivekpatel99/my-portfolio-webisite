@@ -52,14 +52,18 @@ const Header = () => {
     // Use the scroll position captured BEFORE opening (synchronously on click)
     const previousScrollY = preOpenScrollYRef.current;
 
-    // Lock scroll FIRST before any focus to prevent scroll jumps
+    // Save overflow state before locking
     const previousOverflow = document.body.style.overflow;
     const previousHtmlOverflow = document.documentElement.style.overflow;
     
+    // Lock overflow (this may reset scroll to 0 in some browsers)
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
+    
+    // IMMEDIATELY restore scroll after locking overflow (before any focus or layout)
+    window.scrollTo(0, previousScrollY);
 
-    // Now focus with scroll locked and preventScroll
+    // Now focus with preventScroll (scroll is already correct and locked)
     previousFocusRef.current = toggleButtonRef.current;
     closeButtonRef.current?.focus({ preventScroll: true });
 
