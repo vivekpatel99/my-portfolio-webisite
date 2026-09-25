@@ -309,16 +309,17 @@ test('craft signal surfaces: Contact form panel with CONTACT · DETECTED meta', 
   await expect(form).toBeVisible();
   
   // Form detection meta
-  await expect(form).toContainText('CONTACT · DETECTED');
+  await expect(form.getByText('CONTACT · DETECTED', { exact: true })).toBeVisible();
   
   // Proof strip with metrics
-  await expect(page.locator('.proof')).toBeVisible();
-  await expect(page).toContainText('100%');
-  await expect(page).toContainText('Job Success');
-  await expect(page).toContainText('5★');
+  const proof = page.locator('.proof');
+  await expect(proof).toBeVisible();
+  await expect(proof.getByText('100%', { exact: true })).toBeVisible();
+  await expect(proof.getByText(/Job Success/i)).toBeVisible();
+  await expect(proof.getByText('5★', { exact: true })).toBeVisible();
   
   // Submit note
-  await expect(page).toContainText('SUBMIT · FIELD');
+  await expect(form.getByText('SUBMIT · FIELD', { exact: true })).toBeVisible();
 });
 
 test('craft signal surfaces: Case study cards have detection boxes', async ({ page }) => {
@@ -436,7 +437,8 @@ test('e2e: Testimonials carousel advance and structure', async ({ page }) => {
   // Wait a bit for transition
   await page.waitForTimeout(300);
   
-  // Quote should change (or verify structure at minimum)
+  // Quote should change
+  await expect(testimonials.locator('blockquote')).not.toHaveText(initialQuote ?? '');
   await expect(testimonials.locator('blockquote')).toBeVisible();
   
   // Verify rail structure persists
