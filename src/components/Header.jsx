@@ -118,12 +118,14 @@ const Header = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       
-      // Restore in order: focus first (preventScroll), then overflow, then scroll position
-      previousFocusRef.current?.focus?.({ preventScroll: true });
+      // Critical: restore scroll WHILE overflow still locked, BEFORE any focus
+      window.scrollTo(0, previousScrollY);
       
+      // Unlock overflow AFTER scroll restore
       document.body.style.overflow = previousOverflow;
       document.documentElement.style.overflow = previousHtmlOverflow;
       
+      // Restore inert/aria-hidden
       backgroundElementState.forEach(({ element, ariaHidden, hadInertAttribute, inert }) => {
         if (ariaHidden === null) {
           element.removeAttribute('aria-hidden');
@@ -139,7 +141,10 @@ const Header = () => {
         element.inert = inert;
       });
       
-      // Restore scroll immediately after unlocking, no async delay
+      // Focus toggle WITH preventScroll to avoid scroll jump
+      previousFocusRef.current?.focus?.({ preventScroll: true });
+      
+      // Re-assert scroll position after focus to guard against any browser resets
       window.scrollTo(0, previousScrollY);
     };
   }, [isOpen]);
