@@ -76,7 +76,7 @@ describe('Header', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText(/NAV ·/i)).toBeInTheDocument();
-    expect(screen.getByText(/SITE/i)).toBeInTheDocument();
+    expect(screen.getByText(/NAV ·/i)).toBeTruthy();
+    expect(screen.getByText(/SITE/i)).toBeTruthy();
   });
 });

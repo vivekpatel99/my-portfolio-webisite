@@ -390,8 +390,8 @@ describe("Contact form", () => {
 
   it('renders CONTACT · DETECTED panel meta and SUBMIT · FIELD button craft', () => {
     render(<Contact />);
-    expect(screen.getByText(/CONTACT ·/i)).toBeInTheDocument();
-    expect(screen.getByText(/DETECTED/i)).toBeInTheDocument();
-    expect(screen.getByText(/SUBMIT · FIELD/i)).toBeInTheDocument();
+    expect(screen.getByText(/CONTACT ·/i)).toBeTruthy();
+    expect(screen.getByText(/DETECTED/i)).toBeTruthy();
+    expect(screen.getByText(/SUBMIT · FIELD/i)).toBeTruthy();
   });
 });
