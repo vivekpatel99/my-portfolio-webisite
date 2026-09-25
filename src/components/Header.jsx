@@ -49,13 +49,9 @@ const Header = () => {
       return undefined;
     }
 
-    // Census: Defer focus to next frame to allow dialog render without scroll jump
-    // Fixed dialog rendering can trigger scroll reset in some browsers
-    const focusTimer = requestAnimationFrame(() => {
-      // Focus with preventScroll AFTER dialog has rendered
-      previousFocusRef.current = toggleButtonRef.current;
-      closeButtonRef.current?.focus({ preventScroll: true });
-    });
+    // Census: Test if focus() itself zeros scroll (even with preventScroll)
+    // DO NOT focus close button on open - test if this preserves scrollY
+    previousFocusRef.current = toggleButtonRef.current;
 
     const backgroundElements = [
       headerRef.current,
@@ -111,7 +107,6 @@ const Header = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => {
-      cancelAnimationFrame(focusTimer);
       window.removeEventListener('keydown', handleKeyDown);
       
       // Restore inert/aria-hidden
