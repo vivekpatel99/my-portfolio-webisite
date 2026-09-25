@@ -145,8 +145,8 @@ const Hero = () => {
         ))}
       </div>
 
-      <div className="container mx-auto px-6 md:px-12 relative z-10 py-1 max-md:px-4 max-md:py-0">
-        <div className="max-w-[1320px] mx-auto flex flex-col gap-1 max-md:gap-0">
+      <div className="container mx-auto px-6 md:px-12 relative z-10 py-0.5 max-md:px-4 max-md:py-0">
+        <div className="max-w-[1320px] mx-auto flex flex-col gap-0.5 max-md:gap-0">
           {/* Status badge */}
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/[0.12] bg-white/[0.03]">
@@ -392,14 +392,14 @@ const Hero = () => {
           <div className="flex flex-wrap gap-3 mt-0 max-md:flex-col max-md:mt-0 max-md:gap-0">
             <Button
               onClick={handleCTAClick}
-              className="bg-[#8B5CF6] hover:bg-[#9B6FFF] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-1.5"
+              className="bg-[#8B5CF6] hover:bg-[#9B6FFF] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-1"
             >
               Request a Project Estimate
             </Button>
             <Button
               asChild
               variant="outline"
-              className="border border-white/[0.14] hover:bg-[#8B5CF6]/8 hover:border-purple-400/35 text-white px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[150px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-1.5"
+              className="border border-white/[0.14] hover:bg-[#8B5CF6]/8 hover:border-purple-400/35 text-white px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[150px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-1"
             >
               <a href="#portfolio">
                 View Case Studies

@@ -52,18 +52,22 @@ const Header = () => {
     // Use the scroll position captured BEFORE opening (synchronously on click)
     const previousScrollY = preOpenScrollYRef.current;
 
-    // Save overflow state before locking
-    const previousOverflow = document.body.style.overflow;
-    const previousHtmlOverflow = document.documentElement.style.overflow;
+    // Classic scroll lock: position:fixed with negative top offset (not overflow:hidden)
+    // Saves current body position styles
+    const previousPosition = document.body.style.position;
+    const previousTop = document.body.style.top;
+    const previousLeft = document.body.style.left;
+    const previousRight = document.body.style.right;
+    const previousWidth = document.body.style.width;
     
-    // Lock overflow (this may reset scroll to 0 in some browsers)
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
-    
-    // IMMEDIATELY restore scroll after locking overflow (before any focus or layout)
-    window.scrollTo(0, previousScrollY);
+    // Lock scroll by fixing body position at negative scroll offset
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${previousScrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
 
-    // Now focus with preventScroll (scroll is already correct and locked)
+    // Focus with preventScroll (body is already locked)
     previousFocusRef.current = toggleButtonRef.current;
     closeButtonRef.current?.focus({ preventScroll: true });
 
@@ -123,17 +127,17 @@ const Header = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       
-      // CENSUS: Unlock overflow causes browser to reset scroll when fixed header present
-      // Fix: Restore scroll IMMEDIATELY after unlock, before any other operations
+      // Clear position:fixed lock styles
+      document.body.style.position = previousPosition;
+      document.body.style.top = previousTop;
+      document.body.style.left = previousLeft;
+      document.body.style.right = previousRight;
+      document.body.style.width = previousWidth;
       
-      // 1. Unlock overflow
-      document.body.style.overflow = previousOverflow;
-      document.documentElement.style.overflow = previousHtmlOverflow;
-      
-      // 2. IMMEDIATELY restore scroll (before browser can reset it)
+      // Restore scroll position
       window.scrollTo(0, previousScrollY);
       
-      // 3. Then restore inert/aria-hidden
+      // Restore inert/aria-hidden
       backgroundElementState.forEach(({ element, ariaHidden, hadInertAttribute, inert }) => {
         if (ariaHidden === null) {
           element.removeAttribute('aria-hidden');
@@ -149,8 +153,11 @@ const Header = () => {
         element.inert = inert;
       });
       
-      // 4. Finally focus toggle (with preventScroll to avoid focus-scroll)
+      // Focus toggle with preventScroll
       previousFocusRef.current?.focus?.({ preventScroll: true });
+      
+      // Re-assert scroll position after focus
+      window.scrollTo(0, previousScrollY);
     };
   }, [isOpen]);
 
