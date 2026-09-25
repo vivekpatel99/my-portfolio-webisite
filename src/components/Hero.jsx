@@ -389,17 +389,17 @@ const Hero = () => {
           </div>
 
           {/* CTAs below invoice */}
-          <div className="flex flex-wrap gap-3 mt-0 max-md:flex-col max-md:mt-0 max-md:gap-1">
+          <div className="flex flex-wrap gap-3 mt-0 max-md:flex-col max-md:mt-0 max-md:gap-0.5">
             <Button
               onClick={handleCTAClick}
-              className="bg-[#8B5CF6] hover:bg-[#9B6FFF] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-2.5"
+              className="bg-[#8B5CF6] hover:bg-[#9B6FFF] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-2"
             >
               Request a Project Estimate
             </Button>
             <Button
               asChild
               variant="outline"
-              className="border border-white/[0.14] hover:bg-[#8B5CF6]/8 hover:border-purple-400/35 text-white px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[150px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-2.5"
+              className="border border-white/[0.14] hover:bg-[#8B5CF6]/8 hover:border-purple-400/35 text-white px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[150px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-2"
             >
               <a href="#portfolio">
                 View Case Studies

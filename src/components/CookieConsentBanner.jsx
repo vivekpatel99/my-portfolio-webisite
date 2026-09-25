@@ -106,7 +106,7 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
           className="fixed top-[68px] left-0 right-0 z-40 bg-[rgba(12,13,13,0.98)] backdrop-blur-lg border-b border-white/20 shadow-xl"
-          style={{ marginBottom: 0 }}
+          style={{ marginBottom: 0, top: '68px' }}
         >
           <div className="max-w-[1400px] mx-auto px-4 py-3 sm:px-6 sm:py-4 flex items-center gap-3 sm:gap-6">
             <div className="hidden sm:flex items-center flex-shrink-0">
@@ -123,7 +123,7 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
               <div className="flex flex-row gap-1.5 sm:gap-2">
                 <Button
                   onClick={handleAcceptAll}
-                  className="h-8 sm:h-9 text-[11px] sm:text-xs bg-accent-purple hover:bg-accent-purple/90 text-white rounded-full px-3 sm:px-4 whitespace-nowrap"
+                  className="min-h-[44px] min-w-[44px] h-auto sm:h-auto text-[11px] sm:text-xs bg-accent-purple hover:bg-accent-purple/90 text-white rounded-full px-3 sm:px-4 py-2.5 whitespace-nowrap"
                   size="sm"
                 >
                   Accept
