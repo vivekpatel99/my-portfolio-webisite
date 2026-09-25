@@ -42,7 +42,7 @@ const Testimonials = () => {
             <div className="inner relative z-[2] w-full max-w-[1120px] mx-auto">
                 <header className="section-head mb-[54px]">
                     <div className="eyebrow font-mono text-[10px] text-[#6b7280] mb-[19px] tracking-[0.15em] uppercase">
-                        TESTIMONIALS · <span className="text-[#a78bfa]">FIELD</span>
+                        TESTIMONIALS · <span className="text-[#a78bfa]">DETECTED</span>
                     </div>
                     <h1 className="text-[clamp(2.35rem,4vw,4rem)] leading-[0.98] tracking-[-0.045em] uppercase font-[730]">
                         CLIENT <span className="text-[#8B5CF6]">RESULTS</span>
@@ -104,7 +104,7 @@ const Testimonials = () => {
                                 )}
                             </div>
                             <div className="font-mono text-[8px] text-[#52525b]">
-                                CLIENT RESPONSE · QUOTE
+                                CLIENT RESPONSE · DETECTED
                             </div>
                         </footer>
                     </article>

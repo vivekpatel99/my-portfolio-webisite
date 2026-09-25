@@ -5,7 +5,7 @@ const About = () => {
     <section id="about" className="relative bg-[#0C0D0D] py-14 px-7 md:px-12 min-h-[900px]">
       <div className="relative z-[2] max-w-[1120px] mx-auto">
         <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] mb-4">
-          ABOUT · <em className="not-italic text-[#a78bfa]">FIELD</em>
+          ABOUT · <em className="not-italic text-[#a78bfa]">DETECTED</em>
         </div>
         <h2 className="text-[clamp(1.85rem,3.4vw,2.75rem)] font-bold tracking-[-0.02em] leading-[1.1] uppercase mb-7">
           WHO I <span className="text-[#8B5CF6]">AM</span>

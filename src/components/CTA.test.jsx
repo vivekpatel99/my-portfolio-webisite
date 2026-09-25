@@ -57,7 +57,7 @@ describe('CTA Action Field', () => {
     expect(screen.getByText(/ROUTE.*\/CONTACT\/.*NO MAILTO/i)).toBeTruthy();
   });
 
-  it('includes CTA · ACTION eyebrow meta', () => {
+  it('includes CTA · DETECTED eyebrow meta', () => {
     const { container } = render(
       <MemoryRouter>
         <CTA />
@@ -65,7 +65,7 @@ describe('CTA Action Field', () => {
     );
 
     expect(container.textContent).toContain('CTA ·');
-    expect(container.textContent).toContain('ACTION');
+    expect(container.textContent).toContain('DETECTED');
   });
 
   it('has secondary View case studies button', () => {

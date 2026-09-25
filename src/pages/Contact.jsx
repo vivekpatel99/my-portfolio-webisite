@@ -226,7 +226,7 @@ const Contact = () => {
               <span className="bracket-br absolute bottom-[5px] right-[5px] w-[18px] h-[18px] border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.55)] pointer-events-none z-[5]"></span>
 
               <div className="meta font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] mb-5">
-                FORM · <em className="not-italic text-[#a78bfa]">PANEL</em>
+                FORM · <em className="not-italic text-[#a78bfa]">DETECTED</em>
               </div>
 
               <div className="field mb-4">

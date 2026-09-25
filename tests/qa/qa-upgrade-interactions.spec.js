@@ -294,7 +294,7 @@ test('craft signal surfaces: CTA action field shows €45/hour rate', async ({ p
   await expect(cta).toContainText('RATE');
   
   // Detection meta
-  await expect(cta).toContainText('CTA · ACTION');
+  await expect(cta).toContainText('CTA · DETECTED');
   
   // Action field button
   await expect(cta).toContainText('REQUEST · ESTIMATE');
@@ -303,13 +303,13 @@ test('craft signal surfaces: CTA action field shows €45/hour rate', async ({ p
   await expect(cta).toContainText('ROUTE · /CONTACT/ · NO MAILTO');
 });
 
-test('craft signal surfaces: Contact form panel with FORM · PANEL meta', async ({ page }) => {
+test('craft signal surfaces: Contact form panel with FORM · DETECTED meta', async ({ page }) => {
   await page.goto('/contact');
   const form = page.locator('form[data-sensitive-telemetry]');
   await expect(form).toBeVisible();
   
   // Form detection meta
-  await expect(form).toContainText('FORM · PANEL');
+  await expect(form).toContainText('FORM · DETECTED');
   
   // Proof strip with metrics
   await expect(page.locator('.proof')).toBeVisible();
@@ -413,7 +413,7 @@ test('e2e: Mobile nav Detection Bar → Menu → Request Estimate → Contact', 
   await expect(page.getByRole('heading', { name: /Request a Project Estimate/i })).toBeVisible();
   
   // Verify contact form detection meta
-  await expect(page.locator('form')).toContainText('FORM · PANEL');
+  await expect(page.locator('form')).toContainText('FORM · DETECTED');
 });
 
 test('e2e: Testimonials carousel advance and structure', async ({ page }) => {
