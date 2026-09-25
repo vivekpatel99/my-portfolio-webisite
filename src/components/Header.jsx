@@ -49,9 +49,14 @@ const Header = () => {
       return undefined;
     }
 
-    // Census: Test if focus() itself zeros scroll (even with preventScroll)
-    // DO NOT focus close button on open - test if this preserves scrollY
+    // Restore focus for a11y. Look for co-actors that zero scroll.
+    // Test: Blur active element BEFORE focus to prevent scrollIntoView chain
+    if (document.activeElement && document.activeElement !== document.body) {
+      document.activeElement.blur();
+    }
+    
     previousFocusRef.current = toggleButtonRef.current;
+    closeButtonRef.current?.focus({ preventScroll: true });
 
     const backgroundElements = [
       headerRef.current,

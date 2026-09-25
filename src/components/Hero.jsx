@@ -160,7 +160,7 @@ const Hero = () => {
             {/* Left: Profile Invoice */}
             <div className="flex flex-col gap-1 min-w-0 w-full max-lg:gap-0">
               <article 
-                className="relative w-full max-w-[760px] border border-[#8B5CF6]/[0.28] rounded-lg px-5 py-4 max-md:px-2.5 max-md:py-0"
+                className="relative w-full max-w-[760px] border border-[#8B5CF6]/[0.28] rounded-lg px-5 py-2 max-md:px-2.5 max-md:py-0"
                 style={{
                   background: 'linear-gradient(165deg, #141318 0%, #0f1012 55%, #0e0e10 100%)',
                   boxShadow: '0 0 0 1px rgba(255,255,255,0.03) inset, 0 24px 64px rgba(0,0,0,0.45), 0 0 48px rgba(139,92,246,0.1)'
@@ -183,7 +183,7 @@ const Hero = () => {
                 </div>
 
                 {/* Header */}
-                <div className="flex justify-between items-start mb-2 pb-3.5 border-b border-white/[0.08] max-md:mb-1 max-md:pb-1">
+                <div className="flex justify-between items-start mb-1.5 pb-2 border-b border-white/[0.08] max-md:mb-1 max-md:pb-1">
                   <div>
                     <div className="font-mono text-[11px] font-semibold tracking-[0.14em] uppercase text-purple-200/[0.78]">Profile Invoice</div>
                     <div className="mt-1 font-mono text-[10px] text-gray-500 tracking-wide">field parse</div>
@@ -195,7 +195,7 @@ const Hero = () => {
                 </div>
 
                 {/* Name field */}
-                <div className="mb-1.5 max-md:mb-1">
+                <div className="mb-1 max-md:mb-1">
                   <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Name</span>
                   <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-[7px] py-[3px] rounded-[1px] bg-[#8B5CF6]/[0.07]">
                     <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4]">
@@ -206,7 +206,7 @@ const Hero = () => {
                 </div>
 
                 {/* Role field */}
-                <div className="mb-1.5 max-md:mb-1">
+                <div className="mb-1 max-md:mb-1">
                   <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Role</span>
                   <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-2 py-1 rounded-[1px] bg-[#8B5CF6]/[0.07]">
                     <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4]">
@@ -219,7 +219,7 @@ const Hero = () => {
                 </div>
 
                 {/* Proofs folded under role */}
-                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 mb-1.5 max-md:grid-cols-1 max-md:gap-y-1 max-md:mb-1" role="group" aria-label="Detected credentials">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-1 mb-1 max-md:grid-cols-1 max-md:gap-y-1 max-md:mb-1" role="group" aria-label="Detected credentials">
                   <div className="min-w-0">
                     <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Credential</span>
                     <span className="relative inline-flex items-center gap-[7px] border-[1.5px] border-[#8B5CF6] px-[9px] py-[5px] rounded-[1px] bg-[#8B5CF6]/[0.07] max-w-full">
