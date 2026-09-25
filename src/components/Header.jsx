@@ -15,6 +15,7 @@ const Header = () => {
   const toggleButtonRef = useRef(null);
   const previousFocusRef = useRef(null);
   const scrollRestoreRef = useRef(null);
+  const preOpenScrollYRef = useRef(0);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -36,13 +37,21 @@ const Header = () => {
     return location.pathname === href;
   };
 
+  const handleToggle = () => {
+    if (!isOpen) {
+      // Capture scroll BEFORE any state change, focus, or layout shift
+      preOpenScrollYRef.current = window.scrollY;
+    }
+    setIsOpen(!isOpen);
+  };
+
   useEffect(() => {
     if (!isOpen) {
       return undefined;
     }
 
-    // Capture scroll position FIRST, before any DOM mutations or focus changes
-    const previousScrollY = window.scrollY;
+    // Use the scroll position captured BEFORE opening (synchronously on click)
+    const previousScrollY = preOpenScrollYRef.current;
 
     // Pointer activation does not focus the toggle in every browser. Always
     // restore to the control that opened the menu rather than BODY or a stale
@@ -229,7 +238,7 @@ const Header = () => {
           
           <button
             ref={toggleButtonRef}
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={handleToggle}
             className="md:hidden w-11 h-11 flex items-center justify-center ml-auto"
             aria-label="Toggle navigation menu"
             aria-expanded={isOpen}
