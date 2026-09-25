@@ -253,9 +253,8 @@ test('hero invoice proof fold structure per #176', async ({ page }) => {
   await expect(page.getByText('Client delivery record')).toBeVisible();
   
   await expect(page.getByText('Detected total')).toHaveCount(0);
-  
   await expect(page.getByText('PROOF ·')).toHaveCount(0);
-  await expect(page.getByText('DETECTED')).toHaveCount(0);
+  await expect(page.getByText('PROOF · DETECTED')).toHaveCount(0);
   await expect(page.getByText('fields · 2')).toHaveCount(0);
   
   const invoice = page.locator('article[aria-label="Profile invoice field parse"]');

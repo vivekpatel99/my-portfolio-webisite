@@ -171,6 +171,8 @@ test('desktop hero invoice proof fold: all elements visible, no clip', async ({ 
   await expect(page.getByText('Linz, Austria', { exact: true })).toBeVisible();
   
   await expect(page.getByText('Detected total')).not.toBeVisible();
+  await expect(page.getByText('PROOF ·')).not.toBeVisible();
+  await expect(page.getByText('fields · 2')).not.toBeVisible();
   
   const viewport = viewportBox(page);
   const dialog = page.getByRole('dialog', { name: /we value your privacy/i });
