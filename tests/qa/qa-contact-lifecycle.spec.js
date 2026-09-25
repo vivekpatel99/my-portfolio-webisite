@@ -136,7 +136,7 @@ test('holds one pending submit, blocks duplicates, exposes failure, then retries
   const submit = form.locator('button[type="submit"]');
   await submit.click();
   await expect(submit).toBeDisabled();
-  await expect(submit).toContainText('Sending');
+  await expect(submit).toContainText(/sending/i);
 
   // requestSubmit exercises the duplicate guard even though the browser has
   // already disabled the visible button for the pending request.
