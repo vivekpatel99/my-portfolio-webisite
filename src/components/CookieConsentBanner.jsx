@@ -106,7 +106,7 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
           transition={{ duration: 0.15 }}
           className="fixed inset-x-2 bottom-2 z-50 max-h-[calc(100dvh-5rem)] overflow-y-auto rounded-2xl p-2 sm:inset-x-auto sm:top-auto sm:bottom-6 sm:left-auto sm:right-6 sm:w-auto sm:max-w-lg sm:max-h-[calc(100dvh-3rem)] sm:rounded-2xl sm:p-6 bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl shadow-black/30"
         >
-          <div className="flex items-start gap-2 sm:gap-4 pr-8 sm:pr-0">
+          <div className="flex items-start gap-2 sm:gap-4 pr-11 sm:pr-0">
             <div className="hidden sm:block p-3 bg-accent-purple/20 rounded-full flex-shrink-0">
               <Cookie className="w-6 h-6 text-accent-purple" />
             </div>
