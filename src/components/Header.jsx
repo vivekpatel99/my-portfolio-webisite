@@ -49,14 +49,13 @@ const Header = () => {
       return undefined;
     }
 
-    // Ownership change: DO NOT lock body scroll. Drawer is fixed inset-0.
-    // Use overscroll-behavior on dialog to prevent scroll-through without
-    // mutating window.scrollY. Since we never touch scroll, there's nothing
-    // to restore on Escape.
-
-    // Focus with preventScroll
-    previousFocusRef.current = toggleButtonRef.current;
-    closeButtonRef.current?.focus({ preventScroll: true });
+    // Census: Defer focus to next frame to allow dialog render without scroll jump
+    // Fixed dialog rendering can trigger scroll reset in some browsers
+    const focusTimer = requestAnimationFrame(() => {
+      // Focus with preventScroll AFTER dialog has rendered
+      previousFocusRef.current = toggleButtonRef.current;
+      closeButtonRef.current?.focus({ preventScroll: true });
+    });
 
     const backgroundElements = [
       headerRef.current,
@@ -112,6 +111,7 @@ const Header = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => {
+      cancelAnimationFrame(focusTimer);
       window.removeEventListener('keydown', handleKeyDown);
       
       // Restore inert/aria-hidden

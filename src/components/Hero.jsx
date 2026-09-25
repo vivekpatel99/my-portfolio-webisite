@@ -219,7 +219,7 @@ const Hero = () => {
                 </div>
 
                 {/* Proofs folded under role */}
-                <div className="grid grid-cols-2 gap-x-4 gap-y-2 mb-2 max-md:grid-cols-1 max-md:gap-y-1 max-md:mb-1" role="group" aria-label="Detected credentials">
+                <div className="lg:hidden grid grid-cols-2 gap-x-4 gap-y-2 mb-2 max-md:grid-cols-1 max-md:gap-y-1 max-md:mb-1" role="group" aria-label="Detected credentials">
                   <div className="min-w-0">
                     <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Credential</span>
                     <span className="relative inline-flex items-center gap-[7px] border-[1.5px] border-[#8B5CF6] px-[9px] py-[5px] rounded-[1px] bg-[#8B5CF6]/[0.07] max-w-full">
