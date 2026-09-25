@@ -355,7 +355,7 @@ test('e2e: Home → Service → CTA → Contact → Fill validation', async ({ p
   await expect(panel).toContainText('€45/hour');
   
   // Navigate to CTA
-  const ctaButton = page.locator('#cta').getByRole('link', { name: /request estimate/i });
+  const ctaButton = page.locator('#cta').getByRole('link', { name: /request a project estimate/i });
   await ctaButton.scrollIntoViewIfNeeded();
   await ctaButton.click();
   

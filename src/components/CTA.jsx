@@ -41,7 +41,7 @@ const CTA = () => {
           {/* Detected action field link */}
           <a
             href="/contact/"
-            aria-label="Request Estimate"
+            aria-label="Request a Project Estimate"
             className="action-field relative inline-flex items-center justify-center gap-4 border border-[rgba(139,92,246,0.72)] bg-gradient-to-b from-[rgba(139,92,246,0.06)] to-transparent bg-[length:100%_55%] bg-no-repeat py-[22px] px-9 pr-9 min-w-[min(420px,92vw)] hover:border-[rgba(139,92,246,0.95)] hover:bg-gradient-to-b hover:from-[rgba(139,92,246,0.1)] hover:to-transparent hover:bg-[length:100%_55%] transition-all focus-visible:outline focus-visible:outline-1 focus-visible:outline-[#8B5CF6] focus-visible:outline-offset-4 no-underline"
           >
             <span className="bracket-tl absolute top-[5px] left-[5px] w-4 h-4 border-t-[1.5px] border-l-[1.5px] border-[rgba(139,92,246,0.95)] pointer-events-none z-[5]"></span>
