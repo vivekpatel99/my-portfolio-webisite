@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { AnimatePresence } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 
@@ -49,9 +48,6 @@ const Header = () => {
       return undefined;
     }
 
-    // Capture scroll at open
-    const lockedScrollY = preOpenScrollYRef.current;
-
     // Restore focus for a11y. Blur co-actor before focus.
     if (document.activeElement && document.activeElement !== document.body) {
       document.activeElement.blur();
@@ -59,17 +55,6 @@ const Header = () => {
     
     previousFocusRef.current = toggleButtonRef.current;
     closeButtonRef.current?.focus({ preventScroll: true });
-
-    // CI-specific behavior lock: Guard scroll mutations while menu open
-    // Design local holds scroll; CI has foreign mutator (Playwright, layout, timing)
-    // Restore scroll on any scroll event while menu is open
-    const handleScroll = () => {
-      if (window.scrollY !== lockedScrollY) {
-        window.scrollTo(0, lockedScrollY);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: false });
 
     const backgroundElements = [
       headerRef.current,
@@ -125,7 +110,6 @@ const Header = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('keydown', handleKeyDown);
       
       // Restore inert/aria-hidden
@@ -243,61 +227,59 @@ const Header = () => {
       </header>
 
       {/* Mobile drawer */}
-      <AnimatePresence>
-        {isOpen && (
-          <div
-            ref={menuRef}
-            id="mobile-menu"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Navigation menu"
-            className="fixed inset-0 bg-[#0C0D0D] z-50 md:hidden flex flex-col px-5 pb-7 overscroll-contain touch-none"
-            style={{ overscrollBehavior: 'contain', touchAction: 'pan-y' }}
-          >
-            <div className="h-[68px] flex items-center justify-between border-b border-[rgba(139,92,246,0.38)]">
-              <Link to="/" onClick={handleHomeClick} className="flex items-center gap-3" aria-label="Vivek Patel Logo">
-                <span className="w-[30px] h-[30px] border border-[rgba(139,92,246,0.7)] grid place-items-center font-mono text-[11px] tracking-[0.06em] text-white bg-[rgba(139,92,246,0.06)]">
-                  VP
-                </span>
-              </Link>
-              <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280]">
-                NAV · <em className="not-italic text-[#a78bfa]">SITE</em>
-              </div>
-              <button 
-                ref={closeButtonRef}
-                onClick={() => setIsOpen(false)} 
-                className="w-11 h-11 relative"
-                aria-label="Close navigation menu"
-              >
-                <span className="absolute left-3 top-[21px] w-5 h-[1.5px] bg-white rotate-45"></span>
-                <span className="absolute left-3 top-[21px] w-5 h-[1.5px] bg-white -rotate-45"></span>
-              </button>
+      {isOpen && (
+        <div
+          ref={menuRef}
+          id="mobile-menu"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation menu"
+          className="fixed inset-0 bg-[#0C0D0D] z-50 md:hidden flex flex-col px-5 pb-7 overscroll-contain touch-none"
+          style={{ overscrollBehavior: 'contain', touchAction: 'pan-y' }}
+        >
+          <div className="h-[68px] flex items-center justify-between border-b border-[rgba(139,92,246,0.38)]">
+            <Link to="/" onClick={handleHomeClick} className="flex items-center gap-3" aria-label="Vivek Patel Logo">
+              <span className="w-[30px] h-[30px] border border-[rgba(139,92,246,0.7)] grid place-items-center font-mono text-[11px] tracking-[0.06em] text-white bg-[rgba(139,92,246,0.06)]">
+                VP
+              </span>
+            </Link>
+            <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280]">
+              NAV · <em className="not-italic text-[#a78bfa]">SITE</em>
             </div>
-            
-            <nav className="flex-1 flex flex-col justify-center gap-[22px]">
-              {navLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  onClick={handleSmoothScroll}
-                  className={`text-[1.55rem] font-[650] tracking-[-0.02em] ${isActiveLink(link.href) ? 'text-white shadow-[inset_0_-2px_0_#8B5CF6] w-fit pb-1' : 'text-[#9ca3af]'}`}
-                >
-                  {link.name}
-                </a>
-              ))}
-            </nav>
-            
-            <button
-              onClick={handleCTA}
-              aria-label="Request a Project Estimate"
-              className="flex items-center justify-center gap-[10px] border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.05)] px-[14px] py-[14px] font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.1)] hover:text-[#d8caff]"
+            <button 
+              ref={closeButtonRef}
+              onClick={() => setIsOpen(false)} 
+              className="w-11 h-11 relative"
+              aria-label="Close navigation menu"
             >
-              Request Estimate
-              <ArrowRight className="w-3 h-3 text-[#a78bfa]" />
+              <span className="absolute left-3 top-[21px] w-5 h-[1.5px] bg-white rotate-45"></span>
+              <span className="absolute left-3 top-[21px] w-5 h-[1.5px] bg-white -rotate-45"></span>
             </button>
           </div>
-        )}
-      </AnimatePresence>
+          
+          <nav className="flex-1 flex flex-col justify-center gap-[22px]">
+            {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                onClick={handleSmoothScroll}
+                className={`text-[1.55rem] font-[650] tracking-[-0.02em] ${isActiveLink(link.href) ? 'text-white shadow-[inset_0_-2px_0_#8B5CF6] w-fit pb-1' : 'text-[#9ca3af]'}`}
+              >
+                {link.name}
+              </a>
+            ))}
+          </nav>
+          
+          <button
+            onClick={handleCTA}
+            aria-label="Request a Project Estimate"
+            className="flex items-center justify-center gap-[10px] border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.05)] px-[14px] py-[14px] font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.1)] hover:text-[#d8caff]"
+          >
+            Request Estimate
+            <ArrowRight className="w-3 h-3 text-[#a78bfa]" />
+          </button>
+        </div>
+      )}
     </>
   );
 };
