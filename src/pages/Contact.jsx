@@ -344,15 +344,9 @@ const Contact = () => {
                       SENDING...
                     </>
                   ) : (
-                    <>
-                      REQUEST ESTIMATE
-                      <ArrowRight className="h-4 w-4" />
-                    </>
+                    'SUBMIT · FIELD'
                   )}
                 </button>
-                <div className="mt-3 font-mono text-[9px] tracking-[0.08em] uppercase text-[#484851]">
-                  SUBMIT · FIELD
-                </div>
               </div>
             </form>
           </div>
