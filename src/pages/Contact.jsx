@@ -80,6 +80,12 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    e.stopPropagation();
+    
+    if (submittingRef.current || isSubmitting) {
+      return;
+    }
+    
     const telemetrySource = e.currentTarget;
     const trimmedFormState = {
       ...formState,
@@ -100,13 +106,14 @@ const Contact = () => {
     if (!trimmedFormState.description) {
       nextErrors.description = 'Project description is required.';
     }
+    
     setFieldErrors(nextErrors);
 
-    if (nextErrors.name || nextErrors.email || nextErrors.description) {
+    if (Object.keys(nextErrors).length > 0) {
         toast({
             title: nextErrors.email && trimmedFormState.email ? "Invalid email address." : "Uh oh! Missing fields.",
             description: nextErrors.email && trimmedFormState.email
-              ? "Please enter a valid email address before sending."
+              ? "Please check your email format before sending."
               : "Please fill out all required fields before sending.",
             variant: "destructive",
         });
@@ -161,99 +168,135 @@ const Contact = () => {
     <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}>
       <Seo {...routeSeo['/contact']} />
       
-      <section className="bg-[#0C0D0D] text-white py-24 sm:py-32">
-        <div className="container mx-auto px-6">
-          <motion.div 
-            className="text-center max-w-3xl mx-auto"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-          >
-            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white uppercase mb-4 leading-tight break-words">
-              Request a <span className="text-accent-purple">Project Estimate</span>
+      <section className="contact relative bg-[#0C0D0D] text-white py-12 px-7 md:px-10 min-h-[900px]">
+        <div className="inner relative z-[2] max-w-[1100px] mx-auto">
+          {/* Hero */}
+          <div className="hero text-center max-w-[720px] mx-auto mb-7">
+            <h1 className="text-[clamp(1.75rem,3.6vw,2.85rem)] font-bold tracking-[-0.02em] leading-[1.1] uppercase mb-[14px]">
+              REQUEST A <span className="accent text-[#8B5CF6]">PROJECT ESTIMATE</span>
             </h1>
-            <p className="text-lg text-gray-400 mb-12">
+            <p className="text-base leading-[1.55] text-[#9ca3af]">
               Share the workflow, data problem, or computer-vision bottleneck you want solved. I typically respond within 24 hours with fit, next steps, and the clearest scope path.
             </p>
-          </motion.div>
+          </div>
 
-          {/* Social Proof Section */}
-          <motion.div
-            className="max-w-2xl mx-auto mb-8"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            role="region"
-            aria-label="Client success metrics"
-          >
-            <ul className="flex flex-wrap justify-center gap-6 text-center">
-              <li className="flex items-center gap-2">
-                <span className="text-2xl font-bold text-accent-purple">100%</span>
-                <span className="text-gray-400 text-sm">Job Success<br/>on Upwork</span>
-              </li>
-              <li className="hidden sm:block w-px h-12 bg-white/10" role="separator" aria-hidden="true"></li>
-              <li className="flex items-center gap-2">
-                <span className="text-2xl font-bold text-accent-purple">5★</span>
-                <span className="text-gray-400 text-sm">Average<br/>Rating</span>
-              </li>
-            </ul>
-          </motion.div>
+          {/* Proof strip */}
+          <ul className="proof flex flex-wrap justify-center gap-7 mb-9">
+            <li className="flex items-center gap-[10px]">
+              <span className="num text-[1.35rem] font-bold text-[#8B5CF6]">100%</span>
+              <span className="lab text-xs leading-[1.25] text-[#9ca3af]">Job Success<br/>on Upwork</span>
+            </li>
+            <span className="sep w-px h-9 bg-[rgba(255,255,255,0.1)]" role="separator" aria-hidden="true"></span>
+            <li className="flex items-center gap-[10px]">
+              <span className="num text-[1.35rem] font-bold text-[#8B5CF6]">5★</span>
+              <span className="lab text-xs leading-[1.25] text-[#9ca3af]">Average<br/>Rating</span>
+            </li>
+          </ul>
 
-          <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[0.85fr_1.15fr]">
-            <motion.aside
-              className="rounded-lg border border-white/10 bg-white/[0.04] p-6"
-              initial={{ opacity: 0, x: -16 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, delay: 0.35 }}
-            >
-              <h2 className="text-2xl font-bold uppercase text-white">What happens next</h2>
-              <div className="mt-6 space-y-5">
+          {/* Layout: aside + form */}
+          <div className="layout grid md:grid-cols-[0.82fr_1.18fr] gap-7 items-start">
+            {/* Aside */}
+            <aside className="aside border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] p-6 px-[22px]">
+              <h2 className="text-[1.15rem] font-bold uppercase tracking-[-0.01em] mb-[18px]">
+                WHAT HAPPENS NEXT
+              </h2>
+              <div className="space-y-[14px]">
                 {nextSteps.map((step, index) => (
-                  <div key={step} className="flex gap-3">
-                    <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-accent-purple" aria-hidden="true" />
-                    <p className="text-sm leading-relaxed text-gray-300">
-                      <span className="font-semibold text-white">Step {index + 1}:</span> {step}
+                  <div key={step} className="step flex gap-[10px]">
+                    <div className="tick flex-shrink-0 w-[14px] h-[14px] mt-[3px] border border-[rgba(139,92,246,0.7)] relative after:content-[''] after:absolute after:left-[3px] after:top-[1px] after:w-[5px] after:h-2 after:border-r-[1.5px] after:border-b-[1.5px] after:border-[#8B5CF6] after:rotate-[40deg]"></div>
+                    <p className="text-[0.85rem] leading-[1.5] text-[#9ca3af]">
+                      <strong className="text-white font-semibold">Step {index + 1}:</strong> {step}
                     </p>
                   </div>
                 ))}
               </div>
-              <div className="mt-8 rounded-lg border border-accent-purple/20 bg-accent-purple/10 p-4">
-                <p className="text-sm text-gray-300">Prefer email?</p>
-                <a href={socialLinks.emailHref} className="mt-1 inline-flex items-center gap-2 font-semibold text-white hover:text-accent-purple-text">
-                  <Mail className="h-4 w-4" aria-hidden="true" />
+              <div className="email-note mt-[22px] border border-[rgba(139,92,246,0.22)] bg-[rgba(139,92,246,0.08)] p-[14px]">
+                <p className="q text-[0.8rem] text-[#9ca3af] mb-[6px]">Prefer email?</p>
+                <a href={socialLinks.emailHref} className="text-[0.9rem] font-semibold text-white hover:text-[#a78bfa]">
                   {socialLinks.contactEmail}
                 </a>
+                <div className="sub mt-2 font-mono text-[9px] leading-[1.4] tracking-[0.08em] uppercase text-[#6b7280]">
+                  SECONDARY PATH · FORM REMAINS PRIMARY
+                </div>
               </div>
-            </motion.aside>
+            </aside>
 
-            <motion.form
+            {/* Form panel with detection box */}
+            <form
               onSubmit={handleSubmit}
+              action="javascript:void(0);"
               noValidate
               {...SENSITIVE_TELEMETRY_REGION_PROPS}
-              className="space-y-6 bg-white/5 p-6 sm:p-8 rounded-lg border border-white/10"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7, delay: 0.4 }}
+              className="form-panel relative border border-[rgba(139,92,246,0.42)] bg-gradient-to-b from-[rgba(139,92,246,0.035)] to-transparent bg-[length:100%_22%] bg-no-repeat p-7 px-[26px] pb-[26px]"
             >
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">Full Name *</label>
-                <Input type="text" id="name" name="name" placeholder="Alex from Acme Ops" value={formState.name} onChange={handleInputChange} className="h-14" required disabled={isSubmitting} aria-invalid={Boolean(fieldErrors.name)} aria-describedby={fieldErrors.name ? 'name-error' : undefined} />
+              {/* Corner brackets */}
+              <span className="bracket-tl absolute top-[5px] left-[5px] w-[18px] h-[18px] border-t-[1.5px] border-l-[1.5px] border-[#8B5CF6] pointer-events-none z-[5]"></span>
+              <span className="bracket-br absolute bottom-[5px] right-[5px] w-[18px] h-[18px] border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.55)] pointer-events-none z-[5]"></span>
+
+              <div className="meta font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] mb-5">
+                CONTACT · <em className="not-italic text-[#a78bfa]">DETECTED</em>
+              </div>
+
+              <div className="field relative mb-4">
+                <span className="field-meta absolute -top-[9px] left-0 px-[5px] bg-[#0C0D0D] font-mono text-[9px] tracking-[0.12em] uppercase text-[#a78bfa] pointer-events-none z-[4]">
+                  NAME · FIELD
+                </span>
+                <label htmlFor="name" className="flabel block font-mono text-[9px] tracking-[0.14em] uppercase text-[#6b7280] mb-2">
+                  Full Name <span className="text-[#a78bfa]">*</span>
+                </label>
+                <Input
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder="Alex from Acme Ops"
+                  value={formState.name}
+                  onChange={handleInputChange}
+                  className="ctrl w-full h-12 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.12)] px-[14px] text-[0.95rem] text-white rounded-none outline-none focus:border-[#8B5CF6] focus:shadow-[0_0_0_1px_rgba(139,92,246,0.35)] transition-all placeholder:text-[rgba(156,163,175,0.55)]"
+                  required
+                  disabled={isSubmitting}
+                  aria-invalid={Boolean(fieldErrors.name)}
+                  aria-describedby={fieldErrors.name ? 'name-error' : undefined}
+                />
                 {fieldErrors.name ? <p id="name-error" role="alert" className="mt-2 text-sm text-red-400">{fieldErrors.name}</p> : null}
               </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">Email Address *</label>
-                <Input type="email" id="email" name="email" placeholder="alex@company.com" value={formState.email} onChange={handleInputChange} className="h-14" required disabled={isSubmitting} aria-invalid={Boolean(fieldErrors.email)} aria-describedby={fieldErrors.email ? 'email-error' : undefined} />
+
+              <div className="field relative mb-4">
+                <span className="field-meta absolute -top-[9px] left-0 px-[5px] bg-[#0C0D0D] font-mono text-[9px] tracking-[0.12em] uppercase text-[#a78bfa] pointer-events-none z-[4]">
+                  EMAIL · FIELD
+                </span>
+                <label htmlFor="email" className="flabel block font-mono text-[9px] tracking-[0.14em] uppercase text-[#6b7280] mb-2">
+                  Email Address <span className="text-[#a78bfa]">*</span>
+                </label>
+                <Input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="alex@company.com"
+                  value={formState.email}
+                  onChange={handleInputChange}
+                  className="ctrl w-full h-12 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.12)] px-[14px] text-[0.95rem] text-white rounded-none outline-none focus:border-[#8B5CF6] focus:shadow-[0_0_0_1px_rgba(139,92,246,0.35)] transition-all placeholder:text-[rgba(156,163,175,0.55)]"
+                  required
+                  disabled={isSubmitting}
+                  aria-invalid={Boolean(fieldErrors.email)}
+                  aria-describedby={fieldErrors.email ? 'email-error' : undefined}
+                />
                 {fieldErrors.email ? <p id="email-error" role="alert" className="mt-2 text-sm text-red-400">{fieldErrors.email}</p> : null}
               </div>
-              <div>
-                <label htmlFor="budget" className="block text-sm font-medium text-gray-300 mb-2">Budget Range (Optional)</label>
+
+              <div className="field relative mb-4">
+                <span className="field-meta absolute -top-[9px] left-0 px-[5px] bg-[#0C0D0D] font-mono text-[9px] tracking-[0.12em] uppercase text-[#a78bfa] pointer-events-none z-[4]">
+                  BUDGET · FIELD
+                </span>
+                <label htmlFor="budget" className="flabel block font-mono text-[9px] tracking-[0.14em] uppercase text-[#6b7280] mb-2">
+                  Budget Range
+                </label>
                 <select
                   id="budget"
                   name="budget"
                   value={formState.budget}
                   onChange={(event) => handleSelectChange(event.target.value)}
                   disabled={isSubmitting}
-                  className="h-14 w-full rounded-md border border-white/20 bg-transparent px-4 text-md text-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-purple focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="ctrl w-full h-12 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.12)] px-[14px] text-[0.95rem] text-[#9ca3af] rounded-none outline-none focus:border-[#8B5CF6] focus:shadow-[0_0_0_1px_rgba(139,92,246,0.35)] transition-all"
                 >
                   <option value="">Select your budget range</option>
                   {BUDGET_OPTIONS.map((value) => (
@@ -261,52 +304,64 @@ const Contact = () => {
                   ))}
                 </select>
               </div>
-              <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-2">Project Description *</label>
-                <Textarea id="description" name="description" placeholder="Example: We need invoice OCR or a data extraction workflow that exports clean records to our CRM within 4 weeks..." value={formState.description} onChange={handleInputChange} rows={5} required disabled={isSubmitting} aria-invalid={Boolean(fieldErrors.description)} aria-describedby={fieldErrors.description ? 'description-error' : undefined} />
+
+              <div className="field relative mb-4">
+                <span className="field-meta absolute -top-[9px] left-0 px-[5px] bg-[#0C0D0D] font-mono text-[9px] tracking-[0.12em] uppercase text-[#a78bfa] pointer-events-none z-[4]">
+                  MESSAGE · FIELD
+                </span>
+                <label htmlFor="description" className="flabel block font-mono text-[9px] tracking-[0.14em] uppercase text-[#6b7280] mb-2">
+                  Project Description <span className="text-[#a78bfa]">*</span>
+                </label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  placeholder="Example: We need invoice OCR or a data extraction workflow that exports clean records to our CRM within 4 weeks..."
+                  value={formState.description}
+                  onChange={handleInputChange}
+                  rows={5}
+                  className="ctrl w-full min-h-[140px] bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.12)] px-[14px] py-[12px] text-[0.95rem] text-white rounded-none outline-none focus:border-[#8B5CF6] focus:shadow-[0_0_0_1px_rgba(139,92,246,0.35)] transition-all placeholder:text-[rgba(156,163,175,0.55)] resize-y"
+                  required
+                  disabled={isSubmitting}
+                  aria-invalid={Boolean(fieldErrors.description)}
+                  aria-describedby={fieldErrors.description ? 'description-error' : undefined}
+                />
                 {fieldErrors.description ? <p id="description-error" role="alert" className="mt-2 text-sm text-red-400">{fieldErrors.description}</p> : null}
-                <div className="mt-3 rounded-lg border border-white/10 bg-black/20 p-4">
+                <div className="mt-3 border border-[rgba(255,255,255,0.1)] bg-[rgba(0,0,0,0.2)] p-4">
                   <p className="text-sm font-semibold text-white">Helpful details to include:</p>
                   <ul className="mt-2 space-y-2 text-sm text-gray-400">
                     {descriptionPrompts.map((prompt) => (
                       <li key={prompt} className="flex gap-2">
-                        <span className="text-accent-purple">•</span>
+                        <span className="text-[#8B5CF6]">•</span>
                         <span>{prompt}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
               </div>
-              <div className="text-center">
-                 <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="group relative inline-flex items-center justify-center overflow-hidden rounded-full p-0.5 text-lg font-medium text-white transition-all duration-300 bg-gradient-to-br from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <span className="relative inline-flex items-center px-8 py-3.5 transition-all duration-75 ease-in bg-[#0C0D0D] rounded-full group-hover:bg-opacity-0">
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                          Sending...
-                        </>
-                      ) : (
-                        <>
-                          Request a Project Estimate <ArrowRight className="ml-2 h-5 w-5" />
-                        </>
-                      )}
-                    </span>
-                  </button>
+
+              <div className="text-center mt-6">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  aria-label="Submit Project Estimate Request"
+                  className="relative inline-flex items-center justify-center gap-3 border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.12)] px-10 py-4 font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.18)] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      SENDING...
+                    </>
+                  ) : (
+                    'SUBMIT · FIELD'
+                  )}
+                </button>
               </div>
-            </motion.form>
+            </form>
           </div>
 
-          <motion.div 
-            className="text-center mt-24"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.6 }}
-          >
-            <h2 className="text-2xl font-bold text-white mb-8">
+          {/* Platform links */}
+          <div className="text-center mt-24">
+            <h2 className="text-xl font-bold text-white mb-8 uppercase">
               Or connect on your preferred platform
             </h2>
             <div className="flex flex-wrap justify-center gap-4">
@@ -319,7 +374,7 @@ const Contact = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`Connect with Vivek Patel on ${link.name}`}
-                    className="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-lg text-white font-semibold transition-all hover:bg-white/10 hover:border-accent-purple/50"
+                    className="flex items-center gap-3 px-6 py-3 bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] text-white font-semibold transition-all hover:bg-[rgba(255,255,255,0.1)] hover:border-[rgba(139,92,246,0.5)]"
                   >
                     <Icon aria-hidden="true" />
                     {link.name}
@@ -327,19 +382,12 @@ const Contact = () => {
                 );
               })}
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div 
-            className="text-center mt-24"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.8 }}
-          >
-              <div className="flex justify-center space-x-6">
-                <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile" className="text-gray-400 hover:text-accent-purple transition-colors"><Linkedin size={24} /></a>
-                <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub profile" className="text-gray-400 hover:text-accent-purple transition-colors"><Github size={24} /></a>
-              </div>
-          </motion.div>
+          <div className="flex justify-center space-x-6 mt-12">
+            <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile" className="text-gray-400 hover:text-[#8B5CF6] transition-colors"><Linkedin size={24} /></a>
+            <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub profile" className="text-gray-400 hover:text-[#8B5CF6] transition-colors"><Github size={24} /></a>
+          </div>
         </div>
       </section>
     </motion.div>

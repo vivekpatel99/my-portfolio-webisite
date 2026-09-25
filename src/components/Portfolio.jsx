@@ -5,23 +5,19 @@ import CaseStudyCard from './CaseStudyCard.js';
 
 const Portfolio = () => {
   return (
-    <section id="portfolio" className="py-24 bg-[#0C0D0D]">
-      <div className="container mx-auto px-6">
-        <div className="flex flex-col lg:flex-row gap-8 items-start justify-between">
-          <div className="w-full lg:w-2/3">
-            <div className="inline-block pb-2 mb-4.5 border-b border-[#8B5CF6]/35 text-[10px] font-mono tracking-[0.16em] uppercase leading-none text-[#6b7280]">
-              PORTFOLIO · <span className="text-[#a78bfa]">CASE STUDIES</span>
-            </div>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight uppercase">
-              Featured <span className="text-accent-purple">Case Studies</span>
-            </h2>
-            <p className="text-lg text-gray-400 mt-6 mb-12">
-              Selected work in data extraction, OCR, and computer vision. Each case study shows the problem, the build, and the outcome.
-            </p>
-          </div>
-        </div>
+    <section id="portfolio" className="portfolio relative bg-[#0C0D0D] py-16 px-7 md:px-12">
+      <div className="inner relative z-[2] max-w-[1180px] mx-auto">
+        <span className="eyebrow inline-block font-mono text-[10px] tracking-[0.16em] uppercase text-[#6b7280] mb-[18px] pb-2 border-b border-[rgba(139,92,246,0.35)]">
+          PORTFOLIO · <em className="not-italic text-[#a78bfa]">CASE STUDIES</em>
+        </span>
+        <h2 className="text-[clamp(1.75rem,3.2vw,2.35rem)] font-bold tracking-[-0.02em] leading-[1.15] mb-[14px]">
+          FEATURED <span className="text-[#8B5CF6]">CASE STUDIES</span>
+        </h2>
+        <p className="blurb max-w-[560px] text-[0.95rem] leading-[1.55] text-[#9ca3af] mb-10">
+          Selected work in data extraction, OCR, and computer vision. Each case study shows the problem, the build, and the outcome.
+        </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[22px]">
           {featuredCaseStudies.map((project) => (
             <CaseStudyCard
               key={project.id}
@@ -29,10 +25,11 @@ const Portfolio = () => {
             />
           ))}
         </div>
-        <div className="mt-8">
+        
+        <div className="footer-link mt-9 text-center">
           <Link
             to="/case-studies/"
-            className="min-h-11 inline-flex items-center text-accent-purple-text hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple focus-visible:ring-offset-2 focus-visible:ring-offset-[#0C0D0D]"
+            className="text-[0.9rem] text-[#a78bfa] border-b border-[rgba(167,139,250,0.4)] pb-0.5 hover:text-white hover:border-[#8B5CF6] transition-colors"
           >
             View all case studies ({collectionCaseStudies.length})
           </Link>

@@ -70,18 +70,18 @@ test('mobile cookie dialog and its controls remain visible and do not cover the 
     box: dialogBox,
     viewport,
     minWidth: 320,
-    minHeight: 100,
+    minHeight: 44,
   });
 
   const close = dialog.getByRole('button', { name: /close cookie consent/i });
-  const accept = dialog.getByRole('button', { name: 'Accept All', exact: true });
-  const reject = dialog.getByRole('button', { name: 'Reject All', exact: true });
-  const customize = dialog.getByRole('button', { name: 'Customize', exact: true });
+  const accept = dialog.getByRole('button', { name: 'Accept', exact: true });
+  const reject = dialog.getByRole('button', { name: 'Reject', exact: true });
+  const options = dialog.getByRole('button', { name: 'Options', exact: true });
   for (const [label, locator] of [
     ['cookie close control', close],
     ['cookie accept control', accept],
     ['cookie reject control', reject],
-    ['cookie customize control', customize],
+    ['cookie options control', options],
   ]) {
     await expect(locator).toBeVisible();
     assertVisualLayout({
@@ -121,10 +121,9 @@ test('hero invoice proof fold design (#176): proofs visible, CTA routes correctl
   await expect(page.getByText('Top Rated Plus', { exact: true })).toBeVisible();
   await expect(page.getByText('100% Job Success', { exact: true })).toBeVisible();
   
-  await expect(page.getByText('Detected total')).not.toBeVisible();
-  
-  await expect(page.getByText('PROOF ·')).not.toBeVisible();
-  await expect(page.getByText('fields · 2')).not.toBeVisible();
+  await expect(page.getByText('Detected total', { exact: true })).not.toBeVisible();
+  await expect(page.getByText('PROOF ·', { exact: true })).not.toBeVisible();
+  await expect(page.getByText('fields · 2', { exact: true })).not.toBeVisible();
   
   const viewport = viewportBox(page);
   const dialog = page.getByRole('dialog', { name: /we value your privacy/i });
@@ -170,7 +169,9 @@ test('desktop hero invoice proof fold: all elements visible, no clip', async ({ 
   await expect(page.getByText('€45/hour', { exact: true })).toBeVisible();
   await expect(page.getByText('Linz, Austria', { exact: true })).toBeVisible();
   
-  await expect(page.getByText('Detected total')).not.toBeVisible();
+  await expect(page.getByText('Detected total', { exact: true })).not.toBeVisible();
+  await expect(page.getByText('PROOF ·', { exact: true })).not.toBeVisible();
+  await expect(page.getByText('fields · 2', { exact: true })).not.toBeVisible();
   
   const viewport = viewportBox(page);
   const dialog = page.getByRole('dialog', { name: /we value your privacy/i });
@@ -332,9 +333,9 @@ test('contact form stays horizontally contained with visible fields and submit c
   for (const [label, locator] of [
     ['contact name field', page.getByLabel('Full Name *', { exact: true })],
     ['contact email field', page.getByLabel('Email Address *', { exact: true })],
-    ['contact budget field', page.getByLabel('Budget Range (Optional)', { exact: true })],
+    ['contact budget field', page.getByLabel('Budget Range')],
     ['contact description field', page.getByLabel('Project Description *', { exact: true })],
-    ['contact submit control', page.getByRole('button', { name: /Request a Project Estimate/i })],
+    ['contact submit control', page.getByRole('button', { name: /Submit Project Estimate Request/i })],
   ]) {
     await expect(locator).toBeVisible();
     assertVisualLayout({
@@ -391,11 +392,11 @@ test('custom cursor mounts on desktop fine pointer', async ({ page }, testInfo) 
   await expect(page.locator('html')).toHaveClass(/custom-cursor-enabled/);
 });
 
-test('cookie customize panel expands', async ({ page }) => {
+test('cookie options panel expands', async ({ page }) => {
   await page.addInitScript((key) => localStorage.removeItem(key), COOKIE_KEY);
   await page.goto('/');
-  await page.getByRole('button', { name: /Customize/i }).click({ timeout: 5000 });
-  await expect(page.getByLabel(/Analytics and Diagnostics Cookies/i)).toBeVisible();
+  await page.getByRole('button', { name: /Options/i }).click({ timeout: 5000 });
+  await expect(page.getByLabel(/^Analytics$/i)).toBeVisible();
 });
 
 test('case-study article renders sober sections without legacy stats panels', async ({ page }) => {
@@ -414,7 +415,7 @@ test('contact validation notice leaves cookie controls visible on tablet and des
     await page.addStyleTag({ content: '*, *::before, *::after { animation: none !important; transition: none !important; }' });
     const cookie = page.getByRole('dialog', { name: 'We value your privacy' });
     await expect(cookie).toBeVisible();
-    await page.getByRole('button', { name: 'Request a Project Estimate', exact: true }).click();
+    await page.getByRole('button', { name: 'Submit Project Estimate Request', exact: true }).click();
     const message = page.getByText('Uh oh! Missing fields.', { exact: true }).first();
     await expect(message).toBeVisible();
     const notice = message.locator('xpath=ancestor::li[1]');

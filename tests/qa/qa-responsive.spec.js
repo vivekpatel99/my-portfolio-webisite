@@ -106,23 +106,27 @@ test('mobile cookie banner leaves the hero estimate CTA clickable', async ({ pag
   await expect(page).toHaveURL(/\/contact/);
 });
 
-test('desktop cookie banner stays a bounded corner card', async ({ page }) => {
+test('desktop cookie banner is a full-width horizontal strip', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.addInitScript(() => localStorage.removeItem('cookie_consent_preferences'));
   await page.goto('/');
   const banner = page.getByRole('dialog', { name: /we value your privacy/i });
   await expect(banner).toBeVisible({ timeout: 5000 });
   const box = await banner.boundingBox();
-  expect(box.width).toBeLessThan(560);
-  expect(box.x + box.width).toBeGreaterThan(1280 - 560);
+  expect(box.width).toBeGreaterThan(1200);
+  expect(box.x).toBeLessThan(10);
+  expect(box.y).toBeGreaterThan(60);
+  expect(box.y).toBeLessThan(80);
 });
 
 test('expanded cookie settings stay reachable on a short phone', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 568 });
   await page.addInitScript(() => localStorage.removeItem('cookie_consent_preferences'));
   await page.goto('/');
-  await expect(page.getByRole('button', { name: /Customize/i })).toBeVisible({ timeout: 5000 });
-  await page.getByRole('button', { name: /Customize/i }).click();
+  const optionsButton = page.getByRole('button', { name: /Options/i });
+  await expect(optionsButton).toBeVisible({ timeout: 5000 });
+  await expect(optionsButton).toBeEnabled();
+  await optionsButton.click();
   await expect(page.getByRole('button', { name: /Save Preferences/i })).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
   expect(overflow).toBe(false);

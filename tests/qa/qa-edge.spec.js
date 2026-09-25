@@ -12,13 +12,13 @@ test.beforeEach(async ({ page }) => {
 
 test('cookie banner appears after delay on first visit', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('button', { name: /Accept All/i })).toBeHidden();
-  await expect(page.getByRole('button', { name: /Accept All/i })).toBeVisible({ timeout: 5000 });
+  await expect(page.getByRole('button', { name: /Accept/i })).toBeHidden();
+  await expect(page.getByRole('button', { name: /Accept/i })).toBeVisible({ timeout: 5000 });
 });
 
 test('accept all persists consent in localStorage', async ({ page }) => {
   await page.goto('/');
-  const acceptAll = page.getByRole('button', { name: /Accept All/i });
+  const acceptAll = page.getByRole('button', { name: /Accept/i });
   await expect(acceptAll).toBeVisible({ timeout: 5000 });
   await acceptAll.click();
   await expect
@@ -31,7 +31,7 @@ test('accept all persists consent in localStorage', async ({ page }) => {
 
 test('reject all persists rejection', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: /Reject All/i }).click({ timeout: 5000 });
+  await page.getByRole('button', { name: 'Reject', exact: true }).click({ timeout: 5000 });
   const stored = await page.evaluate((key) => localStorage.getItem(key), COOKIE_KEY);
   const prefs = JSON.parse(stored);
   expect(prefs.analytics).toBe(false);
@@ -47,22 +47,22 @@ test('reject all blocks analytics and Sentry network requests', async ({ page })
   });
 
   await page.goto('/');
-  await page.getByRole('button', { name: /Reject All/i }).click({ timeout: 5000 });
+  await page.getByRole('button', { name: 'Reject', exact: true }).click({ timeout: 5000 });
   await page.waitForTimeout(1000);
   expect(telemetryRequests).toEqual([]);
 });
 
 test('manage consent reopens banner from footer', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: /Accept All/i }).click({ timeout: 5000 });
+  await page.getByRole('button', { name: /Accept/i }).click({ timeout: 5000 });
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-  await page.getByRole('link', { name: /Manage Consent/i }).click();
-  await expect(page.getByRole('button', { name: /Accept All/i })).toBeVisible();
+  await page.getByRole('button', { name: /Manage Consent/i }).click();
+  await expect(page.getByRole('button', { name: /Accept/i })).toBeVisible();
 });
 
 test.skip('TODO: accepting analytics consent should load Google Analytics when a measurement ID is configured', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: /Accept All/i }).click({ timeout: 5000 });
+  await page.getByRole('button', { name: /Accept/i }).click({ timeout: 5000 });
   const gtagLoaded = await page.evaluate(() => typeof window.gtag !== 'undefined');
   expect(gtagLoaded).toBe(true);
 });
@@ -80,7 +80,7 @@ test('corrupt localStorage handled gracefully', async ({ page }) => {
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto('/');
   await expect(page.locator('#main-content')).toBeVisible();
-  await expect(page.getByRole('button', { name: /Accept All/i })).toBeVisible({ timeout: 5000 });
+  await expect(page.getByRole('button', { name: /Accept/i })).toBeVisible({ timeout: 5000 });
   expect(errors.filter((e) => e.includes('JSON'))).toEqual([]);
 });
 

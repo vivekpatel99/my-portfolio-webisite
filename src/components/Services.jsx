@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, ArrowRight } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
+import { Plus } from 'lucide-react';
 import {
   HOURLY_FROM_LABEL,
   serviceOffers,
@@ -9,114 +9,135 @@ import {
 } from '@/data/serviceOffers';
 
 const Services = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const handleServiceClick = index => {
+  const [activeIndex, setActiveIndex] = useState(null);
+  
+  const handleServiceClick = (index) => {
     setActiveIndex(activeIndex === index ? null : index);
   };
 
-  return <section id="services" className="py-24 bg-[#0C0D0D]">
-    <div className="container mx-auto px-6 relative z-10">
-      <div className="mb-16">
-        <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-white uppercase">
-          SERVICE <span className="text-accent-purple">OFFERS</span>
+  const GeometricGlyph = () => (
+    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" className="w-[14px] h-[14px]">
+      <path d="M2 2h4M2 2v4"/>
+      <path d="M12 12H8M12 12V8"/>
+      <rect x="4.5" y="4.5" width="5" height="5"/>
+    </svg>
+  );
+
+  return (
+    <section id="services" className="relative bg-[#0C0D0D] py-14 px-7 md:px-12 min-h-[900px]">
+      <div className="relative z-[2] max-w-[1080px] mx-auto">
+        <h2 className="text-[clamp(1.85rem,3.4vw,2.6rem)] font-bold tracking-[-0.02em] leading-[1.1] uppercase mb-[14px]">
+          SERVICE <span className="text-[#8B5CF6]">OFFERS</span>
         </h2>
-        <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mt-4">
+        <p className="text-[0.95rem] leading-[1.55] text-[#9ca3af] max-w-[640px] mb-9">
           Hourly engagements, {HOURLY_FROM_LABEL}. Each offer lists typical duration and what is in or out of scope. Estimates go through the contact form.
         </p>
-      </div>
 
-      <div className="border-t border-gray-800">
-        {serviceOffers.map((service, index) => <div key={service.id} className="border-b border-gray-800">
-          <div
-            className="flex justify-between items-center cursor-pointer py-8 group gap-4"
-            onClick={() => handleServiceClick(index)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                handleServiceClick(index);
-              }
-            }}
-            role="button"
-            tabIndex={0}
-            aria-expanded={activeIndex === index}
-            aria-controls={`service-content-${service.id}`}
-          >
-            <div className="flex min-w-0 flex-1 items-center gap-4">
-              <h3 className={`text-xl sm:text-2xl md:text-5xl font-bold transition-colors duration-300 break-words ${activeIndex === index ? 'text-white' : 'text-gray-400'}`}>
-                {service.title}
-              </h3>
-              {activeIndex === index && <motion.div className="w-4 h-4 shrink-0 bg-accent-purple rounded-full" initial={{
-                scale: 0
-              }} animate={{
-                scale: 1
-              }} />}
-            </div>
+        <div className="flex flex-col gap-[14px]">
+          {serviceOffers.map((service, index) => (
+            <article
+              key={service.id}
+              className={`relative border ${activeIndex === index ? 'border-[rgba(139,92,246,0.72)]' : 'border-[rgba(139,92,246,0.28)]'} bg-transparent`}
+            >
+              {/* Corner brackets */}
+              <span 
+                className={`absolute top-[5px] left-[5px] w-4 h-4 border-t-[1.5px] border-l-[1.5px] border-[rgba(139,92,246,0.85)] pointer-events-none z-[5] transition-opacity ${activeIndex === index ? 'opacity-100' : 'opacity-45'}`}
+              ></span>
+              <span 
+                className={`absolute bottom-[5px] right-[5px] w-4 h-4 border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.45)] pointer-events-none z-[5] transition-opacity ${activeIndex === index ? 'opacity-100' : 'opacity-45'}`}
+              ></span>
 
-            <motion.div className="text-accent-purple shrink-0" animate={{
-              rotate: activeIndex === index ? 45 : 0
-            }}
-              transition={{
-                duration: 0.3
-              }}>
-              <Plus size={40} className={`${activeIndex === index ? 'text-accent-purple' : 'text-gray-400'} transition-colors`} />
-            </motion.div>
-          </div>
-
-          <AnimatePresence initial={false}>
-            {activeIndex === index && <motion.div
-              id={`service-content-${service.id}`}
-              initial={{
-                opacity: 0,
-                height: 0,
-                y: -20
-              }} animate={{
-                opacity: 1,
-                height: 'auto',
-                y: 0
-              }} exit={{
-                opacity: 0,
-                height: 0,
-                y: -20
-              }} transition={{
-                duration: 0.4,
-                ease: "easeInOut"
-              }} className="overflow-hidden">
-              <div className="pb-8 pr-4 sm:pr-8 md:pr-16 space-y-6">
-                <div className="flex flex-wrap gap-3 text-sm sm:text-base">
-                  <p className="text-white font-semibold">{HOURLY_FROM_LABEL}</p>
-                  <p className="text-gray-300">{typicalDurationLabel(service)}</p>
-                </div>
-                <div className="grid gap-6 md:grid-cols-2 max-w-4xl">
-                  <div>
-                    <h4 className="text-white font-semibold mb-3">In scope</h4>
-                    <ul className="space-y-2">
-                      {service.inScope.map((item) => (
-                        <li key={item} className="text-gray-400 text-sm">{item}</li>
-                      ))}
-                    </ul>
+              <div
+                className="flex items-start justify-between gap-4 py-[22px] px-7 cursor-pointer"
+                onClick={() => handleServiceClick(index)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleServiceClick(index);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                aria-expanded={activeIndex === index ? 'true' : 'false'}
+                aria-controls={`service-content-${service.id}`}
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] mb-3">
+                    SERVICE · <em className={`not-italic ${activeIndex === index ? 'text-[#8B5CF6]' : 'text-[#a78bfa]'} transition-colors`}>OFFER {String(index + 1).padStart(2, '0')}</em>
                   </div>
-                  <div>
-                    <h4 className="text-white font-semibold mb-3">Out of scope</h4>
-                    <ul className="space-y-2">
-                      {service.outOfScope.map((item) => (
-                        <li key={item} className="text-gray-400 text-sm">{item}</li>
-                      ))}
-                    </ul>
+                  <div className="flex items-center gap-[14px]">
+                    <span className={`flex-shrink-0 w-[14px] h-[14px] transition-all ${activeIndex === index ? 'text-[#8B5CF6] opacity-100' : 'text-[#6b7280] opacity-70'}`}>
+                      <GeometricGlyph />
+                    </span>
+                    <h3 className={`text-[clamp(1rem,2.2vw,1.55rem)] font-bold tracking-[-0.015em] leading-[1.2] uppercase transition-colors ${activeIndex === index ? 'text-white' : 'text-[#9ca3af]'}`}>
+                      {service.title}
+                    </h3>
                   </div>
                 </div>
-                <p className="text-lg text-gray-400 max-w-2xl">{service.summary}</p>
-                <Link
-                  to={`/services/${service.id}`}
-                  className="inline-flex items-center gap-2 text-accent-purple hover:text-accent-purple/80 transition-colors"
-                >
-                  View details <ArrowRight size={16} />
-                </Link>
+
+                <span className={`flex-shrink-0 w-7 h-7 grid place-items-center mt-[18px] transition-all ${activeIndex === index ? 'text-[#8B5CF6] rotate-45' : 'text-[#6b7280] rotate-0'}`}>
+                  <Plus className="w-[22px] h-[22px]" />
+                </span>
               </div>
-            </motion.div>}
-          </AnimatePresence>
-        </div>)}
+
+              <AnimatePresence>
+                {activeIndex === index && (
+                  <div id={`service-content-${service.id}`} className="px-7 pb-[26px]">
+                    <div className="flex flex-wrap gap-[10px] gap-x-7 mb-5 pb-4 border-b border-[rgba(255,255,255,0.06)]">
+                      <div className="font-mono text-[11px] leading-[1.4] tracking-[0.04em] text-[#6b7280]">
+                        <span className="tracking-[0.08em] uppercase">RATE</span> · <strong className="font-medium text-[#d8caff] font-sans text-[0.88rem] tracking-normal">{HOURLY_FROM_LABEL}</strong>
+                      </div>
+                      <div className="font-mono text-[11px] leading-[1.4] tracking-[0.04em] text-[#6b7280]">
+                        <span className="tracking-[0.08em] uppercase">DURATION</span> · <strong className="font-medium text-[#d8caff] font-sans text-[0.88rem] tracking-normal">{typicalDurationLabel(service)}</strong>
+                      </div>
+                    </div>
+
+                    <p className="text-[0.9rem] leading-[1.55] text-[#9ca3af] mb-5 max-w-[720px]">
+                      {service.summary}
+                    </p>
+
+                    <div className="grid md:grid-cols-2 gap-[14px] mb-5">
+                      <div className="relative border border-[rgba(139,92,246,0.32)] p-[14px] px-4 pb-4">
+                        <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[#a78bfa] mb-3">
+                          IN SCOPE
+                        </div>
+                        <ul>
+                          {service.inScope.map((item, i) => (
+                            <li key={i} className="relative pl-[14px] text-[0.84rem] leading-[1.45] text-[#9ca3af] mb-2 last:mb-0 before:content-[''] before:absolute before:left-0 before:top-[0.55em] before:w-[5px] before:h-px before:bg-[rgba(139,92,246,0.7)]">
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="relative border border-[rgba(255,255,255,0.1)] p-[14px] px-4 pb-4">
+                        <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] mb-3">
+                          OUT OF SCOPE
+                        </div>
+                        <ul>
+                          {service.outOfScope.map((item, i) => (
+                            <li key={i} className="relative pl-[14px] text-[0.84rem] leading-[1.45] text-[#9ca3af] mb-2 last:mb-0 before:content-[''] before:absolute before:left-0 before:top-[0.55em] before:w-[5px] before:h-px before:bg-[rgba(156,163,175,0.55)]">
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+
+                    <Link
+                      to={`/services/${service.id}`}
+                      className="text-[0.9rem] text-[#a78bfa] border-b border-[rgba(167,139,250,0.4)] pb-0.5 hover:text-white hover:border-[#8B5CF6] transition-colors"
+                    >
+                      View details →
+                    </Link>
+                  </div>
+                )}
+              </AnimatePresence>
+            </article>
+          ))}
+        </div>
       </div>
-    </div>
-  </section>;
+    </section>
+  );
 };
+
 export default Services;

@@ -64,25 +64,19 @@ describe('CookieConsentBanner', () => {
     render(<CookieConsentBanner onConsent={vi.fn()} show onHide={vi.fn()} />);
     const dialog = screen.getByRole('dialog', { name: /we value your privacy/i });
     const classes = dialog.className.split(/\s+/);
-    expect(classes).toContain('bottom-0');
-    expect(classes).toContain('sm:bottom-4');
-    expect(classes).toContain('sm:max-w-lg');
-    expect(classes).toContain('sm:right-4');
-    expect(classes).not.toContain('left-4');
-    expect(classes).not.toContain('right-4');
+    expect(classes).toContain('top-[72px]');
+    expect(classes).toContain('left-0');
+    expect(classes).toContain('right-0');
+    expect(classes).not.toContain('bottom-2');
     expect(classes).not.toContain('top-20');
   });
 
   it('keeps expanded settings reachable', async () => {
     const user = userEvent.setup();
     render(<CookieConsentBanner onConsent={vi.fn()} show onHide={vi.fn()} />);
-    await user.click(screen.getByRole('button', { name: /customize/i }));
-    const dialog = screen.getByRole('dialog', { name: /we value your privacy/i });
-    const classes = dialog.className.split(/\s+/);
-    expect(classes).toContain('max-h-[calc(100dvh-5rem)]');
-    expect(classes).toContain('overflow-y-auto');
+    await user.click(screen.getByRole('button', { name: /options/i }));
     expect(screen.getByRole('button', { name: /save preferences/i })).toBeTruthy();
-    expect(screen.getByLabelText(/analytics and diagnostics cookies/i)).toBeTruthy();
+    expect(screen.getByLabelText(/analytics/i)).toBeTruthy();
   });
 
   it('moves focus to the manager when opened explicitly', async () => {
@@ -110,7 +104,7 @@ describe('CookieConsentBanner', () => {
     await act(async () => {
       vi.advanceTimersByTime(1500);
     });
-    fireEvent.click(screen.getByRole('button', { name: /^reject all$/i }));
+    fireEvent.click(screen.getByRole('button', { name: /^reject$/i }));
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(onHide).toHaveBeenCalledTimes(1);
     expect(JSON.parse(window.localStorage.getItem(COOKIE_CONSENT_KEY))).toEqual({

@@ -47,7 +47,7 @@ describe('Portfolio', () => {
         </MemoryRouter>,
       );
 
-      const eyebrow = container.querySelector('div[class*="border-b"][class*="border-[#8B5CF6]/35"]');
+      const eyebrow = container.querySelector('.eyebrow');
       expect(eyebrow).toBeTruthy();
       expect(eyebrow.textContent).toContain('PORTFOLIO ·');
       expect(eyebrow.textContent).toContain('CASE STUDIES');
@@ -56,9 +56,9 @@ describe('Portfolio', () => {
       expect(eyebrow.className).toContain('uppercase');
       expect(eyebrow.className).toContain('border-b');
       expect(eyebrow.className).not.toContain('rounded-full');
-      const purpleSpan = eyebrow.querySelector('span[class*="text-[#a78bfa]"]');
-      expect(purpleSpan).toBeTruthy();
-      expect(purpleSpan.textContent).toBe('CASE STUDIES');
+      const purpleEm = eyebrow.querySelector('em.not-italic.text-\\[\\#a78bfa\\]');
+      expect(purpleEm).toBeTruthy();
+      expect(purpleEm.textContent).toBe('CASE STUDIES');
     });
   });
 });

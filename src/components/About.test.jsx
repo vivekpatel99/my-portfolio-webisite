@@ -22,4 +22,12 @@ describe('About', () => {
     expect(screen.queryByText(/37s/)).toBeNull();
     expect(screen.queryByText(/2\.5s/)).toBeNull();
   });
+
+  it('renders craft markers: ABOUT · DETECTED, PHOTO · FIELD, BIO · FIELD', () => {
+    render(<About />);
+    expect(screen.getByText(/ABOUT ·/i)).toBeTruthy();
+    expect(screen.getByText(/DETECTED/i)).toBeTruthy();
+    expect(screen.getAllByText(/PHOTO · FIELD/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/BIO ·/i)).toBeTruthy();
+  });
 });

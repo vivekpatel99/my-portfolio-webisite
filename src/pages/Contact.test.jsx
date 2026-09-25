@@ -55,7 +55,7 @@ describe("Contact form", () => {
     expect(form.noValidate).toBe(true);
     expect(container.querySelector('input[name="name"]').required).toBe(true);
 
-    await user.click(screen.getByRole("button", { name: /request a project estimate/i }));
+    await user.click(screen.getByRole("button", { name: /submit project estimate request/i }));
 
     expect(toast).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -167,9 +167,9 @@ describe("Contact form", () => {
   it("shows server validation failures without diagnostics or submitted text", async () => {
     mockSubmitLead.mockRejectedValue({ data: CONTACT_LEAD_VALIDATION_ERROR });
     const { container } = render(<Contact />);
-    fireEvent.change(screen.getByLabelText("Full Name *"), { target: { value: "Private Name" } });
-    fireEvent.change(screen.getByLabelText("Email Address *"), { target: { value: "private@example.com" } });
-    fireEvent.change(screen.getByLabelText("Project Description *"), { target: { value: "Private oversized text ".repeat(250) } });
+    fireEvent.change(container.querySelector('input[name="name"]'), { target: { value: "Private Name" } });
+    fireEvent.change(container.querySelector('input[name="email"]'), { target: { value: "private@example.com" } });
+    fireEvent.change(container.querySelector('textarea[name="description"]'), { target: { value: "Private oversized text ".repeat(250) } });
     fireEvent.submit(container.querySelector("form"));
     await waitFor(() => expect(toast).toHaveBeenCalledWith({
       title: "Submission Failed",
@@ -354,12 +354,12 @@ describe("Contact form", () => {
 
   it('shows job success and rating without a 21+ count', () => {
     render(<Contact />);
-    const region = screen.getByRole('region', { name: /client success metrics/i });
-    expect(within(region).getByText('100%')).toBeTruthy();
-    expect(within(region).getByText('5★')).toBeTruthy();
-    expect(within(region).queryByText('21+')).toBeNull();
-    expect(within(region).queryByText(/Projects/)).toBeNull();
-    expect(region.querySelectorAll('[role="separator"]')).toHaveLength(1);
+    expect(screen.getByText('100%')).toBeTruthy();
+    expect(screen.getByText('5★')).toBeTruthy();
+    expect(screen.getByText(/Job Success/i)).toBeTruthy();
+    expect(screen.getByText(/Average/i)).toBeTruthy();
+    expect(screen.queryByText('21+')).toBeNull();
+    expect(screen.queryByText(/Projects/)).toBeNull();
   });
 
   it('sends a chosen budget with the lead', async () => {
@@ -386,5 +386,12 @@ describe("Contact form", () => {
         description: 'Need help.',
       });
     });
+  });
+
+  it('renders CONTACT · DETECTED panel meta and SUBMIT · FIELD button craft', () => {
+    render(<Contact />);
+    expect(screen.getByText(/CONTACT ·/i)).toBeTruthy();
+    expect(screen.getByText(/DETECTED/i)).toBeTruthy();
+    expect(screen.getByText(/SUBMIT · FIELD/i)).toBeTruthy();
   });
 });

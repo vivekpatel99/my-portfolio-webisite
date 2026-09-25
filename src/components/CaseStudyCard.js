@@ -24,6 +24,12 @@ const formatCompletionDate = (completedAt) => {
   return `${MONTH_NAMES[Number(month) - 1]} ${year}`;
 };
 
+const ArrowGlyph = () => 
+  React.createElement('svg', { viewBox: '0 0 16 16', fill: 'none', stroke: 'currentColor', strokeWidth: '1.5', strokeLinecap: 'square', className: 'w-4 h-4' },
+    React.createElement('path', { d: 'M5 3H13V11' }),
+    React.createElement('path', { d: 'M13 3L4 12' })
+  );
+
 const CaseStudyCard = ({
   project,
   fromCollection = false,
@@ -36,15 +42,15 @@ const CaseStudyCard = ({
 
   return React.createElement(
     'article',
-    { className: 'group relative flex h-full flex-col overflow-hidden rounded-none border border-[#8B5CF6]/40 bg-[#0C0D0D] transition-colors hover:border-[#8B5CF6] focus-within:ring-2 focus-within:ring-accent-purple' },
-    React.createElement('span', { className: 'absolute top-1.5 left-1.5 w-[18px] h-[18px] pointer-events-none z-10 before:content-[""] before:absolute before:top-0 before:left-0 before:w-[14px] before:h-[14px] before:border-t-[1.5px] before:border-l-[1.5px] before:border-[#8B5CF6]/85', 'aria-hidden': true }),
-    React.createElement('span', { className: 'absolute bottom-1.5 right-1.5 w-[18px] h-[18px] pointer-events-none z-10 before:content-[""] before:absolute before:bottom-0 before:right-0 before:w-[14px] before:h-[14px] before:border-b-[1.5px] before:border-r-[1.5px] before:border-white/45', 'aria-hidden': true }),
+    { className: 'card relative flex flex-col bg-[#0C0D0D] border border-[rgba(139,92,246,0.4)] overflow-hidden hover:border-[#8B5CF6] focus-within:outline focus-within:outline-2 focus-within:outline-[rgba(139,92,246,0.55)] focus-within:outline-offset-2 transition-colors' },
+    React.createElement('span', { className: 'bracket-tl absolute top-[6px] left-[6px] w-[18px] h-[18px] border-t-[1.5px] border-l-[1.5px] border-[rgba(139,92,246,0.85)] pointer-events-none z-[5]' }),
+    React.createElement('span', { className: 'bracket-br absolute bottom-[6px] right-[6px] w-[18px] h-[18px] border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.45)] pointer-events-none z-[5]' }),
     React.createElement(
       Link,
       {
         to: fromCollection ? `/project/${project.slug}/?from=collection` : `/project/${project.slug}/`,
         state: fromCollection ? { fromCollection: true } : undefined,
-        className: 'block focus:outline-none after:absolute after:inset-0 after:content-[" "]',
+        className: 'block focus:outline-none',
         'aria-label': `Read case study: ${project.cardTitle || project.title}`,
         onClickCapture,
         onPointerDownCapture,
@@ -52,43 +58,41 @@ const CaseStudyCard = ({
       },
       React.createElement(
         'div',
-        { className: 'relative flex min-h-[320px] items-end bg-[#19191f] p-5' },
+        { className: 'media relative min-h-[300px] bg-[#111] overflow-hidden' },
         project.image ? React.createElement('img', {
-          className: 'absolute inset-0 h-full w-full object-cover',
+          className: 'absolute inset-0 w-full h-full object-cover block',
           alt: project.image.alt, src: project.image.src,
           width: project.image.width, height: project.image.height, loading: 'lazy',
         }) : null,
-        React.createElement('div', { className: 'absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent', 'aria-hidden': true }),
+        React.createElement('div', { className: 'scrim absolute inset-0 bg-gradient-to-b from-transparent via-[rgba(12,13,13,0.35)] to-[rgba(12,13,13,0.92)] z-[1]', 'aria-hidden': true }),
         React.createElement(
-          'div', { className: 'relative flex w-full items-end gap-4' },
-          React.createElement(
-            'div', { className: 'min-w-0 flex-1' },
-            project.category ? React.createElement('div', { className: 'mb-2.5 inline-block pb-1.5 border-b border-[#8B5CF6]/45 text-[10px] font-mono tracking-[0.12em] uppercase leading-none text-[#d8caff]' }, project.category, ' · ', React.createElement('span', { className: 'text-[#a78bfa]' }, 'CASE STUDY')) : null,
-            React.createElement('h3', { className: 'break-words text-xl font-bold leading-tight text-white' }, project.cardTitle || project.title),
-          ),
-          React.createElement('span', { className: 'flex h-11 w-11 shrink-0 items-center justify-center border border-[#8B5CF6]/35 bg-[#0C0D0D]/55 text-[#d8caff]', 'aria-hidden': true }, 
-            React.createElement('svg', { viewBox: '0 0 16 16', fill: 'none', stroke: 'currentColor', strokeWidth: '1.5', strokeLinecap: 'square', className: 'w-4 h-4' },
-              React.createElement('path', { d: 'M5 3H13V11' }),
-              React.createElement('path', { d: 'M13 3L4 12' })
-            )
-          ),
+          'div',
+          { className: 'media-meta absolute left-4 right-14 bottom-4 z-[2]' },
+          project.category ? React.createElement('div', { className: 'cat inline-block font-mono text-[10px] tracking-[0.12em] uppercase text-[#d8caff] pb-[6px] mb-[10px] border-b border-[rgba(139,92,246,0.45)]' },
+            project.category.toUpperCase(),
+            ' · ',
+            React.createElement('em', { className: 'not-italic text-[#a78bfa]' }, 'CASE STUDY')
+          ) : null,
+          React.createElement('h3', { className: 'text-[1.05rem] font-[650] tracking-[-0.015em] leading-[1.3] text-white' }, project.cardTitle || project.title),
         ),
+        React.createElement('span', { className: 'glyph-hit absolute right-3 bottom-3 z-[3] w-11 h-11 grid place-items-center text-[#d8caff] border border-[rgba(139,92,246,0.35)] bg-[rgba(12,13,13,0.55)]', 'aria-hidden': true }, React.createElement(ArrowGlyph)),
       ),
     ),
     React.createElement(
-      'div', { className: 'flex flex-1 flex-col gap-4 p-5' },
-      React.createElement('p', { className: 'break-words text-sm leading-relaxed text-gray-400' }, project.summary),
+      'div',
+      { className: 'body p-5 flex flex-col gap-4 flex-1' },
+      React.createElement('p', { className: 'summary text-[0.875rem] leading-[1.5] text-[#9ca3af]' }, project.summary),
       React.createElement(
-        'div', { className: 'mt-auto flex flex-wrap items-end justify-between gap-x-4 gap-y-2' },
+        'div',
+        { className: 'fields flex flex-wrap items-baseline justify-between gap-2 gap-x-4 pt-[10px] border-t border-[rgba(255,255,255,0.06)] mt-auto' },
         upworkLink ? React.createElement('a', {
           href: upworkLink.href, target: '_blank', rel: 'noopener noreferrer',
-          className: 'relative z-10 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-accent-purple-text hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-purple',
-        }, 'Upwork project', React.createElement('span', { 'aria-hidden': true }, '↗'))
-          : React.createElement('span', { className: 'inline-flex min-h-11 items-center text-sm font-semibold text-accent-purple-text' }, 'Read case study →'),
+          className: 'field font-mono text-[11px] leading-[1.3] tracking-[0.04em] text-[#6b7280]',
+        }, React.createElement('span', { className: 'text-[#a78bfa] border-b border-[rgba(167,139,250,0.35)] hover:text-white hover:border-[#8B5CF6]' }, 'Upwork project')) : null,
         completionDate ? React.createElement('time', {
           dateTime: project.completedAt, 'aria-label': `Completed ${completionDate}`,
-          className: 'ml-auto shrink-0 text-right text-xs leading-tight text-gray-400',
-        }, React.createElement('span', { className: 'block' }, 'Completed'), React.createElement('span', { className: 'block text-sm text-white' }, completionDate)) : null,
+          className: 'field font-mono text-[11px] leading-[1.3] tracking-[0.04em] text-[#6b7280] ml-auto',
+        }, 'Completed ', React.createElement('span', { className: 'text-[#9ca3af]' }, completionDate)) : null,
       ),
     ),
   );

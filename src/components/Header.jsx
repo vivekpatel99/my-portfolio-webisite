@@ -1,9 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { assetsLinks } from '@/config/links';
 
 const prefersReducedMotion = () =>
   typeof window !== 'undefined'
@@ -11,12 +8,12 @@ const prefersReducedMotion = () =>
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const headerRef = useRef(null);
   const menuRef = useRef(null);
   const closeButtonRef = useRef(null);
   const toggleButtonRef = useRef(null);
   const previousFocusRef = useRef(null);
+  const preOpenScrollYRef = useRef(0);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -27,31 +24,37 @@ const Header = () => {
     { name: 'Testimonials', href: '/#testimonials' },
   ];
 
-  const handleScroll = () => {
-    if (window.scrollY > 10) {
-      setIsScrolled(true);
-    } else {
-      setIsScrolled(false);
+  const isActiveLink = (href) => {
+    if (href === '/case-studies/') {
+      return location.pathname.startsWith('/case-studies');
     }
+    if (href.startsWith('/#')) {
+      const hash = href.substring(1);
+      return location.pathname === '/' && location.hash === hash;
+    }
+    return location.pathname === href;
   };
 
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+  const handleToggle = () => {
+    if (!isOpen) {
+      // Capture scroll BEFORE any state change, focus, or layout shift
+      preOpenScrollYRef.current = window.scrollY;
+    }
+    setIsOpen(!isOpen);
+  };
 
   useEffect(() => {
     if (!isOpen) {
       return undefined;
     }
 
-    // Pointer activation does not focus the toggle in every browser. Always
-    // restore to the control that opened the menu rather than BODY or a stale
-    // element from the page's previous focus sequence.
+    // Restore focus for a11y. Blur co-actor before focus.
+    if (document.activeElement && document.activeElement !== document.body) {
+      document.activeElement.blur();
+    }
+    
     previousFocusRef.current = toggleButtonRef.current;
-    closeButtonRef.current?.focus();
+    closeButtonRef.current?.focus({ preventScroll: true });
 
     const backgroundElements = [
       headerRef.current,
@@ -65,11 +68,7 @@ const Header = () => {
       hadInertAttribute: element.hasAttribute('inert'),
       inert: element.inert,
     }));
-    const previousOverflow = document.body.style.overflow;
-    const previousHtmlOverflow = document.documentElement.style.overflow;
-
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
+    
     backgroundElements.forEach((element) => {
       element.setAttribute('aria-hidden', 'true');
       element.setAttribute('inert', '');
@@ -112,8 +111,8 @@ const Header = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = previousOverflow;
-      document.documentElement.style.overflow = previousHtmlOverflow;
+      
+      // Restore inert/aria-hidden
       backgroundElementState.forEach(({ element, ariaHidden, hadInertAttribute, inert }) => {
         if (ariaHidden === null) {
           element.removeAttribute('aria-hidden');
@@ -128,7 +127,9 @@ const Header = () => {
         }
         element.inert = inert;
       });
-      previousFocusRef.current?.focus?.();
+      
+      // Focus toggle with preventScroll
+      previousFocusRef.current?.focus?.({ preventScroll: true });
     };
   }, [isOpen]);
 
@@ -173,89 +174,112 @@ const Header = () => {
 
   return (
     <>
-      <motion.header
+      {/* Detection bar — thin hairline, not a boxed HUD */}
+      <header 
         ref={headerRef}
-        className={`fixed top-0 left-0 w-full z-50 transition-colors duration-300 ${isScrolled ? 'bg-[#0C0D0D]/80 backdrop-blur-lg border-b border-white/10' : 'bg-transparent'}`}
+        className="sticky top-0 z-40 bg-gradient-to-b from-[rgba(139,92,246,0.05)] to-[rgba(12,13,13,0.92)] backdrop-blur-[14px] border-b border-[rgba(139,92,246,0.38)]"
       >
-        <div className="container mx-auto px-6 h-20 flex justify-between items-center">
-          <Link to="/" onClick={handleHomeClick} className="flex items-center">
-             <img src={assetsLinks.logo} alt="Vivek Patel Logo" className="h-12" />
+        <div className="max-w-[1120px] mx-auto px-7 h-[68px] flex items-center gap-[22px]">
+          <Link to="/" onClick={handleHomeClick} className="flex items-center gap-3 flex-shrink-0" aria-label="Vivek Patel Logo">
+            <span className="w-[30px] h-[30px] border border-[rgba(139,92,246,0.7)] grid place-items-center font-mono text-[11px] tracking-[0.06em] text-white bg-[rgba(139,92,246,0.06)]">
+              VP
+            </span>
           </Link>
-          <nav className="hidden md:flex items-center gap-8">
+          <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] flex-shrink-0">
+            NAV · <em className="not-italic text-[#a78bfa]">SITE</em>
+          </div>
+          
+          <nav className="hidden md:flex items-center gap-7 ml-auto">
             {navLinks.map((link) => (
-              <a key={link.name} href={link.href} onClick={handleSmoothScroll} className="text-gray-300 hover:text-white transition-colors relative group">
+              <a 
+                key={link.name} 
+                href={link.href} 
+                onClick={handleSmoothScroll}
+                className={`relative text-[0.92rem] py-[10px] pb-3 ${isActiveLink(link.href) ? 'text-white' : 'text-[#9ca3af]'} hover:text-white transition-colors`}
+              >
                 {link.name}
-                <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-accent-purple transition-all duration-300 group-hover:w-full"></span>
+                {isActiveLink(link.href) && (
+                  <span className="absolute left-0 right-0 bottom-1 h-0.5 bg-[#8B5CF6] shadow-[0_0_10px_rgba(139,92,246,0.35)]"></span>
+                )}
               </a>
             ))}
           </nav>
-          <div className="hidden md:flex items-center gap-4">
-            <Button className="bg-accent-purple text-white hover:bg-accent-purple/90 group rounded-full" onClick={handleCTA}>
-              Request Estimate <ArrowRight className="ml-2 h-4 w-4 transform transition-transform duration-300 group-hover:translate-x-1" />
-            </Button>
-          </div>
-          <div className="md:hidden">
-            <button
-              ref={toggleButtonRef}
-              onClick={() => setIsOpen(!isOpen)}
-              className="min-h-11 min-w-11 inline-flex items-center justify-center text-white"
-              aria-label="Toggle navigation menu"
-              aria-expanded={isOpen}
-              aria-controls="mobile-menu"
+          
+          <button
+            onClick={handleCTA}
+            className="hidden md:inline-flex flex-shrink-0 items-center gap-[10px] border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.05)] px-[14px] py-[10px] font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.1)] hover:text-[#d8caff] transition-colors"
+          >
+            Request Estimate
+            <ArrowRight className="w-3 h-3 text-[#a78bfa]" />
+          </button>
+          
+          <button
+            ref={toggleButtonRef}
+            onClick={handleToggle}
+            className="md:hidden w-11 h-11 flex items-center justify-center ml-auto"
+            aria-label="Toggle navigation menu"
+            aria-expanded={isOpen}
+            aria-controls="mobile-menu"
+          >
+            <span className="relative block w-[18px] h-[1.5px] bg-white before:content-[''] before:block before:w-[18px] before:h-[1.5px] before:bg-white before:absolute before:left-0 before:-top-[6px] after:content-[''] after:block after:w-[18px] after:h-[1.5px] after:bg-white after:absolute after:left-0 after:top-[6px]"></span>
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile drawer */}
+      {isOpen && (
+        <div
+          ref={menuRef}
+          id="mobile-menu"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation menu"
+          className="fixed inset-0 bg-[#0C0D0D] z-50 md:hidden flex flex-col px-5 pb-7 overscroll-contain touch-none"
+          style={{ overscrollBehavior: 'contain', touchAction: 'pan-y' }}
+        >
+          <div className="h-[68px] flex items-center justify-between border-b border-[rgba(139,92,246,0.38)]">
+            <Link to="/" onClick={handleHomeClick} className="flex items-center gap-3" aria-label="Vivek Patel Logo">
+              <span className="w-[30px] h-[30px] border border-[rgba(139,92,246,0.7)] grid place-items-center font-mono text-[11px] tracking-[0.06em] text-white bg-[rgba(139,92,246,0.06)]">
+                VP
+              </span>
+            </Link>
+            <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280]">
+              NAV · <em className="not-italic text-[#a78bfa]">SITE</em>
+            </div>
+            <button 
+              ref={closeButtonRef}
+              onClick={() => setIsOpen(false)} 
+              className="w-11 h-11 relative"
+              aria-label="Close navigation menu"
             >
-              <Menu size={28} />
+              <span className="absolute left-3 top-[21px] w-5 h-[1.5px] bg-white rotate-45"></span>
+              <span className="absolute left-3 top-[21px] w-5 h-[1.5px] bg-white -rotate-45"></span>
             </button>
           </div>
-        </div>
-      </motion.header>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            ref={menuRef}
-            id="mobile-menu"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Navigation menu"
-            initial={{ opacity: 0, y: "-100%" }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: "-100%" }}
-            transition={{ duration: 0.5, ease: 'easeInOut' }}
-            className="fixed inset-0 bg-[#0C0D0D] z-50 md:hidden"
+          
+          <nav className="flex-1 flex flex-col justify-center gap-[22px]">
+            {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                onClick={handleSmoothScroll}
+                className={`text-[1.55rem] font-[650] tracking-[-0.02em] ${isActiveLink(link.href) ? 'text-white shadow-[inset_0_-2px_0_#8B5CF6] w-fit pb-1' : 'text-[#9ca3af]'}`}
+              >
+                {link.name}
+              </a>
+            ))}
+          </nav>
+          
+          <button
+            onClick={handleCTA}
+            aria-label="Request a Project Estimate"
+            className="flex items-center justify-center gap-[10px] border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.05)] px-[14px] py-[14px] font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.1)] hover:text-[#d8caff]"
           >
-            <div className="container mx-auto px-6 h-full flex flex-col">
-              <div className="flex justify-between items-center h-20">
-                <Link to="/" onClick={handleHomeClick} className="flex items-center">
-                  <img src={assetsLinks.logo} alt="Vivek Patel Logo" className="h-12" />
-                </Link>
-                <button ref={closeButtonRef} onClick={() => setIsOpen(false)} className="min-h-11 min-w-11 inline-flex items-center justify-center text-white" aria-label="Close navigation menu">
-                  <X size={28} />
-                </button>
-              </div>
-              <nav className="flex-grow flex flex-col justify-center items-center gap-8">
-                {navLinks.map((link, index) => (
-                  <motion.a
-                    key={link.name}
-                    href={link.href}
-                    onClick={handleSmoothScroll}
-                    className="text-3xl font-semibold text-gray-300 hover:text-accent-purple transition-colors"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
-                  >
-                    {link.name}
-                  </motion.a>
-                ))}
-              </nav>
-              <div className="py-8 flex flex-col gap-4">
-                <Button className="bg-accent-purple text-white hover:bg-accent-purple/90 group w-full text-lg py-6 rounded-full" onClick={handleCTA}>
-                    Request a Project Estimate <ArrowRight className="ml-2 h-4 w-4 transform transition-transform duration-300 group-hover:translate-x-1" />
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            Request Estimate
+            <ArrowRight className="w-3 h-3 text-[#a78bfa]" />
+          </button>
+        </div>
+      )}
     </>
   );
 };
