@@ -75,3 +75,53 @@ test('census A/B: force click vs normal click', async ({ page }) => {
   console.log(`[A/B TEST] scrollY after click({ force: true }): ${scrollAfter}`);
   console.log(`[A/B TEST] force:true preserves scroll: ${scrollAfter === scrollBefore ? 'YES ✓' : 'NO ❌'}`);
 });
+
+test('census C: DOM click (no Playwright actionability)', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 600 });
+  await page.goto('/');
+  
+  await page.evaluate(() => window.scrollTo(0, 300));
+  await page.waitForTimeout(100);
+  
+  const scrollBefore = await page.evaluate(() => window.scrollY);
+  console.log(`\n[DOM CLICK] scrollY before: ${scrollBefore}`);
+  
+  // Click via DOM (no scrollIntoViewIfNeeded, no actionability checks)
+  await page.evaluate(() => {
+    document.querySelector('[aria-label="Toggle navigation menu"]').click();
+  });
+  
+  const scrollAfterClick = await page.evaluate(() => window.scrollY);
+  console.log(`[DOM CLICK] scrollY IMMEDIATELY after DOM click: ${scrollAfterClick}`);
+  
+  await expect(page.getByRole('dialog', { name: 'Navigation menu' })).toBeVisible();
+  const scrollAfterDialog = await page.evaluate(() => window.scrollY);
+  console.log(`[DOM CLICK] scrollY after dialog visible: ${scrollAfterDialog}`);
+  
+  await expect(page.getByRole('button', { name: 'Close navigation menu' })).toBeFocused();
+  const scrollAfterFocus = await page.evaluate(() => window.scrollY);
+  console.log(`[DOM CLICK] scrollY after Close focused: ${scrollAfterFocus}`);
+  
+  await expect(page.locator('#main-content')).toHaveAttribute('inert', '');
+  const scrollAfterInert = await page.evaluate(() => window.scrollY);
+  console.log(`[DOM CLICK] scrollY after inert: ${scrollAfterInert}`);
+  
+  console.log(`\n[DOM CLICK RESULT]`);
+  console.log(`Before: ${scrollBefore}`);
+  console.log(`After click: ${scrollAfterClick} ${scrollAfterClick !== scrollBefore ? '❌ CHANGED' : '✓ PRESERVED'}`);
+  console.log(`After dialog: ${scrollAfterDialog} ${scrollAfterDialog !== scrollBefore ? '❌ CHANGED' : '✓ PRESERVED'}`);
+  console.log(`After focus: ${scrollAfterFocus} ${scrollAfterFocus !== scrollBefore ? '❌ CHANGED' : '✓ PRESERVED'}`);
+  console.log(`After inert: ${scrollAfterInert} ${scrollAfterInert !== scrollBefore ? '❌ CHANGED' : '✓ PRESERVED'}`);
+  
+  if (scrollAfterClick === scrollBefore && scrollAfterDialog === scrollBefore && scrollAfterFocus === scrollBefore && scrollAfterInert === scrollBefore) {
+    console.log(`\n[WINNER] DOM click preserves scroll → HARNESS WAS ACTOR → Change qa-focus/qa-a11y to use page.evaluate click`);
+  } else if (scrollAfterClick === scrollBefore && scrollAfterDialog !== scrollBefore) {
+    console.log(`\n[WINNER] Product dialog render zeros scroll → Fix product component mount`);
+  } else if (scrollAfterClick === scrollBefore && scrollAfterDialog === scrollBefore && scrollAfterFocus !== scrollBefore) {
+    console.log(`\n[WINNER] Product focus() zeros scroll → Fix closeButtonRef.focus() in Header.jsx`);
+  } else if (scrollAfterClick === scrollBefore && scrollAfterDialog === scrollBefore && scrollAfterFocus === scrollBefore && scrollAfterInert !== scrollBefore) {
+    console.log(`\n[WINNER] Product inert on sticky header zeros scroll → Remove headerRef from backgroundElements in Header.jsx`);
+  } else {
+    console.log(`\n[INCONCLUSIVE] Scroll changed at multiple points`);
+  }
+});
