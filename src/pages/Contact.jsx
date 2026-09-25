@@ -209,7 +209,7 @@ const Contact = () => {
                   {socialLinks.contactEmail}
                 </a>
                 <div className="sub mt-2 font-mono text-[9px] leading-[1.4] tracking-[0.08em] uppercase text-[#6b7280]">
-                  PRIMARY · ROUTE
+                  SECONDARY PATH · FORM REMAINS PRIMARY
                 </div>
               </div>
             </aside>
@@ -226,10 +226,13 @@ const Contact = () => {
               <span className="bracket-br absolute bottom-[5px] right-[5px] w-[18px] h-[18px] border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.55)] pointer-events-none z-[5]"></span>
 
               <div className="meta font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] mb-5">
-                FORM · <em className="not-italic text-[#a78bfa]">DETECTED</em>
+                CONTACT · <em className="not-italic text-[#a78bfa]">DETECTED</em>
               </div>
 
-              <div className="field mb-4">
+              <div className="field relative mb-4">
+                <span className="field-meta absolute -top-[9px] left-0 px-[5px] bg-[#0C0D0D] font-mono text-[9px] tracking-[0.12em] uppercase text-[#a78bfa] pointer-events-none z-[4]">
+                  NAME · FIELD
+                </span>
                 <label htmlFor="name" className="flabel block font-mono text-[9px] tracking-[0.14em] uppercase text-[#6b7280] mb-2">
                   Full Name <span className="text-[#a78bfa]">*</span>
                 </label>
@@ -249,7 +252,10 @@ const Contact = () => {
                 {fieldErrors.name ? <p id="name-error" role="alert" className="mt-2 text-sm text-red-400">{fieldErrors.name}</p> : null}
               </div>
 
-              <div className="field mb-4">
+              <div className="field relative mb-4">
+                <span className="field-meta absolute -top-[9px] left-0 px-[5px] bg-[#0C0D0D] font-mono text-[9px] tracking-[0.12em] uppercase text-[#a78bfa] pointer-events-none z-[4]">
+                  EMAIL · FIELD
+                </span>
                 <label htmlFor="email" className="flabel block font-mono text-[9px] tracking-[0.14em] uppercase text-[#6b7280] mb-2">
                   Email Address <span className="text-[#a78bfa]">*</span>
                 </label>
@@ -269,7 +275,10 @@ const Contact = () => {
                 {fieldErrors.email ? <p id="email-error" role="alert" className="mt-2 text-sm text-red-400">{fieldErrors.email}</p> : null}
               </div>
 
-              <div className="field mb-4">
+              <div className="field relative mb-4">
+                <span className="field-meta absolute -top-[9px] left-0 px-[5px] bg-[#0C0D0D] font-mono text-[9px] tracking-[0.12em] uppercase text-[#a78bfa] pointer-events-none z-[4]">
+                  BUDGET · FIELD
+                </span>
                 <label htmlFor="budget" className="flabel block font-mono text-[9px] tracking-[0.14em] uppercase text-[#6b7280] mb-2">
                   Budget Range
                 </label>
@@ -288,7 +297,10 @@ const Contact = () => {
                 </select>
               </div>
 
-              <div className="field mb-4">
+              <div className="field relative mb-4">
+                <span className="field-meta absolute -top-[9px] left-0 px-[5px] bg-[#0C0D0D] font-mono text-[9px] tracking-[0.12em] uppercase text-[#a78bfa] pointer-events-none z-[4]">
+                  MESSAGE · FIELD
+                </span>
                 <label htmlFor="description" className="flabel block font-mono text-[9px] tracking-[0.14em] uppercase text-[#6b7280] mb-2">
                   Project Description <span className="text-[#a78bfa]">*</span>
                 </label>
@@ -338,9 +350,9 @@ const Contact = () => {
                     </>
                   )}
                 </button>
-              </div>
-              <div className="text-center mt-3 font-mono text-[9px] tracking-[0.08em] uppercase text-[#484851]">
-                SUBMIT · CONVEX DB
+                <div className="mt-3 font-mono text-[9px] tracking-[0.08em] uppercase text-[#484851]">
+                  SUBMIT · FIELD
+                </div>
               </div>
             </form>
           </div>
