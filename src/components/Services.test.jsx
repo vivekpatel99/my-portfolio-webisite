@@ -40,19 +40,22 @@ const renderServices = () => {
 const section = () => document.getElementById('services');
 
 describe('Services offers', () => {
-  it('starts with the first offer open and the other two closed', () => {
+  it('starts with all offers closed', () => {
     renderServices();
     const rows = within(section()).getAllByRole('button');
     expect(rows).toHaveLength(3);
-    expect(rows[0].getAttribute('aria-expanded')).toBe('true');
+    expect(rows[0].getAttribute('aria-expanded')).toBe('false');
     expect(rows[1].getAttribute('aria-expanded')).toBe('false');
     expect(rows[2].getAttribute('aria-expanded')).toBe('false');
   });
 
-  it('shows hourly rate, typical duration, and scope above the summary', () => {
+  it('shows hourly rate, typical duration, and scope above the summary when opened', async () => {
+    const user = userEvent.setup();
     renderServices();
+    const button = within(section()).getAllByRole('button')[0];
+    await user.click(button);
     const offer = serviceOffers[0];
-    const panel = document.getElementById(within(section()).getAllByRole('button')[0].getAttribute('aria-controls'));
+    const panel = document.getElementById(button.getAttribute('aria-controls'));
     const text = panel.textContent;
     expect(text).toContain(HOURLY_FROM_LABEL);
     expect(text).toContain(typicalDurationLabel(offer));
@@ -67,7 +70,7 @@ describe('Services offers', () => {
   it('keeps the catalog rate visible when every row is closed', async () => {
     const user = userEvent.setup();
     renderServices();
-    await user.click(within(section()).getAllByRole('button')[0]);
+    // All rows start closed
     within(section()).getAllByRole('button').forEach((row) => {
       expect(row.getAttribute('aria-expanded')).toBe('false');
     });
@@ -101,6 +104,7 @@ describe('Services offers', () => {
     renderServices();
     
     const rows = () => within(section()).getAllByRole('button');
+    await user.click(rows()[0]);
     const panel = document.getElementById(rows()[0].getAttribute('aria-controls'));
     const link = within(panel).getByRole('link', { name: /View details/i });
     expect(link.getAttribute('href')).toBe(`/services/${serviceOffers[0].id}`);
