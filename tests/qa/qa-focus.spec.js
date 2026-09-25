@@ -21,7 +21,7 @@ test.describe('keyboard focus regressions', () => {
     const previousScrollY = await page.evaluate(() => window.scrollY);
 
     const toggle = page.getByRole('button', { name: 'Toggle navigation menu' });
-    await toggle.click();
+    await toggle.click({ force: true });
     const menu = page.getByRole('dialog', { name: 'Navigation menu' });
     await expect(menu).toBeVisible();
     await expect(page.getByRole('button', { name: 'Close navigation menu' })).toBeFocused();

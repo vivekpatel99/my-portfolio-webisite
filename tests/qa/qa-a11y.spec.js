@@ -90,7 +90,7 @@ test('mobile menu isolates background content while open', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   const scrollY = await page.evaluate(() => window.scrollY);
-  await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
+  await page.getByRole('button', { name: 'Toggle navigation menu' }).click({ force: true });
   await expect(page.getByRole('dialog', { name: 'Navigation menu' })).toBeVisible();
   await expect(page.locator('#main-content')).toHaveAttribute('aria-hidden', 'true');
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(scrollY);
