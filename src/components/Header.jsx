@@ -125,9 +125,12 @@ const Header = () => {
       });
       previousFocusRef.current?.focus?.({ preventScroll: true });
       // Restore scroll after focus and all DOM updates (preventScroll stops focus from auto-scrolling)
+      // Multiple rAFs ensure layout, cookie spacer, and React updates complete first
       window.requestAnimationFrame(() => {
         window.requestAnimationFrame(() => {
-          window.scrollTo(0, scrollY);
+          window.requestAnimationFrame(() => {
+            window.scrollTo(0, scrollY);
+          });
         });
       });
     };
@@ -207,7 +210,6 @@ const Header = () => {
           
           <button
             onClick={handleCTA}
-            aria-label="Request a Project Estimate"
             className="hidden md:inline-flex flex-shrink-0 items-center gap-[10px] border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.05)] px-[14px] py-[10px] font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.1)] hover:text-[#d8caff] transition-colors"
           >
             Request Estimate
