@@ -127,22 +127,26 @@ const Header = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       
-      // Critical: Restore scroll BEFORE clearing position:fixed to prevent browser reset
-      // When position:fixed is removed, browser scrolls to 0 immediately. We must
-      // pre-position the scroll target before unlocking.
+      // Critical: Restore scroll with rAF to survive browser reflow and React updates
+      // Clearing position:fixed triggers immediate browser scroll reset. We must restore
+      // scroll across multiple frames to ensure it sticks through CI timing variations.
       
-      // First: Temporarily make the scroll position available by clearing top offset
-      // but keeping position:fixed (this doesn't trigger scroll jump yet)
+      // Clear top offset but keep position:fixed (no scroll jump yet)
       document.body.style.top = '0';
       
-      // Now restore scroll while still locked (prevents jump)
+      // Restore scroll while still locked
       window.scrollTo(0, previousScrollY);
+      document.documentElement.scrollTop = previousScrollY;
       
-      // Then clear position:fixed (body already at correct visual position)
+      // Clear position:fixed (body already positioned)
       document.body.style.position = previousPosition;
       document.body.style.left = previousLeft;
       document.body.style.right = previousRight;
       document.body.style.width = previousWidth;
+      
+      // Immediately restore again after unlock
+      window.scrollTo(0, previousScrollY);
+      document.documentElement.scrollTop = previousScrollY;
       
       // Restore inert/aria-hidden
       backgroundElementState.forEach(({ element, ariaHidden, hadInertAttribute, inert }) => {
@@ -160,11 +164,22 @@ const Header = () => {
         element.inert = inert;
       });
       
+      // Restore again before focus
+      window.scrollTo(0, previousScrollY);
+      document.documentElement.scrollTop = previousScrollY;
+      
       // Focus toggle with preventScroll
       previousFocusRef.current?.focus?.({ preventScroll: true });
       
-      // Re-assert scroll position after focus (guard against focus-induced scroll)
-      window.scrollTo(0, previousScrollY);
+      // Double rAF to ensure scroll sticks through browser reflow and React updates
+      requestAnimationFrame(() => {
+        window.scrollTo(0, previousScrollY);
+        document.documentElement.scrollTop = previousScrollY;
+        requestAnimationFrame(() => {
+          window.scrollTo(0, previousScrollY);
+          document.documentElement.scrollTop = previousScrollY;
+        });
+      });
     };
   }, [isOpen]);
 
