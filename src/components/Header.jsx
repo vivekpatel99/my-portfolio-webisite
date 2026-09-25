@@ -41,6 +41,9 @@ const Header = () => {
       return undefined;
     }
 
+    // Capture scroll position FIRST, before any DOM mutations or focus changes
+    const previousScrollY = window.scrollY;
+
     // Pointer activation does not focus the toggle in every browser. Always
     // restore to the control that opened the menu rather than BODY or a stale
     // element from the page's previous focus sequence.
@@ -61,7 +64,6 @@ const Header = () => {
     }));
     const previousOverflow = document.body.style.overflow;
     const previousHtmlOverflow = document.documentElement.style.overflow;
-    const previousScrollY = window.scrollY;
 
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
