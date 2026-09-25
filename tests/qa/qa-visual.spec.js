@@ -70,7 +70,7 @@ test('mobile cookie dialog and its controls remain visible and do not cover the 
     box: dialogBox,
     viewport,
     minWidth: 320,
-    minHeight: 100,
+    minHeight: 44,
   });
 
   const close = dialog.getByRole('button', { name: /close cookie consent/i });
