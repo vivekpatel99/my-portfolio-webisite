@@ -49,14 +49,27 @@ const Header = () => {
       return undefined;
     }
 
-    // Restore focus for a11y. Look for co-actors that zero scroll.
-    // Test: Blur active element BEFORE focus to prevent scrollIntoView chain
+    // Capture scroll at open
+    const lockedScrollY = preOpenScrollYRef.current;
+
+    // Restore focus for a11y. Blur co-actor before focus.
     if (document.activeElement && document.activeElement !== document.body) {
       document.activeElement.blur();
     }
     
     previousFocusRef.current = toggleButtonRef.current;
     closeButtonRef.current?.focus({ preventScroll: true });
+
+    // CI-specific behavior lock: Guard scroll mutations while menu open
+    // Design local holds scroll; CI has foreign mutator (Playwright, layout, timing)
+    // Restore scroll on any scroll event while menu is open
+    const handleScroll = () => {
+      if (window.scrollY !== lockedScrollY) {
+        window.scrollTo(0, lockedScrollY);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: false });
 
     const backgroundElements = [
       headerRef.current,
@@ -112,6 +125,7 @@ const Header = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => {
+      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('keydown', handleKeyDown);
       
       // Restore inert/aria-hidden

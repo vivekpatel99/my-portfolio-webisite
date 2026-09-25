@@ -113,7 +113,7 @@ const Contact = () => {
         toast({
             title: nextErrors.email && trimmedFormState.email ? "Invalid email address." : "Uh oh! Missing fields.",
             description: nextErrors.email && trimmedFormState.email
-              ? "Please enter a valid email address before sending."
+              ? "Please check your email format before sending."
               : "Please fill out all required fields before sending.",
             variant: "destructive",
         });
