@@ -127,15 +127,22 @@ const Header = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       
-      // Clear position:fixed lock styles
+      // Critical: Restore scroll BEFORE clearing position:fixed to prevent browser reset
+      // When position:fixed is removed, browser scrolls to 0 immediately. We must
+      // pre-position the scroll target before unlocking.
+      
+      // First: Temporarily make the scroll position available by clearing top offset
+      // but keeping position:fixed (this doesn't trigger scroll jump yet)
+      document.body.style.top = '0';
+      
+      // Now restore scroll while still locked (prevents jump)
+      window.scrollTo(0, previousScrollY);
+      
+      // Then clear position:fixed (body already at correct visual position)
       document.body.style.position = previousPosition;
-      document.body.style.top = previousTop;
       document.body.style.left = previousLeft;
       document.body.style.right = previousRight;
       document.body.style.width = previousWidth;
-      
-      // Restore scroll position
-      window.scrollTo(0, previousScrollY);
       
       // Restore inert/aria-hidden
       backgroundElementState.forEach(({ element, ariaHidden, hadInertAttribute, inert }) => {
@@ -156,7 +163,7 @@ const Header = () => {
       // Focus toggle with preventScroll
       previousFocusRef.current?.focus?.({ preventScroll: true });
       
-      // Re-assert scroll position after focus
+      // Re-assert scroll position after focus (guard against focus-induced scroll)
       window.scrollTo(0, previousScrollY);
     };
   }, [isOpen]);

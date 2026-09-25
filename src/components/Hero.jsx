@@ -156,9 +156,9 @@ const Hero = () => {
           </div>
 
           {/* Two columns: invoice | photo */}
-          <div className="grid lg:grid-cols-[minmax(0,1.7fr)_minmax(260px,0.72fr)] gap-4 items-center max-lg:grid-cols-1 max-lg:gap-3 max-md:gap-0">
+          <div className="grid lg:grid-cols-[minmax(0,1.7fr)_minmax(260px,0.72fr)] gap-3 items-center max-lg:grid-cols-1 max-lg:gap-3 max-md:gap-0">
             {/* Left: Profile Invoice */}
-            <div className="flex flex-col gap-4 min-w-0 w-full max-lg:gap-0">
+            <div className="flex flex-col gap-3 min-w-0 w-full max-lg:gap-0">
               <article 
                 className="relative w-full max-w-[760px] border border-[#8B5CF6]/[0.28] rounded-lg px-5 py-4 max-md:px-2.5 max-md:py-0"
                 style={{
@@ -392,14 +392,14 @@ const Hero = () => {
           <div className="flex flex-wrap gap-3 mt-0 max-md:flex-col max-md:mt-0 max-md:gap-0">
             <Button
               onClick={handleCTAClick}
-              className="bg-[#8B5CF6] hover:bg-[#9B6FFF] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-0.5"
+              className="bg-[#8B5CF6] hover:bg-[#9B6FFF] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-0"
             >
               Request a Project Estimate
             </Button>
             <Button
               asChild
               variant="outline"
-              className="border border-white/[0.14] hover:bg-[#8B5CF6]/8 hover:border-purple-400/35 text-white px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[150px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-0.5"
+              className="border border-white/[0.14] hover:bg-[#8B5CF6]/8 hover:border-purple-400/35 text-white px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[150px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-0"
             >
               <a href="#portfolio">
                 View Case Studies
