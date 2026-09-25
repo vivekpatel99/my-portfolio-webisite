@@ -396,7 +396,7 @@ test('cookie options panel expands', async ({ page }) => {
   await page.addInitScript((key) => localStorage.removeItem(key), COOKIE_KEY);
   await page.goto('/');
   await page.getByRole('button', { name: /Options/i }).click({ timeout: 5000 });
-  await expect(page.getByLabel(/Analytics and Diagnostics Cookies/i)).toBeVisible();
+  await expect(page.getByLabel(/^Analytics$/i)).toBeVisible();
 });
 
 test('case-study article renders sober sections without legacy stats panels', async ({ page }) => {

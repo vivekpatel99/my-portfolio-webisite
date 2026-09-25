@@ -31,7 +31,7 @@ test('accept all persists consent in localStorage', async ({ page }) => {
 
 test('reject all persists rejection', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: /Reject/i }).click({ timeout: 5000 });
+  await page.getByRole('button', { name: 'Reject', exact: true }).click({ timeout: 5000 });
   const stored = await page.evaluate((key) => localStorage.getItem(key), COOKIE_KEY);
   const prefs = JSON.parse(stored);
   expect(prefs.analytics).toBe(false);
@@ -47,7 +47,7 @@ test('reject all blocks analytics and Sentry network requests', async ({ page })
   });
 
   await page.goto('/');
-  await page.getByRole('button', { name: /Reject/i }).click({ timeout: 5000 });
+  await page.getByRole('button', { name: 'Reject', exact: true }).click({ timeout: 5000 });
   await page.waitForTimeout(1000);
   expect(telemetryRequests).toEqual([]);
 });
