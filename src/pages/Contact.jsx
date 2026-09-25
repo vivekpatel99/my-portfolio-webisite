@@ -80,6 +80,12 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    e.stopPropagation();
+    
+    if (submittingRef.current || isSubmitting) {
+      return;
+    }
+    
     const telemetrySource = e.currentTarget;
     const trimmedFormState = {
       ...formState,
@@ -100,9 +106,10 @@ const Contact = () => {
     if (!trimmedFormState.description) {
       nextErrors.description = 'Project description is required.';
     }
+    
     setFieldErrors(nextErrors);
 
-    if (nextErrors.name || nextErrors.email || nextErrors.description) {
+    if (Object.keys(nextErrors).length > 0) {
         toast({
             title: nextErrors.email && trimmedFormState.email ? "Invalid email address." : "Uh oh! Missing fields.",
             description: nextErrors.email && trimmedFormState.email
@@ -217,6 +224,7 @@ const Contact = () => {
             {/* Form panel with detection box */}
             <form
               onSubmit={handleSubmit}
+              action="javascript:void(0);"
               noValidate
               {...SENSITIVE_TELEMETRY_REGION_PROPS}
               className="form-panel relative border border-[rgba(139,92,246,0.42)] bg-gradient-to-b from-[rgba(139,92,246,0.035)] to-transparent bg-[length:100%_22%] bg-no-repeat p-7 px-[26px] pb-[26px]"
