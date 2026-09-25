@@ -107,6 +107,12 @@ const Header = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       const scrollY = previousScrollY;
+      
+      // Restore scroll FIRST, while overflow is still locked
+      // This prevents browser from resetting scroll when we unlock overflow
+      window.scrollTo(0, scrollY);
+      
+      // Then restore overflow and other states
       document.body.style.overflow = previousOverflow;
       document.documentElement.style.overflow = previousHtmlOverflow;
       backgroundElementState.forEach(({ element, ariaHidden, hadInertAttribute, inert }) => {
@@ -124,15 +130,6 @@ const Header = () => {
         element.inert = inert;
       });
       previousFocusRef.current?.focus?.({ preventScroll: true });
-      // Restore scroll after focus and all DOM updates (preventScroll stops focus from auto-scrolling)
-      // Multiple rAFs ensure layout, cookie spacer, and React updates complete first
-      window.requestAnimationFrame(() => {
-        window.requestAnimationFrame(() => {
-          window.requestAnimationFrame(() => {
-            window.scrollTo(0, scrollY);
-          });
-        });
-      });
     };
   }, [isOpen]);
 
