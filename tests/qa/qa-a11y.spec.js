@@ -92,7 +92,7 @@ test('mobile menu isolates background content while open', async ({ page }) => {
   await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
   await expect(page.getByRole('dialog', { name: 'Navigation menu' })).toBeVisible();
   await expect(page.locator('#main-content')).toHaveAttribute('aria-hidden', 'true');
-  await expect(page.locator('body')).toHaveCSS('overflow', 'hidden');
+  await expect(page.locator('body')).toHaveCSS('position', 'fixed');
 });
 
 test('testimonial Field Quote structure without soft asserts', async ({ page }) => {
