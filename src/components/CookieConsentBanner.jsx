@@ -165,8 +165,8 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
               </CollapsibleContent>
             </Collapsible>
 
-            <button onClick={handleClose} className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors" aria-label="Close cookie consent banner and reject optional cookies">
-              <X size={16} />
+            <button onClick={handleClose} className="flex-shrink-0 w-11 h-11 flex items-center justify-center text-gray-400 hover:text-white transition-colors" aria-label="Close cookie consent banner and reject optional cookies">
+              <X size={20} />
             </button>
           </div>
         </motion.div>

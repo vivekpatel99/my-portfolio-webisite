@@ -14,6 +14,7 @@ const Header = () => {
   const closeButtonRef = useRef(null);
   const toggleButtonRef = useRef(null);
   const previousFocusRef = useRef(null);
+  const scrollRestoreRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -106,13 +107,11 @@ const Header = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-      const scrollY = previousScrollY;
       
-      // Restore scroll FIRST, while overflow is still locked
-      // This prevents browser from resetting scroll when we unlock overflow
-      window.scrollTo(0, scrollY);
+      // Store scroll position for restoration AFTER cleanup completes
+      scrollRestoreRef.current = previousScrollY;
       
-      // Then restore overflow and other states
+      // Restore DOM state (overflow, inert, aria-hidden, focus)
       document.body.style.overflow = previousOverflow;
       document.documentElement.style.overflow = previousHtmlOverflow;
       backgroundElementState.forEach(({ element, ariaHidden, hadInertAttribute, inert }) => {
@@ -131,6 +130,19 @@ const Header = () => {
       });
       previousFocusRef.current?.focus?.({ preventScroll: true });
     };
+  }, [isOpen]);
+
+  // Separate effect to restore scroll AFTER cleanup and all DOM updates complete
+  useEffect(() => {
+    if (!isOpen && scrollRestoreRef.current !== null) {
+      const targetScrollY = scrollRestoreRef.current;
+      scrollRestoreRef.current = null;
+      
+      // Use rAF to ensure restoration happens after all layout/focus/overflow changes settle
+      requestAnimationFrame(() => {
+        window.scrollTo(0, targetScrollY);
+      });
+    }
   }, [isOpen]);
 
   const handleSmoothScroll = (e) => {
