@@ -145,8 +145,8 @@ const Hero = () => {
         ))}
       </div>
 
-      <div className="container mx-auto px-6 md:px-12 relative z-10 py-3 max-md:px-4 max-md:py-0">
-        <div className="max-w-[1320px] mx-auto flex flex-col gap-2 max-md:gap-0">
+      <div className="container mx-auto px-6 md:px-12 relative z-10 py-2 max-md:px-4 max-md:py-0">
+        <div className="max-w-[1320px] mx-auto flex flex-col gap-1.5 max-md:gap-0">
           {/* Status badge */}
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/[0.12] bg-white/[0.03]">

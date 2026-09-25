@@ -52,9 +52,14 @@ const Header = () => {
     // Use the scroll position captured BEFORE opening (synchronously on click)
     const previousScrollY = preOpenScrollYRef.current;
 
-    // Pointer activation does not focus the toggle in every browser. Always
-    // restore to the control that opened the menu rather than BODY or a stale
-    // element from the page's previous focus sequence.
+    // Lock scroll FIRST before any focus to prevent scroll jumps
+    const previousOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
+    // Now focus with scroll locked and preventScroll
     previousFocusRef.current = toggleButtonRef.current;
     closeButtonRef.current?.focus({ preventScroll: true });
 
@@ -70,11 +75,7 @@ const Header = () => {
       hadInertAttribute: element.hasAttribute('inert'),
       inert: element.inert,
     }));
-    const previousOverflow = document.body.style.overflow;
-    const previousHtmlOverflow = document.documentElement.style.overflow;
-
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
+    
     backgroundElements.forEach((element) => {
       element.setAttribute('aria-hidden', 'true');
       element.setAttribute('inert', '');
@@ -118,14 +119,17 @@ const Header = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       
-      // Critical: restore scroll WHILE overflow still locked, BEFORE any focus
-      window.scrollTo(0, previousScrollY);
+      // CENSUS: Unlock overflow causes browser to reset scroll when fixed header present
+      // Fix: Restore scroll IMMEDIATELY after unlock, before any other operations
       
-      // Unlock overflow AFTER scroll restore
+      // 1. Unlock overflow
       document.body.style.overflow = previousOverflow;
       document.documentElement.style.overflow = previousHtmlOverflow;
       
-      // Restore inert/aria-hidden
+      // 2. IMMEDIATELY restore scroll (before browser can reset it)
+      window.scrollTo(0, previousScrollY);
+      
+      // 3. Then restore inert/aria-hidden
       backgroundElementState.forEach(({ element, ariaHidden, hadInertAttribute, inert }) => {
         if (ariaHidden === null) {
           element.removeAttribute('aria-hidden');
@@ -141,11 +145,8 @@ const Header = () => {
         element.inert = inert;
       });
       
-      // Focus toggle WITH preventScroll to avoid scroll jump
+      // 4. Finally focus toggle (with preventScroll to avoid focus-scroll)
       previousFocusRef.current?.focus?.({ preventScroll: true });
-      
-      // Re-assert scroll position after focus to guard against any browser resets
-      window.scrollTo(0, previousScrollY);
     };
   }, [isOpen]);
 

@@ -137,7 +137,7 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
                   Reject
                 </Button>
                 <CollapsibleTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 sm:h-9 text-[11px] sm:text-xs text-white hover:bg-white/10 px-2 sm:px-3 whitespace-nowrap" aria-label="Options">
+                  <Button variant="ghost" size="sm" className="flex-shrink-0 min-h-[44px] min-w-[44px] h-auto sm:h-auto text-[11px] sm:text-xs text-white hover:bg-white/10 px-2 sm:px-3 py-2.5 whitespace-nowrap" aria-label="Options">
                     <Settings className="w-3 h-3 sm:w-3.5 sm:h-3.5 sm:mr-1.5" />
                     <span className="hidden sm:inline">Options</span>
                   </Button>
