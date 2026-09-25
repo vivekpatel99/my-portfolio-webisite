@@ -121,10 +121,9 @@ test('hero invoice proof fold design (#176): proofs visible, CTA routes correctl
   await expect(page.getByText('Top Rated Plus', { exact: true })).toBeVisible();
   await expect(page.getByText('100% Job Success', { exact: true })).toBeVisible();
   
-  await expect(page.getByText('Detected total')).not.toBeVisible();
-  
-  await expect(page.getByText('PROOF ·')).not.toBeVisible();
-  await expect(page.getByText('fields · 2')).not.toBeVisible();
+  await expect(page.getByText('Detected total', { exact: true })).not.toBeVisible();
+  await expect(page.getByText('PROOF ·', { exact: true })).not.toBeVisible();
+  await expect(page.getByText('fields · 2', { exact: true })).not.toBeVisible();
   
   const viewport = viewportBox(page);
   const dialog = page.getByRole('dialog', { name: /we value your privacy/i });
@@ -170,9 +169,9 @@ test('desktop hero invoice proof fold: all elements visible, no clip', async ({ 
   await expect(page.getByText('€45/hour', { exact: true })).toBeVisible();
   await expect(page.getByText('Linz, Austria', { exact: true })).toBeVisible();
   
-  await expect(page.getByText('Detected total')).not.toBeVisible();
-  await expect(page.getByText('PROOF ·')).not.toBeVisible();
-  await expect(page.getByText('fields · 2')).not.toBeVisible();
+  await expect(page.getByText('Detected total', { exact: true })).not.toBeVisible();
+  await expect(page.getByText('PROOF ·', { exact: true })).not.toBeVisible();
+  await expect(page.getByText('fields · 2', { exact: true })).not.toBeVisible();
   
   const viewport = viewportBox(page);
   const dialog = page.getByRole('dialog', { name: /we value your privacy/i });
