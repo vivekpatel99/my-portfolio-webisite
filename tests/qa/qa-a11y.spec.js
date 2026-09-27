@@ -98,6 +98,27 @@ test('mobile menu isolates background content while open', async ({ page }) => {
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(scrollY);
 });
 
+test('mobile menu isolates the identified site footer without mutating the testimonial footer', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+
+  const siteFooter = page.locator('#site-footer');
+  const testimonialFooter = page.locator('#testimonials footer');
+  await expect(siteFooter).toHaveCount(1);
+  await expect(testimonialFooter).toHaveCount(1);
+
+  await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
+  await expect(page.getByRole('dialog', { name: 'Navigation menu' })).toBeVisible();
+  await expect(siteFooter).toHaveAttribute('inert', '');
+  await expect(siteFooter).toHaveAttribute('aria-hidden', 'true');
+  await expect(testimonialFooter).not.toHaveAttribute('inert', '');
+  await expect(testimonialFooter).not.toHaveAttribute('aria-hidden', 'true');
+
+  await page.keyboard.press('Escape');
+  await expect(siteFooter).not.toHaveAttribute('inert', '');
+  await expect(siteFooter).not.toHaveAttribute('aria-hidden', 'true');
+});
+
 test('testimonial Field Quote structure without soft asserts', async ({ page }) => {
   await page.goto('/');
   

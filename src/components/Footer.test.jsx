@@ -20,6 +20,7 @@ describe('Footer Registration Strip', () => {
     // FOOTER · SITE meta is split across text and em elements
     expect(container.textContent).toContain('FOOTER ·');
     expect(container.textContent).toContain('SITE');
+    expect(container.querySelector('footer')?.id).toBe('site-footer');
   });
 
   it('has flat inline navigation links', () => {
