@@ -50,10 +50,6 @@
     scroll-padding-top: 6rem;
   }
 
-  section[id] {
-    scroll-margin-top: 6rem;
-  }
-
   /* Only hide cursor on devices with precise pointers (mouse/trackpad) */
   @media (pointer: fine) {
 
