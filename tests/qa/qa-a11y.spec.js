@@ -261,7 +261,7 @@ test('header remains visible after scrolling without horizontal overflow', async
 
   const header = page.locator('header').first();
   await expect.poll(() => header.evaluate((element) => element.getBoundingClientRect().top)).toBe(0);
-  expect(await page.evaluate(() => document.body.scrollWidth)).toBeLessThanOrEqual(390);
+  expect(await page.evaluate(() => document.querySelector('#root').scrollWidth)).toBeLessThanOrEqual(390);
   await page.evaluate(() => window.scrollTo(100, 1500));
   expect(await page.evaluate(() => window.scrollX)).toBe(0);
   expect(await page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop))).toBeGreaterThan(68);
@@ -279,6 +279,9 @@ test('header stays visible on the case studies route', async ({ page }) => {
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(1000);
   await expect.poll(() => page.locator('header').first()
     .evaluate((element) => element.getBoundingClientRect().top)).toBe(0);
+  if ((await page.viewportSize()).width <= 390) {
+    expect(await page.evaluate(() => document.querySelector('#root').scrollWidth)).toBeLessThanOrEqual(390);
+  }
   if ((await page.viewportSize()).width >= 768) {
     await page.locator('header').getByRole('button', { name: 'Request Estimate' }).click();
     await expect(page).toHaveURL(/\/contact\/?$/);
