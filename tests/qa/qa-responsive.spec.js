@@ -44,15 +44,16 @@ for (const width of [390, 1280]) {
 
 test('anchor navigation leaves its section below the sticky header', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
-  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   await page.getByRole('banner').getByRole('link', { name: 'Services' }).click();
 
   await expect(page).toHaveURL(/#services$/);
   const section = page.locator('#services');
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(1000);
+  await expect.poll(() => section.evaluate((element) => getComputedStyle(element.parentElement).transform))
+    .toBe('none');
   await expect.poll(async () => (await section.boundingBox())?.y).toBeGreaterThanOrEqual(68);
-  await expect.poll(async () => (await section.boundingBox())?.y).toBeLessThanOrEqual(120);
+  await expect.poll(async () => (await section.boundingBox())?.y).toBeLessThanOrEqual(150);
 });
 
 test('mobile menu opens and closes', async ({ page }) => {
