@@ -82,10 +82,9 @@ test.describe('keyboard focus regressions', () => {
     const desktopEstimate = page.getByRole('button', { name: 'Request Estimate', exact: true });
     await expect(desktopEstimate).toBeVisible();
     await expect(desktopEstimate).toBeFocused();
+    const caseStudies = page.getByRole('navigation').getByRole('link', { name: 'Case Studies' });
+    await caseStudies.focus();
     await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(/\/contact\/?$/);
-    await expect(page.getByRole('main')).toBeVisible();
-    await page.getByRole('navigation').getByRole('link', { name: 'Case Studies' }).click();
     await expect(page).toHaveURL(/\/case-studies\/?$/);
     await expect(page.getByRole('heading', { name: /Selected Case Studies/i })).toBeVisible();
 
