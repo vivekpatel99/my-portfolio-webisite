@@ -245,6 +245,24 @@ test('section anchors include scroll-margin-top for fixed header navigation', as
   }
 });
 
+test('header remains visible after scrolling without horizontal overflow', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await page.evaluate(() => window.scrollTo(0, 1500));
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(1000);
+
+  const header = page.locator('header').first();
+  await expect.poll(() => header.evaluate((element) => element.getBoundingClientRect().top)).toBe(0);
+  expect(await page.evaluate(() => document.body.scrollWidth)).toBeLessThanOrEqual(390);
+  expect(await page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop))).toBeGreaterThan(68);
+  await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
+  const estimate = page.getByRole('dialog', { name: 'Navigation menu' })
+    .getByRole('button', { name: 'Request a Project Estimate' });
+  await expect(estimate).toBeVisible();
+  await estimate.click();
+  await expect(page).toHaveURL(/\/contact\/?$/);
+});
+
 test('hero invoice proof fold structure per #176', async ({ page }) => {
   await page.goto('/');
   

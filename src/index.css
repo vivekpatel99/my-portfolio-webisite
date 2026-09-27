@@ -44,6 +44,11 @@
   body,
   html {
     @apply bg-background text-foreground;
+    overflow-x: clip;
+  }
+
+  html {
+    scroll-padding-top: 6rem;
   }
 
   section[id] {
