@@ -27,7 +27,11 @@ describe('Header', () => {
 
   beforeEach(() => {
     window.HTMLElement.prototype.scrollIntoView = vi.fn();
-    window.matchMedia = vi.fn().mockReturnValue({ matches: false });
+    window.matchMedia = vi.fn().mockReturnValue({
+      matches: false,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    });
   });
 
   it('closes the mobile menu at the desktop breakpoint and restores focus to a visible control', async () => {

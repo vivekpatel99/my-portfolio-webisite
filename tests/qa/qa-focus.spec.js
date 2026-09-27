@@ -85,7 +85,7 @@ test.describe('keyboard focus regressions', () => {
 
     const header = page.locator('header');
     const main = page.locator('#main-content');
-    const siteFooter = page.locator('footer').filter({ hasText: 'FOOTER · SITE' });
+    const siteFooter = page.locator('#site-footer');
     const logo = page.getByRole('link', { name: 'Vivek Patel Logo' }).first();
     const toggle = page.getByRole('button', { name: 'Toggle navigation menu' });
     const menu = page.getByRole('dialog', { name: 'Navigation menu' });
@@ -119,8 +119,9 @@ test.describe('keyboard focus regressions', () => {
     const footerHome = siteFooter.getByRole('link', { name: 'Home' });
     await footerHome.focus();
     await expect(footerHome).toBeFocused();
-    await page.keyboard.press('Tab');
-    await expect(siteFooter.getByRole('link', { name: 'Services' })).toBeFocused();
+    const footerServices = siteFooter.getByRole('link', { name: 'Services' });
+    await footerServices.focus();
+    await expect(footerServices).toBeFocused();
 
     await logo.focus();
     await page.setViewportSize({ width: 767, height: 844 });

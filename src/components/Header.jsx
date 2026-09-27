@@ -12,6 +12,7 @@ const Header = () => {
   const menuRef = useRef(null);
   const closeButtonRef = useRef(null);
   const toggleButtonRef = useRef(null);
+  const logoLinkRef = useRef(null);
   const previousFocusRef = useRef(null);
   const preOpenScrollYRef = useRef(0);
   const navigate = useNavigate();
@@ -59,7 +60,7 @@ const Header = () => {
     const backgroundElements = [
       headerRef.current,
       document.getElementById('main-content'),
-      document.querySelector('footer'),
+      document.getElementById('site-footer'),
       document.querySelector('a[href="#main-content"]'),
     ].filter(Boolean);
     const backgroundElementState = backgroundElements.map((element) => ({
@@ -108,9 +109,22 @@ const Header = () => {
       focusableElements[nextIndex].focus();
     };
 
+    const desktopBreakpoint = window.matchMedia('(min-width: 768px)');
+    const handleDesktopBreakpoint = (event) => {
+      if (!event.matches) {
+        return;
+      }
+
+      previousFocusRef.current = logoLinkRef.current;
+      setIsOpen(false);
+    };
+
     window.addEventListener('keydown', handleKeyDown);
+    desktopBreakpoint.addEventListener('change', handleDesktopBreakpoint);
+    handleDesktopBreakpoint(desktopBreakpoint);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      desktopBreakpoint.removeEventListener('change', handleDesktopBreakpoint);
       
       // Restore inert/aria-hidden
       backgroundElementState.forEach(({ element, ariaHidden, hadInertAttribute, inert }) => {
@@ -180,7 +194,7 @@ const Header = () => {
         className="sticky top-0 z-40 bg-gradient-to-b from-[rgba(139,92,246,0.05)] to-[rgba(12,13,13,0.92)] backdrop-blur-[14px] border-b border-[rgba(139,92,246,0.38)]"
       >
         <div className="max-w-[1120px] mx-auto px-7 h-[68px] flex items-center gap-[22px]">
-          <Link to="/" onClick={handleHomeClick} className="flex items-center gap-3 flex-shrink-0" aria-label="Vivek Patel Logo">
+          <Link ref={logoLinkRef} to="/" onClick={handleHomeClick} className="flex items-center gap-3 flex-shrink-0" aria-label="Vivek Patel Logo">
             <span className="w-[30px] h-[30px] border border-[rgba(139,92,246,0.7)] grid place-items-center font-mono text-[11px] tracking-[0.06em] text-white bg-[rgba(139,92,246,0.06)]">
               VP
             </span>
