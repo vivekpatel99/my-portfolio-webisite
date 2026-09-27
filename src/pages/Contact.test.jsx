@@ -53,6 +53,7 @@ describe("Contact form", () => {
     const { container } = render(<Contact />);
     const form = container.querySelector("form");
     expect(form.noValidate).toBe(true);
+    expect(form.hasAttribute("action")).toBe(false);
     expect(container.querySelector('input[name="name"]').required).toBe(true);
 
     await user.click(screen.getByRole("button", { name: /submit project estimate request/i }));
