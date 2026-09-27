@@ -235,14 +235,13 @@ test('services section exists for anchor target', async ({ page }) => {
   await expect(page.locator('#testimonials')).toBeAttached();
 });
 
-test('section anchors include scroll-margin-top for fixed header navigation', async ({ page }) => {
+test('document scroll padding clears the sticky header for anchor navigation', async ({ page }) => {
   await page.goto('/');
-  for (const id of ['services', 'about', 'portfolio', 'testimonials']) {
-    const margin = await page.locator(`#${id}`).evaluate((el) =>
-      getComputedStyle(el).scrollMarginTop
-    );
-    expect(margin === '0px' || margin === '', `#${id} scroll-margin-top is ${margin}`).toBeFalsy();
-  }
+  const padding = await page.locator('html').evaluate((element) =>
+    parseFloat(getComputedStyle(element).scrollPaddingTop)
+  );
+  const header = await page.getByRole('banner').boundingBox();
+  expect(padding).toBeGreaterThanOrEqual(header.height);
 });
 
 test('hero invoice proof fold structure per #176', async ({ page }) => {
