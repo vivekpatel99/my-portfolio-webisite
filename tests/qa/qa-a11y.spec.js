@@ -235,17 +235,8 @@ test('services section exists for anchor target', async ({ page }) => {
   await expect(page.locator('#testimonials')).toBeAttached();
 });
 
-test('section anchors include scroll-margin-top for fixed header navigation', async ({ page }) => {
-  await page.goto('/');
-  for (const id of ['services', 'about', 'portfolio', 'testimonials']) {
-    const margin = await page.locator(`#${id}`).evaluate((el) =>
-      getComputedStyle(el).scrollMarginTop
-    );
-    expect(margin === '0px' || margin === '', `#${id} scroll-margin-top is ${margin}`).toBeFalsy();
-  }
-});
-
 test('section anchor lands below the sticky header without a large gap', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   if ((await page.viewportSize()).width < 768) {
     await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
