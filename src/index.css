@@ -46,6 +46,10 @@
     @apply bg-background text-foreground;
   }
 
+  html {
+    scroll-padding-top: 6rem;
+  }
+
   section[id] {
     scroll-margin-top: 6rem;
   }
