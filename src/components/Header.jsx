@@ -12,7 +12,7 @@ const Header = () => {
   const menuRef = useRef(null);
   const closeButtonRef = useRef(null);
   const toggleButtonRef = useRef(null);
-  const previousFocusRef = useRef(null);
+  const desktopEstimateRef = useRef(null);
   const preOpenScrollYRef = useRef(0);
   const navigate = useNavigate();
   const location = useLocation();
@@ -53,13 +53,17 @@ const Header = () => {
       document.activeElement.blur();
     }
     
-    previousFocusRef.current = toggleButtonRef.current;
+    const desktopQuery = window.matchMedia('(min-width: 768px)');
+    const handleDesktopChange = (event) => {
+      if (event.matches) setIsOpen(false);
+    };
+    desktopQuery.addEventListener('change', handleDesktopChange);
     closeButtonRef.current?.focus({ preventScroll: true });
 
     const backgroundElements = [
       headerRef.current,
       document.getElementById('main-content'),
-      document.querySelector('footer'),
+      document.getElementById('site-footer'),
       document.querySelector('a[href="#main-content"]'),
     ].filter(Boolean);
     const backgroundElementState = backgroundElements.map((element) => ({
@@ -111,6 +115,7 @@ const Header = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      desktopQuery.removeEventListener('change', handleDesktopChange);
       
       // Restore inert/aria-hidden
       backgroundElementState.forEach(({ element, ariaHidden, hadInertAttribute, inert }) => {
@@ -128,8 +133,8 @@ const Header = () => {
         element.inert = inert;
       });
       
-      // Focus toggle with preventScroll
-      previousFocusRef.current?.focus?.({ preventScroll: true });
+      const focusTarget = desktopQuery.matches ? desktopEstimateRef.current : toggleButtonRef.current;
+      focusTarget?.focus({ preventScroll: true });
     };
   }, [isOpen]);
 
@@ -206,6 +211,7 @@ const Header = () => {
           </nav>
           
           <button
+            ref={desktopEstimateRef}
             onClick={handleCTA}
             className="hidden md:inline-flex flex-shrink-0 items-center gap-[10px] border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.05)] px-[14px] py-[10px] font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.1)] hover:text-[#d8caff] transition-colors"
           >
