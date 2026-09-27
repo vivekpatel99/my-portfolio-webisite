@@ -1,13 +1,13 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
 import { compileCaseStudyPublication } from './compile-case-studies.js';
+import { containsCaseStudyCopyLeak } from '../tests/case-study-copy.js';
 
 describe('buyer-facing case-study copy', () => {
   const publication = compileCaseStudyPublication();
 
   it('excludes draft history and proposal instructions from public stories', () => {
-    const editorialCopy = /not for proposals|not client-ready evidence|this story replaces|temporary stand-in|engagement screenshots/i;
-    expect(publication.filter((story) => editorialCopy.test(JSON.stringify(story))).map((story) => story.slug)).toEqual([]);
+    expect(publication.filter((story) => containsCaseStudyCopyLeak(JSON.stringify(story))).map((story) => story.slug)).toEqual([]);
   });
 
   it('keeps the depth demo uncalibrated and preserves its measurement limits', () => {
