@@ -74,6 +74,13 @@ one approval and dismiss stale approvals after new commits.
 
 ## Practical habits
 
+Repository-changing tasks finish through
+[the task delivery skill](../.agents/skills/task-delivery/SKILL.md).
+Capture the dirty-file baseline before editing. Verify the pushed commit and
+PR head, then clean up task-owned temporary files and unused worktrees.
+Preserve unrelated work and report every retained path or checkout.
+An open PR does not authorize a merge or production release.
+
 - Keep each pull request small enough to understand and revert independently.
 - Link the originating issue and state observable acceptance checks.
 - Stage only task-owned paths; preserve unrelated local work.
