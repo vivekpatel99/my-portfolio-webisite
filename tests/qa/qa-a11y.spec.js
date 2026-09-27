@@ -245,6 +245,23 @@ test('section anchors include scroll-margin-top for fixed header navigation', as
   }
 });
 
+test('section anchor lands below the sticky header without a large gap', async ({ page }) => {
+  await page.goto('/');
+  if ((await page.viewportSize()).width < 768) {
+    await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
+    await page.getByRole('dialog', { name: 'Navigation menu' })
+      .getByRole('link', { name: 'Services' }).click();
+  } else {
+    await page.getByRole('navigation').first()
+      .getByRole('link', { name: 'Services' }).click();
+  }
+  const section = page.locator('#services');
+  await expect.poll(() => section.evaluate((element) => {
+    const top = element.getBoundingClientRect().top;
+    return top >= 68 && top < 144;
+  })).toBe(true);
+});
+
 test('header remains visible after scrolling without horizontal overflow', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
@@ -254,6 +271,8 @@ test('header remains visible after scrolling without horizontal overflow', async
   const header = page.locator('header').first();
   await expect.poll(() => header.evaluate((element) => element.getBoundingClientRect().top)).toBe(0);
   expect(await page.evaluate(() => document.body.scrollWidth)).toBeLessThanOrEqual(390);
+  await page.evaluate(() => window.scrollTo(100, 1500));
+  expect(await page.evaluate(() => window.scrollX)).toBe(0);
   expect(await page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop))).toBeGreaterThan(68);
   await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
   const estimate = page.getByRole('dialog', { name: 'Navigation menu' })
@@ -261,6 +280,18 @@ test('header remains visible after scrolling without horizontal overflow', async
   await expect(estimate).toBeVisible();
   await estimate.click();
   await expect(page).toHaveURL(/\/contact\/?$/);
+});
+
+test('header stays visible on the case studies route', async ({ page }) => {
+  await page.goto('/case-studies/');
+  await page.evaluate(() => window.scrollTo(0, 1500));
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(1000);
+  await expect.poll(() => page.locator('header').first()
+    .evaluate((element) => element.getBoundingClientRect().top)).toBe(0);
+  if ((await page.viewportSize()).width >= 768) {
+    await page.locator('header').getByRole('button', { name: 'Request Estimate' }).click();
+    await expect(page).toHaveURL(/\/contact\/?$/);
+  }
 });
 
 test('hero invoice proof fold structure per #176', async ({ page }) => {
