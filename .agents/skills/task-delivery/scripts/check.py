@@ -132,11 +132,11 @@ def submodule_paths(repo):
 
 
 def repository_state(repo):
-    status = git(repo, "status", "--porcelain=v1", "-z", "--untracked-files=all")
+    status = git(repo, "-c", "core.fileMode=true", "status", "--porcelain=v1", "-z", "--untracked-files=all")
     files = untracked_files(repo)
     state = {
-        "index_diff": digest(git(repo, "diff", "--cached", "--binary", "--")),
-        "worktree_diff": digest(git(repo, "diff", "--binary", "--")),
+        "index_diff": digest(git(repo, "-c", "core.fileMode=true", "diff", "--no-ext-diff", "--cached", "--binary", "--")),
+        "worktree_diff": digest(git(repo, "-c", "core.fileMode=true", "diff", "--no-ext-diff", "--binary", "--")),
         "status": digest(status),
         "untracked": files,
         "assume_unchanged": assume_unchanged_files(repo),
