@@ -5,7 +5,7 @@ import { HOURLY_FROM_LABEL } from '@/data/serviceOffers';
 
 const CTA = () => {
   const navigate = useNavigate();
-  
+
   const handleCTAClick = () => {
     navigate('/contact/');
   };
@@ -16,8 +16,8 @@ const CTA = () => {
 
   const ActionGlyph = () => (
     <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" className="w-[18px] h-[18px]">
-      <rect x="2" y="2" width="14" height="14"/>
-      <path d="M6 9h6M10 6l3 3-3 3"/>
+      <rect x="2" y="2" width="14" height="14" />
+      <path d="M6 9h6M10 6l3 3-3 3" />
     </svg>
   );
 
@@ -46,7 +46,7 @@ const CTA = () => {
           >
             <span className="bracket-tl absolute top-[5px] left-[5px] w-4 h-4 border-t-[1.5px] border-l-[1.5px] border-[rgba(139,92,246,0.95)] pointer-events-none z-[5]"></span>
             <span className="bracket-br absolute bottom-[5px] right-[5px] w-4 h-4 border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.55)] pointer-events-none z-[5]"></span>
-            
+
             <span className="field-meta absolute -top-[9px] left-[18px] px-2 bg-[#0C0D0D] font-mono text-[9px] tracking-[0.14em] uppercase text-[#a78bfa]">
               REQUEST · ESTIMATE
             </span>
@@ -70,9 +70,6 @@ const CTA = () => {
           </button>
         </div>
 
-        <div className="route-note mt-7 font-mono text-[9px] tracking-[0.12em] uppercase text-[#484851]">
-          ROUTE · /CONTACT/ · NO MAILTO
-        </div>
       </div>
     </section>
   );
