@@ -126,6 +126,51 @@ test('skip link is focusable at 200% zoom', async ({ page }) => {
 const boxesOverlap = (a, b) =>
   !(a.x + a.width <= b.x || b.x + b.width <= a.x || a.y + a.height <= b.y || b.y + b.height <= a.y);
 
+const heroFoldViewports = [
+  { width: 320, height: 640, stacked: true },
+  { width: 390, height: 844, stacked: true },
+  { width: 768, height: 900, stacked: true },
+  { width: 1280, height: 720, stacked: false },
+];
+
+for (const vp of heroFoldViewports) {
+  test(`hero CTAs start in the first screen at ${vp.width}x${vp.height}`, async ({ page }) => {
+    await page.setViewportSize({ width: vp.width, height: vp.height });
+    await page.goto('/');
+    const hero = page.locator('#main-content section').first();
+    const invoice = await hero.getByRole('article', { name: 'Profile invoice field parse' }).boundingBox();
+    const estimate = await hero.getByRole('button', { name: 'Request a Project Estimate' }).boundingBox();
+    const caseStudies = await hero.getByRole('link', { name: 'View Case Studies' }).boundingBox();
+    const portrait = hero.getByAltText('Tracked engineer portrait');
+    await expect(portrait).toBeVisible();
+    const portraitBox = await portrait.boundingBox();
+
+    expect(estimate.y).toBeLessThan(vp.height);
+    expect(estimate.y).toBeGreaterThanOrEqual(invoice.y + invoice.height - 1);
+
+    const ctaGap = vp.width < 768
+      ? caseStudies.y - (estimate.y + estimate.height)
+      : caseStudies.x - (estimate.x + estimate.width);
+    expect(ctaGap).toBeGreaterThanOrEqual(8);
+
+    if (vp.stacked) {
+      expect(portraitBox.y).toBeGreaterThanOrEqual(Math.max(estimate.y + estimate.height, caseStudies.y + caseStudies.height));
+    } else {
+      expect(portraitBox.x).toBeGreaterThanOrEqual(invoice.x + invoice.width);
+    }
+
+    const overlays = portrait.locator('xpath=..').locator('span.absolute:visible').filter({ hasText: /\S/ });
+    const labels = await overlays.allTextContents();
+    if (vp.stacked) {
+      for (const box of await Promise.all((await overlays.all()).map((o) => o.boundingBox()))) {
+        expect(box.y).toBeGreaterThanOrEqual(portraitBox.y + portraitBox.height * 0.55);
+      }
+    } else {
+      expect(labels.map((t) => t.trim())).toEqual(expect.arrayContaining(['engineer · 0.99', 'ID 001 · TRACKED']));
+    }
+  });
+}
+
 test('mobile cookie banner leaves the hero estimate CTA clickable', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.addInitScript(() => localStorage.removeItem('cookie_consent_preferences'));

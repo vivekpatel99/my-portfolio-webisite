@@ -156,9 +156,9 @@ const Hero = () => {
           </div>
 
           {/* Two columns: invoice | photo */}
-          <div className="grid lg:grid-cols-[minmax(0,1.7fr)_minmax(260px,0.72fr)] gap-0.5 items-center max-lg:grid-cols-1 max-lg:gap-3 max-md:gap-0">
+          <div className="grid lg:grid-cols-[minmax(0,1.7fr)_minmax(260px,0.72fr)] gap-0.5 lg:gap-y-0 items-center max-lg:grid-cols-1 max-lg:gap-3 max-md:gap-0">
             {/* Left: Profile Invoice */}
-            <div className="flex flex-col gap-0.5 min-w-0 w-full max-lg:gap-0">
+            <div className="flex flex-col gap-0.5 min-w-0 w-full max-lg:gap-0 lg:col-start-1 lg:row-start-1">
               <article 
                 className="relative w-full max-w-[760px] border border-[#8B5CF6]/[0.28] rounded-lg px-5 py-1.5 max-md:px-2.5 max-md:py-0"
                 style={{
@@ -219,7 +219,7 @@ const Hero = () => {
                 </div>
 
                 {/* Proofs folded under role */}
-                <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 mb-0.5 max-md:grid-cols-1 max-md:gap-y-1 max-md:mb-1" role="group" aria-label="Detected credentials">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 mb-0.5 max-md:gap-x-3 max-md:mb-1" role="group" aria-label="Detected credentials">
                   <div className="min-w-0">
                     <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Credential</span>
                     <span className="relative inline-flex items-center gap-[7px] border-[1.5px] border-[#8B5CF6] px-[9px] py-[5px] rounded-[1px] bg-[#8B5CF6]/[0.07] max-w-full">
@@ -303,8 +303,26 @@ const Hero = () => {
               </article>
             </div>
 
+            <div className="flex flex-wrap gap-3 mt-0 lg:col-start-1 lg:row-start-2 max-md:flex-col max-md:mt-3">
+              <Button
+                onClick={handleCTAClick}
+                className="bg-[#8B5CF6] hover:bg-[#9B6FFF] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-0"
+              >
+                Request a Project Estimate
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                className="border border-white/[0.14] hover:bg-[#8B5CF6]/8 hover:border-purple-400/35 text-white px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[150px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-0"
+              >
+                <a href="#portfolio">
+                  View Case Studies
+                </a>
+              </Button>
+            </div>
+
             {/* Right: Photo detection card */}
-            <div className="flex justify-center items-center max-lg:mx-auto max-lg:w-full max-lg:max-w-[220px] max-md:max-w-[110px]">
+            <div className="flex justify-center items-center lg:col-start-2 lg:row-start-1 max-lg:mx-auto max-lg:w-full max-lg:max-w-[220px] max-md:max-w-[110px] max-md:mt-2">
               <div className="relative w-full max-w-[300px] p-8 overflow-visible max-md:p-3 max-md:max-w-[110px]">
                 {/* Ghost trail frames behind */}
                 <div className="absolute inset-8 pointer-events-none z-[1] overflow-visible max-md:inset-6" aria-hidden="true">
@@ -372,11 +390,10 @@ const Hero = () => {
                     />
                   )}
 
-                  {/* Badges */}
-                  <span className="absolute top-[22px] left-[22px] z-[4] inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm max-md:top-4 max-md:left-4 max-md:text-[10px] max-md:px-2 max-md:py-1">
+                  <span className="absolute top-[22px] left-[22px] z-[4] max-lg:hidden inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm max-md:top-4 max-md:left-4 max-md:text-[10px] max-md:px-2 max-md:py-1">
                     engineer · 0.99
                   </span>
-                  <span className="absolute bottom-[22px] left-[22px] z-[4] inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm max-md:bottom-4 max-md:left-4 max-md:text-[10px] max-md:px-2 max-md:py-1">
+                  <span className="absolute bottom-[22px] left-[22px] z-[4] max-lg:hidden inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm max-md:bottom-4 max-md:left-4 max-md:text-[10px] max-md:px-2 max-md:py-1">
                     ID 001 · TRACKED
                   </span>
                   <span className="absolute bottom-[22px] right-[22px] z-[4] inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-red-400/35 font-mono text-[11px] text-red-400 tracking-wide backdrop-blur-sm max-md:bottom-4 max-md:right-4 max-md:text-[10px] max-md:px-2 max-md:py-1">
@@ -386,25 +403,6 @@ const Hero = () => {
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* CTAs below invoice */}
-          <div className="flex flex-wrap gap-3 mt-0 max-md:flex-col max-md:mt-0 max-md:gap-0">
-            <Button
-              onClick={handleCTAClick}
-              className="bg-[#8B5CF6] hover:bg-[#9B6FFF] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-0"
-            >
-              Request a Project Estimate
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="border border-white/[0.14] hover:bg-[#8B5CF6]/8 hover:border-purple-400/35 text-white px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[150px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-0"
-            >
-              <a href="#portfolio">
-                View Case Studies
-              </a>
-            </Button>
           </div>
 
           {/* Rate and location chips for a11y */}
