@@ -335,7 +335,7 @@ test('contact form stays horizontally contained with visible fields and submit c
     ['contact email field', page.getByLabel('Email Address *', { exact: true })],
     ['contact budget field', page.getByLabel('Budget Range')],
     ['contact description field', page.getByLabel('Project Description *', { exact: true })],
-    ['contact submit control', page.getByRole('button', { name: /Submit Project Estimate Request/i })],
+    ['contact submit control', page.getByRole('button', { name: /Send project request/i })],
   ]) {
     await expect(locator).toBeVisible();
     assertVisualLayout({
@@ -415,7 +415,7 @@ test('contact validation notice leaves cookie controls visible on tablet and des
     await page.addStyleTag({ content: '*, *::before, *::after { animation: none !important; transition: none !important; }' });
     const cookie = page.getByRole('dialog', { name: 'We value your privacy' });
     await expect(cookie).toBeVisible();
-    await page.getByRole('button', { name: 'Submit Project Estimate Request', exact: true }).click();
+    await page.getByRole('button', { name: 'Send project request', exact: true }).click();
     const message = page.getByText('Uh oh! Missing fields.', { exact: true }).first();
     await expect(message).toBeVisible();
     const notice = message.locator('xpath=ancestor::li[1]');

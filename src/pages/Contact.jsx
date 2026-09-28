@@ -109,7 +109,9 @@ const Contact = () => {
 
     setFieldErrors(nextErrors);
 
-    if (Object.keys(nextErrors).length > 0) {
+    const firstInvalidField = Object.keys(nextErrors)[0];
+    if (firstInvalidField) {
+      telemetrySource.elements.namedItem(firstInvalidField)?.focus();
       toast({
         title: nextErrors.email && trimmedFormState.email ? "Invalid email address." : "Uh oh! Missing fields.",
         description: nextErrors.email && trimmedFormState.email
@@ -234,17 +236,20 @@ const Contact = () => {
               </div>
 
               <div className="field relative mb-4">
-                <span className="field-meta absolute -top-[9px] left-0 px-[5px] bg-[#0C0D0D] font-mono text-[9px] tracking-[0.12em] uppercase text-[#a78bfa] pointer-events-none z-[4]">
-                  NAME · FIELD
-                </span>
-                <label htmlFor="name" className="flabel block font-mono text-[9px] tracking-[0.14em] uppercase text-[#6b7280] mb-2">
-                  Full Name <span className="text-[#a78bfa]">*</span>
-                </label>
+                <div className="field-head flex items-start justify-between gap-3 mb-2">
+                  <label htmlFor="name" className="flabel font-mono text-xs tracking-[0.14em] uppercase text-[#9ca3af]">
+                    Full Name <span className="text-[#a78bfa]">*</span>
+                  </label>
+                  <span aria-hidden="true" className="field-meta hidden sm:inline shrink-0 font-mono text-[9px] tracking-[0.12em] uppercase text-[#a78bfa] pointer-events-none">
+                    NAME · FIELD
+                  </span>
+                </div>
                 <Input
                   type="text"
                   id="name"
                   name="name"
                   placeholder="Alex from Acme Ops"
+                  autoComplete="name"
                   value={formState.name}
                   onChange={handleInputChange}
                   className="ctrl w-full h-12 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.12)] px-[14px] text-[0.95rem] text-white rounded-none outline-none focus:border-[#8B5CF6] focus:shadow-[0_0_0_1px_rgba(139,92,246,0.35)] transition-all placeholder:text-[rgba(156,163,175,0.55)]"
@@ -257,17 +262,20 @@ const Contact = () => {
               </div>
 
               <div className="field relative mb-4">
-                <span className="field-meta absolute -top-[9px] left-0 px-[5px] bg-[#0C0D0D] font-mono text-[9px] tracking-[0.12em] uppercase text-[#a78bfa] pointer-events-none z-[4]">
-                  EMAIL · FIELD
-                </span>
-                <label htmlFor="email" className="flabel block font-mono text-[9px] tracking-[0.14em] uppercase text-[#6b7280] mb-2">
-                  Email Address <span className="text-[#a78bfa]">*</span>
-                </label>
+                <div className="field-head flex items-start justify-between gap-3 mb-2">
+                  <label htmlFor="email" className="flabel font-mono text-xs tracking-[0.14em] uppercase text-[#9ca3af]">
+                    Email Address <span className="text-[#a78bfa]">*</span>
+                  </label>
+                  <span aria-hidden="true" className="field-meta hidden sm:inline shrink-0 font-mono text-[9px] tracking-[0.12em] uppercase text-[#a78bfa] pointer-events-none">
+                    EMAIL · FIELD
+                  </span>
+                </div>
                 <Input
                   type="email"
                   id="email"
                   name="email"
                   placeholder="alex@company.com"
+                  autoComplete="email"
                   value={formState.email}
                   onChange={handleInputChange}
                   className="ctrl w-full h-12 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.12)] px-[14px] text-[0.95rem] text-white rounded-none outline-none focus:border-[#8B5CF6] focus:shadow-[0_0_0_1px_rgba(139,92,246,0.35)] transition-all placeholder:text-[rgba(156,163,175,0.55)]"
@@ -280,12 +288,14 @@ const Contact = () => {
               </div>
 
               <div className="field relative mb-4">
-                <span className="field-meta absolute -top-[9px] left-0 px-[5px] bg-[#0C0D0D] font-mono text-[9px] tracking-[0.12em] uppercase text-[#a78bfa] pointer-events-none z-[4]">
-                  BUDGET · FIELD
-                </span>
-                <label htmlFor="budget" className="flabel block font-mono text-[9px] tracking-[0.14em] uppercase text-[#6b7280] mb-2">
-                  Budget Range
-                </label>
+                <div className="field-head flex items-start justify-between gap-3 mb-2">
+                  <label htmlFor="budget" className="flabel font-mono text-xs tracking-[0.14em] uppercase text-[#9ca3af]">
+                    Budget Range
+                  </label>
+                  <span aria-hidden="true" className="field-meta hidden sm:inline shrink-0 font-mono text-[9px] tracking-[0.12em] uppercase text-[#a78bfa] pointer-events-none">
+                    BUDGET · FIELD
+                  </span>
+                </div>
                 <select
                   id="budget"
                   name="budget"
@@ -302,12 +312,14 @@ const Contact = () => {
               </div>
 
               <div className="field relative mb-4">
-                <span className="field-meta absolute -top-[9px] left-0 px-[5px] bg-[#0C0D0D] font-mono text-[9px] tracking-[0.12em] uppercase text-[#a78bfa] pointer-events-none z-[4]">
-                  MESSAGE · FIELD
-                </span>
-                <label htmlFor="description" className="flabel block font-mono text-[9px] tracking-[0.14em] uppercase text-[#6b7280] mb-2">
-                  Project Description <span className="text-[#a78bfa]">*</span>
-                </label>
+                <div className="field-head flex items-start justify-between gap-3 mb-2">
+                  <label htmlFor="description" className="flabel font-mono text-xs tracking-[0.14em] uppercase text-[#9ca3af]">
+                    Project Description <span className="text-[#a78bfa]">*</span>
+                  </label>
+                  <span aria-hidden="true" className="field-meta hidden sm:inline shrink-0 font-mono text-[9px] tracking-[0.12em] uppercase text-[#a78bfa] pointer-events-none">
+                    MESSAGE · FIELD
+                  </span>
+                </div>
                 <Textarea
                   id="description"
                   name="description"
@@ -339,7 +351,6 @@ const Contact = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  aria-label="Submit Project Estimate Request"
                   className="relative inline-flex items-center justify-center gap-3 border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.12)] px-10 py-4 font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.18)] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                   {isSubmitting ? (
