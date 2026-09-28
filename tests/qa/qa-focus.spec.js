@@ -68,7 +68,7 @@ test.describe('keyboard focus regressions', () => {
     const toggle = page.getByRole('button', { name: 'Toggle navigation menu' });
     const menu = page.getByRole('dialog', { name: 'Navigation menu' });
     const main = page.locator('#main-content');
-    const footer = page.locator('footer').filter({ hasText: 'FOOTER · SITE' });
+    const footer = page.locator('#site-footer');
     await toggle.click();
     await expect(menu).toBeVisible();
     await expect(main).toHaveAttribute('inert', '');
