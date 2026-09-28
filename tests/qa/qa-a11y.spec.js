@@ -326,6 +326,15 @@ test('estimate action stays reachable after deep scrolling', async ({ page }) =>
   await expect(page).toHaveURL(/\/contact\/?$/);
 });
 
+test('document scroll padding clears the sticky header for anchor navigation', async ({ page }) => {
+  await page.goto('/');
+  const padding = await page.locator('html').evaluate((element) =>
+    parseFloat(getComputedStyle(element).scrollPaddingTop)
+  );
+  const header = await page.getByRole('banner').boundingBox();
+  expect(padding).toBeGreaterThanOrEqual(header.height);
+});
+
 test('hero invoice proof fold structure per #176', async ({ page }) => {
   await page.goto('/');
   
