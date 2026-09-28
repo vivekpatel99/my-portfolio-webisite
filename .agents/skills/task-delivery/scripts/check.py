@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import stat
 import subprocess
+import sys
 
 parser = argparse.ArgumentParser(description="Compare dirty state with a task's starting baseline.")
 parser.add_argument("mode", choices=["snapshot", "check"])
@@ -146,7 +147,14 @@ def submodule_paths(repo):
         if configured.returncode not in (0, 1):
             raise subprocess.CalledProcessError(configured.returncode, configured.args, configured.stdout, configured.stderr)
         for line in configured.stdout.decode().splitlines():
-            _, module_path = line.split(None, 1)
+            parts = line.split(None, 1)
+            if len(parts) < 2:
+                print(f"Error: invalid submodule path (empty)", file=sys.stderr)
+                continue
+            module_path = parts[1]
+            if not module_path or module_path == "." or Path(module_path).is_absolute() or (repo / module_path).resolve() == repo.resolve():
+                print(f"Error: invalid submodule path '{module_path}' (empty, '.', absolute, or repo root)", file=sys.stderr)
+                continue
             paths.add(module_path)
     return paths
 
@@ -156,8 +164,8 @@ def repository_state(repo):
     files = untracked_files(repo)
     assume_unchanged, skip_worktree = flagged_index_files(repo)
     state = {
-        "index_diff": digest(git(repo, "-c", "core.fileMode=true", "diff", "--no-ext-diff", "--cached", "--binary", "--")),
-        "worktree_diff": digest(git(repo, "-c", "core.fileMode=true", "diff", "--no-ext-diff", "--binary", "--")),
+        "index_diff": digest(git(repo, "-c", "core.fileMode=true", "diff", "--no-ext-diff", "--no-textconv", "--cached", "--binary", "--")),
+        "worktree_diff": digest(git(repo, "-c", "core.fileMode=true", "diff", "--no-ext-diff", "--no-textconv", "--binary", "--")),
         "status": digest(status),
         "untracked": files,
         "assume_unchanged": assume_unchanged,
