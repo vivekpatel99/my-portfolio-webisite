@@ -56,7 +56,7 @@ describe("Contact form", () => {
     expect(form.hasAttribute("action")).toBe(false);
     expect(container.querySelector('input[name="name"]').required).toBe(true);
 
-    await user.click(screen.getByRole("button", { name: /send project request/i }));
+    await user.click(screen.getByRole("button", { name: /submit project estimate request/i }));
 
     expect(toast).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -392,7 +392,7 @@ describe("Contact form", () => {
   it('names the submit button and hides the route instruction', () => {
     render(<Contact />);
     expect(screen.getByText(/CONTACT ·/i)).toBeTruthy();
-    expect(screen.getByRole('button', { name: /send project request/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /submit project estimate request/i })).toBeTruthy();
     expect(screen.queryByText(/SUBMIT · FIELD/i)).toBeNull();
     expect(screen.queryByText(/FORM REMAINS PRIMARY/i)).toBeNull();
   });

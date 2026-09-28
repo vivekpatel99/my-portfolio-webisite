@@ -76,7 +76,7 @@ describe('Header', () => {
       </MemoryRouter>,
     );
 
-    const home = screen.getAllByRole('link', { name: 'Vivek Patel' })[0];
+    const home = screen.getAllByRole('link', { name: 'Vivek Patel Logo' })[0];
     expect(home.querySelector('img')?.getAttribute('src')).toBe('/assets/logos/mylogo.png');
     expect(screen.queryByText(/NAV ·/i)).toBeNull();
   });
