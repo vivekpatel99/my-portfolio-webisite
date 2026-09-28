@@ -3,7 +3,7 @@
 }
 
 .contact-detection-frame {
-  --corner-color: rgba(139, 92, 246, 0.62);
+  --corner-color: #6b7280;
   --corner-length: 16px;
   --corner-width: 1px;
   position: relative;
@@ -34,10 +34,6 @@
   transition: background-color 150ms ease;
 }
 
-.contact-detection-frame[data-filled="true"] {
-  --corner-color: #8b5cf6;
-}
-
 .contact-detection-frame:focus-within {
   --corner-color: #a78bfa;
   --corner-length: 18px;
@@ -58,7 +54,6 @@
   cursor: text;
 }
 
-.contact-detection-frame[data-filled="true"] .contact-detection-label,
 .contact-detection-frame:focus-within .contact-detection-label {
   color: #c4b5fd;
 }
