@@ -303,7 +303,7 @@ const Hero = () => {
               </article>
             </div>
 
-            <div className="flex flex-wrap gap-3 mt-0 lg:col-start-1 lg:row-start-2 max-md:flex-col max-md:mt-3">
+            <div className="flex flex-wrap gap-3 mt-6 lg:col-start-1 lg:row-start-2 max-md:flex-col max-md:mt-4">
               <Button
                 onClick={handleCTAClick}
                 className="bg-[#8B5CF6] hover:bg-[#9B6FFF] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-0"

@@ -22,7 +22,7 @@ const CTA = () => {
   );
 
   return (
-    <section id="cta" className="cta-sec relative bg-[radial-gradient(ellipse_at_50%_40%,rgba(139,92,246,0.045),transparent_55%),#0C0D0D] py-14 px-7 md:px-12 min-h-[900px] flex items-center">
+    <section id="cta" className="cta-sec relative bg-[radial-gradient(ellipse_at_50%_40%,rgba(139,92,246,0.045),transparent_55%),#0C0D0D] py-14 px-7 md:px-12 flex items-center">
       <div className="inner relative z-[2] max-w-[920px] mx-auto w-full text-center">
         <div className="eyebrow font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] mb-[22px]">
           CTA · <em className="not-italic text-[#a78bfa]">DETECTED</em>
