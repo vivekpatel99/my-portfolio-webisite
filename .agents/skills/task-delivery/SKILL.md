@@ -16,8 +16,12 @@ the user's explicit delivery scope and `AGENTS.md`. Read
 3. Run `python3 .agents/skills/task-delivery/scripts/check.py snapshot /absolute/task-directory/baseline.json`.
 4. Record task-owned repository paths, temporary paths, and process IDs in that
    directory. Record whether the checkout is primary, shared, or task-owned.
-5. Create the task branch from current `develop`. If dirty work blocks a branch
-   switch, preserve it and use a safe delivery method. Never reset it away.
+5. For a feature, ordinary fix, documentation change, or unreleased revert,
+   create the task branch from current `develop`. For a production rollback or
+   urgent hotfix, follow `docs/git-workflow.md`: branch from `main`, deliver a
+   PR into `main`, then open the required synchronization PR into `develop`.
+   If dirty work blocks a branch switch, preserve it and use a safe delivery
+   method. Never reset it away.
 
 If this skill is being added for the first time, capture the baseline before
 creating it. Do not capture a new baseline to conceal task-created leftovers.
@@ -29,8 +33,9 @@ Keep the baseline outside the repository and do not publish its contents.
 2. Stage only task-owned paths. Inspect the staged diff before committing.
 3. Commit on the task branch and push it. Verify the remote branch SHA equals
    the delivered commit.
-4. Create or update the PR into `develop`. Verify its base, head branch, and
-   head SHA. Attach the PR to the Codex chat with `attach_artifact`.
+4. Create or update the PR into the branch selected in step 5. Verify its base,
+   head branch, and head SHA. Attach the PR to the Codex chat with
+   `attach_artifact`.
 5. Record the PR URL and verification results. State pending CI accurately.
    PR creation does not authorize merging or a production release.
 

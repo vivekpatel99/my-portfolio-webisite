@@ -24,6 +24,33 @@ def digest(value):
     return hashlib.sha256(value).hexdigest()
 
 
+def file_state(path):
+    info = path.lstat()
+    mode = stat.S_IFMT(info.st_mode) | stat.S_IMODE(info.st_mode)
+    if stat.S_ISLNK(info.st_mode):
+        content = os.fsencode(os.readlink(path))
+    elif stat.S_ISREG(info.st_mode):
+        content = path.read_bytes()
+    else:
+        content = b""
+    return {"mode": mode, "content": digest(content)}
+
+
+def filesystem_tree(directory):
+    entries = {}
+
+    def visit(current):
+        for entry in os.scandir(current):
+            path = Path(entry.path)
+            relative = path.relative_to(directory).as_posix()
+            entries[relative] = file_state(path)
+            if entry.is_dir(follow_symlinks=False):
+                visit(path)
+
+    visit(directory)
+    return entries
+
+
 def untracked_files(repo):
     paths = git(repo, "ls-files", "--others", "--exclude-standard", "-z")
     files = {}
@@ -31,16 +58,19 @@ def untracked_files(repo):
         if not raw:
             continue
         path = repo / os.fsdecode(raw)
-        info = path.lstat()
-        mode = stat.S_IFMT(info.st_mode) | stat.S_IMODE(info.st_mode)
-        if stat.S_ISLNK(info.st_mode):
-            content = os.fsencode(os.readlink(path))
-        elif stat.S_ISREG(info.st_mode):
-            content = path.read_bytes()
-        else:
-            content = b""
-        files[os.fsdecode(raw)] = {"mode": mode, "content": digest(content)}
+        files[os.fsdecode(raw)] = file_state(path)
     return files
+
+
+def is_dirty(state):
+    empty_digest = digest(b"")
+    return (
+        state["index_diff"] != empty_digest
+        or state["worktree_diff"] != empty_digest
+        or state["status"] != empty_digest
+        or bool(state["untracked"])
+        or bool(state["submodules"])
+    )
 
 
 def repository_state(repo):
@@ -55,14 +85,24 @@ def repository_state(repo):
     }
     modules = repo / ".gitmodules"
     if modules.is_file():
-        configured = git(repo, "config", "--file", ".gitmodules", "--get-regexp", r"^submodule\..*\.path$").decode()
-        for line in configured.splitlines():
+        configured = subprocess.run(
+            ["git", "-C", str(repo), "config", "--file", ".gitmodules", "--get-regexp", r"^submodule\..*\.path$"],
+            capture_output=True,
+            check=False,
+        )
+        if configured.returncode not in (0, 1):
+            raise subprocess.CalledProcessError(configured.returncode, configured.args, configured.stdout, configured.stderr)
+        for line in configured.stdout.decode().splitlines():
             _, module_path = line.split(None, 1)
             module = repo / module_path
             if (module / ".git").exists():
-                state["submodules"][module_path] = repository_state(module)
-            else:
-                state["submodules"][module_path] = {"uninitialized": True}
+                child_state = repository_state(module)
+                if is_dirty(child_state):
+                    state["submodules"][module_path] = child_state
+            elif module.is_dir():
+                files = filesystem_tree(module)
+                if files:
+                    state["submodules"][module_path] = {"uninitialized_files": files}
     return state
 
 
@@ -75,8 +115,8 @@ else:
     starting = json.loads(baseline.read_text())
     if state != starting:
         print("Dirty state differs from the baseline. Inspect git status and git diff.")
-        for name in sorted(set(files) | set(starting["untracked"])):
-            if files.get(name) != starting["untracked"].get(name):
+        for name in sorted(set(state["untracked"]) | set(starting["untracked"])):
+            if state["untracked"].get(name) != starting["untracked"].get(name):
                 print("Untracked file changed:", name)
         raise SystemExit(1)
     print("Dirty state matches the baseline.")

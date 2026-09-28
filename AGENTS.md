@@ -44,8 +44,11 @@ Convex agent skills for common tasks can be installed by running
 - Before editing, record the branch, HEAD, dirty-file baseline, and task-owned
   paths. Preserve pre-existing changes and untracked files.
 - Do not report completion until intended changes are verified, committed,
-  pushed, and included in a PR targeting `develop`. Verify the remote commit
-  and PR head. Creating a PR does not authorize merging or production release.
+  pushed, and included in a PR targeting the branch required by the Git
+  workflow: `develop` for ordinary work, or `main` for a production rollback
+  or urgent hotfix, followed by its required synchronization PR to `develop`.
+  Verify each remote commit and PR head. Creating a PR does not authorize
+  merging or production release.
 - Before finishing, run the delivery check against the starting baseline.
   Account for every new or changed local file. If delivery or cleanup is
   blocked, report the task as incomplete with the blocker and remaining paths.
