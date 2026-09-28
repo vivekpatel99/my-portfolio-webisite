@@ -1,4 +1,5 @@
 import React from 'react';
+import { profileImages } from '@/config/links';
 
 const About = () => {
   return (
@@ -14,15 +15,17 @@ const About = () => {
         {/* Dual field columns */}
         <div className="dual quiet-grid grid md:grid-cols-[1fr_1.15fr] gap-[18px] mb-12">
           {/* Photo field */}
-          <article className="field relative border border-[rgba(139,92,246,0.32)] p-[22px] px-6 pb-[26px] bg-transparent min-h-[320px]">
+          <article className="field relative border border-[rgba(139,92,246,0.32)] p-[22px] px-6 pb-[26px] bg-transparent md:min-h-[320px]">
             <span className="f-tl absolute top-[5px] left-[5px] w-[14px] h-[14px] border-t-[1.5px] border-l-[1.5px] border-[rgba(139,92,246,0.75)] pointer-events-none"></span>
             <span className="f-br absolute bottom-[5px] right-[5px] w-[14px] h-[14px] border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.4)] pointer-events-none"></span>
 
-            <div className="photo-area aspect-[4/3] bg-[#161718] border border-[rgba(255,255,255,0.08)] flex flex-col items-center justify-center gap-[10px]">
-              <div className="photo-glyph w-11 h-11 relative text-[rgba(139,92,246,0.5)]">
-                <span className="absolute inset-[5px] border border-current rotate-45"></span>
-                <span className="absolute inset-[13px] border border-[rgba(255,255,255,0.25)] rotate-45"></span>
-              </div>
+            <div className="photo-area aspect-[4/3] bg-[#161718] border border-[rgba(255,255,255,0.08)] overflow-hidden">
+              <img
+                src={profileImages.aboutPhoto}
+                alt="Portrait of Vivek Patel"
+                loading="lazy"
+                className="block w-full h-full object-cover object-[center_top]"
+              />
             </div>
           </article>
 

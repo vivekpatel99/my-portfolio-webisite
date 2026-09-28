@@ -30,4 +30,10 @@ describe('About', () => {
     expect(screen.queryByText(/PHOTO · FIELD/i)).toBeNull();
     expect(screen.getByText(/BIO ·/i)).toBeTruthy();
   });
+
+  it('fills the photo panel with the approved portrait', () => {
+    render(<About />);
+    const portrait = screen.getByRole('img', { name: 'Portrait of Vivek Patel' });
+    expect(portrait.getAttribute('src')).toBe('/assets/images/vivek-black-and-white.webp');
+  });
 });
