@@ -62,6 +62,43 @@ test.describe('keyboard focus regressions', () => {
     await expect(page.locator('#main-content')).not.toHaveAttribute('inert', '');
   });
 
+  test('resizing an open mobile menu to desktop restores navigation and page interaction', async ({ page }) => {
+    await page.setViewportSize({ width: 767, height: 844 });
+    await page.goto('/');
+    const toggle = page.getByRole('button', { name: 'Toggle navigation menu' });
+    const menu = page.getByRole('dialog', { name: 'Navigation menu' });
+    const main = page.locator('#main-content');
+    const footer = page.locator('#site-footer');
+    await toggle.click();
+    await expect(menu).toBeVisible();
+    await expect(main).toHaveAttribute('inert', '');
+
+    await page.setViewportSize({ width: 768, height: 844 });
+    await expect(page.locator('#mobile-menu')).toHaveCount(0);
+    for (const background of [page.locator('header'), main, footer, page.locator('a[href="#main-content"]')]) {
+      await expect(background).not.toHaveAttribute('inert', '');
+      await expect(background).not.toHaveAttribute('aria-hidden', 'true');
+    }
+    const desktopEstimate = page.getByRole('button', { name: 'Request Estimate', exact: true });
+    await expect(desktopEstimate).toBeVisible();
+    await expect(desktopEstimate).toBeFocused();
+    const caseStudies = page.getByRole('navigation').getByRole('link', { name: 'Case Studies' });
+    await caseStudies.focus();
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL(/\/case-studies\/?$/);
+    await expect(page.getByRole('heading', { name: /Selected Case Studies/i })).toBeVisible();
+
+    await page.setViewportSize({ width: 767, height: 844 });
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await toggle.click();
+    await expect(menu).toBeVisible();
+    await expect(footer).toHaveAttribute('inert', '');
+    await page.keyboard.press('Escape');
+    await expect(menu).toBeHidden();
+    await expect(toggle).toBeFocused();
+    await expect(main).not.toHaveAttribute('inert', '');
+  });
+
   test('mobile menu navigation closes cleanly and keeps route navigation working', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
@@ -74,6 +111,70 @@ test.describe('keyboard focus regressions', () => {
     await expect(page.getByRole('dialog', { name: 'Navigation menu' })).toBeHidden();
     await expect(page.locator('#main-content')).not.toHaveAttribute('inert', '');
     await expect(toggle).toBeFocused();
+  });
+
+  test('mobile menu releases every landmark across the desktop breakpoint and can reopen by keyboard', async ({ page }) => {
+    await page.setViewportSize({ width: 767, height: 844 });
+    await page.addInitScript(() => {
+      localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false }));
+    });
+    await page.goto('/');
+
+    const header = page.locator('header');
+    const main = page.locator('#main-content');
+    const siteFooter = page.locator('#site-footer');
+    const logo = page.getByRole('link', { name: 'Vivek Patel Logo' }).first();
+    const toggle = page.getByRole('button', { name: 'Toggle navigation menu' });
+    const menu = page.getByRole('dialog', { name: 'Navigation menu' });
+
+    await toggle.click();
+    await expect(menu).toBeVisible();
+    await expect(header).toHaveAttribute('inert', '');
+    await expect(main).toHaveAttribute('inert', '');
+
+    await page.setViewportSize({ width: 768, height: 844 });
+    await expect(menu).toHaveCount(0);
+    await expect(header).not.toHaveAttribute('inert', '');
+    await expect(main).not.toHaveAttribute('inert', '');
+    await expect(siteFooter).not.toHaveAttribute('inert', '');
+    await expect(header.getByRole('button', { name: 'Request Estimate' })).toBeFocused();
+
+    const desktopControls = [
+      page.getByRole('navigation').getByRole('link', { name: 'Services', exact: true }),
+      page.getByRole('navigation').getByRole('link', { name: 'About', exact: true }),
+      page.getByRole('navigation').getByRole('link', { name: 'Case Studies', exact: true }),
+      page.getByRole('navigation').getByRole('link', { name: 'Testimonials', exact: true }),
+      header.getByRole('button', { name: 'Request Estimate' }),
+      main.getByRole('button', { name: 'Request a Project Estimate' }).first(),
+    ];
+    for (const control of desktopControls) {
+      await expect(control).toBeVisible();
+      await control.focus();
+      await expect(control).toBeFocused();
+    }
+
+    const footerHome = siteFooter.getByRole('link', { name: 'Home' });
+    await footerHome.focus();
+    await expect(footerHome).toBeFocused();
+    const footerServices = siteFooter.getByRole('link', { name: 'Services' });
+    await footerServices.focus();
+    await expect(footerServices).toBeFocused();
+
+    await logo.focus();
+    await page.setViewportSize({ width: 767, height: 844 });
+    await expect(logo).toBeFocused();
+    await expect(toggle).toBeVisible();
+    await toggle.focus();
+    await page.keyboard.press('Enter');
+    await expect(menu).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Close navigation menu' })).toBeFocused();
+
+    await page.keyboard.press('Escape');
+    await expect(menu).toHaveCount(0);
+    await expect(toggle).toBeFocused();
+    await expect(header).not.toHaveAttribute('inert', '');
+    await expect(main).not.toHaveAttribute('inert', '');
+    await expect(siteFooter).not.toHaveAttribute('inert', '');
   });
 
   test('pointer gallery controls still close with Escape and restore their opener', async ({ page }) => {

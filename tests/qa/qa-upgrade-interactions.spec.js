@@ -366,7 +366,7 @@ test('e2e: Home → Service → CTA → Contact → Fill validation', async ({ p
   await page.getByRole('button', { name: /Submit Project Estimate Request/i }).click();
   
   // Validation should trigger
-  await expect(page.getByText(/Invalid email/i)).toBeVisible();
+  await expect(page.getByText('Invalid email address.', { exact: true })).toBeVisible();
 });
 
 test('e2e: Home portfolio card → Case study detail → Back', async ({ page }) => {
