@@ -83,7 +83,7 @@ Important frontend files:
 | `src/components/Experience.jsx` | Timeline/collapsible experience section. |
 | `src/pages/Contact.jsx` | Contact form state, client-side validation, Convex mutation call, toasts, Sentry capture. |
 | `src/pages/Project.jsx` | Case-study route lookup, SEO, article rendering, and missing-project handling. |
-| `src/config/links.js` | Centralized social links, remote image URLs, logos, backgrounds, tech icons, gallery images. |
+| `src/config/links.js` | Social and contact links, logo paths, and profile image URLs. |
 | `src/lib/seoConfig.js` | Site URL, default SEO, route-specific SEO config. |
 | `src/lib/seo.js` | React Helmet SEO component. |
 | `src/lib/consent.js` | Cookie consent persistence helpers. |
