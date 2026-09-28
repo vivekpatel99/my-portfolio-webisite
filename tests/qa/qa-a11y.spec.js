@@ -1,4 +1,6 @@
 import { expect, test } from './qa-test.js';
+import { caseStudies } from '../../src/data/caseStudies.js';
+import { serviceOffers } from '../../src/data/serviceOffers.js';
 
 const renderedContrast = async (locator) => locator.evaluate((element) => {
   const parseColor = (value) => {
@@ -256,14 +258,72 @@ test('services section exists for anchor target', async ({ page }) => {
   await expect(page.locator('#testimonials')).toBeAttached();
 });
 
-test('section anchors include scroll-margin-top for fixed header navigation', async ({ page }) => {
+test('section anchor lands below the sticky header without a large gap', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
-  for (const id of ['services', 'about', 'portfolio', 'testimonials']) {
-    const margin = await page.locator(`#${id}`).evaluate((el) =>
-      getComputedStyle(el).scrollMarginTop
-    );
-    expect(margin === '0px' || margin === '', `#${id} scroll-margin-top is ${margin}`).toBeFalsy();
+  if ((await page.viewportSize()).width < 768) {
+    await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
+    await page.getByRole('dialog', { name: 'Navigation menu' })
+      .getByRole('link', { name: 'Services' }).click();
+  } else {
+    await page.getByRole('navigation').first()
+      .getByRole('link', { name: 'Services' }).click();
   }
+  const section = page.locator('#services');
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(1000);
+  const sectionTop = await section.evaluate((element) => element.getBoundingClientRect().top);
+  const headerHeight = await page.locator('header').first()
+    .evaluate((element) => element.getBoundingClientRect().height);
+  const scrollPadding = await page.evaluate(() =>
+    parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop));
+  expect(sectionTop).toBeGreaterThanOrEqual(headerHeight);
+  expect(sectionTop).toBeLessThanOrEqual(scrollPadding + 16);
+});
+
+test('header stays visible and content fits across route types', async ({ page }) => {
+  const routes = [
+    '/',
+    '/case-studies/',
+    '/contact/',
+    `/project/${caseStudies[0].slug}/`,
+    `/services/${serviceOffers[0].id}/`,
+    '/legal/',
+    '/data-policy/',
+    '/missing-page/',
+  ];
+  const viewportWidth = (await page.viewportSize()).width;
+
+  for (const route of routes) {
+    await page.goto(route);
+    await expect(page.locator('#main-content h1').first()).toBeVisible();
+    await page.locator('#main-content').evaluate((element) => {
+      element.style.minHeight = '2400px';
+    });
+    await page.evaluate(() => window.scrollTo(0, 1500));
+    await expect.poll(() => page.evaluate(() => window.scrollY), { message: route })
+      .toBeGreaterThan(1000);
+    await expect.poll(() => page.locator('header').first()
+      .evaluate((element) => element.getBoundingClientRect().top), { message: route }).toBe(0);
+    if (viewportWidth === 390) {
+      expect(await page.evaluate(() => document.querySelector('#root').scrollWidth), route)
+        .toBeLessThanOrEqual(viewportWidth);
+    }
+  }
+});
+
+test('estimate action stays reachable after deep scrolling', async ({ page }) => {
+  await page.goto('/case-studies/');
+  await page.evaluate(() => window.scrollTo(0, 1500));
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(1000);
+
+  if ((await page.viewportSize()).width < 768) {
+    await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
+    await page.getByRole('dialog', { name: 'Navigation menu' })
+      .getByRole('button', { name: 'Request a Project Estimate' }).click();
+  } else {
+    await page.locator('header').getByRole('button', { name: 'Request Estimate' }).click();
+  }
+  await expect(page).toHaveURL(/\/contact\/?$/);
 });
 
 test('hero invoice proof fold structure per #176', async ({ page }) => {

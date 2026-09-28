@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Header from './Header';
+import Footer from './Footer';
 
 vi.mock('framer-motion', () => {
   const motion = new Proxy(
@@ -71,8 +72,7 @@ describe('Header', () => {
     await waitFor(() => {
       expect(screen.queryByRole('dialog', { name: 'Navigation menu' })).toBeNull();
     });
-    const logo = screen.getByRole('link', { name: 'Vivek Patel Logo' });
-    expect(document.activeElement).toBe(logo);
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Request Estimate' }));
     expect(document.getElementById('main-content').hasAttribute('inert')).toBe(false);
     expect(document.getElementById('site-footer').hasAttribute('inert')).toBe(false);
   });
@@ -98,6 +98,43 @@ describe('Header', () => {
     expect(contentFooter.hasAttribute('aria-hidden')).toBe(false);
     expect(siteFooter.hasAttribute('inert')).toBe(true);
     expect(siteFooter.getAttribute('aria-hidden')).toBe('true');
+  });
+
+  it('closes at the desktop breakpoint, restores background state and desktop focus', async () => {
+    const user = userEvent.setup();
+    const desktopQuery = { matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() };
+    window.matchMedia = vi.fn().mockReturnValue(desktopQuery);
+    render(
+      <MemoryRouter>
+        <a href="#main-content">Skip to content</a>
+        <Header />
+        <main id="main-content"><article><footer>Article footer</footer></article></main>
+        <Footer />
+      </MemoryRouter>,
+    );
+    const main = document.getElementById('main-content');
+    const siteFooter = document.getElementById('site-footer');
+    siteFooter.setAttribute('aria-hidden', 'false');
+    await user.click(screen.getByRole('button', { name: 'Toggle navigation menu' }));
+    expect(main.hasAttribute('inert')).toBe(true);
+    expect(siteFooter.hasAttribute('inert')).toBe(true);
+    expect(desktopQuery.addEventListener).toHaveBeenCalledWith('change', expect.any(Function));
+    const onChange = desktopQuery.addEventListener.mock.calls[0][1];
+    act(() => {
+      desktopQuery.matches = true;
+      onChange({ matches: true });
+    });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(main.hasAttribute('inert')).toBe(false);
+    expect(siteFooter.hasAttribute('inert')).toBe(false);
+    expect(siteFooter.getAttribute('aria-hidden')).toBe('false');
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Request Estimate' }));
+    expect(desktopQuery.removeEventListener).toHaveBeenCalledWith('change', onChange);
+    act(() => { desktopQuery.matches = false; });
+    await user.click(screen.getByRole('button', { name: 'Toggle navigation menu' }));
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Toggle navigation menu' }));
   });
 
   it('scrolls when clicking a nav link for the current hash', async () => {
@@ -139,14 +176,15 @@ describe('Header', () => {
     await waitFor(() => expect(screen.getByTestId('location').textContent).toBe('/case-studies/'));
   });
 
-  it('renders Detection Bar with NAV · SITE craft marker', () => {
+  it('shows the logo instead of a VP text mark', () => {
     render(
       <MemoryRouter>
         <Header />
       </MemoryRouter>,
     );
 
-    expect(screen.getByText(/NAV ·/i)).toBeTruthy();
-    expect(screen.getByText(/SITE/i)).toBeTruthy();
+    const home = screen.getAllByRole('link', { name: 'Vivek Patel Logo' })[0];
+    expect(home.querySelector('img')?.getAttribute('src')).toBe('/assets/logos/mylogo.png');
+    expect(screen.queryByText(/NAV ·/i)).toBeNull();
   });
 });

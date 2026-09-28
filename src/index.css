@@ -44,10 +44,11 @@
   body,
   html {
     @apply bg-background text-foreground;
+    overflow-x: clip;
   }
 
-  section[id] {
-    scroll-margin-top: 6rem;
+  html {
+    scroll-padding-top: 6rem;
   }
 
   /* Only hide cursor on devices with precise pointers (mouse/trackpad) */

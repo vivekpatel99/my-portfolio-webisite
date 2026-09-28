@@ -17,18 +17,11 @@ const About = () => {
           <article className="field relative border border-[rgba(139,92,246,0.32)] p-[22px] px-6 pb-[26px] bg-transparent min-h-[320px]">
             <span className="f-tl absolute top-[5px] left-[5px] w-[14px] h-[14px] border-t-[1.5px] border-l-[1.5px] border-[rgba(139,92,246,0.75)] pointer-events-none"></span>
             <span className="f-br absolute bottom-[5px] right-[5px] w-[14px] h-[14px] border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.4)] pointer-events-none"></span>
-            
-            <div className="field-meta font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] mb-[18px]">
-              PHOTO · <em className="not-italic text-[#a78bfa]">FIELD</em>
-            </div>
-            
+
             <div className="photo-area aspect-[4/3] bg-[#161718] border border-[rgba(255,255,255,0.08)] flex flex-col items-center justify-center gap-[10px]">
               <div className="photo-glyph w-11 h-11 relative text-[rgba(139,92,246,0.5)]">
                 <span className="absolute inset-[5px] border border-current rotate-45"></span>
                 <span className="absolute inset-[13px] border border-[rgba(255,255,255,0.25)] rotate-45"></span>
-              </div>
-              <div className="photo-label font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280]">
-                PHOTO · FIELD
               </div>
             </div>
           </article>
@@ -37,11 +30,11 @@ const About = () => {
           <article className="field relative border border-[rgba(139,92,246,0.32)] p-[22px] px-6 pb-[26px] bg-transparent min-h-[320px]">
             <span className="f-tl absolute top-[5px] left-[5px] w-[14px] h-[14px] border-t-[1.5px] border-l-[1.5px] border-[rgba(139,92,246,0.75)] pointer-events-none"></span>
             <span className="f-br absolute bottom-[5px] right-[5px] w-[14px] h-[14px] border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.4)] pointer-events-none"></span>
-            
+
             <div className="field-meta font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] mb-[18px]">
               BIO · <em className="not-italic text-[#a78bfa]">FIELD</em>
             </div>
-            
+
             <div className="name-line text-[clamp(1.05rem,1.7vw,1.3rem)] font-bold leading-[1.3] tracking-[-0.015em] text-white mb-4">
               Vivek Patel — AI Engineer specializing in Computer Vision
             </div>

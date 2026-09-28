@@ -526,11 +526,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "43942cf7af2137d59e5be24a67b866299143516bc54db5b1c7119813d8731c7c",
-        "approvedBy": "Viv (issue #128)",
-        "approvedAt": "2026-09-21T14:40:00.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/128",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "sha256": "182925263df784697ee3552481b0f86c54c7e4d581c49bb3d7de5a9a59108ac8",
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
       },
       "claimRefs": {
         "summary": "depth-based-distance-estimation.summary",
@@ -538,7 +538,7 @@ export const stagedCaseStudyPublication = {
       },
       "content": {
         "title": "Lab Demo of Depth-Based Spatial Analysis Between Detected Objects",
-        "summary": "A Python lab demo overlays object detections and uncalibrated distances on a scene. Not a benchmark. Not for proposals.",
+        "summary": "A Python lab demo overlays object detections and uncalibrated distances on a scene.",
         "projectStatus": "completed",
         "completedAt": "2025-09",
         "category": "Computer Vision",
@@ -552,7 +552,7 @@ export const stagedCaseStudyPublication = {
                 "children": [
                   {
                     "type": "text",
-                    "value": "The task was to estimate spatial relationships between objects in a scene. This is a lab demo, not client-ready evidence and not for proposals. Object boxes alone do not describe depth, so the processing path needed both detection and a depth estimate that could support distance and navigation-zone logic."
+                    "value": "The task was to estimate spatial relationships between objects in a scene. This is an uncalibrated lab demo. Object boxes alone do not describe depth, so the processing path needed both detection and a depth estimate that could support distance and navigation-zone logic."
                   }
                 ]
               }
@@ -654,8 +654,8 @@ export const stagedCaseStudyPublication = {
         ],
         "image": {
           "src": "/assets/case-studies/depth-based-distance-estimation-6cff31a07362f0483bf43298af0366ffb4c8f40137291202506a8924b0d24957.png",
-          "alt": "Lab demo showing object detections and estimated distances. Displayed values are demo output, not an accuracy benchmark, and not for proposals.",
-          "caption": "Lab demo showing object detections and estimated distances. Displayed values are demo output, not an accuracy benchmark, and not for proposals.",
+          "alt": "Lab demo showing object detections and estimated distances. Displayed values are demo output, not an accuracy benchmark.",
+          "caption": "Lab demo showing object detections and estimated distances. Displayed values are demo output, not an accuracy benchmark.",
           "width": 1280,
           "height": 769
         }
@@ -1220,11 +1220,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "6ca6a748e0a1ebf9a3d9353903e1762e4b46172b9c3a8317d8a74ab1f3df0966",
-        "approvedBy": "Cloud Agent (issue #121)",
-        "approvedAt": "2026-09-21T14:07:58.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
-        "candidateSha256": "1cb28c13acc2ccd04e7cf73d8a8cf1ade7261dcff6affd991f1e76400d042213"
+        "sha256": "e3a4af1e07fffbcc91b6009cf85d8182fa712b951143f0dcf358895106e1d91c",
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
       },
       "claimRefs": {
         "summary": "n8n-python-ai-agents.summary",
@@ -1339,7 +1339,7 @@ export const stagedCaseStudyPublication = {
                   {
                     "type": "image",
                     "src": "/assets/case-studies/n8n-python-ai-agents-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png",
-                    "alt": "Representative n8n data extraction workflow from other portfolio work; temporary stand-in for Andrew engagement screenshots",
+                    "alt": "Representative n8n data extraction workflow from other portfolio work",
                     "width": 2984,
                     "height": 874
                   }
@@ -1351,7 +1351,7 @@ export const stagedCaseStudyPublication = {
                   {
                     "type": "image",
                     "src": "/assets/case-studies/n8n-python-ai-agents-7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b.png",
-                    "alt": "Representative n8n data processor workflow from other portfolio work; temporary stand-in for Andrew engagement screenshots",
+                    "alt": "Representative n8n data processor workflow from other portfolio work",
                     "width": 1679,
                     "height": 981
                   }
@@ -1363,7 +1363,7 @@ export const stagedCaseStudyPublication = {
                   {
                     "type": "image",
                     "src": "/assets/case-studies/n8n-python-ai-agents-3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66.png",
-                    "alt": "Representative n8n error handler workflow from other portfolio work; temporary stand-in for Andrew engagement screenshots",
+                    "alt": "Representative n8n error handler workflow from other portfolio work",
                     "width": 1142,
                     "height": 923
                   }
@@ -1375,7 +1375,7 @@ export const stagedCaseStudyPublication = {
                   {
                     "type": "image",
                     "src": "/assets/case-studies/n8n-python-ai-agents-ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338.png",
-                    "alt": "Representative n8n Excel-to-JSON processor from other portfolio work; temporary stand-in for Andrew engagement screenshots",
+                    "alt": "Representative n8n Excel-to-JSON processor from other portfolio work",
                     "width": 3400,
                     "height": 955
                   }
@@ -1387,7 +1387,7 @@ export const stagedCaseStudyPublication = {
                   {
                     "type": "image",
                     "src": "/assets/case-studies/n8n-python-ai-agents-f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png",
-                    "alt": "Representative invoice orchestrator workflow from other portfolio work; temporary stand-in for Andrew engagement screenshots",
+                    "alt": "Representative invoice orchestrator workflow from other portfolio work",
                     "width": 2448,
                     "height": 684
                   }
@@ -1399,7 +1399,7 @@ export const stagedCaseStudyPublication = {
                   {
                     "type": "image",
                     "src": "/assets/case-studies/n8n-python-ai-agents-c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9.png",
-                    "alt": "Representative invoice extractor workflow from other portfolio work; temporary stand-in for Andrew engagement screenshots",
+                    "alt": "Representative invoice extractor workflow from other portfolio work",
                     "width": 1862,
                     "height": 800
                   }
@@ -1416,7 +1416,7 @@ export const stagedCaseStudyPublication = {
                 "children": [
                   {
                     "type": "text",
-                    "value": "The result is an inspectable n8n pipeline and a constrained way to ask operational database questions. Uncertain enrichment and empty query results remain visible. The local archive includes evaluation plans, not a scored agent-accuracy result. No standalone Python service or measured savings figure is claimed from these artifacts."
+                    "value": "The result is an inspectable n8n pipeline and a constrained way to ask operational database questions. Uncertain enrichment and empty query results remain visible. No scored agent-accuracy result, standalone Python service or measured savings figure is claimed."
                   }
                 ]
               }
@@ -1900,11 +1900,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "166478703c25b8dbce46ffea83ae6118a38f9a8b27c1c199101739f187c26744",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "sha256": "e0d1600c854d80ac05306d554c030bf68011fd05cd6591f45cfde2e4752f5a5c",
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
       },
       "claimRefs": {
         "summary": "yolo-computer-vision-optimization.summary",
@@ -2093,7 +2093,7 @@ export const stagedCaseStudyPublication = {
                 "children": [
                   {
                     "type": "text",
-                    "value": "The delivered component converts exercise stills into visual pose outputs and gives the client a training path for their own data. It can support a fitness product’s computer-vision work, while the application and any form-scoring rules remain separate. Live-video latency, on-device deployment and automatic exercise scoring are not claimed. This story replaces the older mixed pose/stitching description."
+                    "value": "The delivered component converts exercise stills into visual pose outputs and gives the client a training path for their own data. It can support a fitness product’s computer-vision work, while the application and any form-scoring rules remain separate. Live-video latency, on-device deployment and automatic exercise scoring are not claimed."
                   }
                 ]
               }
@@ -2294,48 +2294,6 @@ export const stagedCaseStudyPublication = {
         "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
       }
     },
-    "depth-based-distance-estimation.summary": {
-      "type": "content",
-      "recordId": "depth-based-distance-estimation",
-      "placement": "summary",
-      "value": "A Python lab demo overlays object detections and uncalibrated distances on a scene. Not a benchmark. Not for proposals.",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "a4ac5a0abf9852daea0f2e10d494901a0e8ef395616b355a115f304b5a9e4799",
-        "approvedBy": "Viv (issue #128)",
-        "approvedAt": "2026-09-21T14:40:00.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/128",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "depth-based-distance-estimation.outcome": {
-      "type": "content",
-      "recordId": "depth-based-distance-estimation",
-      "placement": "outcome",
-      "value": {
-        "key": "outcome",
-        "heading": "The outcome",
-        "nodes": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "text",
-                "value": "The handoff provides a starting point for scene-level spatial analysis. Monocular depth and estimated distances require validation against the intended camera and environment; this case study does not claim calibrated measurement accuracy or safety-critical navigation readiness. The value demonstrated is the integrated processing component, with deployment validation remaining application-specific."
-              }
-            ]
-          }
-        ]
-      },
-      "approval": {
-        "kind": "explicit",
-        "sha256": "78d6b6298090f0ca556687200706a081cb468d59416920d47e792c5acab56ca2",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
     "resumable-listing-data-extraction.summary": {
       "type": "content",
       "recordId": "resumable-listing-data-extraction",
@@ -2414,48 +2372,6 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "1e8f2f66a77868f288864ef10c758a4232376d05f53755b933ba2bf1a58085b3",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "yolo-computer-vision-optimization.summary": {
-      "type": "content",
-      "recordId": "yolo-computer-vision-optimization",
-      "placement": "summary",
-      "value": "A Python pose-estimation project with training scripts and image outputs showing person boxes and body keypoints.",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "a1cedfffe5e11e2c6ea7a2e3459c1f9788227bad1a91185b8cac2c75c9d956a1",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "yolo-computer-vision-optimization.outcome": {
-      "type": "content",
-      "recordId": "yolo-computer-vision-optimization",
-      "placement": "outcome",
-      "value": {
-        "key": "outcome",
-        "heading": "The outcome",
-        "nodes": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "text",
-                "value": "The delivered component converts exercise stills into visual pose outputs and gives the client a training path for their own data. It can support a fitness product’s computer-vision work, while the application and any form-scoring rules remain separate. Live-video latency, on-device deployment and automatic exercise scoring are not claimed. This story replaces the older mixed pose/stitching description."
-              }
-            ]
-          }
-        ]
-      },
-      "approval": {
-        "kind": "explicit",
-        "sha256": "67482d8a10044efc615ed206bda18d929ea5d5ebcad45307d5ac0a232b9fba02",
         "approvedBy": "Viv",
         "approvedAt": "2026-09-15T08:45:57.100Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
@@ -2588,48 +2504,6 @@ export const stagedCaseStudyPublication = {
         "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
       }
     },
-    "n8n-python-ai-agents.summary": {
-      "type": "content",
-      "recordId": "n8n-python-ai-agents",
-      "placement": "summary",
-      "value": "Repeat automation work moved scripted data flows into n8n and added a database-question agent with an explicit SQL execution boundary.",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "499d8ae36b021db6cbe9889582e577808b1b1d0d101e3c47d380f2f0badc8bfe",
-        "approvedBy": "Cloud Agent (issue #121)",
-        "approvedAt": "2026-09-21T14:07:58.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
-        "candidateSha256": "1cb28c13acc2ccd04e7cf73d8a8cf1ade7261dcff6affd991f1e76400d042213"
-      }
-    },
-    "n8n-python-ai-agents.outcome": {
-      "type": "content",
-      "recordId": "n8n-python-ai-agents",
-      "placement": "outcome",
-      "value": {
-        "key": "outcome",
-        "heading": "The outcome",
-        "nodes": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "text",
-                "value": "The result is an inspectable n8n pipeline and a constrained way to ask operational database questions. Uncertain enrichment and empty query results remain visible. The local archive includes evaluation plans, not a scored agent-accuracy result. No standalone Python service or measured savings figure is claimed from these artifacts."
-              }
-            ]
-          }
-        ]
-      },
-      "approval": {
-        "kind": "explicit",
-        "sha256": "184db62cb14392483d107afd580d2d9893fc8b18c1f738a2935374c5caddb78d",
-        "approvedBy": "Cloud Agent (issue #121)",
-        "approvedAt": "2026-09-21T14:07:58.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
-        "candidateSha256": "1cb28c13acc2ccd04e7cf73d8a8cf1ade7261dcff6affd991f1e76400d042213"
-      }
-    },
     "python-ci-workflow-automation.summary": {
       "type": "content",
       "recordId": "python-ci-workflow-automation",
@@ -2671,6 +2545,132 @@ export const stagedCaseStudyPublication = {
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/125",
         "candidateSha256": "6ca0b9be07fc064ac452f43d7ebb5886e0c6275352bf1ce93a06625cae74d59f"
       }
+    },
+    "depth-based-distance-estimation.summary": {
+      "type": "content",
+      "recordId": "depth-based-distance-estimation",
+      "placement": "summary",
+      "value": "A Python lab demo overlays object detections and uncalibrated distances on a scene.",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "374708da591865ae345085df42c52f655aee614ed9f7c501b2508e06e1c0b205",
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+      }
+    },
+    "depth-based-distance-estimation.outcome": {
+      "type": "content",
+      "recordId": "depth-based-distance-estimation",
+      "placement": "outcome",
+      "value": {
+        "key": "outcome",
+        "heading": "The outcome",
+        "nodes": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "text",
+                "value": "The handoff provides a starting point for scene-level spatial analysis. Monocular depth and estimated distances require validation against the intended camera and environment; this case study does not claim calibrated measurement accuracy or safety-critical navigation readiness. The value demonstrated is the integrated processing component, with deployment validation remaining application-specific."
+              }
+            ]
+          }
+        ]
+      },
+      "approval": {
+        "kind": "explicit",
+        "sha256": "78d6b6298090f0ca556687200706a081cb468d59416920d47e792c5acab56ca2",
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+      }
+    },
+    "yolo-computer-vision-optimization.summary": {
+      "type": "content",
+      "recordId": "yolo-computer-vision-optimization",
+      "placement": "summary",
+      "value": "A Python pose-estimation project with training scripts and image outputs showing person boxes and body keypoints.",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "a1cedfffe5e11e2c6ea7a2e3459c1f9788227bad1a91185b8cac2c75c9d956a1",
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+      }
+    },
+    "yolo-computer-vision-optimization.outcome": {
+      "type": "content",
+      "recordId": "yolo-computer-vision-optimization",
+      "placement": "outcome",
+      "value": {
+        "key": "outcome",
+        "heading": "The outcome",
+        "nodes": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "text",
+                "value": "The delivered component converts exercise stills into visual pose outputs and gives the client a training path for their own data. It can support a fitness product’s computer-vision work, while the application and any form-scoring rules remain separate. Live-video latency, on-device deployment and automatic exercise scoring are not claimed."
+              }
+            ]
+          }
+        ]
+      },
+      "approval": {
+        "kind": "explicit",
+        "sha256": "09b81a547dec425652e521ad86601bb954610ae50b404eaaca44c11b86aeab66",
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+      }
+    },
+    "n8n-python-ai-agents.summary": {
+      "type": "content",
+      "recordId": "n8n-python-ai-agents",
+      "placement": "summary",
+      "value": "Repeat automation work moved scripted data flows into n8n and added a database-question agent with an explicit SQL execution boundary.",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "499d8ae36b021db6cbe9889582e577808b1b1d0d101e3c47d380f2f0badc8bfe",
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+      }
+    },
+    "n8n-python-ai-agents.outcome": {
+      "type": "content",
+      "recordId": "n8n-python-ai-agents",
+      "placement": "outcome",
+      "value": {
+        "key": "outcome",
+        "heading": "The outcome",
+        "nodes": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "text",
+                "value": "The result is an inspectable n8n pipeline and a constrained way to ask operational database questions. Uncertain enrichment and empty query results remain visible. No scored agent-accuracy result, standalone Python service or measured savings figure is claimed."
+              }
+            ]
+          }
+        ]
+      },
+      "approval": {
+        "kind": "explicit",
+        "sha256": "695f4215c24582ec03e78f8cd9bb3793364f21fc2b74be24da9d5f7f03486b2e",
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+      }
     }
   },
   "assets": {
@@ -2710,10 +2710,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "6cff31a07362f0483bf43298af0366ffb4c8f40137291202506a8924b0d24957",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
       }
     },
     "/assets/case-studies/invoice-ocr-extraction-e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4.webp": {
@@ -2738,13 +2738,12 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "e542384f4f7532d230440cb9a68e0e7e66d951996959221225633fc5304b08b7",
-        "approvedBy": "Cloud Agent (issue #121)",
-        "approvedAt": "2026-09-21T14:07:58.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
-        "candidateSha256": "1cb28c13acc2ccd04e7cf73d8a8cf1ade7261dcff6affd991f1e76400d042213"
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
       }
     },
-
     "/assets/case-studies/yolo-computer-vision-optimization-a1c141cdaa34086f779a22bbc54861dd5a0b6bd6c956df38456a3313983c2c0c.webp": {
       "file": "public/assets/case-studies/yolo-computer-vision-optimization-a1c141cdaa34086f779a22bbc54861dd5a0b6bd6c956df38456a3313983c2c0c.webp",
       "width": 960,
@@ -2753,10 +2752,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "a1c141cdaa34086f779a22bbc54861dd5a0b6bd6c956df38456a3313983c2c0c",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
       }
     },
     "/assets/case-studies/yolo-computer-vision-optimization-5d40e830aa8d828e7fe3c360c8e867ad6ece4f2fdca5e4efc917744df42d4661.jpg": {
@@ -2767,10 +2766,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "5d40e830aa8d828e7fe3c360c8e867ad6ece4f2fdca5e4efc917744df42d4661",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
       }
     },
     "/assets/case-studies/yolo-computer-vision-optimization-eeeef2e888f1d90f3f74cc2dedce3217b69875c67001b95e138dbda8dfa92249.jpg": {
@@ -2781,10 +2780,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "eeeef2e888f1d90f3f74cc2dedce3217b69875c67001b95e138dbda8dfa92249",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
       }
     },
     "/assets/case-studies/yolo-computer-vision-optimization-ceb105f111468c414425a9b66c60f83d1c05152495eeae4b79d9770637fba7e6.jpg": {
@@ -2795,10 +2794,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "ceb105f111468c414425a9b66c60f83d1c05152495eeae4b79d9770637fba7e6",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
       }
     },
     "/assets/case-studies/yolo-computer-vision-optimization-e0fda8e3265b2103cda475ec21735f245b48aeee64505137ffb1d446ce8fb869.jpg": {
@@ -2809,10 +2808,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "e0fda8e3265b2103cda475ec21735f245b48aeee64505137ffb1d446ce8fb869",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
       }
     },
     "/assets/case-studies/yolo-computer-vision-optimization-b3a9d87cd8189721b815648379e5c41748bd8db215f20b201fe3e56024e2eb80.jpg": {
@@ -2823,10 +2822,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "b3a9d87cd8189721b815648379e5c41748bd8db215f20b201fe3e56024e2eb80",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
       }
     },
     "/assets/case-studies/ai-invoice-processing-automation-c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9.png": {
@@ -3005,10 +3004,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275",
-        "approvedBy": "Cloud Agent (issue #121)",
-        "approvedAt": "2026-09-21T14:07:58.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
-        "candidateSha256": "1cb28c13acc2ccd04e7cf73d8a8cf1ade7261dcff6affd991f1e76400d042213"
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
       }
     },
     "/assets/case-studies/n8n-python-ai-agents-c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9.png": {
@@ -3019,10 +3018,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9",
-        "approvedBy": "Cloud Agent (issue #121)",
-        "approvedAt": "2026-09-21T14:07:58.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
-        "candidateSha256": "1cb28c13acc2ccd04e7cf73d8a8cf1ade7261dcff6affd991f1e76400d042213"
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
       }
     },
     "/assets/case-studies/n8n-python-ai-agents-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png": {
@@ -3033,10 +3032,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82",
-        "approvedBy": "Cloud Agent (issue #121)",
-        "approvedAt": "2026-09-21T14:07:58.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
-        "candidateSha256": "1cb28c13acc2ccd04e7cf73d8a8cf1ade7261dcff6affd991f1e76400d042213"
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
       }
     },
     "/assets/case-studies/n8n-python-ai-agents-7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b.png": {
@@ -3047,10 +3046,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b",
-        "approvedBy": "Cloud Agent (issue #121)",
-        "approvedAt": "2026-09-21T14:07:58.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
-        "candidateSha256": "1cb28c13acc2ccd04e7cf73d8a8cf1ade7261dcff6affd991f1e76400d042213"
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
       }
     },
     "/assets/case-studies/n8n-python-ai-agents-3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66.png": {
@@ -3061,10 +3060,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66",
-        "approvedBy": "Cloud Agent (issue #121)",
-        "approvedAt": "2026-09-21T14:07:58.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
-        "candidateSha256": "1cb28c13acc2ccd04e7cf73d8a8cf1ade7261dcff6affd991f1e76400d042213"
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
       }
     },
     "/assets/case-studies/n8n-python-ai-agents-ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338.png": {
@@ -3075,10 +3074,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338",
-        "approvedBy": "Cloud Agent (issue #121)",
-        "approvedAt": "2026-09-21T14:07:58.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
-        "candidateSha256": "1cb28c13acc2ccd04e7cf73d8a8cf1ade7261dcff6affd991f1e76400d042213"
+        "approvedBy": "Codex (Viv instruction, issue #187)",
+        "approvedAt": "2026-09-27T11:49:17.695Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
+        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
       }
     }
   }

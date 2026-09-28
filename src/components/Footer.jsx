@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { socialLinks } from '@/config/links'; 
+import { socialLinks } from '@/config/links';
 
 const Footer = () => {
     const handleManageCookies = (e) => {
@@ -14,11 +14,7 @@ const Footer = () => {
                 {/* Corner brackets */}
                 <span className="absolute top-[5px] left-[5px] w-4 h-4 border-t-[1.5px] border-l-[1.5px] border-[#8B5CF6] pointer-events-none"></span>
                 <span className="absolute bottom-[5px] right-[5px] w-4 h-4 border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.5)] pointer-events-none"></span>
-                
-                <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] mb-[14px]">
-                    FOOTER · <em className="not-italic text-[#a78bfa]">SITE</em>
-                </div>
-                
+
                 <div className="flex items-center justify-between gap-4 mb-3 flex-wrap">
                     <div className="flex flex-wrap gap-2 gap-x-[22px]">
                         <Link to="/" className="font-mono text-[11px] tracking-[0.1em] uppercase text-[#c4c4cc] hover:text-[#a78bfa] transition-colors">Home</Link>
@@ -32,7 +28,7 @@ const Footer = () => {
                         <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-[#a78bfa] transition-colors">Linkedin</a>
                     </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between gap-4 pt-3 border-t border-[rgba(255,255,255,0.07)] flex-wrap">
                     <div className="flex flex-wrap gap-2 gap-x-4">
                         <Link to="/legal/" className="font-mono text-[10px] tracking-[0.1em] uppercase text-[#6b7280] hover:text-[#9ca3af] transition-colors">Privacy Policy</Link>

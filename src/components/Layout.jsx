@@ -60,7 +60,7 @@ const Layout = () => {
       <CustomCursor />
       <GoogleAnalytics hasConsent={gaConsent} />
       <SentryTelemetry hasConsent={gaConsent} />
-      <div className="min-h-screen bg-[#0C0D0D] text-white overflow-x-hidden flex flex-col">
+      <div className="min-h-screen bg-[#0C0D0D] text-white flex flex-col">
         <Header />
         {/* Cookie banner spacer - reserves vertical space when banner is visible */}
         {(needsConsent || showConsentManager) && (
