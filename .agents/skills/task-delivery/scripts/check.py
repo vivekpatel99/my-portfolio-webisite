@@ -59,6 +59,15 @@ def is_repository(directory):
     return root.resolve() == directory.resolve()
 
 
+def repository_head(repo):
+    result = subprocess.run(
+        ["git", "-C", str(repo), "rev-parse", "--verify", "HEAD^{commit}"],
+        capture_output=True,
+        check=False,
+    )
+    return result.stdout.decode().strip() if result.returncode == 0 else None
+
+
 def untracked_files(repo):
     paths = git(repo, "ls-files", "--others", "--exclude-standard", "-z")
     files = {}
@@ -70,6 +79,7 @@ def untracked_files(repo):
         info = path.lstat()
         if stat.S_ISDIR(info.st_mode):
             if is_repository(path):
+                record["repository_head"] = repository_head(path)
                 record["repository"] = repository_state(path)
             else:
                 record["tree"] = filesystem_tree(path)
@@ -88,23 +98,33 @@ def is_dirty(state):
     )
 
 
-def assume_unchanged_files(repo):
+def flagged_index_files(repo):
     entries = git(repo, "ls-files", "-v", "-z")
-    flagged = {}
+    assume_unchanged = {}
+    skip_worktree = {}
     for entry in entries.split(b"\0"):
-        if len(entry) < 3 or not entry[:1].islower():
+        if len(entry) < 3:
+            continue
+        tag = entry[:1]
+        if not tag.islower() and tag != b"S":
             continue
         path = repo / os.fsdecode(entry[2:])
         try:
-            flagged[os.fsdecode(entry[2:])] = file_state(path)
+            state = file_state(path)
         except FileNotFoundError:
-            flagged[os.fsdecode(entry[2:])] = {"missing": True}
-    return flagged
+            state = {"missing": True}
+        destination = assume_unchanged if tag.islower() else skip_worktree
+        destination[os.fsdecode(entry[2:])] = state
+    return assume_unchanged, skip_worktree
 
 
 def submodule_paths(repo):
     paths = set()
-    for entry in git(repo, "ls-tree", "-r", "-z", "HEAD").split(b"\0"):
+    try:
+        head_tree = git(repo, "ls-tree", "-r", "-z", "HEAD")
+    except subprocess.CalledProcessError:
+        head_tree = b""
+    for entry in head_tree.split(b"\0"):
         if not entry:
             continue
         metadata, raw_path = entry.split(b"\t", 1)
@@ -134,12 +154,14 @@ def submodule_paths(repo):
 def repository_state(repo):
     status = git(repo, "-c", "core.fileMode=true", "status", "--porcelain=v1", "-z", "--untracked-files=all")
     files = untracked_files(repo)
+    assume_unchanged, skip_worktree = flagged_index_files(repo)
     state = {
         "index_diff": digest(git(repo, "-c", "core.fileMode=true", "diff", "--no-ext-diff", "--cached", "--binary", "--")),
         "worktree_diff": digest(git(repo, "-c", "core.fileMode=true", "diff", "--no-ext-diff", "--binary", "--")),
         "status": digest(status),
         "untracked": files,
-        "assume_unchanged": assume_unchanged_files(repo),
+        "assume_unchanged": assume_unchanged,
+        "skip_worktree": skip_worktree,
         "submodules": {},
     }
     for module_path in submodule_paths(repo):
