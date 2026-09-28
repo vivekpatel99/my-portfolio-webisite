@@ -41,20 +41,20 @@ describe('CTA Action Field', () => {
 
     const actionField = screen.getByRole('link', { name: /request a project estimate/i });
     expect(actionField).toBeTruthy();
-    
+
     // Meta label for detection field (appears in field-meta span)
     expect(container.querySelector('.field-meta')?.textContent).toContain('REQUEST · ESTIMATE');
   });
 
-  it('shows ROUTE note indicating no primary mailto (locked preference)', () => {
+  it('does not show a route instruction under the actions', () => {
     render(
       <MemoryRouter>
         <CTA />
       </MemoryRouter>,
     );
 
-    // Locked preference: Contact stays form→DB, no primary mailto/phone
-    expect(screen.getByText(/ROUTE.*\/CONTACT\/.*NO MAILTO/i)).toBeTruthy();
+    expect(screen.queryByText(/NO MAILTO/i)).toBeNull();
+    expect(screen.getByRole('link', { name: /request a project estimate/i })).toBeTruthy();
   });
 
   it('includes CTA · DETECTED eyebrow meta', () => {

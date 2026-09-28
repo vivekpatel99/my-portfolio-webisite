@@ -53,6 +53,7 @@ describe("Contact form", () => {
     const { container } = render(<Contact />);
     const form = container.querySelector("form");
     expect(form.noValidate).toBe(true);
+    expect(form.hasAttribute("action")).toBe(false);
     expect(container.querySelector('input[name="name"]').required).toBe(true);
 
     await user.click(screen.getByRole("button", { name: /submit project estimate request/i }));
@@ -388,10 +389,11 @@ describe("Contact form", () => {
     });
   });
 
-  it('renders CONTACT · DETECTED panel meta and SUBMIT · FIELD button craft', () => {
+  it('names the submit button and hides the route instruction', () => {
     render(<Contact />);
     expect(screen.getByText(/CONTACT ·/i)).toBeTruthy();
-    expect(screen.getByText(/DETECTED/i)).toBeTruthy();
-    expect(screen.getByText(/SUBMIT · FIELD/i)).toBeTruthy();
+    expect(screen.getByRole('button', { name: /submit project estimate request/i })).toBeTruthy();
+    expect(screen.queryByText(/SUBMIT · FIELD/i)).toBeNull();
+    expect(screen.queryByText(/FORM REMAINS PRIMARY/i)).toBeNull();
   });
 });
