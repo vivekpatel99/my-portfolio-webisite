@@ -146,7 +146,10 @@ for (const vp of heroFoldViewports) {
     const portraitBox = await portrait.boundingBox();
 
     expect(estimate.y).toBeLessThan(vp.height);
-    expect(estimate.y).toBeGreaterThanOrEqual(invoice.y + invoice.height - 1);
+    if (vp.width === 320) {
+      expect(estimate.y + estimate.height).toBeLessThanOrEqual(vp.height);
+    }
+    expect(estimate.y).toBeGreaterThanOrEqual(invoice.y + invoice.height);
 
     const ctaGap = vp.width < 768
       ? caseStudies.y - (estimate.y + estimate.height)
@@ -162,6 +165,7 @@ for (const vp of heroFoldViewports) {
     const overlays = portrait.locator('xpath=..').locator('span.absolute:visible').filter({ hasText: /\S/ });
     const labels = await overlays.allTextContents();
     if (vp.stacked) {
+      expect(labels.map((label) => label.trim())).toEqual(['REC']);
       for (const box of await Promise.all((await overlays.all()).map((o) => o.boundingBox()))) {
         expect(box.y).toBeGreaterThanOrEqual(portraitBox.y + portraitBox.height * 0.55);
       }

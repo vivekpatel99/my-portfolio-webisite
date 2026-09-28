@@ -282,10 +282,10 @@ const Hero = () => {
                 </div>
 
                 {/* Tags field */}
-                <div>
-                  <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Tags</span>
-                  <span className="relative inline-flex border-[1.5px] border-[#8B5CF6] px-2 py-1.5 rounded-[1px] bg-[#8B5CF6]/[0.07]">
-                    <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4]">
+                <div className="max-[359px]:flex max-[359px]:items-center max-[359px]:gap-2">
+                  <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px] max-[359px]:mb-0">Tags</span>
+                  <span className="relative inline-flex border-[1.5px] border-[#8B5CF6] px-2 py-1.5 rounded-[1px] bg-[#8B5CF6]/[0.07] max-[359px]:py-0.5">
+                    <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
                       field · 0.94
                     </span>
                     <span className="flex flex-wrap gap-1.5">
