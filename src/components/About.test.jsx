@@ -23,11 +23,11 @@ describe('About', () => {
     expect(screen.queryByText(/2\.5s/)).toBeNull();
   });
 
-  it('renders craft markers: ABOUT · DETECTED, PHOTO · FIELD, BIO · FIELD', () => {
+  it('renders craft markers without the empty photo instruction', () => {
     render(<About />);
     expect(screen.getByText(/ABOUT ·/i)).toBeTruthy();
     expect(screen.getByText(/DETECTED/i)).toBeTruthy();
-    expect(screen.getAllByText(/PHOTO · FIELD/i).length).toBeGreaterThan(0);
+    expect(screen.queryByText(/PHOTO · FIELD/i)).toBeNull();
     expect(screen.getByText(/BIO ·/i)).toBeTruthy();
   });
 });

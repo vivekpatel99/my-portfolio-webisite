@@ -16,25 +16,25 @@ import { CONTACT_LEAD_VALIDATION_ERROR } from '../../convex/lib/leadValidation';
 // Custom logo components for platform links
 const UpworkIcon = () => (
   <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M18.561 13.158c-1.102 0-2.135-.467-3.074-1.227l.228-1.076.008-.042c.207-1.143.849-3.06 2.839-3.06 1.492 0 2.703 1.212 2.703 2.703-.001 1.489-1.212 2.702-2.704 2.702zm0-8.14c-2.539 0-4.51 1.649-5.31 4.366-1.22-1.834-2.148-4.036-2.687-5.892H7.828v7.112c-.002 1.406-1.141 2.546-2.547 2.548-1.405-.002-2.543-1.143-2.545-2.548V3.492H0v7.112c0 2.914 2.37 5.303 5.281 5.303 2.913 0 5.283-2.389 5.283-5.303v-1.19c.529 1.107 1.182 2.229 1.974 3.221l-1.673 7.873h2.797l1.213-5.71c1.063.679 2.285 1.109 3.686 1.109 3 0 5.439-2.452 5.439-5.45 0-3-2.439-5.439-5.439-5.439z"/>
+    <path d="M18.561 13.158c-1.102 0-2.135-.467-3.074-1.227l.228-1.076.008-.042c.207-1.143.849-3.06 2.839-3.06 1.492 0 2.703 1.212 2.703 2.703-.001 1.489-1.212 2.702-2.704 2.702zm0-8.14c-2.539 0-4.51 1.649-5.31 4.366-1.22-1.834-2.148-4.036-2.687-5.892H7.828v7.112c-.002 1.406-1.141 2.546-2.547 2.548-1.405-.002-2.543-1.143-2.545-2.548V3.492H0v7.112c0 2.914 2.37 5.303 5.281 5.303 2.913 0 5.283-2.389 5.283-5.303v-1.19c.529 1.107 1.182 2.229 1.974 3.221l-1.673 7.873h2.797l1.213-5.71c1.063.679 2.285 1.109 3.686 1.109 3 0 5.439-2.452 5.439-5.45 0-3-2.439-5.439-5.439-5.439z" />
   </svg>
 );
 const FreelancerIcon = () => (
   <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M14.096 3.076l1.634 2.292L24 3.076M5.503 20.924l4.474-4.374-2.692-2.89m6.133-10.584L11.027 5.23l4.022.15M4.124 3.077l.857 1.76 4.734.294m-3.058 7.072l3.497-6.522L0 5.13"/>
+    <path d="M14.096 3.076l1.634 2.292L24 3.076M5.503 20.924l4.474-4.374-2.692-2.89m6.133-10.584L11.027 5.23l4.022.15M4.124 3.077l.857 1.76 4.734.294m-3.058 7.072l3.497-6.522L0 5.13" />
   </svg>
 );
 const FreelancerMapIcon = () => (
   <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M16.5 3L7.5 21" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+    <path d="M16.5 3L7.5 21" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
   </svg>
 );
 
 const platformLinks = [
-    { name: 'Upwork', icon: UpworkIcon, url: socialLinks.upwork }, // Using centralized link
-    { name: 'Freelancer.com', icon: FreelancerIcon, url: socialLinks.freelancer }, // Using centralized link
-    { name: 'FreelancerMap', icon: FreelancerMapIcon, url: socialLinks.freelancerMap }, // Using centralized link
-    { name: 'Email', icon: Mail, url: socialLinks.emailHref } // Using centralized link
+  { name: 'Upwork', icon: UpworkIcon, url: socialLinks.upwork }, // Using centralized link
+  { name: 'Freelancer.com', icon: FreelancerIcon, url: socialLinks.freelancer }, // Using centralized link
+  { name: 'FreelancerMap', icon: FreelancerMapIcon, url: socialLinks.freelancerMap }, // Using centralized link
+  { name: 'Email', icon: Mail, url: socialLinks.emailHref } // Using centralized link
 ];
 
 const nextSteps = [
@@ -81,11 +81,11 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (submittingRef.current || isSubmitting) {
       return;
     }
-    
+
     const telemetrySource = e.currentTarget;
     const trimmedFormState = {
       ...formState,
@@ -106,18 +106,18 @@ const Contact = () => {
     if (!trimmedFormState.description) {
       nextErrors.description = 'Project description is required.';
     }
-    
+
     setFieldErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) {
-        toast({
-            title: nextErrors.email && trimmedFormState.email ? "Invalid email address." : "Uh oh! Missing fields.",
-            description: nextErrors.email && trimmedFormState.email
-              ? "Please check your email format before sending."
-              : "Please fill out all required fields before sending.",
-            variant: "destructive",
-        });
-        return;
+      toast({
+        title: nextErrors.email && trimmedFormState.email ? "Invalid email address." : "Uh oh! Missing fields.",
+        description: nextErrors.email && trimmedFormState.email
+          ? "Please check your email format before sending."
+          : "Please fill out all required fields before sending.",
+        variant: "destructive",
+      });
+      return;
     }
 
     if (submittingRef.current) return;
@@ -167,7 +167,7 @@ const Contact = () => {
   return (
     <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}>
       <Seo {...routeSeo['/contact']} />
-      
+
       <section className="contact relative bg-[#0C0D0D] text-white py-12 px-7 md:px-10 min-h-[900px]">
         <div className="inner relative z-[2] max-w-[1100px] mx-auto">
           {/* Hero */}
@@ -184,12 +184,12 @@ const Contact = () => {
           <ul className="proof flex flex-wrap justify-center gap-7 mb-9">
             <li className="flex items-center gap-[10px]">
               <span className="num text-[1.35rem] font-bold text-[#8B5CF6]">100%</span>
-              <span className="lab text-xs leading-[1.25] text-[#9ca3af]">Job Success<br/>on Upwork</span>
+              <span className="lab text-xs leading-[1.25] text-[#9ca3af]">Job Success<br />on Upwork</span>
             </li>
             <span className="sep w-px h-9 bg-[rgba(255,255,255,0.1)]" role="separator" aria-hidden="true"></span>
             <li className="flex items-center gap-[10px]">
               <span className="num text-[1.35rem] font-bold text-[#8B5CF6]">5★</span>
-              <span className="lab text-xs leading-[1.25] text-[#9ca3af]">Average<br/>Rating</span>
+              <span className="lab text-xs leading-[1.25] text-[#9ca3af]">Average<br />Rating</span>
             </li>
           </ul>
 
@@ -215,9 +215,6 @@ const Contact = () => {
                 <a href={socialLinks.emailHref} className="text-[0.9rem] font-semibold text-white hover:text-[#a78bfa]">
                   {socialLinks.contactEmail}
                 </a>
-                <div className="sub mt-2 font-mono text-[9px] leading-[1.4] tracking-[0.08em] uppercase text-[#6b7280]">
-                  SECONDARY PATH · FORM REMAINS PRIMARY
-                </div>
               </div>
             </aside>
 
@@ -342,16 +339,15 @@ const Contact = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  aria-label="Submit Project Estimate Request"
                   className="relative inline-flex items-center justify-center gap-3 border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.12)] px-10 py-4 font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.18)] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                   {isSubmitting ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      SENDING...
+                      Sending...
                     </>
                   ) : (
-                    'SUBMIT · FIELD'
+                    'Send project request'
                   )}
                 </button>
               </div>

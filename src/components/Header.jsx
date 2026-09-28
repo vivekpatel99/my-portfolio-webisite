@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { logos } from '@/config/links';
 
 const prefersReducedMotion = () =>
   typeof window !== 'undefined'
-    && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -52,7 +53,7 @@ const Header = () => {
     if (document.activeElement && document.activeElement !== document.body) {
       document.activeElement.blur();
     }
-    
+
     previousFocusRef.current = toggleButtonRef.current;
     closeButtonRef.current?.focus({ preventScroll: true });
 
@@ -68,7 +69,7 @@ const Header = () => {
       hadInertAttribute: element.hasAttribute('inert'),
       inert: element.inert,
     }));
-    
+
     backgroundElements.forEach((element) => {
       element.setAttribute('aria-hidden', 'true');
       element.setAttribute('inert', '');
@@ -111,7 +112,7 @@ const Header = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-      
+
       // Restore inert/aria-hidden
       backgroundElementState.forEach(({ element, ariaHidden, hadInertAttribute, inert }) => {
         if (ariaHidden === null) {
@@ -127,7 +128,7 @@ const Header = () => {
         }
         element.inert = inert;
       });
-      
+
       // Focus toggle with preventScroll
       previousFocusRef.current?.focus?.({ preventScroll: true });
     };
@@ -151,16 +152,16 @@ const Header = () => {
     } else {
       navigate(href);
     }
-    
+
     if (isOpen) {
       setIsOpen(false);
     }
   };
-  
+
   const handleHomeClick = (e) => {
-     e.preventDefault();
-     navigate('/');
-     if (isOpen) {
+    e.preventDefault();
+    navigate('/');
+    if (isOpen) {
       setIsOpen(false);
     }
   }
@@ -175,25 +176,20 @@ const Header = () => {
   return (
     <>
       {/* Detection bar — thin hairline, not a boxed HUD */}
-      <header 
+      <header
         ref={headerRef}
         className="sticky top-0 z-40 bg-gradient-to-b from-[rgba(139,92,246,0.05)] to-[rgba(12,13,13,0.92)] backdrop-blur-[14px] border-b border-[rgba(139,92,246,0.38)]"
       >
         <div className="max-w-[1120px] mx-auto px-7 h-[68px] flex items-center gap-[22px]">
-          <Link to="/" onClick={handleHomeClick} className="flex items-center gap-3 flex-shrink-0" aria-label="Vivek Patel Logo">
-            <span className="w-[30px] h-[30px] border border-[rgba(139,92,246,0.7)] grid place-items-center font-mono text-[11px] tracking-[0.06em] text-white bg-[rgba(139,92,246,0.06)]">
-              VP
-            </span>
+          <Link to="/" onClick={handleHomeClick} className="flex items-center flex-shrink-0" aria-label="Vivek Patel">
+            <img src={logos.logo} alt="" width="30" height="30" className="w-[30px] h-[30px] object-contain" />
           </Link>
-          <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] flex-shrink-0">
-            NAV · <em className="not-italic text-[#a78bfa]">SITE</em>
-          </div>
-          
+
           <nav className="hidden md:flex items-center gap-7 ml-auto">
             {navLinks.map((link) => (
-              <a 
-                key={link.name} 
-                href={link.href} 
+              <a
+                key={link.name}
+                href={link.href}
                 onClick={handleSmoothScroll}
                 className={`relative text-[0.92rem] py-[10px] pb-3 ${isActiveLink(link.href) ? 'text-white' : 'text-[#9ca3af]'} hover:text-white transition-colors`}
               >
@@ -204,7 +200,7 @@ const Header = () => {
               </a>
             ))}
           </nav>
-          
+
           <button
             onClick={handleCTA}
             className="hidden md:inline-flex flex-shrink-0 items-center gap-[10px] border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.05)] px-[14px] py-[10px] font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.1)] hover:text-[#d8caff] transition-colors"
@@ -212,7 +208,7 @@ const Header = () => {
             Request Estimate
             <ArrowRight className="w-3 h-3 text-[#a78bfa]" />
           </button>
-          
+
           <button
             ref={toggleButtonRef}
             onClick={handleToggle}
@@ -238,17 +234,12 @@ const Header = () => {
           style={{ overscrollBehavior: 'contain', touchAction: 'pan-y' }}
         >
           <div className="h-[68px] flex items-center justify-between border-b border-[rgba(139,92,246,0.38)]">
-            <Link to="/" onClick={handleHomeClick} className="flex items-center gap-3" aria-label="Vivek Patel Logo">
-              <span className="w-[30px] h-[30px] border border-[rgba(139,92,246,0.7)] grid place-items-center font-mono text-[11px] tracking-[0.06em] text-white bg-[rgba(139,92,246,0.06)]">
-                VP
-              </span>
+            <Link to="/" onClick={handleHomeClick} className="flex items-center" aria-label="Vivek Patel">
+              <img src={logos.logo} alt="" width="30" height="30" className="w-[30px] h-[30px] object-contain" />
             </Link>
-            <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280]">
-              NAV · <em className="not-italic text-[#a78bfa]">SITE</em>
-            </div>
-            <button 
+            <button
               ref={closeButtonRef}
-              onClick={() => setIsOpen(false)} 
+              onClick={() => setIsOpen(false)}
               className="w-11 h-11 relative"
               aria-label="Close navigation menu"
             >
@@ -256,7 +247,7 @@ const Header = () => {
               <span className="absolute left-3 top-[21px] w-5 h-[1.5px] bg-white -rotate-45"></span>
             </button>
           </div>
-          
+
           <nav className="flex-1 flex flex-col justify-center gap-[22px]">
             {navLinks.map((link) => (
               <a
@@ -269,7 +260,7 @@ const Header = () => {
               </a>
             ))}
           </nav>
-          
+
           <button
             onClick={handleCTA}
             aria-label="Request a Project Estimate"
