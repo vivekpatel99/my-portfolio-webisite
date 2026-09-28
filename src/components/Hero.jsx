@@ -63,7 +63,7 @@ const Hero = () => {
   return (
     <section 
       ref={heroRef}
-      className="relative h-auto flex flex-col justify-start pt-16 pb-40 bg-[#0C0D0D] max-md:pb-36 max-md:pt-0 max-md:justify-start"
+      className="relative h-auto flex flex-col justify-start pt-0 pb-40 bg-[#0C0D0D] max-md:pb-36 max-md:justify-start"
     >
       {/* Grid background */}
       <div 
@@ -148,7 +148,7 @@ const Hero = () => {
       <div className="container mx-auto px-6 md:px-12 relative z-10 py-0 max-md:px-4 max-md:py-0">
         <div className="max-w-[1320px] mx-auto flex flex-col gap-0 max-md:gap-0">
           {/* Status badge */}
-          <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center justify-between gap-4 flex-wrap mb-5">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/[0.12] bg-white/[0.03]">
               <span className="w-[7px] h-[7px] rounded-full bg-[#8B5CF6] shadow-[0_0_8px_rgba(139,92,246,0.65)]" />
               <span className="text-[11px] font-mono tracking-wider uppercase text-gray-400">Inference online</span>
@@ -160,7 +160,7 @@ const Hero = () => {
             {/* Left: Profile Invoice */}
             <div className="flex flex-col gap-0.5 min-w-0 w-full max-lg:gap-0 lg:col-start-1 lg:row-start-1">
               <article 
-                className="relative w-full max-w-[760px] border border-[#8B5CF6]/[0.28] rounded-lg px-5 py-1.5 max-md:px-2.5 max-md:py-0"
+                className="relative w-full max-w-[760px] border border-[#8B5CF6]/[0.28] rounded-lg px-5 pt-4 pb-3 max-md:px-2.5 max-md:pb-2"
                 style={{
                   background: 'linear-gradient(165deg, #141318 0%, #0f1012 55%, #0e0e10 100%)',
                   boxShadow: '0 0 0 1px rgba(255,255,255,0.03) inset, 0 24px 64px rgba(0,0,0,0.45), 0 0 48px rgba(139,92,246,0.1)'
@@ -186,19 +186,19 @@ const Hero = () => {
                 <div className="flex justify-between items-start mb-1 pb-1.5 border-b border-white/[0.08] max-md:mb-1 max-md:pb-1">
                   <div>
                     <div className="font-mono text-[11px] font-semibold tracking-[0.14em] uppercase text-purple-200/[0.78]">Profile Invoice</div>
-                    <div className="mt-1 font-mono text-[10px] text-gray-500 tracking-wide">field parse</div>
+                    <div className="mt-1 max-[359px]:hidden font-mono text-[10px] text-gray-500 tracking-wide">field parse</div>
                   </div>
                   <div className="text-right font-mono text-[10px] leading-relaxed text-gray-500">
                     <strong className="block text-gray-400 font-medium tracking-wider">INV-VP-0045</strong>
-                    OCR surface
+                    <span className="max-[359px]:hidden">OCR surface</span>
                   </div>
                 </div>
 
                 {/* Name field */}
                 <div className="mb-1 max-md:mb-1">
-                  <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Name</span>
+                  <span className="block mb-4 max-[359px]:mb-[5px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500">Name</span>
                   <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-[7px] py-[3px] rounded-[1px] bg-[#8B5CF6]/[0.07]">
-                    <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4]">
+                    <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
                       field · 0.99
                     </span>
                     <span className="text-[1.3rem] font-semibold tracking-tight text-white max-md:text-[1.1rem]">Vivek Patel</span>
@@ -207,9 +207,9 @@ const Hero = () => {
 
                 {/* Role field */}
                 <div className="mb-1 max-md:mb-1">
-                  <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Role</span>
+                  <span className="block mb-4 max-[359px]:mb-[5px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500">Role</span>
                   <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-2 py-1 rounded-[1px] bg-[#8B5CF6]/[0.07]">
-                    <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4]">
+                    <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
                       field · 0.98
                     </span>
                     <h1 className="text-[clamp(1.25rem,2.1vw,1.65rem)] font-bold text-white tracking-tight leading-[1.2] max-md:text-[1.12rem]">
@@ -221,52 +221,52 @@ const Hero = () => {
                 {/* Proofs folded under role */}
                 <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 mb-0.5 max-md:gap-x-3 max-md:mb-1" role="group" aria-label="Detected credentials">
                   <div className="min-w-0">
-                    <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Credential</span>
-                    <span className="relative inline-flex items-center gap-[7px] border-[1.5px] border-[#8B5CF6] px-[9px] py-[5px] rounded-[1px] bg-[#8B5CF6]/[0.07] max-w-full">
-                      <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4]">
+                    <span className="block mb-4 max-[359px]:mb-[5px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500">Credential</span>
+                    <span className="relative inline-flex items-center gap-[7px] border-[1.5px] border-[#8B5CF6] px-[9px] py-[5px] rounded-[1px] bg-[#8B5CF6]/[0.07] max-w-full max-[359px]:px-1.5">
+                      <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
                         credential · 0.99
                       </span>
-                      <span className="flex-shrink-0 w-3 h-3 text-purple-400 opacity-90" aria-hidden="true">
+                      <span className="flex-shrink-0 w-3 h-3 text-purple-400 opacity-90 max-[359px]:hidden" aria-hidden="true">
                         <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" className="w-full h-full">
                           <path d="M7 1.5l1.4 2.8 3.1.45-2.25 2.2.53 3.1L7 8.6 4.22 10.05l.53-3.1L2.5 4.75l3.1-.45L7 1.5z"/>
                         </svg>
                       </span>
-                      <span className="text-[0.88rem] font-semibold tracking-[-0.01em] text-white leading-[1.2] whitespace-nowrap max-md:text-[0.84rem] max-md:whitespace-normal">Top Rated Plus</span>
+                      <span className="text-[0.88rem] font-semibold tracking-[-0.01em] text-white leading-[1.2] whitespace-nowrap max-md:text-[0.84rem] max-md:whitespace-normal max-[359px]:text-[0.75rem] max-[359px]:whitespace-nowrap">Top Rated Plus</span>
                     </span>
                     <p className="mt-[5px] ml-[2px] font-mono text-[9px] leading-[1.2] tracking-[0.04em] text-gray-500">Upwork freelancer</p>
                   </div>
                   <div className="min-w-0">
-                    <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Success</span>
-                    <span className="relative inline-flex items-center gap-[7px] border-[1.5px] border-[#8B5CF6] px-[9px] py-[5px] rounded-[1px] bg-[#8B5CF6]/[0.07] max-w-full">
-                      <span className="absolute -top-3 right-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-md:left-0 max-md:right-auto">
+                    <span className="block mb-4 max-[359px]:mb-[5px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500">Success</span>
+                    <span className="relative inline-flex items-center gap-[7px] border-[1.5px] border-[#8B5CF6] px-[9px] py-[5px] rounded-[1px] bg-[#8B5CF6]/[0.07] max-w-full max-[359px]:px-1.5">
+                      <span className="absolute -top-3 right-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-md:left-0 max-md:right-auto max-[359px]:hidden">
                         success · 0.99
                       </span>
-                      <span className="flex-shrink-0 w-3 h-3 text-purple-400 opacity-90" aria-hidden="true">
+                      <span className="flex-shrink-0 w-3 h-3 text-purple-400 opacity-90 max-[359px]:hidden" aria-hidden="true">
                         <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" className="w-full h-full">
                           <path d="M2.5 7.2l3.2 3.1L11.5 3.8"/>
                         </svg>
                       </span>
-                      <span className="text-[0.88rem] font-semibold tracking-[-0.01em] text-white leading-[1.2] whitespace-nowrap max-md:text-[0.84rem] max-md:whitespace-normal">100% Job Success</span>
+                      <span className="text-[0.88rem] font-semibold tracking-[-0.01em] text-white leading-[1.2] whitespace-nowrap max-md:text-[0.84rem] max-md:whitespace-normal max-[359px]:text-[0.75rem] max-[359px]:whitespace-nowrap">100% Job Success</span>
                     </span>
                     <p className="mt-[5px] ml-[2px] font-mono text-[9px] leading-[1.2] tracking-[0.04em] text-gray-500">Client delivery record</p>
                   </div>
                 </div>
 
                 {/* Rate & Location columns */}
-                <div className="grid grid-cols-2 gap-x-[18px] gap-y-3 mb-2.5 max-md:mb-1.5 max-md:gap-y-2">
+                <div className="grid grid-cols-2 gap-x-[18px] gap-y-3 mb-2.5 max-md:mb-1.5 max-md:gap-y-2 max-[359px]:mb-0">
                   <div>
-                    <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Rate</span>
+                    <span className="block mb-4 max-[359px]:mb-[5px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500">Rate</span>
                     <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-[7px] py-[3px] rounded-[1px] bg-[#8B5CF6]/[0.07]">
-                      <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4]">
+                      <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
                         field · 0.96
                       </span>
                       <span className="font-mono text-[1.05rem] font-semibold text-white leading-[1.2]">€45/hour</span>
                     </span>
                   </div>
                   <div>
-                    <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Location</span>
+                    <span className="block mb-4 max-[359px]:mb-[5px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500">Location</span>
                     <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-[7px] py-[3px] rounded-[1px] bg-[#8B5CF6]/[0.07]">
-                      <span className="absolute -top-3 right-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4]">
+                      <span className="absolute -top-3 right-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
                         field · 0.95
                       </span>
                       <span className="font-medium text-[0.92rem] text-gray-300 leading-[1.3]">Linz, Austria</span>
@@ -275,7 +275,7 @@ const Hero = () => {
                 </div>
 
                 {/* Bio */}
-                <div className="mb-2.5 max-md:mb-1">
+                <div className="mb-2.5 max-md:mb-1 max-[359px]:mb-0">
                   <p className="max-w-[54ch] text-[0.78rem] leading-[1.4] text-gray-400 font-normal max-md:text-[0.72rem] max-md:max-w-full">
                     I build detectors, document extractors, and n8n workflows that turn camera feeds and messy files into reliable production data.
                   </p>
@@ -283,7 +283,7 @@ const Hero = () => {
 
                 {/* Tags field */}
                 <div className="max-[359px]:flex max-[359px]:items-center max-[359px]:gap-2">
-                  <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px] max-[359px]:mb-0">Tags</span>
+                  <span className="block mb-4 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-[359px]:mb-0">Tags</span>
                   <span className="relative inline-flex border-[1.5px] border-[#8B5CF6] px-2 py-1.5 rounded-[1px] bg-[#8B5CF6]/[0.07] max-[359px]:py-0.5">
                     <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
                       field · 0.94
@@ -303,7 +303,7 @@ const Hero = () => {
               </article>
             </div>
 
-            <div className="flex flex-wrap gap-3 mt-0 lg:col-start-1 lg:row-start-2 max-md:flex-col max-md:mt-3">
+            <div className="flex flex-wrap gap-3 mt-4 lg:col-start-1 lg:row-start-2 max-lg:mt-1 max-md:flex-col max-md:mt-4">
               <Button
                 onClick={handleCTAClick}
                 className="bg-[#8B5CF6] hover:bg-[#9B6FFF] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-0"
