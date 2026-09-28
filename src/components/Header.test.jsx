@@ -107,14 +107,15 @@ describe('Header', () => {
     await waitFor(() => expect(screen.getByTestId('location').textContent).toBe('/case-studies/'));
   });
 
-  it('renders Detection Bar with NAV · SITE craft marker', () => {
+  it('shows the logo instead of a VP text mark', () => {
     render(
       <MemoryRouter>
         <Header />
       </MemoryRouter>,
     );
 
-    expect(screen.getByText(/NAV ·/i)).toBeTruthy();
-    expect(screen.getByText(/SITE/i)).toBeTruthy();
+    const home = screen.getAllByRole('link', { name: 'Vivek Patel Logo' })[0];
+    expect(home.querySelector('img')?.getAttribute('src')).toBe('/assets/logos/mylogo.png');
+    expect(screen.queryByText(/NAV ·/i)).toBeNull();
   });
 });
