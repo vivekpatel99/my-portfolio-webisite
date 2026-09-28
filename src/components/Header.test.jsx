@@ -44,7 +44,7 @@ describe('Header', () => {
       </MemoryRouter>,
     );
     const main = document.getElementById('main-content');
-    const siteFooter = screen.getAllByRole('contentinfo').find((footer) => footer.textContent.includes('FOOTER'));
+    const siteFooter = document.getElementById('site-footer');
     siteFooter.setAttribute('aria-hidden', 'false');
     await user.click(screen.getByRole('button', { name: 'Toggle navigation menu' }));
     expect(main.hasAttribute('inert')).toBe(true);
