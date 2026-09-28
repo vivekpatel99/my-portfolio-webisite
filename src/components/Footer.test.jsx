@@ -18,6 +18,7 @@ describe('Footer Registration Strip', () => {
     );
 
     expect(container.textContent).not.toContain('FOOTER ·');
+    expect(container.querySelector('footer')?.id).toBe('site-footer');
     expect(screen.getByRole('link', { name: /privacy policy/i })).toBeTruthy();
   });
 

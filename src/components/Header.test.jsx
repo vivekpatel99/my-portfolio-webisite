@@ -2,11 +2,12 @@
  * @vitest-environment jsdom
  */
 import React from 'react';
-import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Header from './Header';
+import Footer from './Footer';
 
 vi.mock('framer-motion', () => {
   const motion = new Proxy(
@@ -27,7 +28,113 @@ describe('Header', () => {
 
   beforeEach(() => {
     window.HTMLElement.prototype.scrollIntoView = vi.fn();
-    window.matchMedia = vi.fn().mockReturnValue({ matches: false });
+    window.matchMedia = vi.fn().mockReturnValue({
+      matches: false,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    });
+  });
+
+  it('closes the mobile menu at the desktop breakpoint and restores focus to a visible control', async () => {
+    const user = userEvent.setup();
+    const desktopListeners = new Set();
+    const desktopQuery = {
+      matches: false,
+      media: '(min-width: 768px)',
+      addEventListener: vi.fn((event, listener) => {
+        if (event === 'change') desktopListeners.add(listener);
+      }),
+      removeEventListener: vi.fn((event, listener) => {
+        if (event === 'change') desktopListeners.delete(listener);
+      }),
+    };
+    window.matchMedia = vi.fn((query) => (
+      query === desktopQuery.media ? desktopQuery : { matches: false }
+    ));
+
+    render(
+      <MemoryRouter>
+        <Header />
+        <main id="main-content"><button type="button">Main action</button></main>
+        <footer id="site-footer"><a href="/privacy">Privacy</a></footer>
+      </MemoryRouter>,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Toggle navigation menu' }));
+    expect(screen.getByRole('dialog', { name: 'Navigation menu' })).toBeTruthy();
+    expect(document.getElementById('main-content').hasAttribute('inert')).toBe(true);
+
+    await act(async () => {
+      desktopQuery.matches = true;
+      desktopListeners.forEach((listener) => listener({ matches: true, media: desktopQuery.media }));
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog', { name: 'Navigation menu' })).toBeNull();
+    });
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Request Estimate' }));
+    expect(document.getElementById('main-content').hasAttribute('inert')).toBe(false);
+    expect(document.getElementById('site-footer').hasAttribute('inert')).toBe(false);
+  });
+
+  it('isolates the site footer without adding modal attributes to a nested content footer', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter>
+        <Header />
+        <main id="main-content">
+          <article><footer data-testid="content-footer">Attribution</footer></article>
+        </main>
+        <footer id="site-footer" data-testid="site-footer">Site links</footer>
+      </MemoryRouter>,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Toggle navigation menu' }));
+
+    const contentFooter = screen.getByTestId('content-footer');
+    const siteFooter = screen.getByTestId('site-footer');
+    expect(contentFooter.hasAttribute('inert')).toBe(false);
+    expect(contentFooter.hasAttribute('aria-hidden')).toBe(false);
+    expect(siteFooter.hasAttribute('inert')).toBe(true);
+    expect(siteFooter.getAttribute('aria-hidden')).toBe('true');
+  });
+
+  it('closes at the desktop breakpoint, restores background state and desktop focus', async () => {
+    const user = userEvent.setup();
+    const desktopQuery = { matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() };
+    window.matchMedia = vi.fn().mockReturnValue(desktopQuery);
+    render(
+      <MemoryRouter>
+        <a href="#main-content">Skip to content</a>
+        <Header />
+        <main id="main-content"><article><footer>Article footer</footer></article></main>
+        <Footer />
+      </MemoryRouter>,
+    );
+    const main = document.getElementById('main-content');
+    const siteFooter = document.getElementById('site-footer');
+    siteFooter.setAttribute('aria-hidden', 'false');
+    await user.click(screen.getByRole('button', { name: 'Toggle navigation menu' }));
+    expect(main.hasAttribute('inert')).toBe(true);
+    expect(siteFooter.hasAttribute('inert')).toBe(true);
+    expect(desktopQuery.addEventListener).toHaveBeenCalledWith('change', expect.any(Function));
+    const onChange = desktopQuery.addEventListener.mock.calls[0][1];
+    act(() => {
+      desktopQuery.matches = true;
+      onChange({ matches: true });
+    });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(main.hasAttribute('inert')).toBe(false);
+    expect(siteFooter.hasAttribute('inert')).toBe(false);
+    expect(siteFooter.getAttribute('aria-hidden')).toBe('false');
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Request Estimate' }));
+    expect(desktopQuery.removeEventListener).toHaveBeenCalledWith('change', onChange);
+    act(() => { desktopQuery.matches = false; });
+    await user.click(screen.getByRole('button', { name: 'Toggle navigation menu' }));
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Toggle navigation menu' }));
   });
 
   it('scrolls when clicking a nav link for the current hash', async () => {
