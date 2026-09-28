@@ -17,11 +17,6 @@ export const logos = {
   logo: '/assets/logos/mylogo.png',
 };
 
-export const backgrounds = {
-  hero: `${BASE_URLS.hostingerCdn}/71f6723b117af5fb7e36d829dfcd6b7f.jpg`,
-  cta: `${BASE_URLS.hostingerCdn}/71f6723b117af5fb7e36d829dfcd6b7f.jpg`,
-};
-
 export const profileImages = {
   aboutPhoto: '/assets/images/vivek-black-and-white.webp',
   teamCollaboration: `${BASE_URLS.hostingerCdn}/michael-t-rxri-ho62y4-unsplash-2-tvxRc.jpg`,
