@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { logos } from '@/config/links';
+import { focusNavigationTarget, isModifiedClick } from '@/lib/focusTarget';
 
 const prefersReducedMotion = () =>
   typeof window !== 'undefined'
@@ -137,6 +138,7 @@ const Header = () => {
   }, [isOpen]);
 
   const handleSmoothScroll = (e) => {
+    if (isModifiedClick(e)) return;
     e.preventDefault();
     const href = e.currentTarget.getAttribute('href');
     const [path, id] = href.split('#');
@@ -145,9 +147,10 @@ const Header = () => {
       const nextHash = `#${id}`;
 
       if (location.pathname === '/' && location.hash === nextHash) {
-        document
-          .getElementById(decodeURIComponent(id))
-          ?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+        const target = document.getElementById(decodeURIComponent(id));
+        target?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+        // Defer so a closing mobile menu restores inert/focus first; the target wins.
+        window.setTimeout(() => focusNavigationTarget(target), 0);
       } else {
         navigate(`/#${id}`);
       }
@@ -161,6 +164,7 @@ const Header = () => {
   };
 
   const handleHomeClick = (e) => {
+    if (isModifiedClick(e)) return;
     e.preventDefault();
     navigate('/');
     if (isOpen) {

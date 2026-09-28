@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import React from 'react';
-import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -152,7 +152,37 @@ describe('Header', () => {
     await user.click(within(screen.getByRole('navigation')).getByRole('link', { name: 'Services' }));
 
     expect(target.scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth' });
+    await waitFor(() => expect(document.activeElement).toBe(target));
     target.remove();
+  });
+
+  it.each([
+    ['Cmd-click', { metaKey: true }],
+    ['Ctrl-click', { ctrlKey: true }],
+    ['middle-click', { button: 1 }],
+  ])('leaves %s on header links to the browser for a new tab', (_, modifiers) => {
+    const LocationProbe = () => {
+      const location = useLocation();
+      return <output data-testid="location">{`${location.pathname}${location.hash}`}</output>;
+    };
+
+    render(
+      <MemoryRouter initialEntries={['/contact/']}>
+        <Header />
+        <LocationProbe />
+      </MemoryRouter>,
+    );
+
+    const nav = within(screen.getByRole('navigation'));
+    const links = [
+      nav.getByRole('link', { name: 'Services' }),
+      nav.getByRole('link', { name: 'Case Studies' }),
+      screen.getAllByRole('link', { name: 'Vivek Patel Logo' })[0],
+    ];
+    links.forEach((link) => {
+      expect(fireEvent.click(link, modifiers)).toBe(true);
+    });
+    expect(screen.getByTestId('location').textContent).toBe('/contact/');
   });
 
   it('navigates to the case studies collection from the header', async () => {

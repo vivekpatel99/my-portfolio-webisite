@@ -110,7 +110,7 @@ test.describe('keyboard focus regressions', () => {
     await expect(page.getByRole('heading', { name: /Selected Case Studies/i })).toBeVisible();
     await expect(page.getByRole('dialog', { name: 'Navigation menu' })).toBeHidden();
     await expect(page.locator('#main-content')).not.toHaveAttribute('inert', '');
-    await expect(toggle).toBeFocused();
+    await expect(page.locator('#main-content')).toBeFocused();
   });
 
   test('mobile menu releases every landmark across the desktop breakpoint and can reopen by keyboard', async ({ page }) => {
