@@ -38,7 +38,7 @@ const Testimonials = () => {
     const testimonial = testimonials[activeIndex];
 
     return (
-        <section id="testimonials" className="section min-h-screen relative py-[92px] px-5 sm:px-12 overflow-hidden bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.035),transparent_42%),#0C0D0D]">
+        <section id="testimonials" className="section relative py-[92px] px-5 sm:px-12 overflow-hidden bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.035),transparent_42%),#0C0D0D]">
             <div className="inner relative z-[2] w-full max-w-[1120px] mx-auto">
                 <div className="section-head mb-[54px]">
                     <div className="eyebrow font-mono text-[10px] text-[#6b7280] mb-[19px] tracking-[0.15em] uppercase">

@@ -24,7 +24,7 @@ const Services = () => {
   );
 
   return (
-    <section id="services" className="relative bg-[#0C0D0D] py-14 px-7 md:px-12 min-h-[900px]">
+    <section id="services" className="relative bg-[#0C0D0D] py-14 px-7 md:px-12">
       <div className="relative z-[2] max-w-[1080px] mx-auto">
         <h2 className="text-[clamp(1.85rem,3.4vw,2.6rem)] font-bold tracking-[-0.02em] leading-[1.1] uppercase mb-[14px]">
           SERVICE <span className="text-[#8B5CF6]">OFFERS</span>
