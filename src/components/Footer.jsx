@@ -9,7 +9,7 @@ const Footer = () => {
     };
 
     return (
-        <footer className="flex-shrink-0 px-7 pb-[22px] bg-[#0C0D0D]">
+        <footer id="site-footer" className="flex-shrink-0 px-7 pb-[22px] bg-[#0C0D0D]">
             <div className="relative max-w-[1120px] mx-auto border border-[rgba(139,92,246,0.38)] bg-gradient-to-b from-[rgba(139,92,246,0.035)] to-transparent bg-[length:100%_50%] bg-no-repeat px-6 pt-[18px] pb-4">
                 {/* Corner brackets */}
                 <span className="absolute top-[5px] left-[5px] w-4 h-4 border-t-[1.5px] border-l-[1.5px] border-[#8B5CF6] pointer-events-none"></span>

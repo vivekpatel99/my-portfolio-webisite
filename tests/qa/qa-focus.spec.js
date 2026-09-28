@@ -62,6 +62,43 @@ test.describe('keyboard focus regressions', () => {
     await expect(page.locator('#main-content')).not.toHaveAttribute('inert', '');
   });
 
+  test('resizing an open mobile menu to desktop restores navigation and page interaction', async ({ page }) => {
+    await page.setViewportSize({ width: 767, height: 844 });
+    await page.goto('/');
+    const toggle = page.getByRole('button', { name: 'Toggle navigation menu' });
+    const menu = page.getByRole('dialog', { name: 'Navigation menu' });
+    const main = page.locator('#main-content');
+    const footer = page.locator('#site-footer');
+    await toggle.click();
+    await expect(menu).toBeVisible();
+    await expect(main).toHaveAttribute('inert', '');
+
+    await page.setViewportSize({ width: 768, height: 844 });
+    await expect(page.locator('#mobile-menu')).toHaveCount(0);
+    for (const background of [page.locator('header'), main, footer, page.locator('a[href="#main-content"]')]) {
+      await expect(background).not.toHaveAttribute('inert', '');
+      await expect(background).not.toHaveAttribute('aria-hidden', 'true');
+    }
+    const desktopEstimate = page.getByRole('button', { name: 'Request Estimate', exact: true });
+    await expect(desktopEstimate).toBeVisible();
+    await expect(desktopEstimate).toBeFocused();
+    const caseStudies = page.getByRole('navigation').getByRole('link', { name: 'Case Studies' });
+    await caseStudies.focus();
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL(/\/case-studies\/?$/);
+    await expect(page.getByRole('heading', { name: /Selected Case Studies/i })).toBeVisible();
+
+    await page.setViewportSize({ width: 767, height: 844 });
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await toggle.click();
+    await expect(menu).toBeVisible();
+    await expect(footer).toHaveAttribute('inert', '');
+    await page.keyboard.press('Escape');
+    await expect(menu).toBeHidden();
+    await expect(toggle).toBeFocused();
+    await expect(main).not.toHaveAttribute('inert', '');
+  });
+
   test('mobile menu navigation closes cleanly and keeps route navigation working', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
