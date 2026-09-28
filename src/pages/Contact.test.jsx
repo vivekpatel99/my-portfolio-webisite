@@ -410,17 +410,13 @@ describe("Contact form", () => {
     expect(button.textContent.trim()).toBe('Send project request');
   });
 
-  it('#188: decorative field chips are hidden from assistive tech and do not overlay labels', () => {
-    const { container } = render(<Contact />);
-    const chips = container.querySelectorAll('.field-meta');
-    expect(chips).toHaveLength(4);
-    chips.forEach((chip) => {
-      expect(chip.getAttribute('aria-hidden')).toBe('true');
-      expect(chip.className).not.toMatch(/\babsolute\b/);
-    });
+  it('#188: each field has a readable label without decorative field text', () => {
+    render(<Contact />);
     expect(screen.getByLabelText('Full Name *')).toBeTruthy();
     expect(screen.getByLabelText('Email Address *')).toBeTruthy();
+    expect(screen.getByLabelText('Budget Range')).toBeTruthy();
     expect(screen.getByLabelText('Project Description *')).toBeTruthy();
+    expect(screen.queryByText(/· FIELD/i)).toBeNull();
   });
 
   it('#188: name and email declare autocomplete tokens', () => {

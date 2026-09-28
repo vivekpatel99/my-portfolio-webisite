@@ -1,0 +1,128 @@
+.contact-detection-field {
+  padding-top: 10px;
+}
+
+.contact-detection-frame {
+  --corner-color: rgba(139, 92, 246, 0.62);
+  --corner-length: 16px;
+  --corner-width: 1px;
+  position: relative;
+  min-height: 54px;
+  background-color: rgba(255, 255, 255, 0.025);
+  background-image:
+    linear-gradient(var(--corner-color), var(--corner-color)),
+    linear-gradient(var(--corner-color), var(--corner-color)),
+    linear-gradient(var(--corner-color), var(--corner-color)),
+    linear-gradient(var(--corner-color), var(--corner-color)),
+    linear-gradient(var(--corner-color), var(--corner-color)),
+    linear-gradient(var(--corner-color), var(--corner-color)),
+    linear-gradient(var(--corner-color), var(--corner-color)),
+    linear-gradient(var(--corner-color), var(--corner-color));
+  background-position:
+    left top, right top, left bottom, right bottom,
+    left top, right top, left bottom, right bottom;
+  background-size:
+    var(--corner-length) var(--corner-width),
+    var(--corner-length) var(--corner-width),
+    var(--corner-length) var(--corner-width),
+    var(--corner-length) var(--corner-width),
+    var(--corner-width) var(--corner-length),
+    var(--corner-width) var(--corner-length),
+    var(--corner-width) var(--corner-length),
+    var(--corner-width) var(--corner-length);
+  background-repeat: no-repeat;
+  transition: background-color 150ms ease;
+}
+
+.contact-detection-frame[data-filled="true"] {
+  --corner-color: #8b5cf6;
+}
+
+.contact-detection-frame:focus-within {
+  --corner-color: #a78bfa;
+  --corner-length: 18px;
+  --corner-width: 2px;
+  background-color: rgba(167, 139, 250, 0.07);
+}
+
+.contact-detection-label {
+  position: absolute;
+  z-index: 1;
+  top: -9px;
+  left: 24px;
+  color: #b6b9c3;
+  font: 12px/16px ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: text;
+}
+
+.contact-detection-frame[data-filled="true"] .contact-detection-label,
+.contact-detection-frame:focus-within .contact-detection-label {
+  color: #c4b5fd;
+}
+
+.contact-detection-control {
+  display: block;
+  width: 100%;
+  min-height: 54px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+  box-shadow: none;
+  background: transparent;
+  color: white;
+  font: inherit;
+  font-size: 0.95rem;
+}
+
+.contact-detection-control::placeholder {
+  color: rgba(156, 163, 175, 0.65);
+  opacity: 1;
+}
+
+.contact-detection-select {
+  color: #9ca3af;
+  cursor: pointer;
+}
+
+.contact-detection-frame[data-filled="true"] .contact-detection-select {
+  color: white;
+}
+
+.contact-detection-select option {
+  color: white;
+  background: #17171b;
+}
+
+.contact-detection-textarea {
+  min-height: 140px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  resize: vertical;
+}
+
+@media (max-width: 420px) {
+  .contact-detection-label {
+    left: 22px;
+    letter-spacing: 0.06em;
+  }
+}
+
+@media (forced-colors: active) {
+  .contact-detection-frame {
+    outline: 1px solid CanvasText;
+  }
+
+  .contact-detection-frame:focus-within {
+    outline: 2px solid Highlight;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-detection-frame {
+    transition: none;
+  }
+}
