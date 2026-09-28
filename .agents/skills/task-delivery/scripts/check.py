@@ -51,6 +51,14 @@ def filesystem_tree(directory):
     return entries
 
 
+def is_repository(directory):
+    try:
+        root = Path(git(directory, "rev-parse", "--show-toplevel").decode().strip())
+    except subprocess.CalledProcessError:
+        return False
+    return root.resolve() == directory.resolve()
+
+
 def untracked_files(repo):
     paths = git(repo, "ls-files", "--others", "--exclude-standard", "-z")
     files = {}
@@ -58,7 +66,14 @@ def untracked_files(repo):
         if not raw:
             continue
         path = repo / os.fsdecode(raw)
-        files[os.fsdecode(raw)] = file_state(path)
+        record = file_state(path)
+        info = path.lstat()
+        if stat.S_ISDIR(info.st_mode):
+            if is_repository(path):
+                record["repository"] = repository_state(path)
+            else:
+                record["tree"] = filesystem_tree(path)
+        files[os.fsdecode(raw)] = record
     return files
 
 
@@ -73,16 +88,34 @@ def is_dirty(state):
     )
 
 
-def repository_state(repo):
-    status = git(repo, "status", "--porcelain=v1", "-z", "--untracked-files=all")
-    files = untracked_files(repo)
-    state = {
-        "index_diff": digest(git(repo, "diff", "--cached", "--binary", "--")),
-        "worktree_diff": digest(git(repo, "diff", "--binary", "--")),
-        "status": digest(status),
-        "untracked": files,
-        "submodules": {},
-    }
+def assume_unchanged_files(repo):
+    entries = git(repo, "ls-files", "-v", "-z")
+    flagged = {}
+    for entry in entries.split(b"\0"):
+        if len(entry) < 3 or not entry[:1].islower():
+            continue
+        path = repo / os.fsdecode(entry[2:])
+        try:
+            flagged[os.fsdecode(entry[2:])] = file_state(path)
+        except FileNotFoundError:
+            flagged[os.fsdecode(entry[2:])] = {"missing": True}
+    return flagged
+
+
+def submodule_paths(repo):
+    paths = set()
+    for entry in git(repo, "ls-tree", "-r", "-z", "HEAD").split(b"\0"):
+        if not entry:
+            continue
+        metadata, raw_path = entry.split(b"\t", 1)
+        if metadata.startswith(b"160000 "):
+            paths.add(os.fsdecode(raw_path))
+    for entry in git(repo, "ls-files", "--stage", "-z").split(b"\0"):
+        if not entry:
+            continue
+        metadata, raw_path = entry.split(b"\t", 1)
+        if metadata.startswith(b"160000 "):
+            paths.add(os.fsdecode(raw_path))
     modules = repo / ".gitmodules"
     if modules.is_file():
         configured = subprocess.run(
@@ -94,15 +127,31 @@ def repository_state(repo):
             raise subprocess.CalledProcessError(configured.returncode, configured.args, configured.stdout, configured.stderr)
         for line in configured.stdout.decode().splitlines():
             _, module_path = line.split(None, 1)
-            module = repo / module_path
-            if (module / ".git").exists():
-                child_state = repository_state(module)
-                if is_dirty(child_state):
-                    state["submodules"][module_path] = child_state
-            elif module.is_dir():
-                files = filesystem_tree(module)
-                if files:
-                    state["submodules"][module_path] = {"uninitialized_files": files}
+            paths.add(module_path)
+    return paths
+
+
+def repository_state(repo):
+    status = git(repo, "status", "--porcelain=v1", "-z", "--untracked-files=all")
+    files = untracked_files(repo)
+    state = {
+        "index_diff": digest(git(repo, "diff", "--cached", "--binary", "--")),
+        "worktree_diff": digest(git(repo, "diff", "--binary", "--")),
+        "status": digest(status),
+        "untracked": files,
+        "assume_unchanged": assume_unchanged_files(repo),
+        "submodules": {},
+    }
+    for module_path in submodule_paths(repo):
+        module = repo / module_path
+        if (module / ".git").exists():
+            child_state = repository_state(module)
+            if is_dirty(child_state):
+                state["submodules"][module_path] = child_state
+        elif module.is_dir():
+            files = filesystem_tree(module)
+            if files:
+                state["submodules"][module_path] = {"uninitialized_files": files}
     return state
 
 
