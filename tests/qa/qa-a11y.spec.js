@@ -149,10 +149,16 @@ test('reduced motion disables custom cursor', async ({ page }) => {
 });
 
 test('form inputs have associated labels', async ({ page }) => {
-  await page.goto('/contact');
-  for (const id of ['name', 'email', 'description']) {
-    const label = page.locator(`label[for="${id}"]`);
-    await expect(label).toBeVisible();
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/contact');
+    for (const id of ['name', 'email', 'budget', 'description']) {
+      const label = page.locator(`label[for="${id}"]`);
+      await expect(label).toBeVisible();
+      await expectRenderedContrast(label, `${id} label at ${width}px`);
+      expect(await label.evaluate((element) => parseFloat(getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(12);
+    }
+    await expect(page.locator('.field-meta')).toHaveCount(0);
   }
 });
 

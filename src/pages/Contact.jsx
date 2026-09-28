@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import './Contact.css';
 import { toast } from '@/components/ui/use-toast';
 import { Github, Linkedin, Mail, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
 import { useMutation } from 'convex/react';
@@ -109,7 +108,9 @@ const Contact = () => {
 
     setFieldErrors(nextErrors);
 
-    if (Object.keys(nextErrors).length > 0) {
+    const firstInvalidField = Object.keys(nextErrors)[0];
+    if (firstInvalidField) {
+      telemetrySource.elements.namedItem(firstInvalidField)?.focus();
       toast({
         title: nextErrors.email && trimmedFormState.email ? "Invalid email address." : "Uh oh! Missing fields.",
         description: nextErrors.email && trimmedFormState.email
@@ -233,94 +234,92 @@ const Contact = () => {
                 CONTACT · <em className="not-italic text-[#a78bfa]">DETECTED</em>
               </div>
 
-              <div className="field relative mb-4">
-                <span className="field-meta absolute -top-[9px] left-0 px-[5px] bg-[#0C0D0D] font-mono text-[9px] tracking-[0.12em] uppercase text-[#a78bfa] pointer-events-none z-[4]">
-                  NAME · FIELD
-                </span>
-                <label htmlFor="name" className="flabel block font-mono text-[9px] tracking-[0.14em] uppercase text-[#6b7280] mb-2">
-                  Full Name <span className="text-[#a78bfa]">*</span>
-                </label>
-                <Input
+              <div className="contact-detection-field mb-5">
+                <div className="contact-detection-frame" data-filled={Boolean(formState.name)}>
+                  <label htmlFor="name" className="contact-detection-label">
+                    Full Name <span className="text-[#a78bfa]">*</span>
+                  </label>
+                  <input
                   type="text"
                   id="name"
                   name="name"
                   placeholder="Alex from Acme Ops"
+                  autoComplete="name"
                   value={formState.name}
                   onChange={handleInputChange}
-                  className="ctrl w-full h-12 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.12)] px-[14px] text-[0.95rem] text-white rounded-none outline-none focus:border-[#8B5CF6] focus:shadow-[0_0_0_1px_rgba(139,92,246,0.35)] transition-all placeholder:text-[rgba(156,163,175,0.55)]"
+                  className="contact-detection-control"
                   required
                   disabled={isSubmitting}
                   aria-invalid={Boolean(fieldErrors.name)}
                   aria-describedby={fieldErrors.name ? 'name-error' : undefined}
-                />
+                  />
+                </div>
                 {fieldErrors.name ? <p id="name-error" role="alert" className="mt-2 text-sm text-red-400">{fieldErrors.name}</p> : null}
               </div>
 
-              <div className="field relative mb-4">
-                <span className="field-meta absolute -top-[9px] left-0 px-[5px] bg-[#0C0D0D] font-mono text-[9px] tracking-[0.12em] uppercase text-[#a78bfa] pointer-events-none z-[4]">
-                  EMAIL · FIELD
-                </span>
-                <label htmlFor="email" className="flabel block font-mono text-[9px] tracking-[0.14em] uppercase text-[#6b7280] mb-2">
-                  Email Address <span className="text-[#a78bfa]">*</span>
-                </label>
-                <Input
+              <div className="contact-detection-field mb-5">
+                <div className="contact-detection-frame" data-filled={Boolean(formState.email)}>
+                  <label htmlFor="email" className="contact-detection-label">
+                    Email Address <span className="text-[#a78bfa]">*</span>
+                  </label>
+                  <input
                   type="email"
                   id="email"
                   name="email"
                   placeholder="alex@company.com"
+                  autoComplete="email"
                   value={formState.email}
                   onChange={handleInputChange}
-                  className="ctrl w-full h-12 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.12)] px-[14px] text-[0.95rem] text-white rounded-none outline-none focus:border-[#8B5CF6] focus:shadow-[0_0_0_1px_rgba(139,92,246,0.35)] transition-all placeholder:text-[rgba(156,163,175,0.55)]"
+                  className="contact-detection-control"
                   required
                   disabled={isSubmitting}
                   aria-invalid={Boolean(fieldErrors.email)}
                   aria-describedby={fieldErrors.email ? 'email-error' : undefined}
-                />
+                  />
+                </div>
                 {fieldErrors.email ? <p id="email-error" role="alert" className="mt-2 text-sm text-red-400">{fieldErrors.email}</p> : null}
               </div>
 
-              <div className="field relative mb-4">
-                <span className="field-meta absolute -top-[9px] left-0 px-[5px] bg-[#0C0D0D] font-mono text-[9px] tracking-[0.12em] uppercase text-[#a78bfa] pointer-events-none z-[4]">
-                  BUDGET · FIELD
-                </span>
-                <label htmlFor="budget" className="flabel block font-mono text-[9px] tracking-[0.14em] uppercase text-[#6b7280] mb-2">
-                  Budget Range
-                </label>
-                <select
+              <div className="contact-detection-field mb-5">
+                <div className="contact-detection-frame" data-filled={Boolean(formState.budget)}>
+                  <label htmlFor="budget" className="contact-detection-label">
+                    Budget Range
+                  </label>
+                  <select
                   id="budget"
                   name="budget"
                   value={formState.budget}
                   onChange={(event) => handleSelectChange(event.target.value)}
                   disabled={isSubmitting}
-                  className="ctrl w-full h-12 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.12)] px-[14px] text-[0.95rem] text-[#9ca3af] rounded-none outline-none focus:border-[#8B5CF6] focus:shadow-[0_0_0_1px_rgba(139,92,246,0.35)] transition-all"
+                  className="contact-detection-control contact-detection-select"
                 >
                   <option value="">Select your budget range</option>
                   {BUDGET_OPTIONS.map((value) => (
                     <option key={value} value={value}>{BUDGET_LABELS[value]}</option>
                   ))}
-                </select>
+                  </select>
+                </div>
               </div>
 
-              <div className="field relative mb-4">
-                <span className="field-meta absolute -top-[9px] left-0 px-[5px] bg-[#0C0D0D] font-mono text-[9px] tracking-[0.12em] uppercase text-[#a78bfa] pointer-events-none z-[4]">
-                  MESSAGE · FIELD
-                </span>
-                <label htmlFor="description" className="flabel block font-mono text-[9px] tracking-[0.14em] uppercase text-[#6b7280] mb-2">
-                  Project Description <span className="text-[#a78bfa]">*</span>
-                </label>
-                <Textarea
+              <div className="contact-detection-field mb-4">
+                <div className="contact-detection-frame contact-detection-frame-area" data-filled={Boolean(formState.description)}>
+                  <label htmlFor="description" className="contact-detection-label">
+                    Project Description <span className="text-[#a78bfa]">*</span>
+                  </label>
+                  <textarea
                   id="description"
                   name="description"
                   placeholder="Example: We need invoice OCR or a data extraction workflow that exports clean records to our CRM within 4 weeks..."
                   value={formState.description}
                   onChange={handleInputChange}
                   rows={5}
-                  className="ctrl w-full min-h-[140px] bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.12)] px-[14px] py-[12px] text-[0.95rem] text-white rounded-none outline-none focus:border-[#8B5CF6] focus:shadow-[0_0_0_1px_rgba(139,92,246,0.35)] transition-all placeholder:text-[rgba(156,163,175,0.55)] resize-y"
+                  className="contact-detection-control contact-detection-textarea"
                   required
                   disabled={isSubmitting}
                   aria-invalid={Boolean(fieldErrors.description)}
                   aria-describedby={fieldErrors.description ? 'description-error' : undefined}
-                />
+                  />
+                </div>
                 {fieldErrors.description ? <p id="description-error" role="alert" className="mt-2 text-sm text-red-400">{fieldErrors.description}</p> : null}
                 <div className="mt-3 border border-[rgba(255,255,255,0.1)] bg-[rgba(0,0,0,0.2)] p-4">
                   <p className="text-sm font-semibold text-white">Helpful details to include:</p>
@@ -339,7 +338,6 @@ const Contact = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  aria-label="Submit Project Estimate Request"
                   className="relative inline-flex items-center justify-center gap-3 border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.12)] px-10 py-4 font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.18)] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                   {isSubmitting ? (

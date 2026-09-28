@@ -29,13 +29,19 @@ vi.mock("react-helmet", () => ({
 }));
 
 vi.mock("framer-motion", () => {
+  // Cache per tag so re-renders keep the same component type (no remount, focus survives).
+  const cache = new Map();
   const motion = new Proxy(
     {},
     {
-      get: (_, tag) =>
-        function MotionComponent({ children, ...props }) {
-          return React.createElement(String(tag), props, children);
-        },
+      get: (_, tag) => {
+        if (!cache.has(tag)) {
+          cache.set(tag, function MotionComponent({ children, ...props }) {
+            return React.createElement(String(tag), props, children);
+          });
+        }
+        return cache.get(tag);
+      },
     },
   );
   return { motion };
@@ -56,7 +62,7 @@ describe("Contact form", () => {
     expect(form.hasAttribute("action")).toBe(false);
     expect(container.querySelector('input[name="name"]').required).toBe(true);
 
-    await user.click(screen.getByRole("button", { name: /submit project estimate request/i }));
+    await user.click(screen.getByRole("button", { name: /send project request/i }));
 
     expect(toast).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -392,8 +398,52 @@ describe("Contact form", () => {
   it('names the submit button and hides the route instruction', () => {
     render(<Contact />);
     expect(screen.getByText(/CONTACT ·/i)).toBeTruthy();
-    expect(screen.getByRole('button', { name: /submit project estimate request/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /send project request/i })).toBeTruthy();
     expect(screen.queryByText(/SUBMIT · FIELD/i)).toBeNull();
     expect(screen.queryByText(/FORM REMAINS PRIMARY/i)).toBeNull();
+  });
+
+  it('#188: submit accessible name matches its visible text', () => {
+    render(<Contact />);
+    const button = screen.getByRole('button', { name: 'Send project request' });
+    expect(button.hasAttribute('aria-label')).toBe(false);
+    expect(button.textContent.trim()).toBe('Send project request');
+  });
+
+  it('#188: each field has a readable label without decorative field text', () => {
+    render(<Contact />);
+    expect(screen.getByLabelText('Full Name *')).toBeTruthy();
+    expect(screen.getByLabelText('Email Address *')).toBeTruthy();
+    expect(screen.getByLabelText('Budget Range')).toBeTruthy();
+    expect(screen.getByLabelText('Project Description *')).toBeTruthy();
+    expect(screen.queryByText(/· FIELD/i)).toBeNull();
+  });
+
+  it('#188: name and email declare autocomplete tokens', () => {
+    const { container } = render(<Contact />);
+    expect(container.querySelector('input[name="name"]').getAttribute('autocomplete')).toBe('name');
+    expect(container.querySelector('input[name="email"]').getAttribute('autocomplete')).toBe('email');
+  });
+
+  it('#188: empty submit moves focus to the first invalid field', async () => {
+    const user = userEvent.setup();
+    const { container } = render(<Contact />);
+    await user.click(screen.getByRole('button', { name: 'Send project request' }));
+    expect(document.activeElement).toBe(container.querySelector('input[name="name"]'));
+  });
+
+  it('#188: focus skips valid fields and entered values persist after failed validation', async () => {
+    const user = userEvent.setup();
+    const { container } = render(<Contact />);
+    await user.type(container.querySelector('input[name="name"]'), 'Jane Doe');
+    await user.type(container.querySelector('input[name="email"]'), 'not-an-email');
+    await user.click(screen.getByRole('button', { name: 'Send project request' }));
+
+    const email = container.querySelector('input[name="email"]');
+    expect(document.activeElement).toBe(email);
+    expect(email.getAttribute('aria-describedby')).toBe('email-error');
+    expect(container.querySelector('input[name="name"]').value).toBe('Jane Doe');
+    expect(email.value).toBe('not-an-email');
+    expect(mockSubmitLead).not.toHaveBeenCalled();
   });
 });
