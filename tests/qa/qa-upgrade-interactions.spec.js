@@ -205,7 +205,7 @@ test('mobile navigation menu links and CTA work', async ({ page }) => {
   await expect(page).toHaveURL(/\/contact\/?$/);
 });
 
-test('craft signal surfaces: Detection Bar nav has purple border and VP mark', async ({ page }) => {
+test('Detection Bar keeps its purple border and configured logo', async ({ page }) => {
   await page.goto('/');
   const header = page.locator('header');
   await expect(header).toBeVisible();
@@ -220,10 +220,10 @@ test('craft signal surfaces: Detection Bar nav has purple border and VP mark', a
   });
   expect(headerStyles.borderBottom).toContain('139');
   
-  // VP mark exists with correct structure
+  // The configured logo is exposed through the home link.
   const vpMark = page.locator('header').getByRole('link', { name: 'Vivek Patel Logo' }).first();
   await expect(vpMark).toBeVisible();
-  await expect(vpMark.locator('span:has-text("VP")')).toBeVisible();
+  await expect(vpMark.locator('img')).toHaveAttribute('src', '/assets/logos/mylogo.png');
 });
 
 test('craft signal surfaces: Services Field-Row has detection boxes with meta', async ({ page }) => {
@@ -271,7 +271,7 @@ test('craft signal surfaces: Testimonials Field Quote has rail and diamond dots'
   await expect(testimonials).toContainText('PROJECT ·');
 });
 
-test('craft signal surfaces: About dual columns with field labels', async ({ page }) => {
+test('About keeps two information columns and the process grid', async ({ page }) => {
   await page.goto('/#about');
   const about = page.locator('#about');
   await expect(about).toBeVisible();
@@ -280,15 +280,13 @@ test('craft signal surfaces: About dual columns with field labels', async ({ pag
   await expect(about.locator('.dual')).toBeVisible();
   await expect(about.locator('.field')).toHaveCount(2);
   
-  // Field labels present
-  await expect(about).toContainText('PHOTO · FIELD');
   await expect(about).toContainText('BIO · FIELD');
   
   // Process grid exists
   await expect(about.locator('.quiet-grid')).toBeVisible();
 });
 
-test('craft signal surfaces: CTA action field shows €45/hour rate', async ({ page }) => {
+test('CTA shows its starting rate and estimate link', async ({ page }) => {
   await page.goto('/');
   const cta = page.locator('#cta');
   await expect(cta).toBeVisible();
@@ -303,11 +301,10 @@ test('craft signal surfaces: CTA action field shows €45/hour rate', async ({ p
   // Action field button
   await expect(cta).toContainText('REQUEST · ESTIMATE');
   
-  // Route note (no mailto)
-  await expect(cta).toContainText('ROUTE · /CONTACT/ · NO MAILTO');
+  await expect(cta.getByRole('link', { name: /request a project estimate/i })).toBeVisible();
 });
 
-test('craft signal surfaces: Contact form panel with CONTACT · DETECTED meta', async ({ page }) => {
+test('Contact form labels the form and submit action', async ({ page }) => {
   await page.goto('/contact');
   const form = page.locator('form[data-sensitive-telemetry]');
   await expect(form).toBeVisible();
@@ -322,8 +319,7 @@ test('craft signal surfaces: Contact form panel with CONTACT · DETECTED meta', 
   await expect(proof.getByText(/Job Success/i)).toBeVisible();
   await expect(proof.getByText('5★', { exact: true })).toBeVisible();
   
-  // Submit note
-  await expect(form.getByText('SUBMIT · FIELD', { exact: true })).toBeVisible();
+  await expect(form.getByRole('button', { name: 'Submit Project Estimate Request' })).toBeVisible();
 });
 
 test('craft signal surfaces: Case study cards have detection boxes', async ({ page }) => {
@@ -392,23 +388,24 @@ test('e2e: Home portfolio card → Case study detail → Back', async ({ page })
   await expect(page.locator('#portfolio')).toBeVisible();
 });
 
-test('e2e: Mobile nav Detection Bar → Menu → Request Estimate → Contact', async ({ page }) => {
+test('e2e: Mobile nav → Menu → Request Estimate → Contact', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   
-  // Verify Detection Bar with VP mark
+  // Verify the configured logo in the header.
   const vpMark = page.locator('header').getByRole('link', { name: 'Vivek Patel Logo' }).first();
   await expect(vpMark).toBeVisible();
-  await expect(vpMark.locator('span:has-text("VP")')).toBeVisible();
+  await expect(vpMark.locator('img')).toHaveAttribute('src', '/assets/logos/mylogo.png');
   
   // Open mobile menu
   await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
   const menu = page.getByRole('dialog', { name: 'Navigation menu' });
   await expect(menu).toBeVisible();
   
-  // Verify Detection Bar in menu
-  await expect(menu.getByRole('link', { name: 'Vivek Patel Logo' })).toBeVisible();
-  await expect(menu.locator('span:has-text("VP")')).toBeVisible();
+  // Verify the configured logo in the open menu.
+  const menuLogo = menu.getByRole('link', { name: 'Vivek Patel Logo' });
+  await expect(menuLogo).toBeVisible();
+  await expect(menuLogo.locator('img')).toHaveAttribute('src', '/assets/logos/mylogo.png');
   
   // Click Request Estimate
   await menu.getByRole('button', { name: /Request a Project Estimate/i }).click();

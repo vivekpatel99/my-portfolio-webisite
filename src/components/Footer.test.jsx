@@ -10,16 +10,15 @@ import Footer from './Footer.jsx';
 describe('Footer Registration Strip', () => {
   afterEach(cleanup);
 
-  it('renders registration footer with FOOTER · SITE meta', () => {
+  it('does not show the FOOTER · SITE instruction', () => {
     const { container } = render(
       <MemoryRouter>
         <Footer />
       </MemoryRouter>,
     );
 
-    // FOOTER · SITE meta is split across text and em elements
-    expect(container.textContent).toContain('FOOTER ·');
-    expect(container.textContent).toContain('SITE');
+    expect(container.textContent).not.toContain('FOOTER ·');
+    expect(screen.getByRole('link', { name: /privacy policy/i })).toBeTruthy();
   });
 
   it('has flat inline navigation links', () => {
