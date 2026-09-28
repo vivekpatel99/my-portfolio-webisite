@@ -44,11 +44,11 @@
   body,
   html {
     @apply bg-background text-foreground;
-    overflow-x: clip;
   }
 
   html {
-    scroll-padding-top: 6rem;
+    /* Leave room for the header and the 50px entrance motion on anchored sections. */
+    scroll-padding-top: 8rem;
   }
 
   /* Only hide cursor on devices with precise pointers (mouse/trackpad) */

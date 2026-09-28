@@ -20,6 +20,42 @@ for (const vp of viewports) {
   });
 }
 
+for (const width of [390, 1280]) {
+  test(`header stays visible after scrolling at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/');
+    await page.evaluate(() => window.scrollTo(0, 1500));
+
+    const header = page.getByRole('banner');
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThanOrEqual(1400);
+    await expect.poll(async () => (await header.boundingBox())?.y).toBe(0);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
+    expect(overflow).toBe(false);
+
+    if (width === 390) {
+      await header.getByRole('button', { name: 'Toggle navigation menu' }).click();
+      await expect(page.getByRole('dialog', { name: 'Navigation menu' })
+        .getByRole('button', { name: /Request a Project Estimate/i })).toBeVisible();
+    } else {
+      await expect(header.getByRole('button', { name: /Request Estimate/i })).toBeVisible();
+    }
+  });
+}
+
+test('anchor navigation leaves its section below the sticky header', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+  await page.getByRole('banner').getByRole('link', { name: 'Services' }).click();
+
+  await expect(page).toHaveURL(/#services$/);
+  const section = page.locator('#services');
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(1000);
+  await expect.poll(() => section.evaluate((element) => getComputedStyle(element.parentElement).transform))
+    .toBe('none');
+  await expect.poll(async () => (await section.boundingBox())?.y).toBeGreaterThanOrEqual(68);
+  await expect.poll(async () => (await section.boundingBox())?.y).toBeLessThanOrEqual(150);
+});
+
 test('mobile menu opens and closes', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
