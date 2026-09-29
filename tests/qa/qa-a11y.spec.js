@@ -45,19 +45,23 @@ const measureRenderedContrast = (target) => {
   const cssColors = (value) => (value.match(/rgba?\([^)]*\)|#[\da-f]{3,8}\b|\btransparent\b/gi) ?? [])
     .map(parseColor)
     .filter(Boolean);
+  // CSS gradients interpolate in premultiplied-alpha space, so a transparent stop
+  // fades coverage without darkening the opaque stop's color.
+  const interpolateColor = (from, to, progress) => {
+    const alpha = from.alpha + (to.alpha - from.alpha) * progress;
+    if (alpha === 0) return { rgb: [0, 0, 0], alpha: 0 };
+    return {
+      rgb: from.rgb.map((channel, channelIndex) => (channel * from.alpha
+        + (to.rgb[channelIndex] * to.alpha - channel * from.alpha) * progress) / alpha),
+      alpha,
+    };
+  };
   const cssGradientColors = (value) => {
     if (!/gradient\(/i.test(value)) return [];
     const stops = cssColors(value);
     return stops.slice(0, -1).flatMap((color, index) => {
       const next = stops[index + 1];
-      return Array.from({ length: 21 }, (_, sample) => {
-        const progress = sample / 20;
-        return {
-          rgb: color.rgb.map((channel, channelIndex) => channel
-            + (next.rgb[channelIndex] - channel) * progress),
-          alpha: color.alpha + (next.alpha - color.alpha) * progress,
-        };
-      });
+      return Array.from({ length: 21 }, (_, sample) => interpolateColor(color, next, sample / 20));
     }).concat(stops.slice(-1));
   };
   const layerValue = (style, property, index, fallback) => {
@@ -138,11 +142,7 @@ const measureRenderedContrast = (target) => {
     const rightStop = stops[Math.max(0, right)] ?? stops.at(-1);
     const span = rightStop.position - leftStop.position;
     const ratio = span <= 0 ? 1 : (progress - leftStop.position) / span;
-    return {
-      rgb: leftStop.color.rgb.map((channel, channelIndex) => channel
-        + (rightStop.color.rgb[channelIndex] - channel) * ratio),
-      alpha: leftStop.color.alpha + (rightStop.color.alpha - leftStop.color.alpha) * ratio,
-    };
+    return interpolateColor(leftStop.color, rightStop.color, ratio);
   };
   const layerCoversPoint = (node, point, style, index) => {
     const repeat = layerValue(style, 'backgroundRepeat', index, 'repeat');
@@ -185,11 +185,26 @@ const measureRenderedContrast = (target) => {
       || /\b(?:paint|layout|strict|content)\b/.test(nodeStyle.contain);
   };
   // Negative-z children of a non-stacking ancestor paint in the enclosing stacking
-  // context, beneath every opaque ancestor background up to that context.
-  const paintsBelowOpaqueAncestor = (parent, zIndex) => {
-    if (zIndex >= 0) return false;
+  // context, beneath every opaque ancestor background (color, gradient, or image)
+  // up to that context.
+  const opaqueAncestorPaintCovers = async (parent, point) => {
     for (let node = parent; node && !createsStackingContext(node); node = node.parentElement) {
-      if (parseColor(getComputedStyle(node).backgroundColor)?.alpha === 1) return true;
+      const nodeStyle = getComputedStyle(node);
+      if (parseColor(nodeStyle.backgroundColor)?.alpha === 1) return true;
+      const imageLayers = splitLayers(nodeStyle.backgroundImage);
+      for (let index = 0; index < imageLayers.length; index += 1) {
+        const layer = imageLayers[index];
+        if (!layerCoversPoint(node, point, nodeStyle, index)) continue;
+        const isImage = layer.includes('url(');
+        const sampledGradient = isImage ? null : cssGradientColorAtPoint(layer, node, nodeStyle, index, point);
+        const paints = isImage
+          ? [sampleImage(await loadCssImage(layer), point, node.getBoundingClientRect(), 'none',
+            layerValue(nodeStyle, 'backgroundPosition', index, '0% 0%'),
+            layerValue(nodeStyle, 'backgroundRepeat', index, 'repeat'),
+            layerValue(nodeStyle, 'backgroundSize', index, 'auto'))]
+          : sampledGradient ? [sampledGradient] : cssGradientColors(layer);
+        if (paints.length > 0 && paints.every((paint) => paint?.alpha === 1)) return true;
+      }
     }
     return false;
   };
@@ -418,13 +433,16 @@ const measureRenderedContrast = (target) => {
         const siblings = [...node.children];
         const targetIndex = siblings.indexOf(targetChild);
         const targetZIndex = Number.parseInt(getComputedStyle(targetChild).zIndex, 10) || 0;
-        const backgroundSiblings = siblings.map((sibling, siblingIndex) => ({
+        const siblingLayers = siblings.map((sibling, siblingIndex) => ({
           sibling,
           siblingIndex,
           zIndex: Number.parseInt(getComputedStyle(sibling).zIndex, 10) || 0,
-        })).filter(({ sibling, siblingIndex, zIndex }) => (
+        }));
+        const negativeLayersHidden = siblingLayers.some(({ zIndex }) => zIndex < 0)
+          && await opaqueAncestorPaintCovers(node, samplePoint);
+        const backgroundSiblings = siblingLayers.filter(({ sibling, siblingIndex, zIndex }) => (
           zIndex < targetZIndex || (zIndex === targetZIndex && siblingIndex < targetIndex)
-        ) && !paintsBelowOpaqueAncestor(node, zIndex)
+        ) && !(zIndex < 0 && negativeLayersHidden)
           && !imagesAtPoint.some((image) => sibling === image || sibling.contains(image)))
           .sort((left, right) => left.zIndex - right.zIndex || left.siblingIndex - right.siblingIndex);
         for (const { sibling } of backgroundSiblings) {
@@ -605,6 +623,22 @@ test('contrast measurement places negative-z siblings by parent stacking context
     const result = await renderedContrast(page.locator('#sibling-label'));
     if (stackingContext) expect(result.ratio, parent).toBeLessThan(4.5);
     else expect(result.ratio, parent).toBeGreaterThanOrEqual(4.5);
+  }
+});
+
+test('contrast measurement interpolates translucent gradients with premultiplied alpha', async ({ page }) => {
+  await page.setContent('<div style="background:#000"><div style="position:relative;width:240px;height:40px;background:linear-gradient(#fff,transparent)"><span id="gradient-label" style="position:absolute;left:0;top:14px;color:#fff;font-size:12px;line-height:12px">Fading gradient label</span></div></div>');
+  const result = await renderedContrast(page.locator('#gradient-label'));
+  expect(result.ratio).toBeLessThan(4.5);
+});
+
+test('contrast measurement hides negative-z siblings under opaque ancestor background images', async ({ page }) => {
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10" fill="#fff"/></svg>';
+  const backgrounds = ['linear-gradient(#fff,#fff)', `url('data:image/svg+xml,${encodeURIComponent(svg)}')`];
+  for (const background of backgrounds) {
+    await page.setContent(`<div style="position:relative;width:240px;height:40px;background-image:${background}"><div style="position:absolute;inset:0;z-index:-1;background:#000"></div><span id="sibling-label" style="color:#fff;font-size:12px">Negative z sibling label</span></div>`);
+    const result = await renderedContrast(page.locator('#sibling-label'));
+    expect(result.ratio, background).toBeLessThan(4.5);
   }
 });
 
