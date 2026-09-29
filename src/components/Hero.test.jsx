@@ -84,6 +84,16 @@ describe('Hero invoice proof fold (#176)', () => {
     expect(container.textContent).not.toMatch(/\$|USD|GBP|£/);
   });
 
+  it('shows the rate once, in the invoice RATE field, without the old hero line (#195)', () => {
+    const { container } = renderHero();
+    expect(screen.getAllByText('€45/hour', { exact: true })).toHaveLength(1);
+    expect(container.textContent.match(/€45/g)).toHaveLength(1);
+    expect(screen.queryByText(/Starting at/)).toBeNull();
+    const rateLabel = screen.getByText('Rate', { exact: true });
+    expect(rateLabel.parentElement.textContent).toContain('€45/hour');
+    expect(screen.getByText('Based in Linz, Austria', { exact: true })).toBeTruthy();
+  });
+
   it('displays exact location: Linz, Austria', () => {
     renderHero();
     const location = screen.getByText('Linz, Austria', { exact: true });

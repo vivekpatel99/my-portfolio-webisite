@@ -405,11 +405,7 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* Rate and location chips for a11y */}
           <div className="flex flex-wrap gap-2 mt-2 max-md:hidden">
-            <span className="inline-flex items-center px-3 py-1.5 rounded-full border border-white/[0.08]" style={{ backgroundColor: 'rgb(12, 13, 13)' }}>
-              <span className="text-[13px] text-gray-300">Starting at €45/hour</span>
-            </span>
             <span className="inline-flex items-center px-3 py-1.5 rounded-full border border-white/[0.08]" style={{ backgroundColor: 'rgb(12, 13, 13)' }}>
               <span className="text-[13px] text-gray-300">Based in Linz, Austria</span>
             </span>

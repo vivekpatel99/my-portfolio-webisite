@@ -262,9 +262,9 @@ if (seoConfig.includes('94%')) {
 }
 
 const hero = readFileSync(path.join(process.cwd(), 'src/components/Hero.jsx'), 'utf8');
-if (!hero.includes('Starting at €45/hour')) {
+if ((hero.match(/€45\/hour/g) || []).length !== 1 || hero.includes('Starting at €45/hour')) {
   findings.push({
-    issue: 'Hero.jsx missing Starting at €45/hour',
+    issue: 'Hero.jsx must show €45/hour exactly once, in the invoice RATE field (#195)',
     severity: 'P1',
     ref: 'src/components/Hero.jsx',
   });
