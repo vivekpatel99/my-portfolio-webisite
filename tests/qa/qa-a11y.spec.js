@@ -5,10 +5,18 @@ import { serviceOffers } from '../../src/data/serviceOffers.js';
 const measureRenderedContrast = (target) => {
   const parseColor = (value) => {
     const match = value.match(/rgba?\(([^)]+)\)/);
-    if (!match) return null;
-    const channels = match[1].replaceAll('/', ' ').trim().split(/[ ,]+/).filter(Boolean);
-    const rgb = channels.slice(0, 3).map(Number);
-    const alpha = channels[3] === undefined ? 1 : Number(channels[3]);
+    if (match) {
+      const channels = match[1].replaceAll('/', ' ').trim().split(/[ ,]+/).filter(Boolean);
+      const rgb = channels.slice(0, 3).map(Number);
+      const alpha = channels[3] === undefined ? 1 : Number(channels[3]);
+      return rgb.every(Number.isFinite) && Number.isFinite(alpha) ? { rgb, alpha } : null;
+    }
+    if (value.trim().toLowerCase() === 'transparent') return { rgb: [0, 0, 0], alpha: 0 };
+    const hex = value.match(/^#([\da-f]{3,8})$/i)?.[1];
+    if (!hex) return null;
+    const expanded = hex.length <= 4 ? [...hex].map((channel) => channel + channel).join('') : hex;
+    const rgb = [0, 2, 4].map((index) => Number.parseInt(expanded.slice(index, index + 2), 16));
+    const alpha = expanded.length === 8 ? Number.parseInt(expanded.slice(6, 8), 16) / 255 : 1;
     return rgb.every(Number.isFinite) && Number.isFinite(alpha) ? { rgb, alpha } : null;
   };
   const composite = (foreground, background) => {
@@ -19,34 +27,110 @@ const measureRenderedContrast = (target) => {
     const normalized = channel / 255;
     return normalized <= 0.04045 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
   }).reduce((sum, channel, index) => sum + channel * [0.2126, 0.7152, 0.0722][index], 0);
+  const splitLayers = (value) => {
+    const layers = [];
+    let depth = 0;
+    let start = 0;
+    for (let index = 0; index < value.length; index += 1) {
+      if (value[index] === '(') depth += 1;
+      if (value[index] === ')') depth -= 1;
+      if (value[index] === ',' && depth === 0) {
+        layers.push(value.slice(start, index));
+        start = index + 1;
+      }
+    }
+    layers.push(value.slice(start));
+    return layers;
+  };
+  const cssColors = (value) => (value.match(/rgba?\([^)]*\)|#[\da-f]{3,8}\b|\btransparent\b/gi) ?? [])
+    .map(parseColor)
+    .filter(Boolean);
+  const layerCoversPoint = (node, point, style, index) => {
+    const layerValue = (value, fallback) => {
+      const layers = splitLayers(value);
+      return layers[index % layers.length] ?? fallback;
+    };
+    const repeat = layerValue(style.backgroundRepeat, 'repeat').trim();
+    if (repeat.split(/\s+/).some((axis) => axis !== 'no-repeat')) return true;
+
+    const rect = node.getBoundingClientRect();
+    const size = layerValue(style.backgroundSize, 'auto').trim().split(/\s+/);
+    const dimension = (value, containerSize) => {
+      if (!value || value === 'auto') return containerSize;
+      if (value.endsWith('%')) return containerSize * Number.parseFloat(value) / 100;
+      if (value.endsWith('px')) return Number.parseFloat(value);
+      return containerSize;
+    };
+    const width = dimension(size[0], rect.width);
+    const height = dimension(size[1] ?? size[0], rect.height);
+    const position = layerValue(style.backgroundPosition, '0% 0%').trim().split(/\s+/);
+    const offset = (value, available) => {
+      if (value === 'right' || value === 'bottom') return available;
+      if (value === 'center') return available / 2;
+      if (value === 'left' || value === 'top') return 0;
+      if (value.endsWith('%')) return available * Number.parseFloat(value) / 100;
+      if (value.endsWith('px')) return Number.parseFloat(value);
+      return 0;
+    };
+    const left = rect.left + offset(position[0], rect.width - width);
+    const top = rect.top + offset(position[1] ?? '50%', rect.height - height);
+    return point.x >= left && point.x <= left + width && point.y >= top && point.y <= top + height;
+  };
 
   const measure = (element) => {
     const ancestors = [];
     for (let node = element; node; node = node.parentElement) ancestors.unshift(node);
-    let background = [0, 0, 0];
+    const rect = element.getBoundingClientRect();
+    const samplePoint = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    const overlapsImage = [...document.images].some((image) => {
+      const imageRect = image.getBoundingClientRect();
+      return rect.left < imageRect.right && rect.right > imageRect.left
+        && rect.top < imageRect.bottom && rect.bottom > imageRect.top;
+    });
+    const hasCssImage = ancestors.some((node) => {
+      const style = getComputedStyle(node);
+      return splitLayers(style.backgroundImage).some((layer, index) => layer.includes('url(')
+        && layerCoversPoint(node, samplePoint, style, index));
+    });
+    let backgrounds = [overlapsImage || hasCssImage ? [255, 255, 255] : [0, 0, 0]];
     for (const node of ancestors) {
-      const color = parseColor(getComputedStyle(node).backgroundColor);
-      if (!color || color.alpha === 0) continue;
-      background = composite(color, background);
+      const style = getComputedStyle(node);
+      const color = parseColor(style.backgroundColor);
+      if (color && color.alpha > 0) backgrounds = backgrounds.map((background) => composite(color, background));
+      const imageLayers = splitLayers(style.backgroundImage);
+      for (let index = imageLayers.length - 1; index >= 0; index -= 1) {
+        const layer = imageLayers[index];
+        const colors = cssColors(layer);
+        if (!layerCoversPoint(node, samplePoint, style, index)) continue;
+        if (colors.length === 0) continue;
+        const gradientBackgrounds = colors.flatMap((gradientColor) => backgrounds
+          .map((background) => composite(gradientColor, background)));
+        backgrounds = colors.every((gradientColor) => gradientColor.alpha === 1)
+          ? gradientBackgrounds
+          : [...backgrounds, ...gradientBackgrounds];
+      }
     }
     const style = getComputedStyle(element);
     const parsedForeground = parseColor(style.color);
     if (!parsedForeground) throw new Error('Could not parse rendered foreground color');
-    const foreground = composite(parsedForeground, background);
-    const foregroundLuminance = luminance(foreground);
-    const backgroundLuminance = luminance(background);
+    const foregrounds = backgrounds.map((background) => composite(parsedForeground, background));
+    const contrasts = backgrounds.map((background, index) => {
+      const foregroundLuminance = luminance(foregrounds[index]);
+      const backgroundLuminance = luminance(background);
+      return (Math.max(foregroundLuminance, backgroundLuminance) + 0.05)
+        / (Math.min(foregroundLuminance, backgroundLuminance) + 0.05);
+    });
+    const worstBackgroundIndex = contrasts.indexOf(Math.min(...contrasts));
     const ownText = [...element.childNodes]
       .filter((node) => node.nodeType === Node.TEXT_NODE)
       .map((node) => node.textContent)
       .join('')
       .replace(/\s+/g, ' ')
       .trim();
-    const rect = element.getBoundingClientRect();
     return {
-      ratio: (Math.max(foregroundLuminance, backgroundLuminance) + 0.05)
-        / (Math.min(foregroundLuminance, backgroundLuminance) + 0.05),
-      foreground,
-      background,
+      ratio: contrasts[worstBackgroundIndex],
+      foreground: foregrounds[worstBackgroundIndex],
+      background: backgrounds[worstBackgroundIndex],
       fontSize: parseFloat(style.fontSize),
       text: ownText.slice(0, 60),
       transparentText: parsedForeground.alpha === 0,
@@ -71,6 +155,12 @@ const expectRenderedForeground = async (locator, label, expected) => {
     { message: label },
   ).toBe(expected);
 };
+
+test('contrast measurement includes gradient background stops', async ({ page }) => {
+  await page.setContent('<div style="background: linear-gradient(165deg, #141318 0%, #0e0e10 100%); padding: 16px"><span id="gradient-label" style="color: #747b87; font-size: 12px">Gradient label</span></div>');
+  const result = await renderedContrast(page.locator('#gradient-label'));
+  expect(result.ratio).toBeLessThan(4.5);
+});
 
 test('home has exactly one main landmark', async ({ page }) => {
   await page.goto('/');
