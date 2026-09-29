@@ -821,6 +821,7 @@ test('filled primary CTAs keep white text readable at rest, hover, and focus', a
 });
 
 test('visible text under 14px meets 4.5:1 on its rendered background', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.addInitScript(() => {
     localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false }));
   });
