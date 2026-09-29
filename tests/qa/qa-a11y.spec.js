@@ -277,7 +277,9 @@ const measureRenderedContrast = (target) => {
     }
     return cssImageCache.get(source);
   };
-  const sampleImage = (image, point, rect, fit = 'fill', position = '50% 50%', repeat = 'no-repeat', size = 'auto') => {
+  // `blur` is a backdrop-filter Gaussian sigma in CSS px, approximated by a box
+  // average with the same variance (width sigma * sqrt(12)).
+  const sampleImage = (image, point, rect, fit = 'fill', position = '50% 50%', repeat = 'no-repeat', size = 'auto', blur = 0) => {
     if (!image?.complete || !image.naturalWidth || !image.naturalHeight
       || point.x < rect.left || point.x > rect.right || point.y < rect.top || point.y > rect.bottom) return null;
     const [positionX = '50%', positionY = '50%'] = position.trim().split(/\s+/);
@@ -321,16 +323,26 @@ const measureRenderedContrast = (target) => {
     const y = repeatsY ? ((localY % height) + height) % height : localY;
     if (x < 0 || y < 0 || x > width || y > height) return null;
     try {
-      const sampleWidth = Math.min(image.naturalWidth, image.naturalWidth / width);
-      const sampleHeight = Math.min(image.naturalHeight, image.naturalHeight / height);
+      const extent = Math.max(1, blur * Math.sqrt(12));
+      const sampleWidth = Math.min(image.naturalWidth, image.naturalWidth * extent / width);
+      const sampleHeight = Math.min(image.naturalHeight, image.naturalHeight * extent / height);
       const sourceX = Math.min(image.naturalWidth - sampleWidth, Math.max(0,
         x / width * image.naturalWidth - sampleWidth / 2));
       const sourceY = Math.min(image.naturalHeight - sampleHeight, Math.max(0,
         y / height * image.naturalHeight - sampleHeight / 2));
-      pixelContext.clearRect(0, 0, 1, 1);
-      pixelContext.drawImage(image, sourceX, sourceY, sampleWidth, sampleHeight, 0, 0, 1, 1);
-      const [red, green, blue, alpha] = pixelContext.getImageData(0, 0, 1, 1).data;
-      return { rgb: [red, green, blue], alpha: alpha / 255 };
+      const grid = blur > 0 ? 8 : 1;
+      pixelContext.clearRect(0, 0, grid, grid);
+      pixelContext.drawImage(image, sourceX, sourceY, sampleWidth, sampleHeight, 0, 0, grid, grid);
+      const { data } = pixelContext.getImageData(0, 0, grid, grid);
+      // Average in premultiplied space so transparent pixels add coverage, not black.
+      const sum = [0, 0, 0, 0];
+      for (let index = 0; index < data.length; index += 4) {
+        const pixelAlpha = data[index + 3] / 255;
+        for (let channel = 0; channel < 3; channel += 1) sum[channel] += data[index + channel] * pixelAlpha;
+        sum[3] += pixelAlpha;
+      }
+      const alpha = sum[3] / (grid * grid);
+      return { rgb: sum[3] > 0 ? sum.slice(0, 3).map((channel) => channel / sum[3]) : [0, 0, 0], alpha };
     } catch {
       return null;
     }
@@ -508,7 +520,14 @@ const measureRenderedContrast = (target) => {
             imageSamplingFailed = true;
           }
           const imageStyle = getComputedStyle(placement.image);
-          const sample = sampleImage(placement.image, samplePoint, placement.image.getBoundingClientRect(), imageStyle.objectFit, imageStyle.objectPosition);
+          // Backdrop blurs on ancestors painted above this image (including the text
+          // element) filter its pixels; stacked Gaussian blurs add in variance.
+          const backdropBlur = Math.sqrt(ancestors.slice(ancestors.indexOf(node) + 1)
+            .flatMap((blurNode) => [...(getComputedStyle(blurNode).backdropFilter ?? '')
+              .matchAll(/blur\((\d*\.?\d+)px\)/g)].map((match) => Number(match[1]) ** 2))
+            .reduce((sum, variance) => sum + variance, 0));
+          const sample = sampleImage(placement.image, samplePoint, placement.image.getBoundingClientRect(),
+            imageStyle.objectFit, imageStyle.objectPosition, undefined, undefined, backdropBlur);
           if (!sample) imageSamplingFailed = true;
           // Each wrapper and the image itself nest as opacity groups; the image pixel
           // paints innermost, above the image element's own background.
@@ -824,6 +843,21 @@ test('contrast measurement applies image overlays once', async ({ page }) => {
     await loaded.decode();
   }, source);
   const result = await renderedContrast(page.locator('#image-label'));
+  expect(result.ratio, JSON.stringify(result)).toBeLessThan(4.5);
+});
+
+test('contrast measurement blurs image pixels behind backdrop-filter labels', async ({ page }) => {
+  // White image with a 16px black stripe under the label; the 16px backdrop blur
+  // pulls in the surrounding white, so the real backdrop is light gray, not black.
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="80"><rect width="240" height="80" fill="#fff"/><rect y="32" width="240" height="16" fill="#000"/></svg>';
+  const source = `data:image/svg+xml,${encodeURIComponent(svg)}`;
+  await page.setContent(`<div style="position:relative;width:240px;height:80px"><div style="position:absolute;inset:0"><img src="${source}" alt="" style="display:block;width:240px;height:80px"></div><span id="blur-label" style="position:absolute;left:20px;top:32px;z-index:1;height:16px;line-height:16px;background:rgba(0,0,0,0.1);backdrop-filter:blur(16px);color:#fff;font-size:12px;white-space:nowrap">Blurred portrait label</span></div>`);
+  await page.evaluate(async (src) => {
+    const loaded = new Image();
+    loaded.src = src;
+    await loaded.decode();
+  }, source);
+  const result = await renderedContrast(page.locator('#blur-label'));
   expect(result.ratio, JSON.stringify(result)).toBeLessThan(4.5);
 });
 
