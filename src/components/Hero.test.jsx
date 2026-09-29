@@ -13,6 +13,7 @@ vi.mock('framer-motion', () => ({
 
 afterEach(() => {
   cleanup();
+  vi.restoreAllMocks();
 });
 
 const renderHero = () =>
@@ -137,5 +138,97 @@ describe('Hero invoice proof fold (#176)', () => {
     renderHero();
     const cta = screen.getByRole('link', { name: 'View Case Studies' });
     expect(cta).toBeTruthy();
+  });
+});
+
+describe('Hero randomized field bboxes (#206)', () => {
+  const FIELD_VALUES = {
+    name: 'Vivek Patel',
+    role: 'Computer Vision & AI Engineer',
+    credential: 'Top Rated Plus',
+    success: '100% Job Success',
+    rate: '€45/hour',
+    location: 'Linz, Austria',
+  };
+
+  const loadFreshPageHeroWithRandom = async (randomValue) => {
+    vi.resetModules();
+    vi.spyOn(Math, 'random').mockReturnValue(randomValue);
+    const { default: FreshHero } = await import('./Hero');
+    return FreshHero;
+  };
+
+  const renderFresh = (Component) =>
+    render(
+      <BrowserRouter>
+        <Component />
+      </BrowserRouter>
+    );
+
+  const detectedIds = (container) =>
+    Array.from(container.querySelectorAll('[data-hero-field][data-detected="true"]'))
+      .map((el) => el.getAttribute('data-hero-field'))
+      .sort();
+
+  it('frames exactly 3 of the 6 invoice fields', async () => {
+    const FreshHero = await loadFreshPageHeroWithRandom(0);
+    const { container } = renderFresh(FreshHero);
+
+    const fields = container.querySelectorAll('[data-hero-field]');
+    expect(fields).toHaveLength(6);
+    expect(container.querySelectorAll('.invoice-field-corners')).toHaveLength(3);
+    expect(detectedIds(container)).toEqual(['credential', 'role', 'success']);
+
+    fields.forEach((field) => {
+      const detected = field.getAttribute('data-detected') === 'true';
+      expect(field.classList.contains('invoice-field-corners')).toBe(detected);
+    });
+  });
+
+  it('keeps every label and value visible regardless of selection', async () => {
+    const FreshHero = await loadFreshPageHeroWithRandom(0.999999);
+    const { container } = renderFresh(FreshHero);
+
+    ['Name', 'Role', 'Credential', 'Success', 'Rate', 'Location'].forEach((label) => {
+      expect(screen.getByText(label, { exact: true })).toBeTruthy();
+    });
+    Object.entries(FIELD_VALUES).forEach(([id, value]) => {
+      const field = container.querySelector(`[data-hero-field="${id}"]`);
+      expect(field.textContent).toContain(value);
+    });
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe(FIELD_VALUES.role);
+    expect(screen.getByText('doc · extract · 0.97', { exact: true })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Request a Project Estimate' })).toBeTruthy();
+  });
+
+  it('keeps the selection stable across rerenders and remounts in one page load', async () => {
+    const FreshHero = await loadFreshPageHeroWithRandom(0);
+    const { container, rerender, unmount } = renderFresh(FreshHero);
+    const initial = detectedIds(container);
+
+    vi.mocked(Math.random).mockReturnValue(0.999999);
+    rerender(
+      <BrowserRouter>
+        <FreshHero />
+      </BrowserRouter>
+    );
+    expect(detectedIds(container)).toEqual(initial);
+
+    unmount();
+    const remounted = renderFresh(FreshHero);
+    expect(detectedIds(remounted.container)).toEqual(initial);
+  });
+
+  it('can pick a different selection after a fresh page load', async () => {
+    const first = renderFresh(await loadFreshPageHeroWithRandom(0));
+    const firstIds = detectedIds(first.container);
+    cleanup();
+
+    const second = renderFresh(await loadFreshPageHeroWithRandom(0.999999));
+    const secondIds = detectedIds(second.container);
+
+    expect(firstIds).toEqual(['credential', 'role', 'success']);
+    expect(secondIds).toEqual(['credential', 'name', 'role']);
+    expect(secondIds).not.toEqual(firstIds);
   });
 });
