@@ -6,12 +6,12 @@ import {
   HOURLY_FROM_EUR,
   HOURLY_FROM_LABEL,
   serviceOffers,
-  typicalDurationLabel,
+  serviceTimelineLabel,
 } from './serviceOffers';
 
 const TITLES = [
   'DATA EXTRACTION AUTOMATION SPRINT',
-  'COMPUTER VISION PRODUCTION OPTIMIZATION',
+  'COMPUTER VISION MODEL DEVELOPMENT',
   'AI WORKFLOW BUILDOUT',
 ];
 
@@ -44,23 +44,28 @@ describe('serviceOffers catalog', () => {
       expect(offer.id).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
       expect(offer.title).toBeTruthy();
       expect(offer.summary.length).toBeGreaterThan(20);
-      expect(Number.isInteger(offer.minWeeks)).toBe(true);
-      expect(Number.isInteger(offer.maxWeeks)).toBe(true);
-      expect(offer.minWeeks).toBeGreaterThanOrEqual(1);
-      expect(offer.maxWeeks).toBeGreaterThanOrEqual(offer.minWeeks);
+      if (offer.timelineLabel) {
+        expect(offer.timelineLabel).toBe('Timeline scoped per project');
+        expect(offer).not.toHaveProperty('minWeeks');
+        expect(offer).not.toHaveProperty('maxWeeks');
+      } else {
+        expect(Number.isInteger(offer.minWeeks)).toBe(true);
+        expect(Number.isInteger(offer.maxWeeks)).toBe(true);
+        expect(offer.minWeeks).toBeGreaterThanOrEqual(1);
+        expect(offer.maxWeeks).toBeGreaterThanOrEqual(offer.minWeeks);
+      }
       expect(offer.inScope.length).toBeGreaterThanOrEqual(1);
       expect(offer.outOfScope.length).toBeGreaterThanOrEqual(1);
       SKU_KEYS.forEach((key) => expect(offer).not.toHaveProperty(key));
     });
   });
 
-  it('labels duration as typical calendar weeks', () => {
-    expect(typicalDurationLabel(serviceOffers[0])).toBe('Typically 1–2 weeks');
-    expect(typicalDurationLabel(serviceOffers[1])).toBe('Typically 1–2 weeks');
-    expect(typicalDurationLabel(serviceOffers[2])).toBe('Typically 2–4 weeks');
+  it('shows the agreed timeline for each offer', () => {
+    expect(serviceTimelineLabel(serviceOffers[0])).toBe('Typically 1–2 weeks');
+    expect(serviceTimelineLabel(serviceOffers[1])).toBe('Timeline scoped per project');
+    expect(serviceTimelineLabel(serviceOffers[2])).toBe('Typically 2–4 weeks');
     serviceOffers.forEach((offer) => {
-      expect(typicalDurationLabel(offer)).toMatch(/^Typically \d+–\d+ weeks$/);
-      expect(typicalDurationLabel(offer)).not.toMatch(/€|hour|hr\b/i);
+      expect(serviceTimelineLabel(offer)).not.toMatch(/€|hour|hr\b/i);
     });
   });
 
@@ -74,13 +79,15 @@ describe('serviceOffers catalog', () => {
     });
   });
 
-  it('mirrors the existing offer boundaries in summaries and scope', () => {
+  it('matches the approved offer boundaries in summaries and scope', () => {
     const [extraction, vision, workflow] = serviceOffers;
     expect(extraction.summary).toMatch(/extractor/i);
     expect(extraction.summary).toMatch(/validation/i);
     expect(extraction.inScope.join(' ')).toMatch(/extractor|validation/i);
-    expect(vision.summary).toMatch(/existing YOLO/i);
-    expect(vision.outOfScope.join(' ')).toMatch(/from scratch|from zero/i);
+    expect(vision.summary).toMatch(/build and fine-tune/i);
+    expect(vision.summary).toMatch(/optimization where needed/i);
+    expect(vision.inScope.join(' ')).toMatch(/Build or fine-tune a model/i);
+    expect(vision.outOfScope.join(' ')).not.toMatch(/model|training|product from scratch/i);
     expect(workflow.summary).toMatch(/n8n/);
     expect(workflow.inScope.join(' ')).toMatch(/n8n|LLM/i);
   });
@@ -95,7 +102,7 @@ describe('serviceOffers catalog', () => {
 
   it('keeps euros out of bullets so money cannot sneak past the missing price key', () => {
     const copy = serviceOffers
-      .flatMap((offer) => [offer.summary, ...offer.inScope, ...offer.outOfScope, typicalDurationLabel(offer)])
+      .flatMap((offer) => [offer.summary, ...offer.inScope, ...offer.outOfScope, serviceTimelineLabel(offer)])
       .join('\n');
     expect(copy).not.toMatch(/€|\$/);
     const eurosInSource = [...moduleSource.matchAll(/€/g)];
