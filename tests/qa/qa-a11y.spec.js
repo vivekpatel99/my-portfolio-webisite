@@ -381,16 +381,17 @@ const measureRenderedContrast = (target) => {
         }
         return currentBackgrounds;
       };
-      // An opacity < 1 sibling is its own group: paint it over each backdrop, then
+      // An opacity < 1 node is its own group: paint it over each backdrop, then
       // mix that result back into the same backdrop by the group opacity.
-      const applySiblingGroup = async (sibling, currentBackgrounds) => {
-        const groupOpacity = Number(getComputedStyle(sibling).opacity);
-        if (groupOpacity >= 1) return applyNodeBackground(sibling, currentBackgrounds);
-        const grouped = await Promise.all(currentBackgrounds.map(async (backdrop) => (
-          await applyNodeBackground(sibling, [backdrop]))
+      const applyOpacityGroup = async (node, currentBackgrounds, paint) => {
+        const groupOpacity = Number(getComputedStyle(node).opacity);
+        if (groupOpacity >= 1) return paint(currentBackgrounds);
+        const grouped = await Promise.all(currentBackgrounds.map(async (backdrop) => (await paint([backdrop]))
           .map((painted) => composite({ rgb: painted, alpha: groupOpacity }, backdrop))));
         return grouped.flat();
       };
+      const applySiblingGroup = (sibling, currentBackgrounds) => applyOpacityGroup(sibling, currentBackgrounds,
+        (groupBackgrounds) => applyNodeBackground(sibling, groupBackgrounds));
       const imagePlacements = imagesAtPoint.map((image) => {
         const imageAncestors = new Set();
         for (let node = image.parentElement; node; node = node.parentElement) imageAncestors.add(node);
@@ -408,9 +409,6 @@ const measureRenderedContrast = (target) => {
         }
         backgrounds = await applyNodeBackground(node, backgrounds);
         for (const placement of imagePlacements.filter(({ commonAncestor }) => commonAncestor === node)) {
-          let imageBackgrounds = backgrounds;
-          for (const imageNode of placement.imagePath) imageBackgrounds = await applyNodeBackground(imageNode, imageBackgrounds);
-          imageBackgrounds = await applyNodeBackground(placement.image, imageBackgrounds);
           if (!placement.image.complete) placement.image.loading = 'eager';
           try {
             await placement.image.decode();
@@ -420,7 +418,16 @@ const measureRenderedContrast = (target) => {
           const imageStyle = getComputedStyle(placement.image);
           const sample = sampleImage(placement.image, samplePoint, placement.image.getBoundingClientRect(), imageStyle.objectFit, imageStyle.objectPosition);
           if (!sample) imageSamplingFailed = true;
-          else imageBackgrounds = imageBackgrounds.map((background) => composite(sample, background));
+          // Each wrapper and the image itself nest as opacity groups; the image pixel
+          // paints innermost, above the image element's own background.
+          const imageChain = [...placement.imagePath, placement.image];
+          const paintImageChain = (depth, chainBackgrounds) => applyOpacityGroup(imageChain[depth], chainBackgrounds,
+            async (groupBackgrounds) => {
+              const painted = await applyNodeBackground(imageChain[depth], groupBackgrounds);
+              if (depth < imageChain.length - 1) return paintImageChain(depth + 1, painted);
+              return sample ? painted.map((background) => composite(sample, background)) : painted;
+            });
+          let imageBackgrounds = await paintImageChain(0, backgrounds);
 
           const targetChild = ancestors[ancestors.indexOf(node) + 1];
           const imageChild = placement.imagePath[0] ?? placement.image;
@@ -672,6 +679,26 @@ test('contrast measurement samples DOM and CSS background image pixels', async (
     }, source);
     const result = await renderedContrast(page.locator('#image-label'));
     expect(result.ratio, `CSS background: ${cssBackground}`).toBeLessThan(4.5);
+  }
+});
+
+test('contrast measurement composites DOM image opacity groups', async ({ page }) => {
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10" fill="#000"/></svg>';
+  const source = `data:image/svg+xml,${encodeURIComponent(svg)}`;
+  const image = (style) => `<img src="${source}" alt="" style="width:100%;height:100%;display:block;${style}">`;
+  const cases = [
+    { label: 'image opacity', paint: `<div style="position:absolute;inset:0">${image('opacity:0.1')}</div>` },
+    { label: 'image ancestor opacity', paint: `<div style="position:absolute;inset:0;opacity:0.1">${image('')}</div>` },
+  ];
+  for (const { label, paint } of cases) {
+    await page.setContent(`<div style="position:relative;width:240px;height:40px;background:#fff">${paint}<span id="image-label" style="position:relative;color:#fff;font-size:12px">Faded image background label</span></div>`);
+    await page.evaluate(async (src) => {
+      const loaded = new Image();
+      loaded.src = src;
+      await loaded.decode();
+    }, source);
+    const result = await renderedContrast(page.locator('#image-label'));
+    expect(result.ratio, `${label}: ${JSON.stringify(result)}`).toBeLessThan(4.5);
   }
 });
 
