@@ -6,7 +6,7 @@ import { cleanup, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import ServiceDetail from './ServiceDetail';
-import { serviceOffers, HOURLY_FROM_LABEL, typicalDurationLabel } from '@/data/serviceOffers';
+import { serviceOffers, HOURLY_FROM_LABEL, serviceTimelineLabel } from '@/data/serviceOffers';
 
 vi.mock('@/components/ui/button', () => ({
   Button: ({ children, asChild, ...props }) => {
@@ -36,7 +36,7 @@ describe('ServiceDetail', () => {
 
     expect(screen.getByText(service.title)).toBeTruthy();
     expect(screen.getByText(HOURLY_FROM_LABEL)).toBeTruthy();
-    expect(screen.getByText(typicalDurationLabel(service))).toBeTruthy();
+    expect(screen.getByText(serviceTimelineLabel(service))).toBeTruthy();
     expect(screen.getByText(service.summary)).toBeTruthy();
     expect(screen.getByText('In scope')).toBeTruthy();
     expect(screen.getByText('Out of scope')).toBeTruthy();

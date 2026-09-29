@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import { serviceOffers, HOURLY_FROM_LABEL, typicalDurationLabel } from '@/data/serviceOffers';
+import { serviceOffers, HOURLY_FROM_LABEL, serviceTimelineLabel } from '@/data/serviceOffers';
 import { Button } from '@/components/ui/button';
 
 const ServiceDetail = () => {
@@ -39,7 +39,7 @@ const ServiceDetail = () => {
 
           <div className="flex flex-wrap gap-4 text-lg mb-8">
             <p className="text-white font-semibold">{HOURLY_FROM_LABEL}</p>
-            <p className="text-gray-300">{typicalDurationLabel(service)}</p>
+            <p className="text-gray-300">{serviceTimelineLabel(service)}</p>
           </div>
 
           <p className="text-xl text-gray-300 mb-12 leading-relaxed">

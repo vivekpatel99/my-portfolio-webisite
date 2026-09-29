@@ -78,7 +78,7 @@ Important frontend files:
 | --- | --- |
 | `src/components/Header.jsx` | Fixed desktop/mobile navigation, hash navigation, contact CTA. |
 | `src/components/Footer.jsx` | Footer links, cookie manager trigger, contact/social links. |
-| `src/components/Services.jsx` | Local accordion state for service copy. |
+| `src/components/Services.jsx` | Three home offer cards with a link to each service's scope details. |
 | `src/components/Portfolio.jsx` | Published case-study cards, optional covers, summaries, and article links. |
 | `src/components/Experience.jsx` | Timeline/collapsible experience section. |
 | `src/pages/Contact.jsx` | Contact form state, client-side validation, Convex mutation call, toasts, Sentry capture. |

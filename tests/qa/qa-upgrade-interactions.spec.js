@@ -1,6 +1,6 @@
 import { expect, test } from './qa-test.js';
 import { caseStudies, featuredCaseStudies } from '../../src/data/caseStudies.js';
-import { HOURLY_FROM_LABEL, serviceOffers, typicalDurationLabel } from '../../src/data/serviceOffers.js';
+import { HOURLY_FROM_LABEL, serviceOffers, serviceTimelineLabel } from '../../src/data/serviceOffers.js';
 
 const cardFor = (caseStudy) => ({
   cardName: `Read case study: ${caseStudy.cardTitle || caseStudy.title}`,
@@ -76,31 +76,30 @@ test('hero and header CTAs activate the expected routes and sections', async ({ 
     .toBeTruthy();
 });
 
-test('service offer accordions are keyboard and click operable', async ({ page }) => {
-  await page.goto('/#services');
-  const services = page.locator('#services [role="button"]');
-  await expect(services).toHaveCount(3);
-
-  for (const service of [
-    'DATA EXTRACTION AUTOMATION SPRINT',
-    'COMPUTER VISION PRODUCTION OPTIMIZATION',
-    'AI WORKFLOW BUILDOUT',
-  ]) {
-    const row = page.locator('#services [role="button"]').filter({ hasText: service });
-    const initialExpanded = await row.getAttribute('aria-expanded');
-    await row.click();
-    await expect(row).toHaveAttribute('aria-expanded', initialExpanded === 'true' ? 'false' : 'true');
-    await row.press('Enter');
-    await expect(row).toHaveAttribute('aria-expanded', initialExpanded === 'true' ? 'true' : 'false');
-    await row.press(' ');
-    await expect(row).toHaveAttribute('aria-expanded', initialExpanded === 'true' ? 'false' : 'true');
-  }
-});
-
-test('open service offers show hourly rate, typical duration, and scope', async ({ page }) => {
+test('service cards have working keyboard and click scope links', async ({ page }) => {
   await page.goto('/#services');
   const services = page.locator('#services');
-  await expect(services.getByRole('button')).toHaveCount(3);
+  await expect(services.getByRole('article')).toHaveCount(serviceOffers.length);
+  await expect(services.locator('[aria-expanded]')).toHaveCount(0);
+
+  const firstLink = services.getByRole('article', { name: serviceOffers[0].title }).getByRole('link', { name: /Scope details/i });
+  await firstLink.focus();
+  await firstLink.press('Enter');
+  await expect(page).toHaveURL(new RegExp(`/services/${serviceOffers[0].id}/?$`));
+
+  await page.goto('/#services');
+  const secondLink = page.locator('#services').getByRole('article', { name: serviceOffers[1].title }).getByRole('link', { name: /Scope details/i });
+  await secondLink.click();
+  await expect(page).toHaveURL(new RegExp(`/services/${serviceOffers[1].id}/?$`));
+  await expect(page.getByRole('heading', { name: serviceOffers[1].title })).toBeVisible();
+  await expect(page.locator('main')).toContainText('Timeline scoped per project');
+  await expect(page.locator('main')).toContainText('Build or fine-tune a model');
+});
+
+test('service cards show summary, timeline, and rate without opening', async ({ page }) => {
+  await page.goto('/#services');
+  const services = page.locator('#services');
+  await expect(services.getByRole('article')).toHaveCount(serviceOffers.length);
   await expect(services).toContainText(HOURLY_FROM_LABEL);
   await expect(services).not.toContainText('€80');
   await expect(services).not.toContainText('3,600');
@@ -108,19 +107,14 @@ test('open service offers show hourly rate, typical duration, and scope', async 
   await expect(services.getByRole('button', { name: /Request a Project Estimate/i })).toHaveCount(0);
 
   for (const offer of serviceOffers) {
-    const row = services.getByRole('button').filter({ hasText: offer.title });
-    if ((await row.getAttribute('aria-expanded')) !== 'true') {
-      await row.click();
-    }
-    await expect(row).toHaveAttribute('aria-expanded', 'true');
-    const panel = page.locator(`#${await row.getAttribute('aria-controls')}`);
-    await expect(panel).toBeVisible();
-    await expect(panel).toContainText(HOURLY_FROM_LABEL);
-    await expect(panel).toContainText(typicalDurationLabel(offer));
-    await expect(panel).toContainText('IN SCOPE');
-    await expect(panel).toContainText('OUT OF SCOPE');
-    await expect(panel).toContainText(offer.inScope[0]);
-    await expect(panel).toContainText(offer.outOfScope[0]);
+    const card = services.getByRole('article', { name: offer.title });
+    await expect(card).toBeVisible();
+    await expect(card.getByRole('heading', { name: offer.title })).toBeVisible();
+    await expect(card).toContainText(offer.summary.split(/(?<=\.)\s+/)[0]);
+    await expect(card).toContainText(HOURLY_FROM_LABEL);
+    await expect(card).toContainText(serviceTimelineLabel(offer));
+    await expect(card).not.toContainText(offer.inScope[0]);
+    await expect(card.getByRole('link', { name: /Scope details/i })).toHaveAttribute('href', `/services/${offer.id}`);
   }
 });
 
@@ -226,27 +220,15 @@ test('Detection Bar keeps its purple border and configured logo', async ({ page 
   await expect(vpMark.locator('img')).toHaveAttribute('src', '/assets/logos/mylogo.png');
 });
 
-test('craft signal surfaces: Services Field-Row has detection boxes with meta', async ({ page }) => {
+test('craft signal surfaces: Services cards keep offer markers and metadata', async ({ page }) => {
   await page.goto('/#services');
-  const firstService = page.locator('#services [role="button"]').first();
-  
-  // Service button has SERVICE · OFFER meta
+  const firstService = page.locator('#services article').first();
   await expect(firstService.getByText(/SERVICE · OFFER \d+/i)).toBeVisible();
-  
-  await firstService.click();
-  await expect(firstService).toHaveAttribute('aria-expanded', 'true');
-  
-  // Panel contains rate and duration meta
-  const panel = page.locator(`#${await firstService.getAttribute('aria-controls')}`);
-  await expect(panel).toBeVisible();
-  await expect(panel).toContainText('RATE');
-  await expect(panel).toContainText('€45/hour');
-  await expect(panel).toContainText('DURATION');
-  await expect(panel).toContainText('Typically');
-  
-  // Scope grid present
-  await expect(panel).toContainText('IN SCOPE');
-  await expect(panel).toContainText('OUT OF SCOPE');
+  await expect(firstService.getByText('Rate', { exact: true })).toBeVisible();
+  await expect(firstService).toContainText('€45/hour');
+  await expect(firstService.getByText('Timeline', { exact: true })).toBeVisible();
+  await expect(firstService).toContainText('Typically');
+  await expect(firstService.getByRole('link', { name: /Scope details/i })).toBeVisible();
 });
 
 test('craft signal surfaces: Testimonials Field Quote has rail and diamond dots', async ({ page }) => {
@@ -339,33 +321,21 @@ test('craft signal surfaces: Case study cards have detection boxes', async ({ pa
 
 test('e2e: Home → Service → CTA → Contact → Fill validation', async ({ page }) => {
   await page.goto('/');
-  
-  // Open first service offer
-  const firstService = page.locator('#services [role="button"]').first();
+  const firstService = page.locator('#services article').first();
   await firstService.scrollIntoViewIfNeeded();
-  await firstService.click();
-  await expect(firstService).toHaveAttribute('aria-expanded', 'true');
-  
-  // Verify service panel shows rate
-  const panel = page.locator(`#${await firstService.getAttribute('aria-controls')}`);
-  await expect(panel).toContainText('€45/hour');
-  
-  // Navigate to CTA
-  const ctaButton = page.locator('#cta').getByRole('link', { name: /request a project estimate/i });
-  await ctaButton.scrollIntoViewIfNeeded();
-  await ctaButton.click();
-  
-  // Should be on contact page
+  await expect(firstService).toContainText('€45/hour');
+  await firstService.getByRole('link', { name: /Scope details/i }).click();
+  await expect(page).toHaveURL(/\/services\/data-extraction-automation-sprint\/?$/);
+  await expect(page.getByRole('heading', { name: 'In scope' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Out of scope' })).toBeVisible();
+  await page.getByRole('link', { name: /Request a Project Estimate/i }).click();
   await expect(page).toHaveURL(/\/contact\/?$/);
   await expect(page.getByRole('heading', { name: /Request a Project Estimate/i })).toBeVisible();
-  
-  // Fill form with invalid email
+
   await page.getByLabel('Full Name *').fill('QA Tester');
   await page.getByLabel('Email Address *').fill('invalid');
   await page.getByLabel('Project Description *').fill('Test project');
   await page.getByRole('button', { name: /Send project request/i }).click();
-  
-  // Validation should trigger
   await expect(page.getByText('Invalid email address.', { exact: true })).toBeVisible();
 });
 
