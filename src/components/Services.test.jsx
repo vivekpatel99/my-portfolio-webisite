@@ -2,30 +2,15 @@
  * @vitest-environment jsdom
  */
 import React from 'react';
-import { cleanup, render, screen, within } from '@testing-library/react';
+import { cleanup, render, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import Services from './Services';
 import {
   HOURLY_FROM_LABEL,
   serviceOffers,
   typicalDurationLabel,
 } from '@/data/serviceOffers';
-
-vi.mock('framer-motion', () => {
-  const motion = new Proxy(
-    {},
-    {
-      get: (_, tag) =>
-        React.forwardRef(function MotionComponent({ children, ...props }, ref) {
-          return React.createElement(String(tag), { ref, ...props }, children);
-        }),
-    },
-  );
-
-  return { AnimatePresence: ({ children }) => <>{children}</>, motion };
-});
 
 afterEach(cleanup);
 
@@ -38,59 +23,68 @@ const renderServices = () => {
 };
 
 const section = () => document.getElementById('services');
+const cards = () => within(section()).getAllByRole('article');
+const cardFor = (offer) =>
+  within(section()).getByRole('article', { name: offer.title });
 
 describe('Services offers', () => {
-  it('starts with all offers closed', () => {
+  it('renders exactly the three current offers as open cards with no toggle controls', () => {
     renderServices();
-    const rows = within(section()).getAllByRole('button');
-    expect(rows).toHaveLength(3);
-    expect(rows[0].getAttribute('aria-expanded')).toBe('false');
-    expect(rows[1].getAttribute('aria-expanded')).toBe('false');
-    expect(rows[2].getAttribute('aria-expanded')).toBe('false');
-  });
-
-  it('shows hourly rate, typical duration, and scope above the summary when opened', async () => {
-    const user = userEvent.setup();
-    renderServices();
-    const button = within(section()).getAllByRole('button')[0];
-    await user.click(button);
-    const offer = serviceOffers[0];
-    const panel = document.getElementById(button.getAttribute('aria-controls'));
-    const text = panel.textContent;
-    expect(text).toContain(HOURLY_FROM_LABEL);
-    expect(text).toContain(typicalDurationLabel(offer));
-    expect(text).toContain('IN SCOPE');
-    expect(text).toContain('OUT OF SCOPE');
-    expect(text).toContain(offer.inScope[0]);
-    expect(text).toContain(offer.outOfScope[0]);
-    expect(text.indexOf(HOURLY_FROM_LABEL)).toBeLessThan(text.indexOf(offer.summary));
-    expect(text.indexOf('Typically')).toBeLessThan(text.indexOf(offer.summary));
-  });
-
-  it('keeps the catalog rate visible when every row is closed', async () => {
-    const user = userEvent.setup();
-    renderServices();
-    // All rows start closed
-    within(section()).getAllByRole('button').forEach((row) => {
-      expect(row.getAttribute('aria-expanded')).toBe('false');
+    expect(cards()).toHaveLength(3);
+    expect(within(section()).queryAllByRole('button')).toHaveLength(0);
+    expect(section().querySelector('[aria-expanded]')).toBeNull();
+    serviceOffers.forEach((offer) => {
+      expect(cardFor(offer)).toBeTruthy();
     });
-    expect(section().textContent).toContain(HOURLY_FROM_LABEL);
-    expect(within(section()).getAllByRole('button')[1].textContent).not.toContain(HOURLY_FROM_LABEL);
-    expect(within(section()).getAllByRole('button')[1].textContent).not.toContain('Typically');
   });
 
-  it('opens only one offer at a time and never adds a fourth accordion control', async () => {
-    const user = userEvent.setup();
+  it.each(serviceOffers.map((offer) => [offer.id, offer]))(
+    'shows the title, one sentence, typical weeks, and rate for %s without a click',
+    (_id, offer) => {
+      renderServices();
+      const card = cardFor(offer);
+      const text = card.textContent;
+      const sentence = offer.summary.split(/(?<=\.)\s+/)[0];
+
+      expect(within(card).getByRole('heading', { level: 3, name: offer.title })).toBeTruthy();
+      expect(text).toContain(sentence);
+      expect(sentence).toMatch(/^[^.]+\.$/);
+      expect(text).not.toContain(offer.summary.slice(sentence.length).trim());
+      expect(text).toContain(typicalDurationLabel(offer));
+      expect(text).toContain(HOURLY_FROM_LABEL);
+      expect(HOURLY_FROM_LABEL).toBe('from €45/hour');
+    },
+  );
+
+  it('renders titles white rather than greyed out', () => {
     renderServices();
-    const rows = () => within(section()).getAllByRole('button');
-    await user.click(rows()[2]);
-    expect(rows()).toHaveLength(3);
-    expect(rows()[0].getAttribute('aria-expanded')).toBe('false');
-    expect(rows()[2].getAttribute('aria-expanded')).toBe('true');
-    const panel = document.getElementById(rows()[2].getAttribute('aria-controls'));
-    expect(panel.textContent).toContain(HOURLY_FROM_LABEL);
-    expect(panel.textContent).toContain(typicalDurationLabel(serviceOffers[2]));
-    expect(screen.queryByRole('button', { name: /Request a Project Estimate/i })).toBeNull();
+    within(section()).getAllByRole('heading', { level: 3 }).forEach((heading) => {
+      expect(heading.className).toContain('text-white');
+      expect(heading.className).not.toMatch(/text-\[#9ca3af\]|text-\[#6b7280\]/);
+    });
+  });
+
+  it('keeps in/out scope lists off the home cards and links each card to its detail page', () => {
+    renderServices();
+    serviceOffers.forEach((offer) => {
+      const card = cardFor(offer);
+      expect(card.textContent).not.toContain(offer.inScope[0]);
+      expect(card.textContent).not.toContain(offer.outOfScope[0]);
+      const link = within(card).getByRole('link', { name: /Scope details/i });
+      expect(link.getAttribute('href')).toBe(`/services/${offer.id}`);
+    });
+    const linkNames = within(section())
+      .getAllByRole('link', { name: /Scope details/i })
+      .map((link) => link.textContent);
+    expect(new Set(linkNames).size).toBe(3);
+  });
+
+  it('keeps the computer-vision offer for existing systems, typically 1–2 weeks', () => {
+    renderServices();
+    const cv = serviceOffers.find((offer) => offer.id === 'computer-vision-production-optimization');
+    const text = cardFor(cv).textContent;
+    expect(text).toMatch(/For existing YOLO, OCR, OpenCV, ONNX, or edge-AI systems/);
+    expect(text).toContain('Typically 1–2 weeks');
   });
 
   it('drops the old fixed-scope and ROI chips', () => {
@@ -99,28 +93,11 @@ describe('Services offers', () => {
     expect(section().textContent).not.toMatch(/€80|3,600|7,200|guaranteed ROI|30-day support/i);
   });
 
-  it('includes View details link in each expanded accordion', async () => {
-    const user = userEvent.setup();
+  it('renders SERVICE · OFFER craft markers on each card', () => {
     renderServices();
-    
-    const rows = () => within(section()).getAllByRole('button');
-    await user.click(rows()[0]);
-    const panel = document.getElementById(rows()[0].getAttribute('aria-controls'));
-    const link = within(panel).getByRole('link', { name: /View details/i });
-    expect(link.getAttribute('href')).toBe(`/services/${serviceOffers[0].id}`);
-    
-    await user.click(rows()[1]);
-    const panel1 = document.getElementById(rows()[1].getAttribute('aria-controls'));
-    const link1 = within(panel1).getByRole('link', { name: /View details/i });
-    expect(link1.getAttribute('href')).toBe(`/services/${serviceOffers[1].id}`);
-  });
-
-  it('renders SERVICE · OFFER craft markers on each accordion button', () => {
-    renderServices();
-    const rows = within(section()).getAllByRole('button');
-    rows.forEach((button, index) => {
-      expect(button.textContent).toMatch(/SERVICE · OFFER/i);
-      expect(button.textContent).toContain(String(index + 1).padStart(2, '0'));
+    cards().forEach((card, index) => {
+      expect(card.textContent).toMatch(/SERVICE · OFFER/i);
+      expect(card.textContent).toContain(String(index + 1).padStart(2, '0'));
     });
   });
 });
