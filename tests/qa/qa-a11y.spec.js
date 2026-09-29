@@ -45,6 +45,21 @@ const measureRenderedContrast = (target) => {
   const cssColors = (value) => (value.match(/rgba?\([^)]*\)|#[\da-f]{3,8}\b|\btransparent\b/gi) ?? [])
     .map(parseColor)
     .filter(Boolean);
+  const cssGradientColors = (value) => {
+    if (!/gradient\(/i.test(value)) return [];
+    const stops = cssColors(value);
+    return stops.slice(0, -1).flatMap((color, index) => {
+      const next = stops[index + 1];
+      return Array.from({ length: 21 }, (_, sample) => {
+        const progress = sample / 20;
+        return {
+          rgb: color.rgb.map((channel, channelIndex) => channel
+            + (next.rgb[channelIndex] - channel) * progress),
+          alpha: color.alpha + (next.alpha - color.alpha) * progress,
+        };
+      });
+    }).concat(stops.slice(-1));
+  };
   const layerCoversPoint = (node, point, style, index) => {
     const layerValue = (value, fallback) => {
       const layers = splitLayers(value);
@@ -100,7 +115,7 @@ const measureRenderedContrast = (target) => {
       const imageLayers = splitLayers(style.backgroundImage);
       for (let index = imageLayers.length - 1; index >= 0; index -= 1) {
         const layer = imageLayers[index];
-        const colors = cssColors(layer);
+        const colors = cssGradientColors(layer);
         if (!layerCoversPoint(node, samplePoint, style, index)) continue;
         if (colors.length === 0) continue;
         const gradientBackgrounds = colors.flatMap((gradientColor) => backgrounds
@@ -158,6 +173,12 @@ const expectRenderedForeground = async (locator, label, expected) => {
 
 test('contrast measurement includes gradient background stops', async ({ page }) => {
   await page.setContent('<div style="background: linear-gradient(165deg, #141318 0%, #0e0e10 100%); padding: 16px"><span id="gradient-label" style="color: #747b87; font-size: 12px">Gradient label</span></div>');
+  const result = await renderedContrast(page.locator('#gradient-label'));
+  expect(result.ratio).toBeLessThan(4.5);
+});
+
+test('contrast measurement includes interpolated gradient colors', async ({ page }) => {
+  await page.setContent('<div style="background: linear-gradient(#000 0%, #fff 100%); padding: 16px"><span id="gradient-label" style="color: #767676; font-size: 12px">Gradient label</span></div>');
   const result = await renderedContrast(page.locator('#gradient-label'));
   expect(result.ratio).toBeLessThan(4.5);
 });
