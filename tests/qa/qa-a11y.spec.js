@@ -538,7 +538,12 @@ const measureRenderedContrast = (target) => {
           opacityScopes.push({ node, opacity: nodeOpacity, backdrop: backgrounds.map((background) => [...background]) });
         }
         if (paintsCanvas(node) || coversSamplePoint(node)) backgrounds = await applyNodeBackground(node, backgrounds);
-        for (const placement of imagePlacements.filter(({ commonAncestor }) => commonAncestor === node)) {
+        // Paint overlapping images by their stacking order under this ancestor, not document.images order.
+        const imageLayerOrder = inPaintOrder(paintLayers(node));
+        const nodePlacements = imagePlacements.filter(({ commonAncestor }) => commonAncestor === node)
+          .sort((left, right) => imageLayerOrder.indexOf(left.imagePath[0] ?? left.image)
+            - imageLayerOrder.indexOf(right.imagePath[0] ?? right.image));
+        for (const placement of nodePlacements) {
           if (!placement.image.complete) placement.image.loading = 'eager';
           try {
             await placement.image.decode();
@@ -896,6 +901,20 @@ test('contrast measurement blurs image pixels behind backdrop-filter labels', as
     await loaded.decode();
   }, source);
   const result = await renderedContrast(page.locator('#blur-label'));
+  expect(result.ratio, JSON.stringify(result)).toBeLessThan(4.5);
+});
+
+test('contrast measurement stacks overlapping DOM images in paint order', async ({ page }) => {
+  const svg = (fill) => `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10" fill="${fill}"/></svg>`)}`;
+  const [black, white] = [svg('#000'), svg('#fff')];
+  const image = (src, zIndex) => `<img src="${src}" alt="" style="position:absolute;inset:0;width:100%;height:100%;z-index:${zIndex}">`;
+  await page.setContent(`<div style="position:relative;width:240px;height:40px">${image(black, 1)}${image(white, 0)}<span id="image-label" style="position:relative;z-index:2;color:#000;font-size:12px">Black label over the top black image</span></div>`);
+  await page.evaluate((sources) => Promise.all(sources.map((src) => {
+    const loaded = new Image();
+    loaded.src = src;
+    return loaded.decode();
+  })), [black, white]);
+  const result = await renderedContrast(page.locator('#image-label'));
   expect(result.ratio, JSON.stringify(result)).toBeLessThan(4.5);
 });
 
