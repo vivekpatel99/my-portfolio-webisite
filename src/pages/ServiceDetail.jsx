@@ -13,7 +13,7 @@ const ServiceDetail = () => {
       <div className="min-h-screen bg-[#0C0D0D] flex items-center justify-center px-6">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-white mb-4">Service Not Found</h1>
-          <Link to="/#services" className="text-accent-purple hover:underline">
+          <Link to="/#services" className="text-accent-purple-text hover:underline">
             View All Services
           </Link>
         </div>
@@ -71,7 +71,7 @@ const ServiceDetail = () => {
           </div>
 
           <div className="flex flex-wrap gap-4">
-            <Button asChild size="lg" className="bg-accent-purple hover:bg-accent-purple/90">
+            <Button asChild size="lg" className="bg-accent-purple text-white hover:bg-[#6D28D9]">
               <Link to="/contact">Request a Project Estimate</Link>
             </Button>
             <Button asChild size="lg" variant="outline">

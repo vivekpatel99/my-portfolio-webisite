@@ -37,7 +37,7 @@ const Services = () => {
                 <span aria-hidden="true" className="absolute top-[5px] left-[5px] w-4 h-4 border-t-[1.5px] border-l-[1.5px] border-[rgba(139,92,246,0.85)] pointer-events-none"></span>
                 <span aria-hidden="true" className="absolute bottom-[5px] right-[5px] w-4 h-4 border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.45)] pointer-events-none"></span>
 
-                <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] mb-3">
+                <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[#9ca3af] mb-3">
                   SERVICE · <em className="not-italic text-[#a78bfa]">OFFER {String(index + 1).padStart(2, '0')}</em>
                 </div>
                 <div className="flex items-start gap-[14px] mb-4">
@@ -56,7 +56,7 @@ const Services = () => {
                   {firstSentence(service.summary)}
                 </p>
 
-                <dl className="mt-auto flex flex-wrap gap-[10px] gap-x-7 mb-5 pt-4 border-t border-[rgba(255,255,255,0.06)] font-mono text-[11px] leading-[1.4] tracking-[0.04em] text-[#6b7280]">
+                <dl className="mt-auto flex flex-wrap gap-[10px] gap-x-7 mb-5 pt-4 border-t border-[rgba(255,255,255,0.06)] font-mono text-[11px] leading-[1.4] tracking-[0.04em] text-[#9ca3af]">
                   <div>
                     <dt className="inline tracking-[0.08em] uppercase">Timeline</dt> ·{' '}
                     <dd className="inline font-medium text-[#d8caff] font-sans text-[0.88rem] tracking-normal">{serviceTimelineLabel(service)}</dd>

@@ -2,7 +2,7 @@ import { expect, test } from './qa-test.js';
 import { caseStudies } from '../../src/data/caseStudies.js';
 import { serviceOffers } from '../../src/data/serviceOffers.js';
 
-const renderedContrast = async (locator) => locator.evaluate((element) => {
+const measureRenderedContrast = (target) => {
   const parseColor = (value) => {
     const match = value.match(/rgba?\(([^)]+)\)/);
     if (!match) return null;
@@ -20,25 +20,44 @@ const renderedContrast = async (locator) => locator.evaluate((element) => {
     return normalized <= 0.04045 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
   }).reduce((sum, channel, index) => sum + channel * [0.2126, 0.7152, 0.0722][index], 0);
 
-  const ancestors = [];
-  for (let node = element; node; node = node.parentElement) ancestors.unshift(node);
-  let background = [0, 0, 0];
-  for (const node of ancestors) {
-    const color = parseColor(getComputedStyle(node).backgroundColor);
-    if (!color || color.alpha === 0) continue;
-    background = composite(color, background);
-  }
-  const foreground = parseColor(getComputedStyle(element).color)?.rgb;
-  if (!foreground) throw new Error('Could not parse rendered foreground color');
-  const foregroundLuminance = luminance(foreground);
-  const backgroundLuminance = luminance(background);
-  return {
-    ratio: (Math.max(foregroundLuminance, backgroundLuminance) + 0.05)
-      / (Math.min(foregroundLuminance, backgroundLuminance) + 0.05),
-    foreground,
-    background,
+  const measure = (element) => {
+    const ancestors = [];
+    for (let node = element; node; node = node.parentElement) ancestors.unshift(node);
+    let background = [0, 0, 0];
+    for (const node of ancestors) {
+      const color = parseColor(getComputedStyle(node).backgroundColor);
+      if (!color || color.alpha === 0) continue;
+      background = composite(color, background);
+    }
+    const style = getComputedStyle(element);
+    const parsedForeground = parseColor(style.color);
+    if (!parsedForeground) throw new Error('Could not parse rendered foreground color');
+    const foreground = composite(parsedForeground, background);
+    const foregroundLuminance = luminance(foreground);
+    const backgroundLuminance = luminance(background);
+    const ownText = [...element.childNodes]
+      .filter((node) => node.nodeType === Node.TEXT_NODE)
+      .map((node) => node.textContent)
+      .join('')
+      .replace(/\s+/g, ' ')
+      .trim();
+    const rect = element.getBoundingClientRect();
+    return {
+      ratio: (Math.max(foregroundLuminance, backgroundLuminance) + 0.05)
+        / (Math.min(foregroundLuminance, backgroundLuminance) + 0.05),
+      foreground,
+      background,
+      fontSize: parseFloat(style.fontSize),
+      text: ownText.slice(0, 60),
+      transparentText: parsedForeground.alpha === 0,
+      visible: rect.width > 1 && rect.height > 1 && style.visibility !== 'hidden'
+        && style.display !== 'none',
+    };
   };
-});
+  return Array.isArray(target) ? target.map(measure) : measure(target);
+};
+
+const renderedContrast = async (locator) => locator.evaluate(measureRenderedContrast);
 
 const expectRenderedContrast = async (locator, label, minimum = 4.5) => {
   const result = await renderedContrast(locator);
@@ -241,6 +260,108 @@ test('policy, contact, footer, and not-found accent states meet contrast', async
 
   await page.goto('/missing-page/');
   await expectRenderedContrast(page.getByText('404', { exact: true }), 'Not-found status');
+});
+
+const PRIMARY_FILL = '124,58,237';
+const PRIMARY_HOVER_FILL = '109,40,217';
+
+const ownBackground = (locator) => locator.evaluate((element) => {
+  const match = getComputedStyle(element).backgroundColor.match(/rgba?\(([^)]+)\)/);
+  return match ? match[1].split(/[ ,/]+/).filter(Boolean).slice(0, 3).join(',') : '';
+});
+
+const paintedDominantColor = async (page, locator) => {
+  await page.mouse.move(0, 0);
+  const png = await locator.screenshot({ animations: 'disabled' });
+  return page.evaluate(async (base64) => {
+    const image = new Image();
+    image.src = `data:image/png;base64,${base64}`;
+    await image.decode();
+    const canvas = document.createElement('canvas');
+    canvas.width = image.width;
+    canvas.height = image.height;
+    const context = canvas.getContext('2d');
+    context.drawImage(image, 0, 0);
+    const { data } = context.getImageData(0, 0, canvas.width, canvas.height);
+    const counts = new Map();
+    for (let i = 0; i < data.length; i += 4) {
+      const key = `${data[i]},${data[i + 1]},${data[i + 2]}`;
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+    return [...counts].sort((a, b) => b[1] - a[1])[0][0];
+  }, png.toString('base64'));
+};
+
+const expectFilledPrimaryStates = async (page, button, label) => {
+  await expect(button).toBeVisible();
+  await expect.poll(() => ownBackground(button), { message: `${label} rest fill` }).toBe(PRIMARY_FILL);
+  await expectRenderedForeground(button, `${label} rest text`, '255,255,255');
+  await expectRenderedContrast(button, `${label} at rest`);
+  expect(await paintedDominantColor(page, button), `${label} painted fill`).toBe(PRIMARY_FILL);
+
+  await button.hover();
+  await expect.poll(() => ownBackground(button), { message: `${label} hover fill` }).toBe(PRIMARY_HOVER_FILL);
+  await expectRenderedForeground(button, `${label} hover text`, '255,255,255');
+  await expectRenderedContrast(button, `${label} on hover`);
+
+  await page.mouse.move(0, 0);
+  await button.focus();
+  await expect(button).toBeFocused();
+  await expect.poll(() => ownBackground(button), { message: `${label} focus fill` }).toBe(PRIMARY_FILL);
+  await expectRenderedContrast(button, `${label} on focus`);
+};
+
+test('filled primary CTAs keep white text readable at rest, hover, and focus', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false }));
+  });
+  await page.goto('/');
+  await expectFilledPrimaryStates(
+    page,
+    page.locator('#main-content').getByRole('button', { name: 'Request a Project Estimate' }).first(),
+    'Hero primary CTA',
+  );
+
+  await page.goto(`/services/${serviceOffers[0].id}/`);
+  await expectFilledPrimaryStates(
+    page,
+    page.locator('#main-content').getByRole('link', { name: 'Request a Project Estimate' }),
+    'Service detail CTA',
+  );
+
+  await page.goto('/services/not-a-service/');
+  await expectRenderedContrast(
+    page.locator('#main-content').getByRole('link', { name: 'View All Services' }),
+    'Unknown service fallback link',
+  );
+});
+
+test('visible text under 14px meets 4.5:1 on its rendered background', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false }));
+  });
+  const routes = ['/', '/contact/', '/case-studies/', `/services/${serviceOffers[0].id}/`, '/legal/', '/data-policy/'];
+  for (const route of routes) {
+    await page.goto(route);
+    await expect(page.locator('#main-content h1').first()).toBeVisible();
+    const results = await page.locator('body *:not(script):not(style):not(:disabled)')
+      .evaluateAll(measureRenderedContrast);
+    const small = results.filter((result) => result.visible && result.text
+      && !result.transparentText && result.fontSize < 14);
+    expect(small.length, `${route} should render small labels to check`).toBeGreaterThan(0);
+    const failures = small.filter((result) => result.ratio < 4.5)
+      .map(({ text, fontSize, ratio, foreground, background }) => ({
+        text, fontSize, ratio: Number(ratio.toFixed(2)), foreground, background,
+      }));
+    expect(failures, `${route} small text below 4.5:1`).toEqual([]);
+  }
+
+  await page.goto('/');
+  const footerPolicy = page.locator('#site-footer').getByRole('link', { name: 'Privacy Policy', exact: true });
+  await expectRenderedContrast(footerPolicy, 'Footer policy link at rest');
+  await footerPolicy.hover();
+  await expectRenderedForeground(footerPolicy, 'Footer policy link should finish its hover transition', '209,213,219');
+  await expectRenderedContrast(footerPolicy, 'Footer policy link on hover');
 });
 
 test('service card and detail scope lists meet normal-text contrast', async ({ page }) => {
