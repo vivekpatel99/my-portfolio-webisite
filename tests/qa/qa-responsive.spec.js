@@ -138,7 +138,8 @@ for (const vp of heroFoldViewports) {
     await page.setViewportSize({ width: vp.width, height: vp.height });
     await page.goto('/');
     const hero = page.locator('#main-content section').first();
-    const invoice = await hero.getByRole('article', { name: 'Profile invoice field parse' }).boundingBox();
+    const invoiceElement = hero.getByRole('article', { name: 'Profile invoice field parse' });
+    const invoice = await invoiceElement.boundingBox();
     const estimate = await hero.getByRole('button', { name: 'Request a Project Estimate' }).boundingBox();
     const caseStudies = await hero.getByRole('link', { name: 'View Case Studies' }).boundingBox();
     const portrait = hero.getByAltText('Tracked engineer portrait');
@@ -150,6 +151,18 @@ for (const vp of heroFoldViewports) {
       expect(estimate.y + estimate.height).toBeLessThanOrEqual(vp.height);
     }
     expect(estimate.y).toBeGreaterThanOrEqual(invoice.y + invoice.height);
+    expect(invoice.x).toBeGreaterThanOrEqual(0);
+    expect(invoice.x + invoice.width).toBeLessThanOrEqual(vp.width);
+    const invoiceTitle = invoiceElement.getByText('Profile Invoice', { exact: true });
+    await expect(invoiceTitle).toBeVisible();
+
+    if (vp.width < 768) {
+      const name = await invoiceElement.getByText('Name', { exact: true }).boundingBox();
+      const role = await invoiceElement.getByText('Role', { exact: true }).boundingBox();
+      expect(role.x).toBeGreaterThan(name.x);
+      const scanLabel = await invoiceElement.getByText('doc · extract · 0.97').boundingBox();
+      expect(boxesOverlap(scanLabel, await invoiceTitle.boundingBox())).toBe(false);
+    }
 
     const ctaGap = vp.width < 768
       ? caseStudies.y - (estimate.y + estimate.height)
@@ -162,15 +175,31 @@ for (const vp of heroFoldViewports) {
       expect(portraitBox.x).toBeGreaterThanOrEqual(invoice.x + invoice.width);
     }
 
-    const overlays = portrait.locator('xpath=..').locator('span.absolute:visible').filter({ hasText: /\S/ });
-    const labels = await overlays.allTextContents();
+    const labels = [
+      hero.getByText('engineer · 0.99', { exact: true }),
+      hero.getByText('ID 001 · TRACKED', { exact: true }),
+      hero.getByText('REC', { exact: true }),
+    ];
+    for (const label of labels) await expect(label).toBeVisible();
     if (vp.stacked) {
-      expect(labels.map((label) => label.trim())).toEqual(['REC']);
-      for (const box of await Promise.all((await overlays.all()).map((o) => o.boundingBox()))) {
-        expect(box.y).toBeGreaterThanOrEqual(portraitBox.y + portraitBox.height * 0.55);
+      const faceZone = {
+        x: portraitBox.x + portraitBox.width * 0.28,
+        y: portraitBox.y + portraitBox.height * 0.12,
+        width: portraitBox.width * 0.4,
+        height: portraitBox.height * 0.36,
+      };
+      for (const label of labels) {
+        const box = await label.boundingBox();
+        expect(box.x).toBeGreaterThanOrEqual(0);
+        expect(box.x + box.width).toBeLessThanOrEqual(vp.width);
+        expect(boxesOverlap(box, faceZone)).toBe(false);
       }
-    } else {
-      expect(labels.map((t) => t.trim())).toEqual(expect.arrayContaining(['engineer · 0.99', 'ID 001 · TRACKED']));
+      const labelBoxes = await Promise.all(labels.map((label) => label.boundingBox()));
+      for (let index = 0; index < labelBoxes.length; index += 1) {
+        for (let next = index + 1; next < labelBoxes.length; next += 1) {
+          expect(boxesOverlap(labelBoxes[index], labelBoxes[next])).toBe(false);
+        }
+      }
     }
   });
 }
