@@ -169,8 +169,9 @@ test('normal-size purple text and links meet contrast in rendered states', async
     localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false }));
   });
   await page.goto('/');
-  const price = page.getByText('Starting at €45/hour', { exact: true });
-  const priceBackground = await price.evaluate((element) => {
+  await expect(page.getByText('Starting at €45/hour', { exact: true })).toHaveCount(0);
+  const locationChip = page.getByText('Based in Linz, Austria', { exact: true });
+  const chipBackground = await locationChip.evaluate((element) => {
     const badge = element.parentElement;
     const style = badge ? getComputedStyle(badge) : null;
     return style ? {
@@ -180,9 +181,9 @@ test('normal-size purple text and links meet contrast in rendered states', async
         : 1,
     } : null;
   });
-  expect(priceBackground?.backgroundColor, 'Hero price badge should have a stable dark background').toBe('rgb(12, 13, 13)');
-  expect(priceBackground?.alpha, 'Hero price badge should be opaque over the image').toBe(1);
-  await expectRenderedContrast(price, 'Hero price');
+  expect(chipBackground?.backgroundColor, 'Hero location badge should have a stable dark background').toBe('rgb(12, 13, 13)');
+  expect(chipBackground?.alpha, 'Hero location badge should be opaque over the image').toBe(1);
+  await expectRenderedContrast(locationChip, 'Hero location');
 
   const cardLabel = page.locator('#portfolio article').first().locator('.cat, a .text-\\[\\#a78bfa\\]').first();
   await expectRenderedContrast(cardLabel, 'Case study card craft label');
