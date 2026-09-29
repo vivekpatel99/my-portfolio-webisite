@@ -45,7 +45,7 @@ const ServiceDetailContent = ({ service }) => {
   const offerNumber = String(serviceOffers.findIndex((offer) => offer.id === service.id) + 1).padStart(2, '0');
 
   return React.createElement(
-    'main',
+    'div',
     { className: 'relative min-h-screen overflow-hidden bg-[#0C0D0D] pb-24 pt-10 text-white md:pt-14' },
     React.createElement('div', {
       'aria-hidden': true,
