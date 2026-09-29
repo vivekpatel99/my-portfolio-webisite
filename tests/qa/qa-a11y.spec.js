@@ -133,6 +133,7 @@ const measureRenderedContrast = (target) => {
       stopIndex = end + 1;
     }
     const right = stops.findIndex((stop) => stop.position >= progress);
+    if (right === -1) return stops.at(-1).color;
     const leftStop = stops[Math.max(0, right - 1)] ?? stops.at(-1);
     const rightStop = stops[Math.max(0, right)] ?? stops.at(-1);
     const span = rightStop.position - leftStop.position;
@@ -249,110 +250,140 @@ const measureRenderedContrast = (target) => {
     const ancestors = [];
     for (let node = element; node; node = node.parentElement) ancestors.unshift(node);
     const rect = element.getBoundingClientRect();
-    const samplePoint = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-    const imagesAtPoint = [...document.images].filter((image) => {
-      const imageRect = image.getBoundingClientRect();
-      return samplePoint.x >= imageRect.left && samplePoint.x <= imageRect.right
-        && samplePoint.y >= imageRect.top && samplePoint.y <= imageRect.bottom;
-    });
-    let backgrounds = [[0, 0, 0]];
-    let imageSamplingFailed = false;
-    const applyNodeBackground = async (node, currentBackgrounds) => {
-      const style = getComputedStyle(node);
-      const color = parseColor(style.backgroundColor);
-      if (color && color.alpha > 0) currentBackgrounds = currentBackgrounds.map((background) => composite(color, background));
-      const imageLayers = splitLayers(style.backgroundImage);
-      for (let index = imageLayers.length - 1; index >= 0; index -= 1) {
-        const layer = imageLayers[index];
-        if (!layerCoversPoint(node, samplePoint, style, index)) continue;
-        if (layer.includes('url(')) {
-          const image = await loadCssImage(layer);
-          const sample = sampleImage(image, samplePoint, node.getBoundingClientRect(), 'none',
-            layerValue(style, 'backgroundPosition', index, '0% 0%'),
-            layerValue(style, 'backgroundRepeat', index, 'repeat'),
-            layerValue(style, 'backgroundSize', index, 'auto'));
-          if (!sample) imageSamplingFailed = true;
-          else currentBackgrounds = currentBackgrounds.map((background) => composite(sample, background));
-          continue;
-        }
-        const sampledGradient = cssGradientColorAtPoint(layer, node, style, index, samplePoint);
-        const colors = sampledGradient ? [sampledGradient] : cssGradientColors(layer);
-        if (colors.length === 0) continue;
-        if (sampledGradient) {
-          currentBackgrounds = currentBackgrounds.map((background) => composite(sampledGradient, background));
-          continue;
-        }
-        const gradientBackgrounds = colors.flatMap((gradientColor) => currentBackgrounds
-          .map((background) => composite(gradientColor, background)));
-        currentBackgrounds = colors.every((gradientColor) => gradientColor.alpha === 1)
-          ? gradientBackgrounds
-          : [...currentBackgrounds, ...gradientBackgrounds];
-      }
-      return currentBackgrounds;
-    };
-    const imagePlacements = imagesAtPoint.map((image) => {
-      const imageAncestors = new Set();
-      for (let node = image.parentElement; node; node = node.parentElement) imageAncestors.add(node);
-      const commonAncestor = [...ancestors].reverse().find((node) => imageAncestors.has(node));
-      const imagePath = [];
-      for (let node = image.parentElement; node && node !== commonAncestor; node = node.parentElement) imagePath.unshift(node);
-      return { image, commonAncestor, imagePath };
-    });
-    for (const node of ancestors) {
-      backgrounds = await applyNodeBackground(node, backgrounds);
-      for (const placement of imagePlacements.filter(({ commonAncestor }) => commonAncestor === node)) {
-        let imageBackgrounds = backgrounds;
-        for (const imageNode of placement.imagePath) imageBackgrounds = await applyNodeBackground(imageNode, imageBackgrounds);
-        imageBackgrounds = await applyNodeBackground(placement.image, imageBackgrounds);
-        if (!placement.image.complete) placement.image.loading = 'eager';
-        try {
-          await placement.image.decode();
-        } catch {
-          imageSamplingFailed = true;
-        }
-        const imageStyle = getComputedStyle(placement.image);
-        const sample = sampleImage(placement.image, samplePoint, placement.image.getBoundingClientRect(), imageStyle.objectFit, imageStyle.objectPosition);
-        if (!sample) imageSamplingFailed = true;
-        else imageBackgrounds = imageBackgrounds.map((background) => composite(sample, background));
-
-        const targetChild = ancestors[ancestors.indexOf(node) + 1];
-        const imageChild = placement.imagePath[0] ?? placement.image;
-        const siblings = [...node.children];
-        const imageChildIndex = siblings.indexOf(imageChild);
-        const targetChildIndex = siblings.indexOf(targetChild);
-        if (imageChildIndex >= 0 && targetChildIndex > imageChildIndex) {
-          for (const overlay of siblings.slice(imageChildIndex + 1, targetChildIndex)) {
-            const overlayRect = overlay.getBoundingClientRect();
-            if (samplePoint.x >= overlayRect.left && samplePoint.x <= overlayRect.right
-              && samplePoint.y >= overlayRect.top && samplePoint.y <= overlayRect.bottom) {
-              imageBackgrounds = await applyNodeBackground(overlay, imageBackgrounds);
-            }
-          }
-        }
-        backgrounds = imageBackgrounds;
-      }
-    }
     const style = getComputedStyle(element);
     const parsedForeground = parseColor(style.color);
     if (!parsedForeground) throw new Error('Could not parse rendered foreground color');
-    const foregrounds = backgrounds.map((background) => composite(parsedForeground, background));
-    const contrasts = imageSamplingFailed ? [1] : backgrounds.map((background, index) => {
-      const foregroundLuminance = luminance(foregrounds[index]);
-      const backgroundLuminance = luminance(background);
-      return (Math.max(foregroundLuminance, backgroundLuminance) + 0.05)
-        / (Math.min(foregroundLuminance, backgroundLuminance) + 0.05);
+    const textNodes = [...element.childNodes].filter((node) => node.nodeType === Node.TEXT_NODE
+      && node.textContent.trim());
+    const ownText = textNodes.map((node) => node.textContent).join('').replace(/\s+/g, ' ').trim();
+    const textRects = textNodes.flatMap((node) => {
+      const range = document.createRange();
+      range.selectNodeContents(node);
+      return [...range.getClientRects()].filter((textRect) => textRect.width > 1 && textRect.height > 1);
     });
-    const worstBackgroundIndex = imageSamplingFailed ? 0 : contrasts.indexOf(Math.min(...contrasts));
-    const ownText = [...element.childNodes]
-      .filter((node) => node.nodeType === Node.TEXT_NODE)
-      .map((node) => node.textContent)
-      .join('')
-      .replace(/\s+/g, ' ')
-      .trim();
+    const samplePoints = textRects.flatMap((textRect) => {
+      const overlapsImage = [...document.images].some((image) => {
+        const imageRect = image.getBoundingClientRect();
+        return textRect.left < imageRect.right && textRect.right > imageRect.left
+          && textRect.top < imageRect.bottom && textRect.bottom > imageRect.top;
+      });
+      const hasSpatialBackground = ancestors.some((node) => /gradient\(|url\(/.test(getComputedStyle(node).backgroundImage));
+      if (!overlapsImage && !hasSpatialBackground) {
+        return [{ x: textRect.left + textRect.width / 2, y: textRect.top + textRect.height / 2 }];
+      }
+      const columns = Math.max(3, Math.min(12, Math.ceil(textRect.width / 12)));
+      return [0.2, 0.5, 0.8].flatMap((vertical) => Array.from({ length: columns }, (_, column) => ({
+        x: textRect.left + textRect.width * (column + 0.5) / columns,
+        y: textRect.top + textRect.height * vertical,
+      })));
+    });
+    if (samplePoints.length === 0) samplePoints.push({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
+
+    const sampleAtPoint = async (samplePoint) => {
+      const imagesAtPoint = [...document.images].filter((image) => {
+        const imageRect = image.getBoundingClientRect();
+        return samplePoint.x >= imageRect.left && samplePoint.x <= imageRect.right
+          && samplePoint.y >= imageRect.top && samplePoint.y <= imageRect.bottom;
+      });
+      let backgrounds = [[0, 0, 0]];
+      let imageSamplingFailed = false;
+      const applyNodeBackground = async (node, currentBackgrounds) => {
+        const nodeStyle = getComputedStyle(node);
+        const color = parseColor(nodeStyle.backgroundColor);
+        if (color && color.alpha > 0) currentBackgrounds = currentBackgrounds.map((background) => composite(color, background));
+        const imageLayers = splitLayers(nodeStyle.backgroundImage);
+        for (let index = imageLayers.length - 1; index >= 0; index -= 1) {
+          const layer = imageLayers[index];
+          if (!layerCoversPoint(node, samplePoint, nodeStyle, index)) continue;
+          if (layer.includes('url(')) {
+            const image = await loadCssImage(layer);
+            const sample = sampleImage(image, samplePoint, node.getBoundingClientRect(), 'none',
+              layerValue(nodeStyle, 'backgroundPosition', index, '0% 0%'),
+              layerValue(nodeStyle, 'backgroundRepeat', index, 'repeat'),
+              layerValue(nodeStyle, 'backgroundSize', index, 'auto'));
+            if (!sample) imageSamplingFailed = true;
+            else currentBackgrounds = currentBackgrounds.map((background) => composite(sample, background));
+            continue;
+          }
+          const sampledGradient = cssGradientColorAtPoint(layer, node, nodeStyle, index, samplePoint);
+          const colors = sampledGradient ? [sampledGradient] : cssGradientColors(layer);
+          if (colors.length === 0) continue;
+          if (sampledGradient) {
+            currentBackgrounds = currentBackgrounds.map((background) => composite(sampledGradient, background));
+            continue;
+          }
+          const gradientBackgrounds = colors.flatMap((gradientColor) => currentBackgrounds
+            .map((background) => composite(gradientColor, background)));
+          currentBackgrounds = colors.every((gradientColor) => gradientColor.alpha === 1)
+            ? gradientBackgrounds
+            : [...currentBackgrounds, ...gradientBackgrounds];
+        }
+        return currentBackgrounds;
+      };
+      const imagePlacements = imagesAtPoint.map((image) => {
+        const imageAncestors = new Set();
+        for (let node = image.parentElement; node; node = node.parentElement) imageAncestors.add(node);
+        const commonAncestor = [...ancestors].reverse().find((node) => imageAncestors.has(node));
+        const imagePath = [];
+        for (let node = image.parentElement; node && node !== commonAncestor; node = node.parentElement) imagePath.unshift(node);
+        return { image, commonAncestor, imagePath };
+      });
+      for (const node of ancestors) {
+        backgrounds = await applyNodeBackground(node, backgrounds);
+        for (const placement of imagePlacements.filter(({ commonAncestor }) => commonAncestor === node)) {
+          let imageBackgrounds = backgrounds;
+          for (const imageNode of placement.imagePath) imageBackgrounds = await applyNodeBackground(imageNode, imageBackgrounds);
+          imageBackgrounds = await applyNodeBackground(placement.image, imageBackgrounds);
+          if (!placement.image.complete) placement.image.loading = 'eager';
+          try {
+            await placement.image.decode();
+          } catch {
+            imageSamplingFailed = true;
+          }
+          const imageStyle = getComputedStyle(placement.image);
+          const sample = sampleImage(placement.image, samplePoint, placement.image.getBoundingClientRect(), imageStyle.objectFit, imageStyle.objectPosition);
+          if (!sample) imageSamplingFailed = true;
+          else imageBackgrounds = imageBackgrounds.map((background) => composite(sample, background));
+
+          const targetChild = ancestors[ancestors.indexOf(node) + 1];
+          const imageChild = placement.imagePath[0] ?? placement.image;
+          const siblings = [...node.children];
+          const imageChildIndex = siblings.indexOf(imageChild);
+          const targetChildIndex = siblings.indexOf(targetChild);
+          if (imageChildIndex >= 0 && targetChildIndex > imageChildIndex) {
+            for (const overlay of siblings.slice(imageChildIndex + 1, targetChildIndex)) {
+              const overlayRect = overlay.getBoundingClientRect();
+              if (samplePoint.x >= overlayRect.left && samplePoint.x <= overlayRect.right
+                && samplePoint.y >= overlayRect.top && samplePoint.y <= overlayRect.bottom) {
+                imageBackgrounds = await applyNodeBackground(overlay, imageBackgrounds);
+              }
+            }
+          }
+          backgrounds = imageBackgrounds;
+        }
+      }
+      const candidates = backgrounds.map((background) => {
+        const foreground = composite(parsedForeground, background);
+        const foregroundLuminance = luminance(foreground);
+        const backgroundLuminance = luminance(background);
+        return {
+          ratio: (Math.max(foregroundLuminance, backgroundLuminance) + 0.05)
+            / (Math.min(foregroundLuminance, backgroundLuminance) + 0.05),
+          foreground,
+          background,
+        };
+      });
+      const worst = candidates.reduce((result, candidate) => candidate.ratio < result.ratio ? candidate : result);
+      return {
+        ...worst,
+        ratio: imageSamplingFailed ? 1 : worst.ratio,
+        background: imageSamplingFailed ? [0, 0, 0] : worst.background,
+      };
+    };
+    const samples = await Promise.all(samplePoints.map(sampleAtPoint));
+    const worstSample = samples.reduce((worst, sample) => sample.ratio < worst.ratio ? sample : worst);
     return {
-      ratio: contrasts[worstBackgroundIndex],
-      foreground: foregrounds[worstBackgroundIndex],
-      background: imageSamplingFailed ? [0, 0, 0] : backgrounds[worstBackgroundIndex],
+      ...worstSample,
       tag: element.tagName,
       className: element.className,
       fontSize: parseFloat(style.fontSize),
@@ -388,6 +419,18 @@ test('contrast measurement includes gradient background stops', async ({ page })
 
 test('contrast measurement includes interpolated gradient colors', async ({ page }) => {
   await page.setContent('<div style="background: linear-gradient(#000 0%, #fff 100%); padding: 16px"><span id="gradient-label" style="color: #767676; font-size: 12px">Gradient label</span></div>');
+  const result = await renderedContrast(page.locator('#gradient-label'));
+  expect(result.ratio).toBeLessThan(4.5);
+});
+
+test('contrast measurement keeps the final gradient color after its stop', async ({ page }) => {
+  await page.setContent('<div style="position:relative;width:100px;height:40px;background:linear-gradient(to right,#fff 0%,#000 50%)"><span id="gradient-label" style="position:absolute;left:70px;top:10px;color:#000;font-size:12px">End label</span></div>');
+  const result = await renderedContrast(page.locator('#gradient-label'));
+  expect(result.ratio).toBeLessThan(4.5);
+});
+
+test('contrast measurement samples across the rendered text bounds', async ({ page }) => {
+  await page.setContent('<div style="position:relative;width:320px;height:40px;background:linear-gradient(to right,#fff 0%,#fff 70%,#000 70%,#000 100%)"><span id="gradient-label" style="position:absolute;left:0;top:8px;color:#000;font-size:16px;white-space:nowrap">This whole text label reaches the dark side</span></div>');
   const result = await renderedContrast(page.locator('#gradient-label'));
   expect(result.ratio).toBeLessThan(4.5);
 });

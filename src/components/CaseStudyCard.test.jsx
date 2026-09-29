@@ -162,9 +162,9 @@ describe('CaseStudyCard', () => {
       expect(metaLine.className).toContain('uppercase');
       expect(metaLine.className).toContain('border-b');
       expect(metaLine.className).not.toContain('rounded-full');
-      const purpleEm = metaLine.querySelector('em.not-italic.text-\\[\\#a78bfa\\]');
-      expect(purpleEm).toBeTruthy();
-      expect(purpleEm.textContent).toBe('CASE STUDY');
+      const caseStudyLabel = metaLine.querySelector('em.not-italic.text-white');
+      expect(caseStudyLabel).toBeTruthy();
+      expect(caseStudyLabel.textContent).toBe('CASE STUDY');
     });
 
     it('applies square corners and purple craft border to card frame', () => {
