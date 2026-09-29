@@ -222,14 +222,17 @@ const measureRenderedContrast = (target) => {
   // Root (and body, when the root has none) backgrounds propagate to the whole canvas.
   const paintsCanvas = (node) => node === document.documentElement
     || (node === document.body && !paintsOwnBackground(getComputedStyle(document.documentElement)));
-  // Includes descendants and their pseudo layers: a transparent box can still carry
-  // painted (and overflowing) children.
+  // `visibility` inherits, so an image's computed value reflects hidden ancestors
+  // (and a descendant re-declaring `visible`, which CSS honours).
+  const isPaintedImage = (node) => node.tagName === 'IMG' && getComputedStyle(node).visibility === 'visible';
+  // Includes descendants, their pseudo layers, and DOM images: a transparent box can
+  // still carry painted (and overflowing) children.
   const subtreePaintNodes = (root) => (root.pseudoOf ? [root] : [root, ...root.querySelectorAll('*')])
     .flatMap((node) => (node.pseudoOf ? [node] : [node, ...paintLayers(node).filter((layer) => layer.pseudoOf)]))
-    .filter((paintNode) => paintsOwnBackground(styleOf(paintNode)));
+    .filter((paintNode) => paintsOwnBackground(styleOf(paintNode)) || isPaintedImage(paintNode));
   const createsStackingContext = (node) => {
     if (node === document.documentElement) return true;
-    const nodeStyle = getComputedStyle(node);
+    const nodeStyle = styleOf(node);
     const parentDisplay = node.parentElement ? getComputedStyle(node.parentElement).display : '';
     return (nodeStyle.zIndex !== 'auto' && (nodeStyle.position !== 'static' || /flex|grid/.test(parentDisplay)))
       || ['fixed', 'sticky'].includes(nodeStyle.position)
@@ -360,19 +363,27 @@ const measureRenderedContrast = (target) => {
     if (!parsedForeground) throw new Error('Could not parse rendered foreground color');
     const foregroundOpacity = ancestors.reduce((opacity, node) => opacity * Number(getComputedStyle(node).opacity), 1);
     const renderedForeground = { ...parsedForeground, alpha: parsedForeground.alpha * foregroundOpacity };
+    // Paint-order key of a layer path below an ancestor: z-index comes from the first
+    // stacking-context node (non-stacking wrappers let descendant z-indexes compete),
+    // and positioned layers paint after in-flow ones at the same z-index.
+    const stackingKey = (path) => {
+      const stackingNode = path.find(createsStackingContext);
+      const positionedNode = stackingNode ?? path.find((pathNode) => styleOf(pathNode).position !== 'static');
+      return { zIndex: stackingNode ? zIndexOf(stackingNode) : 0, positioned: Boolean(positionedNode) };
+    };
     // The target's own text paints above its z >= 0 layers, so for the target
     // itself only negative-z layers sit behind the text.
     const targetLayerOf = (ancestor, ancestorIndex) => {
       const targetChild = ancestors[ancestorIndex + 1];
       return targetChild
-        ? { index: paintLayers(ancestor).indexOf(targetChild), zIndex: zIndexOf(targetChild) }
-        : { index: -1, zIndex: 0 };
+        ? { index: paintLayers(ancestor).indexOf(targetChild), ...stackingKey(ancestors.slice(ancestorIndex + 1)) }
+        : { index: -1, zIndex: 0, positioned: false };
     };
-    const siblingPaintsBehind = (ancestor, ancestorIndex, sibling, siblingIndex) => {
-      const target = targetLayerOf(ancestor, ancestorIndex);
-      const siblingZIndex = zIndexOf(sibling);
-      return siblingZIndex < target.zIndex || (siblingZIndex === target.zIndex && siblingIndex < target.index);
-    };
+    const paintsBehindTarget = (key, index, target) => key.zIndex < target.zIndex
+      || (key.zIndex === target.zIndex && (Number(key.positioned) < Number(target.positioned)
+        || (key.positioned === target.positioned && index < target.index)));
+    const siblingPaintsBehind = (ancestor, ancestorIndex, sibling, siblingIndex) => paintsBehindTarget(
+      stackingKey([sibling]), siblingIndex, targetLayerOf(ancestor, ancestorIndex));
     const textNodes = [...element.childNodes].filter((node) => node.nodeType === Node.TEXT_NODE
       && node.textContent.trim());
     const ownText = textNodes.map((node) => node.textContent).join('').replace(/\s+/g, ' ').trim();
@@ -381,9 +392,7 @@ const measureRenderedContrast = (target) => {
       range.selectNodeContents(node);
       return [...range.getClientRects()].filter((textRect) => textRect.width > 1 && textRect.height > 1);
     });
-    // `visibility` inherits, so the image's computed value reflects hidden ancestors
-    // (and a descendant re-declaring `visible`, which CSS honours).
-    const paintedImages = [...document.images].filter((image) => getComputedStyle(image).visibility === 'visible');
+    const paintedImages = [...document.images].filter(isPaintedImage);
     const samplePoints = textRects.flatMap((textRect) => {
       const overlapsImage = paintedImages.some((image) => {
         const imageRect = image.getBoundingClientRect();
@@ -419,11 +428,6 @@ const measureRenderedContrast = (target) => {
     if (samplePoints.length === 0) samplePoints.push({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
 
     const sampleAtPoint = async (samplePoint) => {
-      const imagesAtPoint = paintedImages.filter((image) => {
-        const imageRect = image.getBoundingClientRect();
-        return samplePoint.x >= imageRect.left && samplePoint.x <= imageRect.right
-          && samplePoint.y >= imageRect.top && samplePoint.y <= imageRect.bottom;
-      });
       let backgrounds = [[0, 0, 0]];
       let imageSamplingFailed = false;
       const applyNodeBackground = async (node, currentBackgrounds) => {
@@ -490,139 +494,99 @@ const measureRenderedContrast = (target) => {
         }
         return false;
       };
-      // Simplified CSS paint order among children: z-index, then in-flow before
-      // positioned at the same level, then DOM order.
-      const inPaintOrder = (children) => children.map((child, index) => ({
-        child,
-        index,
-        zIndex: zIndexOf(child),
-        positioned: styleOf(child).position !== 'static',
-      })).sort((left, right) => left.zIndex - right.zIndex
-        || Number(left.positioned) - Number(right.positioned) || left.index - right.index)
-        .map(({ child }) => child);
-      // Paints a sibling subtree at the sample point: each node's own background,
-      // then its painting children, with every node as a nested opacity group.
-      const applySiblingGroup = (sibling, currentBackgrounds) => {
-        const paintPath = new Set();
-        for (const paintNode of subtreePaintNodes(sibling)
-          .filter((paintNode) => coversSamplePoint(paintNode) && !isClippedWithin(paintNode, sibling))) {
-          for (let pathNode = paintNode; pathNode && !paintPath.has(pathNode);
-            pathNode = pathNode === sibling ? null : pathNode.parentElement) paintPath.add(pathNode);
+      // Paints one DOM image's pixel at the sample point; `blur` is the backdrop-filter
+      // sigma of layers above it.
+      const applyImagePixel = async (image, currentBackgrounds, blur) => {
+        if (!image.complete) image.loading = 'eager';
+        try {
+          await image.decode();
+        } catch {
+          imageSamplingFailed = true;
         }
-        if (!paintPath.has(sibling)) return currentBackgrounds;
-        const paintSubtree = (node, subtreeBackgrounds) => applyOpacityGroup(node, subtreeBackgrounds,
-          async (groupBackgrounds) => {
-            let painted = groupBackgrounds;
-            if (paintsOwnBackground(styleOf(node)) && coversSamplePoint(node) && !isClippedWithin(node, sibling)) {
-              painted = await applyNodeBackground(node, painted);
-            }
-            for (const child of inPaintOrder(paintLayers(node).filter((child) => paintPath.has(child)))) {
-              painted = await paintSubtree(child, painted);
-            }
-            return painted;
-          });
-        return paintSubtree(sibling, currentBackgrounds);
+        const imageStyle = getComputedStyle(image);
+        const sample = sampleImage(image, samplePoint, image.getBoundingClientRect(),
+          imageStyle.objectFit, imageStyle.objectPosition, undefined, undefined, blur);
+        if (!sample) {
+          imageSamplingFailed = true;
+          return currentBackgrounds;
+        }
+        return currentBackgrounds.map((background) => composite(sample, background));
       };
-      const imagePlacements = imagesAtPoint.map((image) => {
-        const imageAncestors = new Set();
-        for (let node = image.parentElement; node; node = node.parentElement) imageAncestors.add(node);
-        const commonAncestor = [...ancestors].reverse().find((node) => imageAncestors.has(node));
-        const imagePath = [];
-        for (let node = image.parentElement; node && node !== commonAncestor; node = node.parentElement) imagePath.unshift(node);
-        return { image, commonAncestor, imagePath };
-      });
+      // Collects the layers painted in root's stacking context, in tree order,
+      // restricted to `relevant` (nodes on a path to a painter at the sample point).
+      // Non-stacking wrappers flatten into it, so their z-indexed descendants escape
+      // wrapper order; stacking-context layers stay atomic with their descendants.
+      const collectPaintItems = (root, relevant, path = [], items = []) => {
+        for (const layer of paintLayers(root)) {
+          if (!relevant.has(layer)) continue;
+          const layerPath = [...path, layer];
+          const atomic = createsStackingContext(layer);
+          items.push({ node: layer, path: layerPath, atomic });
+          if (!atomic) collectPaintItems(layer, relevant, layerPath, items);
+        }
+        return items;
+      };
+      // CSS paint order within one stacking context: z-index, then in-flow before
+      // positioned at the same z-index, then tree order.
+      const inPaintOrder = (items) => items.map((item, order) => ({ item, order, key: stackingKey(item.path) }))
+        .sort((left, right) => left.key.zIndex - right.key.zIndex
+          || Number(left.key.positioned) - Number(right.key.positioned) || left.order - right.order)
+        .map(({ item }) => item);
+      // A layer's own background and image pixel, when they cover the sample point
+      // and no overflow box below `clipRoot` hides them.
+      const paintOwnLayer = async (node, currentBackgrounds, clipRoot, blur) => {
+        if (!coversSamplePoint(node) || isClippedWithin(node, clipRoot)) return currentBackgrounds;
+        let painted = currentBackgrounds;
+        if (paintsOwnBackground(styleOf(node))) painted = await applyNodeBackground(node, painted);
+        if (isPaintedImage(node)) painted = await applyImagePixel(node, painted, blur);
+        return painted;
+      };
+      // Stacking contexts paint atomically as opacity groups: own layer, then their
+      // flattened descendants in paint order. Flattened items have opacity 1, since
+      // opacity < 1 always creates a stacking context.
+      const paintItem = (item, currentBackgrounds, relevant, clipRoot, blur) => (!item.atomic
+        ? paintOwnLayer(item.node, currentBackgrounds, clipRoot, blur)
+        : applyOpacityGroup(item.node, currentBackgrounds, async (groupBackgrounds) => {
+          let painted = await paintOwnLayer(item.node, groupBackgrounds, clipRoot, blur);
+          for (const child of inPaintOrder(collectPaintItems(item.node, relevant))) {
+            painted = await paintItem(child, painted, relevant, clipRoot, blur);
+          }
+          return painted;
+        }));
       const opacityScopes = [];
-      // Overlays already painted above a DOM image must not be painted again as siblings.
-      const imageOverlays = new Set();
-      for (const node of ancestors) {
+      for (const [level, node] of ancestors.entries()) {
         const nodeStyle = getComputedStyle(node);
         const nodeOpacity = Number(nodeStyle.opacity);
         if (nodeOpacity < 1) {
           opacityScopes.push({ node, opacity: nodeOpacity, backdrop: backgrounds.map((background) => [...background]) });
         }
         if (paintsCanvas(node) || coversSamplePoint(node)) backgrounds = await applyNodeBackground(node, backgrounds);
-        // Paint overlapping images by CSS stacking order under this ancestor, not
-        // document.images order. Compare paths at their first divergent layer; a
-        // layer's order comes from its first stacking-context node (non-stacking
-        // wrappers let descendant z-indexes compete), then positioned-after-in-flow,
-        // then tree order.
-        const stackingKey = (path, depth) => {
-          const stackingNode = path.slice(depth).find(createsStackingContext);
-          const positionedNode = stackingNode ?? path.slice(depth).find((pathNode) => styleOf(pathNode).position !== 'static');
-          return { zIndex: stackingNode ? zIndexOf(stackingNode) : 0, positioned: Boolean(positionedNode) };
-        };
-        const comparePlacements = (left, right) => {
-          const leftPath = [...left.imagePath, left.image];
-          const rightPath = [...right.imagePath, right.image];
-          let depth = 0;
-          while (depth < leftPath.length && leftPath[depth] === rightPath[depth]) depth += 1;
-          if (depth >= leftPath.length || depth >= rightPath.length) return 0;
-          const leftKey = stackingKey(leftPath, depth);
-          const rightKey = stackingKey(rightPath, depth);
-          const parentLayers = paintLayers(depth === 0 ? node : leftPath[depth - 1]);
-          return leftKey.zIndex - rightKey.zIndex
-            || Number(leftKey.positioned) - Number(rightKey.positioned)
-            || parentLayers.indexOf(leftPath[depth]) - parentLayers.indexOf(rightPath[depth]);
-        };
-        const nodePlacements = imagePlacements.filter(({ commonAncestor }) => commonAncestor === node)
-          .sort(comparePlacements);
-        for (const placement of nodePlacements) {
-          if (!placement.image.complete) placement.image.loading = 'eager';
-          try {
-            await placement.image.decode();
-          } catch {
-            imageSamplingFailed = true;
-          }
-          const imageStyle = getComputedStyle(placement.image);
-          // Backdrop blurs on ancestors painted above this image (including the text
-          // element) filter its pixels; stacked Gaussian blurs add in variance.
-          const backdropBlur = Math.sqrt(ancestors.slice(ancestors.indexOf(node) + 1)
-            .flatMap((blurNode) => [...(getComputedStyle(blurNode).backdropFilter ?? '')
-              .matchAll(/blur\((\d*\.?\d+)px\)/g)].map((match) => Number(match[1]) ** 2))
-            .reduce((sum, variance) => sum + variance, 0));
-          const sample = sampleImage(placement.image, samplePoint, placement.image.getBoundingClientRect(),
-            imageStyle.objectFit, imageStyle.objectPosition, undefined, undefined, backdropBlur);
-          if (!sample) imageSamplingFailed = true;
-          // Each wrapper and the image itself nest as opacity groups; the image pixel
-          // paints innermost, above the image element's own background.
-          const imageChain = [...placement.imagePath, placement.image];
-          const paintImageChain = (depth, chainBackgrounds) => applyOpacityGroup(imageChain[depth], chainBackgrounds,
-            async (groupBackgrounds) => {
-              const painted = await applyNodeBackground(imageChain[depth], groupBackgrounds);
-              if (depth < imageChain.length - 1) return paintImageChain(depth + 1, painted);
-              return sample ? painted.map((background) => composite(sample, background)) : painted;
-            });
-          let imageBackgrounds = await paintImageChain(0, backgrounds);
-
-          const targetChild = ancestors[ancestors.indexOf(node) + 1];
-          const imageChild = placement.imagePath[0] ?? placement.image;
-          const siblings = [...node.children];
-          const imageChildIndex = siblings.indexOf(imageChild);
-          const targetChildIndex = siblings.indexOf(targetChild);
-          if (imageChildIndex >= 0 && targetChildIndex > imageChildIndex) {
-            for (const overlay of siblings.slice(imageChildIndex + 1, targetChildIndex)) {
-              imageBackgrounds = await applySiblingGroup(overlay, imageBackgrounds);
-              imageOverlays.add(overlay);
-            }
-          }
-          backgrounds = imageBackgrounds;
-        }
-        const siblings = paintLayers(node);
-        const target = targetLayerOf(node, ancestors.indexOf(node));
-        const siblingLayers = siblings.map((sibling, siblingIndex) => ({
-          sibling,
-          siblingIndex,
-          zIndex: zIndexOf(sibling),
-        }));
-        const negativeLayersHidden = siblingLayers.some(({ zIndex }) => zIndex < 0)
+        // Backdrop blurs on deeper ancestors (including the text element) filter the
+        // image pixels painted at this level; stacked Gaussian blurs add in variance.
+        const blur = Math.sqrt(ancestors.slice(level + 1)
+          .flatMap((blurNode) => [...(getComputedStyle(blurNode).backdropFilter ?? '')
+            .matchAll(/blur\((\d*\.?\d+)px\)/g)].map((match) => Number(match[1]) ** 2))
+          .reduce((sum, variance) => sum + variance, 0));
+        const targetChild = ancestors[level + 1];
+        const layers = paintLayers(node);
+        const target = targetLayerOf(node, level);
+        const negativeLayersHidden = layers.some((layer) => zIndexOf(layer) < 0)
           && await opaqueAncestorPaintCovers(node, samplePoint);
-        const backgroundSiblings = siblingLayers.filter(({ sibling, siblingIndex, zIndex }) => (
-          zIndex < target.zIndex || (zIndex === target.zIndex && siblingIndex < target.index)
-        ) && !(zIndex < 0 && negativeLayersHidden) && !imageOverlays.has(sibling)
-          && !imagesAtPoint.some((image) => sibling === image || sibling.contains?.(image)))
-          .sort((left, right) => left.zIndex - right.zIndex || left.siblingIndex - right.siblingIndex);
-        for (const { sibling } of backgroundSiblings) {
-          backgrounds = await applySiblingGroup(sibling, backgrounds);
+        // Only layers on a path to a visible, unclipped painter at the point matter.
+        const relevant = new Set();
+        for (const sibling of layers) {
+          if (sibling === targetChild) continue;
+          for (const paintNode of subtreePaintNodes(sibling)) {
+            if (!coversSamplePoint(paintNode) || isClippedWithin(paintNode, sibling)) continue;
+            for (let pathNode = paintNode; pathNode && !relevant.has(pathNode);
+              pathNode = pathNode === sibling ? null : pathNode.parentElement) relevant.add(pathNode);
+          }
+        }
+        for (const item of inPaintOrder(collectPaintItems(node, relevant))) {
+          const key = stackingKey(item.path);
+          if (key.zIndex < 0 && negativeLayersHidden) continue;
+          if (!paintsBehindTarget(key, layers.indexOf(item.path[0]), target)) continue;
+          backgrounds = await paintItem(item, backgrounds, relevant, item.path[0], blur);
         }
       }
       const opacityScopeNodes = new Set(opacityScopes.map(({ node }) => node));
@@ -932,11 +896,12 @@ test('contrast measurement stacks overlapping DOM images in paint order', async 
   const [black, white] = [svg('#000'), svg('#fff')];
   const image = (src, zIndex) => `<img src="${src}" alt="" style="position:absolute;inset:0;width:100%;height:100%;z-index:${zIndex}">`;
   const cases = [
-    { label: 'direct siblings', wrap: (images) => images },
-    { label: 'shared wrapper', wrap: (images) => `<div>${images}</div>` },
+    { label: 'direct siblings', wrap: (top, bottom) => `${top}${bottom}` },
+    { label: 'shared wrapper', wrap: (top, bottom) => `<div>${top}${bottom}</div>` },
+    { label: 'separate wrappers', wrap: (top, bottom) => `<div>${top}</div><div>${bottom}</div>` },
   ];
   for (const { label, wrap } of cases) {
-    await page.setContent(`<div style="position:relative;width:240px;height:40px">${wrap(`${image(black, 1)}${image(white, 0)}`)}<span id="image-label" style="position:relative;z-index:2;color:#000;font-size:12px">Black label over the top black image</span></div>`);
+    await page.setContent(`<div style="position:relative;width:240px;height:40px">${wrap(image(black, 1), image(white, 0))}<span id="image-label" style="position:relative;z-index:2;color:#000;font-size:12px">Black label over the top black image</span></div>`);
     await page.evaluate((sources) => Promise.all(sources.map((src) => {
       const loaded = new Image();
       loaded.src = src;
@@ -965,6 +930,30 @@ test('contrast measurement ignores visibility-hidden DOM images', async ({ page 
     const result = await renderedContrast(page.locator('#image-label'));
     expect(result.ratio, `${label}: ${JSON.stringify(result)}`).toBeLessThan(4.5);
   }
+});
+
+test('contrast measurement ignores DOM images above the text', async ({ page }) => {
+  const source = `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10" fill="#000"/></svg>')}`;
+  await page.setContent(`<div style="position:relative;width:240px;height:40px;background:#fff"><img src="${source}" alt="" style="position:absolute;inset:0;width:100%;height:100%;z-index:2"><span id="image-label" style="position:relative;z-index:1;color:#fff;font-size:12px">White label under a black image</span></div>`);
+  await page.evaluate(async (src) => {
+    const loaded = new Image();
+    loaded.src = src;
+    await loaded.decode();
+  }, source);
+  const result = await renderedContrast(page.locator('#image-label'));
+  expect(result.ratio, JSON.stringify(result)).toBeLessThan(4.5);
+});
+
+test('contrast measurement keeps painted descendants beside images', async ({ page }) => {
+  const source = `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"/>')}`;
+  await page.setContent(`<div style="position:relative;width:240px;height:40px;background:#fff"><div style="position:absolute;inset:0"><div style="position:absolute;inset:0;background:#000"></div><img src="${source}" alt="" style="position:absolute;inset:0;width:100%;height:100%"></div><span id="image-label" style="position:relative;z-index:1;color:#000;font-size:12px">Black label over a black layer</span></div>`);
+  await page.evaluate(async (src) => {
+    const loaded = new Image();
+    loaded.src = src;
+    await loaded.decode();
+  }, source);
+  const result = await renderedContrast(page.locator('#image-label'));
+  expect(result.ratio, JSON.stringify(result)).toBeLessThan(4.5);
 });
 
 test('home has exactly one main landmark', async ({ page }) => {
