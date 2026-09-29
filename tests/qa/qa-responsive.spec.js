@@ -162,15 +162,23 @@ for (const vp of heroFoldViewports) {
       expect(portraitBox.x).toBeGreaterThanOrEqual(invoice.x + invoice.width);
     }
 
-    const overlays = portrait.locator('xpath=..').locator('span.absolute:visible').filter({ hasText: /\S/ });
-    const labels = await overlays.allTextContents();
-    if (vp.stacked) {
-      expect(labels.map((label) => label.trim())).toEqual(['REC']);
-      for (const box of await Promise.all((await overlays.all()).map((o) => o.boundingBox()))) {
-        expect(box.y).toBeGreaterThanOrEqual(portraitBox.y + portraitBox.height * 0.55);
+    const face = {
+      x: portraitBox.x + portraitBox.width * 0.36,
+      y: portraitBox.y + portraitBox.height * 0.22,
+      width: portraitBox.width * 0.28,
+      height: portraitBox.height * 0.25,
+    };
+    const frame = portrait.locator('xpath=../..');
+    for (const label of ['engineer · 0.99', 'ID 001 · TRACKED', 'REC']) {
+      const badge = frame.locator('span.absolute').filter({ hasText: label });
+      await expect(badge, label).toBeVisible();
+      const box = await badge.boundingBox();
+      expect(box.x, `${label} left edge`).toBeGreaterThanOrEqual(0);
+      expect(box.x + box.width, `${label} right edge`).toBeLessThanOrEqual(vp.width);
+      expect(boxesOverlap(box, face), `${label} must not cover the face`).toBe(false);
+      if (vp.stacked && label !== 'REC') {
+        expect(boxesOverlap(box, portraitBox), `${label} must sit outside the portrait`).toBe(false);
       }
-    } else {
-      expect(labels.map((t) => t.trim())).toEqual(expect.arrayContaining(['engineer · 0.99', 'ID 001 · TRACKED']));
     }
   });
 }

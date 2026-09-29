@@ -323,7 +323,7 @@ const Hero = () => {
 
             {/* Right: Photo detection card */}
             <div className="flex justify-center items-center lg:col-start-2 lg:row-start-1 max-lg:mx-auto max-lg:w-full max-lg:max-w-[220px] max-md:max-w-[110px] max-md:mt-2">
-              <div className="relative w-full max-w-[300px] p-8 overflow-visible max-md:p-3 max-md:max-w-[110px]">
+              <div className="relative w-full max-w-[300px] p-8 overflow-visible max-md:px-3 max-md:py-8 max-md:max-w-[110px]">
                 {/* Ghost trail frames behind */}
                 <div className="absolute inset-8 pointer-events-none z-[1] overflow-visible max-md:inset-6" aria-hidden="true">
                   {[
@@ -390,17 +390,20 @@ const Hero = () => {
                     />
                   )}
 
-                  <span className="absolute top-[22px] left-[22px] z-[4] max-lg:hidden inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm max-md:top-4 max-md:left-4 max-md:text-[10px] max-md:px-2 max-md:py-1">
-                    engineer · 0.99
-                  </span>
-                  <span className="absolute bottom-[22px] left-[22px] z-[4] max-lg:hidden inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm max-md:bottom-4 max-md:left-4 max-md:text-[10px] max-md:px-2 max-md:py-1">
-                    ID 001 · TRACKED
-                  </span>
                   <span className="absolute bottom-[22px] right-[22px] z-[4] inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-red-400/35 font-mono text-[11px] text-red-400 tracking-wide backdrop-blur-sm max-md:bottom-4 max-md:right-4 max-md:text-[10px] max-md:px-2 max-md:py-1">
                     <span className="w-[7px] h-[7px] rounded-full bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.7)]" />
                     REC
                   </span>
                 </div>
+
+                {/* Portrait badges sit on the photo from lg up; below lg the photo is too
+                    narrow, so they move into the frame padding above/below it to keep the face clear. */}
+                <span className="absolute z-[4] whitespace-nowrap inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm lg:top-[54px] lg:left-[54px] max-lg:top-0 max-lg:left-1/2 max-lg:-translate-x-1/2 max-md:text-[10px] max-md:px-2 max-md:py-1">
+                  engineer · 0.99
+                </span>
+                <span className="absolute z-[4] whitespace-nowrap inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm lg:bottom-[54px] lg:left-[54px] max-lg:bottom-0 max-lg:left-1/2 max-lg:-translate-x-1/2 max-md:text-[10px] max-md:px-2 max-md:py-1">
+                  ID 001 · TRACKED
+                </span>
               </div>
             </div>
           </div>
