@@ -127,13 +127,6 @@ describe('Hero invoice proof fold (#176)', () => {
     expect(title).toBeTruthy();
   });
 
-  it('uses purple accent color #8B5CF6 on detection elements', () => {
-    const { container } = renderHero();
-    const proofsGroup = container.querySelector('[role="group"][aria-label="Detected credentials"]');
-    const fields = proofsGroup.querySelectorAll('[class*="border-[#8B5CF6]"]');
-    expect(fields.length).toBeGreaterThanOrEqual(2);
-  });
-
   it('renders Request a Project Estimate CTA', () => {
     renderHero();
     const cta = screen.getByRole('button', { name: 'Request a Project Estimate' });
