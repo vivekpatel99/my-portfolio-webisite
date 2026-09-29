@@ -491,6 +491,8 @@ const measureRenderedContrast = (target) => {
         return { image, commonAncestor, imagePath };
       });
       const opacityScopes = [];
+      // Overlays already painted above a DOM image must not be painted again as siblings.
+      const imageOverlays = new Set();
       for (const node of ancestors) {
         const nodeStyle = getComputedStyle(node);
         const nodeOpacity = Number(nodeStyle.opacity);
@@ -527,6 +529,7 @@ const measureRenderedContrast = (target) => {
           if (imageChildIndex >= 0 && targetChildIndex > imageChildIndex) {
             for (const overlay of siblings.slice(imageChildIndex + 1, targetChildIndex)) {
               imageBackgrounds = await applySiblingGroup(overlay, imageBackgrounds);
+              imageOverlays.add(overlay);
             }
           }
           backgrounds = imageBackgrounds;
@@ -542,7 +545,7 @@ const measureRenderedContrast = (target) => {
           && await opaqueAncestorPaintCovers(node, samplePoint);
         const backgroundSiblings = siblingLayers.filter(({ sibling, siblingIndex, zIndex }) => (
           zIndex < target.zIndex || (zIndex === target.zIndex && siblingIndex < target.index)
-        ) && !(zIndex < 0 && negativeLayersHidden)
+        ) && !(zIndex < 0 && negativeLayersHidden) && !imageOverlays.has(sibling)
           && !imagesAtPoint.some((image) => sibling === image || sibling.contains?.(image)))
           .sort((left, right) => left.zIndex - right.zIndex || left.siblingIndex - right.siblingIndex);
         for (const { sibling } of backgroundSiblings) {
@@ -808,6 +811,20 @@ test('contrast measurement composites DOM image opacity groups', async ({ page }
     const result = await renderedContrast(page.locator('#image-label'));
     expect(result.ratio, `${label}: ${JSON.stringify(result)}`).toBeLessThan(4.5);
   }
+});
+
+test('contrast measurement applies image overlays once', async ({ page }) => {
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10" fill="#fff"/></svg>';
+  const source = `data:image/svg+xml,${encodeURIComponent(svg)}`;
+  // White image -> 50% black scrim -> white text renders ~3.9:1; double-counting the scrim reports ~8:1.
+  await page.setContent(`<div style="position:relative;width:240px;height:40px"><img src="${source}" alt="" style="position:absolute;inset:0;width:100%;height:100%"><div style="position:absolute;inset:0;background:rgba(0,0,0,0.5)"></div><span id="image-label" style="position:relative;color:#fff;font-size:12px">Scrimmed image label</span></div>`);
+  await page.evaluate(async (src) => {
+    const loaded = new Image();
+    loaded.src = src;
+    await loaded.decode();
+  }, source);
+  const result = await renderedContrast(page.locator('#image-label'));
+  expect(result.ratio, JSON.stringify(result)).toBeLessThan(4.5);
 });
 
 test('home has exactly one main landmark', async ({ page }) => {
