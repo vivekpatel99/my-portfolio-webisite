@@ -3,6 +3,7 @@ import { readFileSync, existsSync } from 'fs';
 import path from 'path';
 import { caseStudies } from '../../publication/public-case-studies.js';
 import { defaultSeo, routeSeo } from '../../src/lib/seoConfig.js';
+import { serviceOffers } from '../../src/data/serviceOffers.js';
 import { resolveLoopbackRedirectUrl, resolveQaTargets } from './qa-local-only.js';
 
 const PREVIEW = process.env.QA_PREVIEW_URL ?? 'http://127.0.0.1:3000';
@@ -35,6 +36,12 @@ const expectedRoutes = [
     canonical: 'https://www.vivekapatel.com/data-policy/',
     title: /Cookie Policy/i,
   },
+  ...serviceOffers.map((offer) => ({
+    route: `service-${offer.id}`,
+    path: `/services/${offer.id}`,
+    canonical: `https://www.vivekapatel.com/services/${offer.id}/`,
+    title: new RegExp(offer.name, 'i'),
+  })),
   ...caseStudies.map((story) => ({
     route: `project-${story.slug}`,
     path: `/project/${story.slug}`,

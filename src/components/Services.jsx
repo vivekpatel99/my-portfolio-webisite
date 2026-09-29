@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   HOURLY_FROM_LABEL,
   serviceOffers,
+  serviceRouteForId,
   serviceTimelineLabel,
 } from '@/data/serviceOffers';
 
@@ -68,7 +69,7 @@ const Services = () => {
                 </dl>
 
                 <Link
-                  to={`/services/${service.id}`}
+                  to={serviceRouteForId(service.id)}
                   className="self-start text-[0.9rem] text-[#a78bfa] border-b border-[rgba(167,139,250,0.4)] pb-0.5 hover:text-white hover:border-[#8B5CF6] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5CF6] transition-colors"
                 >
                   Scope details<span className="sr-only"> for {service.title.toLowerCase()}</span> →
