@@ -381,8 +381,11 @@ const measureRenderedContrast = (target) => {
       range.selectNodeContents(node);
       return [...range.getClientRects()].filter((textRect) => textRect.width > 1 && textRect.height > 1);
     });
+    // `visibility` inherits, so the image's computed value reflects hidden ancestors
+    // (and a descendant re-declaring `visible`, which CSS honours).
+    const paintedImages = [...document.images].filter((image) => getComputedStyle(image).visibility === 'visible');
     const samplePoints = textRects.flatMap((textRect) => {
-      const overlapsImage = [...document.images].some((image) => {
+      const overlapsImage = paintedImages.some((image) => {
         const imageRect = image.getBoundingClientRect();
         return textRect.left < imageRect.right && textRect.right > imageRect.left
           && textRect.top < imageRect.bottom && textRect.bottom > imageRect.top;
@@ -416,7 +419,7 @@ const measureRenderedContrast = (target) => {
     if (samplePoints.length === 0) samplePoints.push({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
 
     const sampleAtPoint = async (samplePoint) => {
-      const imagesAtPoint = [...document.images].filter((image) => {
+      const imagesAtPoint = paintedImages.filter((image) => {
         const imageRect = image.getBoundingClientRect();
         return samplePoint.x >= imageRect.left && samplePoint.x <= imageRect.right
           && samplePoint.y >= imageRect.top && samplePoint.y <= imageRect.bottom;
@@ -939,6 +942,26 @@ test('contrast measurement stacks overlapping DOM images in paint order', async 
       loaded.src = src;
       return loaded.decode();
     })), [black, white]);
+    const result = await renderedContrast(page.locator('#image-label'));
+    expect(result.ratio, `${label}: ${JSON.stringify(result)}`).toBeLessThan(4.5);
+  }
+});
+
+test('contrast measurement ignores visibility-hidden DOM images', async ({ page }) => {
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10" fill="#000"/></svg>';
+  const source = `data:image/svg+xml,${encodeURIComponent(svg)}`;
+  const image = (style) => `<img src="${source}" alt="" style="position:absolute;inset:0;width:100%;height:100%;${style}">`;
+  const cases = [
+    { label: 'hidden image', paint: image('visibility:hidden') },
+    { label: 'hidden image ancestor', paint: `<div style="visibility:hidden">${image('')}</div>` },
+  ];
+  for (const { label, paint } of cases) {
+    await page.setContent(`<div style="position:relative;width:240px;height:40px;background:#fff">${paint}<span id="image-label" style="position:relative;color:#fff;font-size:12px">White label over a hidden image</span></div>`);
+    await page.evaluate(async (src) => {
+      const loaded = new Image();
+      loaded.src = src;
+      await loaded.decode();
+    }, source);
     const result = await renderedContrast(page.locator('#image-label'));
     expect(result.ratio, `${label}: ${JSON.stringify(result)}`).toBeLessThan(4.5);
   }
