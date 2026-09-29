@@ -171,11 +171,59 @@ const measureRenderedContrast = (target) => {
     const top = rect.top + offset(position[1] ?? '50%', rect.height - height);
     return point.x >= left && point.x <= left + width && point.y >= top && point.y <= top + height;
   };
+  // Pseudo-elements have no DOM node, so each rendered absolute/fixed ::before or
+  // ::after becomes a stable paint layer with its computed style and resolved box.
+  // In-flow pseudo boxes have no resolvable geometry and are not modelled.
+  const pseudoLayerCache = new WeakMap();
+  const pseudoRect = (element, pseudoStyle) => {
+    const px = (value) => Number.parseFloat(value) || 0;
+    let originLeft = 0;
+    let originTop = 0;
+    if (pseudoStyle.position === 'absolute') {
+      let block = element;
+      while (block !== document.documentElement && getComputedStyle(block).position === 'static'
+        && getComputedStyle(block).transform === 'none') block = block.parentElement;
+      const blockRect = block.getBoundingClientRect();
+      const blockStyle = getComputedStyle(block);
+      originLeft = blockRect.left + px(blockStyle.borderLeftWidth);
+      originTop = blockRect.top + px(blockStyle.borderTopWidth);
+    }
+    const contentBox = pseudoStyle.boxSizing !== 'border-box';
+    const width = px(pseudoStyle.width) + (contentBox ? px(pseudoStyle.paddingLeft) + px(pseudoStyle.paddingRight)
+      + px(pseudoStyle.borderLeftWidth) + px(pseudoStyle.borderRightWidth) : 0);
+    const height = px(pseudoStyle.height) + (contentBox ? px(pseudoStyle.paddingTop) + px(pseudoStyle.paddingBottom)
+      + px(pseudoStyle.borderTopWidth) + px(pseudoStyle.borderBottomWidth) : 0);
+    const left = originLeft + px(pseudoStyle.left) + px(pseudoStyle.marginLeft);
+    const top = originTop + px(pseudoStyle.top) + px(pseudoStyle.marginTop);
+    return { left, top, width, height, right: left + width, bottom: top + height };
+  };
+  const pseudoLayer = (element, pseudo) => {
+    const pseudoStyle = getComputedStyle(element, pseudo);
+    if (['none', 'normal'].includes(pseudoStyle.content) || pseudoStyle.display === 'none'
+      || !['absolute', 'fixed'].includes(pseudoStyle.position)) return null;
+    if (!pseudoLayerCache.has(element)) pseudoLayerCache.set(element, {});
+    const layers = pseudoLayerCache.get(element);
+    layers[pseudo] ??= {
+      pseudoOf: element,
+      pseudo,
+      parentElement: element,
+      getBoundingClientRect: () => pseudoRect(element, getComputedStyle(element, pseudo)),
+    };
+    return layers[pseudo];
+  };
+  const styleOf = (node) => (node.pseudoOf ? getComputedStyle(node.pseudoOf, node.pseudo) : getComputedStyle(node));
+  const zIndexOf = (node) => Number.parseInt(styleOf(node).zIndex, 10) || 0;
+  // Child paint layers in DOM paint order: ::before, element children, ::after.
+  const paintLayers = (node) => (node.pseudoOf ? [] : [
+    pseudoLayer(node, '::before'), ...node.children, pseudoLayer(node, '::after'),
+  ].filter(Boolean));
   const paintsOwnBackground = (nodeStyle) => nodeStyle.visibility !== 'hidden'
     && (nodeStyle.backgroundImage !== 'none' || (parseColor(nodeStyle.backgroundColor)?.alpha ?? 0) > 0);
-  // Includes descendants: a transparent box can still carry painted (and overflowing) children.
-  const subtreePaintNodes = (root) => [root, ...root.querySelectorAll('*')]
-    .filter((paintNode) => paintsOwnBackground(getComputedStyle(paintNode)));
+  // Includes descendants and their pseudo layers: a transparent box can still carry
+  // painted (and overflowing) children.
+  const subtreePaintNodes = (root) => (root.pseudoOf ? [root] : [root, ...root.querySelectorAll('*')])
+    .flatMap((node) => (node.pseudoOf ? [node] : [node, ...paintLayers(node).filter((layer) => layer.pseudoOf)]))
+    .filter((paintNode) => paintsOwnBackground(styleOf(paintNode)));
   const createsStackingContext = (node) => {
     if (node === document.documentElement) return true;
     const nodeStyle = getComputedStyle(node);
@@ -297,14 +345,18 @@ const measureRenderedContrast = (target) => {
     if (!parsedForeground) throw new Error('Could not parse rendered foreground color');
     const foregroundOpacity = ancestors.reduce((opacity, node) => opacity * Number(getComputedStyle(node).opacity), 1);
     const renderedForeground = { ...parsedForeground, alpha: parsedForeground.alpha * foregroundOpacity };
-    const siblingPaintsBehind = (ancestor, ancestorIndex, sibling, siblingIndex) => {
+    // The target's own text paints above its z >= 0 layers, so for the target
+    // itself only negative-z layers sit behind the text.
+    const targetLayerOf = (ancestor, ancestorIndex) => {
       const targetChild = ancestors[ancestorIndex + 1];
-      if (!targetChild) return false;
-      const siblings = [...ancestor.children];
-      const targetIndex = siblings.indexOf(targetChild);
-      const targetZIndex = Number.parseInt(getComputedStyle(targetChild).zIndex, 10) || 0;
-      const siblingZIndex = Number.parseInt(getComputedStyle(sibling).zIndex, 10) || 0;
-      return siblingZIndex < targetZIndex || (siblingZIndex === targetZIndex && siblingIndex < targetIndex);
+      return targetChild
+        ? { index: paintLayers(ancestor).indexOf(targetChild), zIndex: zIndexOf(targetChild) }
+        : { index: -1, zIndex: 0 };
+    };
+    const siblingPaintsBehind = (ancestor, ancestorIndex, sibling, siblingIndex) => {
+      const target = targetLayerOf(ancestor, ancestorIndex);
+      const siblingZIndex = zIndexOf(sibling);
+      return siblingZIndex < target.zIndex || (siblingZIndex === target.zIndex && siblingIndex < target.index);
     };
     const textNodes = [...element.childNodes].filter((node) => node.nodeType === Node.TEXT_NODE
       && node.textContent.trim());
@@ -322,9 +374,7 @@ const measureRenderedContrast = (target) => {
       });
       const hasSpatialBackground = ancestors.some((node, index) => {
         if (/gradient\(|url\(/.test(getComputedStyle(node).backgroundImage)) return true;
-        const targetChild = ancestors[index + 1];
-        if (!targetChild) return false;
-        return [...node.children].some((sibling, siblingIndex) => {
+        return paintLayers(node).some((sibling, siblingIndex) => {
           if (!siblingPaintsBehind(node, index, sibling, siblingIndex)) return false;
           return subtreePaintNodes(sibling).some((paintNode) => {
             const paintRect = paintNode.getBoundingClientRect();
@@ -353,7 +403,7 @@ const measureRenderedContrast = (target) => {
       let backgrounds = [[0, 0, 0]];
       let imageSamplingFailed = false;
       const applyNodeBackground = async (node, currentBackgrounds) => {
-        const nodeStyle = getComputedStyle(node);
+        const nodeStyle = styleOf(node);
         const color = parseColor(nodeStyle.backgroundColor);
         if (color && color.alpha > 0) currentBackgrounds = currentBackgrounds.map((background) => composite(color, background));
         const imageLayers = splitLayers(nodeStyle.backgroundImage);
@@ -388,7 +438,7 @@ const measureRenderedContrast = (target) => {
       // An opacity < 1 node is its own group: paint it over each backdrop, then
       // mix that result back into the same backdrop by the group opacity.
       const applyOpacityGroup = async (node, currentBackgrounds, paint) => {
-        const groupOpacity = Number(getComputedStyle(node).opacity);
+        const groupOpacity = Number(styleOf(node).opacity);
         if (groupOpacity >= 1) return paint(currentBackgrounds);
         const grouped = await Promise.all(currentBackgrounds.map(async (backdrop) => (await paint([backdrop]))
           .map((painted) => composite({ rgb: painted, alpha: groupOpacity }, backdrop))));
@@ -402,15 +452,12 @@ const measureRenderedContrast = (target) => {
       };
       // Simplified CSS paint order among children: z-index, then in-flow before
       // positioned at the same level, then DOM order.
-      const inPaintOrder = (children) => children.map((child, index) => {
-        const childStyle = getComputedStyle(child);
-        return {
-          child,
-          index,
-          zIndex: Number.parseInt(childStyle.zIndex, 10) || 0,
-          positioned: childStyle.position !== 'static',
-        };
-      }).sort((left, right) => left.zIndex - right.zIndex
+      const inPaintOrder = (children) => children.map((child, index) => ({
+        child,
+        index,
+        zIndex: zIndexOf(child),
+        positioned: styleOf(child).position !== 'static',
+      })).sort((left, right) => left.zIndex - right.zIndex
         || Number(left.positioned) - Number(right.positioned) || left.index - right.index)
         .map(({ child }) => child);
       // Paints a sibling subtree at the sample point: each node's own background,
@@ -425,10 +472,10 @@ const measureRenderedContrast = (target) => {
         const paintSubtree = (node, subtreeBackgrounds) => applyOpacityGroup(node, subtreeBackgrounds,
           async (groupBackgrounds) => {
             let painted = groupBackgrounds;
-            if (paintsOwnBackground(getComputedStyle(node)) && coversSamplePoint(node)) {
+            if (paintsOwnBackground(styleOf(node)) && coversSamplePoint(node)) {
               painted = await applyNodeBackground(node, painted);
             }
-            for (const child of inPaintOrder([...node.children].filter((child) => paintPath.has(child)))) {
+            for (const child of inPaintOrder(paintLayers(node).filter((child) => paintPath.has(child)))) {
               painted = await paintSubtree(child, painted);
             }
             return painted;
@@ -484,22 +531,19 @@ const measureRenderedContrast = (target) => {
           }
           backgrounds = imageBackgrounds;
         }
-        const targetChild = ancestors[ancestors.indexOf(node) + 1];
-        if (!targetChild) continue;
-        const siblings = [...node.children];
-        const targetIndex = siblings.indexOf(targetChild);
-        const targetZIndex = Number.parseInt(getComputedStyle(targetChild).zIndex, 10) || 0;
+        const siblings = paintLayers(node);
+        const target = targetLayerOf(node, ancestors.indexOf(node));
         const siblingLayers = siblings.map((sibling, siblingIndex) => ({
           sibling,
           siblingIndex,
-          zIndex: Number.parseInt(getComputedStyle(sibling).zIndex, 10) || 0,
+          zIndex: zIndexOf(sibling),
         }));
         const negativeLayersHidden = siblingLayers.some(({ zIndex }) => zIndex < 0)
           && await opaqueAncestorPaintCovers(node, samplePoint);
         const backgroundSiblings = siblingLayers.filter(({ sibling, siblingIndex, zIndex }) => (
-          zIndex < targetZIndex || (zIndex === targetZIndex && siblingIndex < targetIndex)
+          zIndex < target.zIndex || (zIndex === target.zIndex && siblingIndex < target.index)
         ) && !(zIndex < 0 && negativeLayersHidden)
-          && !imagesAtPoint.some((image) => sibling === image || sibling.contains(image)))
+          && !imagesAtPoint.some((image) => sibling === image || sibling.contains?.(image)))
           .sort((left, right) => left.zIndex - right.zIndex || left.siblingIndex - right.siblingIndex);
         for (const { sibling } of backgroundSiblings) {
           backgrounds = await applySiblingGroup(sibling, backgrounds);
@@ -651,6 +695,23 @@ test('contrast measurement paints descendants of transparent positioned siblings
   for (const { label, sibling, child, expectFailure } of cases) {
     await page.setContent(`<div style="position:relative;width:240px;height:40px;background:#fff"><div style="position:absolute;${sibling};z-index:0"><div style="position:absolute;${child};background:#000"></div></div><span id="sibling-label" style="position:relative;z-index:1;color:#000;font-size:12px">Descendant background label</span></div>`);
     const result = await renderedContrast(page.locator('#sibling-label'));
+    if (expectFailure) expect(result.ratio, `${label}: ${JSON.stringify(result)}`).toBeLessThan(4.5);
+    else expect(result.ratio, `${label}: ${JSON.stringify(result)}`).toBeGreaterThanOrEqual(4.5);
+  }
+});
+
+test('contrast measurement paints ::before and ::after backgrounds', async ({ page }) => {
+  const layer = 'content:"";position:absolute;background:#000';
+  const cases = [
+    { label: 'parent ::before', css: `#host::before{${layer};inset:0;z-index:0}`, expectFailure: true },
+    { label: 'parent ::after', css: `#host::after{${layer};inset:0;z-index:0}`, expectFailure: true },
+    { label: 'label ::before below its text', css: `#pseudo-label::before{${layer};inset:0;z-index:-1}`, expectFailure: true },
+    { label: 'uncovered ::before', css: `#host::before{${layer};left:160px;top:0;width:80px;height:40px;z-index:0}`, expectFailure: false },
+    { label: 'faded ::before', css: `#host::before{${layer};inset:0;z-index:0;opacity:0.1}`, expectFailure: false },
+  ];
+  for (const { label, css, expectFailure } of cases) {
+    await page.setContent(`<style>#host{position:relative;width:240px;height:40px;background:#fff}${css}</style><div id="host"><span id="pseudo-label" style="position:relative;z-index:1;color:#000;font-size:12px;white-space:nowrap">Pseudo label</span></div>`);
+    const result = await renderedContrast(page.locator('#pseudo-label'));
     if (expectFailure) expect(result.ratio, `${label}: ${JSON.stringify(result)}`).toBeLessThan(4.5);
     else expect(result.ratio, `${label}: ${JSON.stringify(result)}`).toBeGreaterThanOrEqual(4.5);
   }
