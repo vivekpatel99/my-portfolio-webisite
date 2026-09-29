@@ -81,7 +81,7 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    --invoice-corner: rgba(186, 170, 207, 0.7);
+    --invoice-corner: #8B5CF6;
     background:
       linear-gradient(var(--invoice-corner) 0 0) top left / 12px 1px no-repeat,
       linear-gradient(var(--invoice-corner) 0 0) top left / 1px 12px no-repeat,
