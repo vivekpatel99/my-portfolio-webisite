@@ -9,7 +9,7 @@ import Services from './Services';
 import {
   HOURLY_FROM_LABEL,
   serviceOffers,
-  typicalDurationLabel,
+  serviceTimelineLabel,
 } from '@/data/serviceOffers';
 
 afterEach(cleanup);
@@ -50,7 +50,7 @@ describe('Services offers', () => {
       expect(text).toContain(sentence);
       expect(sentence).toMatch(/^[^.]+\.$/);
       expect(text).not.toContain(offer.summary.slice(sentence.length).trim());
-      expect(text).toContain(typicalDurationLabel(offer));
+      expect(text).toContain(serviceTimelineLabel(offer));
       expect(text).toContain(HOURLY_FROM_LABEL);
       expect(HOURLY_FROM_LABEL).toBe('from €45/hour');
     },
@@ -79,12 +79,14 @@ describe('Services offers', () => {
     expect(new Set(linkNames).size).toBe(3);
   });
 
-  it('keeps the computer-vision offer for existing systems, typically 1–2 weeks', () => {
+  it('shows model development with optimization as part of the computer-vision offer', () => {
     renderServices();
     const cv = serviceOffers.find((offer) => offer.id === 'computer-vision-production-optimization');
     const text = cardFor(cv).textContent;
-    expect(text).toMatch(/For existing YOLO, OCR, OpenCV, ONNX, or edge-AI systems/);
-    expect(text).toContain('Typically 1–2 weeks');
+    expect(text).toMatch(/I build and fine-tune computer-vision models/);
+    expect(text).toMatch(/optimization where needed/);
+    expect(text).toContain('Timeline scoped per project');
+    expect(text).not.toContain('Typically 1–2 weeks');
   });
 
   it('drops the old fixed-scope and ROI chips', () => {

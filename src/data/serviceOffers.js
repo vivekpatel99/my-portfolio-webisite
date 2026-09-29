@@ -1,8 +1,8 @@
 export const HOURLY_FROM_EUR = 45;
 export const HOURLY_FROM_LABEL = `from €${HOURLY_FROM_EUR}/hour`;
 
-export function typicalDurationLabel({ minWeeks, maxWeeks }) {
-  return `Typically ${minWeeks}–${maxWeeks} weeks`;
+export function serviceTimelineLabel({ minWeeks, maxWeeks, timelineLabel }) {
+  return timelineLabel ?? `Typically ${minWeeks}–${maxWeeks} weeks`;
 }
 
 export const serviceOffers = [
@@ -27,19 +27,17 @@ export const serviceOffers = [
   },
   {
     id: 'computer-vision-production-optimization',
-    title: 'COMPUTER VISION PRODUCTION OPTIMIZATION',
+    title: 'COMPUTER VISION MODEL DEVELOPMENT',
     summary:
-      'For existing YOLO, OCR, OpenCV, ONNX, or edge-AI systems that need to become faster and more reliable. I profile the bottlenecks, improve inference flow, and prepare the pipeline for production constraints.',
-    minWeeks: 1,
-    maxWeeks: 2,
+      'I build and fine-tune computer-vision models for image and video tasks, with inference optimization where needed. An engagement can cover training data, evaluation, reviewable outputs, and integration into an agreed workflow.',
+    timelineLabel: 'Timeline scoped per project',
     inScope: [
-      'Profile bottlenecks in an existing YOLO, OCR, OpenCV, ONNX, or edge-AI system',
-      'Improve inference flow',
-      'Fit the pipeline to production constraints',
+      'Define the vision task, data requirements, and evaluation approach',
+      'Build or fine-tune a model for the agreed vision task',
+      'Deliver training and inference code with reviewable outputs',
+      'Optimize inference or deployment where the project needs it',
     ],
     outOfScope: [
-      'Building a computer-vision product from scratch',
-      'Training a new model from zero',
       'Hardware procurement or plant-floor install',
     ],
   },

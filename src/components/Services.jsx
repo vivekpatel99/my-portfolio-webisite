@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   HOURLY_FROM_LABEL,
   serviceOffers,
-  typicalDurationLabel,
+  serviceTimelineLabel,
 } from '@/data/serviceOffers';
 
 const firstSentence = (text) => text.split(/(?<=\.)\s+/)[0];
@@ -24,7 +24,7 @@ const Services = () => {
           SERVICE <span className="text-[#8B5CF6]">OFFERS</span>
         </h2>
         <p className="text-[0.95rem] leading-[1.55] text-[#9ca3af] max-w-[640px] mb-9">
-          Hourly engagements, {HOURLY_FROM_LABEL}. Each offer shows its typical duration, with in- and out-of-scope details on its own page. Estimates go through the contact form.
+          Hourly engagements, {HOURLY_FROM_LABEL}. Each offer shows its timeline, with in- and out-of-scope details on its own page. Estimates go through the contact form.
         </p>
 
         <ul className="grid gap-[14px] lg:grid-cols-3">
@@ -58,8 +58,8 @@ const Services = () => {
 
                 <dl className="mt-auto flex flex-wrap gap-[10px] gap-x-7 mb-5 pt-4 border-t border-[rgba(255,255,255,0.06)] font-mono text-[11px] leading-[1.4] tracking-[0.04em] text-[#6b7280]">
                   <div>
-                    <dt className="inline tracking-[0.08em] uppercase">Duration</dt> ·{' '}
-                    <dd className="inline font-medium text-[#d8caff] font-sans text-[0.88rem] tracking-normal">{typicalDurationLabel(service)}</dd>
+                    <dt className="inline tracking-[0.08em] uppercase">Timeline</dt> ·{' '}
+                    <dd className="inline font-medium text-[#d8caff] font-sans text-[0.88rem] tracking-normal">{serviceTimelineLabel(service)}</dd>
                   </div>
                   <div>
                     <dt className="inline tracking-[0.08em] uppercase">Rate</dt> ·{' '}

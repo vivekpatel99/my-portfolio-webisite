@@ -242,14 +242,20 @@ test('policy, contact, footer, and not-found accent states meet contrast', async
   await expectRenderedContrast(page.getByText('404', { exact: true }), 'Not-found status');
 });
 
-test('open service offer scope lists meet normal-text contrast', async ({ page }) => {
+test('service card and detail scope lists meet normal-text contrast', async ({ page }) => {
   await page.goto('/#services');
-  const trigger = page.locator('#services [role="button"]').filter({ hasText: 'DATA EXTRACTION AUTOMATION SPRINT' });
-  await trigger.click();
-  const panel = page.locator('#service-content-data-extraction-automation-sprint');
-  await expect(panel).toBeVisible();
-  const items = panel.locator('li');
+  const card = page.locator('#services article').first();
+  await expect(card).toBeVisible();
+  await expectRenderedContrast(card.getByRole('heading', { level: 3 }), 'Service offer title');
+  await expectRenderedContrast(card.locator('p'), 'Service offer summary');
+  const details = card.getByRole('link', { name: /Scope details/i });
+  await expectRenderedContrast(details, 'Service scope link');
+  await details.click();
+  await expect(page).toHaveURL(/\/services\/data-extraction-automation-sprint\/?$/);
+  await expect(page.getByRole('heading', { name: 'In scope' })).toBeVisible();
+  const items = page.locator('main li');
   await expect(items).not.toHaveCount(0);
+  await expect(items.first()).toHaveCSS('color', /^rgb\(/);
   const count = await items.count();
   for (let i = 0; i < count; i += 1) {
     await expectRenderedContrast(items.nth(i), `Service offer scope item ${i}`);
