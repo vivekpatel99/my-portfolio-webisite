@@ -285,7 +285,8 @@ const measureRenderedContrast = (target) => {
         return [...node.children].some((sibling, siblingIndex) => {
           if (!siblingPaintsBehind(node, index, sibling, siblingIndex)) return false;
           const siblingStyle = getComputedStyle(sibling);
-          if (!/gradient\(|url\(/.test(siblingStyle.backgroundImage)) return false;
+          if (!/gradient\(|url\(/.test(siblingStyle.backgroundImage)
+            && (parseColor(siblingStyle.backgroundColor)?.alpha ?? 0) === 0) return false;
           const siblingRect = sibling.getBoundingClientRect();
           return textRect.left < siblingRect.right && textRect.right > siblingRect.left
             && textRect.top < siblingRect.bottom && textRect.bottom > siblingRect.top;
@@ -351,7 +352,13 @@ const measureRenderedContrast = (target) => {
         for (let node = image.parentElement; node && node !== commonAncestor; node = node.parentElement) imagePath.unshift(node);
         return { image, commonAncestor, imagePath };
       });
+      const opacityScopes = [];
       for (const node of ancestors) {
+        const nodeStyle = getComputedStyle(node);
+        const nodeOpacity = Number(nodeStyle.opacity);
+        if (nodeOpacity < 1 && parseColor(nodeStyle.backgroundColor)?.alpha === 1) {
+          opacityScopes.push({ node, opacity: nodeOpacity, backdrop: backgrounds.map((background) => [...background]) });
+        }
         backgrounds = await applyNodeBackground(node, backgrounds);
         for (const placement of imagePlacements.filter(({ commonAncestor }) => commonAncestor === node)) {
           let imageBackgrounds = backgrounds;
@@ -399,8 +406,20 @@ const measureRenderedContrast = (target) => {
           }
         }
       }
-      const candidates = backgrounds.map((background) => {
-        const foreground = composite(renderedForeground, background);
+      const opacityScopeNodes = new Set(opacityScopes.map(({ node }) => node));
+      const ungroupedOpacity = ancestors.reduce((opacity, node) => opacity
+        * (opacityScopeNodes.has(node) ? 1 : Number(getComputedStyle(node).opacity)), 1);
+      let candidates = backgrounds.map((background) => ({
+        background,
+        foreground: composite({ ...parsedForeground, alpha: parsedForeground.alpha * ungroupedOpacity }, background),
+      }));
+      for (const scope of opacityScopes.reverse()) {
+        candidates = candidates.flatMap((candidate) => scope.backdrop.map((backdrop) => ({
+          background: composite({ rgb: candidate.background, alpha: scope.opacity }, backdrop),
+          foreground: composite({ rgb: candidate.foreground, alpha: scope.opacity }, backdrop),
+        })));
+      }
+      const measured = candidates.map(({ background, foreground }) => {
         const foregroundLuminance = luminance(foreground);
         const backgroundLuminance = luminance(background);
         return {
@@ -410,7 +429,7 @@ const measureRenderedContrast = (target) => {
           background,
         };
       });
-      const worst = candidates.reduce((result, candidate) => candidate.ratio < result.ratio ? candidate : result);
+      const worst = measured.reduce((result, candidate) => candidate.ratio < result.ratio ? candidate : result);
       return {
         ...worst,
         ratio: imageSamplingFailed ? 1 : worst.ratio,
@@ -500,12 +519,24 @@ test('contrast measurement includes later lower-stack gradient siblings', async 
   expect(result.ratio).toBeLessThan(4.5);
 });
 
+test('contrast measurement samples solid sibling backgrounds across text bounds', async ({ page }) => {
+  await page.setContent('<div style="position:relative;width:320px;height:40px;background:#fff"><span id="sibling-label" style="position:relative;z-index:1;color:#000;font-size:16px;white-space:nowrap">This label reaches the dark sibling on its right</span><div style="position:absolute;left:70%;top:0;width:30%;height:100%;z-index:0;background:#000"></div></div>');
+  const result = await renderedContrast(page.locator('#sibling-label'));
+  expect(result.ratio).toBeLessThan(4.5);
+});
+
 test('contrast measurement composites text and ancestor CSS opacity', async ({ page }) => {
   for (const ancestorOpacity of [false, true]) {
     await page.setContent(`<div style="background:#fff;${ancestorOpacity ? 'opacity:0.1' : ''}"><span id="opacity-label" style="color:#000;font-size:12px;${ancestorOpacity ? '' : 'opacity:0.1'}">Faded label</span></div>`);
     const result = await renderedContrast(page.locator('#opacity-label'), { waitForOpacity: false });
     expect(result.ratio, `ancestor opacity: ${ancestorOpacity}`).toBeLessThan(4.5);
   }
+});
+
+test('contrast measurement composites an opaque opacity group against its outer backdrop', async ({ page }) => {
+  await page.setContent('<div style="background:#fff;padding:8px"><div style="background:#000;opacity:0.5;padding:8px"><span id="opacity-label" style="color:#fff;font-size:12px">White text in a half-opacity black group</span></div></div>');
+  const result = await renderedContrast(page.locator('#opacity-label'), { waitForOpacity: false });
+  expect(result.ratio).toBeLessThan(4.5);
 });
 
 test('contrast measurement samples DOM and CSS background image pixels', async ({ page }) => {
