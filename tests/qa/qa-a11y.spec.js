@@ -267,7 +267,20 @@ const measureRenderedContrast = (target) => {
         return textRect.left < imageRect.right && textRect.right > imageRect.left
           && textRect.top < imageRect.bottom && textRect.bottom > imageRect.top;
       });
-      const hasSpatialBackground = ancestors.some((node) => /gradient\(|url\(/.test(getComputedStyle(node).backgroundImage));
+      const hasSpatialBackground = ancestors.some((node, index) => {
+        if (/gradient\(|url\(/.test(getComputedStyle(node).backgroundImage)) return true;
+        const targetChild = ancestors[index + 1];
+        if (!targetChild) return false;
+        return [...node.children].some((sibling, siblingIndex, siblings) => {
+          const targetIndex = siblings.indexOf(targetChild);
+          if (siblingIndex >= targetIndex) return false;
+          const siblingStyle = getComputedStyle(sibling);
+          if (!/gradient\(|url\(/.test(siblingStyle.backgroundImage)) return false;
+          const siblingRect = sibling.getBoundingClientRect();
+          return textRect.left < siblingRect.right && textRect.right > siblingRect.left
+            && textRect.top < siblingRect.bottom && textRect.bottom > siblingRect.top;
+        });
+      });
       if (!overlapsImage && !hasSpatialBackground) {
         return [{ x: textRect.left + textRect.width / 2, y: textRect.top + textRect.height / 2 }];
       }
@@ -361,6 +374,23 @@ const measureRenderedContrast = (target) => {
           }
           backgrounds = imageBackgrounds;
         }
+        const targetChild = ancestors[ancestors.indexOf(node) + 1];
+        if (!targetChild) continue;
+        const siblings = [...node.children];
+        const targetIndex = siblings.indexOf(targetChild);
+        const targetZIndex = Number.parseInt(getComputedStyle(targetChild).zIndex, 10) || 0;
+        for (const [siblingIndex, sibling] of siblings.entries()) {
+          if (siblingIndex >= targetIndex || imagesAtPoint.some((image) => sibling === image || sibling.contains(image))) continue;
+          const siblingStyle = getComputedStyle(sibling);
+          const siblingZIndex = Number.parseInt(siblingStyle.zIndex, 10) || 0;
+          if (siblingZIndex > targetZIndex) continue;
+          const siblingRect = sibling.getBoundingClientRect();
+          if (samplePoint.x < siblingRect.left || samplePoint.x > siblingRect.right
+            || samplePoint.y < siblingRect.top || samplePoint.y > siblingRect.bottom) continue;
+          if (siblingStyle.backgroundImage !== 'none' || (parseColor(siblingStyle.backgroundColor)?.alpha ?? 0) > 0) {
+            backgrounds = await applyNodeBackground(sibling, backgrounds);
+          }
+        }
       }
       const candidates = backgrounds.map((background) => {
         const foreground = composite(parsedForeground, background);
@@ -432,6 +462,12 @@ test('contrast measurement keeps the final gradient color after its stop', async
 test('contrast measurement samples across the rendered text bounds', async ({ page }) => {
   await page.setContent('<div style="position:relative;width:320px;height:40px;background:linear-gradient(to right,#fff 0%,#fff 70%,#000 70%,#000 100%)"><span id="gradient-label" style="position:absolute;left:0;top:8px;color:#000;font-size:16px;white-space:nowrap">This whole text label reaches the dark side</span></div>');
   const result = await renderedContrast(page.locator('#gradient-label'));
+  expect(result.ratio).toBeLessThan(4.5);
+});
+
+test('contrast measurement includes positioned gradient siblings behind text', async ({ page }) => {
+  await page.setContent('<div style="position:relative;width:240px;height:40px;background:#fff"><div style="position:absolute;inset:0;z-index:0;background:linear-gradient(#000,#000)"></div><span id="sibling-label" style="position:relative;z-index:1;color:#000;font-size:12px">Sibling background label</span></div>');
+  const result = await renderedContrast(page.locator('#sibling-label'));
   expect(result.ratio).toBeLessThan(4.5);
 });
 
