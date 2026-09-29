@@ -1008,8 +1008,8 @@ test('filled primary CTAs keep white text readable at rest, hover, and focus', a
 
   await page.goto('/services/not-a-service/');
   await expectRenderedContrast(
-    page.locator('#main-content').getByRole('link', { name: 'View All Services' }),
-    'Unknown service fallback link',
+    page.locator('#main-content').getByRole('link', { name: 'Back to Home' }),
+    'Unknown service 404 link',
   );
 });
 
