@@ -24,7 +24,7 @@ const CTA = () => {
   return (
     <section id="cta" className="cta-sec relative bg-[radial-gradient(ellipse_at_50%_40%,rgba(139,92,246,0.045),transparent_55%),#0C0D0D] py-14 px-7 md:px-12 flex items-center">
       <div className="inner relative z-[2] max-w-[920px] mx-auto w-full text-center">
-        <div className="eyebrow font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] mb-[22px]">
+        <div className="eyebrow font-mono text-[10px] tracking-[0.14em] uppercase text-[#9ca3af] mb-[22px]">
           CTA · <em className="not-italic text-[#a78bfa]">DETECTED</em>
         </div>
         <h2 className="text-[clamp(2rem,4.2vw,3.6rem)] font-bold tracking-[-0.03em] leading-[1.05] uppercase mb-5">
@@ -33,7 +33,7 @@ const CTA = () => {
         <p className="body text-[0.95rem] leading-[1.55] text-[#9ca3af] mb-4 max-w-[720px] mx-auto">
           Let's build your next AI solution together. You'll get production-ready code, clear communication at every milestone, and 30 days of support after delivery—so your team never feels stuck.
         </p>
-        <div className="rate font-mono text-[11px] leading-[1.4] tracking-[0.06em] text-[#6b7280] mb-10">
+        <div className="rate font-mono text-[11px] leading-[1.4] tracking-[0.06em] text-[#9ca3af] mb-10">
           <span className="lab tracking-[0.1em] uppercase">RATE</span> · <strong className="font-medium text-[#d8caff] font-sans text-[0.92rem] tracking-normal">{HOURLY_FROM_LABEL}</strong> &nbsp;·&nbsp; <span className="lab tracking-[0.1em] uppercase">ESTIMATES</span> · <strong className="font-medium text-[#d8caff] font-sans text-[0.92rem] tracking-normal">via contact form</strong>
         </div>
 
@@ -64,7 +64,7 @@ const CTA = () => {
 
           <button
             onClick={handleSecondaryClick}
-            className="secondary font-mono text-[11px] tracking-[0.12em] uppercase text-[#6b7280] border-b border-[rgba(107,114,128,0.45)] pb-[3px] hover:text-[#a78bfa] hover:border-[rgba(167,139,250,0.55)] transition-colors"
+            className="secondary font-mono text-[11px] tracking-[0.12em] uppercase text-[#9ca3af] border-b border-[rgba(107,114,128,0.45)] pb-[3px] hover:text-[#a78bfa] hover:border-[rgba(167,139,250,0.55)] transition-colors"
           >
             View case studies
           </button>

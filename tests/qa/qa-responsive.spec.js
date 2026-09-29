@@ -140,8 +140,9 @@ test('custom cursor disabled on touch emulation', async ({ page }) => {
 test('skip link is focusable at 200% zoom', async ({ page }) => {
   await page.setViewportSize({ width: 640, height: 800 });
   await page.goto('/');
-  await page.keyboard.press('Tab');
   const skipLink = page.getByRole('link', { name: 'Skip to main content' });
+  await expect(skipLink).toBeAttached();
+  await page.keyboard.press('Tab');
   await expect(skipLink).toBeFocused();
 });
 

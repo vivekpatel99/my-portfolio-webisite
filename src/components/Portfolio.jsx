@@ -7,7 +7,7 @@ const Portfolio = () => {
   return (
     <section id="portfolio" className="portfolio relative bg-[#0C0D0D] py-16 px-7 md:px-12">
       <div className="inner relative z-[2] max-w-[1180px] mx-auto">
-        <span className="eyebrow inline-block font-mono text-[10px] tracking-[0.16em] uppercase text-[#6b7280] mb-[18px] pb-2 border-b border-[rgba(139,92,246,0.35)]">
+        <span className="eyebrow inline-block font-mono text-[10px] tracking-[0.16em] uppercase text-[#9ca3af] mb-[18px] pb-2 border-b border-[rgba(139,92,246,0.35)]">
           PORTFOLIO · <em className="not-italic text-[#a78bfa]">CASE STUDIES</em>
         </span>
         <h2 className="text-[clamp(1.75rem,3.2vw,2.35rem)] font-bold tracking-[-0.02em] leading-[1.15] mb-[14px]">

@@ -68,10 +68,10 @@ const CaseStudyCard = ({
         React.createElement(
           'div',
           { className: 'media-meta absolute left-4 right-14 bottom-4 z-[2]' },
-          project.category ? React.createElement('div', { className: 'cat inline-block font-mono text-[10px] tracking-[0.12em] uppercase text-[#d8caff] pb-[6px] mb-[10px] border-b border-[rgba(139,92,246,0.45)]' },
+          project.category ? React.createElement('div', { className: 'cat inline-block font-mono text-[10px] tracking-[0.12em] uppercase text-white pb-[6px] mb-[10px] border-b border-[rgba(139,92,246,0.45)]' },
             project.category.toUpperCase(),
             ' · ',
-            React.createElement('em', { className: 'not-italic text-[#a78bfa]' }, 'CASE STUDY')
+            React.createElement('em', { className: 'not-italic text-white' }, 'CASE STUDY')
           ) : null,
           React.createElement('h3', { className: 'text-[1.05rem] font-[650] tracking-[-0.015em] leading-[1.3] text-white' }, project.cardTitle || project.title),
         ),
@@ -87,11 +87,11 @@ const CaseStudyCard = ({
         { className: 'fields flex flex-wrap items-baseline justify-between gap-2 gap-x-4 pt-[10px] border-t border-[rgba(255,255,255,0.06)] mt-auto' },
         upworkLink ? React.createElement('a', {
           href: upworkLink.href, target: '_blank', rel: 'noopener noreferrer',
-          className: 'field font-mono text-[11px] leading-[1.3] tracking-[0.04em] text-[#6b7280]',
+          className: 'field font-mono text-[11px] leading-[1.3] tracking-[0.04em] text-[#9ca3af]',
         }, React.createElement('span', { className: 'text-[#a78bfa] border-b border-[rgba(167,139,250,0.35)] hover:text-white hover:border-[#8B5CF6]' }, 'Upwork project')) : null,
         completionDate ? React.createElement('time', {
           dateTime: project.completedAt, 'aria-label': `Completed ${completionDate}`,
-          className: 'field font-mono text-[11px] leading-[1.3] tracking-[0.04em] text-[#6b7280] ml-auto',
+          className: 'field font-mono text-[11px] leading-[1.3] tracking-[0.04em] text-[#9ca3af] ml-auto',
         }, 'Completed ', React.createElement('span', { className: 'text-[#9ca3af]' }, completionDate)) : null,
       ),
     ),
