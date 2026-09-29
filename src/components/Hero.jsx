@@ -160,7 +160,7 @@ const Hero = () => {
             {/* Left: Profile Invoice */}
             <div className="flex flex-col gap-0.5 min-w-0 w-full max-lg:gap-0 lg:col-start-1 lg:row-start-1">
               <article 
-                className="relative w-full max-w-[760px] border border-[#8B5CF6]/[0.28] rounded-lg px-5 py-1.5 max-md:px-2.5 max-md:py-0"
+                className="relative w-full max-w-[760px] border border-[#8B5CF6]/[0.28] rounded-lg px-5 py-1.5 max-md:px-2.5 max-md:pt-3 max-md:pb-2"
                 style={{
                   background: 'linear-gradient(165deg, #141318 0%, #0f1012 55%, #0e0e10 100%)',
                   boxShadow: '0 0 0 1px rgba(255,255,255,0.03) inset, 0 24px 64px rgba(0,0,0,0.45), 0 0 48px rgba(139,92,246,0.1)'
@@ -194,35 +194,35 @@ const Hero = () => {
                   </div>
                 </div>
 
-                {/* Name field */}
-                <div className="mb-1 max-md:mb-1">
-                  <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Name</span>
-                  <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-[7px] py-[3px] rounded-[1px] bg-[#8B5CF6]/[0.07]">
-                    <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
-                      field · 0.99
+                <div className="max-md:grid max-md:grid-cols-[minmax(0,0.95fr)_minmax(0,1.85fr)] max-md:gap-x-2">
+                  <div className="mb-1 max-md:min-w-0">
+                    <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Name</span>
+                    <span className="invoice-field-corners relative inline-block px-[7px] py-[3px]">
+                      <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
+                        field · 0.99
+                      </span>
+                      <span className="text-[1.3rem] font-semibold tracking-tight text-white max-md:text-[0.95rem]">Vivek Patel</span>
                     </span>
-                    <span className="text-[1.3rem] font-semibold tracking-tight text-white max-md:text-[1.1rem]">Vivek Patel</span>
-                  </span>
-                </div>
+                  </div>
 
-                {/* Role field */}
-                <div className="mb-1 max-md:mb-1">
-                  <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Role</span>
-                  <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-2 py-1 rounded-[1px] bg-[#8B5CF6]/[0.07]">
-                    <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
-                      field · 0.98
+                  <div className="mb-1 max-md:min-w-0">
+                    <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Role</span>
+                    <span className="invoice-field-corners relative inline-block max-w-full px-2 py-1">
+                      <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
+                        field · 0.98
+                      </span>
+                      <h1 className="text-[clamp(1.25rem,2.1vw,1.65rem)] font-bold text-white tracking-tight leading-[1.2] max-md:text-[1rem] max-md:leading-[1.1]">
+                        Computer Vision & AI Engineer
+                      </h1>
                     </span>
-                    <h1 className="text-[clamp(1.25rem,2.1vw,1.65rem)] font-bold text-white tracking-tight leading-[1.2] max-md:text-[1.12rem]">
-                      Computer Vision & AI Engineer
-                    </h1>
-                  </span>
+                  </div>
                 </div>
 
                 {/* Proofs folded under role */}
                 <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 mb-0.5 max-md:gap-x-3 max-md:mb-1" role="group" aria-label="Detected credentials">
                   <div className="min-w-0">
                     <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Credential</span>
-                    <span className="relative inline-flex items-center gap-[7px] border-[1.5px] border-[#8B5CF6] px-[9px] py-[5px] rounded-[1px] bg-[#8B5CF6]/[0.07] max-w-full max-[359px]:px-1.5">
+                    <span className="invoice-field-corners relative inline-flex items-center gap-[7px] px-[9px] py-[5px] max-w-full max-[359px]:px-1.5">
                       <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
                         credential · 0.99
                       </span>
@@ -237,7 +237,7 @@ const Hero = () => {
                   </div>
                   <div className="min-w-0">
                     <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Success</span>
-                    <span className="relative inline-flex items-center gap-[7px] border-[1.5px] border-[#8B5CF6] px-[9px] py-[5px] rounded-[1px] bg-[#8B5CF6]/[0.07] max-w-full max-[359px]:px-1.5">
+                    <span className="invoice-field-corners relative inline-flex items-center gap-[7px] px-[9px] py-[5px] max-w-full max-[359px]:px-1.5">
                       <span className="absolute -top-3 right-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-md:left-0 max-md:right-auto max-[359px]:hidden">
                         success · 0.99
                       </span>
@@ -256,7 +256,7 @@ const Hero = () => {
                 <div className="grid grid-cols-2 gap-x-[18px] gap-y-3 mb-2.5 max-md:mb-1.5 max-md:gap-y-2 max-[359px]:mb-0">
                   <div>
                     <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Rate</span>
-                    <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-[7px] py-[3px] rounded-[1px] bg-[#8B5CF6]/[0.07]">
+                    <span className="invoice-field-corners relative inline-block px-[7px] py-[3px]">
                       <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
                         field · 0.96
                       </span>
@@ -265,7 +265,7 @@ const Hero = () => {
                   </div>
                   <div>
                     <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Location</span>
-                    <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-[7px] py-[3px] rounded-[1px] bg-[#8B5CF6]/[0.07]">
+                    <span className="invoice-field-corners relative inline-block px-[7px] py-[3px]">
                       <span className="absolute -top-3 right-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
                         field · 0.95
                       </span>
@@ -284,20 +284,15 @@ const Hero = () => {
                 {/* Tags field */}
                 <div className="max-[359px]:flex max-[359px]:items-center max-[359px]:gap-2">
                   <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px] max-[359px]:mb-0">Tags</span>
-                  <span className="relative inline-flex border-[1.5px] border-[#8B5CF6] px-2 py-1.5 rounded-[1px] bg-[#8B5CF6]/[0.07] max-[359px]:py-0.5">
-                    <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
-                      field · 0.94
-                    </span>
-                    <span className="flex flex-wrap gap-1.5">
-                      {['OCR', 'CV', 'n8n'].map((tag) => (
-                        <span 
-                          key={tag}
-                          className="font-mono text-[11px] text-purple-200 px-2.5 py-1.5 rounded-[3px] border border-white/[0.1] bg-white/[0.03]"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </span>
+                  <span className="inline-flex flex-wrap gap-1.5">
+                    {['OCR', 'CV', 'n8n'].map((tag) => (
+                      <span
+                        key={tag}
+                        className="font-mono text-[11px] text-purple-200 px-2.5 py-1.5 rounded-[3px] border border-white/[0.1] bg-white/[0.03]"
+                      >
+                        {tag}
+                      </span>
+                    ))}
                   </span>
                 </div>
               </article>
@@ -322,10 +317,10 @@ const Hero = () => {
             </div>
 
             {/* Right: Photo detection card */}
-            <div className="flex justify-center items-center lg:col-start-2 lg:row-start-1 max-lg:mx-auto max-lg:w-full max-lg:max-w-[220px] max-md:max-w-[110px] max-md:mt-2">
-              <div className="relative w-full max-w-[300px] p-8 overflow-visible max-md:px-3 max-md:py-8 max-md:max-w-[110px]">
+            <div className="flex justify-center items-center lg:col-start-2 lg:row-start-1 max-lg:mx-auto max-lg:w-full max-lg:max-w-[300px] max-md:max-w-[256px] max-md:mt-2">
+              <div className="relative w-full max-w-[300px] p-8 overflow-visible max-md:p-5 max-md:max-w-[256px]">
                 {/* Ghost trail frames behind */}
-                <div className="absolute inset-8 pointer-events-none z-[1] overflow-visible max-md:inset-6" aria-hidden="true">
+                <div className="absolute inset-8 pointer-events-none z-[1] overflow-visible max-md:inset-5" aria-hidden="true">
                   {[
                     { class: 'g1', inset: '-12px', opacity: reduceMotion ? 0.22 : 0.4, delay: '0s', name: 'ghost-trail-a' },
                     { class: 'g2', inset: '-20px -8px -8px -20px', opacity: reduceMotion ? 0.16 : 0.32, delay: '-1s', name: 'ghost-trail-b' },
@@ -363,47 +358,44 @@ const Hero = () => {
                   <span className="absolute bottom-0 right-0 w-6 h-6 border-r-[2.5px] border-b-[2.5px] border-[#8B5CF6]" style={{ filter: 'drop-shadow(0 0 4px rgba(139,92,246,0.55))' }} />
                 </div>
 
-                {/* Photo card */}
-                <div 
-                  className="relative z-[2] w-full rounded-[28px] overflow-hidden bg-[#8B5CF6]"
-                  style={{
-                    aspectRatio: '362 / 424',
-                    boxShadow: '0 28px 64px rgba(0,0,0,0.5), 0 0 56px rgba(139,92,246,0.18)'
-                  }}
-                >
-                  <img 
-                    src="/assets/images/vivek-black-and-white.webp" 
-                    alt="Tracked engineer portrait"
-                    className="block w-full h-full object-cover object-[center_top]"
-                  />
-                  
-                  {/* Scan line */}
-                  {!reduceMotion && (
-                    <span 
-                      className="absolute left-0 right-0 h-[1.5px] z-[5] pointer-events-none"
-                      style={{
-                        background: 'linear-gradient(90deg, transparent 0%, rgba(139,92,246,0.05) 15%, rgba(233,213,255,0.45) 50%, rgba(139,92,246,0.05) 85%, transparent 100%)',
-                        boxShadow: '0 0 10px rgba(139,92,246,0.35)',
-                        opacity: 0.35,
-                        animation: 'photo-scan 4.5s ease-in-out infinite'
-                      }}
+                <div className="relative z-[2]">
+                  <div
+                    className="relative w-full rounded-[28px] overflow-hidden bg-[#8B5CF6]"
+                    style={{
+                      aspectRatio: '362 / 424',
+                      boxShadow: '0 28px 64px rgba(0,0,0,0.5), 0 0 56px rgba(139,92,246,0.18)'
+                    }}
+                  >
+                    <img
+                      src="/assets/images/vivek-black-and-white.webp"
+                      alt="Tracked engineer portrait"
+                      className="block w-full h-full object-cover object-[center_top]"
                     />
-                  )}
 
-                  <span className="absolute bottom-[22px] right-[22px] z-[4] inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-red-400/35 font-mono text-[11px] text-red-400 tracking-wide backdrop-blur-sm max-md:bottom-4 max-md:right-4 max-md:text-[10px] max-md:px-2 max-md:py-1">
+                    {!reduceMotion && (
+                      <span
+                        className="absolute left-0 right-0 h-[1.5px] z-[5] pointer-events-none"
+                        style={{
+                          background: 'linear-gradient(90deg, transparent 0%, rgba(139,92,246,0.05) 15%, rgba(233,213,255,0.45) 50%, rgba(139,92,246,0.05) 85%, transparent 100%)',
+                          boxShadow: '0 0 10px rgba(139,92,246,0.35)',
+                          opacity: 0.35,
+                          animation: 'photo-scan 4.5s ease-in-out infinite'
+                        }}
+                      />
+                    )}
+
+                  </div>
+                  <span className="absolute top-[22px] left-[22px] z-[4] inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm max-lg:top-0 max-lg:left-3 max-lg:-translate-y-1/2 max-lg:whitespace-nowrap max-md:text-[10px] max-md:px-2 max-md:py-1">
+                    engineer · 0.99
+                  </span>
+                  <span className="absolute bottom-[22px] left-[22px] z-[4] inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm max-lg:bottom-0 max-lg:left-3 max-lg:translate-y-1/2 max-lg:whitespace-nowrap max-md:text-[10px] max-md:px-2 max-md:py-1">
+                    ID 001 · TRACKED
+                  </span>
+                  <span className="absolute bottom-[22px] right-[22px] z-[4] inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-red-400/35 font-mono text-[11px] text-red-400 tracking-wide backdrop-blur-sm max-lg:bottom-0 max-lg:right-3 max-lg:translate-y-1/2 max-lg:whitespace-nowrap max-md:text-[10px] max-md:px-2 max-md:py-1">
                     <span className="w-[7px] h-[7px] rounded-full bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.7)]" />
                     REC
                   </span>
                 </div>
-
-                {/* Portrait badges sit on the photo from lg up; below lg the photo is too
-                    narrow, so they move into the frame padding above/below it to keep the face clear. */}
-                <span className="absolute z-[4] whitespace-nowrap inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm lg:top-[54px] lg:left-[54px] max-lg:top-0 max-lg:left-1/2 max-lg:-translate-x-1/2 max-md:text-[10px] max-md:px-2 max-md:py-1">
-                  engineer · 0.99
-                </span>
-                <span className="absolute z-[4] whitespace-nowrap inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm lg:bottom-[54px] lg:left-[54px] max-lg:bottom-0 max-lg:left-1/2 max-lg:-translate-x-1/2 max-md:text-[10px] max-md:px-2 max-md:py-1">
-                  ID 001 · TRACKED
-                </span>
               </div>
             </div>
           </div>
