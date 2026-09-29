@@ -56,6 +56,28 @@ test('anchor navigation leaves its section below the sticky header', async ({ pa
   await expect.poll(async () => (await section.boundingBox())?.y).toBeLessThanOrEqual(150);
 });
 
+for (const width of [390, 1280]) {
+  test(`homepage sections stay visible before scroll, on anchor jumps, and in print at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/');
+
+    const sections = page.locator('#portfolio, #services, #testimonials, #cta');
+    await expect(sections).toHaveCount(4);
+    expect(await sections.evaluateAll((elements) => elements.map((element) => getComputedStyle(element.parentElement).opacity)))
+      .toEqual(['1', '1', '1', '1']);
+
+    const anchorOpacity = await page.evaluate(() => {
+      location.hash = '#services';
+      return getComputedStyle(document.querySelector('#services').parentElement).opacity;
+    });
+    expect(anchorOpacity).toBe('1');
+
+    await page.emulateMedia({ media: 'print' });
+    expect(await sections.evaluateAll((elements) => elements.map((element) => getComputedStyle(element.parentElement).transform)))
+      .toEqual(['none', 'none', 'none', 'none']);
+  });
+}
+
 test('mobile menu opens and closes', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
