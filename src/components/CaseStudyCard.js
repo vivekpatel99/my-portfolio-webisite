@@ -68,10 +68,10 @@ const CaseStudyCard = ({
         React.createElement(
           'div',
           { className: 'media-meta absolute left-4 right-14 bottom-4 z-[2]' },
-          project.category ? React.createElement('div', { className: 'cat inline-block font-mono text-[10px] tracking-[0.12em] uppercase text-[#d8caff] pb-[6px] mb-[10px] border-b border-[rgba(139,92,246,0.45)]' },
+          project.category ? React.createElement('div', { className: 'cat inline-block font-mono text-[10px] tracking-[0.12em] uppercase text-white pb-[6px] mb-[10px] border-b border-[rgba(139,92,246,0.45)]' },
             project.category.toUpperCase(),
             ' · ',
-            React.createElement('em', { className: 'not-italic text-[#a78bfa]' }, 'CASE STUDY')
+            React.createElement('em', { className: 'not-italic text-white' }, 'CASE STUDY')
           ) : null,
           React.createElement('h3', { className: 'text-[1.05rem] font-[650] tracking-[-0.015em] leading-[1.3] text-white' }, project.cardTitle || project.title),
         ),

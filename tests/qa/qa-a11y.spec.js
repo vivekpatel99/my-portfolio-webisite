@@ -60,16 +60,95 @@ const measureRenderedContrast = (target) => {
       });
     }).concat(stops.slice(-1));
   };
-  const layerCoversPoint = (node, point, style, index) => {
-    const layerValue = (value, fallback) => {
-      const layers = splitLayers(value);
-      return layers[index % layers.length] ?? fallback;
+  const layerValue = (style, property, index, fallback) => {
+    const layers = splitLayers(style[property]);
+    return layers[index % layers.length]?.trim() ?? fallback;
+  };
+  const cssGradientColorAtPoint = (value, node, style, index, point) => {
+    if (!/^linear-gradient\(/i.test(value)) return null;
+    const inner = value.slice(value.indexOf('(') + 1, value.lastIndexOf(')'));
+    const parts = splitLayers(inner);
+    const firstColorIndex = parts.findIndex((part) => cssColors(part).length > 0);
+    if (firstColorIndex < 0) return null;
+    const direction = parts.slice(0, firstColorIndex).join(' ').trim();
+    let angle = Math.PI;
+    const degrees = direction.match(/^(-?\d+(?:\.\d+)?)deg$/i);
+    if (degrees) angle = Number(degrees[1]) * Math.PI / 180;
+    else if (direction.startsWith('to ')) {
+      const sides = direction.slice(3).split(/\s+/);
+      const x = sides.includes('right') ? 1 : sides.includes('left') ? -1 : 0;
+      const y = sides.includes('bottom') ? 1 : sides.includes('top') ? -1 : 0;
+      angle = Math.atan2(x, -y);
+      if (angle < 0) angle += Math.PI * 2;
+    } else if (direction) return null;
+
+    const rect = node.getBoundingClientRect();
+    const size = layerValue(style, 'backgroundSize', index, 'auto').split(/\s+/);
+    const dimension = (value, containerSize) => value?.endsWith('%')
+      ? containerSize * Number.parseFloat(value) / 100
+      : value?.endsWith('px') ? Number.parseFloat(value) : containerSize;
+    const width = dimension(size[0], rect.width);
+    const height = dimension(size[1], rect.height);
+    const position = layerValue(style, 'backgroundPosition', index, '0% 0%').split(/\s+/);
+    const offset = (value, available) => {
+      if (value === 'right' || value === 'bottom') return available;
+      if (value === 'center') return available / 2;
+      if (value === 'left' || value === 'top') return 0;
+      if (value.endsWith('%')) return available * Number.parseFloat(value) / 100;
+      if (value.endsWith('px')) return Number.parseFloat(value);
+      return 0;
     };
-    const repeat = layerValue(style.backgroundRepeat, 'repeat').trim();
+    const left = rect.left + offset(position[0], rect.width - width);
+    const top = rect.top + offset(position[1] ?? '50%', rect.height - height);
+    const dx = Math.sin(angle);
+    const dy = -Math.cos(angle);
+    const length = Math.abs(dx) * width + Math.abs(dy) * height;
+    const startX = left + width / 2 - dx * length / 2;
+    const startY = top + height / 2 - dy * length / 2;
+    const progress = Math.max(0, Math.min(1,
+      ((point.x - startX) * dx + (point.y - startY) * dy) / length));
+    const stops = parts.slice(firstColorIndex).map((part) => {
+      const match = part.match(/rgba?\([^)]*\)|#[\da-f]{3,8}\b|\btransparent\b/i);
+      if (!match) return null;
+      const color = parseColor(match[0]);
+      const position = part.slice(match.index + match[0].length).trim().match(/^(-?\d*\.?\d+)(%|px)/);
+      return { color, position: position ? Number(position[1]) / (position[2] === '%' ? 100 : length) : null };
+    }).filter((stop) => stop?.color);
+    if (stops.length === 0) return null;
+    if (stops[0].position === null) stops[0].position = 0;
+    if (stops.at(-1).position === null) stops.at(-1).position = 1;
+    for (let stopIndex = 0; stopIndex < stops.length;) {
+      if (stops[stopIndex].position !== null) {
+        stopIndex += 1;
+        continue;
+      }
+      const start = stopIndex - 1;
+      let end = stopIndex;
+      while (end < stops.length && stops[end].position === null) end += 1;
+      const range = end - start;
+      for (let fill = stopIndex; fill < end; fill += 1) {
+        stops[fill].position = stops[start].position
+          + (stops[end].position - stops[start].position) * (fill - start) / range;
+      }
+      stopIndex = end + 1;
+    }
+    const right = stops.findIndex((stop) => stop.position >= progress);
+    const leftStop = stops[Math.max(0, right - 1)] ?? stops.at(-1);
+    const rightStop = stops[Math.max(0, right)] ?? stops.at(-1);
+    const span = rightStop.position - leftStop.position;
+    const ratio = span <= 0 ? 1 : (progress - leftStop.position) / span;
+    return {
+      rgb: leftStop.color.rgb.map((channel, channelIndex) => channel
+        + (rightStop.color.rgb[channelIndex] - channel) * ratio),
+      alpha: leftStop.color.alpha + (rightStop.color.alpha - leftStop.color.alpha) * ratio,
+    };
+  };
+  const layerCoversPoint = (node, point, style, index) => {
+    const repeat = layerValue(style, 'backgroundRepeat', index, 'repeat');
     if (repeat.split(/\s+/).some((axis) => axis !== 'no-repeat')) return true;
 
     const rect = node.getBoundingClientRect();
-    const size = layerValue(style.backgroundSize, 'auto').trim().split(/\s+/);
+    const size = layerValue(style, 'backgroundSize', index, 'auto').split(/\s+/);
     const dimension = (value, containerSize) => {
       if (!value || value === 'auto') return containerSize;
       if (value.endsWith('%')) return containerSize * Number.parseFloat(value) / 100;
@@ -78,7 +157,7 @@ const measureRenderedContrast = (target) => {
     };
     const width = dimension(size[0], rect.width);
     const height = dimension(size[1] ?? size[0], rect.height);
-    const position = layerValue(style.backgroundPosition, '0% 0%').trim().split(/\s+/);
+    const position = layerValue(style, 'backgroundPosition', index, '0% 0%').split(/\s+/);
     const offset = (value, available) => {
       if (value === 'right' || value === 'bottom') return available;
       if (value === 'center') return available / 2;
@@ -91,51 +170,179 @@ const measureRenderedContrast = (target) => {
     const top = rect.top + offset(position[1] ?? '50%', rect.height - height);
     return point.x >= left && point.x <= left + width && point.y >= top && point.y <= top + height;
   };
+  const pixelContext = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+  const cssImageCache = new Map();
+  const loadCssImage = (layer) => {
+    const url = layer.match(/url\((?:"([^"]+)"|'([^']+)'|([^'\")]+))\)/i);
+    const source = url?.[1] ?? url?.[2] ?? url?.[3]?.trim();
+    if (!source) return Promise.resolve(null);
+    if (!cssImageCache.has(source)) {
+      cssImageCache.set(source, new Promise((resolve) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = () => resolve(null);
+        image.src = source;
+      }));
+    }
+    return cssImageCache.get(source);
+  };
+  const sampleImage = (image, point, rect, fit = 'fill', position = '50% 50%', repeat = 'no-repeat', size = 'auto') => {
+    if (!image?.complete || !image.naturalWidth || !image.naturalHeight
+      || point.x < rect.left || point.x > rect.right || point.y < rect.top || point.y > rect.bottom) return null;
+    const [positionX = '50%', positionY = '50%'] = position.trim().split(/\s+/);
+    const resolvePosition = (value, available) => {
+      if (value.endsWith('%')) return available * Number.parseFloat(value) / 100;
+      if (value.endsWith('px')) return Number.parseFloat(value);
+      if (value === 'left' || value === 'top') return 0;
+      if (value === 'right' || value === 'bottom') return available;
+      return available / 2;
+    };
+    const sizeParts = size.trim().split(/\s+/);
+    let width = image.naturalWidth;
+    let height = image.naturalHeight;
+    if (size === 'cover' || size === 'contain' || fit === 'cover' || fit === 'contain') {
+      const strategy = size === 'cover' || size === 'contain' ? size : fit;
+      const scale = (strategy === 'cover' ? Math.max : Math.min)(rect.width / width, rect.height / height);
+      width *= scale;
+      height *= scale;
+    } else if (sizeParts[0] !== 'auto') {
+      width = sizeParts[0].endsWith('%') ? rect.width * Number.parseFloat(sizeParts[0]) / 100 : Number.parseFloat(sizeParts[0]);
+      height = sizeParts[1] && sizeParts[1] !== 'auto'
+        ? sizeParts[1].endsWith('%') ? rect.height * Number.parseFloat(sizeParts[1]) / 100 : Number.parseFloat(sizeParts[1])
+        : width * image.naturalHeight / image.naturalWidth;
+    } else if (sizeParts[1] && sizeParts[1] !== 'auto') {
+      height = sizeParts[1].endsWith('%') ? rect.height * Number.parseFloat(sizeParts[1]) / 100 : Number.parseFloat(sizeParts[1]);
+      width = height * image.naturalWidth / image.naturalHeight;
+    } else if (fit === 'fill') {
+      width = rect.width;
+      height = rect.height;
+    }
+    if (!width || !height) return null;
+    const availableX = rect.width - width;
+    const availableY = rect.height - height;
+    const left = rect.left + resolvePosition(positionX, availableX);
+    const top = rect.top + resolvePosition(positionY, availableY);
+    const localX = point.x - left;
+    const localY = point.y - top;
+    const repeatsX = repeat === 'repeat' || repeat === 'repeat-x';
+    const repeatsY = repeat === 'repeat' || repeat === 'repeat-y';
+    const x = repeatsX ? ((localX % width) + width) % width : localX;
+    const y = repeatsY ? ((localY % height) + height) % height : localY;
+    if (x < 0 || y < 0 || x > width || y > height) return null;
+    try {
+      const sampleWidth = Math.min(image.naturalWidth, image.naturalWidth / width);
+      const sampleHeight = Math.min(image.naturalHeight, image.naturalHeight / height);
+      const sourceX = Math.min(image.naturalWidth - sampleWidth, Math.max(0,
+        x / width * image.naturalWidth - sampleWidth / 2));
+      const sourceY = Math.min(image.naturalHeight - sampleHeight, Math.max(0,
+        y / height * image.naturalHeight - sampleHeight / 2));
+      pixelContext.clearRect(0, 0, 1, 1);
+      pixelContext.drawImage(image, sourceX, sourceY, sampleWidth, sampleHeight, 0, 0, 1, 1);
+      const [red, green, blue, alpha] = pixelContext.getImageData(0, 0, 1, 1).data;
+      return { rgb: [red, green, blue], alpha: alpha / 255 };
+    } catch {
+      return null;
+    }
+  };
 
-  const measure = (element) => {
+  const measure = async (element) => {
     const ancestors = [];
     for (let node = element; node; node = node.parentElement) ancestors.unshift(node);
     const rect = element.getBoundingClientRect();
     const samplePoint = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-    const overlapsImage = [...document.images].some((image) => {
+    const imagesAtPoint = [...document.images].filter((image) => {
       const imageRect = image.getBoundingClientRect();
-      return rect.left < imageRect.right && rect.right > imageRect.left
-        && rect.top < imageRect.bottom && rect.bottom > imageRect.top;
+      return samplePoint.x >= imageRect.left && samplePoint.x <= imageRect.right
+        && samplePoint.y >= imageRect.top && samplePoint.y <= imageRect.bottom;
     });
-    const hasCssImage = ancestors.some((node) => {
-      const style = getComputedStyle(node);
-      return splitLayers(style.backgroundImage).some((layer, index) => layer.includes('url(')
-        && layerCoversPoint(node, samplePoint, style, index));
-    });
-    let backgrounds = [overlapsImage || hasCssImage ? [255, 255, 255] : [0, 0, 0]];
-    for (const node of ancestors) {
+    let backgrounds = [[0, 0, 0]];
+    let imageSamplingFailed = false;
+    const applyNodeBackground = async (node, currentBackgrounds) => {
       const style = getComputedStyle(node);
       const color = parseColor(style.backgroundColor);
-      if (color && color.alpha > 0) backgrounds = backgrounds.map((background) => composite(color, background));
+      if (color && color.alpha > 0) currentBackgrounds = currentBackgrounds.map((background) => composite(color, background));
       const imageLayers = splitLayers(style.backgroundImage);
       for (let index = imageLayers.length - 1; index >= 0; index -= 1) {
         const layer = imageLayers[index];
-        const colors = cssGradientColors(layer);
         if (!layerCoversPoint(node, samplePoint, style, index)) continue;
+        if (layer.includes('url(')) {
+          const image = await loadCssImage(layer);
+          const sample = sampleImage(image, samplePoint, node.getBoundingClientRect(), 'none',
+            layerValue(style, 'backgroundPosition', index, '0% 0%'),
+            layerValue(style, 'backgroundRepeat', index, 'repeat'),
+            layerValue(style, 'backgroundSize', index, 'auto'));
+          if (!sample) imageSamplingFailed = true;
+          else currentBackgrounds = currentBackgrounds.map((background) => composite(sample, background));
+          continue;
+        }
+        const sampledGradient = cssGradientColorAtPoint(layer, node, style, index, samplePoint);
+        const colors = sampledGradient ? [sampledGradient] : cssGradientColors(layer);
         if (colors.length === 0) continue;
-        const gradientBackgrounds = colors.flatMap((gradientColor) => backgrounds
+        if (sampledGradient) {
+          currentBackgrounds = currentBackgrounds.map((background) => composite(sampledGradient, background));
+          continue;
+        }
+        const gradientBackgrounds = colors.flatMap((gradientColor) => currentBackgrounds
           .map((background) => composite(gradientColor, background)));
-        backgrounds = colors.every((gradientColor) => gradientColor.alpha === 1)
+        currentBackgrounds = colors.every((gradientColor) => gradientColor.alpha === 1)
           ? gradientBackgrounds
-          : [...backgrounds, ...gradientBackgrounds];
+          : [...currentBackgrounds, ...gradientBackgrounds];
+      }
+      return currentBackgrounds;
+    };
+    const imagePlacements = imagesAtPoint.map((image) => {
+      const imageAncestors = new Set();
+      for (let node = image.parentElement; node; node = node.parentElement) imageAncestors.add(node);
+      const commonAncestor = [...ancestors].reverse().find((node) => imageAncestors.has(node));
+      const imagePath = [];
+      for (let node = image.parentElement; node && node !== commonAncestor; node = node.parentElement) imagePath.unshift(node);
+      return { image, commonAncestor, imagePath };
+    });
+    for (const node of ancestors) {
+      backgrounds = await applyNodeBackground(node, backgrounds);
+      for (const placement of imagePlacements.filter(({ commonAncestor }) => commonAncestor === node)) {
+        let imageBackgrounds = backgrounds;
+        for (const imageNode of placement.imagePath) imageBackgrounds = await applyNodeBackground(imageNode, imageBackgrounds);
+        imageBackgrounds = await applyNodeBackground(placement.image, imageBackgrounds);
+        if (!placement.image.complete) placement.image.loading = 'eager';
+        try {
+          await placement.image.decode();
+        } catch {
+          imageSamplingFailed = true;
+        }
+        const imageStyle = getComputedStyle(placement.image);
+        const sample = sampleImage(placement.image, samplePoint, placement.image.getBoundingClientRect(), imageStyle.objectFit, imageStyle.objectPosition);
+        if (!sample) imageSamplingFailed = true;
+        else imageBackgrounds = imageBackgrounds.map((background) => composite(sample, background));
+
+        const targetChild = ancestors[ancestors.indexOf(node) + 1];
+        const imageChild = placement.imagePath[0] ?? placement.image;
+        const siblings = [...node.children];
+        const imageChildIndex = siblings.indexOf(imageChild);
+        const targetChildIndex = siblings.indexOf(targetChild);
+        if (imageChildIndex >= 0 && targetChildIndex > imageChildIndex) {
+          for (const overlay of siblings.slice(imageChildIndex + 1, targetChildIndex)) {
+            const overlayRect = overlay.getBoundingClientRect();
+            if (samplePoint.x >= overlayRect.left && samplePoint.x <= overlayRect.right
+              && samplePoint.y >= overlayRect.top && samplePoint.y <= overlayRect.bottom) {
+              imageBackgrounds = await applyNodeBackground(overlay, imageBackgrounds);
+            }
+          }
+        }
+        backgrounds = imageBackgrounds;
       }
     }
     const style = getComputedStyle(element);
     const parsedForeground = parseColor(style.color);
     if (!parsedForeground) throw new Error('Could not parse rendered foreground color');
     const foregrounds = backgrounds.map((background) => composite(parsedForeground, background));
-    const contrasts = backgrounds.map((background, index) => {
+    const contrasts = imageSamplingFailed ? [1] : backgrounds.map((background, index) => {
       const foregroundLuminance = luminance(foregrounds[index]);
       const backgroundLuminance = luminance(background);
       return (Math.max(foregroundLuminance, backgroundLuminance) + 0.05)
         / (Math.min(foregroundLuminance, backgroundLuminance) + 0.05);
     });
-    const worstBackgroundIndex = contrasts.indexOf(Math.min(...contrasts));
+    const worstBackgroundIndex = imageSamplingFailed ? 0 : contrasts.indexOf(Math.min(...contrasts));
     const ownText = [...element.childNodes]
       .filter((node) => node.nodeType === Node.TEXT_NODE)
       .map((node) => node.textContent)
@@ -145,7 +352,9 @@ const measureRenderedContrast = (target) => {
     return {
       ratio: contrasts[worstBackgroundIndex],
       foreground: foregrounds[worstBackgroundIndex],
-      background: backgrounds[worstBackgroundIndex],
+      background: imageSamplingFailed ? [0, 0, 0] : backgrounds[worstBackgroundIndex],
+      tag: element.tagName,
+      className: element.className,
       fontSize: parseFloat(style.fontSize),
       text: ownText.slice(0, 60),
       transparentText: parsedForeground.alpha === 0,
@@ -153,7 +362,7 @@ const measureRenderedContrast = (target) => {
         && style.display !== 'none',
     };
   };
-  return Array.isArray(target) ? target.map(measure) : measure(target);
+  return Array.isArray(target) ? Promise.all(target.map(measure)) : measure(target);
 };
 
 const renderedContrast = async (locator) => locator.evaluate(measureRenderedContrast);
@@ -181,6 +390,23 @@ test('contrast measurement includes interpolated gradient colors', async ({ page
   await page.setContent('<div style="background: linear-gradient(#000 0%, #fff 100%); padding: 16px"><span id="gradient-label" style="color: #767676; font-size: 12px">Gradient label</span></div>');
   const result = await renderedContrast(page.locator('#gradient-label'));
   expect(result.ratio).toBeLessThan(4.5);
+});
+
+test('contrast measurement samples DOM and CSS background image pixels', async ({ page }) => {
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="#141414"/></svg>';
+  const source = `data:image/svg+xml,${encodeURIComponent(svg)}`;
+  for (const cssBackground of [false, true]) {
+    const image = cssBackground ? '' : `<img src="${source}" alt="" style="width:100%;height:100%">`;
+    const background = cssBackground ? `background-image:url("${source}");background-size:100% 100%;background-repeat:no-repeat;` : '';
+    await page.setContent(`<div style="position:relative;width:100px;height:100px;${background}">${image}<span id="image-label" style="position:absolute;inset:40px;color:#444;font-size:12px">Image label</span></div>`);
+    await page.evaluate(async (src) => {
+      const loaded = new Image();
+      loaded.src = src;
+      await loaded.decode();
+    }, source);
+    const result = await renderedContrast(page.locator('#image-label'));
+    expect(result.ratio, `CSS background: ${cssBackground}`).toBeLessThan(4.5);
+  }
 });
 
 test('home has exactly one main landmark', async ({ page }) => {
@@ -461,8 +687,8 @@ test('visible text under 14px meets 4.5:1 on its rendered background', async ({ 
       && !result.transparentText && result.fontSize < 14);
     expect(small.length, `${route} should render small labels to check`).toBeGreaterThan(0);
     const failures = small.filter((result) => result.ratio < 4.5)
-      .map(({ text, fontSize, ratio, foreground, background }) => ({
-        text, fontSize, ratio: Number(ratio.toFixed(2)), foreground, background,
+      .map(({ tag, className, text, fontSize, ratio, foreground, background }) => ({
+        tag, className, text, fontSize, ratio: Number(ratio.toFixed(2)), foreground, background,
       }));
     expect(failures, `${route} small text below 4.5:1`).toEqual([]);
   }
