@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import React from 'react';
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import ServiceDetail from './ServiceDetail';
@@ -65,11 +65,28 @@ describe('ServiceDetail', () => {
     expect(backLink.getAttribute('href')).toBe('/#services');
   });
 
-  it('shows not found message for invalid service ID', () => {
+  it('renders the shared noindex 404 page for an unknown service ID', async () => {
     renderWithRouter('invalid-service-id');
 
-    expect(screen.getByText('Service Not Found')).toBeTruthy();
-    expect(screen.getByRole('link', { name: /View All Services/i })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 1, name: 'Page Not Found' })).toBeTruthy();
+    expect(screen.queryByText('In scope')).toBeNull();
+    await waitFor(() => {
+      expect(document.head.querySelector('meta[name="robots"]')?.getAttribute('content')).toBe('noindex, nofollow');
+    });
+  });
+
+  it('emits the service title, canonical, and social metadata', async () => {
+    const service = serviceOffers[1];
+    renderWithRouter(service.id);
+
+    const canonical = `https://www.vivekapatel.com/services/${service.id}/`;
+    const title = `${service.name} | Freelance Service - Vivek Patel`;
+    await waitFor(() => expect(document.title).toBe(title));
+    expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(canonical);
+    expect(document.head.querySelector('meta[property="og:url"]')?.getAttribute('content')).toBe(canonical);
+    expect(document.head.querySelector('meta[property="og:title"]')?.getAttribute('content')).toBe(title);
+    expect(document.head.querySelector('meta[name="twitter:title"]')?.getAttribute('content')).toBe(title);
+    expect(document.head.querySelector('meta[name="robots"]')?.getAttribute('content')).toBe('index, follow');
   });
 
   it('uses euro sign for pricing, never dollar sign', () => {

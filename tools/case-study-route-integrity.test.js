@@ -63,7 +63,10 @@ function fixture() {
     'src/components/CaseStudyCard.js',
     'src/components/CaseStudyCollection.js',
     'src/components/CaseStudiesContent.js',
+    'src/components/ServiceDetailContent.js',
+    'src/data/serviceOffers.js',
     'tools/case-study-route-integrity.js',
+    'tools/public-route-integrity.js',
     'tools/generate-sitemap.js',
     'tools/generate-static-route-html.js',
   ]) {

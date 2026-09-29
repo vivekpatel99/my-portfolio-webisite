@@ -1,4 +1,5 @@
 import { caseStudySlugs, getCaseStudyBySlug } from '../data/caseStudies.js';
+import { serviceOffers, serviceRouteForId } from '../data/serviceOffers.js';
 
 export const SITE_URL = 'https://www.vivekapatel.com';
 export const SITE_NAME = 'Vivek Patel';
@@ -69,6 +70,19 @@ export const routeSeo = {
     type: 'website',
     image: DEFAULT_OG_IMAGE_PATH,
   },
+  ...Object.fromEntries(
+    serviceOffers.map((service) => [
+      serviceRouteForId(service.id),
+      {
+        title: `${service.name} | Freelance Service - Vivek Patel`,
+        description: service.summary,
+        keywords: `${service.name}, freelance AI engineer, Vivek Patel, AI automation, computer vision, data extraction`,
+        path: serviceRouteForId(service.id),
+        type: 'website',
+        image: DEFAULT_OG_IMAGE_PATH,
+      },
+    ]),
+  ),
   ...Object.fromEntries(
     caseStudySlugs.map((slug) => {
       const caseStudy = getCaseStudyBySlug(slug);
