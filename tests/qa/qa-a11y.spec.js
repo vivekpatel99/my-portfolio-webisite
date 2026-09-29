@@ -538,11 +538,31 @@ const measureRenderedContrast = (target) => {
           opacityScopes.push({ node, opacity: nodeOpacity, backdrop: backgrounds.map((background) => [...background]) });
         }
         if (paintsCanvas(node) || coversSamplePoint(node)) backgrounds = await applyNodeBackground(node, backgrounds);
-        // Paint overlapping images by their stacking order under this ancestor, not document.images order.
-        const imageLayerOrder = inPaintOrder(paintLayers(node));
+        // Paint overlapping images by CSS stacking order under this ancestor, not
+        // document.images order. Compare paths at their first divergent layer; a
+        // layer's order comes from its first stacking-context node (non-stacking
+        // wrappers let descendant z-indexes compete), then positioned-after-in-flow,
+        // then tree order.
+        const stackingKey = (path, depth) => {
+          const stackingNode = path.slice(depth).find(createsStackingContext);
+          const positionedNode = stackingNode ?? path.slice(depth).find((pathNode) => styleOf(pathNode).position !== 'static');
+          return { zIndex: stackingNode ? zIndexOf(stackingNode) : 0, positioned: Boolean(positionedNode) };
+        };
+        const comparePlacements = (left, right) => {
+          const leftPath = [...left.imagePath, left.image];
+          const rightPath = [...right.imagePath, right.image];
+          let depth = 0;
+          while (depth < leftPath.length && leftPath[depth] === rightPath[depth]) depth += 1;
+          if (depth >= leftPath.length || depth >= rightPath.length) return 0;
+          const leftKey = stackingKey(leftPath, depth);
+          const rightKey = stackingKey(rightPath, depth);
+          const parentLayers = paintLayers(depth === 0 ? node : leftPath[depth - 1]);
+          return leftKey.zIndex - rightKey.zIndex
+            || Number(leftKey.positioned) - Number(rightKey.positioned)
+            || parentLayers.indexOf(leftPath[depth]) - parentLayers.indexOf(rightPath[depth]);
+        };
         const nodePlacements = imagePlacements.filter(({ commonAncestor }) => commonAncestor === node)
-          .sort((left, right) => imageLayerOrder.indexOf(left.imagePath[0] ?? left.image)
-            - imageLayerOrder.indexOf(right.imagePath[0] ?? right.image));
+          .sort(comparePlacements);
         for (const placement of nodePlacements) {
           if (!placement.image.complete) placement.image.loading = 'eager';
           try {
@@ -908,14 +928,20 @@ test('contrast measurement stacks overlapping DOM images in paint order', async 
   const svg = (fill) => `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10" fill="${fill}"/></svg>`)}`;
   const [black, white] = [svg('#000'), svg('#fff')];
   const image = (src, zIndex) => `<img src="${src}" alt="" style="position:absolute;inset:0;width:100%;height:100%;z-index:${zIndex}">`;
-  await page.setContent(`<div style="position:relative;width:240px;height:40px">${image(black, 1)}${image(white, 0)}<span id="image-label" style="position:relative;z-index:2;color:#000;font-size:12px">Black label over the top black image</span></div>`);
-  await page.evaluate((sources) => Promise.all(sources.map((src) => {
-    const loaded = new Image();
-    loaded.src = src;
-    return loaded.decode();
-  })), [black, white]);
-  const result = await renderedContrast(page.locator('#image-label'));
-  expect(result.ratio, JSON.stringify(result)).toBeLessThan(4.5);
+  const cases = [
+    { label: 'direct siblings', wrap: (images) => images },
+    { label: 'shared wrapper', wrap: (images) => `<div>${images}</div>` },
+  ];
+  for (const { label, wrap } of cases) {
+    await page.setContent(`<div style="position:relative;width:240px;height:40px">${wrap(`${image(black, 1)}${image(white, 0)}`)}<span id="image-label" style="position:relative;z-index:2;color:#000;font-size:12px">Black label over the top black image</span></div>`);
+    await page.evaluate((sources) => Promise.all(sources.map((src) => {
+      const loaded = new Image();
+      loaded.src = src;
+      return loaded.decode();
+    })), [black, white]);
+    const result = await renderedContrast(page.locator('#image-label'));
+    expect(result.ratio, `${label}: ${JSON.stringify(result)}`).toBeLessThan(4.5);
+  }
 });
 
 test('home has exactly one main landmark', async ({ page }) => {
