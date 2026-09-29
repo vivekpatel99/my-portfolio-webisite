@@ -75,6 +75,25 @@
   }
 }
 
+@layer components {
+  .invoice-field-corners::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    --invoice-corner: rgba(186, 170, 207, 0.7);
+    background:
+      linear-gradient(var(--invoice-corner) 0 0) top left / 12px 1px no-repeat,
+      linear-gradient(var(--invoice-corner) 0 0) top left / 1px 12px no-repeat,
+      linear-gradient(var(--invoice-corner) 0 0) top right / 12px 1px no-repeat,
+      linear-gradient(var(--invoice-corner) 0 0) top right / 1px 12px no-repeat,
+      linear-gradient(var(--invoice-corner) 0 0) bottom left / 12px 1px no-repeat,
+      linear-gradient(var(--invoice-corner) 0 0) bottom left / 1px 12px no-repeat,
+      linear-gradient(var(--invoice-corner) 0 0) bottom right / 12px 1px no-repeat,
+      linear-gradient(var(--invoice-corner) 0 0) bottom right / 1px 12px no-repeat;
+  }
+}
+
 /* For Webkit-based browsers (Chrome, Safari) */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;

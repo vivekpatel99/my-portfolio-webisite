@@ -197,7 +197,7 @@ const Hero = () => {
                 <div className="max-md:grid max-md:grid-cols-[minmax(0,0.95fr)_minmax(0,1.85fr)] max-md:gap-x-2">
                   <div className="mb-1 max-md:min-w-0">
                     <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Name</span>
-                    <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-[7px] py-[3px] rounded-[1px] bg-[#8B5CF6]/[0.07]">
+                    <span className="invoice-field-corners relative inline-block px-[7px] py-[3px]">
                       <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
                         field · 0.99
                       </span>
@@ -207,7 +207,7 @@ const Hero = () => {
 
                   <div className="mb-1 max-md:min-w-0">
                     <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Role</span>
-                    <span className="relative inline-block max-w-full border-[1.5px] border-[#8B5CF6] px-2 py-1 rounded-[1px] bg-[#8B5CF6]/[0.07]">
+                    <span className="invoice-field-corners relative inline-block max-w-full px-2 py-1">
                       <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
                         field · 0.98
                       </span>
@@ -222,7 +222,7 @@ const Hero = () => {
                 <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 mb-0.5 max-md:gap-x-3 max-md:mb-1" role="group" aria-label="Detected credentials">
                   <div className="min-w-0">
                     <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Credential</span>
-                    <span className="relative inline-flex items-center gap-[7px] border-[1.5px] border-[#8B5CF6] px-[9px] py-[5px] rounded-[1px] bg-[#8B5CF6]/[0.07] max-w-full max-[359px]:px-1.5">
+                    <span className="invoice-field-corners relative inline-flex items-center gap-[7px] px-[9px] py-[5px] max-w-full max-[359px]:px-1.5">
                       <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
                         credential · 0.99
                       </span>
@@ -237,7 +237,7 @@ const Hero = () => {
                   </div>
                   <div className="min-w-0">
                     <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Success</span>
-                    <span className="relative inline-flex items-center gap-[7px] border-[1.5px] border-[#8B5CF6] px-[9px] py-[5px] rounded-[1px] bg-[#8B5CF6]/[0.07] max-w-full max-[359px]:px-1.5">
+                    <span className="invoice-field-corners relative inline-flex items-center gap-[7px] px-[9px] py-[5px] max-w-full max-[359px]:px-1.5">
                       <span className="absolute -top-3 right-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-md:left-0 max-md:right-auto max-[359px]:hidden">
                         success · 0.99
                       </span>
@@ -256,7 +256,7 @@ const Hero = () => {
                 <div className="grid grid-cols-2 gap-x-[18px] gap-y-3 mb-2.5 max-md:mb-1.5 max-md:gap-y-2 max-[359px]:mb-0">
                   <div>
                     <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Rate</span>
-                    <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-[7px] py-[3px] rounded-[1px] bg-[#8B5CF6]/[0.07]">
+                    <span className="invoice-field-corners relative inline-block px-[7px] py-[3px]">
                       <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
                         field · 0.96
                       </span>
@@ -265,7 +265,7 @@ const Hero = () => {
                   </div>
                   <div>
                     <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Location</span>
-                    <span className="relative inline-block border-[1.5px] border-[#8B5CF6] px-[7px] py-[3px] rounded-[1px] bg-[#8B5CF6]/[0.07]">
+                    <span className="invoice-field-corners relative inline-block px-[7px] py-[3px]">
                       <span className="absolute -top-3 right-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
                         field · 0.95
                       </span>
@@ -284,20 +284,15 @@ const Hero = () => {
                 {/* Tags field */}
                 <div className="max-[359px]:flex max-[359px]:items-center max-[359px]:gap-2">
                   <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px] max-[359px]:mb-0">Tags</span>
-                  <span className="relative inline-flex border-[1.5px] border-[#8B5CF6] px-2 py-1.5 rounded-[1px] bg-[#8B5CF6]/[0.07] max-[359px]:py-0.5">
-                    <span className="absolute -top-3 left-0 font-mono text-[10px] text-[#8B5CF6] tracking-wide bg-[rgba(14,14,16,0.95)] px-[3px] pointer-events-none z-[4] max-[359px]:hidden">
-                      field · 0.94
-                    </span>
-                    <span className="flex flex-wrap gap-1.5">
-                      {['OCR', 'CV', 'n8n'].map((tag) => (
-                        <span 
-                          key={tag}
-                          className="font-mono text-[11px] text-purple-200 px-2.5 py-1.5 rounded-[3px] border border-white/[0.1] bg-white/[0.03]"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </span>
+                  <span className="inline-flex flex-wrap gap-1.5">
+                    {['OCR', 'CV', 'n8n'].map((tag) => (
+                      <span
+                        key={tag}
+                        className="font-mono text-[11px] text-purple-200 px-2.5 py-1.5 rounded-[3px] border border-white/[0.1] bg-white/[0.03]"
+                      >
+                        {tag}
+                      </span>
+                    ))}
                   </span>
                 </div>
               </article>
