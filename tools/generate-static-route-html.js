@@ -7,15 +7,20 @@ import { absoluteUrl, routeSeo, SITE_NAME } from '../src/lib/seoConfig.js';
 import { getCaseStudyBySlug } from '../src/data/caseStudies.js';
 import CaseStudyArticle from '../src/components/CaseStudyArticle.js';
 import CaseStudiesContent from '../src/components/CaseStudiesContent.js';
+import ServiceDetailContent from '../src/components/ServiceDetailContent.js';
+import { getServiceOfferById } from '../src/data/serviceOffers.js';
 import {
   assertCaseStudyRouteSources,
   assertStaticCaseStudyRoutes,
   assertSafeStaticOutput,
   removeStaleProjectHtml,
 } from './case-study-route-integrity.js';
+import { assertPublicLinksRouted, assertServiceRouteSources } from './public-route-integrity.js';
 
 const distDir = path.join(process.cwd(), 'dist');
-assertCaseStudyRouteSources({ htaccess: readFileSync(path.join(process.cwd(), 'dist/.htaccess'), 'utf8') });
+const deploymentHtaccess = readFileSync(path.join(process.cwd(), 'dist/.htaccess'), 'utf8');
+assertCaseStudyRouteSources({ htaccess: deploymentHtaccess });
+assertServiceRouteSources({ htaccess: deploymentHtaccess });
 const staticRoutes = Object.keys(routeSeo).filter((route) => route !== '/');
 assertSafeStaticOutput(distDir, staticRoutes);
 const removedStaleProjectHtml = removeStaleProjectHtml(distDir);
@@ -146,6 +151,16 @@ writeFileSync(indexPath, rootHtml);
 
 const renderStaticRoute = (route) => {
   const html = applySeo(rootHtml, routeSeo[route]);
+  if (route.startsWith('/services/')) {
+    const service = getServiceOfferById(route.slice('/services/'.length));
+    if (!service) throw new Error(`Static service route has no service offer: ${route}`);
+    const content = renderToStaticMarkup(
+      React.createElement(StaticRouter, { location: route }, React.createElement(ServiceDetailContent, { service })),
+    );
+    const rootMarker = '<div id="root"></div>';
+    if (html.split(rootMarker).length !== 2) throw new Error('Static route shell must contain exactly one empty root element');
+    return html.replace(rootMarker, () => `<div id="root">${content}</div>`);
+  }
   if (route === '/case-studies') {
     const collection = renderToStaticMarkup(
       React.createElement(StaticRouter, { location: route }, React.createElement(CaseStudiesContent)),
@@ -176,4 +191,6 @@ for (const route of staticRoutes) {
 writeFileSync(path.join(distDir, '404.html'), stripHeroPreload(applyNoIndex(applySeo(rootHtml, notFoundSeo))));
 
 assertStaticCaseStudyRoutes(distDir);
+const checkedLinkCount = assertPublicLinksRouted(distDir);
+console.log(`Checked ${checkedLinkCount} public links against static output.`);
 console.log(`Generated static HTML for ${staticRoutes.length + 2} routes, including 404.html.${removedStaleProjectHtml.length > 0 ? ` Removed stale project HTML for: ${removedStaleProjectHtml.join(', ')}.` : ''}`);
