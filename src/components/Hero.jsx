@@ -10,9 +10,9 @@ const Hero = () => {
   const navigate = useNavigate();
   const reduceMotion = useReducedMotion();
   const detectedFields = getPageLoadDetectedFields();
-  const fieldBoxProps = (id) => ({
+  const fieldBoxProps = (id, className) => ({
     'data-hero-field': id,
-    'data-detected': detectedFields.has(id) ? 'true' : 'false',
+    className: `${detectedFields.has(id) ? 'invoice-field-corners ' : ''}${className}`,
   });
 
   const handleCTAClick = () => {
@@ -203,14 +203,14 @@ const Hero = () => {
                 <div className="max-md:grid max-md:grid-cols-[minmax(0,0.95fr)_minmax(0,1.85fr)] max-md:gap-x-2">
                   <div className="mb-1 max-md:min-w-0">
                     <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Name</span>
-                    <span {...fieldBoxProps('name')} className={`${detectedFields.has('name') ? 'invoice-field-corners ' : ''}relative inline-block px-[7px] py-[3px]`}>
+                    <span {...fieldBoxProps('name', 'relative inline-block px-[7px] py-[3px]')}>
                       <span className="text-[1.3rem] font-semibold tracking-tight text-white max-md:text-[0.95rem]">Vivek Patel</span>
                     </span>
                   </div>
 
                   <div className="mb-1 max-md:min-w-0">
                     <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Role</span>
-                    <span {...fieldBoxProps('role')} className={`${detectedFields.has('role') ? 'invoice-field-corners ' : ''}relative inline-block max-w-full px-2 py-1`}>
+                    <span {...fieldBoxProps('role', 'relative inline-block max-w-full px-2 py-1')}>
                       <h1 className="text-[clamp(1.25rem,2.1vw,1.65rem)] font-bold text-white tracking-tight leading-[1.2] max-md:text-[1rem] max-md:leading-[1.1]">
                         Computer Vision & AI Engineer
                       </h1>
@@ -222,7 +222,7 @@ const Hero = () => {
                 <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 mb-0.5 max-md:gap-x-3 max-md:mb-1" role="group" aria-label="Detected credentials">
                   <div className="min-w-0">
                     <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Credential</span>
-                    <span {...fieldBoxProps('credential')} className={`${detectedFields.has('credential') ? 'invoice-field-corners ' : ''}relative inline-flex items-center gap-[7px] px-[9px] py-[5px] max-w-full max-[359px]:px-1.5`}>
+                    <span {...fieldBoxProps('credential', 'relative inline-flex items-center gap-[7px] px-[9px] py-[5px] max-w-full max-[359px]:px-1.5')}>
                       <span className="flex-shrink-0 w-3 h-3 text-purple-400 opacity-90 max-[359px]:hidden" aria-hidden="true">
                         <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" className="w-full h-full">
                           <path d="M7 1.5l1.4 2.8 3.1.45-2.25 2.2.53 3.1L7 8.6 4.22 10.05l.53-3.1L2.5 4.75l3.1-.45L7 1.5z"/>
@@ -234,7 +234,7 @@ const Hero = () => {
                   </div>
                   <div className="min-w-0">
                     <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Success</span>
-                    <span {...fieldBoxProps('success')} className={`${detectedFields.has('success') ? 'invoice-field-corners ' : ''}relative inline-flex items-center gap-[7px] px-[9px] py-[5px] max-w-full max-[359px]:px-1.5`}>
+                    <span {...fieldBoxProps('success', 'relative inline-flex items-center gap-[7px] px-[9px] py-[5px] max-w-full max-[359px]:px-1.5')}>
                       <span className="flex-shrink-0 w-3 h-3 text-purple-400 opacity-90 max-[359px]:hidden" aria-hidden="true">
                         <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" className="w-full h-full">
                           <path d="M2.5 7.2l3.2 3.1L11.5 3.8"/>
@@ -250,13 +250,13 @@ const Hero = () => {
                 <div className="grid grid-cols-2 gap-x-[18px] gap-y-3 mb-2.5 max-md:mb-1.5 max-md:gap-y-2 max-[359px]:mb-0">
                   <div>
                     <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Rate</span>
-                    <span {...fieldBoxProps('rate')} className={`${detectedFields.has('rate') ? 'invoice-field-corners ' : ''}relative inline-block px-[7px] py-[3px]`}>
+                    <span {...fieldBoxProps('rate', 'relative inline-block px-[7px] py-[3px]')}>
                       <span className="font-mono text-[1.05rem] font-semibold text-white leading-[1.2]">€45/hour</span>
                     </span>
                   </div>
                   <div>
                     <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Location</span>
-                    <span {...fieldBoxProps('location')} className={`${detectedFields.has('location') ? 'invoice-field-corners ' : ''}relative inline-block px-[7px] py-[3px]`}>
+                    <span {...fieldBoxProps('location', 'relative inline-block px-[7px] py-[3px]')}>
                       <span className="font-medium text-[0.92rem] text-gray-300 leading-[1.3]">Linz, Austria</span>
                     </span>
                   </div>

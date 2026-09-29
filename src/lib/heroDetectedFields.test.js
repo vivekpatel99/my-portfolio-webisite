@@ -5,7 +5,8 @@ import {
   pickDetectedFields,
 } from './heroDetectedFields';
 
-const seeded = (seed) => () => {
+// mulberry32 PRNG: deterministic random() for a given integer seed.
+const mulberry32 = (seed) => () => {
   seed = (seed + 0x6d2b79f5) | 0;
   let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
   t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
@@ -15,7 +16,7 @@ const seeded = (seed) => () => {
 describe('pickDetectedFields (#206)', () => {
   it('always picks exactly 3 distinct known fields', () => {
     for (let seed = 1; seed <= 200; seed += 1) {
-      const picked = pickDetectedFields(seeded(seed));
+      const picked = pickDetectedFields(mulberry32(seed));
       expect(picked.size).toBe(HERO_DETECTED_FIELD_COUNT);
       picked.forEach((id) => expect(HERO_INVOICE_FIELDS).toContain(id));
     }
@@ -27,7 +28,7 @@ describe('pickDetectedFields (#206)', () => {
   });
 
   it('is deterministic for the same seed and varies across seeds', () => {
-    const key = (seed) => [...pickDetectedFields(seeded(seed))].sort().join(',');
+    const key = (seed) => [...pickDetectedFields(mulberry32(seed))].sort().join(',');
     expect(key(42)).toBe(key(42));
     const distinct = new Set(Array.from({ length: 50 }, (_, i) => key(i + 1)));
     expect(distinct.size).toBeGreaterThan(1);

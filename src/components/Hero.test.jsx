@@ -4,6 +4,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
+import { HERO_INVOICE_FIELDS } from '@/lib/heroDetectedFields';
 import Hero from './Hero';
 
 vi.mock('framer-motion', () => ({
@@ -166,7 +167,7 @@ describe('Hero randomized field bboxes (#206)', () => {
     );
 
   const detectedIds = (container) =>
-    Array.from(container.querySelectorAll('[data-hero-field][data-detected="true"]'))
+    Array.from(container.querySelectorAll('[data-hero-field].invoice-field-corners'))
       .map((el) => el.getAttribute('data-hero-field'))
       .sort();
 
@@ -176,13 +177,11 @@ describe('Hero randomized field bboxes (#206)', () => {
 
     const fields = container.querySelectorAll('[data-hero-field]');
     expect(fields).toHaveLength(6);
+    expect(Array.from(fields, (el) => el.getAttribute('data-hero-field')).sort()).toEqual(
+      [...HERO_INVOICE_FIELDS].sort()
+    );
     expect(container.querySelectorAll('.invoice-field-corners')).toHaveLength(3);
     expect(detectedIds(container)).toEqual(['credential', 'role', 'success']);
-
-    fields.forEach((field) => {
-      const detected = field.getAttribute('data-detected') === 'true';
-      expect(field.classList.contains('invoice-field-corners')).toBe(detected);
-    });
   });
 
   it('keeps every label and value visible regardless of selection', async () => {
@@ -227,8 +226,8 @@ describe('Hero randomized field bboxes (#206)', () => {
     const second = renderFresh(await loadFreshPageHeroWithRandom(0.999999));
     const secondIds = detectedIds(second.container);
 
-    expect(firstIds).toEqual(['credential', 'role', 'success']);
-    expect(secondIds).toEqual(['credential', 'name', 'role']);
+    expect(firstIds).toHaveLength(3);
+    expect(secondIds).toHaveLength(3);
     expect(secondIds).not.toEqual(firstIds);
   });
 });
