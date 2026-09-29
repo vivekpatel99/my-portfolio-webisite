@@ -219,6 +219,9 @@ const measureRenderedContrast = (target) => {
   ].filter(Boolean));
   const paintsOwnBackground = (nodeStyle) => nodeStyle.visibility !== 'hidden'
     && (nodeStyle.backgroundImage !== 'none' || (parseColor(nodeStyle.backgroundColor)?.alpha ?? 0) > 0);
+  // Root (and body, when the root has none) backgrounds propagate to the whole canvas.
+  const paintsCanvas = (node) => node === document.documentElement
+    || (node === document.body && !paintsOwnBackground(getComputedStyle(document.documentElement)));
   // Includes descendants and their pseudo layers: a transparent box can still carry
   // painted (and overflowing) children.
   const subtreePaintNodes = (root) => (root.pseudoOf ? [root] : [root, ...root.querySelectorAll('*')])
@@ -386,6 +389,12 @@ const measureRenderedContrast = (target) => {
       });
       const hasSpatialBackground = ancestors.some((node, index) => {
         if (/gradient\(|url\(/.test(getComputedStyle(node).backgroundImage)) return true;
+        // Text overflowing a painted ancestor box sits partly on the backdrop outside it.
+        if (!paintsCanvas(node) && paintsOwnBackground(getComputedStyle(node))) {
+          const nodeRect = node.getBoundingClientRect();
+          if (textRect.left < nodeRect.left || textRect.right > nodeRect.right
+            || textRect.top < nodeRect.top || textRect.bottom > nodeRect.bottom) return true;
+        }
         return paintLayers(node).some((sibling, siblingIndex) => {
           if (!siblingPaintsBehind(node, index, sibling, siblingIndex)) return false;
           return subtreePaintNodes(sibling).some((paintNode) => {
@@ -462,6 +471,22 @@ const measureRenderedContrast = (target) => {
           && samplePoint.x >= rect.left && samplePoint.x <= rect.right
           && samplePoint.y >= rect.top && samplePoint.y <= rect.bottom;
       };
+      // True when a non-visible-overflow box between paintNode and root hides the
+      // sample point. Absolute boxes escape clips below their containing block.
+      const isClippedWithin = (paintNode, root) => {
+        const position = styleOf(paintNode).position;
+        if (paintNode === root || position === 'fixed') return false;
+        let escaping = position === 'absolute';
+        for (let node = paintNode.parentElement; node; node = node.parentElement) {
+          const nodeStyle = getComputedStyle(node);
+          if (escaping && nodeStyle.position !== 'static') escaping = false;
+          if (!escaping && (nodeStyle.overflowX !== 'visible' || nodeStyle.overflowY !== 'visible')
+            && !coversSamplePoint(node)) return true;
+          if (nodeStyle.position === 'absolute') escaping = true;
+          if (node === root) return false;
+        }
+        return false;
+      };
       // Simplified CSS paint order among children: z-index, then in-flow before
       // positioned at the same level, then DOM order.
       const inPaintOrder = (children) => children.map((child, index) => ({
@@ -476,7 +501,8 @@ const measureRenderedContrast = (target) => {
       // then its painting children, with every node as a nested opacity group.
       const applySiblingGroup = (sibling, currentBackgrounds) => {
         const paintPath = new Set();
-        for (const paintNode of subtreePaintNodes(sibling).filter(coversSamplePoint)) {
+        for (const paintNode of subtreePaintNodes(sibling)
+          .filter((paintNode) => coversSamplePoint(paintNode) && !isClippedWithin(paintNode, sibling))) {
           for (let pathNode = paintNode; pathNode && !paintPath.has(pathNode);
             pathNode = pathNode === sibling ? null : pathNode.parentElement) paintPath.add(pathNode);
         }
@@ -484,7 +510,7 @@ const measureRenderedContrast = (target) => {
         const paintSubtree = (node, subtreeBackgrounds) => applyOpacityGroup(node, subtreeBackgrounds,
           async (groupBackgrounds) => {
             let painted = groupBackgrounds;
-            if (paintsOwnBackground(styleOf(node)) && coversSamplePoint(node)) {
+            if (paintsOwnBackground(styleOf(node)) && coversSamplePoint(node) && !isClippedWithin(node, sibling)) {
               painted = await applyNodeBackground(node, painted);
             }
             for (const child of inPaintOrder(paintLayers(node).filter((child) => paintPath.has(child)))) {
@@ -511,7 +537,7 @@ const measureRenderedContrast = (target) => {
         if (nodeOpacity < 1) {
           opacityScopes.push({ node, opacity: nodeOpacity, backdrop: backgrounds.map((background) => [...background]) });
         }
-        backgrounds = await applyNodeBackground(node, backgrounds);
+        if (paintsCanvas(node) || coversSamplePoint(node)) backgrounds = await applyNodeBackground(node, backgrounds);
         for (const placement of imagePlacements.filter(({ commonAncestor }) => commonAncestor === node)) {
           if (!placement.image.complete) placement.image.loading = 'eager';
           try {
@@ -737,6 +763,18 @@ test('contrast measurement paints ::before and ::after backgrounds', async ({ pa
     if (expectFailure) expect(result.ratio, `${label}: ${JSON.stringify(result)}`).toBeLessThan(4.5);
     else expect(result.ratio, `${label}: ${JSON.stringify(result)}`).toBeGreaterThanOrEqual(4.5);
   }
+});
+
+test('contrast measurement limits ancestor fills to their painted box', async ({ page }) => {
+  await page.setContent('<div style="background:#000"><div style="width:40px;height:20px;background:#fff"><span id="overflow-label" style="color:#000;font-size:12px;white-space:nowrap">Overflowing black label outside the white box</span></div></div>');
+  const result = await renderedContrast(page.locator('#overflow-label'));
+  expect(result.ratio, JSON.stringify(result)).toBeLessThan(4.5);
+});
+
+test('contrast measurement clips sibling descendants to overflow ancestors', async ({ page }) => {
+  await page.setContent('<div style="position:relative;width:240px;height:40px;background:#000"><div style="position:absolute;left:0;top:0;width:0;height:0;overflow:hidden"><div style="position:absolute;left:0;top:0;width:240px;height:40px;background:#fff"></div></div><span id="clipped-label" style="position:relative;z-index:1;color:#000;font-size:12px">Black label over a clipped white layer</span></div>');
+  const result = await renderedContrast(page.locator('#clipped-label'));
+  expect(result.ratio, JSON.stringify(result)).toBeLessThan(4.5);
 });
 
 test('contrast measurement composites text and ancestor CSS opacity', async ({ page }) => {
