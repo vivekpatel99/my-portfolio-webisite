@@ -381,6 +381,16 @@ const measureRenderedContrast = (target) => {
         }
         return currentBackgrounds;
       };
+      // An opacity < 1 sibling is its own group: paint it over each backdrop, then
+      // mix that result back into the same backdrop by the group opacity.
+      const applySiblingGroup = async (sibling, currentBackgrounds) => {
+        const groupOpacity = Number(getComputedStyle(sibling).opacity);
+        if (groupOpacity >= 1) return applyNodeBackground(sibling, currentBackgrounds);
+        const grouped = await Promise.all(currentBackgrounds.map(async (backdrop) => (
+          await applyNodeBackground(sibling, [backdrop]))
+          .map((painted) => composite({ rgb: painted, alpha: groupOpacity }, backdrop))));
+        return grouped.flat();
+      };
       const imagePlacements = imagesAtPoint.map((image) => {
         const imageAncestors = new Set();
         for (let node = image.parentElement; node; node = node.parentElement) imageAncestors.add(node);
@@ -422,7 +432,7 @@ const measureRenderedContrast = (target) => {
               const overlayRect = overlay.getBoundingClientRect();
               if (samplePoint.x >= overlayRect.left && samplePoint.x <= overlayRect.right
                 && samplePoint.y >= overlayRect.top && samplePoint.y <= overlayRect.bottom) {
-                imageBackgrounds = await applyNodeBackground(overlay, imageBackgrounds);
+                imageBackgrounds = await applySiblingGroup(overlay, imageBackgrounds);
               }
             }
           }
@@ -451,7 +461,7 @@ const measureRenderedContrast = (target) => {
           if (samplePoint.x < siblingRect.left || samplePoint.x > siblingRect.right
             || samplePoint.y < siblingRect.top || samplePoint.y > siblingRect.bottom) continue;
           if (siblingStyle.backgroundImage !== 'none' || (parseColor(siblingStyle.backgroundColor)?.alpha ?? 0) > 0) {
-            backgrounds = await applyNodeBackground(sibling, backgrounds);
+            backgrounds = await applySiblingGroup(sibling, backgrounds);
           }
         }
       }
@@ -584,6 +594,12 @@ test('contrast measurement samples solid sibling backgrounds across text bounds'
   await page.setContent('<div style="position:relative;width:320px;height:40px;background:#fff"><span id="sibling-label" style="position:relative;z-index:1;color:#000;font-size:16px;white-space:nowrap">This label reaches the dark sibling on its right</span><div style="position:absolute;left:70%;top:0;width:30%;height:100%;z-index:0;background:#000"></div></div>');
   const result = await renderedContrast(page.locator('#sibling-label'));
   expect(result.ratio).toBeLessThan(4.5);
+});
+
+test('contrast measurement composites positioned sibling opacity groups', async ({ page }) => {
+  await page.setContent('<div style="position:relative;width:240px;height:40px;background:#fff"><div style="position:absolute;inset:0;z-index:0;background:#000;opacity:0.1"></div><span id="sibling-label" style="position:relative;z-index:1;color:#fff;font-size:12px">Faded sibling background label</span></div>');
+  const result = await renderedContrast(page.locator('#sibling-label'));
+  expect(result.ratio, JSON.stringify(result)).toBeLessThan(4.5);
 });
 
 test('contrast measurement composites text and ancestor CSS opacity', async ({ page }) => {
