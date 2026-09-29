@@ -171,6 +171,11 @@ const measureRenderedContrast = (target) => {
     const top = rect.top + offset(position[1] ?? '50%', rect.height - height);
     return point.x >= left && point.x <= left + width && point.y >= top && point.y <= top + height;
   };
+  const paintsOwnBackground = (nodeStyle) => nodeStyle.visibility !== 'hidden'
+    && (nodeStyle.backgroundImage !== 'none' || (parseColor(nodeStyle.backgroundColor)?.alpha ?? 0) > 0);
+  // Includes descendants: a transparent box can still carry painted (and overflowing) children.
+  const subtreePaintNodes = (root) => [root, ...root.querySelectorAll('*')]
+    .filter((paintNode) => paintsOwnBackground(getComputedStyle(paintNode)));
   const createsStackingContext = (node) => {
     if (node === document.documentElement) return true;
     const nodeStyle = getComputedStyle(node);
@@ -321,12 +326,11 @@ const measureRenderedContrast = (target) => {
         if (!targetChild) return false;
         return [...node.children].some((sibling, siblingIndex) => {
           if (!siblingPaintsBehind(node, index, sibling, siblingIndex)) return false;
-          const siblingStyle = getComputedStyle(sibling);
-          if (!/gradient\(|url\(/.test(siblingStyle.backgroundImage)
-            && (parseColor(siblingStyle.backgroundColor)?.alpha ?? 0) === 0) return false;
-          const siblingRect = sibling.getBoundingClientRect();
-          return textRect.left < siblingRect.right && textRect.right > siblingRect.left
-            && textRect.top < siblingRect.bottom && textRect.bottom > siblingRect.top;
+          return subtreePaintNodes(sibling).some((paintNode) => {
+            const paintRect = paintNode.getBoundingClientRect();
+            return textRect.left < paintRect.right && textRect.right > paintRect.left
+              && textRect.top < paintRect.bottom && textRect.bottom > paintRect.top;
+          });
         });
       });
       if (!overlapsImage && !hasSpatialBackground) {
@@ -390,8 +394,47 @@ const measureRenderedContrast = (target) => {
           .map((painted) => composite({ rgb: painted, alpha: groupOpacity }, backdrop))));
         return grouped.flat();
       };
-      const applySiblingGroup = (sibling, currentBackgrounds) => applyOpacityGroup(sibling, currentBackgrounds,
-        (groupBackgrounds) => applyNodeBackground(sibling, groupBackgrounds));
+      const coversSamplePoint = (node) => {
+        const rect = node.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0
+          && samplePoint.x >= rect.left && samplePoint.x <= rect.right
+          && samplePoint.y >= rect.top && samplePoint.y <= rect.bottom;
+      };
+      // Simplified CSS paint order among children: z-index, then in-flow before
+      // positioned at the same level, then DOM order.
+      const inPaintOrder = (children) => children.map((child, index) => {
+        const childStyle = getComputedStyle(child);
+        return {
+          child,
+          index,
+          zIndex: Number.parseInt(childStyle.zIndex, 10) || 0,
+          positioned: childStyle.position !== 'static',
+        };
+      }).sort((left, right) => left.zIndex - right.zIndex
+        || Number(left.positioned) - Number(right.positioned) || left.index - right.index)
+        .map(({ child }) => child);
+      // Paints a sibling subtree at the sample point: each node's own background,
+      // then its painting children, with every node as a nested opacity group.
+      const applySiblingGroup = (sibling, currentBackgrounds) => {
+        const paintPath = new Set();
+        for (const paintNode of subtreePaintNodes(sibling).filter(coversSamplePoint)) {
+          for (let pathNode = paintNode; pathNode && !paintPath.has(pathNode);
+            pathNode = pathNode === sibling ? null : pathNode.parentElement) paintPath.add(pathNode);
+        }
+        if (!paintPath.has(sibling)) return currentBackgrounds;
+        const paintSubtree = (node, subtreeBackgrounds) => applyOpacityGroup(node, subtreeBackgrounds,
+          async (groupBackgrounds) => {
+            let painted = groupBackgrounds;
+            if (paintsOwnBackground(getComputedStyle(node)) && coversSamplePoint(node)) {
+              painted = await applyNodeBackground(node, painted);
+            }
+            for (const child of inPaintOrder([...node.children].filter((child) => paintPath.has(child)))) {
+              painted = await paintSubtree(child, painted);
+            }
+            return painted;
+          });
+        return paintSubtree(sibling, currentBackgrounds);
+      };
       const imagePlacements = imagesAtPoint.map((image) => {
         const imageAncestors = new Set();
         for (let node = image.parentElement; node; node = node.parentElement) imageAncestors.add(node);
@@ -436,11 +479,7 @@ const measureRenderedContrast = (target) => {
           const targetChildIndex = siblings.indexOf(targetChild);
           if (imageChildIndex >= 0 && targetChildIndex > imageChildIndex) {
             for (const overlay of siblings.slice(imageChildIndex + 1, targetChildIndex)) {
-              const overlayRect = overlay.getBoundingClientRect();
-              if (samplePoint.x >= overlayRect.left && samplePoint.x <= overlayRect.right
-                && samplePoint.y >= overlayRect.top && samplePoint.y <= overlayRect.bottom) {
-                imageBackgrounds = await applySiblingGroup(overlay, imageBackgrounds);
-              }
+              imageBackgrounds = await applySiblingGroup(overlay, imageBackgrounds);
             }
           }
           backgrounds = imageBackgrounds;
@@ -463,13 +502,7 @@ const measureRenderedContrast = (target) => {
           && !imagesAtPoint.some((image) => sibling === image || sibling.contains(image)))
           .sort((left, right) => left.zIndex - right.zIndex || left.siblingIndex - right.siblingIndex);
         for (const { sibling } of backgroundSiblings) {
-          const siblingStyle = getComputedStyle(sibling);
-          const siblingRect = sibling.getBoundingClientRect();
-          if (samplePoint.x < siblingRect.left || samplePoint.x > siblingRect.right
-            || samplePoint.y < siblingRect.top || samplePoint.y > siblingRect.bottom) continue;
-          if (siblingStyle.backgroundImage !== 'none' || (parseColor(siblingStyle.backgroundColor)?.alpha ?? 0) > 0) {
-            backgrounds = await applySiblingGroup(sibling, backgrounds);
-          }
+          backgrounds = await applySiblingGroup(sibling, backgrounds);
         }
       }
       const opacityScopeNodes = new Set(opacityScopes.map(({ node }) => node));
@@ -607,6 +640,20 @@ test('contrast measurement composites positioned sibling opacity groups', async 
   await page.setContent('<div style="position:relative;width:240px;height:40px;background:#fff"><div style="position:absolute;inset:0;z-index:0;background:#000;opacity:0.1"></div><span id="sibling-label" style="position:relative;z-index:1;color:#fff;font-size:12px">Faded sibling background label</span></div>');
   const result = await renderedContrast(page.locator('#sibling-label'));
   expect(result.ratio, JSON.stringify(result)).toBeLessThan(4.5);
+});
+
+test('contrast measurement paints descendants of transparent positioned siblings', async ({ page }) => {
+  const cases = [
+    { label: 'inset descendant', sibling: 'inset:0', child: 'inset:0', expectFailure: true },
+    { label: 'overflowing descendant', sibling: 'left:0;top:0;width:0;height:0', child: 'left:0;top:0;width:240px;height:40px', expectFailure: true },
+    { label: 'faded sibling group', sibling: 'inset:0;opacity:0.1', child: 'inset:0', expectFailure: false },
+  ];
+  for (const { label, sibling, child, expectFailure } of cases) {
+    await page.setContent(`<div style="position:relative;width:240px;height:40px;background:#fff"><div style="position:absolute;${sibling};z-index:0"><div style="position:absolute;${child};background:#000"></div></div><span id="sibling-label" style="position:relative;z-index:1;color:#000;font-size:12px">Descendant background label</span></div>`);
+    const result = await renderedContrast(page.locator('#sibling-label'));
+    if (expectFailure) expect(result.ratio, `${label}: ${JSON.stringify(result)}`).toBeLessThan(4.5);
+    else expect(result.ratio, `${label}: ${JSON.stringify(result)}`).toBeGreaterThanOrEqual(4.5);
+  }
 });
 
 test('contrast measurement composites text and ancestor CSS opacity', async ({ page }) => {
