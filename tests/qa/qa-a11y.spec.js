@@ -171,6 +171,28 @@ const measureRenderedContrast = (target) => {
     const top = rect.top + offset(position[1] ?? '50%', rect.height - height);
     return point.x >= left && point.x <= left + width && point.y >= top && point.y <= top + height;
   };
+  const createsStackingContext = (node) => {
+    if (node === document.documentElement) return true;
+    const nodeStyle = getComputedStyle(node);
+    const parentDisplay = node.parentElement ? getComputedStyle(node.parentElement).display : '';
+    return (nodeStyle.zIndex !== 'auto' && (nodeStyle.position !== 'static' || /flex|grid/.test(parentDisplay)))
+      || ['fixed', 'sticky'].includes(nodeStyle.position)
+      || Number(nodeStyle.opacity) < 1
+      || nodeStyle.isolation === 'isolate'
+      || nodeStyle.mixBlendMode !== 'normal'
+      || ['transform', 'filter', 'perspective', 'clipPath', 'backdropFilter']
+        .some((property) => nodeStyle[property] && nodeStyle[property] !== 'none')
+      || /\b(?:paint|layout|strict|content)\b/.test(nodeStyle.contain);
+  };
+  // Negative-z children of a non-stacking ancestor paint in the enclosing stacking
+  // context, beneath every opaque ancestor background up to that context.
+  const paintsBelowOpaqueAncestor = (parent, zIndex) => {
+    if (zIndex >= 0) return false;
+    for (let node = parent; node && !createsStackingContext(node); node = node.parentElement) {
+      if (parseColor(getComputedStyle(node).backgroundColor)?.alpha === 1) return true;
+    }
+    return false;
+  };
   const pixelContext = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
   const cssImageCache = new Map();
   const loadCssImage = (layer) => {
@@ -356,7 +378,7 @@ const measureRenderedContrast = (target) => {
       for (const node of ancestors) {
         const nodeStyle = getComputedStyle(node);
         const nodeOpacity = Number(nodeStyle.opacity);
-        if (nodeOpacity < 1 && parseColor(nodeStyle.backgroundColor)?.alpha === 1) {
+        if (nodeOpacity < 1) {
           opacityScopes.push({ node, opacity: nodeOpacity, backdrop: backgrounds.map((background) => [...background]) });
         }
         backgrounds = await applyNodeBackground(node, backgrounds);
@@ -394,9 +416,18 @@ const measureRenderedContrast = (target) => {
         const targetChild = ancestors[ancestors.indexOf(node) + 1];
         if (!targetChild) continue;
         const siblings = [...node.children];
-        for (const [siblingIndex, sibling] of siblings.entries()) {
-          if (!siblingPaintsBehind(node, ancestors.indexOf(node), sibling, siblingIndex)
-            || imagesAtPoint.some((image) => sibling === image || sibling.contains(image))) continue;
+        const targetIndex = siblings.indexOf(targetChild);
+        const targetZIndex = Number.parseInt(getComputedStyle(targetChild).zIndex, 10) || 0;
+        const backgroundSiblings = siblings.map((sibling, siblingIndex) => ({
+          sibling,
+          siblingIndex,
+          zIndex: Number.parseInt(getComputedStyle(sibling).zIndex, 10) || 0,
+        })).filter(({ sibling, siblingIndex, zIndex }) => (
+          zIndex < targetZIndex || (zIndex === targetZIndex && siblingIndex < targetIndex)
+        ) && !paintsBelowOpaqueAncestor(node, zIndex)
+          && !imagesAtPoint.some((image) => sibling === image || sibling.contains(image)))
+          .sort((left, right) => left.zIndex - right.zIndex || left.siblingIndex - right.siblingIndex);
+        for (const { sibling } of backgroundSiblings) {
           const siblingStyle = getComputedStyle(sibling);
           const siblingRect = sibling.getBoundingClientRect();
           if (samplePoint.x < siblingRect.left || samplePoint.x > siblingRect.right
@@ -449,7 +480,19 @@ const measureRenderedContrast = (target) => {
         && style.display !== 'none',
     };
   };
-  return Array.isArray(target) ? Promise.all(target.map(measure)) : measure(target);
+  if (!Array.isArray(target)) return measure(target);
+  const candidates = target.filter((element) => {
+    const style = getComputedStyle(element);
+    if (Number.parseFloat(style.fontSize) >= 14 || style.display === 'none' || style.visibility === 'hidden') return false;
+    if (![...element.childNodes].some((node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim())) return false;
+    const rect = element.getBoundingClientRect();
+    if (rect.width <= 1 || rect.height <= 1) return false;
+    for (let node = element; node; node = node.parentElement) {
+      if (Number(getComputedStyle(node).opacity) === 0) return false;
+    }
+    return true;
+  });
+  return Promise.all(candidates.map(measure));
 };
 
 const renderedContrast = async (locator, { waitForOpacity = true } = {}) => {
@@ -533,10 +576,36 @@ test('contrast measurement composites text and ancestor CSS opacity', async ({ p
   }
 });
 
-test('contrast measurement composites an opaque opacity group against its outer backdrop', async ({ page }) => {
-  await page.setContent('<div style="background:#fff;padding:8px"><div style="background:#000;opacity:0.5;padding:8px"><span id="opacity-label" style="color:#fff;font-size:12px">White text in a half-opacity black group</span></div></div>');
-  const result = await renderedContrast(page.locator('#opacity-label'), { waitForOpacity: false });
+test('contrast measurement composites opacity groups against their outer backdrop', async ({ page }) => {
+  const cases = [
+    { open: '<div style="background:#000;opacity:0.5;padding:8px">', close: '</div>' },
+    { open: '<div style="background:linear-gradient(#000,#000);opacity:0.5;padding:8px">', close: '</div>' },
+    { open: '<div style="opacity:0.5;padding:8px"><div style="background:#000;padding:8px">', close: '</div></div>' },
+  ];
+  for (const group of cases) {
+    await page.setContent(`<div style="background:#fff;padding:8px">${group.open}<span id="opacity-label" style="color:#fff;font-size:12px">White text in a half-opacity group</span>${group.close}</div>`);
+    const result = await renderedContrast(page.locator('#opacity-label'), { waitForOpacity: false });
+    expect(result.ratio, group).toBeLessThan(4.5);
+  }
+});
+
+test('contrast measurement composites sibling backgrounds in stacking order', async ({ page }) => {
+  await page.setContent('<div style="position:relative;width:240px;height:40px;background:#fff"><div style="position:absolute;inset:0;z-index:1;background:#000"></div><div style="position:absolute;inset:0;z-index:0;background:#fff"></div><span id="sibling-label" style="position:relative;z-index:2;color:#000;font-size:12px">Stacked sibling background label</span></div>');
+  const result = await renderedContrast(page.locator('#sibling-label'));
   expect(result.ratio).toBeLessThan(4.5);
+});
+
+test('contrast measurement places negative-z siblings by parent stacking context', async ({ page }) => {
+  const cases = [
+    { parent: 'position:relative', stackingContext: false },
+    { parent: 'position:relative;z-index:0', stackingContext: true },
+  ];
+  for (const { parent, stackingContext } of cases) {
+    await page.setContent(`<div style="${parent};width:240px;height:40px;background:#fff"><div style="position:absolute;inset:0;z-index:-1;background:#000"></div><span id="sibling-label" style="color:#000;font-size:12px">Negative z sibling label</span></div>`);
+    const result = await renderedContrast(page.locator('#sibling-label'));
+    if (stackingContext) expect(result.ratio, parent).toBeLessThan(4.5);
+    else expect(result.ratio, parent).toBeGreaterThanOrEqual(4.5);
+  }
 });
 
 test('contrast measurement samples DOM and CSS background image pixels', async ({ page }) => {
