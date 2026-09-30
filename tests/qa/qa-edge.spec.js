@@ -94,6 +94,7 @@ const blockedConsentChoices = [
 for (const errorName of ['SecurityError', 'QuotaExceededError']) {
   for (const { label, analytics, choose } of blockedConsentChoices) {
     test(`${label} dismisses the banner for the session when storage writes throw ${errorName}`, async ({ page }) => {
+      test.skip(process.env.QA_LOCAL_ONLY !== '1', 'Unreleased storage-failure consent behavior is checked on local previews only.');
       await page.addInitScript((name) => {
         if (window.self === window.top) {
           Storage.prototype.setItem = () => {
@@ -147,6 +148,7 @@ for (const errorName of ['SecurityError', 'QuotaExceededError']) {
 for (const reducedMotion of ['no-preference', 'reduce']) {
   for (const width of [390, 1440]) {
     test(`consent manager keyboard flow retains choice when storage writes throw (${reducedMotion}, ${width}px)`, async ({ page }) => {
+      test.skip(process.env.QA_LOCAL_ONLY !== '1', 'Unreleased storage-failure consent behavior is checked on local previews only.');
       await page.addInitScript(() => {
         if (window.self === window.top) {
           Storage.prototype.setItem = () => {
@@ -242,6 +244,7 @@ async function captureEdgeTelemetry(page, marker, { initialize = false } = {}) {
 }
 
 test('session rejection overrides stale stored acceptance when storage writes throw', async ({ page }) => {
+  test.skip(process.env.QA_LOCAL_ONLY !== '1', 'Unreleased storage-failure consent behavior is checked on local previews only.');
   await seedStaleAcceptanceWithBlockedWrites(page);
   const errors = [];
   page.on('pageerror', (error) => errors.push(`${error.name}: ${error.message}`));
@@ -293,7 +296,10 @@ async function expectTelemetrySilent(page, sentEnvelopes, marker) {
 }
 
 test('fake Sentry transport stops after session rejection overrides stale stored acceptance when storage writes throw', async ({ page }) => {
-  test.skip(process.env.QA_FAKE_SENTRY !== '1', 'requires the local fake-Sentry QA server mode');
+  test.skip(
+    process.env.QA_FAKE_SENTRY !== '1' || process.env.QA_LOCAL_ONLY !== '1',
+    'requires the local-only fake-Sentry QA server mode'
+  );
 
   const allowedMarker = 'QA_EDGE_STALE_ACCEPTED_TELEMETRY_EVENT';
   const rejectedMarker = 'QA_EDGE_SESSION_REJECTED_TELEMETRY_EVENT';
@@ -324,7 +330,10 @@ test('fake Sentry transport stops after session rejection overrides stale stored
 });
 
 test('fake Sentry transport follows first session acceptance then Close when storage writes throw', async ({ page }) => {
-  test.skip(process.env.QA_FAKE_SENTRY !== '1', 'requires the local fake-Sentry QA server mode');
+  test.skip(
+    process.env.QA_FAKE_SENTRY !== '1' || process.env.QA_LOCAL_ONLY !== '1',
+    'requires the local-only fake-Sentry QA server mode'
+  );
 
   const acceptedMarker = 'QA_EDGE_SESSION_ACCEPTED_TELEMETRY_EVENT';
   const closedMarker = 'QA_EDGE_ACCEPTED_THEN_CLOSED_TELEMETRY_EVENT';

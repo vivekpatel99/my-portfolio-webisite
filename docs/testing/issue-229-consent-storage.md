@@ -119,3 +119,15 @@ on desktop and mobile: 40 cases, with no skips. A fresh Opus requirements and
 code-quality review and an independent Codex review found no blockers. The
 documented limits above remain unchanged. Current-head CI and unresolved review
 threads must still be checked immediately before merging.
+
+A second review found that the default passive command also registers these
+unreleased regressions against production. Opus added `QA_LOCAL_ONLY=1` guards
+to every new storage-failure case, preserving existing production checks. Codex
+verified all 17 callbacks skip before mutating the page when the flag is absent.
+Both production projects, safely pointed at loopback for this check, skipped all
+34 corresponding cases with the flag disabled. With local-only mode enabled,
+44 focused preview cases passed and the telemetry-boundary command passed all
+three positive synthetic transport cases. The integrated checkout at develop
+`e45c0a13b062e45656a89f30396c33dcbb07223a` also passed 610 unit tests and the
+production build. The earlier 40 repeated cases remain evidence for the
+initializer-order repair; the target guards preserve their assertions.
