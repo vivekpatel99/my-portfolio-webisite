@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import useMousePosition from '@/hooks/useMousePosition';
 import { motion } from 'framer-motion';
 
+const ownCursorClass = (node) => {
+  document.documentElement.classList.toggle('custom-cursor-enabled', Boolean(node));
+};
+
 const CustomCursor = () => {
   const [enabled, setEnabled] = useState(false);
   const { x, y } = useMousePosition(enabled);
@@ -10,13 +14,7 @@ const CustomCursor = () => {
     const pointerQuery = window.matchMedia('(pointer: fine)');
     const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     const syncCursorAvailability = () => {
-      const canUseCustomCursor = pointerQuery.matches && !reducedMotionQuery.matches;
-
-      setEnabled(canUseCustomCursor);
-      document.documentElement.classList.toggle(
-        'custom-cursor-enabled',
-        canUseCustomCursor,
-      );
+      setEnabled(pointerQuery.matches && !reducedMotionQuery.matches);
     };
 
     const addListener = (query) => {
@@ -42,7 +40,6 @@ const CustomCursor = () => {
     return () => {
       removeListener(pointerQuery);
       removeListener(reducedMotionQuery);
-      document.documentElement.classList.remove('custom-cursor-enabled');
     };
   }, []);
 
@@ -63,6 +60,7 @@ const CustomCursor = () => {
 
   return (
     <motion.div
+      ref={ownCursorClass}
       variants={variants}
       animate="default"
       transition={{ type: "spring", stiffness: 500, damping: 28 }}
