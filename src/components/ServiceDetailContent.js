@@ -101,7 +101,7 @@ const ServiceDetailContent = ({ service }) => {
             { className: 'flex flex-col gap-3' },
             React.createElement(Link, {
               to: '/contact',
-              className: 'inline-flex min-h-12 items-center justify-center bg-[#8B5CF6] px-4 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#7c4ee3] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white',
+              className: 'inline-flex min-h-12 items-center justify-center bg-accent-purple px-4 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#6D28D9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white',
             }, 'Request a Project Estimate'),
             React.createElement(Link, {
               to: SERVICES_SECTION_HREF,

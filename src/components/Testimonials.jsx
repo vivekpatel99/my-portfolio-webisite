@@ -41,7 +41,7 @@ const Testimonials = () => {
         <section id="testimonials" className="section relative py-[92px] px-5 sm:px-12 overflow-hidden bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.035),transparent_42%),#0C0D0D]">
             <div className="inner relative z-[2] w-full max-w-[1120px] mx-auto">
                 <div className="section-head mb-[54px]">
-                    <div className="eyebrow font-mono text-[10px] text-[#6b7280] mb-[19px] tracking-[0.15em] uppercase">
+                    <div className="eyebrow font-mono text-[10px] text-[#9ca3af] mb-[19px] tracking-[0.15em] uppercase">
                         TESTIMONIALS · <span className="text-[#a78bfa]">DETECTED</span>
                     </div>
                     <h1 className="text-[clamp(2.35rem,4vw,4rem)] leading-[0.98] tracking-[-0.045em] uppercase font-[730]">
@@ -73,7 +73,7 @@ const Testimonials = () => {
                             <i className="absolute w-px h-full bg-current left-1/2 -translate-x-1/2"></i>
                             <i className="absolute h-px w-full bg-current top-1/2 -translate-y-1/2"></i>
                         </div>
-                        <div className="count font-mono text-[9px] text-[#6b7280] leading-[1.8]">
+                        <div className="count font-mono text-[9px] text-[#9ca3af] leading-[1.8]">
                             Field<br/>
                             <b className="text-[#a78bfa] font-medium">
                                 {String(activeIndex + 1).padStart(2, '0')} / {String(testimonials.length).padStart(2, '0')}
@@ -83,10 +83,10 @@ const Testimonials = () => {
 
                     {/* Quote area */}
                     <article className="quote-area py-[24px] md:py-[34px] px-5 md:px-12 flex flex-col">
-                        <div className="meta font-mono text-[10px] text-[#6b7280] pb-[19px] border-b border-[rgba(255,255,255,0.08)]">
+                        <div className="meta font-mono text-[10px] text-[#9ca3af] pb-[19px] border-b border-[rgba(255,255,255,0.08)]">
                             TESTIMONIAL · <b className="text-[#a78bfa] font-medium">{testimonial.clientName}</b>
                         </div>
-                        <div className="project font-mono mt-[27px] text-[#74747e] text-[10px]">
+                        <div className="project font-mono mt-[27px] text-[#9ca3af] text-[10px]">
                             PROJECT · <span className="text-[#c1b8da]">{testimonial.projectTitle || testimonial.project || 'Automated Data Extraction Workflow'}</span>
                         </div>
                         <blockquote className="quote mt-[19px] max-w-[790px] text-[clamp(1.2rem,2.35vw,2.12rem)] leading-[1.42] tracking-[-0.025em] font-[430]">
@@ -98,18 +98,18 @@ const Testimonials = () => {
                             <div className="identity">
                                 <strong className="text-sm font-[650]">{testimonial.clientName}</strong>
                                 {testimonial.source && (
-                                    <span className="source inline-block ml-[10px] border border-[rgba(255,255,255,0.13)] py-1 px-[7px] text-[#777780] text-[8px] align-[2px]">
+                                    <span className="source inline-block ml-[10px] border border-[rgba(255,255,255,0.13)] py-1 px-[7px] text-[#9ca3af] text-[8px] align-[2px]">
                                         {testimonial.source}
                                     </span>
                                 )}
                             </div>
-                            <div className="font-mono text-[8px] text-[#52525b]">
+                            <div className="font-mono text-[8px] text-[#9ca3af]">
                                 CLIENT RESPONSE · DETECTED
                             </div>
                         </footer>
                     </article>
 
-                    <span className="micro absolute right-0 top-[-24px] text-[#484851] text-[8px] font-mono">
+                    <span className="micro absolute right-0 top-[-24px] text-[#9ca3af] text-[8px] font-mono">
                         BBOX · ACTIVE
                     </span>
                 </div>

@@ -230,7 +230,7 @@ const Contact = () => {
               <span className="bracket-tl absolute top-[5px] left-[5px] w-[18px] h-[18px] border-t-[1.5px] border-l-[1.5px] border-[#8B5CF6] pointer-events-none z-[5]"></span>
               <span className="bracket-br absolute bottom-[5px] right-[5px] w-[18px] h-[18px] border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.55)] pointer-events-none z-[5]"></span>
 
-              <div className="meta font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] mb-5">
+              <div className="meta font-mono text-[10px] tracking-[0.14em] uppercase text-[#9ca3af] mb-5">
                 CONTACT · <em className="not-italic text-[#a78bfa]">DETECTED</em>
               </div>
 

@@ -31,11 +31,11 @@ const Footer = () => {
 
                 <div className="flex items-center justify-between gap-4 pt-3 border-t border-[rgba(255,255,255,0.07)] flex-wrap">
                     <div className="flex flex-wrap gap-2 gap-x-4">
-                        <Link to="/legal/" className="font-mono text-[10px] tracking-[0.1em] uppercase text-[#6b7280] hover:text-[#9ca3af] transition-colors">Privacy Policy</Link>
-                        <Link to="/data-policy/" className="font-mono text-[10px] tracking-[0.1em] uppercase text-[#6b7280] hover:text-[#9ca3af] transition-colors">Cookie Policy</Link>
-                        <button onClick={handleManageCookies} className="font-mono text-[10px] tracking-[0.1em] uppercase text-[#6b7280] hover:text-[#9ca3af] transition-colors">Manage Consent</button>
+                        <Link to="/legal/" className="font-mono text-[10px] tracking-[0.1em] uppercase text-[#9ca3af] hover:text-[#d1d5db] transition-colors">Privacy Policy</Link>
+                        <Link to="/data-policy/" className="font-mono text-[10px] tracking-[0.1em] uppercase text-[#9ca3af] hover:text-[#d1d5db] transition-colors">Cookie Policy</Link>
+                        <button onClick={handleManageCookies} className="font-mono text-[10px] tracking-[0.1em] uppercase text-[#9ca3af] hover:text-[#d1d5db] transition-colors">Manage Consent</button>
                     </div>
-                    <div className="font-mono text-[10px] tracking-[0.08em] uppercase text-[#6b7280]">
+                    <div className="font-mono text-[10px] tracking-[0.08em] uppercase text-[#9ca3af]">
                         © {new Date().getFullYear()} Vivek Patel. All Rights Reserved.
                     </div>
                 </div>

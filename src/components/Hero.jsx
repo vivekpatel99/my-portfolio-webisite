@@ -192,9 +192,9 @@ const Hero = () => {
                 <div className="flex justify-between items-start mb-1 pb-1.5 border-b border-white/[0.08] max-md:mb-1 max-md:pb-1">
                   <div>
                     <div className="font-mono text-[11px] font-semibold tracking-[0.14em] uppercase text-purple-200/[0.78]">Profile Invoice</div>
-                    <div className="mt-1 font-mono text-[10px] text-gray-500 tracking-wide">field parse</div>
+                    <div className="mt-1 font-mono text-[10px] text-gray-400 tracking-wide">field parse</div>
                   </div>
-                  <div className="text-right font-mono text-[10px] leading-relaxed text-gray-500">
+                  <div className="text-right font-mono text-[10px] leading-relaxed text-gray-400">
                     <strong className="block text-gray-400 font-medium tracking-wider">INV-VP-0045</strong>
                     OCR surface
                   </div>
@@ -202,14 +202,14 @@ const Hero = () => {
 
                 <div className="max-md:grid max-md:grid-cols-[minmax(0,0.95fr)_minmax(0,1.85fr)] max-md:gap-x-2">
                   <div className="mb-1 max-md:min-w-0">
-                    <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Name</span>
+                    <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-400 max-md:mb-[5px]">Name</span>
                     <span {...fieldBoxProps('name', 'relative inline-block px-[7px] py-[3px]')}>
                       <span className="text-[1.3rem] font-semibold tracking-tight text-white max-md:text-[0.95rem]">Vivek Patel</span>
                     </span>
                   </div>
 
                   <div className="mb-1 max-md:min-w-0">
-                    <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Role</span>
+                    <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-400 max-md:mb-[5px]">Role</span>
                     <span {...fieldBoxProps('role', 'relative inline-block max-w-full px-2 py-1')}>
                       <h1 className="text-[clamp(1.25rem,2.1vw,1.65rem)] font-bold text-white tracking-tight leading-[1.2] max-md:text-[1rem] max-md:leading-[1.1]">
                         Computer Vision & AI Engineer
@@ -221,7 +221,7 @@ const Hero = () => {
                 {/* Proofs folded under role */}
                 <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 mb-0.5 max-md:gap-x-3 max-md:mb-1" role="group" aria-label="Detected credentials">
                   <div className="min-w-0">
-                    <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Credential</span>
+                    <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-400 max-md:mb-[5px]">Credential</span>
                     <span {...fieldBoxProps('credential', 'relative inline-flex items-center gap-[7px] px-[9px] py-[5px] max-w-full max-[359px]:px-1.5')}>
                       <span className="flex-shrink-0 w-3 h-3 text-purple-400 opacity-90 max-[359px]:hidden" aria-hidden="true">
                         <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" className="w-full h-full">
@@ -230,10 +230,10 @@ const Hero = () => {
                       </span>
                       <span className="text-[0.88rem] font-semibold tracking-[-0.01em] text-white leading-[1.2] whitespace-nowrap max-md:text-[0.84rem] max-md:whitespace-normal max-[359px]:text-[0.75rem] max-[359px]:whitespace-nowrap">Top Rated Plus</span>
                     </span>
-                    <p className="mt-[5px] ml-[2px] font-mono text-[9px] leading-[1.2] tracking-[0.04em] text-gray-500">Upwork freelancer</p>
+                    <p className="mt-[5px] ml-[2px] font-mono text-[9px] leading-[1.2] tracking-[0.04em] text-gray-400">Upwork freelancer</p>
                   </div>
                   <div className="min-w-0">
-                    <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Success</span>
+                    <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-400 max-md:mb-[5px]">Success</span>
                     <span {...fieldBoxProps('success', 'relative inline-flex items-center gap-[7px] px-[9px] py-[5px] max-w-full max-[359px]:px-1.5')}>
                       <span className="flex-shrink-0 w-3 h-3 text-purple-400 opacity-90 max-[359px]:hidden" aria-hidden="true">
                         <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" className="w-full h-full">
@@ -242,20 +242,20 @@ const Hero = () => {
                       </span>
                       <span className="text-[0.88rem] font-semibold tracking-[-0.01em] text-white leading-[1.2] whitespace-nowrap max-md:text-[0.84rem] max-md:whitespace-normal max-[359px]:text-[0.75rem] max-[359px]:whitespace-nowrap">100% Job Success</span>
                     </span>
-                    <p className="mt-[5px] ml-[2px] font-mono text-[9px] leading-[1.2] tracking-[0.04em] text-gray-500">Client delivery record</p>
+                    <p className="mt-[5px] ml-[2px] font-mono text-[9px] leading-[1.2] tracking-[0.04em] text-gray-400">Client delivery record</p>
                   </div>
                 </div>
 
                 {/* Rate & Location columns */}
                 <div className="grid grid-cols-2 gap-x-[18px] gap-y-3 mb-2.5 max-md:mb-1.5 max-md:gap-y-2 max-[359px]:mb-0">
                   <div>
-                    <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Rate</span>
+                    <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-400 max-md:mb-[5px]">Rate</span>
                     <span {...fieldBoxProps('rate', 'relative inline-block px-[7px] py-[3px]')}>
                       <span className="font-mono text-[1.05rem] font-semibold text-white leading-[1.2]">€45/hour</span>
                     </span>
                   </div>
                   <div>
-                    <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px]">Location</span>
+                    <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-400 max-md:mb-[5px]">Location</span>
                     <span {...fieldBoxProps('location', 'relative inline-block px-[7px] py-[3px]')}>
                       <span className="font-medium text-[0.92rem] text-gray-300 leading-[1.3]">Linz, Austria</span>
                     </span>
@@ -271,7 +271,7 @@ const Hero = () => {
 
                 {/* Tags field */}
                 <div className="max-[359px]:flex max-[359px]:items-center max-[359px]:gap-2">
-                  <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-500 max-md:mb-[5px] max-[359px]:mb-0">Tags</span>
+                  <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-400 max-md:mb-[5px] max-[359px]:mb-0">Tags</span>
                   <span className="inline-flex flex-wrap gap-1.5">
                     {['OCR', 'CV', 'n8n'].map((tag) => (
                       <span
@@ -286,10 +286,10 @@ const Hero = () => {
               </article>
             </div>
 
-            <div className="flex flex-wrap gap-3 mt-1 lg:col-start-1 lg:row-start-2 max-md:flex-col max-md:mt-4">
+            <div className="relative z-[1] flex flex-wrap gap-3 mt-1 lg:col-start-1 lg:row-start-2 max-md:flex-col max-md:mt-4">
               <Button
                 onClick={handleCTAClick}
-                className="bg-[#8B5CF6] hover:bg-[#9B6FFF] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-0"
+                className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-0"
               >
                 Request a Project Estimate
               </Button>

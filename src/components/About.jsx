@@ -5,7 +5,7 @@ const About = () => {
   return (
     <section id="about" className="relative bg-[#0C0D0D] py-14 px-7 md:px-12">
       <div className="relative z-[2] max-w-[1120px] mx-auto">
-        <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] mb-4">
+        <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[#9ca3af] mb-4">
           ABOUT · <em className="not-italic text-[#a78bfa]">DETECTED</em>
         </div>
         <h2 className="text-[clamp(1.85rem,3.4vw,2.75rem)] font-bold tracking-[-0.02em] leading-[1.1] uppercase mb-7">
@@ -34,7 +34,7 @@ const About = () => {
             <span className="f-tl absolute top-[5px] left-[5px] w-[14px] h-[14px] border-t-[1.5px] border-l-[1.5px] border-[rgba(139,92,246,0.75)] pointer-events-none"></span>
             <span className="f-br absolute bottom-[5px] right-[5px] w-[14px] h-[14px] border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.4)] pointer-events-none"></span>
 
-            <div className="field-meta font-mono text-[10px] tracking-[0.14em] uppercase text-[#6b7280] mb-[18px]">
+            <div className="field-meta font-mono text-[10px] tracking-[0.14em] uppercase text-[#9ca3af] mb-[18px]">
               BIO · <em className="not-italic text-[#a78bfa]">FIELD</em>
             </div>
 
@@ -44,7 +44,7 @@ const About = () => {
             <p className="bio text-[0.92rem] leading-[1.55] text-[#9ca3af] mb-5">
               I optimize complex AI systems for production. From real-time inference acceleration to automated data extraction at scale, I deliver measurable results faster than typical agency timelines.
             </p>
-            <div className="diff-label font-mono text-[10px] tracking-[0.12em] uppercase text-[#6b7280] mb-[10px]">
+            <div className="diff-label font-mono text-[10px] tracking-[0.12em] uppercase text-[#9ca3af] mb-[10px]">
               KEY DIFFERENTIATORS
             </div>
             <ul className="diff-block">
@@ -103,13 +103,13 @@ const About = () => {
           <div className="process-grid grid md:grid-cols-2 gap-6">
             <div>
               <h3 className="text-[0.95rem] font-bold mb-2 text-[#e5e7eb]">Strategy & Discovery</h3>
-              <p className="text-[0.84rem] leading-[1.5] text-[#6b7280]">
+              <p className="text-[0.84rem] leading-[1.5] text-[#9ca3af]">
                 We'll start by understanding your data challenges, constraints, and success metrics to define the right approach—whether it's vision system optimization, data extraction, or a custom AI workflow.
               </p>
             </div>
             <div>
               <h3 className="text-[0.95rem] font-bold mb-2 text-[#e5e7eb]">Execution & Optimization</h3>
-              <p className="text-[0.84rem] leading-[1.5] text-[#6b7280]">
+              <p className="text-[0.84rem] leading-[1.5] text-[#9ca3af]">
                 I build, test, and optimize the solution with production-grade performance standards. I deliver robust, working systems, not just prototypes.
               </p>
             </div>
