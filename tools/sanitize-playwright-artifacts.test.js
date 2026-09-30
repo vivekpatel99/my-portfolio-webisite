@@ -100,6 +100,25 @@ describe('sanitized Playwright QA artifacts', () => {
     },
   );
 
+  it.each(['preview-desktop', 'preview-mobile'])(
+    'sanitizes route recovery failures for %s without raw browser data', async (projectName) => {
+      const paths = await temporaryPaths();
+      const report = JSON.parse(await readFile(fixturePath, 'utf8'));
+      const suite = report.suites[0];
+      suite.file = 'qa-route-recovery.spec.js';
+      suite.specs[0].file = 'qa-route-recovery.spec.js';
+      suite.specs[0].tests[0].projectName = projectName;
+      await writeFile(paths.rawReport, JSON.stringify(report), 'utf8');
+
+      await expect(sanitizePlaywrightArtifacts({ paths })).resolves.toMatchObject({ created: true });
+      const summary = JSON.parse(await readFile(paths.summary, 'utf8'));
+      const failures = JSON.parse(await readFile(paths.failureResults, 'utf8'));
+      expect(summary.runStatus).toBe('failed');
+      expect(failures.failures[0]).toMatchObject({ suite: 'route-recovery', project: projectName });
+      expect(JSON.stringify({ summary, failures })).not.toMatch(/QA_SECRET_SENTINEL|Injected title|raw stack|localStorage|trace\.zip/);
+    },
+  );
+
   it('removes prior upload candidates and emits nothing when no raw report exists', async () => {
     const paths = await temporaryPaths();
     await mkdir(paths.outputDirectory, { recursive: true });
