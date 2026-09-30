@@ -169,6 +169,34 @@ describe('sanitized Playwright QA artifacts', () => {
       .not.toMatch(/QA_SECRET_SENTINEL|Injected title|hero title|raw stack|localStorage|trace\.zip|qa-hero-motion/);
   });
 
+  it('reconstructs and validates a bounded consent suite report without emitting hostile raw data', async () => {
+    const paths = await temporaryPaths();
+    const report = JSON.parse(await readFile(fixturePath, 'utf8'));
+    const suite = report.suites[0];
+    suite.file = 'qa-consent.spec.js';
+    suite.title = 'QA_SECRET_SENTINEL consent title';
+    suite.specs[0].file = 'qa-consent.spec.js';
+    await writeFile(paths.rawReport, JSON.stringify(report), 'utf8');
+
+    await expect(sanitizePlaywrightArtifacts({ paths })).resolves.toMatchObject({ created: true });
+    await validateStagedArtifacts({ paths });
+    const summary = JSON.parse(await readFile(paths.summary, 'utf8'));
+    const failures = JSON.parse(await readFile(paths.failureResults, 'utf8'));
+
+    expect(summary.suites).toEqual([{
+      suite: 'consent',
+      projects: [{
+        project: 'preview-desktop',
+        attempts: { passed: 0, failed: 1, skipped: 0, timed_out: 0, interrupted: 0 },
+      }],
+    }]);
+    expect(failures.failures).toEqual([{
+      suite: 'consent', sourceLine: 53, testOrdinal: 1, project: 'preview-desktop', retry: 1, outcome: 'failed', durationMs: 60_000,
+    }]);
+    expect(`${JSON.stringify(summary)}${JSON.stringify(failures)}`)
+      .not.toMatch(/QA_SECRET_SENTINEL|Injected title|consent title|raw stack|localStorage|trace\.zip|qa-consent/);
+  });
+
   it('removes prior upload candidates and emits nothing when no raw report exists', async () => {
     const paths = await temporaryPaths();
     await mkdir(paths.outputDirectory, { recursive: true });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from "@/components/ui/checkbox.jsx";
@@ -11,11 +11,45 @@ import {
   saveCookieConsentPreferences,
 } from '@/lib/consent';
 
-const CookieConsentBanner = ({ onConsent, show, onHide }) => {
+const CookieConsentBanner = ({ onConsent, show, onHide, onReservedBottomChange }) => {
   const [isManaging, setIsManaging] = useState(show);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [preferences, setPreferences] = useState(DEFAULT_COOKIE_CONSENT_PREFERENCES);
   const bannerRef = useRef(null);
+  const settingsRef = useRef(null);
   const previousFocusRef = useRef(null);
+
+  useEffect(() => {
+    if (!isManaging) setSettingsOpen(false);
+  }, [isManaging]);
+
+  // Untransformed dimensions keep the entry motion from changing the reserved space.
+  useLayoutEffect(() => {
+    if (!onReservedBottomChange) return undefined;
+    const dialog = bannerRef.current;
+    if (!isManaging || !dialog) {
+      onReservedBottomChange(0);
+      return undefined;
+    }
+
+    const measure = () => {
+      const top = parseFloat(window.getComputedStyle(dialog).top) || 0;
+      const settingsHeight = settingsRef.current?.offsetHeight ?? 0;
+      onReservedBottomChange(top + dialog.offsetHeight + settingsHeight);
+    };
+    measure();
+
+    let observer;
+    if (typeof ResizeObserver !== 'undefined') {
+      observer = new ResizeObserver(measure);
+      observer.observe(dialog);
+      if (settingsRef.current) observer.observe(settingsRef.current);
+    }
+    return () => {
+      observer?.disconnect();
+      onReservedBottomChange(0);
+    };
+  }, [isManaging, settingsOpen, onReservedBottomChange]);
 
   useEffect(() => {
     if(show) {
@@ -119,7 +153,7 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
               </p>
             </div>
             
-            <Collapsible className="flex-shrink-0">
+            <Collapsible className="flex-shrink-0" open={settingsOpen} onOpenChange={setSettingsOpen}>
               <div className="flex flex-row gap-1.5 sm:gap-2">
                 <Button
                   onClick={handleAcceptAll}
@@ -144,7 +178,7 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
                 </CollapsibleTrigger>
               </div>
 
-              <CollapsibleContent className="absolute top-full left-0 right-0 bg-[rgba(12,13,13,0.98)] backdrop-blur-lg border-b border-white/20 shadow-xl z-50">
+              <CollapsibleContent ref={settingsRef} className="absolute top-full left-0 right-0 bg-[rgba(12,13,13,0.98)] backdrop-blur-lg border-b border-white/20 shadow-xl z-50">
                 <div className="max-w-[1400px] mx-auto px-4 py-4 sm:px-6 sm:py-5 space-y-3">
                   <div className="p-3 bg-black/20 rounded-lg">
                     <div className="flex items-center justify-between">
