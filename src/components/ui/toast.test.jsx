@@ -49,6 +49,8 @@ describe('Toast', () => {
 
     expect(classes).toContain('motion-reduce:data-[state=open]:animate-none');
     expect(classes).toContain('motion-reduce:data-[state=closed]:animate-none');
+    // A cancelled swipe otherwise slides back through `transition-all`.
+    expect(classes).toContain('motion-reduce:transition-none');
   });
 
   it('names the close control and hides the decorative icon', () => {
@@ -58,10 +60,12 @@ describe('Toast', () => {
     expect(close.querySelector('svg')?.getAttribute('aria-hidden')).toBe('true');
   });
 
-  it('keeps the close control visible on devices without hover', () => {
+  it('keeps the close control visible on devices without hover or with any touch pointer', () => {
     renderToast('default');
 
     const close = screen.getByRole('button', { name: 'Dismiss notification' });
     expect(classesOf(close)).toContain('[@media(hover:none)]:opacity-100');
+    // Touch laptops report `hover: hover` for their trackpad, yet a finger tap cannot hover.
+    expect(classesOf(close)).toContain('[@media(any-pointer:coarse)]:opacity-100');
   });
 });
