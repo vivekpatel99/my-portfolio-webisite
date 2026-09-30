@@ -101,6 +101,14 @@ remain unchanged. The focused tests went from 6 failures and 29 passes to
 38 passes across the config, sanitizer, and artifact-workflow files.
 `npm run qa:artifacts:verify` also passed.
 
+During monitoring, `develop` gained #238, #240, #242, and #245. The first three
+integrated without changing this patch. #245's hero-motion QA registration
+conflicted with the testimonial config and sanitizer tests. Opus resolved both
+by retaining the preview-only testimonial selection, local-only hero/focus
+selection, and both exact sanitizer suite registrations and tests. The focused
+config, sanitizer, workflow, local-only, and hero tests passed 84 cases.
+Integration uses merge commits and preserves shared history.
+
 Listing with the default JSON reporter regenerated the ignored
 `playwright-output/qa-results.json`; its earlier generated contents were not
 recoverable. Subsequent listing used `--reporter=line`. No source or baseline
