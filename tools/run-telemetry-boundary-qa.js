@@ -84,6 +84,7 @@ try {
       'test',
       '-c', 'tests/qa/qa.config.js',
       'tests/qa/qa-contact.spec.js',
+      'tests/qa/qa-edge.spec.js',
       '--project=preview-desktop',
       '--grep', 'fake Sentry',
     ],
