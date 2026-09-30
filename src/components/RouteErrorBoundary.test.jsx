@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import React, { lazy, useEffect } from 'react';
-import { act, cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import ErrorBoundary from './ErrorBoundary';
@@ -81,7 +81,8 @@ describe('RouteErrorBoundary', () => {
     const heading = await screen.findByRole('heading', { level: 1, name: ROUTE_ERROR_HEADING });
     expectShellIntact();
     expect(document.getElementById('main-content').contains(heading)).toBe(true);
-    expect(document.activeElement).toBe(heading);
+    // Focus moves in a passive effect, which can run after the heading is observable.
+    await waitFor(() => expect(document.activeElement).toBe(heading));
 
     const retry = screen.getByRole('button', { name: 'Retry' });
     expect(retry.getAttribute('type')).toBe('button');
@@ -123,7 +124,7 @@ describe('RouteErrorBoundary', () => {
 
     const heading = await screen.findByRole('heading', { level: 1, name: ROUTE_ERROR_HEADING });
     expectShellIntact();
-    expect(document.activeElement).toBe(heading);
+    await waitFor(() => expect(document.activeElement).toBe(heading));
   });
 
   it('clears the fallback after navigation with a hash', () => {

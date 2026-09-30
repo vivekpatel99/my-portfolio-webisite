@@ -127,3 +127,23 @@ all five lifecycle cases; the extracted helper's actual values and wire messages
 matched develop. Later base updates preserved the task patch, including the
 published merge bringing in consent-storage handling. Final-head CI is the
 required evidence for the combined integration tree.
+
+## CI timing repair: route error focus assertion
+
+CI run 36723545609 on head `f795eeb` failed 1 of 630 tests. The failure was in
+the `RouteErrorBoundary.test.jsx` test that came in with develop (#244), not
+the motion patch: `document.activeElement` was `<body>` when the test expected
+the recovery heading. The same file passed 8/8 locally. The fallback moves focus
+in a passive `useEffect`. After the first rejected `lazy()` import, React
+commits the heading DOM first and runs passive effects in a later Scheduler
+task. `findByRole` can resolve in that gap, and RTL's `setTimeout(0)` drain can
+run before Scheduler's next `setImmediate` when the machine is busy. A temporary
+diagnostic in the test blocked the commit and drain. The heading appeared while
+`<body>` still had focus. The unfixed assertion failed 5/5 with the CI message,
+and the fixed assertion passed 5/5. The navigate-to-lazy test only avoided the
+race because the first test had already cached the rejected import. Run alone,
+it took the same async path. Both focus assertions now use
+`await waitFor(() => expect(document.activeElement).toBe(heading))`. No
+production code changed. The focused file passed 8/8, the isolated navigation
+test passed, and the full `npm test` suite passed 630/630 locally. Final-head CI
+is still required.
