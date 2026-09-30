@@ -2,13 +2,10 @@ import { expect, test } from './qa-test.js';
 
 const COOKIE_KEY = 'cookie_consent_preferences';
 
-test.beforeEach(async ({ page }) => {
-  await page.addInitScript((key) => {
-    if (window.self === window.top) {
-      localStorage.removeItem(key);
-    }
-  }, COOKIE_KEY);
-});
+// Each test receives Playwright's per-test browser context, and qa.config.js sets no
+// storageState, so every test starts with empty localStorage. Tests that need stored
+// consent seed it in their only init script: Playwright does not guarantee the order of
+// multiple init scripts, so a separate cleanup script could erase the seeded value.
 
 test('cookie banner appears after delay on first visit', async ({ page }) => {
   await page.goto('/');
