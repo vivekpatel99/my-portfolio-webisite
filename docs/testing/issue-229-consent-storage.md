@@ -23,7 +23,7 @@ No banner markup, styling, motion configuration, or Layout logic changed.
 Issue [#228](https://github.com/vivekpatel99/my-portfolio-webisite/issues/228)
 continues to own the separate hidden consent spacer.
 
-## Verification
+## Initial verification
 
 - Codex independently inspected the production diff and consent callers.
 - `npm test` passed all 570 tests in 55 files.
@@ -96,5 +96,26 @@ duplication remains as a nonblocking nit.
 - Chromium was verified locally. Physical devices, deployed hosting, and
   production telemetry were not tested.
 
-Issue 229 remains open pending PR acceptance, required CI, and merge. This work
-does not authorize merge or deployment.
+At initial delivery, issue 229 remained open pending PR acceptance, required CI,
+and merge. Merge authorization was supplied in a later follow-up; deployment
+remains a separate decision.
+
+## PR review follow-up
+
+Develop advanced to `1aa8bf8077051aebcb4ed9f8c67cfe87b05af0c7` during
+babysitting. Its testimonial heading and case-study navigation changes were
+integrated without changing the consent implementation.
+
+A review identified undefined ordering between the file-level consent cleanup
+initializer and the stale-acceptance seed. Codex reproduced both orders: cleanup
+then seed preserved acceptance; seed then cleanup erased it. Opus removed the
+redundant cleanup because each test has a fresh browser context without saved
+storage state. This also prevents cleanup from erasing the corrupt-consent seed.
+All existing assertions remain.
+
+After the repair, 582 unit tests in 56 files and the production build passed.
+The stale-consent, corrupt-consent, and fake-Sentry tests passed five repetitions
+on desktop and mobile: 40 cases, with no skips. A fresh Opus requirements and
+code-quality review and an independent Codex review found no blockers. The
+documented limits above remain unchanged. Current-head CI and unresolved review
+threads must still be checked immediately before merging.
