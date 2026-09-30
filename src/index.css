@@ -57,13 +57,12 @@
     }
   }
 
-  /* Only hide cursor on devices with precise pointers (mouse/trackpad) */
   @media (pointer: fine) {
 
-    body,
-    html,
-    a,
-    button {
+    :where(.custom-cursor-enabled) body,
+    html:where(.custom-cursor-enabled),
+    :where(.custom-cursor-enabled) a,
+    :where(.custom-cursor-enabled) button {
       cursor: none;
     }
   }
@@ -71,10 +70,10 @@
   /* Respect user preference for reduced motion */
   @media (prefers-reduced-motion: reduce) {
 
-    body,
-    html,
-    a,
-    button {
+    :where(.custom-cursor-enabled) body,
+    html:where(.custom-cursor-enabled),
+    :where(.custom-cursor-enabled) a,
+    :where(.custom-cursor-enabled) button {
       cursor: auto;
     }
   }

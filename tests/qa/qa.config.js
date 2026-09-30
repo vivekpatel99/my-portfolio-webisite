@@ -43,6 +43,7 @@ const passiveSpecs = [
   'qa-local-navigation.spec.js',
   'qa-contact.spec.js',
   'qa-consent.spec.js',
+  'qa-cursor.spec.js',
   'qa-edge.spec.js',
   ...(localOnly ? ['qa-focus.spec.js', 'qa-hero-motion.spec.js'] : []),
   'qa-responsive.spec.js',
