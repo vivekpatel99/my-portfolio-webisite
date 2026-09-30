@@ -1,0 +1,235 @@
+import { expect, test } from './qa-test.js';
+import { testimonials as testimonialData } from '../../src/data/testimonials.js';
+
+// Longer than one 6s rotation interval, so an unexpected advance is observable.
+const OVER_ONE_INTERVAL_MS = 7_000;
+const PERSISTENT_PAUSE_MS = 20_500;
+const MIN_TARGET_PX = 24;
+const slideCount = testimonialData.length;
+const counterFor = (index) => `${String(index + 1).padStart(2, '0')} / ${String(slideCount).padStart(2, '0')}`;
+
+test.beforeEach(async ({ page }) => {
+  // Keep the consent banner from covering the controls on narrow viewports.
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      'cookie_consent_preferences',
+      JSON.stringify({ essential: true, analytics: false, sentry: false, decidedAt: new Date().toISOString() }),
+    );
+  });
+});
+
+async function openCarousel(page) {
+  await page.goto('/');
+  const section = page.locator('#testimonials');
+  await section.scrollIntoViewIfNeeded();
+  const carousel = section.getByRole('region', { name: 'Client testimonials' });
+  await expect(carousel).toBeVisible();
+  return {
+    carousel,
+    counter: section.locator('.count b'),
+    quote: carousel.getByRole('group', { name: new RegExp(`of ${slideCount}$`) }),
+    slides: carousel.getByRole('button', { name: /^Slide \d+$/ }),
+    toggle: carousel.getByRole('button', { name: /^(Pause|Play) testimonials$/ }),
+  };
+}
+
+// Remove every transient stop reason: pointer outside the carousel and no focus inside it.
+async function leaveCarousel(page) {
+  await page.mouse.move(1, 1);
+  await page.evaluate(() => document.activeElement?.blur());
+}
+
+async function activate(locator, hasTouch) {
+  if (hasTouch) await locator.tap();
+  else await locator.click();
+}
+
+test('pause by tap or click keeps the slide for 20s after hover and focus leave', async ({ page, hasTouch }) => {
+  test.setTimeout(90_000);
+  const { counter, toggle } = await openCarousel(page);
+
+  await expect(toggle).toHaveAccessibleName('Pause testimonials');
+  await activate(toggle, hasTouch);
+  await expect(toggle).toHaveAccessibleName('Play testimonials');
+  const pausedAt = await counter.textContent();
+
+  await leaveCarousel(page);
+  await page.waitForTimeout(PERSISTENT_PAUSE_MS);
+  await expect(counter).toHaveText(pausedAt);
+
+  await activate(toggle, hasTouch);
+  await expect(toggle).toHaveAccessibleName('Pause testimonials');
+  await leaveCarousel(page);
+  await expect(counter).not.toHaveText(pausedAt, { timeout: OVER_ONE_INTERVAL_MS + 2_000 });
+});
+
+test('keyboard traversal reaches quote, slides, and pause; chosen slide persists 20s', async ({ page }) => {
+  test.setTimeout(90_000);
+  const { counter, quote, slides, toggle } = await openCarousel(page);
+
+  await quote.focus();
+  await expect(quote).toBeFocused();
+  for (let index = 0; index < slideCount; index += 1) {
+    await page.keyboard.press('Tab');
+    await expect(slides.nth(index)).toBeFocused();
+  }
+  await page.keyboard.press('Tab');
+  await expect(toggle).toBeFocused();
+
+  await page.keyboard.press('Space');
+  await expect(toggle).toHaveAccessibleName('Play testimonials');
+  await page.keyboard.press('Space');
+  await expect(toggle).toHaveAccessibleName('Pause testimonials');
+
+  await page.keyboard.press('Shift+Tab');
+  await expect(slides.nth(slideCount - 1)).toBeFocused();
+  await slides.nth(1).focus();
+  await page.keyboard.press('Enter');
+  await expect(counter).toHaveText(counterFor(1));
+  await expect(slides.nth(1)).toHaveAttribute('aria-current', 'true');
+  await expect(toggle).toHaveAccessibleName('Play testimonials');
+
+  await leaveCarousel(page);
+  await page.waitForTimeout(PERSISTENT_PAUSE_MS);
+  await expect(counter).toHaveText(counterFor(1));
+});
+
+test('focusing the quote or a control stops auto-advance until focus leaves', async ({ page }) => {
+  test.setTimeout(60_000);
+  const { counter, quote, slides } = await openCarousel(page);
+  await page.mouse.move(1, 1);
+
+  for (const target of [quote, slides.nth(4)]) {
+    await target.focus();
+    const heldAt = await counter.textContent();
+    await page.waitForTimeout(OVER_ONE_INTERVAL_MS);
+    await expect(counter).toHaveText(heldAt);
+  }
+
+  await leaveCarousel(page);
+  const releasedAt = await counter.textContent();
+  await expect(counter).not.toHaveText(releasedAt, { timeout: OVER_ONE_INTERVAL_MS + 2_000 });
+});
+
+test('overlapping hover and focus reasons each keep rotation stopped', async ({ page, hasTouch }) => {
+  test.skip(hasTouch, 'Pointer hover is a desktop-only interaction.');
+  test.setTimeout(60_000);
+  const { carousel, counter, quote } = await openCarousel(page);
+
+  await carousel.hover();
+  await quote.focus();
+  await page.mouse.move(1, 1);
+  const heldByFocus = await counter.textContent();
+  await page.waitForTimeout(OVER_ONE_INTERVAL_MS);
+  await expect(counter).toHaveText(heldByFocus);
+
+  await carousel.hover();
+  await page.evaluate(() => document.activeElement?.blur());
+  await page.waitForTimeout(OVER_ONE_INTERVAL_MS);
+  await expect(counter).toHaveText(heldByFocus);
+
+  await page.mouse.move(1, 1);
+  await expect(counter).not.toHaveText(heldByFocus, { timeout: OVER_ONE_INTERVAL_MS + 2_000 });
+});
+
+test('controls are non-overlapping targets of at least 24x24 with decorative diamonds', async ({ page }) => {
+  const { slides, toggle } = await openCarousel(page);
+  const viewportWidth = page.viewportSize().width;
+
+  const boxes = [];
+  for (const target of [...await slides.all(), toggle]) {
+    const box = await target.boundingBox();
+    expect(box.width).toBeGreaterThanOrEqual(MIN_TARGET_PX);
+    expect(box.height).toBeGreaterThanOrEqual(MIN_TARGET_PX);
+    expect(box.x).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width).toBeLessThanOrEqual(viewportWidth);
+    boxes.push(box);
+  }
+  for (let a = 0; a < boxes.length; a += 1) {
+    for (let b = a + 1; b < boxes.length; b += 1) {
+      const overlapX = Math.min(boxes[a].x + boxes[a].width, boxes[b].x + boxes[b].width) - Math.max(boxes[a].x, boxes[b].x);
+      const overlapY = Math.min(boxes[a].y + boxes[a].height, boxes[b].y + boxes[b].height) - Math.max(boxes[a].y, boxes[b].y);
+      expect(overlapX > 0.5 && overlapY > 0.5, `targets ${a} and ${b} overlap`).toBe(false);
+    }
+  }
+  if (viewportWidth >= 640) {
+    for (const box of boxes) {
+      expect(box.width).toBeGreaterThanOrEqual(44);
+      expect(box.height).toBeGreaterThanOrEqual(44);
+    }
+  }
+
+  const marks = await slides.evaluateAll((buttons) => buttons.map((button) => {
+    const mark = button.querySelector('span[aria-hidden="true"]');
+    const style = mark ? getComputedStyle(mark) : null;
+    return {
+      buttonTransform: getComputedStyle(button).transform,
+      markTransform: style?.transform ?? 'none',
+      markColor: style?.backgroundColor ?? '',
+      markSize: mark ? [mark.offsetWidth, mark.offsetHeight] : [],
+      current: button.getAttribute('aria-current') === 'true',
+    };
+  }));
+  for (const mark of marks) {
+    expect(mark.buttonTransform).toBe('none');
+    expect(mark.markTransform).not.toBe('none');
+    expect(mark.markSize).toEqual(mark.current ? [8, 8] : [5, 5]);
+  }
+  expect(marks.find((mark) => mark.current).markColor).toBe('rgb(139, 92, 246)');
+});
+
+test('focused quote and controls show a visible outline during keyboard traversal', async ({ page }) => {
+  const { quote, slides, toggle } = await openCarousel(page);
+  const expectVisibleOutline = async (target) => {
+    await expect(target).toBeFocused();
+    const outline = await target.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return { style: style.outlineStyle, width: parseFloat(style.outlineWidth) };
+    });
+    expect(outline.style).not.toBe('none');
+    expect(outline.width).toBeGreaterThanOrEqual(2);
+  };
+
+  await quote.focus();
+  await expectVisibleOutline(quote);
+  await page.keyboard.press('Tab');
+  await expectVisibleOutline(slides.first());
+  for (let index = 1; index <= slideCount; index += 1) await page.keyboard.press('Tab');
+  await expectVisibleOutline(toggle);
+});
+
+test('reduced motion shows autoplay off, offers no playback control, and keeps manual slides usable', async ({ page, hasTouch }) => {
+  test.setTimeout(60_000);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const { carousel, counter, slides, toggle } = await openCarousel(page);
+
+  await expect(counter).toHaveText(counterFor(0));
+  await expect(carousel.getByText('Autoplay off · Reduced motion')).toBeVisible();
+  await expect(toggle).toHaveCount(0);
+  await expect(carousel.getByRole('button', { name: /play|pause/i })).toHaveCount(0);
+
+  await activate(slides.nth(2), hasTouch);
+  await expect(counter).toHaveText(counterFor(2));
+  await expect(slides.nth(2)).toHaveAttribute('aria-current', 'true');
+
+  await leaveCarousel(page);
+  await page.waitForTimeout(OVER_ONE_INTERVAL_MS * 2);
+  await expect(counter).toHaveText(counterFor(2));
+});
+
+test('rotation resumes after a motion-preference change removes the focused Pause control', async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  const { carousel, counter, toggle } = await openCarousel(page);
+
+  await toggle.focus();
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(carousel.getByText('Autoplay off · Reduced motion')).toBeVisible();
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await expect(toggle).toHaveAccessibleName('Pause testimonials');
+
+  await leaveCarousel(page);
+  expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
+  const releasedAt = await counter.textContent();
+  await expect(counter).not.toHaveText(releasedAt, { timeout: OVER_ONE_INTERVAL_MS + 2_000 });
+});
