@@ -415,7 +415,7 @@ const Hero = () => {
                     }}
                   >
                     <img
-                      src={profileImages.aboutPhoto}
+                      src={profileImages.portrait}
                       srcSet={profileImages.portraitSrcSet}
                       sizes="(min-width: 768px) 236px, 216px"
                       width="1008"

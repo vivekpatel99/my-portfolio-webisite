@@ -214,7 +214,7 @@ describe('Header', () => {
     );
 
     const home = screen.getAllByRole('link', { name: 'Vivek Patel Logo' })[0];
-    expect(home.querySelector('img')?.getAttribute('src')).toBe('/assets/logos/mylogo-60.webp');
+    expect(home.querySelector('img')?.getAttribute('src')).toBe('/assets/logos/mylogo-60-c6065baa4d50.webp');
     expect(screen.queryByText(/NAV ·/i)).toBeNull();
   });
 
@@ -233,8 +233,8 @@ describe('Header', () => {
       .map((link) => link.querySelector('img'));
     expect(marks).toHaveLength(2);
     marks.forEach((img) => {
-      expect(img.getAttribute('src')).toBe('/assets/logos/mylogo-60.webp');
-      expect(img.getAttribute('srcset')).toBe('/assets/logos/mylogo-60.webp 2x, /assets/logos/mylogo-90.webp 3x');
+      expect(img.getAttribute('src')).toBe('/assets/logos/mylogo-60-c6065baa4d50.webp');
+      expect(img.getAttribute('srcset')).toBe('/assets/logos/mylogo-60-c6065baa4d50.webp 2x, /assets/logos/mylogo-90-cbffb31a1bdc.webp 3x');
       expect(img.getAttribute('width')).toBe('30');
       expect(img.getAttribute('height')).toBe('30');
     });

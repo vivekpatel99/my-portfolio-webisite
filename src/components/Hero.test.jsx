@@ -143,7 +143,7 @@ describe('Hero portrait sizing (#252)', () => {
     const portrait = screen.getByRole('img', { name: 'Tracked engineer portrait' });
     expect(portrait.getAttribute('src')).toBe('/assets/images/vivek-black-and-white.webp');
     expect(portrait.getAttribute('srcset')).toBe(
-      '/assets/images/vivek-black-and-white-480w.webp 480w, /assets/images/vivek-black-and-white-720w.webp 720w, /assets/images/vivek-black-and-white.webp 1008w'
+      '/assets/images/vivek-black-and-white-480w-3a7a7a1ab19c.webp 480w, /assets/images/vivek-black-and-white-720w-aa13477551ed.webp 720w, /assets/images/vivek-black-and-white.webp 1008w'
     );
     expect(portrait.getAttribute('sizes')).toBe('(min-width: 768px) 236px, 216px');
     expect(portrait.getAttribute('width')).toBe('1008');
