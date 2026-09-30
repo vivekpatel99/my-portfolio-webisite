@@ -1,6 +1,7 @@
 import { collectGalleryImages, galleryThumbnailSrc } from '../../src/components/CaseStudyGallery.js';
 import { expect, test } from './qa-test.js';
 import { caseStudies, featuredCaseStudies } from '../../src/data/caseStudies.js';
+import { containsCaseStudyCopyLeak } from '../case-study-copy.js';
 
 const routes = [
   { path: '/', heading: /Vivek Patel/i },
@@ -23,6 +24,37 @@ test.describe('Route rendering', () => {
     });
   }
 });
+
+for (const slug of ['depth-based-distance-estimation', 'yolo-computer-vision-optimization', 'n8n-python-ai-agents']) {
+  test(`buyer-facing copy for ${slug}`, async ({ page }) => {
+    await page.goto(`/project/${slug}/`);
+    const main = page.locator('#main-content');
+    await expect(main).toBeVisible();
+    const copy = await main.innerText();
+    const alts = await main.locator('img').evaluateAll((images) => images.map((image) => image.alt));
+    const imageLabels = await main.locator('.case-gallery-thumbnail').evaluateAll((buttons) => buttons.map((button) => button.getAttribute('aria-label')));
+    const description = await page.locator('meta[name="description"]').getAttribute('content');
+    expect(containsCaseStudyCopyLeak([copy, description, ...alts, ...imageLabels].join(' '))).toBe(false);
+    expect(containsCaseStudyCopyLeak(await page.content())).toBe(false);
+    const staticHtml = await (await page.request.get(`/project/${slug}/`)).text();
+    expect(containsCaseStudyCopyLeak(staticHtml)).toBe(false);
+    if (slug === 'depth-based-distance-estimation') {
+      expect(copy).toMatch(/uncalibrated lab demo/i);
+      expect(copy).toContain('does not claim calibrated measurement accuracy or safety-critical navigation readiness');
+    }
+    if (slug === 'n8n-python-ai-agents') {
+      const representativeImages = main.getByRole('button', { name: /^Show image \d+: Representative / });
+      await expect(representativeImages).toHaveCount(6);
+      for (let index = 0; index < 6; index++) {
+        await representativeImages.nth(index).click();
+        await expect(main.locator('.case-gallery-open img')).toHaveAttribute('alt', /^Representative (n8n|invoice) .+ from other portfolio work$/);
+      }
+    }
+    if (slug === 'yolo-computer-vision-optimization') {
+      expect(copy).toContain('Live-video latency, on-device deployment and automatic exercise scoring are not claimed.');
+    }
+  });
+}
 
 test('multi-image gallery uses bounded previews and loads selected originals on demand', async ({ page }) => {
   const requests = [];
