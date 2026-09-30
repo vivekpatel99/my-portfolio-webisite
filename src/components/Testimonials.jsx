@@ -75,9 +75,9 @@ const Testimonials = () => {
                     <div className="eyebrow font-mono text-[10px] text-[#9ca3af] mb-[19px] tracking-[0.15em] uppercase">
                         TESTIMONIALS · <span className="text-[#a78bfa]">DETECTED</span>
                     </div>
-                    <h1 className="text-[clamp(2.35rem,4vw,4rem)] leading-[0.98] tracking-[-0.045em] uppercase font-[730]">
+                    <h2 className="text-[clamp(2.35rem,4vw,4rem)] leading-[0.98] tracking-[-0.045em] uppercase font-[730]">
                         CLIENT <span className="text-[#8B5CF6]">RESULTS</span>
-                    </h1>
+                    </h2>
                     <p className="sub mt-[17px] text-[#9ca3af] text-[15px] leading-[1.6]">
                         Real projects. Real impact.
                     </p>
