@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useEffect, useCallback } from 'react';
+import React, { Suspense, useState, useEffect, useCallback, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -14,7 +14,20 @@ const Layout = () => {
   const location = useLocation();
   const [gaConsent, setGaConsent] = useState(readAnalyticsConsent);
   const [showConsentManager, setShowConsentManager] = useState(false);
-  const [needsConsent, setNeedsConsent] = useState(() => !readAnalyticsConsent());
+  const [consentSpacerHeight, setConsentSpacerHeight] = useState(0);
+  const consentSpacerRef = useRef(null);
+
+  const handleConsentBannerBottom = useCallback((bannerBottom) => {
+    const spacer = consentSpacerRef.current;
+    const spacerTop = spacer ? spacer.getBoundingClientRect().top + window.scrollY : 0;
+    const rootStyle = document.documentElement.style;
+    if (bannerBottom > 0) {
+      rootStyle.setProperty('--consent-banner-bottom', `${Math.ceil(bannerBottom)}px`);
+    } else {
+      rootStyle.removeProperty('--consent-banner-bottom');
+    }
+    setConsentSpacerHeight(bannerBottom > 0 ? Math.max(0, Math.ceil(bannerBottom - spacerTop)) : 0);
+  }, []);
 
   const syncAnalyticsConsent = useCallback(() => {
     setGaConsent(readAnalyticsConsent());
@@ -42,12 +55,10 @@ const Layout = () => {
 
   const handleConsent = useCallback(() => {
     setGaConsent(true);
-    setNeedsConsent(false);
   }, []);
 
   const handleHideManager = useCallback(() => {
     setShowConsentManager(false);
-    setNeedsConsent(!readAnalyticsConsent());
     syncAnalyticsConsent();
   }, [syncAnalyticsConsent]);
 
@@ -64,10 +75,12 @@ const Layout = () => {
       <SentryTelemetry hasConsent={gaConsent} />
       <div className="min-h-screen bg-[#0C0D0D] text-white flex flex-col">
         <Header />
-        {/* Cookie banner spacer - reserves vertical space when banner is visible */}
-        {(needsConsent || showConsentManager) && (
-          <div className="h-[60px] sm:h-[72px]" aria-hidden="true" />
-        )}
+        <div
+          ref={consentSpacerRef}
+          data-testid="cookie-consent-spacer"
+          style={{ height: consentSpacerHeight }}
+          aria-hidden="true"
+        />
         <main id="main-content" className="flex-grow">
           <RouteErrorBoundary resetKey={location.key}>
             <Suspense fallback={<div className="min-h-screen" role="status" aria-label="Loading page" />}>
@@ -78,7 +91,12 @@ const Layout = () => {
         <Footer />
         <Toaster />
       </div>
-      <CookieConsentBanner onConsent={handleConsent} show={showConsentManager} onHide={handleHideManager} />
+      <CookieConsentBanner
+        onConsent={handleConsent}
+        show={showConsentManager}
+        onHide={handleHideManager}
+        onReservedBottomChange={handleConsentBannerBottom}
+      />
     </>
   );
 };

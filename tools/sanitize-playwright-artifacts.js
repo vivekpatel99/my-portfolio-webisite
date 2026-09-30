@@ -15,6 +15,7 @@ export const artifactPaths = Object.freeze({
 
 const suites = Object.freeze({
   'qa-a11y.spec.js': { label: 'accessibility' },
+  'qa-consent.spec.js': { label: 'consent' },
   'qa-contact.spec.js': { label: 'contact-validation' },
   'qa-cursor.spec.js': { label: 'cursor-availability' },
   'qa-edge.spec.js': { label: 'edge-behavior' },
