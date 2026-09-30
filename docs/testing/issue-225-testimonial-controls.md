@@ -109,6 +109,16 @@ selection, and both exact sanitizer suite registrations and tests. The focused
 config, sanitizer, workflow, local-only, and hero tests passed 84 cases.
 Integration uses merge commits and preserves shared history.
 
+A later review identified touch-generated compatibility mouse events. Codex
+reproduced this in both Chromium and WebKit: tap Pause then Play, remove actual
+focus only, and `01 / 10` stayed unchanged for 8.5 seconds. The event stream
+contained touch pointer enter/leave followed by an unmatched `mouseenter`.
+Opus changed hover pausing to mouse-typed pointer events, preserving mouse hover
+and all independent focus/user/reduced-motion stop reasons. The new unit
+regression failed before the fix; all 22 component tests passed afterwards.
+A dedicated mobile browser regression resumes after taps without any synthetic
+mouse movement, so the previous helper cannot mask the defect.
+
 Listing with the default JSON reporter regenerated the ignored
 `playwright-output/qa-results.json`; its earlier generated contents were not
 recoverable. Subsequent listing used `--reporter=line`. No source or baseline

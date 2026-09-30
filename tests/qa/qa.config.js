@@ -43,6 +43,7 @@ export function qaPassiveSpecs({ environment, localOnly }) {
     'qa-a11y.spec.js',
     'qa-local-navigation.spec.js',
     'qa-contact.spec.js',
+    'qa-cursor.spec.js',
     'qa-edge.spec.js',
     ...(localOnly ? ['qa-focus.spec.js', 'qa-hero-motion.spec.js'] : []),
     'qa-responsive.spec.js',

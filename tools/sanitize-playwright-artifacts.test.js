@@ -85,6 +85,21 @@ describe('sanitized Playwright QA artifacts', () => {
     expect(() => sanitizePlaywrightReport(unsafeProject)).toThrow('not allowlisted');
   });
 
+  it.each(['preview-desktop', 'preview-mobile'])(
+    'retains bounded cursor failures for %s without raw browser data', async (projectName) => {
+      const report = JSON.parse(await readFile(fixturePath, 'utf8'));
+      const suite = report.suites[0];
+      suite.file = 'qa-cursor.spec.js';
+      suite.specs[0].file = 'qa-cursor.spec.js';
+      suite.specs[0].tests[0].projectName = projectName;
+
+      const { summary, failureResults } = sanitizePlaywrightReport(report);
+      expect(summary.runStatus).toBe('failed');
+      expect(failureResults.failures[0]).toMatchObject({ suite: 'cursor-availability', project: projectName });
+      expect(JSON.stringify({ summary, failureResults })).not.toMatch(/QA_SECRET_SENTINEL|Injected title|raw stack|localStorage|trace\.zip/);
+    },
+  );
+
   it.each(['preview-webkit-desktop', 'preview-webkit-mobile'])(
     'retains bounded focus failures for %s without raw browser data', async (projectName) => {
       const report = JSON.parse(await readFile(fixturePath, 'utf8'));

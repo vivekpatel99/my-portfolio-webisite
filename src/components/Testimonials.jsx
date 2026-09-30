@@ -59,6 +59,15 @@ const Testimonials = () => {
         setIsUserPaused(true);
     };
 
+    // Only a real mouse pointer counts as hover. Touch taps emit a compatibility
+    // mouseenter with no matching mouseleave, which would otherwise hold rotation forever.
+    const handlePointerEnter = (e) => {
+        if (e.pointerType === 'mouse') setIsHovered(true);
+    };
+    const handlePointerLeave = (e) => {
+        if (e.pointerType === 'mouse') setIsHovered(false);
+    };
+
     const handleFocusIn = () => setHasFocusWithin(true);
     const handleFocusOut = (e) => {
         if (!carouselRef.current?.contains(e.relatedTarget)) {
@@ -88,8 +97,8 @@ const Testimonials = () => {
                     role="region"
                     aria-roledescription="carousel"
                     aria-label="Client testimonials"
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
+                    onPointerEnter={handlePointerEnter}
+                    onPointerLeave={handlePointerLeave}
                     onFocus={handleFocusIn}
                     onBlur={handleFocusOut}
                 >

@@ -47,6 +47,17 @@ const pauseToggle = () => screen.getByRole('button', { name: PLAYBACK_NAME });
 const queryPauseToggle = () => screen.queryByRole('button', { name: PLAYBACK_NAME });
 const slideRegion = () => screen.getByRole('group', { name: /of \d+/ });
 const interactionBoundary = () => screen.getByRole('region', { name: 'Client testimonials' });
+// Real mouse hover arrives as pointer events typed 'mouse'; touch taps emit touch-typed
+// pointer events followed by a compatibility mouseenter that never gets a matching leave.
+const hoverWithMouse = (el) => fireEvent.pointerEnter(el, { pointerType: 'mouse' });
+const unhoverWithMouse = (el) => fireEvent.pointerLeave(el, { pointerType: 'mouse' });
+const tapWithTouch = (boundary, target, { emitCompatMouseEnter }) => {
+  fireEvent.pointerEnter(boundary, { pointerType: 'touch' });
+  fireEvent.pointerLeave(boundary, { pointerType: 'touch' });
+  if (emitCompatMouseEnter) fireEvent.mouseEnter(boundary);
+  fireEvent.focus(target);
+  fireEvent.click(target);
+};
 
 describe('Testimonials Carousel', () => {
   beforeEach(() => {
@@ -177,13 +188,13 @@ describe('Testimonials carousel controls (#225)', () => {
     const toggle = pauseToggle();
     expect(toggle.textContent).toMatch(/pause/i);
 
-    fireEvent.mouseEnter(boundary);
+    hoverWithMouse(boundary);
     fireEvent.focus(toggle);
     fireEvent.click(toggle);
     expect(pauseToggle().textContent).toMatch(/play/i);
 
     fireEvent.blur(toggle, { relatedTarget: null });
-    fireEvent.mouseLeave(boundary);
+    unhoverWithMouse(boundary);
     advance(20_000);
     expectShowing(0);
 
@@ -200,13 +211,13 @@ describe('Testimonials carousel controls (#225)', () => {
     const boundary = interactionBoundary();
     const target = slideButtons()[1];
 
-    fireEvent.mouseEnter(boundary);
+    hoverWithMouse(boundary);
     fireEvent.focus(target);
     fireEvent.click(target);
     expectShowing(1);
 
     fireEvent.blur(target, { relatedTarget: null });
-    fireEvent.mouseLeave(boundary);
+    unhoverWithMouse(boundary);
     advance(20_000);
     expectShowing(1);
     expect(pauseToggle().textContent).toMatch(/play/i);
@@ -260,9 +271,9 @@ describe('Testimonials carousel controls (#225)', () => {
     const boundary = interactionBoundary();
     const quote = slideRegion();
 
-    fireEvent.mouseEnter(boundary);
+    hoverWithMouse(boundary);
     fireEvent.focus(quote);
-    fireEvent.mouseLeave(boundary);
+    unhoverWithMouse(boundary);
     advance(20_000);
     expectShowing(0);
 
@@ -278,12 +289,41 @@ describe('Testimonials carousel controls (#225)', () => {
     const quote = slideRegion();
 
     fireEvent.focus(quote);
-    fireEvent.mouseEnter(boundary);
+    hoverWithMouse(boundary);
     fireEvent.blur(quote, { relatedTarget: null });
     advance(20_000);
     expectShowing(0);
 
-    fireEvent.mouseLeave(boundary);
+    unhoverWithMouse(boundary);
+    advance(INTERVAL_MS);
+    expectShowing(1);
+  });
+
+  it('resumes after touch Pause then Play and blur despite a compatibility mouseenter', () => {
+    installMotionPreference(false);
+    render(<Testimonials />);
+    const boundary = interactionBoundary();
+
+    tapWithTouch(boundary, pauseToggle(), { emitCompatMouseEnter: true });
+    expect(pauseToggle().textContent).toMatch(/play/i);
+    tapWithTouch(boundary, pauseToggle(), { emitCompatMouseEnter: false });
+    expect(pauseToggle().textContent).toMatch(/pause/i);
+
+    fireEvent.blur(pauseToggle(), { relatedTarget: null });
+    advance(INTERVAL_MS);
+    expectShowing(1);
+  });
+
+  it('real mouse hover alone stops rotation and mouse leave resumes it', () => {
+    installMotionPreference(false);
+    render(<Testimonials />);
+    const boundary = interactionBoundary();
+
+    hoverWithMouse(boundary);
+    advance(20_000);
+    expectShowing(0);
+
+    unhoverWithMouse(boundary);
     advance(INTERVAL_MS);
     expectShowing(1);
   });

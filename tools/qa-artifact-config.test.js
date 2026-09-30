@@ -76,7 +76,8 @@ describe('sanitized CI Playwright configuration', () => {
 
   it('keeps the other passive suites on production and focus/hero-motion regressions local-only', () => {
     const shared = [
-      'qa-a11y.spec.js', 'qa-contact.spec.js', 'qa-edge.spec.js', 'qa-local-navigation.spec.js',
+      'qa-a11y.spec.js', 'qa-contact.spec.js', 'qa-cursor.spec.js', 'qa-edge.spec.js',
+      'qa-local-navigation.spec.js',
       'qa-responsive.spec.js', 'qa-routes.spec.js', 'qa-upgrade-interactions.spec.js', 'qa-visual.spec.js',
     ];
     const defaultProjects = specsByProject({ localOnly: false });

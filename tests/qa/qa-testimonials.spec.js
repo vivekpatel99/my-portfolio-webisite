@@ -63,6 +63,27 @@ test('pause by tap or click keeps the slide for 20s after hover and focus leave'
   await expect(counter).not.toHaveText(pausedAt, { timeout: OVER_ONE_INTERVAL_MS + 2_000 });
 });
 
+// Touch taps emit compatibility mouse/pointer enter events; Play must still resume rotation
+// without a synthetic mouse move, which a real touch user never produces.
+test('tapping Pause then Play resumes rotation without any mouse movement', async ({ page, hasTouch }) => {
+  test.skip(!hasTouch, 'Touch compatibility events only occur on touch devices.');
+  test.setTimeout(60_000);
+  const { counter, toggle } = await openCarousel(page);
+
+  await toggle.tap();
+  await expect(toggle).toHaveAccessibleName('Play testimonials');
+  await toggle.tap();
+  await expect(toggle).toHaveAccessibleName('Pause testimonials');
+
+  // Clear only real focus so a lingering focus hold cannot mask or fake the resume.
+  await page.evaluate(() => {
+    if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
+  });
+  expect(await page.evaluate(() => document.activeElement?.tagName)).toBe('BODY');
+  const resumedFrom = await counter.textContent();
+  await expect(counter).not.toHaveText(resumedFrom, { timeout: OVER_ONE_INTERVAL_MS + 2_000 });
+});
+
 test('keyboard traversal reaches quote, slides, and pause; chosen slide persists 20s', async ({ page }) => {
   test.setTimeout(90_000);
   const { counter, quote, slides, toggle } = await openCarousel(page);
