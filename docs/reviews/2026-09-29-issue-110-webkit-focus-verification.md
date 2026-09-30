@@ -29,7 +29,9 @@ The close button was already focused on open before `0bbf61b`.
 
 The current header also blurs prior focus and uses `preventScroll` when focusing the close
 button. Those changes came in `fff5306`. Commit `67a83cd` added the desktop resize focus
-target. The current code also restores background inert state and scroll position.
+target. The current code restores background inert state. The focus test observes an
+unchanged scroll position in its tested open/close path; it does not test restoration
+after the page scrolls while the menu is open.
 
 ## Limit of the pre-fix probe
 
@@ -79,7 +81,8 @@ but this run does not repeat every scenario at both mobile and desktop widths.
 
 Covered behaviors: programmatic menu open → close-button focus; `Shift+Tab`/`Tab`
 containment across the full sequence; `Escape` → toggle restoration; menu-link navigation;
-inert + scroll-position cleanup; desktop-resize release and keyboard reopen.
+inert cleanup and unchanged scroll position in the tested path; desktop-resize release
+and keyboard reopen.
 
 ## Verdict
 
