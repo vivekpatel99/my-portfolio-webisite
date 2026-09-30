@@ -10,8 +10,9 @@
 The fix for issue #110 is already present in `src/components/Header.jsx` and covered by
 `tests/qa/qa-focus.spec.js`. This session re-verified the behavior against a local
 production build and reproduced the original defect against the pre-fix logic to prove
-the regression coverage is meaningful. All focus tests pass in both browser families at
-mobile `390×844` and at desktop. No behavior still failed, so `Header.jsx` was not changed.
+the regression coverage is meaningful. All six focus tests passed in each of four
+browser projects at the scenario-specific viewports listed below. No behavior still
+failed, so `Header.jsx` was not changed.
 
 ## What the fix does
 
@@ -78,11 +79,18 @@ npx playwright test -c tests/qa/qa.config.js \
 # 24 passed (6 tests × 4 projects)
 ```
 
+Each test sets its own viewport in `tests/qa/qa-focus.spec.js`, overriding the project
+default. The menu containment and Escape restoration test uses `390×600`; menu-link
+navigation uses `390×844`; the resize tests use `767×844` and `768×844`; and the gallery
+tests use `1280×720`. The four projects exercise WebKit and Chromium browser contexts,
+but this run does not repeat every scenario at both mobile and desktop widths.
+
 Covered behaviors: pointer-open → close-button focus; `Shift+Tab`/`Tab` containment across
 the full sequence; `Escape` → toggle restoration; menu-link navigation; inert +
 scroll-position cleanup; desktop-resize release and keyboard reopen.
 
 ## Verdict
 
-Issue #110 is fixed and merged (`0bbf61b` in `develop` and `main`). Re-verification passes
-in WebKit and Chromium at `390×844` and desktop. No further code change is required.
+Issue #110 is fixed and merged (`0bbf61b` in `develop` and `main`). The focus suite passes
+in WebKit and Chromium at the scenario-specific viewports above. No further code change
+is required.
