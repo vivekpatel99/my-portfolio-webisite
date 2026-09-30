@@ -1,8 +1,8 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import './Contact.css';
 import { toast } from '@/components/ui/use-toast';
-import { Github, Linkedin, Mail, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
+import { Github, Linkedin, Mail, Loader2, CheckCircle2 } from 'lucide-react';
 import { useMutation } from 'convex/react';
 import { api } from '@convex/api';
 import { socialLinks } from '@/config/links';
@@ -62,9 +62,18 @@ const Contact = () => {
   const [formState, setFormState] = useState({ name: '', email: '', budget: '', description: '' });
   const [fieldErrors, setFieldErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [outcome, setOutcome] = useState('idle');
   const submittingRef = useRef(false);
+  const submitButtonRef = useRef(null);
+  const receiptRef = useRef(null);
+  const feedbackToastRef = useRef(null);
   const submitLead = useMutation(api.leads.submitLead);
   const pageMotion = usePageMotion();
+
+  useEffect(() => {
+    if (outcome === 'error') submitButtonRef.current?.focus();
+    if (outcome === 'success') receiptRef.current?.focus();
+  }, [outcome]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -114,7 +123,7 @@ const Contact = () => {
     const firstInvalidField = Object.keys(nextErrors)[0];
     if (firstInvalidField) {
       telemetrySource.elements.namedItem(firstInvalidField)?.focus();
-      toast({
+      feedbackToastRef.current = toast({
         title: nextErrors.email && trimmedFormState.email ? "Invalid email address." : "Uh oh! Missing fields.",
         description: nextErrors.email && trimmedFormState.email
           ? "Please check your email format before sending."
@@ -127,6 +136,9 @@ const Contact = () => {
     if (submittingRef.current) return;
     submittingRef.current = true;
     setIsSubmitting(true);
+    setOutcome('idle');
+    feedbackToastRef.current?.dismiss();
+    feedbackToastRef.current = null;
 
     try {
       await submitLead({
@@ -146,23 +158,20 @@ const Contact = () => {
       const description = ACTIONABLE_SUBMIT_ERRORS.has(convexMessage)
         ? convexMessage
         : SUBMIT_FAILURE_FALLBACK;
-      toast({
+      feedbackToastRef.current = toast({
         title: "Submission Failed",
         description,
         variant: "destructive",
       });
       submittingRef.current = false;
       setIsSubmitting(false);
+      setOutcome('error');
       return;
     }
 
     submittingRef.current = false;
     setIsSubmitting(false);
-
-    toast({
-      title: "Request received",
-      description: "Your details are saved. I'll get back to you within 24 hours.",
-    });
+    setOutcome('success');
     setFormState({ name: '', email: '', budget: '', description: '' });
     setFieldErrors({});
   };
@@ -336,8 +345,26 @@ const Contact = () => {
                 </div>
               </div>
 
+              {outcome === 'success' ? (
+                <div
+                  ref={receiptRef}
+                  role="status"
+                  aria-labelledby="contact-receipt-title"
+                  aria-describedby="contact-receipt-body"
+                  tabIndex={-1}
+                  className="mt-6 flex gap-3 border border-[rgba(139,92,246,0.42)] bg-[rgba(139,92,246,0.08)] p-4 text-left outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5CF6]"
+                >
+                  <CheckCircle2 aria-hidden="true" className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#8B5CF6]" />
+                  <div>
+                    <p id="contact-receipt-title" className="text-sm font-semibold text-white">Request received</p>
+                    <p id="contact-receipt-body" className="mt-1 text-sm text-[#9ca3af]">Your details are saved. I'll get back to you within 24 hours.</p>
+                  </div>
+                </div>
+              ) : null}
+
               <div className="text-center mt-6">
                 <button
+                  ref={submitButtonRef}
                   type="submit"
                   disabled={isSubmitting}
                   className="relative inline-flex items-center justify-center gap-3 border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.12)] px-10 py-4 font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.18)] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
