@@ -2,6 +2,130 @@ import { expect, test } from './qa-test.js';
 
 const clearFocusToBody = (page) => page.evaluate(() => document.activeElement?.blur());
 
+// Issue #234: every mobile-drawer action must stay reachable in short viewports.
+const MENU_ACTIONS = [
+  'Vivek Patel Logo', 'Close navigation menu', 'Services', 'About', 'Case Studies',
+  'Testimonials', 'Request a Project Estimate',
+];
+const DRAWER_VIEWPORTS = [
+  { width: 568, height: 256 },
+  { width: 320, height: 256 },
+  { width: 320, height: 200 },
+  { width: 320, height: 320 },
+  { width: 390, height: 844 },
+];
+const DRAWER_CASES = [
+  // The drawer is shared by every route; home gets the full matrix and one
+  // non-home route covers the two shortest failing shapes.
+  ...DRAWER_VIEWPORTS.flatMap((viewport) => ['no-preference', 'reduce'].map((motion) => ({ route: '/', viewport, motion }))),
+  ...[DRAWER_VIEWPORTS[0], DRAWER_VIEWPORTS[2]].flatMap((viewport) => ['no-preference', 'reduce'].map((motion) => ({ route: '/case-studies/', viewport, motion }))),
+];
+const RECT_TOLERANCE = 0.5;
+
+const useNecessaryOnlyConsent = (page) => page.addInitScript(() => {
+  localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false }));
+});
+
+const backgroundLandmarks = (page) => [
+  page.locator('header'),
+  page.locator('#main-content'),
+  page.locator('#site-footer'),
+  page.locator('a[href="#main-content"]'),
+];
+
+// Measures what a user can actually see and hit: the element box must sit
+// inside the viewport and every clipping ancestor, and hit tests along its
+// vertical centre line must land on the element itself (not on the drawer
+// header or anything else painted above it).
+const readDrawerActionVisibility = (locator) => locator.evaluate((element, tolerance) => {
+  const rect = element.getBoundingClientRect();
+  const clip = { top: 0, left: 0, bottom: window.innerHeight, right: window.innerWidth };
+  for (let ancestor = element.parentElement; ancestor && ancestor !== document.documentElement; ancestor = ancestor.parentElement) {
+    const style = window.getComputedStyle(ancestor);
+    if (style.overflowX === 'visible' && style.overflowY === 'visible') continue;
+    const box = ancestor.getBoundingClientRect();
+    clip.top = Math.max(clip.top, box.top + ancestor.clientTop);
+    clip.left = Math.max(clip.left, box.left + ancestor.clientLeft);
+    clip.bottom = Math.min(clip.bottom, box.top + ancestor.clientTop + ancestor.clientHeight);
+    clip.right = Math.min(clip.right, box.left + ancestor.clientLeft + ancestor.clientWidth);
+  }
+  const fullyVisible = rect.width > 0 && rect.height > 0
+    && rect.top >= clip.top - tolerance
+    && rect.bottom <= clip.bottom + tolerance
+    && rect.left >= clip.left - tolerance
+    && rect.right <= clip.right + tolerance;
+  const centreX = rect.left + rect.width / 2;
+  const probeYs = [rect.top + 1, rect.top + rect.height / 2, rect.bottom - 1];
+  const hitsSelf = fullyVisible && probeYs.every((y) => {
+    const hit = document.elementFromPoint(centreX, y);
+    return Boolean(hit) && (hit === element || element.contains(hit));
+  });
+  const round = (value) => Math.round(value * 100) / 100;
+  return {
+    fullyVisible,
+    hitsSelf,
+    rect: { top: round(rect.top), bottom: round(rect.bottom), left: round(rect.left), right: round(rect.right) },
+    clip: { top: round(clip.top), bottom: round(clip.bottom), left: round(clip.left), right: round(clip.right) },
+  };
+}, RECT_TOLERANCE);
+
+const expectDrawerActionVisible = (locator, label) => expect.poll(
+  () => readDrawerActionVisibility(locator),
+  { message: `${label} should be fully visible and hittable`, intervals: [50, 100, 200, 400], timeout: 3000 },
+).toMatchObject({ fullyVisible: true, hitsSelf: true });
+
+// Short drawers overflow, so a native wheel over the drawer must scroll it and
+// reveal the CTA. focus() and scrollIntoView() also scroll overflow:hidden
+// containers; real wheel input proves user-scrollability where Playwright
+// supports it (non-mobile contexts only).
+const SHORT_DRAWER_MAX_HEIGHT = 256;
+const wheelDrawerToCta = async (page, menu, cta) => {
+  await menu.evaluate((element) => { element.scrollTop = 0; });
+  const menuBox = await menu.boundingBox();
+  // Left padding at mid-height: inside the drawer, away from a right-edge scrollbar.
+  await page.mouse.move(menuBox.x + 10, menuBox.y + menuBox.height / 2);
+  await page.mouse.wheel(0, 400);
+  await expect.poll(
+    async () => ({
+      scrolled: await menu.evaluate((element) => element.scrollTop > 0),
+      ...(await readDrawerActionVisibility(cta)),
+    }),
+    { message: 'wheel should scroll the drawer until the CTA is fully visible and hittable', intervals: [50, 100, 200, 400], timeout: 3000 },
+  ).toMatchObject({ scrolled: true, fullyVisible: true, hitsSelf: true });
+};
+
+// Effective computed style, not the Tailwind class: the drawer must be a real
+// user-scrollable container, not merely programmatically scrollable.
+const expectDrawerScrollable = (menu) => expect.poll(
+  () => menu.evaluate((element) => window.getComputedStyle(element).overflowY),
+  { message: 'short drawer computed overflow-y must allow user scrolling', intervals: [50, 100, 200, 400], timeout: 3000 },
+).toMatch(/^(auto|scroll)$/);
+
+const openDrawer = async (page, { route, viewport, motion }) => {
+  await page.setViewportSize(viewport);
+  await page.emulateMedia({ reducedMotion: motion });
+  await useNecessaryOnlyConsent(page);
+  await page.goto(route);
+  await page.waitForLoadState('domcontentloaded');
+
+  const toggle = page.getByRole('button', { name: 'Toggle navigation menu' });
+  const menu = page.getByRole('dialog', { name: 'Navigation menu' });
+  await expect(toggle).toBeVisible();
+  const previousScrollY = await page.evaluate(() => window.scrollY);
+  await toggle.click();
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole('button', { name: 'Close navigation menu' })).toBeFocused();
+  for (const landmark of backgroundLandmarks(page)) {
+    await expect(landmark).toHaveAttribute('inert', '');
+  }
+
+  const actions = menu.locator('a[href], button');
+  await expect.poll(() => actions.evaluateAll((elements) => elements.map((element) => (
+    element.getAttribute('aria-label') || element.querySelector('img')?.alt || element.textContent.trim()
+  )))).toEqual(MENU_ACTIONS);
+  return { toggle, menu, actions, previousScrollY };
+};
+
 test.describe('keyboard focus regressions', () => {
   test('pointer-open mobile menu wraps focus and restores the toggle on Escape', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 600 });
@@ -230,4 +354,100 @@ test.describe('keyboard focus regressions', () => {
     await expect(opener).toBeFocused();
     await expect(page.locator('#root')).not.toHaveAttribute('inert', '');
   });
+
+  for (const drawerCase of DRAWER_CASES) {
+    const { route, viewport, motion } = drawerCase;
+    test(`mobile menu keeps every action reachable at ${viewport.width}x${viewport.height} on ${route} (${motion} motion)`, async ({ page, isMobile }) => {
+      const { toggle, menu, actions, previousScrollY } = await openDrawer(page, drawerCase);
+      const closeButton = menu.getByRole('button', { name: 'Close navigation menu' });
+      const firstNavItem = menu.getByRole('link', { name: 'Services', exact: true });
+
+      // Scroll start: the first item begins below the drawer header and is usable.
+      const drawerHeaderBottom = await closeButton.evaluate((button) => button.parentElement.getBoundingClientRect().bottom);
+      const firstNavItemTop = await firstNavItem.evaluate((link) => link.getBoundingClientRect().top);
+      expect(firstNavItemTop, 'first menu item must not overlap the drawer header').toBeGreaterThanOrEqual(drawerHeaderBottom - RECT_TOLERANCE);
+      await expectDrawerActionVisible(closeButton, 'Close navigation menu at scroll start');
+      await expectDrawerActionVisible(firstNavItem, 'Services at scroll start');
+
+      // Keyboard: every focused action is brought fully into view, both directions.
+      for (const index of [2, 3, 4, 5, 6, 0, 1]) {
+        await page.keyboard.press('Tab');
+        await expect(actions.nth(index)).toBeFocused();
+        await expectDrawerActionVisible(actions.nth(index), `Tab to ${MENU_ACTIONS[index]}`);
+      }
+      for (const index of [0, 6, 5, 4, 3, 2, 1]) {
+        await page.keyboard.press('Shift+Tab');
+        await expect(actions.nth(index)).toBeFocused();
+        await expectDrawerActionVisible(actions.nth(index), `Shift+Tab to ${MENU_ACTIONS[index]}`);
+      }
+
+      // Programmatic scrollIntoView: each action can be scrolled into view, to the end and back.
+      for (const index of [6, 0, 1, 2, 3, 4, 5, 6]) {
+        await actions.nth(index).evaluate((element) => element.scrollIntoView({ block: 'nearest', inline: 'nearest' }));
+        await expectDrawerActionVisible(actions.nth(index), `scrollIntoView ${MENU_ACTIONS[index]}`);
+      }
+
+      // Harness limit: Playwright rejects mouse.wheel in touch-emulated WebKit,
+      // and has no native touch-scroll gesture API, so every isMobile context
+      // uses computed overflow-y plus the scrollIntoView reachability above.
+      // That is not proof of a native touch gesture; wheel stays for desktop.
+      const isShortDrawer = viewport.height <= SHORT_DRAWER_MAX_HEIGHT;
+      const useNativeWheel = isShortDrawer && !isMobile;
+      if (isShortDrawer) {
+        await expectDrawerScrollable(menu);
+      }
+      if (useNativeWheel) {
+        await wheelDrawerToCta(page, menu, menu.getByRole('button', { name: 'Request a Project Estimate' }));
+      }
+
+      await page.keyboard.press('Escape');
+      await expect(menu).toBeHidden();
+      await expect(toggle).toBeFocused();
+      await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(previousScrollY);
+      for (const landmark of backgroundLandmarks(page)) {
+        await expect(landmark).not.toHaveAttribute('inert', '');
+        await expect(landmark).not.toHaveAttribute('aria-hidden', 'true');
+      }
+
+      // The final CTA is reachable by a real pointer hit at its measured centre.
+      await toggle.click();
+      await expect(menu).toBeVisible();
+      const cta = menu.getByRole('button', { name: 'Request a Project Estimate' });
+      if (isShortDrawer) {
+        await expectDrawerScrollable(menu);
+      }
+      if (useNativeWheel) {
+        await wheelDrawerToCta(page, menu, cta);
+      } else {
+        await cta.evaluate((element) => element.scrollIntoView({ block: 'nearest', inline: 'nearest' }));
+      }
+      await expectDrawerActionVisible(cta, 'Request a Project Estimate before click');
+      const ctaBox = await cta.boundingBox();
+      await page.mouse.click(ctaBox.x + ctaBox.width / 2, ctaBox.y + ctaBox.height / 2);
+      await expect(page).toHaveURL(/\/contact\/?$/);
+      await expect(menu).toBeHidden();
+      await expect(page.locator('#main-content')).not.toHaveAttribute('inert', '');
+    });
+  }
+
+  for (const drawerCase of [
+    { route: '/', viewport: { width: 568, height: 256 }, motion: 'no-preference' },
+    { route: '/case-studies/', viewport: { width: 320, height: 200 }, motion: 'reduce' },
+  ]) {
+    const { route, viewport } = drawerCase;
+    test(`short mobile menu scrolled to its CTA releases landmarks at 768px on ${route} (${viewport.width}x${viewport.height})`, async ({ page }) => {
+      const { menu } = await openDrawer(page, drawerCase);
+      const cta = menu.getByRole('button', { name: 'Request a Project Estimate' });
+      await cta.focus();
+      await expectDrawerActionVisible(cta, 'Request a Project Estimate before resize');
+
+      await page.setViewportSize({ width: 768, height: viewport.height });
+      await expect(page.locator('#mobile-menu')).toHaveCount(0);
+      for (const landmark of backgroundLandmarks(page)) {
+        await expect(landmark).not.toHaveAttribute('inert', '');
+        await expect(landmark).not.toHaveAttribute('aria-hidden', 'true');
+      }
+      await expect(page.locator('header').getByRole('button', { name: 'Request Estimate', exact: true })).toBeFocused();
+    });
+  }
 });
