@@ -1,5 +1,10 @@
 import { expect, test } from './qa-test.js';
-import { caseStudies, featuredCaseStudies } from '../../src/data/caseStudies.js';
+import {
+  caseStudies,
+  collectionCaseStudies,
+  featuredCaseStudies,
+  otherWorkCaseStudies,
+} from '../../src/data/caseStudies.js';
 import { HOURLY_FROM_LABEL, serviceOffers, serviceTimelineLabel } from '../../src/data/serviceOffers.js';
 
 const cardFor = (caseStudy) => ({
@@ -415,4 +420,128 @@ test('e2e: Testimonials carousel advance and structure', async ({ page }) => {
   // Verify rail structure persists
   await expect(testimonials.locator('.rail')).toBeVisible();
   await expect(testimonials.locator('.count')).toBeVisible();
+});
+
+const collectionReturnLink = (page) => page
+  .getByRole('navigation', { name: 'Case study navigation' })
+  .getByRole('link', { name: /View case studies/i });
+
+const settledScrollY = async (page) => {
+  await expect.poll(async () => {
+    const first = await page.evaluate(() => window.scrollY);
+    await page.waitForTimeout(100);
+    return (await page.evaluate(() => window.scrollY)) === first;
+  }).toBe(true);
+  return page.evaluate(() => window.scrollY);
+};
+
+const openAndReturnToCard = async (page, card, activate) => {
+  await card.evaluate((element) => element.scrollIntoView({ block: 'center', behavior: 'instant' }));
+  const departureY = await settledScrollY(page);
+  const slug = (await card.getAttribute('href')).match(/\/project\/([^/]+)\//)[1];
+  await activate(card);
+  await expect(page).toHaveURL(new RegExp(`/project/${slug}/?$`));
+  await collectionReturnLink(page).click();
+  await expect(page).toHaveURL(/\/case-studies\/$/);
+  const returned = page.locator(`#main-content a[href="/project/${slug}/?from=collection"]`);
+  await expect(returned).toBeInViewport();
+  expect(Math.abs((await settledScrollY(page)) - departureY)).toBeLessThanOrEqual(100);
+  return departureY;
+};
+
+const clickCard = (card) => card.click();
+const pressEnterOnCard = (page) => async (card) => {
+  await card.focus();
+  await page.keyboard.press('Enter');
+};
+
+const CORE_PAGE_SIZE = 6;
+const initialCoreCount = Math.min(CORE_PAGE_SIZE, collectionCaseStudies.length);
+const otherWorkIndices = otherWorkCaseStudies.map((_, index) => index);
+const otherWorkCards = (page) => page
+  .getByRole('region', { name: /other work/i })
+  .getByRole('link', { name: /Read case study:/ });
+const loadMoreControl = (page) => page.locator('button[aria-controls^="case-study-grid-"]');
+const coreCards = (page) => page
+  .locator('[id^="case-study-grid-"]')
+  .getByRole('link', { name: /Read case study:/ });
+
+const loadAllCoresByKeyboard = async (page) => {
+  const loadMore = loadMoreControl(page);
+  await expect(loadMore).toHaveText('Load more');
+  await loadMore.focus();
+  for (let shown = initialCoreCount; shown < collectionCaseStudies.length;) {
+    await page.keyboard.press('Enter');
+    shown = Math.min(shown + CORE_PAGE_SIZE, collectionCaseStudies.length);
+    await expect(coreCards(page)).toHaveCount(shown);
+    await expect(loadMore).toBeFocused();
+  }
+  await expect(loadMore).toHaveText('All case studies shown');
+};
+
+const openCollection = async (page) => {
+  await page.goto('/case-studies/');
+  // Same-URL goto keeps history.state, so clear both snapshot stores and reload.
+  await page.evaluate(() => {
+    sessionStorage.clear();
+    window.history.replaceState(null, '');
+  });
+  await page.reload();
+  await expect(coreCards(page)).toHaveCount(initialCoreCount);
+  await expect(otherWorkCards(page)).toHaveCount(otherWorkCaseStudies.length);
+};
+
+test.describe('collection return', () => {
+  test.skip(process.env.QA_LOCAL_ONLY !== '1', 'Unreleased collection-return behavior is checked on local previews only.');
+
+  for (const reducedMotion of ['no-preference', 'reduce']) {
+    test.describe(`reducedMotion=${reducedMotion}`, () => {
+      test.beforeEach(async ({ page }) => {
+        await page.emulateMedia({ reducedMotion });
+      });
+
+      test('fresh session restores each Other Work card by pointer click', async ({ page }) => {
+        for (const index of otherWorkIndices) {
+          await openCollection(page);
+          const departureY = await openAndReturnToCard(page, otherWorkCards(page).nth(index), clickCard);
+          expect(departureY).toBeGreaterThan(0);
+        }
+      });
+
+      test('a core return snapshot is replaced by the next Other Work departure', async ({ page }) => {
+        for (const index of otherWorkIndices) {
+          await openCollection(page);
+          const coreDepartureY = await openAndReturnToCard(page, coreCards(page).nth(1), clickCard);
+          await expect(coreCards(page)).toHaveCount(initialCoreCount);
+          const otherWorkDepartureY = await openAndReturnToCard(page, otherWorkCards(page).nth(index), clickCard);
+          expect(Math.abs(otherWorkDepartureY - coreDepartureY)).toBeGreaterThan(100);
+          await expect(coreCards(page)).toHaveCount(initialCoreCount);
+        }
+      });
+
+      test('keyboard Load more keeps focus and keyboard Other Work returns preserve the loaded count', async ({ page }) => {
+        for (const index of otherWorkIndices) {
+          await openCollection(page);
+          await loadAllCoresByKeyboard(page);
+          await openAndReturnToCard(page, otherWorkCards(page).nth(index), pressEnterOnCard(page));
+          await expect(coreCards(page)).toHaveCount(collectionCaseStudies.length);
+        }
+      });
+
+      test('browser Back from an Other Work article restores position and loaded count', async ({ page }) => {
+        await openCollection(page);
+        await loadAllCoresByKeyboard(page);
+        const card = otherWorkCards(page).first();
+        await card.evaluate((element) => element.scrollIntoView({ block: 'center', behavior: 'instant' }));
+        const departureY = await settledScrollY(page);
+        await card.click();
+        await expect(page).toHaveURL(/\/project\/[^/]+\/$/);
+        await page.goBack();
+        await expect(page).toHaveURL(/\/case-studies\/$/);
+        await expect(coreCards(page)).toHaveCount(collectionCaseStudies.length);
+        await expect(otherWorkCards(page).first()).toBeInViewport();
+        expect(Math.abs((await settledScrollY(page)) - departureY)).toBeLessThanOrEqual(100);
+      });
+    });
+  }
 });
