@@ -1,14 +1,67 @@
-import React, { useEffect, useRef } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { getPageLoadDetectedFields } from '@/lib/heroDetectedFields';
+
+const BACKGROUND_BOXES = [
+  { type: 'bracket', top: '9%', left: '4%', w: 64, h: 44, c: 15, dur: 15, delay: 0, dx: 16, dy: -14, op: 0.78, depth: 0.55 },
+  { type: 'bracket', top: '18%', right: '8%', w: 48, h: 36, c: 12, dur: 17, delay: -3, dx: -15, dy: 12, op: 0.7, depth: 0.9, white: true },
+  { type: 'rect', top: '28%', left: '38%', w: 88, h: 52, dur: 19, delay: -6, dx: 12, dy: -16, op: 0.58, depth: 0.35, pulse: true },
+  { type: 'bracket', top: '42%', left: '12%', w: 42, h: 32, c: 11, dur: 13, delay: -2, dx: 14, dy: 15, op: 0.72, depth: 1.15 },
+  { type: 'rect', bottom: '22%', left: '22%', w: 60, h: 40, dur: 16, delay: -8, dx: -13, dy: 11, op: 0.55, depth: 0.7, white: true },
+  { type: 'bracket', bottom: '16%', right: '18%', w: 52, h: 38, c: 13, dur: 14, delay: -4, dx: 15, dy: -12, op: 0.68, depth: 0.85, white: true },
+  { type: 'bracket', top: '58%', right: '36%', w: 36, h: 28, c: 10, dur: 11, delay: -1, dx: -12, dy: 14, op: 0.66, depth: 1.3, pulse: true },
+  { type: 'rect', top: '12%', left: '58%', w: 44, h: 30, dur: 18, delay: -10, dx: 11, dy: 13, op: 0.5, depth: 0.45 }
+];
+
+const PARALLAX_MAX_SHIFT_PX = 20;
+const PARALLAX_EASING = 0.1;
+const PARALLAX_SETTLE_EPSILON_PX = 0.05;
+
+// framer-motion 10's useReducedMotion only reads the preference once.
+const useMediaQuery = (query) => {
+  const [matches, setMatches] = useState(
+    () => typeof window !== 'undefined' && Boolean(window.matchMedia?.(query).matches)
+  );
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia?.(query);
+    if (!mediaQuery) return undefined;
+    const sync = () => setMatches(mediaQuery.matches);
+    sync();
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', sync);
+      return () => mediaQuery.removeEventListener('change', sync);
+    }
+    mediaQuery.addListener(sync);
+    return () => mediaQuery.removeListener(sync);
+  }, [query]);
+
+  return matches;
+};
+
+const useIsInViewport = (ref) => {
+  const [isInViewport, setIsInViewport] = useState(true);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || typeof IntersectionObserver === 'undefined') return undefined;
+    const observer = new IntersectionObserver((entries) => setIsInViewport(entries[entries.length - 1].isIntersecting));
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref]);
+
+  return isInViewport;
+};
 
 const Hero = () => {
   const heroRef = useRef(null);
   const bgBoxesRef = useRef([]);
   const navigate = useNavigate();
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
+  const hasFinePointer = useMediaQuery('(pointer: fine)');
+  const isInViewport = useIsInViewport(heroRef);
+  const parallaxEnabled = isInViewport && hasFinePointer && !reduceMotion;
   const detectedFields = getPageLoadDetectedFields();
   const fieldBoxProps = (id, className) => ({
     'data-hero-field': id,
@@ -19,56 +72,71 @@ const Hero = () => {
     navigate('/contact/');
   };
 
-  // Mouse parallax for background bboxes
   useEffect(() => {
-    if (reduceMotion || !heroRef.current) return;
-
     const hero = heroRef.current;
-    const boxes = bgBoxesRef.current.filter(Boolean);
-    if (!boxes.length) return;
+    if (!parallaxEnabled || !hero) return undefined;
+
+    const boxes = bgBoxesRef.current
+      .map((element, i) => ({ element, depth: BACKGROUND_BOXES[i].depth }))
+      .filter(({ element }) => element);
+    if (!boxes.length) return undefined;
 
     let targetX = 0, targetY = 0, curX = 0, curY = 0;
-    const maxShift = 20;
     let rafId = null;
 
-    const handleMouseMove = (e) => {
-      const r = hero.getBoundingClientRect();
-      const nx = ((e.clientX - r.left) / r.width) * 2 - 1;
-      const ny = ((e.clientY - r.top) / r.height) * 2 - 1;
-      targetX = nx * maxShift;
-      targetY = ny * maxShift;
-    };
-
-    const handleMouseLeave = () => {
-      targetX = 0;
-      targetY = 0;
+    const writePosition = (x, y) => {
+      boxes.forEach(({ element, depth }) => {
+        element.style.setProperty('--px', `${(x * depth).toFixed(2)}px`);
+        element.style.setProperty('--py', `${(y * depth).toFixed(2)}px`);
+      });
     };
 
     const tick = () => {
-      curX += (targetX - curX) * 0.1;
-      curY += (targetY - curY) * 0.1;
-      boxes.forEach((box, i) => {
-        const depth = parseFloat(box.getAttribute('data-depth') || '1');
-        box.style.setProperty('--px', `${(curX * depth).toFixed(2)}px`);
-        box.style.setProperty('--py', `${(curY * depth).toFixed(2)}px`);
-      });
-      rafId = requestAnimationFrame(tick);
+      curX += (targetX - curX) * PARALLAX_EASING;
+      curY += (targetY - curY) * PARALLAX_EASING;
+      const settled = Math.abs(targetX - curX) < PARALLAX_SETTLE_EPSILON_PX
+        && Math.abs(targetY - curY) < PARALLAX_SETTLE_EPSILON_PX;
+      if (settled) {
+        curX = targetX;
+        curY = targetY;
+      }
+      writePosition(curX, curY);
+      rafId = settled ? null : requestAnimationFrame(tick);
     };
+
+    const moveTo = (x, y) => {
+      targetX = x;
+      targetY = y;
+      if (rafId === null && (targetX !== curX || targetY !== curY)) {
+        rafId = requestAnimationFrame(tick);
+      }
+    };
+
+    const handleMouseMove = (e) => {
+      const r = hero.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      const nx = ((e.clientX - r.left) / r.width) * 2 - 1;
+      const ny = ((e.clientY - r.top) / r.height) * 2 - 1;
+      moveTo(nx * PARALLAX_MAX_SHIFT_PX, ny * PARALLAX_MAX_SHIFT_PX);
+    };
+
+    const handleMouseLeave = () => moveTo(0, 0);
 
     hero.addEventListener('mousemove', handleMouseMove, { passive: true });
     hero.addEventListener('mouseleave', handleMouseLeave);
-    rafId = requestAnimationFrame(tick);
 
     return () => {
       hero.removeEventListener('mousemove', handleMouseMove);
       hero.removeEventListener('mouseleave', handleMouseLeave);
-      if (rafId) cancelAnimationFrame(rafId);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      if (curX !== 0 || curY !== 0) writePosition(0, 0);
     };
-  }, [reduceMotion]);
+  }, [parallaxEnabled]);
 
   return (
     <section 
       ref={heroRef}
+      data-hero-motion={isInViewport ? 'running' : 'paused'}
       className="relative h-auto flex flex-col justify-start pt-14 pb-40 bg-[#0C0D0D] max-md:pb-36 max-md:pt-0 max-md:justify-start"
     >
       {/* Grid background */}
@@ -92,16 +160,7 @@ const Hero = () => {
 
       {/* Background detection bboxes with parallax */}
       <div className="absolute inset-0 pointer-events-none z-[1] overflow-hidden" aria-hidden="true">
-        {[
-          { type: 'bracket', top: '9%', left: '4%', w: 64, h: 44, c: 15, dur: 15, delay: 0, dx: 16, dy: -14, op: 0.78, depth: 0.55 },
-          { type: 'bracket', top: '18%', right: '8%', w: 48, h: 36, c: 12, dur: 17, delay: -3, dx: -15, dy: 12, op: 0.7, depth: 0.9, white: true },
-          { type: 'rect', top: '28%', left: '38%', w: 88, h: 52, dur: 19, delay: -6, dx: 12, dy: -16, op: 0.58, depth: 0.35, pulse: true },
-          { type: 'bracket', top: '42%', left: '12%', w: 42, h: 32, c: 11, dur: 13, delay: -2, dx: 14, dy: 15, op: 0.72, depth: 1.15 },
-          { type: 'rect', bottom: '22%', left: '22%', w: 60, h: 40, dur: 16, delay: -8, dx: -13, dy: 11, op: 0.55, depth: 0.7, white: true },
-          { type: 'bracket', bottom: '16%', right: '18%', w: 52, h: 38, c: 13, dur: 14, delay: -4, dx: 15, dy: -12, op: 0.68, depth: 0.85, white: true },
-          { type: 'bracket', top: '58%', right: '36%', w: 36, h: 28, c: 10, dur: 11, delay: -1, dx: -12, dy: 14, op: 0.66, depth: 1.3, pulse: true },
-          { type: 'rect', top: '12%', left: '58%', w: 44, h: 30, dur: 18, delay: -10, dx: 11, dy: 13, op: 0.5, depth: 0.45 }
-        ].map((box, i) => (
+        {BACKGROUND_BOXES.map((box, i) => (
           <div
             key={i}
             ref={(el) => { bgBoxesRef.current[i] = el; }}
@@ -398,6 +457,11 @@ const Hero = () => {
 
       {/* CSS animations */}
       <style jsx>{`
+        /* Offscreen gate for every named hero animation. !important is required to
+           override the inline animation shorthand; paused animations keep their phase. */
+        [data-hero-motion="paused"] * {
+          animation-play-state: paused !important;
+        }
         @keyframes bg-drift {
           0%, 100% { transform: translate(0, 0) scale(1); opacity: var(--op, 0.72); }
           28% { transform: translate(var(--dx, 14px), var(--dy, -12px)) scale(1.02); opacity: calc(var(--op, 0.72) * 1.15); }
