@@ -2,7 +2,7 @@
 
 Issue: [Remove the consent spacer after Reject](https://github.com/vivekpatel99/my-portfolio-webisite/issues/228).
 Base: `develop` at `8fe91fb930275289bfe1f8f1f1ec3d0083e226f4`.
-Delivery base: `1aa8bf8077051aebcb4ed9f8c67cfe87b05af0c7`, which also includes the independent Testimonials heading and case-study collection corrections. The consent changes rebased without conflicts.
+Original delivery base: `1aa8bf8077051aebcb4ed9f8c67cfe87b05af0c7`, which also includes the independent Testimonials heading and case-study collection corrections. The consent changes rebased without conflicts.
 
 ## Defect and correction
 
@@ -57,10 +57,20 @@ npx playwright test -c tests/qa/qa.config.js qa-consent.spec.js qa-edge.spec.js 
 
 WebKit consent checks used an external temporary config that inherited the local QA config and selected `qa-consent.spec.js` for the existing WebKit projects. Temporary configs, browser outputs, and agent files are excluded from the commit.
 
+## CI repair and integration follow-up
+
+After PR #249 opened, CI run `36715244042` passed 389 passive browser checks and the isolated contact and telemetry checks. It failed when reconstructing sanitized artifacts because the newly configured consent suite was missing from the sanitizer's explicit source registry.
+
+Opus 5.5 added the exact `qa-consent.spec.js` registration with the bounded label `consent`. Its disk-based hostile-report regression reproduced the CI error before the fix, with one failure and 23 passes, then passed all 24 tests after the correction. The sanitizer still rejects unknown sources and excludes raw titles, errors, captures, storage, and source filenames.
+
+The published branch integrated `develop` through merge commits to preserve shared history. The integration base is `ac3e4337da0d0bb89949d8db2baad58ad15f9ad0`. The only configuration conflict was adjacent consent and cursor QA entries; both were retained, along with both sanitizer registrations. The integrated sanitizer suite passed 26 tests, the full unit suite passed 57 files and 613 tests, and the production build passed all 21 routes. Codex repeated T3 geometry checks at 390px and 1440px and observed header and main at 69px after both Accept and Reject reloads. Expanded mobile settings still ended at 354px, with main at 355px and no horizontal overflow.
+
+No consent product code changed during this repair. Fresh Opus and independent Codex shipping reviews inspect the integrated patch. Their final verdicts and the current SHA-scoped CI result are recorded on the PR before the authorized merge.
+
 ## Limits and acceptance gate
 
 Browser checks use local Chromium and WebKit with desktop and mobile profiles. Physical devices and the deployed host were not tested. Google Analytics intentionally does not load on localhost; the existing local GA-loading cases are skipped. Sentry transport uses a synthetic DSN and intercepted envelopes. No real contact submission was made.
 
 The first-visit banner now produces a layout shift when it appears after its existing delay. No performance improvement is claimed. Geometry is verified with normal and reduced-motion preferences; this change does not alter the site's existing animation policy.
 
-The issue remains open pending human acceptance, required CI and review conditions, and merge into develop. This work authorizes no merge or production release.
+At initial delivery, the issue remained open pending acceptance, required CI and review conditions, and merge into develop. The subsequent user request authorizes merge into develop after readiness checks pass and cleanup of this worktree. Production release remains separate.
