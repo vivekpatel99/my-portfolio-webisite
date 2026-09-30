@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useNavigationType } from 'react-router-dom';
 import { collectionCaseStudies } from '../data/caseStudies.js';
 import {
   getInitialBrowsingState,
+  isCollectionArticleOrigin,
   saveBrowsingState,
 } from '../lib/caseStudyBrowsing.js';
 import CaseStudyCard from './CaseStudyCard.js';
@@ -27,7 +28,7 @@ const persistLoadedPage = (loadedCount) => {
   history.replaceState({ ...historyRecord(), loadedCount }, '');
 };
 
-const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
+const CaseStudyCollection = ({ stories = collectionCaseStudies, children = null }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const navigationType = useNavigationType();
@@ -91,10 +92,25 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
     window.history.replaceState({ ...window.history.state, loadedCount: initialState.loadedCount, caseStudyCollection: initialState }, '');
   }, [initialState, resumeRequested, location, navigate]);
 
+  const saveBeforeArticle = (event) => {
+    const link = event.target?.closest?.('a[href]');
+    if (link && isCollectionArticleOrigin(new URL(link.href, window.location.href))) {
+      persistBrowsingState(visibleCount, window.scrollY);
+    }
+  };
+  const boundary = (...content) => React.createElement(
+    'div',
+    {
+      onClickCapture: saveBeforeArticle,
+      onPointerDownCapture: saveBeforeArticle,
+      onAuxClickCapture: saveBeforeArticle,
+    },
+    ...content,
+    children,
+  );
+
   if (stories.length === 0) {
-    return React.createElement(
-      React.Fragment,
-      null,
+    return boundary(
       React.createElement('p', { role: 'status', 'aria-live': 'polite', className: 'mb-6 text-sm text-gray-400' }, 'Showing 0 of 0 case studies'),
       React.createElement('p', { className: 'rounded-lg border border-white/10 bg-white/[0.04] p-8 text-center text-gray-400' }, 'No case studies are available yet.'),
     );
@@ -110,7 +126,6 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
       return next;
     });
   };
-  const saveBeforeArticle = () => persistBrowsingState(visibleCount, window.scrollY);
   const status = React.createElement(
     'p',
     { role: 'status', 'aria-live': 'polite', className: 'mb-6 text-sm text-gray-400' },
@@ -123,9 +138,6 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
       key: story.slug,
       project: story,
       fromCollection: true,
-      onClickCapture: saveBeforeArticle,
-      onPointerDownCapture: saveBeforeArticle,
-      onAuxClickCapture: saveBeforeArticle,
     })),
   );
   const noscriptLinks = isStaticRender && hasMore
@@ -157,7 +169,7 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
     )
     : null;
 
-  return React.createElement(React.Fragment, null, status, grid, noscriptLinks, loadMoreButton);
+  return boundary(status, grid, noscriptLinks, loadMoreButton);
 };
 
 export default CaseStudyCollection;

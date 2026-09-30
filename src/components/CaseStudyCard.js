@@ -33,9 +33,6 @@ const ArrowGlyph = () =>
 const CaseStudyCard = ({
   project,
   fromCollection = false,
-  onClickCapture,
-  onPointerDownCapture,
-  onAuxClickCapture,
 }) => {
   const completionDate = formatCompletionDate(project.completedAt);
   const upworkLink = project.externalLinks?.find((link) => link.label === 'Upwork project');
@@ -52,9 +49,6 @@ const CaseStudyCard = ({
         state: fromCollection ? { fromCollection: true } : undefined,
         className: 'block focus:outline-none',
         'aria-label': `Read case study: ${project.cardTitle || project.title}`,
-        onClickCapture,
-        onPointerDownCapture,
-        onAuxClickCapture,
       },
       React.createElement(
         'div',
