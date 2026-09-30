@@ -21,7 +21,8 @@
       "license": "Apache-2.0",
       "local_adjustments": [
         "POSIX launcher executable bits restored",
-        "pinned root LICENSE copied into both skill packages"
+        "pinned root LICENSE copied into both skill packages",
+        "Correct generated degraded/asset-producer.md review handoff to ../component-review.md in both provider packages; upstream generator is not vendored."
       ]
     },
     {
@@ -78,7 +79,8 @@
       "impeccable_kiro": 54,
       "vercel_react_best_practices": 76,
       "web_design_guidelines": 1,
-      "result": "Every original file matches pinned upstream bytes; added license copies and executable modes recorded separately."
-    }
+      "result": "188 original files match pinned upstream bytes. Two asset-producer handoff links have the documented local repair; added license copies and executable modes are recorded separately."
+    },
+    "review_handoff_links": "Both provider degraded/asset-producer.md links resolve to their packaged reference/component-review.md after the PR #224 review fix."
   }
 }
