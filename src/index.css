@@ -48,7 +48,7 @@
   }
 
   html {
-    scroll-padding-top: 8rem;
+    scroll-padding-top: max(8rem, var(--consent-banner-bottom, 0px));
   }
 
   @media print {
