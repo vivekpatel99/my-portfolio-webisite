@@ -69,6 +69,10 @@ The final integration base is `e4161c7d6062e1d5fc6de40a81d4378dc67b72b2`, which 
 
 No consent product code changed during this repair. Fresh Opus and independent Codex shipping reviews inspect the integrated patch. Their final verdicts and the current SHA-scoped CI result are recorded on the PR before the authorized merge.
 
+The latest integration base is `804e8d66d7af18552d1d1ea4397dad5878fafac5`, which also adds the independently approved storage-failure consent fallback. Another process merged this base into the PR, and Codex adopted those commits without overwriting them. That integration passed 59 unit files and 634 tests, plus the 21-route production build.
+
+CI run `36719786177` exposed a separate test-isolation defect. Its hero parallax check measured layout before the delayed consent banner appeared, then attributed the intentional 80px consent spacer shift to parallax. Opus reproduced that exact failure. The existing hero probe init script now seeds saved rejected consent before navigation, keeping consent constant during the motion measurement. All geometry, motion, badge, and write-count assertions and observation windows remain unchanged. The hero suite passed eight cases with two expected pointer-capability skips, the fine-pointer case passed ten repetitions, and all 32 Chromium consent regressions passed independently of that hero setup.
+
 ## Limits and acceptance gate
 
 Browser checks use local Chromium and WebKit with desktop and mobile profiles. Physical devices and the deployed host were not tested. Google Analytics intentionally does not load on localhost; the existing local GA-loading cases are skipped. Sentry transport uses a synthetic DSN and intercepted envelopes. No real contact submission was made.

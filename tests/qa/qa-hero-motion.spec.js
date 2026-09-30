@@ -8,16 +8,19 @@ const IN_VIEW_ANIMATIONS = [
   'photo-scan',
 ].sort();
 const MEASURE_MS = 2000;
+const COOKIE_CONSENT_KEY = 'cookie_consent_preferences';
 
 async function installWriteProbe(page) {
-  await page.addInitScript(() => {
+  await page.addInitScript((consentKey) => {
+    // Hold consent constant so the first-visit banner spacer cannot shift hero layout mid-measurement.
+    localStorage.setItem(consentKey, JSON.stringify({ necessary: true, analytics: false }));
     window.__heroMotionProbe = { writes: 0 };
     const setProperty = CSSStyleDeclaration.prototype.setProperty;
     CSSStyleDeclaration.prototype.setProperty = function probedSetProperty(name, ...rest) {
       if (name === '--px' || name === '--py') window.__heroMotionProbe.writes += 1;
       return setProperty.call(this, name, ...rest);
     };
-  });
+  }, COOKIE_CONSENT_KEY);
 }
 
 const readWrites = (page) => page.evaluate(() => window.__heroMotionProbe.writes);
