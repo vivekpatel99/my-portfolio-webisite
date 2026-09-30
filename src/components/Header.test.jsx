@@ -214,7 +214,29 @@ describe('Header', () => {
     );
 
     const home = screen.getAllByRole('link', { name: 'Vivek Patel Logo' })[0];
-    expect(home.querySelector('img')?.getAttribute('src')).toBe('/assets/logos/mylogo.png');
+    expect(home.querySelector('img')?.getAttribute('src')).toBe('/assets/logos/mylogo-60.webp');
     expect(screen.queryByText(/NAV ·/i)).toBeNull();
+  });
+
+  it('serves the 30px logo from 60px/90px derivatives in the bar and the drawer (#252)', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <Header />
+      </MemoryRouter>,
+    );
+    await user.click(screen.getByRole('button', { name: 'Toggle navigation menu' }));
+
+    // The open drawer makes the bar inert, so include hidden links to reach both marks.
+    const marks = screen
+      .getAllByRole('link', { name: 'Vivek Patel Logo', hidden: true })
+      .map((link) => link.querySelector('img'));
+    expect(marks).toHaveLength(2);
+    marks.forEach((img) => {
+      expect(img.getAttribute('src')).toBe('/assets/logos/mylogo-60.webp');
+      expect(img.getAttribute('srcset')).toBe('/assets/logos/mylogo-60.webp 2x, /assets/logos/mylogo-90.webp 3x');
+      expect(img.getAttribute('width')).toBe('30');
+      expect(img.getAttribute('height')).toBe('30');
+    });
   });
 });

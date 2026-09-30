@@ -36,4 +36,17 @@ describe('About', () => {
     const portrait = screen.getByRole('img', { name: 'Portrait of Vivek Patel' });
     expect(portrait.getAttribute('src')).toBe('/assets/images/vivek-black-and-white.webp');
   });
+
+  it('shares the portrait derivatives, sized to the lazy photo panel (#252)', () => {
+    render(<About />);
+    const portrait = screen.getByRole('img', { name: 'Portrait of Vivek Patel' });
+    expect(portrait.getAttribute('srcset')).toContain('/assets/images/vivek-black-and-white-480w.webp 480w');
+    expect(portrait.getAttribute('srcset')).toContain('/assets/images/vivek-black-and-white.webp 1008w');
+    expect(portrait.getAttribute('sizes')).toBe(
+      '(min-width: 1216px) 461px, (min-width: 768px) calc(46.5vw - 103px), calc(100vw - 108px)'
+    );
+    expect(portrait.getAttribute('width')).toBe('1008');
+    expect(portrait.getAttribute('height')).toBe('1367');
+    expect(portrait.getAttribute('loading')).toBe('lazy');
+  });
 });

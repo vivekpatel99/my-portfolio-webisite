@@ -15,11 +15,15 @@ export const socialLinks = {
 export const logos = {
   favicon: '/assets/logos/mylogo.png',
   faviconLight: '/assets/logos/favicon-light-scheme.png',
-  logo: '/assets/logos/mylogo.png',
+  // The header mark renders at 30px; these are 60/90px derivatives of mylogo.png (#252).
+  logo: '/assets/logos/mylogo-60.webp',
+  logoSrcSet: '/assets/logos/mylogo-60.webp 2x, /assets/logos/mylogo-90.webp 3x',
 };
 
 export const profileImages = {
   aboutPhoto: '/assets/images/vivek-black-and-white.webp',
+  // Display-size derivatives of aboutPhoto (1008×1367), same crop (#252).
+  portraitSrcSet: '/assets/images/vivek-black-and-white-480w.webp 480w, /assets/images/vivek-black-and-white-720w.webp 720w, /assets/images/vivek-black-and-white.webp 1008w',
   teamCollaboration: `${BASE_URLS.hostingerCdn}/michael-t-rxri-ho62y4-unsplash-2-tvxRc.jpg`,
 };
 

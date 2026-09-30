@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { getPageLoadDetectedFields } from '@/lib/heroDetectedFields';
+import { profileImages } from '@/config/links';
 
 const BACKGROUND_BOXES = [
   { type: 'bracket', top: '9%', left: '4%', w: 64, h: 44, c: 15, dur: 15, delay: 0, dx: 16, dy: -14, op: 0.78, depth: 0.55 },
@@ -414,7 +415,11 @@ const Hero = () => {
                     }}
                   >
                     <img
-                      src="/assets/images/vivek-black-and-white.webp"
+                      src={profileImages.aboutPhoto}
+                      srcSet={profileImages.portraitSrcSet}
+                      sizes="(min-width: 768px) 236px, 216px"
+                      width="1008"
+                      height="1367"
                       alt="Tracked engineer portrait"
                       className="block w-full h-full object-cover object-[center_top]"
                     />
