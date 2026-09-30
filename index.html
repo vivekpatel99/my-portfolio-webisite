@@ -8,13 +8,15 @@
     When updating URLs, change them here AND in the references below.
     These should match the values in src/config/links.js
     ============================================
-    FAVICON:       /assets/logos/mylogo.png
+    FAVICON_LIGHT: /assets/logos/favicon-light-scheme.png (dark V, light browser theme)
+    FAVICON_DARK:  /assets/logos/mylogo.png (white V, dark browser theme)
     OG_IMAGE:      https://www.vivekapatel.com/og-image.png
     PROFILE_IMG:   https://www.vivekapatel.com/assets/images/vivek-black-and-white.webp
     ============================================
     -->
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/png" href="/assets/logos/mylogo.png" />
+  <link rel="icon" type="image/png" href="/assets/logos/favicon-light-scheme.png" media="(prefers-color-scheme: light)" />
+  <link rel="icon" type="image/png" href="/assets/logos/mylogo.png" media="(prefers-color-scheme: dark)" />
   <meta name="generator" content="Hostinger Horizons" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vivek Patel - Computer Vision & AI Engineer</title>

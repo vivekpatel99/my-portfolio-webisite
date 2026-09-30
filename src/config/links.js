@@ -14,6 +14,7 @@ export const socialLinks = {
 
 export const logos = {
   favicon: '/assets/logos/mylogo.png',
+  faviconLight: '/assets/logos/favicon-light-scheme.png',
   logo: '/assets/logos/mylogo.png',
 };
 
