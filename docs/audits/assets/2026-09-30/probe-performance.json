@@ -1,0 +1,158 @@
+{
+  "phases": [
+    {
+      "name": "idle",
+      "px": 1920,
+      "py": 1920,
+      "animations": [
+        "bg-drift",
+        "bg-drift",
+        "bg-drift-pulse",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift-pulse",
+        "bg-drift",
+        "ghost-trail-a",
+        "ghost-trail-b",
+        "ghost-trail-c",
+        "ghost-trail-d",
+        "photo-scan"
+      ]
+    },
+    {
+      "name": "active",
+      "px": 1928,
+      "py": 1928,
+      "animations": [
+        "bg-drift",
+        "bg-drift",
+        "bg-drift-pulse",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift-pulse",
+        "bg-drift",
+        "ghost-trail-a",
+        "ghost-trail-b",
+        "ghost-trail-c",
+        "ghost-trail-d",
+        "photo-scan"
+      ]
+    },
+    {
+      "name": "offscreen",
+      "px": 1928,
+      "py": 1928,
+      "animations": [
+        "CSSTransition",
+        "CSSTransition",
+        "CSSTransition",
+        "CSSTransition",
+        "CSSTransition",
+        "CSSTransition",
+        "CSSTransition",
+        "CSSTransition",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift-pulse",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift-pulse",
+        "bg-drift",
+        "ghost-trail-a",
+        "ghost-trail-b",
+        "ghost-trail-c",
+        "ghost-trail-d",
+        "photo-scan"
+      ]
+    }
+  ],
+  "perf": {
+    "px": 1928,
+    "py": 1928,
+    "tasks": [],
+    "shifts": [
+      {
+        "value": 1.289866255144033e-05,
+        "recentInput": false
+      },
+      {
+        "value": 0.033365885416666664,
+        "recentInput": false
+      }
+    ],
+    "lcp": [
+      {
+        "ms": 52,
+        "tag": "P"
+      },
+      {
+        "ms": 60,
+        "tag": "IMG"
+      }
+    ]
+  },
+  "resources": [
+    {
+      "path": "/assets/index-a6BkGpIL.css",
+      "bytes": 12690,
+      "duration": 4.199999999254942
+    },
+    {
+      "path": "/assets/index-DRCfn4KH.js",
+      "bytes": 150841,
+      "duration": 13.799999998882413
+    },
+    {
+      "path": "/assets/logos/mylogo.png",
+      "bytes": 51235,
+      "duration": 3.100000001490116
+    },
+    {
+      "path": "/assets/images/vivek-black-and-white.webp",
+      "bytes": 73100,
+      "duration": 3.099999999627471
+    },
+    {
+      "path": "/assets/case-studies/invoice-ocr-extraction-e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4.webp",
+      "bytes": 140194,
+      "duration": 5.199999999254942
+    },
+    {
+      "path": "/assets/case-studies/n8n-openai-data-extraction-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png",
+      "bytes": 510545,
+      "duration": 5.599999999627471
+    },
+    {
+      "path": "/assets/case-studies/yolo-computer-vision-optimization-a1c141cdaa34086f779a22bbc54861dd5a0b6bd6c956df38456a3313983c2c0c.webp",
+      "bytes": 33234,
+      "duration": 5
+    }
+  ],
+  "portrait": {
+    "src": "[local production]/assets/images/vivek-black-and-white.webp",
+    "naturalWidth": 1008,
+    "width": 236
+  },
+  "conditions": {
+    "route": "/",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "browser": "Playwright Chromium",
+    "reducedMotion": "no-preference",
+    "samplingDurationMsPerPhase": 2000,
+    "sequence": [
+      "Load home and wait for first h1; sample idle without a pointer move",
+      "Move pointer to x=700,y=300; reset counters and sample active",
+      "Scroll to document.body.scrollHeight; reset counters and sample offscreen"
+    ],
+    "network": "only loopback requests allowed",
+    "throttling": "none configured",
+    "timing": "single sequence; no repeated statistical confidence interval",
+    "cache": "Same context previously used for route-motion observations; local LCP sample is warm, not a cold-load baseline."
+  }
+}

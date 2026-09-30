@@ -1,0 +1,1115 @@
+[
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 753,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1009,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1425,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/",
+    "width": 1440
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/case-studies",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/case-studies",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 753,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/case-studies",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1009,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/case-studies",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1425,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/case-studies",
+    "width": 1440
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/contact",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/contact",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 753,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/contact",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1009,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/contact",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1425,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/contact",
+    "width": 1440
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/legal",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/legal",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 753,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/legal",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1009,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/legal",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1425,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/legal",
+    "width": 1440
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/data-policy",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/data-policy",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 753,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/data-policy",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1009,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/data-policy",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1425,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/data-policy",
+    "width": 1440
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/services/data-extraction-automation-sprint",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/services/data-extraction-automation-sprint",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 753,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/services/data-extraction-automation-sprint",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1009,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/services/data-extraction-automation-sprint",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1425,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/services/data-extraction-automation-sprint",
+    "width": 1440
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/services/computer-vision-production-optimization",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/services/computer-vision-production-optimization",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 753,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/services/computer-vision-production-optimization",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1009,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/services/computer-vision-production-optimization",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1425,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/services/computer-vision-production-optimization",
+    "width": 1440
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/services/ai-workflow-buildout",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/services/ai-workflow-buildout",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 753,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/services/ai-workflow-buildout",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1009,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/services/ai-workflow-buildout",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1425,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/services/ai-workflow-buildout",
+    "width": 1440
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [
+      {
+        "h": 64,
+        "tag": "BUTTON",
+        "text": "",
+        "w": 64,
+        "x": 247,
+        "y": 818
+      },
+      {
+        "h": 64,
+        "tag": "BUTTON",
+        "text": "",
+        "w": 64,
+        "x": 321,
+        "y": 818
+      },
+      {
+        "h": 64,
+        "tag": "BUTTON",
+        "text": "",
+        "w": 64,
+        "x": 395,
+        "y": 818
+      }
+    ],
+    "overflow": 0,
+    "route": "/project/n8n-openai-data-extraction",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [
+      {
+        "h": 64,
+        "tag": "BUTTON",
+        "text": "",
+        "w": 64,
+        "x": 321,
+        "y": 724
+      },
+      {
+        "h": 64,
+        "tag": "BUTTON",
+        "text": "",
+        "w": 64,
+        "x": 395,
+        "y": 724
+      }
+    ],
+    "overflow": 0,
+    "route": "/project/n8n-openai-data-extraction",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 753,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/n8n-openai-data-extraction",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1009,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/n8n-openai-data-extraction",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1425,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/n8n-openai-data-extraction",
+    "width": 1440
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/invoice-ocr-extraction",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/invoice-ocr-extraction",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 753,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/invoice-ocr-extraction",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1009,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/invoice-ocr-extraction",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1425,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/invoice-ocr-extraction",
+    "width": 1440
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [
+      {
+        "h": 64,
+        "tag": "BUTTON",
+        "text": "",
+        "w": 64,
+        "x": 247,
+        "y": 913
+      },
+      {
+        "h": 64,
+        "tag": "BUTTON",
+        "text": "",
+        "w": 64,
+        "x": 321,
+        "y": 913
+      },
+      {
+        "h": 64,
+        "tag": "BUTTON",
+        "text": "",
+        "w": 64,
+        "x": 395,
+        "y": 913
+      }
+    ],
+    "overflow": 0,
+    "route": "/project/yolo-computer-vision-optimization",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [
+      {
+        "h": 64,
+        "tag": "BUTTON",
+        "text": "",
+        "w": 64,
+        "x": 321,
+        "y": 851
+      },
+      {
+        "h": 64,
+        "tag": "BUTTON",
+        "text": "",
+        "w": 64,
+        "x": 395,
+        "y": 851
+      }
+    ],
+    "overflow": 0,
+    "route": "/project/yolo-computer-vision-optimization",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 753,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/yolo-computer-vision-optimization",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1009,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/yolo-computer-vision-optimization",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1425,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/yolo-computer-vision-optimization",
+    "width": 1440
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [
+      {
+        "h": 64,
+        "tag": "BUTTON",
+        "text": "",
+        "w": 64,
+        "x": 247,
+        "y": 790
+      },
+      {
+        "h": 64,
+        "tag": "BUTTON",
+        "text": "",
+        "w": 64,
+        "x": 321,
+        "y": 790
+      }
+    ],
+    "overflow": 0,
+    "route": "/project/ai-invoice-processing-automation",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [
+      {
+        "h": 64,
+        "tag": "BUTTON",
+        "text": "",
+        "w": 64,
+        "x": 321,
+        "y": 729
+      }
+    ],
+    "overflow": 0,
+    "route": "/project/ai-invoice-processing-automation",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 753,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/ai-invoice-processing-automation",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1009,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/ai-invoice-processing-automation",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1425,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/ai-invoice-processing-automation",
+    "width": 1440
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/ai-project-planning-assistant",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/ai-project-planning-assistant",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 753,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/ai-project-planning-assistant",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1009,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/ai-project-planning-assistant",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1425,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/ai-project-planning-assistant",
+    "width": 1440
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/browser-search-to-spreadsheet",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/browser-search-to-spreadsheet",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 753,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/browser-search-to-spreadsheet",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1009,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/browser-search-to-spreadsheet",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1425,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/browser-search-to-spreadsheet",
+    "width": 1440
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/depth-based-distance-estimation",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/depth-based-distance-estimation",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 753,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/depth-based-distance-estimation",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1009,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/depth-based-distance-estimation",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1425,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/depth-based-distance-estimation",
+    "width": 1440
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/healthcare-document-intelligence",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/healthcare-document-intelligence",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 753,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/healthcare-document-intelligence",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1009,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/healthcare-document-intelligence",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1425,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/healthcare-document-intelligence",
+    "width": 1440
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [
+      {
+        "h": 64,
+        "tag": "BUTTON",
+        "text": "",
+        "w": 64,
+        "x": 247,
+        "y": 831
+      },
+      {
+        "h": 64,
+        "tag": "BUTTON",
+        "text": "",
+        "w": 64,
+        "x": 321,
+        "y": 831
+      },
+      {
+        "h": 64,
+        "tag": "BUTTON",
+        "text": "",
+        "w": 64,
+        "x": 395,
+        "y": 831
+      },
+      {
+        "h": 64,
+        "tag": "BUTTON",
+        "text": "",
+        "w": 64,
+        "x": 469,
+        "y": 831
+      }
+    ],
+    "overflow": 0,
+    "route": "/project/n8n-python-ai-agents",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [
+      {
+        "h": 64,
+        "tag": "BUTTON",
+        "text": "",
+        "w": 64,
+        "x": 321,
+        "y": 715
+      },
+      {
+        "h": 64,
+        "tag": "BUTTON",
+        "text": "",
+        "w": 64,
+        "x": 395,
+        "y": 715
+      },
+      {
+        "h": 64,
+        "tag": "BUTTON",
+        "text": "",
+        "w": 64,
+        "x": 469,
+        "y": 715
+      }
+    ],
+    "overflow": 0,
+    "route": "/project/n8n-python-ai-agents",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 753,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/n8n-python-ai-agents",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1009,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/n8n-python-ai-agents",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1425,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/n8n-python-ai-agents",
+    "width": 1440
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/python-ci-workflow-automation",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/python-ci-workflow-automation",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 753,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/python-ci-workflow-automation",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1009,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/python-ci-workflow-automation",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1425,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/python-ci-workflow-automation",
+    "width": 1440
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/resumable-listing-data-extraction",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/resumable-listing-data-extraction",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 753,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/resumable-listing-data-extraction",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1009,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/resumable-listing-data-extraction",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1425,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/resumable-listing-data-extraction",
+    "width": 1440
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/sports-video-analytics-yolo",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/sports-video-analytics-yolo",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 753,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/sports-video-analytics-yolo",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1009,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/sports-video-analytics-yolo",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1425,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/project/sports-video-analytics-yolo",
+    "width": 1440
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 305,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/audit-unknown-route",
+    "width": 320
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 375,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/audit-unknown-route",
+    "width": 390
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 768,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/audit-unknown-route",
+    "width": 768
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1024,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/audit-unknown-route",
+    "width": 1024
+  },
+  {
+    "brokenImages": [],
+    "clientWidth": 1440,
+    "height": 900,
+    "outOfBounds": [],
+    "overflow": 0,
+    "route": "/audit-unknown-route",
+    "width": 1440
+  }
+]
