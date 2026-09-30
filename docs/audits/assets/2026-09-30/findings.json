@@ -1,0 +1,394 @@
+[
+  {
+    "id": "F01",
+    "title": "[Audit] Add a usable pause control and touch targets to testimonials",
+    "priority": "P1",
+    "category": "Confirmed defect",
+    "sha": "2df30703fb450d6ae47a5f47ed45e10f119abd20",
+    "routes": [
+      "/"
+    ],
+    "source": [
+      "src/components/Testimonials.jsx:11",
+      "src/components/Testimonials.jsx:55",
+      "src/components/Testimonials.jsx:118"
+    ],
+    "actual": "A synthesized tap on Slide 2 changed the carousel to 02/10; 6.5 seconds later it advanced to 03/10. There is no pause button. Inactive targets are 5 by 5 CSS px and the active target is 8 by 8; adjacent centers are about 18px apart.",
+    "expected": "A visitor can stop auto-updating quotes and choose slides using usable touch and keyboard controls.",
+    "reproduction": "At 390x844 with Chromium touch emulation and normal motion, scroll to testimonials, tap Slide 2, and wait 6.5 seconds without hovering the quote.",
+    "correction": "Add an explicit Pause/Play control and larger hit areas around the existing diamonds. Keep curated quotes, the detected-field composition, hover/focus behavior, and the reduced-motion static state.",
+    "acceptance": [
+      "Pause works by tap and keyboard; the chosen slide stays unchanged for at least 20 seconds.",
+      "Each target is at least 24x24 CSS px without overlap, preferably 44x44 where space permits.",
+      "Focusing either quote or carousel controls stops auto-advance; manual selection remains available.",
+      "Reduced motion stays static; existing testimonial unit and passive QA checks pass."
+    ],
+    "evidence": [
+      "probe-carousel.json"
+    ],
+    "limits": "Touch was synthesized in Chromium, not tested on physical hardware. WCAG 2.2.2 pause and 2.5.8 target-size/spacing requirements are relevant; this is not a complete conformance assessment.",
+    "dependencies": "None.",
+    "confidence": "High for the observed behavior; broader impact is bounded by the stated limits.",
+    "validation": "Reproduce the stated route/state in the local production build, add a behavior regression check for the acceptance criteria, and run the relevant existing unit/passive QA. Use isolated synthetic transport for contact checks.",
+    "issue": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/225"
+  },
+  {
+    "id": "F02",
+    "title": "[Audit] Honor reduced motion on contact and policy page entrances",
+    "priority": "P2",
+    "category": "Confirmed defect",
+    "sha": "2df30703fb450d6ae47a5f47ed45e10f119abd20",
+    "routes": [
+      "/contact",
+      "/legal",
+      "/data-policy"
+    ],
+    "source": [
+      "src/pages/Contact.jsx:51",
+      "src/pages/Contact.jsx:169",
+      "src/pages/Legal.jsx:7",
+      "src/pages/DataPolicy.jsx:7"
+    ],
+    "actual": "With prefers-reduced-motion=reduce, the route roots still translate approximately 20.8px after 100ms, then about 2.3px after 300ms, at 390 and 1440px.",
+    "expected": "Reduced motion removes route-level spatial entrance movement while preserving readable content and state feedback.",
+    "reproduction": "Use Chromium reduced-motion emulation, directly load each route at 390x900 and 1440x900, and sample root transform from mount through 300ms.",
+    "correction": "Use the existing Framer Motion 10 reduced-motion policy, either MotionConfig or scoped useReducedMotion. Check the consent entrance under the same policy; its missing source guard is not yet a timed observation.",
+    "acceptance": [
+      "At mount, 100ms, and 300ms, reduced-motion route roots have no translating/scaling transform.",
+      "Normal-motion route entrances keep their intended behavior.",
+      "Consent and contact feedback remain visible and understandable; add targeted Chromium and WebKit motion checks."
+    ],
+    "evidence": [
+      "probe-motion.json"
+    ],
+    "limits": "Verified in local Chromium. Physical devices and the deployed host were not tested.",
+    "dependencies": "None.",
+    "confidence": "High for the observed behavior; broader impact is bounded by the stated limits.",
+    "validation": "Reproduce the stated route/state in the local production build, add a behavior regression check for the acceptance criteria, and run the relevant existing unit/passive QA. Use isolated synthetic transport for contact checks.",
+    "issue": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/226"
+  },
+  {
+    "id": "F03",
+    "title": "[Audit] Keep the native pointer until the custom cursor is enabled",
+    "priority": "P2",
+    "category": "Confirmed defect",
+    "sha": "2df30703fb450d6ae47a5f47ed45e10f119abd20",
+    "routes": [
+      "All public routes"
+    ],
+    "source": [
+      "src/index.css:65",
+      "src/components/CustomCursor.jsx:16"
+    ],
+    "actual": "In a fine-pointer Chromium context with JavaScript disabled, computed body cursor is none. The CSS hides it based only on pointer type, while the custom cursor depends on JavaScript and an effect. The component toggles custom-cursor-enabled but CSS does not use that gate.",
+    "expected": "The native pointer remains available until the custom cursor can actually render, and returns whenever the custom cursor is unavailable.",
+    "reproduction": "Open the local production build in a javaScriptEnabled:false Chromium context and inspect the computed cursor. Repeat with the entry script blocked.",
+    "correction": "Scope cursor:none to the existing html.custom-cursor-enabled class and maintain the reduced-motion override. Keep the dot design and normal fine-pointer behavior.",
+    "acceptance": [
+      "JS-disabled and entry-script-blocked states have a native pointer.",
+      "Cursor hiding occurs only while the enabled class and rendered custom cursor are present.",
+      "Coarse pointer and reduced motion use the native cursor; existing QA stays green."
+    ],
+    "evidence": [
+      "probe-fallback.json"
+    ],
+    "limits": "Verified in local Chromium. Physical devices and the deployed host were not tested.",
+    "dependencies": "None.",
+    "confidence": "High for the observed behavior; broader impact is bounded by the stated limits.",
+    "validation": "Reproduce the stated route/state in the local production build, add a behavior regression check for the acceptance criteria, and run the relevant existing unit/passive QA. Use isolated synthetic transport for contact checks.",
+    "issue": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/227"
+  },
+  {
+    "id": "F04",
+    "title": "[Audit] Remove the consent spacer after Reject",
+    "priority": "P2",
+    "category": "Confirmed defect",
+    "sha": "2df30703fb450d6ae47a5f47ed45e10f119abd20",
+    "routes": [
+      "All public routes"
+    ],
+    "source": [
+      "src/components/Layout.jsx:15",
+      "src/components/Layout.jsx:48",
+      "src/components/Layout.jsx:65"
+    ],
+    "actual": "After Reject and reload at 1280px, the header ends at y=69 and main starts at y=141. A hidden 72px spacer remains while the banner is absent. With Accept, main starts at y=69.",
+    "expected": "Content reserves space only while the consent banner is visible, independent of whether analytics are accepted or rejected.",
+    "reproduction": "Open /contact, choose Reject, reload, and compare header/main geometry and the adjacent spacer against an accepted-consent session.",
+    "correction": "Derive visibility from existence of a consent decision and manager state, rather than analytics being true. Preserve the rejection default and network consent boundary.",
+    "acceptance": [
+      "Reject/reload and Accept/reload have the same header-to-main offset at 390 and 1440px.",
+      "The initial banner and reopened manager reserve appropriate space without covering focused controls.",
+      "Reject still causes zero analytics/telemetry requests in the existing local QA."
+    ],
+    "evidence": [
+      "probe-consent.json"
+    ],
+    "limits": "Verified in local Chromium. Physical devices and the deployed host were not tested.",
+    "dependencies": "None.",
+    "confidence": "High for the observed behavior; broader impact is bounded by the stated limits.",
+    "validation": "Reproduce the stated route/state in the local production build, add a behavior regression check for the acceptance criteria, and run the relevant existing unit/passive QA. Use isolated synthetic transport for contact checks.",
+    "issue": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/228"
+  },
+  {
+    "id": "F05",
+    "title": "[Audit] Apply consent choices when local storage writes fail",
+    "priority": "P2",
+    "category": "Confirmed defect",
+    "sha": "2df30703fb450d6ae47a5f47ed45e10f119abd20",
+    "routes": [
+      "All public routes"
+    ],
+    "source": [
+      "src/lib/consent.js:33",
+      "src/components/CookieConsentBanner.jsx:52",
+      "src/components/CookieConsentBanner.jsx:80"
+    ],
+    "actual": "Overriding Storage.setItem to throw SecurityError then clicking Reject emits a page error and leaves the consent banner visible. Reads are guarded, but writes are not.",
+    "expected": "The choice applies safely for the current session even if persistence fails; Reject and Close remain usable.",
+    "reproduction": "Use an isolated Chromium context with a synthetic throwing Storage.setItem, open the consent dialog, and click Reject. Repeat Accept, Save, and Close in the fix validation.",
+    "correction": "Catch storage failures at the persistence boundary and retain the current choice in session memory. Keep analytics off unless explicitly accepted; do not make failed persistence imply consent.",
+    "acceptance": [
+      "Throwing setItem never causes a pageerror for Reject, Close, Save, or Accept.",
+      "The banner dismisses after a choice and that choice governs the current session.",
+      "Reject never enables analytics; Accept behavior remains explicit.",
+      "Add meaningful unit and browser checks for throwing writes."
+    ],
+    "evidence": [
+      "probe-consent.json"
+    ],
+    "limits": "Verified in local Chromium. Physical devices and the deployed host were not tested.",
+    "dependencies": "Coordinate with F04 because both touch consent state. Each acceptance criterion remains independently testable.",
+    "confidence": "High for the observed behavior; broader impact is bounded by the stated limits.",
+    "validation": "Reproduce the stated route/state in the local production build, add a behavior regression check for the acceptance criteria, and run the relevant existing unit/passive QA. Use isolated synthetic transport for contact checks.",
+    "issue": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/229"
+  },
+  {
+    "id": "F06",
+    "title": "[Audit] Preserve contact focus and a lasting request receipt",
+    "priority": "P2",
+    "category": "Confirmed defect",
+    "sha": "2df30703fb450d6ae47a5f47ed45e10f119abd20",
+    "routes": [
+      "/contact"
+    ],
+    "source": [
+      "src/pages/Contact.jsx:152",
+      "src/pages/Contact.jsx:160",
+      "src/pages/Contact.jsx:340",
+      "src/components/ui/use-toast.js:89"
+    ],
+    "actual": "With the in-memory Convex transport, document.activeElement is BODY after both a failure and a subsequent successful retry. After ten seconds, Request received is absent and the cleared form has no lasting receipt.",
+    "expected": "A keyboard user keeps a useful focus position after failure and receives a lasting, accessible confirmation after success.",
+    "reproduction": "Run the existing isolated contact lifecycle transport. Record activeElement after releasing failure and success, then inspect visible confirmation after ten seconds. Never submit a real lead.",
+    "correction": "Restore focus after failure and render a persistent in-form receipt after success. Keep duplicate-submit protection, preserved failure inputs, the existing response promise, and all commercial terms.",
+    "acceptance": [
+      "Failure retains values and places focus on a useful retry control or error summary.",
+      "Mocked success produces a persistent receipt with programmatic focus and accessible status semantics after at least ten seconds.",
+      "Pending sends still prevent duplicate transport calls.",
+      "Any receipt motion is opacity-only, short and nonblocking; reduced motion shows the final state immediately."
+    ],
+    "evidence": [
+      "probe-contact.json"
+    ],
+    "limits": "Only an in-memory transport and Playwright click activation were used. This verifies observed UI lifecycle, not actual email/lead delivery; keyboard-triggered lifecycle impact requires validation.",
+    "dependencies": "None.",
+    "confidence": "High for the observed behavior; broader impact is bounded by the stated limits.",
+    "validation": "Reproduce the stated route/state in the local production build, add a behavior regression check for the acceptance criteria, and run the relevant existing unit/passive QA. Use isolated synthetic transport for contact checks.",
+    "issue": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/230"
+  },
+  {
+    "id": "F07",
+    "title": "[Audit] Show a safe retry message for unknown contact transport errors",
+    "priority": "P2",
+    "category": "Confirmed defect",
+    "sha": "2df30703fb450d6ae47a5f47ed45e10f119abd20",
+    "routes": [
+      "/contact"
+    ],
+    "source": [
+      "src/pages/Contact.jsx:135",
+      "src/pages/Contact.jsx:143"
+    ],
+    "actual": "A synthetic unknown transport error containing [Request ID: synthetic-audit] Server Error appears verbatim in the visible failure toast. The current prefix stripping does not provide a useful recovery instruction.",
+    "expected": "Unknown failures show stable, plain-language retry/contact guidance without internal request IDs or transport details.",
+    "reproduction": "Use the isolated lifecycle transport with a synthetic failure payload that includes a bracketed request ID and Server Error. Inspect the visible failure toast; do not use real backend errors or production data.",
+    "correction": "Map unknown transport failures to a fixed safe message with a next step. Keep approved user-actionable validation/rate-limit messages where appropriate. Preserve inputs and duplicate-submit guards.",
+    "acceptance": [
+      "Unknown failure UI does not contain Request ID, CONVEX, Server Error, or raw stack text.",
+      "A readable retry or existing email fallback is offered and the entered values remain.",
+      "Expected validation errors remain actionable; telemetry handling is tested separately if changed."
+    ],
+    "evidence": [
+      "contact-error-observation.json"
+    ],
+    "limits": "The payload was synthetic. No actual server identifiers were collected. Expected-error telemetry classification was source-reviewed but not runtime verified.",
+    "dependencies": "None.",
+    "confidence": "High for the observed behavior; broader impact is bounded by the stated limits.",
+    "validation": "Reproduce the stated route/state in the local production build, add a behavior regression check for the acceptance criteria, and run the relevant existing unit/passive QA. Use isolated synthetic transport for contact checks.",
+    "issue": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/231"
+  },
+  {
+    "id": "F08",
+    "title": "[Audit] Stop idle and offscreen hero animation work",
+    "priority": "P2",
+    "category": "Measured optimization",
+    "sha": "2df30703fb450d6ae47a5f47ed45e10f119abd20",
+    "routes": [
+      "/"
+    ],
+    "source": [
+      "src/components/Hero.jsx:23",
+      "src/components/Hero.jsx:47",
+      "src/components/Hero.jsx:55"
+    ],
+    "actual": "The production Chromium probe recorded 3840 custom-property writes in two idle seconds, 3856 after pointer movement, and 3856 while scrolled to the footer. Thirteen named hero CSS animations also kept running offscreen. No long task over 50ms was observed in this sample.",
+    "expected": "The existing visual effect performs work while it is useful and stops after convergence, offscreen, on coarse pointers where appropriate, and under reduced motion.",
+    "reproduction": "Instrument CSSStyleDeclaration.setProperty for --px/--py before local production load. Record two seconds each at rest, after pointer movement, and at the footer. Use a functioning requestAnimationFrame browser; T3 timing was inconclusive.",
+    "correction": "Start parallax from useful pointer input, stop after convergence, and pause/cancel hero work when outside the viewport. Cache invariant depth values. Preserve the invoice, all badges, detection frames, normal in-view effect, and existing libraries.",
+    "acceptance": [
+      "After convergence, two idle seconds generate zero Hero --px/--py writes.",
+      "Two offscreen seconds generate zero hero writes and zero running named hero CSS animations.",
+      "Reduced-motion and coarse-pointer states have no unnecessary parallax loop.",
+      "A normal fine-pointer move still produces the intended effect.",
+      "Before/after measurements use the same browser, viewport, motion preference, and input sequence; do not claim field CWV gains from the local probe."
+    ],
+    "evidence": [
+      "probe-performance.json"
+    ],
+    "limits": "This is a measured work-reduction opportunity, not a measured jank or battery-life claim. Local unthrottled timing, no field Core Web Vitals.",
+    "dependencies": "None.",
+    "confidence": "High for the observed behavior; broader impact is bounded by the stated limits.",
+    "validation": "Reproduce the stated route/state in the local production build, add a behavior regression check for the acceptance criteria, and run the relevant existing unit/passive QA. Use isolated synthetic transport for contact checks.",
+    "issue": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/232"
+  },
+  {
+    "id": "F09",
+    "title": "[Audit] Restore collection position after Other Work articles",
+    "priority": "P2",
+    "category": "Confirmed defect",
+    "sha": "2df30703fb450d6ae47a5f47ed45e10f119abd20",
+    "routes": [
+      "/case-studies",
+      "/project/ai-project-planning-assistant"
+    ],
+    "source": [
+      "src/components/CaseStudiesContent.js:46",
+      "src/components/CaseStudyCollection.js:113",
+      "src/components/CaseStudyArticle.js:57"
+    ],
+    "actual": "Opening an Other Work card and following View case studies with resume=1 returned to scrollY=0 instead of the prior Other Work area at scrollY=1213. Those cards request collection resume but omit the save-before-article handlers used by the core collection.",
+    "expected": "The return link brings the visitor back to the Other Work card or its saved collection position.",
+    "reproduction": "In a fresh /case-studies session, scroll Other Work into view, open its first card, then follow the article View case studies link. Record before/after scroll and the returned card viewport intersection.",
+    "correction": "Give Other Work entries the same collection snapshot contract as core cards, or move that contract to a shared collection navigation boundary. Keep URL/filter state and core-card restoration.",
+    "acceptance": [
+      "The selected Other Work card is visible on return and scroll differs from the saved departure by no more than 100px.",
+      "Fresh and previously used core-collection sessions restore the correct origin.",
+      "Core filtering, pagination, focus, browser Back, and article return behavior remain intact."
+    ],
+    "evidence": [
+      "probe-history.json"
+    ],
+    "limits": "Verified in local Chromium. Physical devices and the deployed host were not tested.",
+    "dependencies": "None.",
+    "confidence": "High for the observed behavior; broader impact is bounded by the stated limits.",
+    "validation": "Reproduce the stated route/state in the local production build, add a behavior regression check for the acceptance criteria, and run the relevant existing unit/passive QA. Use isolated synthetic transport for contact checks.",
+    "issue": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/233"
+  },
+  {
+    "id": "F10",
+    "title": "[Audit] Keep mobile menu controls reachable in short viewports",
+    "priority": "P2",
+    "category": "Confirmed defect",
+    "sha": "2df30703fb450d6ae47a5f47ed45e10f119abd20",
+    "routes": [
+      "All public routes below 768px"
+    ],
+    "source": [
+      "src/components/Header.jsx:240",
+      "src/components/Header.jsx:258"
+    ],
+    "actual": "At 568x256 and 320x256 the fixed drawer has clientHeight=256, scrollHeight=306, overflow-y=visible, and scrollTop remains zero after an attempted scroll. Its last control ends at y=306.25. At 320px height the controls fit; the earlier generic 320px-height hypothesis was too broad.",
+    "expected": "Every menu action remains reachable and visible without overlapping the menu header at small viewport heights and zoom-related reflow.",
+    "reproduction": "Open the mobile menu at 568x256 and 320x256. Measure every action; attempt scrolling and traverse with Tab. Use a 320px-height comparison where the current layout fits.",
+    "correction": "Allow vertical drawer scrolling and use safe vertical alignment. Preserve focus trapping, Escape, landmark inert release, and desktop-breakpoint cleanup.",
+    "acceptance": [
+      "At 568x256, 320x256, and 320x200 every action can be fully brought into view by scroll and keyboard.",
+      "The first item does not overlap the drawer header and the final CTA is reachable.",
+      "Escape restores focus; resizing across 768px releases inert state.",
+      "Validate native 200% browser zoom when a host supporting it is available."
+    ],
+    "evidence": [
+      "probe-drawer-zoom.json"
+    ],
+    "limits": "Short viewport clipping is directly measured. CSS zoom was tested separately; native 200% browser zoom is still unverified.",
+    "dependencies": "None.",
+    "confidence": "High for the observed behavior; broader impact is bounded by the stated limits.",
+    "validation": "Reproduce the stated route/state in the local production build, add a behavior regression check for the acceptance criteria, and run the relevant existing unit/passive QA. Use isolated synthetic transport for contact checks.",
+    "issue": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/234"
+  },
+  {
+    "id": "F11",
+    "title": "[Audit enhancement] Preserve navigation when a route chunk fails",
+    "priority": "P2",
+    "category": "Design enhancement",
+    "sha": "2df30703fb450d6ae47a5f47ed45e10f119abd20",
+    "routes": [
+      "All public routes, observed entering /contact"
+    ],
+    "source": [
+      "src/main.jsx:10",
+      "src/components/ErrorBoundary.jsx:15",
+      "src/components/Layout.jsx:70"
+    ],
+    "actual": "Aborting the local ContactRoute chunk then activating Request Estimate replaces the full site with Something went wrong. Back to home. Header and main landmarks are absent. A home recovery link exists, so the state is not unrecoverable.",
+    "expected": "A transient route failure gives clear retry/home options and retains a usable navigation shell.",
+    "reproduction": "In isolated local Chromium, abort only ContactRoute-*.js and activate the header estimate control. Inspect fallback controls and landmarks without affecting production.",
+    "correction": "Add a route-scoped recovery surface inside the layout, with actionable retry/home controls and accessible heading/focus. Keep a root fallback for shell failures; guard any reload retry to prevent loops.",
+    "acceptance": [
+      "An aborted lazy-route chunk retains usable header/footer or equivalent navigation.",
+      "A clear heading and working Retry and Home controls are available by keyboard.",
+      "No infinite reload loop occurs; retries do not submit contact data.",
+      "A brief opacity-only status transition is optional; reduced motion shows the final state immediately."
+    ],
+    "evidence": [
+      "probe-fallback.json"
+    ],
+    "limits": "A deliberately aborted route asset proves the fallback behavior. The frequency of real deployed chunk failures was not measured.",
+    "dependencies": "None.",
+    "confidence": "High for the observed behavior; broader impact is bounded by the stated limits.",
+    "validation": "Reproduce the stated route/state in the local production build, add a behavior regression check for the acceptance criteria, and run the relevant existing unit/passive QA. Use isolated synthetic transport for contact checks.",
+    "issue": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/235"
+  },
+  {
+    "id": "F12",
+    "title": "[Audit] Make the testimonials title a section heading",
+    "priority": "P2",
+    "category": "Confirmed defect",
+    "sha": "2df30703fb450d6ae47a5f47ed45e10f119abd20",
+    "routes": [
+      "/"
+    ],
+    "source": [
+      "src/components/Testimonials.jsx:47",
+      "src/components/Hero.jsx:214"
+    ],
+    "actual": "At all five measured widths, home exposes two h1 headings: Computer Vision & AI Engineer and CLIENT RESULTS. Testimonials is a subsection alongside other h2 sections.",
+    "expected": "Heading navigation identifies the page topic once and testimonials at the appropriate section level.",
+    "reproduction": "Load / at 320, 390, 768, 1024 and 1440px, inspect the rendered heading outline and navigate headings with assistive technology in fix validation.",
+    "correction": "Change only the testimonials heading element from h1 to h2, preserving all typography, wording, color and layout.",
+    "acceptance": [
+      "Home exposes one page h1 and CLIENT RESULTS is an h2.",
+      "Appearance is unchanged at all five widths.",
+      "Existing home, testimonial and route QA remain green."
+    ],
+    "evidence": [
+      "heading-observation.json"
+    ],
+    "limits": "The DOM outline is verified in Chromium. Multiple h1 elements alone do not establish a WCAG failure; this finding concerns the actual subsection hierarchy. Screen-reader speech was not tested.",
+    "dependencies": "None.",
+    "confidence": "High for the observed hierarchy.",
+    "validation": "Verify the actual heading outline and unchanged rendered geometry; run relevant existing QA.",
+    "issue": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/236"
+  }
+]
