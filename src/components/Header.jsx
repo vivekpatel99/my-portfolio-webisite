@@ -237,7 +237,7 @@ const Header = () => {
           role="dialog"
           aria-modal="true"
           aria-label="Navigation menu"
-          className="fixed inset-0 bg-[#0C0D0D] z-50 md:hidden flex flex-col px-5 pb-7 overscroll-contain touch-none"
+          className="fixed inset-0 bg-[#0C0D0D] z-50 md:hidden flex flex-col overflow-y-auto px-5 pb-7 overscroll-contain touch-none"
           style={{ overscrollBehavior: 'contain', touchAction: 'pan-y' }}
         >
           <div className="h-[68px] flex items-center justify-between border-b border-[rgba(139,92,246,0.38)]">
