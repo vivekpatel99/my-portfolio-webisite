@@ -25,6 +25,7 @@ const suites = Object.freeze({
   'qa-responsive.spec.js': { label: 'responsive-layout' },
   'qa-route-recovery.spec.js': { label: 'route-recovery' },
   'qa-routes.spec.js': { label: 'routing' },
+  'qa-testimonials.spec.js': { label: 'testimonials-carousel' },
   'qa-upgrade-interactions.spec.js': { label: 'upgrade-interactions' },
   'qa-visual.spec.js': { label: 'visual-smoke' },
 });
