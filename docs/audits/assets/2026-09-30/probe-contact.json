@@ -1,0 +1,8 @@
+{
+  "failureFocus": "BODY",
+  "successFocus": "BODY",
+  "receiptVisibleAfter10s": false,
+  "transport": "in-memory synthetic Convex lifecycle; no real submission",
+  "rawPageBodyOmitted": true,
+  "activation": "Playwright submit.click(); keyboard-triggered lifecycle not independently reproduced"
+}

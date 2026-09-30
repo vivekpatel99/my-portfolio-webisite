@@ -1,0 +1,12 @@
+{
+  "home": {
+    "before": 898,
+    "after": 898,
+    "outgoing": 898
+  },
+  "other": {
+    "before": 1213,
+    "after": 0,
+    "destination": "/project/ai-project-planning-assistant/?from=collection"
+  }
+}

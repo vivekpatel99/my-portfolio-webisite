@@ -1,0 +1,53 @@
+{
+  "rejected": {
+    "header": {
+      "x": 0,
+      "y": 0,
+      "width": 1280,
+      "height": 69,
+      "top": 0,
+      "right": 1280,
+      "bottom": 69,
+      "left": 0
+    },
+    "main": {
+      "x": 0,
+      "y": 141,
+      "width": 1280,
+      "height": 1309.21875,
+      "top": 141,
+      "right": 1280,
+      "bottom": 1450.21875,
+      "left": 0
+    },
+    "spacer": "<div class=\"h-[60px] sm:h-[72px]\" aria-hidden=\"true\"></div>"
+  },
+  "accepted": {
+    "header": {
+      "x": 0,
+      "y": 0,
+      "width": 1280,
+      "height": 69,
+      "top": 0,
+      "right": 1280,
+      "bottom": 69,
+      "left": 0
+    },
+    "main": {
+      "x": 0,
+      "y": 69,
+      "width": 1280,
+      "height": 1309.21875,
+      "top": 69,
+      "right": 1280,
+      "bottom": 1378.21875,
+      "left": 0
+    }
+  },
+  "storageFailure": {
+    "errors": [
+      "Synthetic blocked storage"
+    ],
+    "bannerVisible": true
+  }
+}
