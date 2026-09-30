@@ -7,6 +7,7 @@ import { useMutation } from 'convex/react';
 import { api } from '@convex/api';
 import { socialLinks } from '@/config/links';
 import { Seo, routeSeo } from '@/lib/seo';
+import { usePageMotion } from '@/lib/pageMotion';
 import { captureException } from '@/lib/sentryTelemetry';
 import { BUDGET_LABELS, BUDGET_OPTIONS } from '@/lib/budgetOptions';
 import { SENSITIVE_TELEMETRY_REGION_PROPS } from '@/lib/sensitiveTelemetry';
@@ -48,12 +49,6 @@ const descriptionPrompts = [
   'Do you already have code, samples, screenshots, or a deadline?',
 ];
 
-const pageVariants = {
-  initial: { opacity: 0, y: 20 },
-  in: { opacity: 1, y: 0 },
-  out: { opacity: 0, y: -20 }
-};
-const pageTransition = { type: 'tween', ease: 'anticipate', duration: 0.5 };
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const ACTIONABLE_SUBMIT_ERRORS = new Set([
   CONTACT_LEAD_VALIDATION_ERROR,
@@ -73,6 +68,7 @@ const Contact = () => {
   const receiptRef = useRef(null);
   const feedbackToastRef = useRef(null);
   const submitLead = useMutation(api.leads.submitLead);
+  const pageMotion = usePageMotion();
 
   useEffect(() => {
     if (outcome === 'error') submitButtonRef.current?.focus();
@@ -181,7 +177,7 @@ const Contact = () => {
   };
 
   return (
-    <motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}>
+    <motion.div {...pageMotion}>
       <Seo {...routeSeo['/contact']} />
 
       <section className="contact relative bg-[#0C0D0D] text-white py-12 px-7 md:px-10 min-h-[900px]">

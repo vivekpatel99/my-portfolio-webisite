@@ -10,6 +10,9 @@ import {
   readCookieConsentPreferences,
   saveCookieConsentPreferences,
 } from '@/lib/consent';
+import { useReducedMotionPreference } from '@/lib/useReducedMotionPreference';
+
+const BANNER_ENTRANCE_OFFSET_PX = -10;
 
 const CookieConsentBanner = ({ onConsent, show, onHide, onReservedBottomChange }) => {
   const [isManaging, setIsManaging] = useState(show);
@@ -18,6 +21,7 @@ const CookieConsentBanner = ({ onConsent, show, onHide, onReservedBottomChange }
   const bannerRef = useRef(null);
   const settingsRef = useRef(null);
   const previousFocusRef = useRef(null);
+  const entranceOffset = useReducedMotionPreference() ? 0 : BANNER_ENTRANCE_OFFSET_PX;
 
   useEffect(() => {
     if (!isManaging) setSettingsOpen(false);
@@ -135,9 +139,9 @@ const CookieConsentBanner = ({ onConsent, show, onHide, onReservedBottomChange }
           aria-modal="false"
           aria-labelledby="cookie-consent-title"
           tabIndex={-1}
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: entranceOffset }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
+          exit={{ opacity: 0, y: entranceOffset }}
           transition={{ duration: 0.2 }}
           className="fixed top-[72px] left-0 right-0 z-40 bg-[rgba(12,13,13,0.98)] backdrop-blur-lg border-b border-white/20 shadow-xl"
           style={{ marginBottom: 0, top: '72px' }}
