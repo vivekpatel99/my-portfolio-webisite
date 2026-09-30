@@ -8,11 +8,11 @@
 ## Summary
 
 The fix for issue #110 is already present in `src/components/Header.jsx` and covered by
-`tests/qa/qa-focus.spec.js`. This session re-verified the behavior against a local
-production build and reproduced a focus escape with the pre-fix trap logic under
-synthetic activation. All six focus tests passed in each of four
-browser projects at the scenario-specific viewports listed below. No behavior still
-failed, so `Header.jsx` was not changed.
+`tests/qa/qa-focus.spec.js`. This session re-verified the fixed behavior against a local
+production build. All six focus tests passed in each of four browser projects at the
+scenario-specific viewports listed below. No behavior still failed, so `Header.jsx` was
+not changed. The pre-fix probe described below does not establish an independent
+reproduction of the original defect.
 
 ## What the fix does
 
@@ -30,29 +30,19 @@ failed, so `Header.jsx` was not changed.
   line ~135).
 - Preserves inert/`aria-hidden` background state and scroll position across open/close.
 
-## Focus escape with pre-fix logic (synthetic activation)
+## Limit of the pre-fix probe
 
-A disposable HTML probe replicated the pre-fix trap logic (from `0bbf61b^`) versus the
-fixed trap logic in plain JS, run under Playwright's default `Desktop Safari` WebKit at
-`390×844`. The probe calls `element.click()` in page JavaScript. This dispatches a
-synthetic click, so it does not test pointer-specific activation or focus behavior.
+A disposable HTML probe compared the pre-fix and fixed trap logic under Playwright
+WebKit at `390×844`. It called `element.click()` in page JavaScript, which dispatches a
+synthetic click rather than pointer input. The probe's menu focus order and WebKit
+keyboard-navigation setting were not recorded, so they cannot be checked against the
+real component and the reported environment.
 
-Result:
-
-- **Baseline (pre-fix) logic:** after synthetic activation and pressing `Shift+Tab` from the
-  close button, focus leaves the dialog (`menu.contains(document.activeElement) === false`).
-  This demonstrates the containment escape in the pre-fix trap logic.
-- **Fixed logic:** focus stays contained across `Shift+Tab` and a full `Tab` cycle, and
-  `Escape` restores the toggle.
-
-### Reproduction nuance
-
-This Playwright WebKit build lets `Tab` visit buttons and links. The probe did not
-reproduce the exact `document.activeElement === BODY` symptom the two reviewers observed
-with WebKit 26.4 under a specific macOS default. Under synthetic activation, keyboard
-traversal escapes the open dialog with the pre-fix boundary trap. The fixed cyclic trap
-contains focus and restores the toggle in this probe. The probe alone does not verify
-pointer-specific focus behavior.
+In the pre-fix `Header.jsx` (`0bbf61b^`), the logo link comes before the close button.
+If WebKit includes links in native keyboard traversal, one `Shift+Tab` from the close
+button moves to the logo and stays inside the dialog. The probe therefore cannot
+establish the reported focus escape or the `document.activeElement === BODY` symptom.
+Neither result from that probe is used in the verdict below.
 
 ## Commands and results
 
