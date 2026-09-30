@@ -152,11 +152,10 @@ describe('Hero invoice header spacing (#253)', () => {
     expect(classesOf(section)).toContain('max-md:pt-3');
     expect(classesOf(pillRow)).toContain('mb-5');
     expect(classesOf(invoice)).toContain('pt-5');
-    expect(classesOf(invoice)).not.toContain('py-1.5');
-    expect(classesOf(invoice)).not.toContain('max-md:pt-3');
-    expect(classesOf(credentials)).toContain('mb-3');
-    expect(classesOf(credentials)).not.toContain('mb-0.5');
-    expect(classesOf(actions)).toContain('lg:mt-5');
+    // A max-md top padding would override pt-5 on mobile and bring the label/title collision back.
+    expect(classesOf(invoice).some((c) => c.startsWith('max-md:pt-'))).toBe(false);
+    expect(classesOf(credentials)).toContain('mb-4');
+    expect(classesOf(actions)).toEqual(expect.arrayContaining(['mt-2', 'lg:mt-5', 'max-md:mt-5']));
   });
 });
 

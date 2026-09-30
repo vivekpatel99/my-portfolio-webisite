@@ -228,7 +228,8 @@ for (const vp of heroFoldViewports) {
 }
 
 // #253: the invoice header stack, credential captions and actions keep visible gaps.
-for (const width of [320, 390, 768, 1024, 1440]) {
+// 720 is the 1440 px desktop at 200% zoom (#191).
+for (const width of [320, 390, 720, 768, 1024, 1440]) {
   test(`hero invoice labels and actions keep their gaps at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -254,12 +255,11 @@ for (const width of [320, 390, 768, 1024, 1440]) {
 
     expect(scanLabel.y - bottom(pill)).toBeGreaterThanOrEqual(4);
     expect(title.y - bottom(scanLabel)).toBeGreaterThanOrEqual(4);
-    const actionsGap = estimate.y - bottom(panel);
-    expect(actionsGap).toBeGreaterThanOrEqual(16);
-    expect(actionsGap).toBeLessThanOrEqual(24);
+    // #191 asks for one consistent panel-to-actions gap inside 16-24 px.
+    expect(estimate.y - bottom(panel)).toBeCloseTo(20, 0);
     const captionToNextLabel = rateLabel.y - bottom(caption);
     expect(captionToNextLabel).toBeGreaterThanOrEqual(rateValue.y - bottom(rateLabel));
-    expect(captionToNextLabel).toBeGreaterThan(caption.y - bottom(credentialValue));
+    expect(captionToNextLabel).toBeGreaterThanOrEqual(caption.y - bottom(credentialValue) + 4);
     if (width < 768) expect(pill.y - bottom(header)).toBeGreaterThanOrEqual(8);
     expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
   });
