@@ -10,25 +10,23 @@
 The fix for issue #110 is already present in `src/components/Header.jsx` and covered by
 `tests/qa/qa-focus.spec.js`. This session re-verified the fixed behavior against a local
 production build. All six focus tests passed in each of four browser projects at the
-scenario-specific viewports listed below. No behavior still failed, so `Header.jsx` was
+scenario-specific viewports listed below. The fixed behavior passed, so `Header.jsx` was
 not changed. The pre-fix probe described below does not establish an independent
 reproduction of the original defect.
 
-## What the fix does
+## Focus behavior and commit history
 
-`src/components/Header.jsx` (current):
+Commit `0bbf61b` changed `src/components/Header.jsx` to:
 
-- Blurs any prior active element, then focuses the close button on open
-  (`closeButtonRef.current?.focus({ preventScroll: true })`, line ~62), instead of saving
-  and later restoring `document.activeElement` (which could be `BODY` after a WebKit
-  pointer click).
-- Traps `Tab`/`Shift+Tab` with an explicit cyclic index over the full focusable sequence
-  (lines ~93–113), rather than a first/last boundary check. This keeps links reachable
-  when WebKit's default keyboard setting would skip them.
-- On close, restores focus to the actual toggle (mobile) or the desktop estimate button
-  after a resize (`desktopQuery.matches ? desktopEstimateRef.current : toggleButtonRef.current`,
-  line ~135).
-- Preserves inert/`aria-hidden` background state and scroll position across open/close.
+- Save the menu toggle as the focus restoration target and focus the close button on open.
+- Trap `Tab` and `Shift+Tab` with a cyclic index over the full focusable sequence instead
+  of checking only the first and last elements. This keeps links reachable when WebKit's
+  keyboard setting skips links during native traversal.
+- Restore focus to the saved toggle when the menu closes.
+
+The current header also blurs prior focus and uses `preventScroll` when focusing the close
+button. Those changes came in `fff5306`. Commit `67a83cd` added the desktop resize focus
+target. The current code also restores background inert state and scroll position.
 
 ## Limit of the pre-fix probe
 
@@ -42,7 +40,7 @@ In the pre-fix `Header.jsx` (`0bbf61b^`), the logo link comes before the close b
 If WebKit includes links in native keyboard traversal, one `Shift+Tab` from the close
 button moves to the logo and stays inside the dialog. The probe therefore cannot
 establish the reported focus escape or the `document.activeElement === BODY` symptom.
-Neither result from that probe is used in the verdict below.
+The verdict below excludes the probe.
 
 ## Commands and results
 
