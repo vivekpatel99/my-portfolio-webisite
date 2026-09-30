@@ -131,7 +131,15 @@ const test = base.extend({
 async function fillContactForm(page) {
   await page.getByLabel('Full Name *').fill('Synthetic QA Contact');
   await page.getByLabel('Email Address *').fill('qa-contact@example.invalid');
+  await page.getByLabel('Budget Range').selectOption(SELECTED_BUDGET);
   await page.getByLabel('Project Description *').fill('Synthetic transport lifecycle test.');
+}
+
+async function expectPreservedValues(page) {
+  await expect(page.getByLabel('Full Name *')).toHaveValue('Synthetic QA Contact');
+  await expect(page.getByLabel('Email Address *')).toHaveValue('qa-contact@example.invalid');
+  await expect(page.getByLabel('Budget Range')).toHaveValue(SELECTED_BUDGET);
+  await expect(page.getByLabel('Project Description *')).toHaveValue('Synthetic transport lifecycle test.');
 }
 
 function failureToastLocator(page) {
@@ -165,7 +173,7 @@ async function expectSettledToastFitsViewport(page, toast) {
   expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
 }
 
-test('holds one pending submit, blocks duplicates, shows safe failure guidance, then retries successfully', async ({ page, contactTransport: transport }) => {
+test('holds one pending keyboard submit, blocks duplicates, shows safe failure guidance and focuses retry, then keeps a focused receipt', async ({ page, contactTransport: transport }) => {
   const mutationHttpRequests = [];
   page.on('request', (request) => {
     if (request.method() === 'POST' && request.url().includes('/api/mutation')) {
@@ -176,12 +184,12 @@ test('holds one pending submit, blocks duplicates, shows safe failure guidance, 
   await page.goto('/contact/');
   await expect(page.getByRole('heading', { name: /Request a Project Estimate/i })).toBeVisible();
   await fillContactForm(page);
-  const budget = page.getByLabel('Budget Range');
-  await budget.selectOption(SELECTED_BUDGET);
 
   const form = page.locator('form[data-sensitive-telemetry]');
   const submit = form.locator('button[type="submit"]');
-  await submit.click();
+  const receipt = form.getByRole('status', { name: 'Request received' });
+
+  await page.getByLabel('Full Name *').press('Enter');
   await expect(submit).toBeDisabled();
   await expect(submit).toContainText(/sending/i);
 
@@ -193,8 +201,8 @@ test('holds one pending submit, blocks duplicates, shows safe failure guidance, 
   expect(transport.state.mutations[0].args[0]).toMatchObject({
     name: 'Synthetic QA Contact',
     email: 'qa-contact@example.invalid',
-    description: 'Synthetic transport lifecycle test.',
     budget: SELECTED_BUDGET,
+    description: 'Synthetic transport lifecycle test.',
   });
 
   transport.releasePending('failure');
@@ -204,21 +212,92 @@ test('holds one pending submit, blocks duplicates, shows safe failure guidance, 
   await expectNoDiagnostics(page);
   await expectSettledToastFitsViewport(page, failureToast);
   await expect(submit).toBeEnabled();
-  await expect(page.getByLabel('Full Name *')).toHaveValue('Synthetic QA Contact');
-  await expect(page.getByLabel('Email Address *')).toHaveValue('qa-contact@example.invalid');
-  await expect(page.getByLabel('Project Description *')).toHaveValue('Synthetic transport lifecycle test.');
-  await expect(budget).toHaveValue(SELECTED_BUDGET);
+  await expect(submit).toBeFocused();
+  await expectPreservedValues(page);
+  await expect(receipt).toHaveCount(0);
+  await expect(failureToast).toBeVisible();
 
-  await page.getByLabel('Full Name *').press('Enter');
+  await page.keyboard.press('Enter');
   await expect.poll(() => transport.state.mutations.length).toBe(2);
   expect(transport.state.mutations[1].args[0]).toMatchObject({ budget: SELECTED_BUDGET });
-  await expect(page.getByText('Request received', { exact: true })).toBeVisible();
+
+  await expect(receipt).toBeVisible();
+  await expect(failureToast).toHaveCount(0, { timeout: 1_000 });
+  await expect(receipt).toBeFocused();
+  await expect(receipt).toContainText("Your details are saved. I'll get back to you within 24 hours.");
+  const geometry = await receipt.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    const formRect = element.closest('form').getBoundingClientRect();
+    const style = getComputedStyle(element);
+    return {
+      fitsForm: rect.left >= formRect.left && rect.right <= formRect.right,
+      inViewport: rect.top >= 0 && rect.bottom <= innerHeight,
+      overflow: document.documentElement.scrollWidth > innerWidth,
+      animation: style.animationName,
+      transition: style.transitionDuration,
+      transform: style.transform,
+    };
+  });
+  expect(geometry).toEqual({
+    fitsForm: true,
+    inViewport: true,
+    overflow: false,
+    animation: 'none',
+    transition: '0s',
+    transform: 'none',
+  });
   await expect(page.getByLabel('Full Name *')).toHaveValue('');
   await expect(page.getByLabel('Email Address *')).toHaveValue('');
+  await expect(page.getByLabel('Budget Range')).toHaveValue('');
   await expect(page.getByLabel('Project Description *')).toHaveValue('');
-  await expect(budget).toHaveValue('');
+
+  await page.waitForTimeout(10_500);
+  await expect(receipt).toBeVisible();
+  await expect(receipt).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(submit).toBeFocused();
+
+  expect(transport.state.mutations).toHaveLength(2);
   expect(transport.state.connections).toBeGreaterThan(0);
   expect(mutationHttpRequests).toEqual([]);
+});
+
+test('invalid keyboard submission never reaches transport and focuses the first invalid field', async ({ page, contactTransport: transport }) => {
+  await page.goto('/contact/');
+  await expect(page.getByRole('heading', { name: /Request a Project Estimate/i })).toBeVisible();
+
+  const name = page.getByLabel('Full Name *');
+  await name.press('Enter');
+  await expect(name).toBeFocused();
+  await expect(name).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.getByRole('status', { name: 'Request received' })).toHaveCount(0);
+  expect(transport.state.mutations).toHaveLength(0);
+});
+
+test('a valid send after invalid submission dismisses the stale validation toast and shows only the receipt', async ({ page, contactTransport: transport }) => {
+  await page.goto('/contact/');
+  await expect(page.getByRole('heading', { name: /Request a Project Estimate/i })).toBeVisible();
+
+  const form = page.locator('form[data-sensitive-telemetry]');
+  const receipt = form.getByRole('status', { name: 'Request received' });
+  const validationToast = page.getByRole('status').filter({
+    has: page.getByText('Uh oh! Missing fields.', { exact: true }),
+  });
+
+  await page.getByLabel('Full Name *').press('Enter');
+  await expect(validationToast).toBeVisible();
+  expect(transport.state.mutations).toHaveLength(0);
+
+  await fillContactForm(page);
+  await page.getByLabel('Full Name *').press('Enter');
+  await expect.poll(() => transport.state.mutations.length).toBe(1);
+  await expect(validationToast).toHaveCount(0, { timeout: 1_000 });
+
+  transport.releasePending('success');
+  await expect(receipt).toBeVisible();
+  await expect(receipt).toBeFocused();
+  await expect(validationToast).toHaveCount(0);
+  expect(transport.state.mutations).toHaveLength(1);
 });
 
 const structuredFailures = [
@@ -254,7 +333,8 @@ for (const { title, errorData, expectedMessage } of structuredFailures) {
     await expect(page.getByRole('heading', { name: /Request a Project Estimate/i })).toBeVisible();
     await fillContactForm(page);
 
-    const submit = page.locator('form[data-sensitive-telemetry] button[type="submit"]');
+    const form = page.locator('form[data-sensitive-telemetry]');
+    const submit = form.locator('button[type="submit"]');
     await submit.click();
     await expect(submit).toBeDisabled();
     await expect.poll(() => transport.state.mutations.length).toBe(1);
@@ -269,9 +349,9 @@ for (const { title, errorData, expectedMessage } of structuredFailures) {
     await expectNoDiagnostics(page);
     await expectSettledToastFitsViewport(page, failureToast);
     await expect(submit).toBeEnabled();
-    await expect(page.getByLabel('Full Name *')).toHaveValue('Synthetic QA Contact');
-    await expect(page.getByLabel('Email Address *')).toHaveValue('qa-contact@example.invalid');
-    await expect(page.getByLabel('Project Description *')).toHaveValue('Synthetic transport lifecycle test.');
+    await expect(submit).toBeFocused();
+    await expectPreservedValues(page);
+    await expect(form.getByRole('status', { name: 'Request received' })).toHaveCount(0);
     expect(transport.state.mutations).toHaveLength(1);
   });
 }
