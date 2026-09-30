@@ -12,6 +12,43 @@ import { CONTACT_LEAD_VALIDATION_ERROR } from "../../convex/lib/leadValidation";
 
 const mockSubmitLead = vi.fn();
 
+const GLOBAL_RATE_LIMIT_ERROR =
+  "The site is receiving too many requests. Please wait a few minutes and try again.";
+const EMAIL_RATE_LIMIT_ERROR =
+  "This email already sent several messages recently. Please wait before submitting again.";
+const SAFE_SUBMIT_FAILURE =
+  "We couldn't send your request. Please try again, or use the email address on this page.";
+const DIAGNOSTIC_MESSAGE =
+  "[CONVEX M(leads:submitLead)] [Request ID: synthetic-audit] Server Error\n    at syntheticStack (fixture.js:1:1)\n  Called by client";
+
+function errorWithMessage(message, data) {
+  const error = new Error(message);
+  if (data !== undefined) error.data = data;
+  return error;
+}
+
+function fillValidLead(container, { budget } = {}) {
+  fireEvent.change(container.querySelector('input[name="name"]'), {
+    target: { name: "name", value: "Jane Doe" },
+  });
+  fireEvent.change(container.querySelector('input[name="email"]'), {
+    target: { name: "email", value: "jane@example.com" },
+  });
+  if (budget) {
+    fireEvent.change(container.querySelector("#budget"), { target: { value: budget } });
+  }
+  fireEvent.change(container.querySelector('textarea[name="description"]'), {
+    target: { name: "description", value: "Need help." },
+  });
+}
+
+function expectNoDiagnostics() {
+  const rendered = JSON.stringify(toast.mock.calls);
+  for (const fragment of ["Request ID", "CONVEX", "Server Error", "syntheticStack", "fixture.js", "Called by client", "internal-detail"]) {
+    expect(rendered).not.toContain(fragment);
+  }
+}
+
 vi.mock("convex/react", () => ({
   useMutation: () => mockSubmitLead,
 }));
@@ -144,8 +181,8 @@ describe("Contact form", () => {
     });
   });
 
-  it("FE-005: mutation failure shows Convex error message in toast", async () => {
-    mockSubmitLead.mockRejectedValue({ data: "Please wait before submitting again." });
+  it("FE-005: mutation failure shows the backend rate-limit message in toast", async () => {
+    mockSubmitLead.mockRejectedValue({ data: EMAIL_RATE_LIMIT_ERROR });
     const { container } = render(<Contact />);
     fireEvent.change(container.querySelector('input[name="name"]'), {
       target: { name: "name", value: "Jane Doe" },
@@ -161,7 +198,7 @@ describe("Contact form", () => {
       expect(toast).toHaveBeenCalledWith(
         expect.objectContaining({
           title: "Submission Failed",
-          description: "Please wait before submitting again.",
+          description: EMAIL_RATE_LIMIT_ERROR,
           variant: "destructive",
         }),
       );
@@ -294,7 +331,7 @@ describe("Contact form", () => {
   });
 
   it('keeps entered values after a mutation failure', async () => {
-    mockSubmitLead.mockRejectedValue({ data: 'Please wait before submitting again.' });
+    mockSubmitLead.mockRejectedValue({ data: EMAIL_RATE_LIMIT_ERROR });
     const { container } = render(<Contact />);
     fireEvent.change(container.querySelector('input[name="name"]'), {
       target: { name: 'name', value: 'Jane Doe' },
@@ -484,8 +521,14 @@ describe('#230: contact outcome focus and receipt', () => {
     expect(mockSubmitLead).toHaveBeenCalledTimes(1);
 
     await act(async () => {
-      first.reject({ data: 'Please wait before submitting again.' });
+      first.reject(errorWithMessage(DIAGNOSTIC_MESSAGE));
     });
+    expect(toast).toHaveBeenCalledWith({
+      title: 'Submission Failed',
+      description: SAFE_SUBMIT_FAILURE,
+      variant: 'destructive',
+    });
+    expectNoDiagnostics();
 
     const retry = submitButton();
     expect(retry.disabled).toBe(false);
@@ -545,7 +588,7 @@ describe('#230: contact outcome focus and receipt', () => {
       expect(document.activeElement).toBe(container.querySelector(field));
 
       await act(async () => {
-        pending.reject({ data: 'Please wait before submitting again.' });
+        pending.reject({ data: EMAIL_RATE_LIMIT_ERROR });
       });
       expect(submitButton().disabled).toBe(false);
       expect(document.activeElement).toBe(submitButton());
@@ -556,7 +599,7 @@ describe('#230: contact outcome focus and receipt', () => {
   it('dismisses the latest contact-owned feedback toast when the next valid send starts', async () => {
     const failureHandle = { dismiss: vi.fn() };
     const validationHandle = { dismiss: vi.fn() };
-    mockSubmitLead.mockRejectedValueOnce({ data: 'Please wait before submitting again.' });
+    mockSubmitLead.mockRejectedValueOnce({ data: EMAIL_RATE_LIMIT_ERROR });
     const user = userEvent.setup();
     const { container } = render(<Contact />);
     await fillByKeyboard(user, container);
@@ -564,7 +607,7 @@ describe('#230: contact outcome focus and receipt', () => {
     toast.mockReturnValueOnce(failureHandle);
     await user.click(submitButton());
     await waitFor(() => expect(toast).toHaveBeenCalledWith(
-      expect.objectContaining({ title: 'Submission Failed', variant: 'destructive' }),
+      expect.objectContaining({ title: 'Submission Failed', description: EMAIL_RATE_LIMIT_ERROR, variant: 'destructive' }),
     ));
     expect(failureHandle.dismiss).not.toHaveBeenCalled();
 
@@ -650,5 +693,117 @@ describe('#230: contact outcome focus and receipt', () => {
     });
     expect(receipt()).not.toBeNull();
     expect(document.activeElement).toBe(receipt());
+  });
+});
+
+describe("Contact form submission failures (#231)", () => {
+  beforeEach(() => {
+    cleanup();
+    vi.clearAllMocks();
+    mockSubmitLead.mockResolvedValue({ success: true });
+  });
+
+  it.each([
+    ["Error.message with request ID, Server Error and stack", errorWithMessage(DIAGNOSTIC_MESSAGE)],
+    ["unknown string data", { data: "[Request ID: synthetic-audit] Server Error internal-detail" }],
+    ["unknown string data on an Error", errorWithMessage(DIAGNOSTIC_MESSAGE, "internal-detail")],
+    ["object data.message", { data: { message: "[Request ID: synthetic-audit] Server Error" } }],
+    ["object data without message", { data: { code: "internal-detail" } }],
+    ["empty string data", errorWithMessage(DIAGNOSTIC_MESSAGE, "")],
+    ["non-string data", errorWithMessage(DIAGNOSTIC_MESSAGE, 500)],
+    ["non-string data.message", { data: { message: 42 } }],
+    ["null rejection", null],
+    ["undefined rejection", undefined],
+  ])("shows fixed safe guidance for %s", async (_label, rejection) => {
+    mockSubmitLead.mockRejectedValue(rejection);
+    const { container } = render(<Contact />);
+    fillValidLead(container);
+    fireEvent.submit(container.querySelector("form"));
+
+    await waitFor(() => expect(toast).toHaveBeenCalledWith({
+      title: "Submission Failed",
+      description: SAFE_SUBMIT_FAILURE,
+      variant: "destructive",
+    }));
+    expectNoDiagnostics();
+    expect(captureException).toHaveBeenCalledTimes(1);
+    expect(captureException.mock.calls[0][0]).toBe(rejection);
+    expect(captureException.mock.calls[0][1].telemetrySource.matches("[data-sensitive-telemetry]")).toBe(true);
+  });
+
+  it.each([
+    ["validation string data", { data: CONTACT_LEAD_VALIDATION_ERROR }, CONTACT_LEAD_VALIDATION_ERROR, false],
+    ["validation data.message", { data: { message: CONTACT_LEAD_VALIDATION_ERROR } }, CONTACT_LEAD_VALIDATION_ERROR, false],
+    ["global rate limit", errorWithMessage(DIAGNOSTIC_MESSAGE, GLOBAL_RATE_LIMIT_ERROR), GLOBAL_RATE_LIMIT_ERROR, true],
+    ["email rate limit", { data: EMAIL_RATE_LIMIT_ERROR }, EMAIL_RATE_LIMIT_ERROR, true],
+    ["email rate limit data.message", { data: { message: EMAIL_RATE_LIMIT_ERROR } }, EMAIL_RATE_LIMIT_ERROR, true],
+  ])("keeps allowlisted %s actionable", async (_label, rejection, expected, captured) => {
+    mockSubmitLead.mockRejectedValue(rejection);
+    const { container } = render(<Contact />);
+    fillValidLead(container);
+    fireEvent.submit(container.querySelector("form"));
+
+    await waitFor(() => expect(toast).toHaveBeenCalledWith({
+      title: "Submission Failed",
+      description: expected,
+      variant: "destructive",
+    }));
+    expectNoDiagnostics();
+    expect(captureException).toHaveBeenCalledTimes(captured ? 1 : 0);
+  });
+
+  it("preserves inputs and budget after an unknown failure, then retries once", async () => {
+    mockSubmitLead
+      .mockRejectedValueOnce(errorWithMessage(DIAGNOSTIC_MESSAGE))
+      .mockResolvedValueOnce({ success: true });
+    const { container } = render(<Contact />);
+    fillValidLead(container, { budget: "€5k-€10k" });
+    const form = container.querySelector("form");
+    fireEvent.submit(form);
+
+    await waitFor(() => expect(toast).toHaveBeenCalledWith(
+      expect.objectContaining({ description: SAFE_SUBMIT_FAILURE }),
+    ));
+    const submit = screen.getByRole("button", { name: "Send project request" });
+    await waitFor(() => expect(submit.disabled).toBe(false));
+    expect(document.activeElement).toBe(submit);
+    expect(container.querySelector('input[name="name"]').value).toBe("Jane Doe");
+    expect(container.querySelector('input[name="email"]').value).toBe("jane@example.com");
+    expect(container.querySelector("#budget").value).toBe("€5k-€10k");
+    expect(container.querySelector('textarea[name="description"]').value).toBe("Need help.");
+    expectNoDiagnostics();
+
+    fireEvent.submit(form);
+    const receipt = await screen.findByRole("status", { name: "Request received" });
+    expect(document.activeElement).toBe(receipt);
+    expect(toast).toHaveBeenCalledTimes(1);
+    expect(mockSubmitLead).toHaveBeenCalledTimes(2);
+    expect(mockSubmitLead.mock.calls[1][0]).toEqual({
+      name: "Jane Doe",
+      email: "jane@example.com",
+      budget: "€5k-€10k",
+      description: "Need help.",
+    });
+  });
+
+  it("blocks duplicate submits while an unknown failure is pending", async () => {
+    let rejectSubmit;
+    mockSubmitLead.mockImplementation(() => new Promise((_resolve, reject) => {
+      rejectSubmit = reject;
+    }));
+    const { container } = render(<Contact />);
+    fillValidLead(container);
+    const form = container.querySelector("form");
+    fireEvent.submit(form);
+    fireEvent.submit(form);
+    expect(mockSubmitLead).toHaveBeenCalledTimes(1);
+
+    rejectSubmit(errorWithMessage(DIAGNOSTIC_MESSAGE));
+    await waitFor(() => expect(toast).toHaveBeenCalledWith(
+      expect.objectContaining({ description: SAFE_SUBMIT_FAILURE }),
+    ));
+    expect(mockSubmitLead).toHaveBeenCalledTimes(1);
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Send project request" }));
+    expectNoDiagnostics();
   });
 });

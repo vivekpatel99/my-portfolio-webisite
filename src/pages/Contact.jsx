@@ -55,6 +55,13 @@ const pageVariants = {
 };
 const pageTransition = { type: 'tween', ease: 'anticipate', duration: 0.5 };
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ACTIONABLE_SUBMIT_ERRORS = new Set([
+  CONTACT_LEAD_VALIDATION_ERROR,
+  'The site is receiving too many requests. Please wait a few minutes and try again.',
+  'This email already sent several messages recently. Please wait before submitting again.',
+]);
+const SUBMIT_FAILURE_FALLBACK =
+  "We couldn't send your request. Please try again, or use the email address on this page.";
 
 const Contact = () => {
   const [formState, setFormState] = useState({ name: '', email: '', budget: '', description: '' });
@@ -152,10 +159,9 @@ const Contact = () => {
       if (convexMessage !== CONTACT_LEAD_VALIDATION_ERROR) {
         captureException(error, { telemetrySource });
       }
-      const description =
-        convexMessage ??
-        error?.message?.replace(/^\[CONVEX[^\]]*\]\s*/i, '') ??
-        'Something went wrong saving your data. Please try again later.';
+      const description = ACTIONABLE_SUBMIT_ERRORS.has(convexMessage)
+        ? convexMessage
+        : SUBMIT_FAILURE_FALLBACK;
       feedbackToastRef.current = toast({
         title: "Submission Failed",
         description,
