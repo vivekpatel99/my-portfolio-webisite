@@ -100,6 +100,49 @@ describe('sanitized Playwright QA artifacts', () => {
     },
   );
 
+  it.each(['preview-desktop', 'preview-mobile'])(
+    'reconstructs a bounded testimonials failure for %s and passes staged validation', async (projectName) => {
+      const paths = await temporaryPaths();
+      const report = JSON.parse(await readFile(fixturePath, 'utf8'));
+      const suite = report.suites[0];
+      suite.file = 'qa-testimonials.spec.js';
+      suite.specs[0].file = 'qa-testimonials.spec.js';
+      suite.specs[0].tests[0].projectName = projectName;
+      await writeFile(paths.rawReport, JSON.stringify(report), 'utf8');
+
+      const result = await sanitizePlaywrightArtifacts({ paths });
+      const staged = `${await readFile(paths.summary, 'utf8')}${await readFile(paths.failureResults, 'utf8')}`;
+
+      expect(result.summary.suites).toEqual([{
+        suite: 'testimonials-carousel',
+        projects: [{ project: projectName, attempts: { passed: 0, failed: 1, skipped: 0, timed_out: 0, interrupted: 0 } }],
+      }]);
+      expect(result.failureResults.failures).toEqual([{
+        suite: 'testimonials-carousel',
+        sourceLine: 53,
+        testOrdinal: 1,
+        project: projectName,
+        retry: 1,
+        outcome: 'failed',
+        durationMs: 60_000,
+      }]);
+      expect(staged).not.toMatch(/QA_SECRET_SENTINEL|Injected title|raw stack|localStorage|trace\.zip|qa-testimonials/);
+    },
+  );
+
+  it.each([
+    ['a public production project', { file: 'qa-testimonials.spec.js', projectName: 'prod-desktop' }, 'test project is not allowlisted'],
+    ['a directory-qualified source', { file: 'qa/qa-testimonials.spec.js', projectName: 'preview-desktop' }, 'suite source name is not allowlisted'],
+    ['a near-miss source name', { file: 'qa-testimonials.spec.ts', projectName: 'preview-desktop' }, 'suite source name is not allowlisted'],
+  ])('keeps failing closed for testimonials with %s', (_description, { file, projectName }, message) => {
+    const report = {
+      errors: [],
+      suites: [{ file, specs: [{ file, line: 1, tests: [{ projectName, results: [{ status: 'passed', duration: 1 }] }] }] }],
+    };
+
+    expect(() => sanitizePlaywrightReport(report)).toThrow(message);
+  });
+
   it('removes prior upload candidates and emits nothing when no raw report exists', async () => {
     const paths = await temporaryPaths();
     await mkdir(paths.outputDirectory, { recursive: true });

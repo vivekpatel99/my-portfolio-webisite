@@ -86,6 +86,27 @@ review session `sess_7baf1739-0eb1-474b-aee6-63daf4bdc286` retain CLI provenance
 Codex independently inspected source, diffs, rendered behavior, and check output.
 Codex also enabled the motion-preference regression on mobile and verified it.
 
+### PR follow-up verification
+
+Both initial hosted CI runs passed unit, build, and browser checks, then failed
+artifact reconstruction because the new testimonial suite was missing from the
+sanitizer's exact registry. Opus added its bounded suite label and regression
+coverage while preserving rejection of unknown sources and production projects.
+
+The published review also identified that default passive QA selected the
+unreleased controls against production. Codex reproduced 16 production test
+variants with `--list`; the corrected config selects the 16 preview variants
+only. Other passive suites, local-only focus projects, and live-contact gates
+remain unchanged. The focused tests went from 6 failures and 29 passes to
+38 passes across the config, sanitizer, and artifact-workflow files.
+`npm run qa:artifacts:verify` also passed.
+
+Listing with the default JSON reporter regenerated the ignored
+`playwright-output/qa-results.json`; its earlier generated contents were not
+recoverable. Subsequent listing used `--reporter=line`. No source or baseline
+untracked files were overwritten. Task-generated raw output is disposable;
+other existing QA artifacts remain untouched.
+
 Touch was synthesized in Chromium and WebKit. Physical devices and screen-reader
 announcement behavior were not tested. This is a scoped fix, not a complete
 accessibility conformance assessment. Public-production QA from this branch
