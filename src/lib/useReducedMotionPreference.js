@@ -12,8 +12,13 @@ function getReducedMotionQuery() {
 function subscribe(onChange) {
   const query = getReducedMotionQuery();
   if (!query) return () => {};
-  query.addEventListener('change', onChange);
-  return () => query.removeEventListener('change', onChange);
+  if (typeof query.addEventListener === 'function') {
+    query.addEventListener('change', onChange);
+    return () => query.removeEventListener('change', onChange);
+  }
+  // Pre-Safari-14 MediaQueryList only has the deprecated listener API.
+  query.addListener(onChange);
+  return () => query.removeListener(onChange);
 }
 
 const getSnapshot = () => getReducedMotionQuery()?.matches ?? false;

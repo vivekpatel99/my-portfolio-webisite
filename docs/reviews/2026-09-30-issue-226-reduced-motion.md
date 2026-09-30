@@ -105,3 +105,25 @@ an actual operating-system setting, and the deployed host were not tested.
 Current-head CI and review-thread resolution remain merge gates. The user
 subsequently authorized merging into `develop` when those gates pass;
 production deployment remains outside the task.
+
+
+## Compatibility follow-up
+
+A later review identified a regression for legacy `MediaQueryList` objects
+that expose `addListener`/`removeListener` without the modern event methods.
+The original Framer hook and existing media-query consumers supported that API.
+A focused legacy-only test failed with `TypeError: query.addEventListener is
+not a function` before the production change; the four modern/fallback tests
+still passed. Opus added the matching feature-detected listener fallback and
+cleanup. All five hook tests and the Contact/consent targeted suite then passed
+(52 tests in three files). This is an API simulation, not a test on an actual
+old Safari binary. The normal and reduced-motion states and styling are unchanged.
+
+During integration with the separately merged safe-contact-error fix, the
+shared synthetic transport preserved develop's diagnostic fixture and optional
+structured `errorData`, and the motion feedback assertion adopted the approved
+safe failure text. Independent checks passed eight motion-feedback cases and
+all five lifecycle cases; the extracted helper's actual values and wire messages
+matched develop. Later base updates preserved the task patch, including the
+published merge bringing in consent-storage handling. Final-head CI is the
+required evidence for the combined integration tree.
