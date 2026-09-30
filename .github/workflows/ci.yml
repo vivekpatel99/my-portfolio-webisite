@@ -150,6 +150,17 @@ jobs:
           QA_ARTIFACT_SAFE_MODE: '1'
         run: npm run qa:telemetry-boundary
 
+      - name: Run reduced-motion regression QA
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          QA_MOTION_OUTPUT_DIR="$(mktemp -d "$RUNNER_TEMP/qa-motion.XXXXXX")"
+          export QA_MOTION_OUTPUT_DIR
+          trap 'rm -rf "$QA_MOTION_OUTPUT_DIR"' EXIT
+
+          npm run qa:motion
+
       - name: Reconstruct sanitized passive QA artifacts
         id: sanitize-qa-artifacts
         if: always()

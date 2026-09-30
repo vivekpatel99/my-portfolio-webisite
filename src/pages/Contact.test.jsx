@@ -81,7 +81,7 @@ vi.mock("framer-motion", () => {
       },
     },
   );
-  return { motion };
+  return { motion, useReducedMotion: () => false };
 });
 
 describe("Contact form", () => {

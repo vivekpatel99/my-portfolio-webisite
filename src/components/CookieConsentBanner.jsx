@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from "@/components/ui/checkbox.jsx";
 import { Cookie, X, Settings } from 'lucide-react';
@@ -11,11 +11,14 @@ import {
   saveCookieConsentPreferences,
 } from '@/lib/consent';
 
+const BANNER_ENTRANCE_OFFSET_PX = -10;
+
 const CookieConsentBanner = ({ onConsent, show, onHide }) => {
   const [isManaging, setIsManaging] = useState(show);
   const [preferences, setPreferences] = useState(DEFAULT_COOKIE_CONSENT_PREFERENCES);
   const bannerRef = useRef(null);
   const previousFocusRef = useRef(null);
+  const entranceOffset = useReducedMotion() ? 0 : BANNER_ENTRANCE_OFFSET_PX;
 
   useEffect(() => {
     if(show) {
@@ -101,9 +104,9 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
           aria-modal="false"
           aria-labelledby="cookie-consent-title"
           tabIndex={-1}
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: entranceOffset }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
+          exit={{ opacity: 0, y: entranceOffset }}
           transition={{ duration: 0.2 }}
           className="fixed top-[72px] left-0 right-0 z-40 bg-[rgba(12,13,13,0.98)] backdrop-blur-lg border-b border-white/20 shadow-xl"
           style={{ marginBottom: 0, top: '72px' }}
