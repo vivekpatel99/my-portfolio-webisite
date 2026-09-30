@@ -18,11 +18,14 @@ reproduction of the original defect.
 
 Commit `0bbf61b` changed `src/components/Header.jsx` to:
 
-- Save the menu toggle as the focus restoration target and focus the close button on open.
+- Save the menu toggle as the focus restoration target instead of the previously active
+  element.
 - Trap `Tab` and `Shift+Tab` with a cyclic index over the full focusable sequence instead
   of checking only the first and last elements. This keeps links reachable when WebKit's
   keyboard setting skips links during native traversal.
 - Restore focus to the saved toggle when the menu closes.
+
+The close button was already focused on open before `0bbf61b`.
 
 The current header also blurs prior focus and uses `preventScroll` when focusing the close
 button. Those changes came in `fff5306`. Commit `67a83cd` added the desktop resize focus
