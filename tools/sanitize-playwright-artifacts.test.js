@@ -100,6 +100,41 @@ describe('sanitized Playwright QA artifacts', () => {
     },
   );
 
+  it('reconstructs a bounded hero-motion suite report without emitting hostile raw data', async () => {
+    const paths = await temporaryPaths();
+    const report = JSON.parse(await readFile(fixturePath, 'utf8'));
+    const suite = report.suites[0];
+    suite.file = 'qa-hero-motion.spec.js';
+    suite.title = 'QA_SECRET_SENTINEL hero title';
+    suite.specs[0].file = 'qa-hero-motion.spec.js';
+    suite.specs[0].tests[0].projectName = 'preview-mobile';
+    suite.specs[0].tests[0].results.push({
+      status: 'passed',
+      duration: 7.9,
+      error: { message: 'QA_SECRET_SENTINEL', stack: 'raw stack' },
+      attachments: [{ name: 'trace', path: 'trace.zip' }],
+      stdout: [{ text: 'localStorage QA_SECRET_SENTINEL' }],
+    });
+    await writeFile(paths.rawReport, JSON.stringify(report), 'utf8');
+
+    await sanitizePlaywrightArtifacts({ paths });
+    const summary = JSON.parse(await readFile(paths.summary, 'utf8'));
+    const failures = JSON.parse(await readFile(paths.failureResults, 'utf8'));
+
+    expect(summary.suites).toEqual([{
+      suite: 'hero-motion',
+      projects: [{
+        project: 'preview-mobile',
+        attempts: { passed: 1, failed: 1, skipped: 0, timed_out: 0, interrupted: 0 },
+      }],
+    }]);
+    expect(failures.failures).toEqual([{
+      suite: 'hero-motion', sourceLine: 53, testOrdinal: 1, project: 'preview-mobile', retry: 1, outcome: 'failed', durationMs: 60_000,
+    }]);
+    expect(`${JSON.stringify(summary)}${JSON.stringify(failures)}`)
+      .not.toMatch(/QA_SECRET_SENTINEL|Injected title|hero title|raw stack|localStorage|trace\.zip|qa-hero-motion/);
+  });
+
   it('removes prior upload candidates and emits nothing when no raw report exists', async () => {
     const paths = await temporaryPaths();
     await mkdir(paths.outputDirectory, { recursive: true });
