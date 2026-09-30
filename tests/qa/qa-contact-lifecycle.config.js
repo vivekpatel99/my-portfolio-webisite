@@ -5,7 +5,9 @@ import { fileURLToPath } from 'node:url';
 const testDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(testDir, '../..');
 const baseURL = 'http://127.0.0.1:4192';
-const artifactDir = path.join(repoRoot, 'playwright-output/contact-lifecycle');
+const artifactDir = process.env.QA_CONTACT_LIFECYCLE_ARTIFACT_DIR
+  ? path.resolve(process.env.QA_CONTACT_LIFECYCLE_ARTIFACT_DIR)
+  : path.join(repoRoot, 'playwright-output/contact-lifecycle');
 
 export default defineConfig({
   testDir,
@@ -15,13 +17,25 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   use: {
-    ...devices['Desktop Chrome'],
     baseURL,
     serviceWorkers: 'block',
     screenshot: 'off',
     trace: 'off',
     video: 'off',
   },
+  projects: ['chromium', 'webkit'].flatMap((browserName) =>
+    [1280, 390].flatMap((width) =>
+      ['no-preference', 'reduce'].map((reducedMotion) => ({
+        name: `${browserName}-${width}-${reducedMotion}`,
+        use: {
+          ...devices[browserName === 'webkit' ? 'Desktop Safari' : 'Desktop Chrome'],
+          browserName,
+          viewport: { width, height: 800 },
+          reducedMotion,
+        },
+      })),
+    ),
+  ),
   outputDir: path.join(artifactDir, 'test-results'),
   reporter: [['list'], ['json', { outputFile: path.join(artifactDir, 'qa-results.json') }]],
   webServer: {

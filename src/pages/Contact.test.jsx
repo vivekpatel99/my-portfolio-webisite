@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import React from "react";
-import { fireEvent, render, screen, waitFor, cleanup, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { toast } from "@/components/ui/use-toast";
@@ -325,12 +325,9 @@ describe("Contact form", () => {
         description: 'Need help.',
       });
     });
-    expect(toast).toHaveBeenCalledWith(
-      expect.objectContaining({
-        title: 'Request received',
-      }),
-    );
-    expect(String(toast.mock.calls[0][0].title).toLowerCase()).not.toMatch(/sent|delivered/);
+    const receipt = await screen.findByRole('status', { name: 'Request received' });
+    expect(receipt.textContent.toLowerCase()).not.toMatch(/sent|delivered/);
+    expect(toast).not.toHaveBeenCalled();
   });
 
   it('keeps entered values after a mutation failure', async () => {
@@ -381,11 +378,8 @@ describe("Contact form", () => {
 
     expect(mockSubmitLead).toHaveBeenCalledTimes(1);
     resolveSubmit({ success: true });
-    await waitFor(() => {
-      expect(toast).toHaveBeenCalledWith(
-        expect.objectContaining({ title: 'Request received' }),
-      );
-    });
+    expect(await screen.findByRole('status', { name: 'Request received' })).toBeTruthy();
+    expect(mockSubmitLead).toHaveBeenCalledTimes(1);
   });
 
   it('leaves the optional budget unselected until the visitor picks one', () => {
@@ -485,6 +479,223 @@ describe("Contact form", () => {
   });
 });
 
+describe('#230: contact outcome focus and receipt', () => {
+  beforeEach(() => {
+    cleanup();
+    vi.clearAllMocks();
+    mockSubmitLead.mockResolvedValue({ success: true });
+  });
+
+  function deferred() {
+    let resolve;
+    let reject;
+    const promise = new Promise((res, rej) => {
+      resolve = res;
+      reject = rej;
+    });
+    return { promise, resolve, reject };
+  }
+
+  async function fillByKeyboard(user, container) {
+    await user.type(container.querySelector('input[name="name"]'), 'Jane Doe');
+    await user.type(container.querySelector('input[name="email"]'), 'jane@example.com');
+    await user.selectOptions(container.querySelector('#budget'), '€5k-€10k');
+    await user.type(container.querySelector('textarea[name="description"]'), 'Need help.');
+  }
+
+  const submitButton = () => screen.getByRole('button', { name: /send project request|sending/i });
+  const receipt = () => screen.queryByRole('status', { name: 'Request received' });
+
+  it('keyboard failure keeps every value and focuses the enabled submit; keyboard retry from submit shows a focused receipt', async () => {
+    const first = deferred();
+    mockSubmitLead.mockImplementationOnce(() => first.promise);
+    const user = userEvent.setup();
+    const { container } = render(<Contact />);
+    await fillByKeyboard(user, container);
+
+    await user.click(container.querySelector('input[name="name"]'));
+    await user.keyboard('{Enter}');
+    expect(submitButton().disabled).toBe(true);
+
+    fireEvent.submit(container.querySelector('form'));
+    expect(mockSubmitLead).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      first.reject(errorWithMessage(DIAGNOSTIC_MESSAGE));
+    });
+    expect(toast).toHaveBeenCalledWith({
+      title: 'Submission Failed',
+      description: SAFE_SUBMIT_FAILURE,
+      variant: 'destructive',
+    });
+    expectNoDiagnostics();
+
+    const retry = submitButton();
+    expect(retry.disabled).toBe(false);
+    expect(document.activeElement).toBe(retry);
+    expect(container.querySelector('input[name="name"]').value).toBe('Jane Doe');
+    expect(container.querySelector('input[name="email"]').value).toBe('jane@example.com');
+    expect(container.querySelector('#budget').value).toBe('€5k-€10k');
+    expect(container.querySelector('textarea[name="description"]').value).toBe('Need help.');
+    expect(receipt()).toBeNull();
+
+    await user.keyboard('{Enter}');
+    await waitFor(() => expect(receipt()).not.toBeNull());
+    expect(mockSubmitLead).toHaveBeenCalledTimes(2);
+    expect(mockSubmitLead).toHaveBeenLastCalledWith({
+      name: 'Jane Doe',
+      email: 'jane@example.com',
+      budget: '€5k-€10k',
+      description: 'Need help.',
+    });
+
+    const status = receipt();
+    const labelId = status.getAttribute('aria-labelledby');
+    expect(labelId).toBeTruthy();
+    expect(document.getElementById(labelId).textContent).toBe('Request received');
+    const descriptionId = status.getAttribute('aria-describedby');
+    expect(document.getElementById(descriptionId).textContent).toBe("Your details are saved. I'll get back to you within 24 hours.");
+    expect(status.textContent).toContain("Your details are saved. I'll get back to you within 24 hours.");
+    expect(container.querySelector('form').contains(status)).toBe(true);
+    expect(document.activeElement).toBe(status);
+    expect(container.querySelector('input[name="name"]').value).toBe('');
+    expect(container.querySelector('#budget').value).toBe('');
+  });
+
+  it('renders a success status without a success toast', async () => {
+    const { container } = render(<Contact />);
+    fireEvent.change(container.querySelector('input[name="name"]'), { target: { value: 'Jane Doe' } });
+    fireEvent.change(container.querySelector('input[name="email"]'), { target: { value: 'jane@example.com' } });
+    fireEvent.change(container.querySelector('textarea[name="description"]'), { target: { value: 'Need help.' } });
+    fireEvent.submit(container.querySelector('form'));
+
+    await waitFor(() => expect(receipt()).not.toBeNull());
+    expect(toast).not.toHaveBeenCalled();
+  });
+
+  it('refocuses the submit button after each consecutive failure', async () => {
+    const user = userEvent.setup();
+    const { container } = render(<Contact />);
+    await fillByKeyboard(user, container);
+
+    for (const [attempt, field] of [[1, 'input[name="name"]'], [2, 'input[name="email"]']]) {
+      const pending = deferred();
+      mockSubmitLead.mockImplementationOnce(() => pending.promise);
+      await user.click(container.querySelector(field));
+      await user.keyboard('{Enter}');
+      expect(mockSubmitLead).toHaveBeenCalledTimes(attempt);
+      expect(submitButton().disabled).toBe(true);
+      expect(document.activeElement).toBe(container.querySelector(field));
+
+      await act(async () => {
+        pending.reject({ data: EMAIL_RATE_LIMIT_ERROR });
+      });
+      expect(submitButton().disabled).toBe(false);
+      expect(document.activeElement).toBe(submitButton());
+    }
+    expect(container.querySelector('textarea[name="description"]').value).toBe('Need help.');
+  });
+
+  it('dismisses the latest contact-owned feedback toast when the next valid send starts', async () => {
+    const failureHandle = { dismiss: vi.fn() };
+    const validationHandle = { dismiss: vi.fn() };
+    mockSubmitLead.mockRejectedValueOnce({ data: EMAIL_RATE_LIMIT_ERROR });
+    const user = userEvent.setup();
+    const { container } = render(<Contact />);
+    await fillByKeyboard(user, container);
+
+    toast.mockReturnValueOnce(failureHandle);
+    await user.click(submitButton());
+    await waitFor(() => expect(toast).toHaveBeenCalledWith(
+      expect.objectContaining({ title: 'Submission Failed', description: EMAIL_RATE_LIMIT_ERROR, variant: 'destructive' }),
+    ));
+    expect(failureHandle.dismiss).not.toHaveBeenCalled();
+
+    const description = container.querySelector('textarea[name="description"]');
+    await user.clear(description);
+    toast.mockReturnValueOnce(validationHandle);
+    await user.click(submitButton());
+    expect(toast).toHaveBeenLastCalledWith(
+      expect.objectContaining({ title: 'Uh oh! Missing fields.', variant: 'destructive' }),
+    );
+    expect(mockSubmitLead).toHaveBeenCalledTimes(1);
+    expect(failureHandle.dismiss).not.toHaveBeenCalled();
+    expect(validationHandle.dismiss).not.toHaveBeenCalled();
+
+    const retry = deferred();
+    mockSubmitLead.mockImplementationOnce(() => retry.promise);
+    await user.type(description, 'Need help.');
+    await user.click(submitButton());
+    expect(mockSubmitLead).toHaveBeenCalledTimes(2);
+    expect(validationHandle.dismiss).toHaveBeenCalledTimes(1);
+    expect(failureHandle.dismiss).not.toHaveBeenCalled();
+
+    await act(async () => {
+      retry.resolve({ success: true });
+    });
+    expect(receipt()).not.toBeNull();
+
+    await user.type(container.querySelector('input[name="name"]'), 'Jane Doe');
+    await user.type(container.querySelector('input[name="email"]'), 'jane@example.com');
+    await user.type(description, 'Another request.');
+    await user.click(submitButton());
+    await waitFor(() => expect(mockSubmitLead).toHaveBeenCalledTimes(3));
+    expect(validationHandle.dismiss).toHaveBeenCalledTimes(1);
+    expect(failureHandle.dismiss).not.toHaveBeenCalled();
+  });
+
+  it('dismisses a validation toast when a valid send follows an invalid submit', async () => {
+    const validationHandle = { dismiss: vi.fn() };
+    const user = userEvent.setup();
+    const { container } = render(<Contact />);
+
+    toast.mockReturnValueOnce(validationHandle);
+    await user.click(submitButton());
+    expect(toast).toHaveBeenCalledWith(
+      expect.objectContaining({ title: 'Uh oh! Missing fields.', variant: 'destructive' }),
+    );
+    expect(mockSubmitLead).not.toHaveBeenCalled();
+    expect(validationHandle.dismiss).not.toHaveBeenCalled();
+
+    await fillByKeyboard(user, container);
+    await user.click(submitButton());
+    await waitFor(() => expect(receipt()).not.toBeNull());
+    expect(mockSubmitLead).toHaveBeenCalledTimes(1);
+    expect(validationHandle.dismiss).toHaveBeenCalledTimes(1);
+    expect(toast).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the receipt while composing and through invalid submits, then clears it on the next actual send', async () => {
+    const user = userEvent.setup();
+    const { container } = render(<Contact />);
+    await fillByKeyboard(user, container);
+    await user.click(submitButton());
+    await waitFor(() => expect(receipt()).not.toBeNull());
+
+    await user.type(container.querySelector('input[name="name"]'), 'Second Lead');
+    expect(receipt()).not.toBeNull();
+
+    await user.click(submitButton());
+    expect(document.activeElement).toBe(container.querySelector('input[name="email"]'));
+    expect(receipt()).not.toBeNull();
+    expect(mockSubmitLead).toHaveBeenCalledTimes(1);
+
+    const second = deferred();
+    mockSubmitLead.mockImplementationOnce(() => second.promise);
+    await user.type(container.querySelector('input[name="email"]'), 'second@example.com');
+    await user.type(container.querySelector('textarea[name="description"]'), 'Another request.');
+    await user.click(submitButton());
+    expect(mockSubmitLead).toHaveBeenCalledTimes(2);
+    expect(receipt()).toBeNull();
+
+    await act(async () => {
+      second.resolve({ success: true });
+    });
+    expect(receipt()).not.toBeNull();
+    expect(document.activeElement).toBe(receipt());
+  });
+});
+
 describe("Contact form submission failures (#231)", () => {
   beforeEach(() => {
     cleanup();
@@ -555,6 +766,7 @@ describe("Contact form submission failures (#231)", () => {
     ));
     const submit = screen.getByRole("button", { name: "Send project request" });
     await waitFor(() => expect(submit.disabled).toBe(false));
+    expect(document.activeElement).toBe(submit);
     expect(container.querySelector('input[name="name"]').value).toBe("Jane Doe");
     expect(container.querySelector('input[name="email"]').value).toBe("jane@example.com");
     expect(container.querySelector("#budget").value).toBe("€5k-€10k");
@@ -562,9 +774,9 @@ describe("Contact form submission failures (#231)", () => {
     expectNoDiagnostics();
 
     fireEvent.submit(form);
-    await waitFor(() => expect(toast).toHaveBeenCalledWith(
-      expect.objectContaining({ title: "Request received" }),
-    ));
+    const receipt = await screen.findByRole("status", { name: "Request received" });
+    expect(document.activeElement).toBe(receipt);
+    expect(toast).toHaveBeenCalledTimes(1);
     expect(mockSubmitLead).toHaveBeenCalledTimes(2);
     expect(mockSubmitLead.mock.calls[1][0]).toEqual({
       name: "Jane Doe",
@@ -591,6 +803,7 @@ describe("Contact form submission failures (#231)", () => {
       expect.objectContaining({ description: SAFE_SUBMIT_FAILURE }),
     ));
     expect(mockSubmitLead).toHaveBeenCalledTimes(1);
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Send project request" }));
     expectNoDiagnostics();
   });
 });
