@@ -1,7 +1,8 @@
 import React, { Suspense, useState, useEffect, useCallback } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import RouteErrorBoundary from '@/components/RouteErrorBoundary';
 import { Toaster } from '@/components/ui/toaster';
 import CustomCursor from '@/components/CustomCursor';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
@@ -10,6 +11,7 @@ import CookieConsentBanner from '@/components/CookieConsentBanner';
 import { COOKIE_CONSENT_KEY, readAnalyticsConsent } from '@/lib/consent';
 
 const Layout = () => {
+  const location = useLocation();
   const [gaConsent, setGaConsent] = useState(readAnalyticsConsent);
   const [showConsentManager, setShowConsentManager] = useState(false);
   const [needsConsent, setNeedsConsent] = useState(() => !readAnalyticsConsent());
@@ -67,9 +69,11 @@ const Layout = () => {
           <div className="h-[60px] sm:h-[72px]" aria-hidden="true" />
         )}
         <main id="main-content" className="flex-grow">
-          <Suspense fallback={<div className="min-h-screen" role="status" aria-label="Loading page" />}>
-            <Outlet />
-          </Suspense>
+          <RouteErrorBoundary resetKey={location.key}>
+            <Suspense fallback={<div className="min-h-screen" role="status" aria-label="Loading page" />}>
+              <Outlet />
+            </Suspense>
+          </RouteErrorBoundary>
         </main>
         <Footer />
         <Toaster />
