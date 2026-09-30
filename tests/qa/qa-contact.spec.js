@@ -130,6 +130,29 @@ test('empty submit shows custom missing-fields validation without Convex mutatio
   expect(convexMutationRequests).toEqual([]);
 });
 
+test('missing-fields toast has an opaque surface and a named close control', async ({ page }) => {
+  await page.getByRole('button', { name: /Send project request/i }).click();
+  const toast = page.locator('li[data-state="open"]');
+  await expect(toast).toContainText('Uh oh! Missing fields.');
+
+  // A transparent surface lets page text show through the message on mobile.
+  const surfaceAlpha = await toast.evaluate((element) => {
+    const channels = getComputedStyle(element).backgroundColor.match(/[\d.]+/g).map(Number);
+    return channels[3] ?? 1;
+  });
+  expect(surfaceAlpha).toBe(1);
+
+  const close = toast.getByRole('button', { name: 'Dismiss notification', exact: true });
+  await expect(close).toHaveCount(1);
+  // Without hover there is no way to reveal a hover-only control.
+  const { hoverNone, opacity } = await close.evaluate((element) => ({
+    hoverNone: matchMedia('(hover: none)').matches,
+    opacity: Number(getComputedStyle(element).opacity),
+  }));
+  if (hoverNone) expect(opacity).toBe(1);
+  expect(convexMutationRequests).toEqual([]);
+});
+
 test('whitespace-only required fields are rejected before Convex mutation', async ({ page }) => {
   await page.getByLabel('Full Name *').fill('   ');
   await page.getByLabel('Email Address *').fill('   ');
