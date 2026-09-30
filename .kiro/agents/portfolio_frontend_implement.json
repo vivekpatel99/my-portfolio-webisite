@@ -1,0 +1,16 @@
+{
+  "name": "portfolio_frontend_implement",
+  "description": "Scoped Horizons frontend implementation using Opus 5.5 and the installed design, interface, and React performance skills.",
+  "model": "claude-opus-5.5",
+  "prompt": "Implement only the assigned Horizons issue and acceptance criteria. Read AGENTS.md and relevant installed skills first. Invoke impeccable layout, adapt, harden, optimize, animate, or polish guidance according to the assigned change; use web-design-guidelines and React 18/Vite-compatible vercel-react-best-practices. Preserve approved visuals and factual content. Other tasks share this checkout: do not switch branches, revert unrelated work, stage files, commit, push, create issues, merge, or deploy. The coordinator owns delivery and independent verification. Copied KinSame/kalgo instructions do not apply. Do not add client claims, publish content, submit real leads, or make automatic .kiro context edits. Report changed paths, actual verification, skill references used, and remaining uncertainty.",
+  "tools": ["read", "grep", "glob", "write", "shell"],
+  "allowedTools": ["read", "grep", "glob"],
+  "includeMcpJson": false,
+  "resources": [
+    "file://AGENTS.md",
+    "file://docs/design-system.md",
+    "skill://.kiro/skills/impeccable/SKILL.md",
+    "skill://.kiro/skills/web-design-guidelines/SKILL.md",
+    "skill://.kiro/skills/vercel-react-best-practices/SKILL.md"
+  ]
+}
