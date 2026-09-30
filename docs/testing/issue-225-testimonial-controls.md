@@ -117,7 +117,13 @@ Opus changed hover pausing to mouse-typed pointer events, preserving mouse hover
 and all independent focus/user/reduced-motion stop reasons. The new unit
 regression failed before the fix; all 22 component tests passed afterwards.
 A dedicated mobile browser regression resumes after taps without any synthetic
-mouse movement, so the previous helper cannot mask the defect.
+mouse movement, so the previous helper cannot mask the defect. Codex reran the
+identical reproduction against the corrected production build: Chromium and
+WebKit both passed, with actual focus cleared and no mouse movement.
+
+The later #239 and #244 integrations retain native-cursor QA and local-only
+route-recovery QA alongside the preview-only testimonial suite. Both exact
+sanitizer registrations and privacy rejection tests are preserved.
 
 Listing with the default JSON reporter regenerated the ignored
 `playwright-output/qa-results.json`; its earlier generated contents were not
@@ -127,8 +133,8 @@ other existing QA artifacts remain untouched.
 
 Touch was synthesized in Chromium and WebKit. Physical devices and screen-reader
 announcement behavior were not tested. This is a scoped fix, not a complete
-accessibility conformance assessment. Public-production QA from this branch
-expects the new controls only after a separately approved production release.
+accessibility conformance assessment. The testimonial suite is preview-only. Public-production QA selection remains
+unchanged until a separately approved production release.
 
 ## Rendered evidence
 

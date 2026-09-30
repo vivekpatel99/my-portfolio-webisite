@@ -9,6 +9,7 @@ import {
 
 const TESTIMONIALS_SPEC = 'qa-testimonials.spec.js';
 const HERO_MOTION_SPEC = 'qa-hero-motion.spec.js';
+const ROUTE_RECOVERY_SPEC = 'qa-route-recovery.spec.js';
 const targetURLs = { previewURL: 'http://127.0.0.1:3000', prodURL: 'https://www.example.test' };
 const specsByProject = (options) => Object.fromEntries(
   qaPassiveProjects({ ...targetURLs, ...options }).map(({ name, testMatch }) => [name, testMatch]),
@@ -74,7 +75,7 @@ describe('sanitized CI Playwright configuration', () => {
     expect(projects['preview-mobile']).toContain(TESTIMONIALS_SPEC);
   });
 
-  it('keeps the other passive suites on production and focus/hero-motion regressions local-only', () => {
+  it('keeps the other passive suites on production and focus/hero-motion/route-recovery regressions local-only', () => {
     const shared = [
       'qa-a11y.spec.js', 'qa-contact.spec.js', 'qa-cursor.spec.js', 'qa-edge.spec.js',
       'qa-local-navigation.spec.js',
@@ -86,9 +87,10 @@ describe('sanitized CI Playwright configuration', () => {
     expect([...defaultProjects['prod-desktop']].sort()).toEqual(shared);
     expect([...defaultProjects['preview-desktop']].sort()).toEqual([...shared, TESTIMONIALS_SPEC].sort());
     expect([...localProjects['preview-mobile']].sort())
-      .toEqual([...shared, 'qa-focus.spec.js', HERO_MOTION_SPEC, TESTIMONIALS_SPEC].sort());
+      .toEqual([...shared, 'qa-focus.spec.js', HERO_MOTION_SPEC, ROUTE_RECOVERY_SPEC, TESTIMONIALS_SPEC].sort());
     for (const specs of Object.values(defaultProjects)) {
       expect(specs).not.toContain(HERO_MOTION_SPEC);
+      expect(specs).not.toContain(ROUTE_RECOVERY_SPEC);
     }
     for (const specs of [...Object.values(defaultProjects), ...Object.values(localProjects)]) {
       expect(specs).not.toContain('qa-contact-live.spec.js');

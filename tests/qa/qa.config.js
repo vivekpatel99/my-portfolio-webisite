@@ -45,7 +45,7 @@ export function qaPassiveSpecs({ environment, localOnly }) {
     'qa-contact.spec.js',
     'qa-cursor.spec.js',
     'qa-edge.spec.js',
-    ...(localOnly ? ['qa-focus.spec.js', 'qa-hero-motion.spec.js'] : []),
+    ...(localOnly ? ['qa-focus.spec.js', 'qa-hero-motion.spec.js', 'qa-route-recovery.spec.js'] : []),
     'qa-responsive.spec.js',
     'qa-routes.spec.js',
     // Covers unreleased carousel behavior, so it must not run against the public deployment.
