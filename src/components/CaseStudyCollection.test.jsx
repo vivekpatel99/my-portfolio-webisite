@@ -172,6 +172,20 @@ describe('CaseStudyCollection', () => {
     expect(JSON.parse(window.sessionStorage.getItem(CASE_STUDY_BROWSING_STORAGE_KEY))).toEqual({ loadedCount: 6, scrollY: 0 });
   });
 
+  it.each([[manyStories(12), 6], [[], 0]])('saves departures from child card groups and ignores other child links', (coreStories, loadedCount) => {
+    const scrollY = vi.spyOn(window, 'scrollY', 'get').mockReturnValue(1388.5);
+    render(<MemoryRouter><CaseStudyCollection stories={coreStories}>
+      <a href="/elsewhere/">Unrelated</a>
+      <a href="/project/child/?from=collection">Child card</a>
+    </CaseStudyCollection></MemoryRouter>);
+
+    screen.getByRole('link', { name: 'Unrelated' }).dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+    expect(sessionStorage.getItem(CASE_STUDY_BROWSING_STORAGE_KEY)).toBeNull();
+    screen.getByRole('link', { name: 'Child card' }).dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+    expect(JSON.parse(sessionStorage.getItem(CASE_STUDY_BROWSING_STORAGE_KEY))).toEqual({ loadedCount, scrollY: 1388.5 });
+    scrollY.mockRestore();
+  });
+
   it('captures the current position when opening a card and restores it on explicit return', () => {
     const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
     const scrollY = vi.spyOn(window, 'scrollY', 'get').mockReturnValue(1260);
