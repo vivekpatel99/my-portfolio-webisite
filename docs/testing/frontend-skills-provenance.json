@@ -34,7 +34,9 @@
       "local_path": ".agents/skills/vercel-react-best-practices",
       "kiro_symlink": ".kiro/skills/vercel-react-best-practices",
       "license": "MIT declared in SKILL.md; no standalone LICENSE at pinned repository root",
-      "local_adjustments": []
+      "local_adjustments": [
+        "Correct three compiled AGENTS.md cross-references to their ./rules/ targets; reapply after upstream updates until corrected upstream."
+      ]
     },
     {
       "name": "web-design-guidelines",
@@ -79,8 +81,9 @@
       "impeccable_kiro": 54,
       "vercel_react_best_practices": 76,
       "web_design_guidelines": 1,
-      "result": "188 original files match pinned upstream bytes. Two asset-producer handoff links have the documented local repair; added license copies and executable modes are recorded separately."
+      "result": "187 original files match pinned upstream bytes. Two asset-producer files and the React compiled guide have documented relative-link repairs; added license copies and executable modes are recorded separately."
     },
-    "review_handoff_links": "Both provider degraded/asset-producer.md links resolve to their packaged reference/component-review.md after the PR #224 review fix."
+    "review_handoff_links": "Both provider degraded/asset-producer.md links resolve to their packaged reference/component-review.md after the PR #224 review fix.",
+    "static_markdown_links": "All 204 static local Markdown references outside fenced examples resolve across the four provider packages after five link repairs."
   }
 }

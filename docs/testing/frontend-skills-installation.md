@@ -24,8 +24,9 @@ commits, upstream paths, declared versions, licenses, and local adjustments.
 Impeccable's Apache license is copied from the pinned repository root. The
 Vercel React skill declares MIT in its entrypoint; the pinned Vercel repository
 has no standalone root license file. The web guideline skill declares no
-license field. Two generated asset-producer handoff links have a documented local repair.
-Reapply that repair when updating until upstream supplies the correction.
+license field. Five relative references in two asset-producer files and the React compiled
+guide have documented local repairs.
+Reapply those repairs when updating until upstream supplies the corrections.
 
 Sources: [Impeccable](https://github.com/pbakaus/impeccable),
 [Vercel agent skills](https://github.com/vercel-labs/agent-skills), and
@@ -95,9 +96,10 @@ file. Runtime downloads used an external temporary cache through
 
 All three Codex entrypoints passed the bundled skill frontmatter validator.
 The native Kiro package uses its own upstream metadata shape; it was validated
-through Kiro agent discovery and real resource loading. 188 original
-package files match their pinned upstream content byte-for-byte; two generated
-asset-producer references have the recorded relative-link repair. Local skill
+through Kiro agent discovery and real resource loading. 187 original
+package files match their pinned upstream content byte-for-byte; three files
+have the recorded relative-link repairs. All 204 static local Markdown links
+outside fenced examples resolve. Local skill
 references resolve, and both Vercel Kiro symlinks resolve to their Codex copies.
 
 New Codex sessions discover `.agents/skills/`; Kiro discovers the workspace
