@@ -1,4 +1,4 @@
-import { useReducedMotion } from 'framer-motion';
+import { useReducedMotionPreference } from '@/lib/useReducedMotionPreference';
 
 const PAGE_ENTRANCE_OFFSET_PX = 20;
 
@@ -17,7 +17,7 @@ const reducedMotionPageVariants = {
 };
 
 export function usePageMotion() {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useReducedMotionPreference();
   return {
     initial: 'initial',
     animate: 'in',

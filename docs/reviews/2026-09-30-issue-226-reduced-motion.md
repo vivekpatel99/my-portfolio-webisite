@@ -6,7 +6,9 @@ Issue [226](https://github.com/vivekpatel99/my-portfolio-webisite/issues/226)
 remained reproducible on `/contact/`, `/legal/`, and `/data-policy/`.
 
 Kiro Claude Opus 5.5 implemented a shared `usePageMotion` hook and a consent
-entrance guard using the existing Framer Motion 10 `useReducedMotion` policy.
+entrance guard, initially using Framer Motion 10 `useReducedMotion`.
+The follow-up below replaces that mount-time snapshot with a live preference
+subscription shared by both consumers.
 Reduced motion keeps the opacity fade and sets all vertical offsets to zero.
 Normal entrances retain their original offsets, duration, and easing.
 Markup, copy, colors, and layout classes are unchanged.
@@ -73,8 +75,33 @@ For baseline comparisons only, `QA_MOTION_BASE_URL` targets an existing
 loopback preview and starts no server. Contact cases then pass only if that
 build used `VITE_CONVEX_URL=https://qa-motion.convex.cloud`.
 
-The checks cover fresh mounts with a preselected motion preference. Physical
-devices, changing the OS preference while a page remains mounted, and the
-deployed host were not tested. Integration acceptance, required CI, resolved
-review threads, and merge remain separate conditions. This change does not
-authorize deployment or issue closure.
+## Review follow-up: preference changes in the mounted app
+
+GitHub review found that the locked Framer Motion 10.18 hook captures its
+value in `useState` without updating the component when the media query changes.
+Consent stays mounted while hidden, so its delayed appearance and reopening
+could use a stale offset. This was reproduced before production edits in
+Chromium and WebKit at both widths: all 24 new preference-change cases failed,
+while the original 32 cases passed. After enabling reduced motion, the delayed
+banner still mounted at y = -10 px and remained approximately -3.4 px at 100 ms.
+
+Opus implemented `useReducedMotionPreference` with React 18
+`useSyncExternalStore`, the standard reduced-motion media query, and change
+listener cleanup. The page-motion hook and consent now share this live
+preference. Without `matchMedia`, the fallback remains normal motion.
+No markup, layout, copy, palette, fade, or normal entrance timing changed.
+
+The expanded matrix passed all 56 cases. It covers both preference-change
+directions before delayed consent, consent reopening through Manage Consent,
+keyboard rejection and saved preferences, and subsequent client-side route
+navigation. The existing initial-mount, contact feedback, and normal-motion
+checks remain included. Four focused hook tests cover current preference,
+both change directions, listener cleanup, and the absent-`matchMedia` fallback.
+Codex inspected the final source and red failure samples independently and
+ran the complete unit suite: 575 tests in 56 files passed on the follow-up base.
+
+Preference changes were emulated in the browsers; physical devices, changing
+an actual operating-system setting, and the deployed host were not tested.
+Current-head CI and review-thread resolution remain merge gates. The user
+subsequently authorized merging into `develop` when those gates pass;
+production deployment remains outside the task.

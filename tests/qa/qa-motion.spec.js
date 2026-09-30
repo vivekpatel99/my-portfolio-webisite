@@ -15,6 +15,12 @@ const CONSENT_ENTRANCE_OFFSET_PX = -10;
 // Opacity can finish a hair below 1 (e.g. 0.9995) without being unreadable.
 const READABLE_OPACITY = 0.99;
 const CONVEX_MOCK_HOST = 'qa-motion.convex.cloud';
+// Footer link used to leave each route by client-side navigation.
+const NEXT_ROUTE_LINK = {
+  '/contact/': 'Privacy Policy',
+  '/legal/': 'Cookie Policy',
+  '/data-policy/': 'Contact Me',
+};
 
 const test = base.extend({
   contactTransport: [async ({ context }, use) => {
@@ -66,32 +72,89 @@ function installEntranceSampler(sampleTimes) {
     });
   };
 
+  const sampleFromInsertion = (key, element) => {
+    window.__motionSamples[key] = [];
+    const start = performance.now();
+    for (const target of sampleTimes) {
+      if (target === 0) sample(key, element, 0, start);
+      else setTimeout(() => sample(key, element, target, start), target);
+    }
+  };
+
   const observer = new MutationObserver(() => {
     for (const [key, selector] of Object.entries(targets)) {
       if (window.__motionSamples[key]) continue;
       const element = document.querySelector(selector);
-      if (!element) continue;
-      window.__motionSamples[key] = [];
-      const start = performance.now();
-      for (const target of sampleTimes) {
-        if (target === 0) sample(key, element, 0, start);
-        else setTimeout(() => sample(key, element, target, start), target);
-      }
+      if (element) sampleFromInsertion(key, element);
     }
   });
   observer.observe(document, { subtree: true, childList: true });
+
+  // Samples the next newly inserted element of a target, such as a reopened
+  // consent banner or the root of a client-side navigation.
+  window.__armEntranceSampler = (target) => {
+    const key = `${target}:next`;
+    const previous = document.querySelector(targets[target]);
+    delete window.__motionSamples[key];
+    const nextObserver = new MutationObserver(() => {
+      const element = document.querySelector(targets[target]);
+      if (!element || element === previous) return;
+      nextObserver.disconnect();
+      sampleFromInsertion(key, element);
+    });
+    nextObserver.observe(document, { subtree: true, childList: true });
+    return key;
+  };
+}
+
+function waitForSamples(page, keys) {
+  return page.waitForFunction(
+    ({ sampleKeys, count }) => sampleKeys.every((key) => window.__motionSamples[key]?.length === count),
+    { sampleKeys: keys, count: SAMPLE_TIMES_MS.length },
+    { timeout: 15_000 },
+  );
 }
 
 async function collectEntranceSamples(page, route) {
   await page.addInitScript(installEntranceSampler, SAMPLE_TIMES_MS);
   await page.goto(route);
   // The consent banner mounts ~1.5s after load for first-time visitors.
-  await page.waitForFunction(
-    (count) => ['route', 'consent'].every((key) => window.__motionSamples[key]?.length === count),
-    SAMPLE_TIMES_MS.length,
-    { timeout: 15_000 },
-  );
+  await waitForSamples(page, ['route', 'consent']);
   return page.evaluate(() => window.__motionSamples);
+}
+
+// A full page load would reset the in-page samples, so a completed sample set
+// also proves the trigger kept the app mounted.
+async function sampleNextEntrance(page, target, trigger) {
+  const key = await page.evaluate((name) => window.__armEntranceSampler(name), target);
+  await trigger();
+  await waitForSamples(page, [key]);
+  return page.evaluate((sampleKey) => window.__motionSamples[sampleKey], key);
+}
+
+// Loads the route, then flips the OS preference while the consent banner is
+// mounted but still waiting for its delayed first appearance.
+async function switchPreferenceBeforeFirstConsent(page, route, reduce) {
+  await page.addInitScript(installEntranceSampler, SAMPLE_TIMES_MS);
+  await page.goto(route);
+  await page.emulateMedia({ reducedMotion: reduce ? 'reduce' : 'no-preference' });
+  await expectMotionPreference(page, reduce);
+  const shownEarly = await page.evaluate(() => Boolean(window.__motionSamples.consent));
+  expect(shownEarly, 'consent banner still hidden when the preference changed').toBe(false);
+  await waitForSamples(page, ['consent']);
+  return page.evaluate(() => window.__motionSamples.consent);
+}
+
+function reopenConsentFromFooter(page) {
+  return sampleNextEntrance(page, 'consent', () => (
+    page.locator('#site-footer').getByRole('button', { name: 'Manage Consent', exact: true }).click()
+  ));
+}
+
+function navigateFromFooter(page, route) {
+  return sampleNextEntrance(page, 'route', () => (
+    page.locator('#site-footer').getByRole('link', { name: NEXT_ROUTE_LINK[route], exact: true }).click()
+  ));
 }
 
 function expectIdentityTransform(samples, label) {
@@ -108,6 +171,29 @@ function expectSettled(samples, label) {
   const last = samples.at(-1);
   expect(last.opacity, `${label} final opacity`).toBeGreaterThan(READABLE_OPACITY);
   expect(Math.abs(last.y), `${label} final y (${last.transform})`).toBeLessThan(IDENTITY_TOLERANCE);
+}
+
+// Reduced motion: no translation or scale at any sample, but the fade is kept.
+function expectReducedEntrance(samples, label) {
+  expectIdentityTransform(samples, label);
+  expect(samples[0].opacity, `${label} mount opacity`).toBe(0);
+  expectSettled(samples, label);
+}
+
+function expectNormalRouteEntrance(samples, label) {
+  const [mount, early] = samples;
+  expect(mount.y, `${label} mount y`).toBeCloseTo(PAGE_ENTRANCE_OFFSET_PX, 0);
+  expect(mount.opacity, `${label} mount opacity`).toBe(0);
+  // Still travelling 100ms in: the entrance is animated, not skipped.
+  expect(early.y, `${label} y at 100ms`).toBeGreaterThan(1);
+  expectSettled(samples, label);
+}
+
+function expectNormalConsentEntrance(samples, label) {
+  const [mount] = samples;
+  expect(mount.y, `${label} mount y`).toBeCloseTo(CONSENT_ENTRANCE_OFFSET_PX, 0);
+  expect(mount.opacity, `${label} mount opacity`).toBe(0);
+  expectSettled(samples, label);
 }
 
 async function expectReadableRoute(page) {
@@ -180,13 +266,8 @@ test.describe('reduced motion', () => {
   for (const route of ROUTES) {
     test(`${route} root and consent enter without translating or scaling`, async ({ page }) => {
       const samples = await collectEntranceSamples(page, route);
-      expectIdentityTransform(samples.route, `${route} root`);
-      expectIdentityTransform(samples.consent, 'consent banner');
-      // The fade is kept: both targets still mount transparent.
-      expect(samples.route[0].opacity, `${route} root mount opacity`).toBe(0);
-      expect(samples.consent[0].opacity, 'consent mount opacity').toBe(0);
-      expectSettled(samples.route, `${route} root`);
-      expectSettled(samples.consent, 'consent banner');
+      expectReducedEntrance(samples.route, `${route} root`);
+      expectReducedEntrance(samples.consent, 'consent banner');
       await expectReadableRoute(page);
       await expectConsentKeyboardAccessible(page);
     });
@@ -204,18 +285,8 @@ test.describe('normal motion', () => {
   for (const route of ROUTES) {
     test(`${route} root and consent keep their entrance and settle`, async ({ page }) => {
       const samples = await collectEntranceSamples(page, route);
-      const [routeMount, routeEarly] = samples.route;
-      expect(routeMount.y, `${route} root mount y`).toBeCloseTo(PAGE_ENTRANCE_OFFSET_PX, 0);
-      expect(routeMount.opacity, `${route} root mount opacity`).toBe(0);
-      // Still travelling 100ms in: the entrance is animated, not skipped.
-      expect(routeEarly.y, `${route} root y at 100ms`).toBeGreaterThan(1);
-      expectSettled(samples.route, `${route} root`);
-
-      const [consentMount] = samples.consent;
-      expect(consentMount.y, 'consent mount y').toBeCloseTo(CONSENT_ENTRANCE_OFFSET_PX, 0);
-      expect(consentMount.opacity, 'consent mount opacity').toBe(0);
-      expectSettled(samples.consent, 'consent banner');
-
+      expectNormalRouteEntrance(samples.route, `${route} root`);
+      expectNormalConsentEntrance(samples.consent, 'consent banner');
       await expectReadableRoute(page);
       await expectConsentKeyboardAccessible(page);
     });
@@ -225,3 +296,35 @@ test.describe('normal motion', () => {
     await expectContactFeedbackVisible(page, contactTransport);
   });
 });
+
+// The preference can change while the app stays mounted. Later entrances must
+// follow the current preference, not the one read when the app first mounted.
+for (const { from, to, reduce } of [
+  { from: 'no-preference', to: 'reduce', reduce: true },
+  { from: 'reduce', to: 'no-preference', reduce: false },
+]) {
+  test.describe(`preference changed from ${from} to ${to} after load`, () => {
+    test.use({ contextOptions: { reducedMotion: from } });
+    test.beforeEach(async ({ page }) => expectMotionPreference(page, !reduce));
+
+    const expectConsentEntrance = reduce ? expectReducedEntrance : expectNormalConsentEntrance;
+    const expectRouteEntrance = reduce ? expectReducedEntrance : expectNormalRouteEntrance;
+
+    for (const route of ROUTES) {
+      test(`${route} delayed and reopened consent and next route follow ${to}`, async ({ page }) => {
+        const firstConsent = await switchPreferenceBeforeFirstConsent(page, route, reduce);
+        expectConsentEntrance(firstConsent, 'delayed first consent');
+        await expectConsentKeyboardAccessible(page);
+
+        const reopenedConsent = await reopenConsentFromFooter(page);
+        expectConsentEntrance(reopenedConsent, 'reopened consent');
+        await expect(page.getByRole('dialog', { name: 'We value your privacy' })).toBeFocused();
+        await expectConsentKeyboardAccessible(page);
+
+        const nextRoot = await navigateFromFooter(page, route);
+        expectRouteEntrance(nextRoot, `root after leaving ${route}`);
+        await expectReadableRoute(page);
+      });
+    }
+  });
+}

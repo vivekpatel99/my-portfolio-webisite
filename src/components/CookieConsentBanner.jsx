@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from "@/components/ui/checkbox.jsx";
 import { Cookie, X, Settings } from 'lucide-react';
@@ -10,6 +10,7 @@ import {
   readCookieConsentPreferences,
   saveCookieConsentPreferences,
 } from '@/lib/consent';
+import { useReducedMotionPreference } from '@/lib/useReducedMotionPreference';
 
 const BANNER_ENTRANCE_OFFSET_PX = -10;
 
@@ -18,7 +19,7 @@ const CookieConsentBanner = ({ onConsent, show, onHide }) => {
   const [preferences, setPreferences] = useState(DEFAULT_COOKIE_CONSENT_PREFERENCES);
   const bannerRef = useRef(null);
   const previousFocusRef = useRef(null);
-  const entranceOffset = useReducedMotion() ? 0 : BANNER_ENTRANCE_OFFSET_PX;
+  const entranceOffset = useReducedMotionPreference() ? 0 : BANNER_ENTRANCE_OFFSET_PX;
 
   useEffect(() => {
     if(show) {
