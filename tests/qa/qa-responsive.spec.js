@@ -227,6 +227,44 @@ for (const vp of heroFoldViewports) {
   });
 }
 
+// #253: the invoice header stack, credential captions and actions keep visible gaps.
+for (const width of [320, 390, 768, 1024, 1440]) {
+  test(`hero invoice labels and actions keep their gaps at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/');
+    const hero = page.locator('#main-content section').first();
+    const invoice = hero.getByRole('article', { name: 'Profile invoice field parse' });
+    const box = async (locator) => {
+      await expect(locator).toBeVisible();
+      return locator.boundingBox();
+    };
+    const bottom = (b) => b.y + b.height;
+
+    const header = await box(page.getByRole('banner'));
+    const pill = await box(hero.getByText('Inference online', { exact: true }).locator('..'));
+    const scanLabel = await box(invoice.getByText('doc · extract · 0.97', { exact: true }));
+    const title = await box(invoice.getByText('Profile Invoice', { exact: true }));
+    const panel = await box(invoice);
+    const estimate = await box(hero.getByRole('button', { name: 'Request a Project Estimate' }));
+    const credentialValue = await box(invoice.getByText('Top Rated Plus', { exact: true }));
+    const caption = await box(invoice.getByText('Upwork freelancer', { exact: true }));
+    const rateLabel = await box(invoice.getByText('Rate', { exact: true }));
+    const rateValue = await box(invoice.getByText('€45/hour', { exact: true }));
+
+    expect(scanLabel.y - bottom(pill)).toBeGreaterThanOrEqual(4);
+    expect(title.y - bottom(scanLabel)).toBeGreaterThanOrEqual(4);
+    const actionsGap = estimate.y - bottom(panel);
+    expect(actionsGap).toBeGreaterThanOrEqual(16);
+    expect(actionsGap).toBeLessThanOrEqual(24);
+    const captionToNextLabel = rateLabel.y - bottom(caption);
+    expect(captionToNextLabel).toBeGreaterThanOrEqual(rateValue.y - bottom(rateLabel));
+    expect(captionToNextLabel).toBeGreaterThan(caption.y - bottom(credentialValue));
+    if (width < 768) expect(pill.y - bottom(header)).toBeGreaterThanOrEqual(8);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
+  });
+}
+
 test('mobile cookie banner leaves the hero estimate CTA clickable', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.addInitScript(() => localStorage.removeItem('cookie_consent_preferences'));

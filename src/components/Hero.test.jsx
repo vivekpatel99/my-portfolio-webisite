@@ -137,6 +137,29 @@ describe('Hero invoice proof fold (#176)', () => {
   });
 });
 
+// jsdom has no layout; tests/qa/qa-responsive.spec.js measures the real gaps.
+describe('Hero invoice header spacing (#253)', () => {
+  const classesOf = (element) => element.className.split(/\s+/);
+
+  it('spaces the status pill, scan label, title, credentials and actions apart', () => {
+    const { container } = renderHero();
+    const section = container.querySelector('section');
+    const pillRow = screen.getByText('Inference online').parentElement.parentElement;
+    const invoice = screen.getByRole('article', { name: 'Profile invoice field parse' });
+    const credentials = screen.getByRole('group', { name: 'Detected credentials' });
+    const actions = screen.getByRole('button', { name: 'Request a Project Estimate' }).parentElement;
+
+    expect(classesOf(section)).toContain('max-md:pt-3');
+    expect(classesOf(pillRow)).toContain('mb-5');
+    expect(classesOf(invoice)).toContain('pt-5');
+    expect(classesOf(invoice)).not.toContain('py-1.5');
+    expect(classesOf(invoice)).not.toContain('max-md:pt-3');
+    expect(classesOf(credentials)).toContain('mb-3');
+    expect(classesOf(credentials)).not.toContain('mb-0.5');
+    expect(classesOf(actions)).toContain('lg:mt-5');
+  });
+});
+
 describe('Hero randomized field bboxes (#206)', () => {
   const FIELD_VALUES = {
     name: 'Vivek Patel',
