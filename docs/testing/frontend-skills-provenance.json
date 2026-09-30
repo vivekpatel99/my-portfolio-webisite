@@ -1,0 +1,84 @@
+{
+  "installed_at": "2026-09-30",
+  "scope": "repository",
+  "packages": [
+    {
+      "name": "impeccable",
+      "repository": "https://github.com/pbakaus/impeccable",
+      "commit": "0d6b47ea19b63afe15e3f93a44d5d9fbbc6fd275",
+      "declared_skill_version": "4.4.0",
+      "engine_version": "0.1.8",
+      "installations": [
+        {
+          "upstream_path": ".agents/skills/impeccable",
+          "local_path": ".agents/skills/impeccable"
+        },
+        {
+          "upstream_path": ".kiro/skills/impeccable",
+          "local_path": ".kiro/skills/impeccable"
+        }
+      ],
+      "license": "Apache-2.0",
+      "local_adjustments": [
+        "POSIX launcher executable bits restored",
+        "pinned root LICENSE copied into both skill packages"
+      ]
+    },
+    {
+      "name": "vercel-react-best-practices",
+      "repository": "https://github.com/vercel-labs/agent-skills",
+      "commit": "063bee94c3f4df8453406c830b0a7df0f2860278",
+      "declared_skill_version": "1.0.0",
+      "upstream_path": "skills/react-best-practices",
+      "local_path": ".agents/skills/vercel-react-best-practices",
+      "kiro_symlink": ".kiro/skills/vercel-react-best-practices",
+      "license": "MIT declared in SKILL.md; no standalone LICENSE at pinned repository root",
+      "local_adjustments": []
+    },
+    {
+      "name": "web-design-guidelines",
+      "repository": "https://github.com/vercel-labs/agent-skills",
+      "commit": "063bee94c3f4df8453406c830b0a7df0f2860278",
+      "declared_skill_version": "1.0.0",
+      "upstream_path": "skills/web-design-guidelines",
+      "local_path": ".agents/skills/web-design-guidelines",
+      "kiro_symlink": ".kiro/skills/web-design-guidelines",
+      "license": "No license field in pinned skill; no standalone LICENSE at pinned repository root",
+      "local_adjustments": []
+    }
+  ],
+  "verification": {
+    "kiro_cli": "2.26.0",
+    "profiles_validated": [
+      "portfolio_frontend_review",
+      "portfolio_frontend_implement"
+    ],
+    "smoke_skill_entrypoints_read": [
+      ".kiro/skills/impeccable/SKILL.md",
+      ".agents/skills/web-design-guidelines/SKILL.md",
+      ".agents/skills/vercel-react-best-practices/SKILL.md"
+    ],
+    "smoke_references_read": [
+      ".kiro/skills/impeccable/reference/audit.md",
+      ".kiro/skills/impeccable/reference/critique.md",
+      ".agents/skills/vercel-react-best-practices/rules/js-hoist-regexp.md"
+    ],
+    "configured_model": "claude-opus-5.5",
+    "provider_reported_model": null,
+    "engine_probe": "impeccable-engine 0.1.8",
+    "context_helper": "successful; existing visual implementation, no PRODUCT.md or DESIGN.md; scoped refinement allowed",
+    "limitations": [
+      "Smoke verified skill discovery and source reading, not a frontend audit or browser behavior.",
+      "Current remote web interface guidelines were not fetched in the read-only smoke; coordinator must supply them in real audits.",
+      "No provider-reported served-model identity was emitted; Opus 5.5 is configured, not independently confirmed."
+    ],
+    "codex_frontmatter_validation": "All three entrypoints passed the bundled quick_validate.py with isolated PyYAML dependency.",
+    "upstream_integrity": {
+      "impeccable_codex": 59,
+      "impeccable_kiro": 54,
+      "vercel_react_best_practices": 76,
+      "web_design_guidelines": 1,
+      "result": "Every original file matches pinned upstream bytes; added license copies and executable modes recorded separately."
+    }
+  }
+}
