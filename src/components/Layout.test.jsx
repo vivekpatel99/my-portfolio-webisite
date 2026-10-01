@@ -35,7 +35,9 @@ vi.mock('framer-motion', () => {
   return { AnimatePresence: ({ children }) => <>{children}</>, motion: { div: MotionDiv } };
 });
 
+const HEADER_HEIGHT = 69;
 const BANNER_HEIGHT = 77;
+let scrollPosition;
 const SETTINGS_HEIGHT = 240;
 
 function renderLayout() {
@@ -57,6 +59,19 @@ describe('Layout consent spacer', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     storage.clear();
+    scrollPosition = 0;
+    vi.spyOn(window, 'scrollY', 'get').mockImplementation(() => scrollPosition);
+    vi.spyOn(window, 'scrollTo').mockImplementation(({ top }) => { scrollPosition = top; });
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function bounds() {
+      const top = this.dataset.testid === 'cookie-consent-spacer' ? HEADER_HEIGHT - scrollPosition : 0;
+      return { top, bottom: top, height: 0, width: 0, left: 0, right: 0 };
+    });
+    const computedStyle = window.getComputedStyle;
+    vi.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+      const style = computedStyle(element);
+      if (element.getAttribute('role') === 'dialog') Object.defineProperty(style, 'top', { value: `${HEADER_HEIGHT}px` });
+      return style;
+    });
     telemetryConsent.mockClear();
     Object.defineProperty(window, 'localStorage', {
       configurable: true,
@@ -81,17 +96,12 @@ describe('Layout consent spacer', () => {
     vi.useRealTimers();
   });
 
-  const advancePastBannerDelay = () => act(async () => {
-    vi.advanceTimersByTime(1500);
-  });
-
   it.each([
     ['rejected', false],
     ['accepted', true],
   ])('reserves no space after a %s decision is reloaded', async (_label, analytics) => {
     storage.set(COOKIE_CONSENT_KEY, JSON.stringify({ necessary: true, analytics }));
     renderLayout();
-    await advancePastBannerDelay();
 
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(spacerHeight()).toBe('0px');
@@ -99,14 +109,14 @@ describe('Layout consent spacer', () => {
     expect(lastConsent('sentry')).toBe(analytics);
   });
 
-  it('reserves the banner space only once the delayed first-visit banner is visible', async () => {
+  it('reserves the delayed first-visit banner as soon as it becomes visible', async () => {
     renderLayout();
     expect(spacerHeight()).toBe('0px');
-
-    await advancePastBannerDelay();
+    expect(screen.queryByRole('dialog')).toBeNull();
+    await act(async () => vi.advanceTimersByTime(1500));
 
     expect(screen.getByRole('dialog', { name: /we value your privacy/i })).toBeTruthy();
-    expect(spacerHeight()).toBe(`${72 + BANNER_HEIGHT}px`);
+    expect(spacerHeight()).toBe(`${BANNER_HEIGHT}px`);
   });
 
   it.each([
@@ -114,7 +124,7 @@ describe('Layout consent spacer', () => {
     ['close', () => screen.getByRole('button', { name: /close cookie consent banner/i })],
   ])('releases the space and keeps telemetry off after %s', async (_label, getControl) => {
     renderLayout();
-    await advancePastBannerDelay();
+    await act(async () => vi.advanceTimersByTime(1500));
 
     fireEvent.click(getControl());
 
@@ -133,10 +143,10 @@ describe('Layout consent spacer', () => {
     act(() => {
       window.dispatchEvent(new CustomEvent('manage-cookies'));
     });
-    expect(spacerHeight()).toBe(`${72 + BANNER_HEIGHT}px`);
+    expect(spacerHeight()).toBe(`${BANNER_HEIGHT}px`);
 
     fireEvent.click(screen.getByRole('button', { name: /options/i }));
-    expect(spacerHeight()).toBe(`${72 + BANNER_HEIGHT + SETTINGS_HEIGHT}px`);
+    expect(spacerHeight()).toBe(`${BANNER_HEIGHT + SETTINGS_HEIGHT}px`);
 
     fireEvent.click(screen.getByRole('checkbox', { name: /analytics/i }));
     fireEvent.click(screen.getByRole('button', { name: /save preferences/i }));
@@ -145,6 +155,80 @@ describe('Layout consent spacer', () => {
     expect(spacerHeight()).toBe('0px');
     expect(lastConsent('analytics')).toBe(false);
     expect(lastConsent('sentry')).toBe(false);
+  });
+
+  it('preserves a scrolled reading position through manager, settings and dismissal', () => {
+    storage.set(COOKIE_CONSENT_KEY, JSON.stringify({ necessary: true, analytics: false }));
+    renderLayout();
+    scrollPosition = 500;
+    const readingTop = () => HEADER_HEIGHT + parseFloat(spacerHeight()) + 700 - scrollPosition;
+    const originalTop = readingTop();
+
+    act(() => window.dispatchEvent(new CustomEvent('manage-cookies')));
+    expect(readingTop()).toBe(originalTop);
+    fireEvent.click(screen.getByRole('button', { name: /options/i }));
+    expect(readingTop()).toBe(originalTop);
+    fireEvent.click(screen.getByRole('button', { name: /options/i }));
+    expect(readingTop()).toBe(originalTop);
+    fireEvent.click(screen.getByRole('button', { name: /^accept$/i }));
+    expect(readingTop()).toBe(originalTop);
+    expect(spacerHeight()).toBe('0px');
+    expect(window.scrollTo).toHaveBeenLastCalledWith({ top: 500, behavior: 'instant' });
+  });
+
+  it('preserves reading when updating scroll padding itself changes the browser scroll position', () => {
+    storage.set(COOKIE_CONSENT_KEY, JSON.stringify({ necessary: true, analytics: false }));
+    renderLayout();
+    scrollPosition = 500;
+    const rootStyle = document.documentElement.style;
+    const setProperty = rootStyle.setProperty.bind(rootStyle);
+    vi.spyOn(rootStyle, 'setProperty').mockImplementation((name, value) => {
+      const previousPadding = Math.max(128, parseFloat(rootStyle.getPropertyValue(name)) || 0);
+      setProperty(name, value);
+      if (name === '--consent-banner-bottom') {
+        scrollPosition -= Math.max(128, parseFloat(value)) - previousPadding;
+      }
+    });
+    const readingTop = () => HEADER_HEIGHT + parseFloat(spacerHeight()) + 700 - scrollPosition;
+    const originalTop = readingTop();
+    act(() => window.dispatchEvent(new CustomEvent('manage-cookies')));
+    expect(readingTop()).toBe(originalTop);
+    fireEvent.click(screen.getByRole('button', { name: /options/i }));
+    expect(readingTop()).toBe(originalTop);
+  });
+
+  it('preserves an already scrolled first visit when the delayed banner arrives', async () => {
+    scrollPosition = 500;
+    renderLayout();
+    await act(async () => vi.advanceTimersByTime(1500));
+    expect(spacerHeight()).toBe(`${BANNER_HEIGHT}px`);
+    expect(scrollPosition).toBe(500 + BANNER_HEIGHT);
+    fireEvent.click(screen.getByRole('button', { name: /^accept$/i }));
+    expect(scrollPosition).toBe(500);
+  });
+
+  it('does not scroll a visitor at the top when the banner opens or closes', async () => {
+    renderLayout();
+    await act(async () => vi.advanceTimersByTime(1500));
+    expect(spacerHeight()).toBe(`${BANNER_HEIGHT}px`);
+    fireEvent.click(screen.getByRole('button', { name: /^reject$/i }));
+    expect(window.scrollTo).not.toHaveBeenCalled();
+    expect(scrollPosition).toBe(0);
+  });
+
+  it('restores an existing native-anchoring style after reservation and on unmount', async () => {
+    const root = document.documentElement;
+    root.style.overflowAnchor = 'auto';
+    const { unmount } = renderLayout();
+    await act(async () => vi.advanceTimersByTime(1500));
+    expect(root.style.overflowAnchor).toBe('none');
+    await act(async () => vi.advanceTimersByTime(20));
+    expect(root.style.overflowAnchor).toBe('auto');
+    fireEvent.click(screen.getByRole('button', { name: /options/i }));
+    expect(root.style.overflowAnchor).toBe('none');
+    unmount();
+    expect(root.style.overflowAnchor).toBe('auto');
+    root.style.removeProperty('overflow-anchor');
   });
 
   it('mirrors the visible banner bottom into root scroll padding and removes it when hidden or unmounted', async () => {
@@ -158,9 +242,9 @@ describe('Layout consent spacer', () => {
     act(() => {
       window.dispatchEvent(new CustomEvent('manage-cookies'));
     });
-    expect(bannerBottom()).toBe(`${72 + BANNER_HEIGHT}px`);
+    expect(bannerBottom()).toBe(`${HEADER_HEIGHT + BANNER_HEIGHT}px`);
     fireEvent.click(screen.getByRole('button', { name: /options/i }));
-    expect(bannerBottom()).toBe(`${72 + BANNER_HEIGHT + SETTINGS_HEIGHT}px`);
+    expect(bannerBottom()).toBe(`${HEADER_HEIGHT + BANNER_HEIGHT + SETTINGS_HEIGHT}px`);
 
     fireEvent.click(screen.getByRole('button', { name: /^reject$/i }));
     expect(bannerBottom()).toBe('');
@@ -189,6 +273,6 @@ describe('Layout consent spacer', () => {
     });
 
     expect(screen.queryByRole('button', { name: /save preferences/i })).toBeNull();
-    expect(spacerHeight()).toBe(`${72 + BANNER_HEIGHT}px`);
+    expect(spacerHeight()).toBe(`${BANNER_HEIGHT}px`);
   });
 });

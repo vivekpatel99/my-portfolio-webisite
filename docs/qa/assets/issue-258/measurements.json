@@ -1,0 +1,4326 @@
+{
+  "base": "2895fe79bc933ef4bf5caf236fa2bc60fd688672",
+  "timing_ms": 1500,
+  "stages": {
+    "before": [
+      {
+        "name": "header gap and top reservation / no-preference",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 165,
+              "mainTop": 165,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 141,
+              "mainTop": 141,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 163,
+              "mainTop": 163,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 149,
+              "mainTop": 149,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation / reduce",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 165,
+              "mainTop": 165,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 141,
+              "mainTop": 141,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 163,
+              "mainTop": 163,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 149,
+              "mainTop": 149,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /contact/ no-preference",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 165,
+              "mainTop": 165,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 141,
+              "mainTop": 141,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 163,
+              "mainTop": 163,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 149,
+              "mainTop": 149,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /contact/ reduce",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 165,
+              "mainTop": 165,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 141,
+              "mainTop": 141,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 163,
+              "mainTop": 163,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 149,
+              "mainTop": 149,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /case-studies/ no-preference",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 165,
+              "mainTop": 165,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 141,
+              "mainTop": 141,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 163,
+              "mainTop": 163,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 149,
+              "mainTop": 149,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /case-studies/ reduce",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 165,
+              "mainTop": 165,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 141,
+              "mainTop": 141,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 163,
+              "mainTop": 163,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 149,
+              "mainTop": 149,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /project/ai-invoice-processing-automation/ no-preference",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 165,
+              "mainTop": 165,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 141,
+              "mainTop": 141,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 163,
+              "mainTop": 163,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 149,
+              "mainTop": 149,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /project/ai-invoice-processing-automation/ reduce",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 165,
+              "mainTop": 165,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 141,
+              "mainTop": 141,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 163,
+              "mainTop": 163,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 149,
+              "mainTop": 149,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor / 390 no-preference",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": 15.3125,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 15.3125,
+              "y": 365
+            },
+            {
+              "state": "options",
+              "top": 15.3125,
+              "y": 579
+            },
+            {
+              "state": "collapse",
+              "top": 15.3125,
+              "y": 365
+            },
+            {
+              "state": "reject",
+              "top": 15.3125,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 15.3125,
+              "y": 365
+            },
+            {
+              "state": "accept",
+              "top": 15.3125,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor / 390 reduce",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": 15.3125,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 15.3125,
+              "y": 365
+            },
+            {
+              "state": "options",
+              "top": 15.3125,
+              "y": 579
+            },
+            {
+              "state": "collapse",
+              "top": 15.3125,
+              "y": 365
+            },
+            {
+              "state": "reject",
+              "top": 15.3125,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 15.3125,
+              "y": 365
+            },
+            {
+              "state": "accept",
+              "top": 15.3125,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor / 1280 no-preference",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": 125.265625,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 125.265625,
+              "y": 373
+            },
+            {
+              "state": "options",
+              "top": 125.265625,
+              "y": 603
+            },
+            {
+              "state": "collapse",
+              "top": 125.265625,
+              "y": 373
+            },
+            {
+              "state": "reject",
+              "top": 125.265625,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 125.265625,
+              "y": 373
+            },
+            {
+              "state": "accept",
+              "top": 125.265625,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor / 1280 reduce",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": 125.265625,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 125.265625,
+              "y": 373
+            },
+            {
+              "state": "options",
+              "top": 125.265625,
+              "y": 603
+            },
+            {
+              "state": "collapse",
+              "top": 125.265625,
+              "y": 373
+            },
+            {
+              "state": "reject",
+              "top": 125.265625,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 125.265625,
+              "y": 373
+            },
+            {
+              "state": "accept",
+              "top": 125.265625,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor /contact/ 390 no-preference",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": -100.396484375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -100.396484375,
+              "y": 365
+            },
+            {
+              "state": "options",
+              "top": -100.396484375,
+              "y": 579
+            },
+            {
+              "state": "collapse",
+              "top": -100.396484375,
+              "y": 365
+            },
+            {
+              "state": "reject",
+              "top": -100.396484375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -100.396484375,
+              "y": 365
+            },
+            {
+              "state": "accept",
+              "top": -100.396484375,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor /contact/ 390 reduce",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": -100.40625,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -100.40625,
+              "y": 365
+            },
+            {
+              "state": "options",
+              "top": -100.40625,
+              "y": 579
+            },
+            {
+              "state": "collapse",
+              "top": -100.40625,
+              "y": 365
+            },
+            {
+              "state": "reject",
+              "top": -100.40625,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -100.40625,
+              "y": 365
+            },
+            {
+              "state": "accept",
+              "top": -100.40625,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor /contact/ 1280 no-preference",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": -111.849609375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -111.849609375,
+              "y": 373
+            },
+            {
+              "state": "options",
+              "top": -111.849609375,
+              "y": 603
+            },
+            {
+              "state": "collapse",
+              "top": -111.849609375,
+              "y": 373
+            },
+            {
+              "state": "reject",
+              "top": -111.849609375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -111.849609375,
+              "y": 373
+            },
+            {
+              "state": "accept",
+              "top": -111.849609375,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor /contact/ 1280 reduce",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": -111.859375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -111.859375,
+              "y": 373
+            },
+            {
+              "state": "options",
+              "top": -111.859375,
+              "y": 603
+            },
+            {
+              "state": "collapse",
+              "top": -111.859375,
+              "y": 373
+            },
+            {
+              "state": "reject",
+              "top": -111.859375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -111.859375,
+              "y": 373
+            },
+            {
+              "state": "accept",
+              "top": -111.859375,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "cold CLS / 412",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "cls": [
+            {
+              "seeded": false,
+              "run": 0,
+              "cls": 0.08650643983699136,
+              "shifts": [
+                {
+                  "value": 0.08110681810464339,
+                  "time": 2865.5
+                },
+                {
+                  "value": 0.005399621732347965,
+                  "time": 5863.10000000149
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 1,
+              "cls": 0.08763292342177806,
+              "shifts": [
+                {
+                  "value": 0.08223330168943009,
+                  "time": 2880.2999999970198
+                },
+                {
+                  "value": 0.005399621732347965,
+                  "time": 5885.699999999255
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 2,
+              "cls": 0.08771187431293337,
+              "shifts": [
+                {
+                  "value": 0.08223330168943009,
+                  "time": 2876.300000000745
+                },
+                {
+                  "value": 7.895089115531715e-05,
+                  "time": 2883.5
+                },
+                {
+                  "value": 0.005399621732347965,
+                  "time": 5873.60000000149
+                }
+              ]
+            },
+            {
+              "seeded": true,
+              "run": 0,
+              "cls": 0.005399621732347965,
+              "shifts": [
+                {
+                  "value": 0.005399621732347965,
+                  "time": 5877.800000000745
+                }
+              ]
+            },
+            {
+              "seeded": true,
+              "run": 1,
+              "cls": 0.005399621732347965,
+              "shifts": [
+                {
+                  "value": 0.005399621732347965,
+                  "time": 5879.400000002235
+                }
+              ]
+            },
+            {
+              "seeded": true,
+              "run": 2,
+              "cls": 0.005399621732347965,
+              "shifts": [
+                {
+                  "value": 0.005399621732347965,
+                  "time": 5877
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "name": "cold CLS / 1350",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "cls": [
+            {
+              "seeded": false,
+              "run": 0,
+              "cls": 0.05770812479934623,
+              "shifts": [
+                {
+                  "value": 0.05559574468085106,
+                  "time": 2889.199999999255
+                },
+                {
+                  "value": 1.4051308992207338e-05,
+                  "time": 2896.199999999255
+                },
+                {
+                  "value": 0.002098328809502962,
+                  "time": 5892.199999999255
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 1,
+              "cls": 0.05769407349035402,
+              "shifts": [
+                {
+                  "value": 0.05559574468085106,
+                  "time": 2889.2999999970198
+                },
+                {
+                  "value": 0.002098328809502962,
+                  "time": 5894.099999997765
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 2,
+              "cls": 0.05700770627207191,
+              "shifts": [
+                {
+                  "value": 0.05490937746256895,
+                  "time": 2875.199999999255
+                },
+                {
+                  "value": 0.002098328809502962,
+                  "time": 5877.099999997765
+                }
+              ]
+            },
+            {
+              "seeded": true,
+              "run": 0,
+              "cls": 0.002098328809502962,
+              "shifts": [
+                {
+                  "value": 0.002098328809502962,
+                  "time": 5906.099999997765
+                }
+              ]
+            },
+            {
+              "seeded": true,
+              "run": 1,
+              "cls": 0.002098328809502962,
+              "shifts": [
+                {
+                  "value": 0.002098328809502962,
+                  "time": 5912.300000000745
+                }
+              ]
+            },
+            {
+              "seeded": true,
+              "run": 2,
+              "cls": 0.002098328809502962,
+              "shifts": [
+                {
+                  "value": 0.002098328809502962,
+                  "time": 5891.400000002235
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "name": "cold CLS /case-studies/ 412",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "cls": [
+            {
+              "seeded": false,
+              "run": 0,
+              "cls": 0.08015011907064366,
+              "shifts": [
+                {
+                  "value": 0.08015011907064366,
+                  "time": 3804.60000000149
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 1,
+              "cls": 0.08015011907064366,
+              "shifts": [
+                {
+                  "value": 0.08015011907064366,
+                  "time": 3811.699999999255
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 2,
+              "cls": 0.08015011907064366,
+              "shifts": [
+                {
+                  "value": 0.08015011907064366,
+                  "time": 3801
+                }
+              ]
+            },
+            {
+              "seeded": true,
+              "run": 0,
+              "cls": 0,
+              "shifts": []
+            },
+            {
+              "seeded": true,
+              "run": 1,
+              "cls": 0,
+              "shifts": []
+            },
+            {
+              "seeded": true,
+              "run": 2,
+              "cls": 0,
+              "shifts": []
+            }
+          ]
+        }
+      },
+      {
+        "name": "cold CLS /case-studies/ 1350",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "cls": [
+            {
+              "seeded": false,
+              "run": 0,
+              "cls": 0.05490937746256895,
+              "shifts": [
+                {
+                  "value": 0.05490937746256895,
+                  "time": 3887.10000000149
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 1,
+              "cls": 0.05490937746256895,
+              "shifts": [
+                {
+                  "value": 0.05490937746256895,
+                  "time": 3887.599999997765
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 2,
+              "cls": 0.05490937746256895,
+              "shifts": [
+                {
+                  "value": 0.05490937746256895,
+                  "time": 3877.199999999255
+                }
+              ]
+            },
+            {
+              "seeded": true,
+              "run": 0,
+              "cls": 0,
+              "shifts": []
+            },
+            {
+              "seeded": true,
+              "run": 1,
+              "cls": 0,
+              "shifts": []
+            },
+            {
+              "seeded": true,
+              "run": 2,
+              "cls": 0,
+              "shifts": []
+            }
+          ]
+        }
+      },
+      {
+        "name": "cold CLS /contact/ 412",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "cls": [
+            {
+              "seeded": false,
+              "run": 0,
+              "cls": 0.08015011907064366,
+              "shifts": [
+                {
+                  "value": 0.08015011907064366,
+                  "time": 2796.89999999851
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 1,
+              "cls": 0.08015011907064366,
+              "shifts": [
+                {
+                  "value": 0.08015011907064366,
+                  "time": 2803.699999999255
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 2,
+              "cls": 0.08015011907064366,
+              "shifts": [
+                {
+                  "value": 0.08015011907064366,
+                  "time": 2790.2999999970198
+                }
+              ]
+            },
+            {
+              "seeded": true,
+              "run": 0,
+              "cls": 0,
+              "shifts": []
+            },
+            {
+              "seeded": true,
+              "run": 1,
+              "cls": 0,
+              "shifts": []
+            },
+            {
+              "seeded": true,
+              "run": 2,
+              "cls": 0,
+              "shifts": []
+            }
+          ]
+        }
+      },
+      {
+        "name": "cold CLS /contact/ 1350",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "cls": [
+            {
+              "seeded": false,
+              "run": 0,
+              "cls": 0.05490937746256895,
+              "shifts": [
+                {
+                  "value": 0.05490937746256895,
+                  "time": 2789.199999999255
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 1,
+              "cls": 0.05490937746256895,
+              "shifts": [
+                {
+                  "value": 0.05490937746256895,
+                  "time": 2785.2000000029802
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 2,
+              "cls": 0.05490937746256895,
+              "shifts": [
+                {
+                  "value": 0.05490937746256895,
+                  "time": 2785.099999997765
+                }
+              ]
+            },
+            {
+              "seeded": true,
+              "run": 0,
+              "cls": 0,
+              "shifts": []
+            },
+            {
+              "seeded": true,
+              "run": 1,
+              "cls": 0,
+              "shifts": []
+            },
+            {
+              "seeded": true,
+              "run": 2,
+              "cls": 0,
+              "shifts": []
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation / no-preference",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 165,
+              "mainTop": 165,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 141,
+              "mainTop": 141,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 163,
+              "mainTop": 163,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 149,
+              "mainTop": 149,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation / reduce",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 165,
+              "mainTop": 165,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 141,
+              "mainTop": 141,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 163,
+              "mainTop": 163,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 149,
+              "mainTop": 149,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /contact/ no-preference",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 165,
+              "mainTop": 165,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 141,
+              "mainTop": 141,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 163,
+              "mainTop": 163,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 149,
+              "mainTop": 149,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /contact/ reduce",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 165,
+              "mainTop": 165,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 141,
+              "mainTop": 141,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 163,
+              "mainTop": 163,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 149,
+              "mainTop": 149,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /case-studies/ no-preference",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 165,
+              "mainTop": 165,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 141,
+              "mainTop": 141,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 163,
+              "mainTop": 163,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 149,
+              "mainTop": 149,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /case-studies/ reduce",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 165,
+              "mainTop": 165,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 141,
+              "mainTop": 141,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 163,
+              "mainTop": 163,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 149,
+              "mainTop": 149,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /project/ai-invoice-processing-automation/ no-preference",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 165,
+              "mainTop": 165,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 141,
+              "mainTop": 141,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 163,
+              "mainTop": 163,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 149,
+              "mainTop": 149,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /project/ai-invoice-processing-automation/ reduce",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 165,
+              "mainTop": 165,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 141,
+              "mainTop": 141,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 163,
+              "mainTop": 163,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 72,
+              "bannerBottom": 149,
+              "mainTop": 149,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor / 390 no-preference",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": 15.3125,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 28.3125,
+              "y": 352
+            },
+            {
+              "state": "options",
+              "top": 242.3125,
+              "y": 352
+            },
+            {
+              "state": "collapse",
+              "top": 28.3125,
+              "y": 352
+            },
+            {
+              "state": "reject",
+              "top": 15.3125,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 28.3125,
+              "y": 352
+            },
+            {
+              "state": "accept",
+              "top": 15.3125,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor / 390 reduce",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": 15.3125,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 28.3125,
+              "y": 352
+            },
+            {
+              "state": "options",
+              "top": 242.3125,
+              "y": 352
+            },
+            {
+              "state": "collapse",
+              "top": 28.3125,
+              "y": 352
+            },
+            {
+              "state": "reject",
+              "top": 15.3125,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 28.3125,
+              "y": 352
+            },
+            {
+              "state": "accept",
+              "top": 15.3125,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor / 1280 no-preference",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": 125.234375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 146.234375,
+              "y": 352
+            },
+            {
+              "state": "options",
+              "top": 376.234375,
+              "y": 352
+            },
+            {
+              "state": "collapse",
+              "top": 146.234375,
+              "y": 352
+            },
+            {
+              "state": "reject",
+              "top": 125.234375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 146.234375,
+              "y": 352
+            },
+            {
+              "state": "accept",
+              "top": 125.234375,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor / 1280 reduce",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": 125.234375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 146.234375,
+              "y": 352
+            },
+            {
+              "state": "options",
+              "top": 376.234375,
+              "y": 352
+            },
+            {
+              "state": "collapse",
+              "top": 146.234375,
+              "y": 352
+            },
+            {
+              "state": "reject",
+              "top": 125.234375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 146.234375,
+              "y": 352
+            },
+            {
+              "state": "accept",
+              "top": 125.234375,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor /contact/ 390 no-preference",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": -100.396484375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -28.396484375,
+              "y": 293
+            },
+            {
+              "state": "options",
+              "top": 185.603515625,
+              "y": 293
+            },
+            {
+              "state": "collapse",
+              "top": -28.396484375,
+              "y": 293
+            },
+            {
+              "state": "reject",
+              "top": -41.396484375,
+              "y": 234
+            },
+            {
+              "state": "open",
+              "top": -28.396484375,
+              "y": 293
+            },
+            {
+              "state": "accept",
+              "top": -41.396484375,
+              "y": 234
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor /contact/ 390 reduce",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": -100.40625,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -87.40625,
+              "y": 352
+            },
+            {
+              "state": "options",
+              "top": 126.59375,
+              "y": 352
+            },
+            {
+              "state": "collapse",
+              "top": -87.40625,
+              "y": 352
+            },
+            {
+              "state": "reject",
+              "top": -100.40625,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -87.40625,
+              "y": 352
+            },
+            {
+              "state": "accept",
+              "top": -100.40625,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor /contact/ 1280 no-preference",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": -111.849609375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -31.849609375,
+              "y": 293
+            },
+            {
+              "state": "options",
+              "top": 198.150390625,
+              "y": 293
+            },
+            {
+              "state": "collapse",
+              "top": -31.849609375,
+              "y": 293
+            },
+            {
+              "state": "reject",
+              "top": -52.849609375,
+              "y": 234
+            },
+            {
+              "state": "open",
+              "top": -31.849609375,
+              "y": 293
+            },
+            {
+              "state": "accept",
+              "top": -52.849609375,
+              "y": 234
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor /contact/ 1280 reduce",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": -111.859375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -90.859375,
+              "y": 352
+            },
+            {
+              "state": "options",
+              "top": 139.140625,
+              "y": 352
+            },
+            {
+              "state": "collapse",
+              "top": -90.859375,
+              "y": 352
+            },
+            {
+              "state": "reject",
+              "top": -111.859375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -90.859375,
+              "y": 352
+            },
+            {
+              "state": "accept",
+              "top": -111.859375,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "cold CLS / 412",
+        "project": "consent-webkit",
+        "status": "skipped",
+        "measurements": {}
+      },
+      {
+        "name": "cold CLS / 1350",
+        "project": "consent-webkit",
+        "status": "skipped",
+        "measurements": {}
+      },
+      {
+        "name": "cold CLS /case-studies/ 412",
+        "project": "consent-webkit",
+        "status": "skipped",
+        "measurements": {}
+      },
+      {
+        "name": "cold CLS /case-studies/ 1350",
+        "project": "consent-webkit",
+        "status": "skipped",
+        "measurements": {}
+      },
+      {
+        "name": "cold CLS /contact/ 412",
+        "project": "consent-webkit",
+        "status": "skipped",
+        "measurements": {}
+      },
+      {
+        "name": "cold CLS /contact/ 1350",
+        "project": "consent-webkit",
+        "status": "skipped",
+        "measurements": {}
+      }
+    ],
+    "before-arrival": [
+      {
+        "name": "first arrival anchor / 390",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "first-arrival": {
+            "before": {
+              "top": 15.3125,
+              "y": 293
+            },
+            "after": {
+              "top": 15.3125,
+              "y": 365
+            }
+          }
+        }
+      },
+      {
+        "name": "first arrival anchor / 1280",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "first-arrival": {
+            "before": {
+              "top": 125.265625,
+              "y": 293
+            },
+            "after": {
+              "top": 125.265625,
+              "y": 373
+            }
+          }
+        }
+      },
+      {
+        "name": "first arrival anchor /contact/ 390",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "first-arrival": {
+            "before": {
+              "top": -100.40625,
+              "y": 293
+            },
+            "after": {
+              "top": -100.40625,
+              "y": 365
+            }
+          }
+        }
+      },
+      {
+        "name": "first arrival anchor /contact/ 1280",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "first-arrival": {
+            "before": {
+              "top": -111.859375,
+              "y": 293
+            },
+            "after": {
+              "top": -111.859375,
+              "y": 373
+            }
+          }
+        }
+      },
+      {
+        "name": "first arrival anchor / 390",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "first-arrival": {
+            "before": {
+              "top": 15.3125,
+              "y": 293
+            },
+            "after": {
+              "top": 28.3125,
+              "y": 352
+            }
+          }
+        }
+      },
+      {
+        "name": "first arrival anchor / 1280",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "first-arrival": {
+            "before": {
+              "top": 125.234375,
+              "y": 293
+            },
+            "after": {
+              "top": 146.234375,
+              "y": 352
+            }
+          }
+        }
+      },
+      {
+        "name": "first arrival anchor /contact/ 390",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "first-arrival": {
+            "before": {
+              "top": -100.40625,
+              "y": 293
+            },
+            "after": {
+              "top": -87.40625,
+              "y": 352
+            }
+          }
+        }
+      },
+      {
+        "name": "first arrival anchor /contact/ 1280",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "first-arrival": {
+            "before": {
+              "top": -111.859375,
+              "y": 293
+            },
+            "after": {
+              "top": -90.859375,
+              "y": 352
+            }
+          }
+        }
+      }
+    ],
+    "final-behavior": [
+      {
+        "name": "header gap and top reservation / no-preference",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 162,
+              "mainTop": 162,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 138,
+              "mainTop": 138,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 160,
+              "mainTop": 160,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 146,
+              "mainTop": 146,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation / reduce",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 162,
+              "mainTop": 162,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 138,
+              "mainTop": 138,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 160,
+              "mainTop": 160,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 146,
+              "mainTop": 146,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /contact/ no-preference",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 162,
+              "mainTop": 162,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 138,
+              "mainTop": 138,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 160,
+              "mainTop": 160,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 146,
+              "mainTop": 146,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /contact/ reduce",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 162,
+              "mainTop": 162,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 138,
+              "mainTop": 138,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 160,
+              "mainTop": 160,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 146,
+              "mainTop": 146,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /case-studies/ no-preference",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 162,
+              "mainTop": 162,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 138,
+              "mainTop": 138,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 160,
+              "mainTop": 160,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 146,
+              "mainTop": 146,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /case-studies/ reduce",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 162,
+              "mainTop": 162,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 138,
+              "mainTop": 138,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 160,
+              "mainTop": 160,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 146,
+              "mainTop": 146,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /project/ai-invoice-processing-automation/ no-preference",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 162,
+              "mainTop": 162,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 138,
+              "mainTop": 138,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 160,
+              "mainTop": 160,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 146,
+              "mainTop": 146,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /project/ai-invoice-processing-automation/ reduce",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 162,
+              "mainTop": 162,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 138,
+              "mainTop": 138,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 160,
+              "mainTop": 160,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 146,
+              "mainTop": 146,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor / 390 no-preference",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": 15.3125,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 15.3125,
+              "y": 362
+            },
+            {
+              "state": "options",
+              "top": 15.3125,
+              "y": 576
+            },
+            {
+              "state": "collapse",
+              "top": 15.3125,
+              "y": 362
+            },
+            {
+              "state": "reject",
+              "top": 15.3125,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 15.3125,
+              "y": 362
+            },
+            {
+              "state": "accept",
+              "top": 15.3125,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor / 390 reduce",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": 15.3125,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 15.3125,
+              "y": 362
+            },
+            {
+              "state": "options",
+              "top": 15.3125,
+              "y": 576
+            },
+            {
+              "state": "collapse",
+              "top": 15.3125,
+              "y": 362
+            },
+            {
+              "state": "reject",
+              "top": 15.3125,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 15.3125,
+              "y": 362
+            },
+            {
+              "state": "accept",
+              "top": 15.3125,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor / 1280 no-preference",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": 125.265625,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 125.265625,
+              "y": 370
+            },
+            {
+              "state": "options",
+              "top": 125.265625,
+              "y": 600
+            },
+            {
+              "state": "collapse",
+              "top": 125.265625,
+              "y": 370
+            },
+            {
+              "state": "reject",
+              "top": 125.265625,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 125.265625,
+              "y": 370
+            },
+            {
+              "state": "accept",
+              "top": 125.265625,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor / 1280 reduce",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": 125.265625,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 125.265625,
+              "y": 370
+            },
+            {
+              "state": "options",
+              "top": 125.265625,
+              "y": 600
+            },
+            {
+              "state": "collapse",
+              "top": 125.265625,
+              "y": 370
+            },
+            {
+              "state": "reject",
+              "top": 125.265625,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 125.265625,
+              "y": 370
+            },
+            {
+              "state": "accept",
+              "top": 125.265625,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor /contact/ 390 no-preference",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": -100.396484375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -100.396484375,
+              "y": 362
+            },
+            {
+              "state": "options",
+              "top": -100.396484375,
+              "y": 576
+            },
+            {
+              "state": "collapse",
+              "top": -100.396484375,
+              "y": 362
+            },
+            {
+              "state": "reject",
+              "top": -100.396484375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -100.396484375,
+              "y": 362
+            },
+            {
+              "state": "accept",
+              "top": -100.396484375,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor /contact/ 390 reduce",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": -100.40625,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -100.40625,
+              "y": 362
+            },
+            {
+              "state": "options",
+              "top": -100.40625,
+              "y": 576
+            },
+            {
+              "state": "collapse",
+              "top": -100.40625,
+              "y": 362
+            },
+            {
+              "state": "reject",
+              "top": -100.40625,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -100.40625,
+              "y": 362
+            },
+            {
+              "state": "accept",
+              "top": -100.40625,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor /contact/ 1280 no-preference",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": -111.849609375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -111.849609375,
+              "y": 370
+            },
+            {
+              "state": "options",
+              "top": -111.849609375,
+              "y": 600
+            },
+            {
+              "state": "collapse",
+              "top": -111.849609375,
+              "y": 370
+            },
+            {
+              "state": "reject",
+              "top": -111.849609375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -111.849609375,
+              "y": 370
+            },
+            {
+              "state": "accept",
+              "top": -111.849609375,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor /contact/ 1280 reduce",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": -111.859375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -111.859375,
+              "y": 370
+            },
+            {
+              "state": "options",
+              "top": -111.859375,
+              "y": 600
+            },
+            {
+              "state": "collapse",
+              "top": -111.859375,
+              "y": 370
+            },
+            {
+              "state": "reject",
+              "top": -111.859375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -111.859375,
+              "y": 370
+            },
+            {
+              "state": "accept",
+              "top": -111.859375,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "delayed arrival and reading stability / 390",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "delayed-arrival": {
+            "firstFrame": {
+              "bannerPresent": false,
+              "mainTop": 69,
+              "bannerBottom": null
+            },
+            "before": {
+              "top": 15.3125,
+              "y": 293
+            },
+            "after": {
+              "top": 15.3125,
+              "y": 362
+            }
+          }
+        }
+      },
+      {
+        "name": "delayed arrival and reading stability / 1280",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "delayed-arrival": {
+            "firstFrame": {
+              "bannerPresent": false,
+              "mainTop": 69,
+              "bannerBottom": null
+            },
+            "before": {
+              "top": 125.265625,
+              "y": 293
+            },
+            "after": {
+              "top": 125.265625,
+              "y": 370
+            }
+          }
+        }
+      },
+      {
+        "name": "delayed arrival and reading stability /contact/ 390",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "delayed-arrival": {
+            "firstFrame": {
+              "bannerPresent": false,
+              "mainTop": 69,
+              "bannerBottom": null
+            },
+            "before": {
+              "top": -100.40625,
+              "y": 293
+            },
+            "after": {
+              "top": -100.40625,
+              "y": 362
+            }
+          }
+        }
+      },
+      {
+        "name": "delayed arrival and reading stability /contact/ 1280",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "delayed-arrival": {
+            "firstFrame": {
+              "bannerPresent": false,
+              "mainTop": 69,
+              "bannerBottom": null
+            },
+            "before": {
+              "top": -111.859375,
+              "y": 293
+            },
+            "after": {
+              "top": -111.859375,
+              "y": 370
+            }
+          }
+        }
+      },
+      {
+        "name": "header gap and top reservation / no-preference",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 162,
+              "mainTop": 162,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 138,
+              "mainTop": 138,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 160,
+              "mainTop": 160,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 146,
+              "mainTop": 146,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation / reduce",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 162,
+              "mainTop": 162,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 138,
+              "mainTop": 138,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 160,
+              "mainTop": 160,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 146,
+              "mainTop": 146,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /contact/ no-preference",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 162,
+              "mainTop": 162,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 138,
+              "mainTop": 138,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 160,
+              "mainTop": 160,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 146,
+              "mainTop": 146,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /contact/ reduce",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 162,
+              "mainTop": 162,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 138,
+              "mainTop": 138,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 160,
+              "mainTop": 160,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 146,
+              "mainTop": 146,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /case-studies/ no-preference",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 162,
+              "mainTop": 162,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 138,
+              "mainTop": 138,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 160,
+              "mainTop": 160,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 146,
+              "mainTop": 146,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /case-studies/ reduce",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 162,
+              "mainTop": 162,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 138,
+              "mainTop": 138,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 160,
+              "mainTop": 160,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 146,
+              "mainTop": 146,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /project/ai-invoice-processing-automation/ no-preference",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 162,
+              "mainTop": 162,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 138,
+              "mainTop": 138,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 160,
+              "mainTop": 160,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 146,
+              "mainTop": 146,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "header gap and top reservation /project/ai-invoice-processing-automation/ reduce",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "geometry": [
+            {
+              "width": 320,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 162,
+              "mainTop": 162,
+              "overflow": false
+            },
+            {
+              "width": 390,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 138,
+              "mainTop": 138,
+              "overflow": false
+            },
+            {
+              "width": 768,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 160,
+              "mainTop": 160,
+              "overflow": false
+            },
+            {
+              "width": 1280,
+              "headerBottom": 69,
+              "bannerTop": 69,
+              "bannerBottom": 146,
+              "mainTop": 146,
+              "overflow": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor / 390 no-preference",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": 15.3125,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 15.3125,
+              "y": 362
+            },
+            {
+              "state": "options",
+              "top": 15.3125,
+              "y": 576
+            },
+            {
+              "state": "collapse",
+              "top": 15.3125,
+              "y": 362
+            },
+            {
+              "state": "reject",
+              "top": 15.3125,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 15.3125,
+              "y": 362
+            },
+            {
+              "state": "accept",
+              "top": 15.3125,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor / 390 reduce",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": 15.3125,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 15.3125,
+              "y": 362
+            },
+            {
+              "state": "options",
+              "top": 15.3125,
+              "y": 576
+            },
+            {
+              "state": "collapse",
+              "top": 15.3125,
+              "y": 362
+            },
+            {
+              "state": "reject",
+              "top": 15.3125,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 15.3125,
+              "y": 362
+            },
+            {
+              "state": "accept",
+              "top": 15.3125,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor / 1280 no-preference",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": 125.234375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 125.234375,
+              "y": 370
+            },
+            {
+              "state": "options",
+              "top": 125.234375,
+              "y": 600
+            },
+            {
+              "state": "collapse",
+              "top": 125.234375,
+              "y": 370
+            },
+            {
+              "state": "reject",
+              "top": 125.234375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 125.234375,
+              "y": 370
+            },
+            {
+              "state": "accept",
+              "top": 125.234375,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor / 1280 reduce",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": 125.234375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 125.234375,
+              "y": 370
+            },
+            {
+              "state": "options",
+              "top": 125.234375,
+              "y": 600
+            },
+            {
+              "state": "collapse",
+              "top": 125.234375,
+              "y": 370
+            },
+            {
+              "state": "reject",
+              "top": 125.234375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": 125.234375,
+              "y": 370
+            },
+            {
+              "state": "accept",
+              "top": 125.234375,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor /contact/ 390 no-preference",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": -100.396484375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -100.396484375,
+              "y": 362
+            },
+            {
+              "state": "options",
+              "top": -100.396484375,
+              "y": 576
+            },
+            {
+              "state": "collapse",
+              "top": -100.396484375,
+              "y": 362
+            },
+            {
+              "state": "reject",
+              "top": -100.396484375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -100.396484375,
+              "y": 362
+            },
+            {
+              "state": "accept",
+              "top": -100.396484375,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor /contact/ 390 reduce",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": -100.40625,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -100.40625,
+              "y": 362
+            },
+            {
+              "state": "options",
+              "top": -100.40625,
+              "y": 576
+            },
+            {
+              "state": "collapse",
+              "top": -100.40625,
+              "y": 362
+            },
+            {
+              "state": "reject",
+              "top": -100.40625,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -100.40625,
+              "y": 362
+            },
+            {
+              "state": "accept",
+              "top": -100.40625,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor /contact/ 1280 no-preference",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": -111.849609375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -111.849609375,
+              "y": 370
+            },
+            {
+              "state": "options",
+              "top": -111.849609375,
+              "y": 600
+            },
+            {
+              "state": "collapse",
+              "top": -111.849609375,
+              "y": 370
+            },
+            {
+              "state": "reject",
+              "top": -111.849609375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -111.849609375,
+              "y": 370
+            },
+            {
+              "state": "accept",
+              "top": -111.849609375,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "reading anchor /contact/ 1280 reduce",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "anchors": [
+            {
+              "state": "before",
+              "top": -111.859375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -111.859375,
+              "y": 370
+            },
+            {
+              "state": "options",
+              "top": -111.859375,
+              "y": 600
+            },
+            {
+              "state": "collapse",
+              "top": -111.859375,
+              "y": 370
+            },
+            {
+              "state": "reject",
+              "top": -111.859375,
+              "y": 293
+            },
+            {
+              "state": "open",
+              "top": -111.859375,
+              "y": 370
+            },
+            {
+              "state": "accept",
+              "top": -111.859375,
+              "y": 293
+            }
+          ]
+        }
+      },
+      {
+        "name": "delayed arrival and reading stability / 390",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "delayed-arrival": {
+            "firstFrame": {
+              "bannerPresent": false,
+              "mainTop": 69,
+              "bannerBottom": null
+            },
+            "before": {
+              "top": 15.3125,
+              "y": 293
+            },
+            "after": {
+              "top": 15.3125,
+              "y": 362
+            }
+          }
+        }
+      },
+      {
+        "name": "delayed arrival and reading stability / 1280",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "delayed-arrival": {
+            "firstFrame": {
+              "bannerPresent": false,
+              "mainTop": 69,
+              "bannerBottom": null
+            },
+            "before": {
+              "top": 125.234375,
+              "y": 293
+            },
+            "after": {
+              "top": 125.234375,
+              "y": 370
+            }
+          }
+        }
+      },
+      {
+        "name": "delayed arrival and reading stability /contact/ 390",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "delayed-arrival": {
+            "firstFrame": {
+              "bannerPresent": false,
+              "mainTop": 69,
+              "bannerBottom": null
+            },
+            "before": {
+              "top": -100.40625,
+              "y": 293
+            },
+            "after": {
+              "top": -100.40625,
+              "y": 362
+            }
+          }
+        }
+      },
+      {
+        "name": "delayed arrival and reading stability /contact/ 1280",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "delayed-arrival": {
+            "firstFrame": {
+              "bannerPresent": false,
+              "mainTop": 69,
+              "bannerBottom": null
+            },
+            "before": {
+              "top": -111.859375,
+              "y": 293
+            },
+            "after": {
+              "top": -111.859375,
+              "y": 370
+            }
+          }
+        }
+      }
+    ],
+    "final-regression": [
+      {
+        "name": "Reject/reload and Accept/reload share the header-to-main offset",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "close and Save with analytics off leave no spacer",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "initial banner reserves space only once visible and keeps focused controls uncovered",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "reopened manager and expanded settings reserve their actual space (no-preference motion)",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "reopened manager and expanded settings reserve their actual space (reduce motion)",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "skip link lands below the expanded manager, then normal padding returns (no-preference motion)",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "skip link lands below the expanded manager, then normal padding returns (reduce motion)",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "reduced motion: Reject reload has no spacer and sends no telemetry",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "Reject/reload and Accept/reload share the header-to-main offset",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "close and Save with analytics off leave no spacer",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "initial banner reserves space only once visible and keeps focused controls uncovered",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "reopened manager and expanded settings reserve their actual space (no-preference motion)",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "reopened manager and expanded settings reserve their actual space (reduce motion)",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "skip link lands below the expanded manager, then normal padding returns (no-preference motion)",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "skip link lands below the expanded manager, then normal padding returns (reduce motion)",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "reduced motion: Reject reload has no spacer and sends no telemetry",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "Reject/reload and Accept/reload share the header-to-main offset",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "close and Save with analytics off leave no spacer",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "initial banner reserves space only once visible and keeps focused controls uncovered",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "reopened manager and expanded settings reserve their actual space (no-preference motion)",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "reopened manager and expanded settings reserve their actual space (reduce motion)",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "skip link lands below the expanded manager, then normal padding returns (no-preference motion)",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "skip link lands below the expanded manager, then normal padding returns (reduce motion)",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "reduced motion: Reject reload has no spacer and sends no telemetry",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "Reject/reload and Accept/reload share the header-to-main offset",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "close and Save with analytics off leave no spacer",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "initial banner reserves space only once visible and keeps focused controls uncovered",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "reopened manager and expanded settings reserve their actual space (no-preference motion)",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "reopened manager and expanded settings reserve their actual space (reduce motion)",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "skip link lands below the expanded manager, then normal padding returns (no-preference motion)",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "skip link lands below the expanded manager, then normal padding returns (reduce motion)",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {}
+      },
+      {
+        "name": "reduced motion: Reject reload has no spacer and sends no telemetry",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {}
+      }
+    ],
+    "final-cls": [
+      {
+        "name": "cold CLS / 412",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "cls": [
+            {
+              "seeded": false,
+              "run": 0,
+              "cls": 0.08425347266741792,
+              "shifts": [
+                {
+                  "value": 0.07885385093506996,
+                  "time": 2857.099999997765
+                },
+                {
+                  "value": 0.005399621732347965,
+                  "time": 5858.29999999702
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 1,
+              "cls": 0.08425347266741792,
+              "shifts": [
+                {
+                  "value": 0.07885385093506996,
+                  "time": 2871.5
+                },
+                {
+                  "value": 0.005399621732347965,
+                  "time": 5875.300000000745
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 2,
+              "cls": 0.0831269890826312,
+              "shifts": [
+                {
+                  "value": 0.07772736735028324,
+                  "time": 2863
+                },
+                {
+                  "value": 0.005399621732347965,
+                  "time": 5865.699999999255
+                }
+              ]
+            },
+            {
+              "seeded": true,
+              "run": 0,
+              "cls": 0.005399621732347965,
+              "shifts": [
+                {
+                  "value": 0.005399621732347965,
+                  "time": 5864.800000000745
+                }
+              ]
+            },
+            {
+              "seeded": true,
+              "run": 1,
+              "cls": 0.005399621732347965,
+              "shifts": [
+                {
+                  "value": 0.005399621732347965,
+                  "time": 5841.599999997765
+                }
+              ]
+            },
+            {
+              "seeded": true,
+              "run": 2,
+              "cls": 0.005399621732347965,
+              "shifts": [
+                {
+                  "value": 0.005399621732347965,
+                  "time": 5845.5
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "name": "cold CLS / 1350",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "cls": [
+            {
+              "seeded": false,
+              "run": 0,
+              "cls": 0.05563497183550768,
+              "shifts": [
+                {
+                  "value": 0.05353664302600472,
+                  "time": 2861
+                },
+                {
+                  "value": 0.002098328809502962,
+                  "time": 5879
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 1,
+              "cls": 0.05563497183550768,
+              "shifts": [
+                {
+                  "value": 0.05353664302600472,
+                  "time": 2872.599999997765
+                },
+                {
+                  "value": 0.002098328809502962,
+                  "time": 5877.79999999702
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 2,
+              "cls": 0.05563497183550768,
+              "shifts": [
+                {
+                  "value": 0.05353664302600472,
+                  "time": 2859.900000002235
+                },
+                {
+                  "value": 0.002098328809502962,
+                  "time": 5868.800000000745
+                }
+              ]
+            },
+            {
+              "seeded": true,
+              "run": 0,
+              "cls": 0.002098328809502962,
+              "shifts": [
+                {
+                  "value": 0.002098328809502962,
+                  "time": 5866.599999997765
+                }
+              ]
+            },
+            {
+              "seeded": true,
+              "run": 1,
+              "cls": 0.002098328809502962,
+              "shifts": [
+                {
+                  "value": 0.002098328809502962,
+                  "time": 5875.10000000149
+                }
+              ]
+            },
+            {
+              "seeded": true,
+              "run": 2,
+              "cls": 0.002098328809502962,
+              "shifts": [
+                {
+                  "value": 0.002098328809502962,
+                  "time": 5893.699999999255
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "name": "cold CLS /case-studies/ 412",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "cls": [
+            {
+              "seeded": false,
+              "run": 0,
+              "cls": 0.0768105307760335,
+              "shifts": [
+                {
+                  "value": 0.0768105307760335,
+                  "time": 3801.89999999851
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 1,
+              "cls": 0.0768105307760335,
+              "shifts": [
+                {
+                  "value": 0.0768105307760335,
+                  "time": 3797.199999999255
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 2,
+              "cls": 0.0768105307760335,
+              "shifts": [
+                {
+                  "value": 0.0768105307760335,
+                  "time": 3806.10000000149
+                }
+              ]
+            },
+            {
+              "seeded": true,
+              "run": 0,
+              "cls": 0,
+              "shifts": []
+            },
+            {
+              "seeded": true,
+              "run": 1,
+              "cls": 0,
+              "shifts": []
+            },
+            {
+              "seeded": true,
+              "run": 2,
+              "cls": 0,
+              "shifts": []
+            }
+          ]
+        }
+      },
+      {
+        "name": "cold CLS /case-studies/ 1350",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "cls": [
+            {
+              "seeded": false,
+              "run": 0,
+              "cls": 0.05285027580772262,
+              "shifts": [
+                {
+                  "value": 0.05285027580772262,
+                  "time": 3884.60000000149
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 1,
+              "cls": 0.05285027580772262,
+              "shifts": [
+                {
+                  "value": 0.05285027580772262,
+                  "time": 3880.199999999255
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 2,
+              "cls": 0.05285027580772262,
+              "shifts": [
+                {
+                  "value": 0.05285027580772262,
+                  "time": 3882.300000000745
+                }
+              ]
+            },
+            {
+              "seeded": true,
+              "run": 0,
+              "cls": 0,
+              "shifts": []
+            },
+            {
+              "seeded": true,
+              "run": 1,
+              "cls": 0,
+              "shifts": []
+            },
+            {
+              "seeded": true,
+              "run": 2,
+              "cls": 0,
+              "shifts": []
+            }
+          ]
+        }
+      },
+      {
+        "name": "cold CLS /contact/ 412",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "cls": [
+            {
+              "seeded": false,
+              "run": 0,
+              "cls": 0.0768105307760335,
+              "shifts": [
+                {
+                  "value": 0.0768105307760335,
+                  "time": 2784.5
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 1,
+              "cls": 0.0768105307760335,
+              "shifts": [
+                {
+                  "value": 0.0768105307760335,
+                  "time": 2784.699999999255
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 2,
+              "cls": 0.0768105307760335,
+              "shifts": [
+                {
+                  "value": 0.0768105307760335,
+                  "time": 2788
+                }
+              ]
+            },
+            {
+              "seeded": true,
+              "run": 0,
+              "cls": 0,
+              "shifts": []
+            },
+            {
+              "seeded": true,
+              "run": 1,
+              "cls": 0,
+              "shifts": []
+            },
+            {
+              "seeded": true,
+              "run": 2,
+              "cls": 0,
+              "shifts": []
+            }
+          ]
+        }
+      },
+      {
+        "name": "cold CLS /contact/ 1350",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "cls": [
+            {
+              "seeded": false,
+              "run": 0,
+              "cls": 0.05285027580772262,
+              "shifts": [
+                {
+                  "value": 0.05285027580772262,
+                  "time": 2788.7999999970198
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 1,
+              "cls": 0.05285027580772262,
+              "shifts": [
+                {
+                  "value": 0.05285027580772262,
+                  "time": 2794
+                }
+              ]
+            },
+            {
+              "seeded": false,
+              "run": 2,
+              "cls": 0.05285027580772262,
+              "shifts": [
+                {
+                  "value": 0.05285027580772262,
+                  "time": 2789.800000000745
+                }
+              ]
+            },
+            {
+              "seeded": true,
+              "run": 0,
+              "cls": 0,
+              "shifts": []
+            },
+            {
+              "seeded": true,
+              "run": 1,
+              "cls": 0,
+              "shifts": []
+            },
+            {
+              "seeded": true,
+              "run": 2,
+              "cls": 0,
+              "shifts": []
+            }
+          ]
+        }
+      },
+      {
+        "name": "cold CLS / 412",
+        "project": "consent-webkit",
+        "status": "skipped",
+        "measurements": {}
+      },
+      {
+        "name": "cold CLS / 1350",
+        "project": "consent-webkit",
+        "status": "skipped",
+        "measurements": {}
+      },
+      {
+        "name": "cold CLS /case-studies/ 412",
+        "project": "consent-webkit",
+        "status": "skipped",
+        "measurements": {}
+      },
+      {
+        "name": "cold CLS /case-studies/ 1350",
+        "project": "consent-webkit",
+        "status": "skipped",
+        "measurements": {}
+      },
+      {
+        "name": "cold CLS /contact/ 412",
+        "project": "consent-webkit",
+        "status": "skipped",
+        "measurements": {}
+      },
+      {
+        "name": "cold CLS /contact/ 1350",
+        "project": "consent-webkit",
+        "status": "skipped",
+        "measurements": {}
+      }
+    ],
+    "final-arrival": [
+      {
+        "name": "delayed arrival and reading stability / 390",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "delayed-arrival": {
+            "firstFrame": {
+              "bannerPresent": false,
+              "mainTop": 69,
+              "bannerBottom": null
+            },
+            "before": {
+              "top": 15.3125,
+              "y": 293
+            },
+            "after": {
+              "top": 15.3125,
+              "y": 362
+            }
+          }
+        }
+      },
+      {
+        "name": "delayed arrival and reading stability / 1280",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "delayed-arrival": {
+            "firstFrame": {
+              "bannerPresent": false,
+              "mainTop": 69,
+              "bannerBottom": null
+            },
+            "before": {
+              "top": 125.265625,
+              "y": 293
+            },
+            "after": {
+              "top": 125.265625,
+              "y": 370
+            }
+          }
+        }
+      },
+      {
+        "name": "delayed arrival and reading stability /contact/ 390",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "delayed-arrival": {
+            "firstFrame": {
+              "bannerPresent": false,
+              "mainTop": 69,
+              "bannerBottom": null
+            },
+            "before": {
+              "top": -100.40625,
+              "y": 293
+            },
+            "after": {
+              "top": -100.40625,
+              "y": 362
+            }
+          }
+        }
+      },
+      {
+        "name": "delayed arrival and reading stability /contact/ 1280",
+        "project": "consent-chromium",
+        "status": "passed",
+        "measurements": {
+          "delayed-arrival": {
+            "firstFrame": {
+              "bannerPresent": false,
+              "mainTop": 69,
+              "bannerBottom": null
+            },
+            "before": {
+              "top": -111.859375,
+              "y": 293
+            },
+            "after": {
+              "top": -111.859375,
+              "y": 370
+            }
+          }
+        }
+      },
+      {
+        "name": "delayed arrival and reading stability / 390",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "delayed-arrival": {
+            "firstFrame": {
+              "bannerPresent": false,
+              "mainTop": 69,
+              "bannerBottom": null
+            },
+            "before": {
+              "top": 15.3125,
+              "y": 293
+            },
+            "after": {
+              "top": 15.3125,
+              "y": 362
+            }
+          }
+        }
+      },
+      {
+        "name": "delayed arrival and reading stability / 1280",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "delayed-arrival": {
+            "firstFrame": {
+              "bannerPresent": false,
+              "mainTop": 69,
+              "bannerBottom": null
+            },
+            "before": {
+              "top": 125.234375,
+              "y": 293
+            },
+            "after": {
+              "top": 125.234375,
+              "y": 370
+            }
+          }
+        }
+      },
+      {
+        "name": "delayed arrival and reading stability /contact/ 390",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "delayed-arrival": {
+            "firstFrame": {
+              "bannerPresent": false,
+              "mainTop": 69,
+              "bannerBottom": null
+            },
+            "before": {
+              "top": -100.40625,
+              "y": 293
+            },
+            "after": {
+              "top": -100.40625,
+              "y": 362
+            }
+          }
+        }
+      },
+      {
+        "name": "delayed arrival and reading stability /contact/ 1280",
+        "project": "consent-webkit",
+        "status": "passed",
+        "measurements": {
+          "delayed-arrival": {
+            "firstFrame": {
+              "bannerPresent": false,
+              "mainTop": 69,
+              "bannerBottom": null
+            },
+            "before": {
+              "top": -111.859375,
+              "y": 293
+            },
+            "after": {
+              "top": -111.859375,
+              "y": 370
+            }
+          }
+        }
+      }
+    ]
+  }
+}

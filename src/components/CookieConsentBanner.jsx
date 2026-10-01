@@ -51,9 +51,10 @@ const CookieConsentBanner = ({ onConsent, show, onHide, onReservedBottomChange }
     }
     return () => {
       observer?.disconnect();
-      onReservedBottomChange(0);
     };
   }, [isManaging, settingsOpen, onReservedBottomChange]);
+
+  useLayoutEffect(() => () => onReservedBottomChange?.(0), [onReservedBottomChange]);
 
   useEffect(() => {
     if(show) {
@@ -63,13 +64,9 @@ const CookieConsentBanner = ({ onConsent, show, onHide, onReservedBottomChange }
         setPreferences(savedPrefs);
       }
       setIsManaging(true);
-    } else {
-       // On initial load, check if consent has already been given
-      const consent = readCookieConsentPreferences();
-      if (!consent) {
-        const timer = setTimeout(() => setIsManaging(true), 1500);
-        return () => clearTimeout(timer);
-      }
+    } else if (!readCookieConsentPreferences()) {
+      const timer = window.setTimeout(() => setIsManaging(true), 1500);
+      return () => window.clearTimeout(timer);
     }
   }, [show]);
 
@@ -80,10 +77,12 @@ const CookieConsentBanner = ({ onConsent, show, onHide, onReservedBottomChange }
 
     previousFocusRef.current = document.activeElement;
     const scheduleFocus = window.requestAnimationFrame || ((callback) => window.setTimeout(callback, 0));
-    scheduleFocus(() => bannerRef.current?.focus());
+    const cancelFocus = window.cancelAnimationFrame || window.clearTimeout;
+    const focusFrame = scheduleFocus(() => bannerRef.current?.focus({ preventScroll: true }));
 
     return () => {
-      previousFocusRef.current?.focus?.();
+      cancelFocus(focusFrame);
+      previousFocusRef.current?.focus?.({ preventScroll: true });
     };
   }, [isManaging, show]);
 
@@ -143,8 +142,8 @@ const CookieConsentBanner = ({ onConsent, show, onHide, onReservedBottomChange }
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: entranceOffset }}
           transition={{ duration: 0.2 }}
-          className="fixed top-[72px] left-0 right-0 z-40 bg-[rgba(12,13,13,0.98)] backdrop-blur-lg border-b border-white/20 shadow-xl"
-          style={{ marginBottom: 0, top: '72px' }}
+          className="fixed left-0 right-0 z-40 bg-[rgba(12,13,13,0.98)] backdrop-blur-lg border-b border-white/20 shadow-xl"
+          style={{ marginBottom: 0, top: 'var(--site-header-height)' }}
         >
           <div className="max-w-[1400px] mx-auto px-4 py-3 sm:px-6 sm:py-4 flex items-center gap-3 sm:gap-6">
             <div className="hidden sm:flex items-center flex-shrink-0">

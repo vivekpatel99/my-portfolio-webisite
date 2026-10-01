@@ -141,6 +141,11 @@ for (const width of WIDTHS) {
 
       const dialog = dialogOf(page);
       await expect(dialog).toBeVisible({ timeout: 5000 });
+      // The approved entrance reserves its final height before its transform settles.
+      await expect.poll(() => dialog.evaluate((el) => {
+        const style = getComputedStyle(el);
+        return Number(style.opacity) === 1 && (style.transform === 'none' || new DOMMatrixReadOnly(style.transform).m42 === 0);
+      })).toBe(true);
       const shown = await geometry(page);
       expect(shown.mainTop).toBeGreaterThanOrEqual(Math.floor(shown.dialogBottom));
       expect(shown.mainTop - shown.dialogBottom).toBeLessThan(2);

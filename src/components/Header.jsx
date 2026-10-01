@@ -183,7 +183,10 @@ const Header = () => {
         ref={headerRef}
         className="sticky top-0 z-40 bg-gradient-to-b from-[rgba(139,92,246,0.05)] to-[rgba(12,13,13,0.92)] backdrop-blur-[14px] border-b border-[rgba(139,92,246,0.38)]"
       >
-        <div className="max-w-[1120px] mx-auto px-7 h-[68px] flex items-center gap-[22px]">
+        <div
+          className="max-w-[1120px] mx-auto px-7 flex items-center gap-[22px]"
+          style={{ height: 'calc(var(--site-header-height) - 1px)' }}
+        >
           <Link to="/" onClick={handleHomeClick} className="flex items-center flex-shrink-0" aria-label="Vivek Patel Logo">
             <img src={logos.logo} srcSet={logos.logoSrcSet} alt="" width="30" height="30" className="w-[30px] h-[30px] object-contain" />
           </Link>

@@ -4,7 +4,7 @@
 import React from 'react';
 import { render, screen, waitFor, cleanup, act, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import CookieConsentBanner from './CookieConsentBanner';
 import { COOKIE_CONSENT_KEY } from '@/lib/consent';
 
@@ -41,6 +41,12 @@ describe('CookieConsentBanner', () => {
     vi.clearAllMocks();
   });
 
+  afterEach(() => {
+    cleanup();
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
   it('persists a reject choice when the close button is clicked', async () => {
     const user = userEvent.setup();
     const onConsent = vi.fn();
@@ -64,7 +70,7 @@ describe('CookieConsentBanner', () => {
     render(<CookieConsentBanner onConsent={vi.fn()} show onHide={vi.fn()} />);
     const dialog = screen.getByRole('dialog', { name: /we value your privacy/i });
     const classes = dialog.className.split(/\s+/);
-    expect(classes).toContain('top-[72px]');
+    expect(dialog.style.top).toBe('var(--site-header-height)');
     expect(classes).toContain('left-0');
     expect(classes).toContain('right-0');
     expect(classes).not.toContain('bottom-2');
@@ -96,14 +102,34 @@ describe('CookieConsentBanner', () => {
     trigger.remove();
   });
 
+  it.each([false, true])('keeps a saved analytics=%s decision hidden on first paint', (analytics) => {
+    storage.set(COOKIE_CONSENT_KEY, JSON.stringify({ necessary: true, analytics }));
+    render(<CookieConsentBanner onConsent={vi.fn()} show={false} onHide={vi.fn()} />);
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('cancels pending manager focus when dismissed and restores focus without scrolling', () => {
+    const trigger = document.createElement('button');
+    document.body.appendChild(trigger);
+    trigger.focus();
+    const restoreFocus = vi.spyOn(trigger, 'focus');
+    vi.spyOn(window, 'requestAnimationFrame').mockReturnValue(42);
+    const cancelFocus = vi.spyOn(window, 'cancelAnimationFrame');
+    render(<CookieConsentBanner onConsent={vi.fn()} show onHide={vi.fn()} />);
+    fireEvent.click(screen.getByRole('button', { name: /^reject$/i }));
+    expect(cancelFocus).toHaveBeenCalledWith(42);
+    expect(restoreFocus).toHaveBeenCalledWith({ preventScroll: true });
+    expect(document.activeElement).toBe(trigger);
+    trigger.remove();
+  });
+
   it('hides at once on first-visit Reject All', async () => {
     vi.useFakeTimers();
     const onHide = vi.fn();
     render(<CookieConsentBanner onConsent={vi.fn()} show={false} onHide={onHide} />);
     expect(screen.queryByRole('dialog')).toBeNull();
-    await act(async () => {
-      vi.advanceTimersByTime(1500);
-    });
+    await act(async () => vi.advanceTimersByTime(1500));
+    expect(screen.getByRole('dialog', { name: /we value your privacy/i })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: /^reject$/i }));
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(onHide).toHaveBeenCalledTimes(1);

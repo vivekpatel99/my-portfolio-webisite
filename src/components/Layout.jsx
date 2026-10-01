@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useEffect, useCallback, useRef } from 'react';
+import React, { Suspense, useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -14,20 +14,56 @@ const Layout = () => {
   const location = useLocation();
   const [gaConsent, setGaConsent] = useState(readAnalyticsConsent);
   const [showConsentManager, setShowConsentManager] = useState(false);
-  const [consentSpacerHeight, setConsentSpacerHeight] = useState(0);
   const consentSpacerRef = useRef(null);
+  const anchoringFrameRef = useRef(null);
+  const previousAnchoringRef = useRef(null);
+
+  const restoreScrollAnchoring = useCallback(() => {
+    if (anchoringFrameRef.current !== null) {
+      window.cancelAnimationFrame(anchoringFrameRef.current);
+      anchoringFrameRef.current = null;
+    }
+    if (previousAnchoringRef.current !== null) {
+      document.documentElement.style.overflowAnchor = previousAnchoringRef.current;
+      previousAnchoringRef.current = null;
+    }
+  }, []);
+
+  useLayoutEffect(() => restoreScrollAnchoring, [restoreScrollAnchoring]);
 
   const handleConsentBannerBottom = useCallback((bannerBottom) => {
     const spacer = consentSpacerRef.current;
-    const spacerTop = spacer ? spacer.getBoundingClientRect().top + window.scrollY : 0;
+    // WebKit can scroll when scroll-padding changes, so capture geometry before updating it.
+    const scrollY = window.scrollY;
+    const spacerTop = spacer ? spacer.getBoundingClientRect().top + scrollY : 0;
     const rootStyle = document.documentElement.style;
     if (bannerBottom > 0) {
       rootStyle.setProperty('--consent-banner-bottom', `${Math.ceil(bannerBottom)}px`);
     } else {
       rootStyle.removeProperty('--consent-banner-bottom');
     }
-    setConsentSpacerHeight(bannerBottom > 0 ? Math.max(0, Math.ceil(bannerBottom - spacerTop)) : 0);
-  }, []);
+    if (!spacer) return;
+
+    const oldHeight = parseFloat(spacer.style.height) || 0;
+    const nextHeight = bannerBottom > 0 ? Math.max(0, Math.ceil(bannerBottom - spacerTop)) : 0;
+    if (oldHeight === nextHeight) {
+      spacer.style.height = `${nextHeight}px`;
+      return;
+    }
+
+    // Own this adjustment in both engines instead of adding to Chromium's native anchoring.
+    if (previousAnchoringRef.current === null) {
+      previousAnchoringRef.current = rootStyle.overflowAnchor;
+    }
+    if (anchoringFrameRef.current !== null) window.cancelAnimationFrame(anchoringFrameRef.current);
+    rootStyle.overflowAnchor = 'none';
+    // Reserve before paint and before scrolling; a queued React update would leave the old scroll range.
+    spacer.style.height = `${nextHeight}px`;
+    if (scrollY >= spacerTop + oldHeight) {
+      window.scrollTo({ top: scrollY + nextHeight - oldHeight, behavior: 'instant' });
+    }
+    anchoringFrameRef.current = window.requestAnimationFrame(restoreScrollAnchoring);
+  }, [restoreScrollAnchoring]);
 
   const syncAnalyticsConsent = useCallback(() => {
     setGaConsent(readAnalyticsConsent());
@@ -78,7 +114,6 @@ const Layout = () => {
         <div
           ref={consentSpacerRef}
           data-testid="cookie-consent-spacer"
-          style={{ height: consentSpacerHeight }}
           aria-hidden="true"
         />
         <main id="main-content" className="flex-grow">
