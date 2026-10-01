@@ -21,9 +21,10 @@ export async function guardLocalNavigation(route) {
   }
 
   // Route handlers alone do not inspect every hop followed by route.fetch.
+  const method = request.method();
   let response;
   try {
-    response = await route.fetch({ maxRedirects: 0 });
+    response = await route.fetch({ maxRedirects: 0, maxRetries: method === 'GET' || method === 'HEAD' ? 1 : 0 });
   } catch (error) {
     // Chromium can cancel an intercepted subresource as a page closes.
     // There is no response to clean up, and this exact cancellation is non-actionable.
