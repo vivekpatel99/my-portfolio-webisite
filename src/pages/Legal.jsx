@@ -22,7 +22,7 @@ const Legal = () => {
         <p className="text-gray-400 mb-6">Last updated: June 1, 2026</p>
         
         <div className="prose prose-invert prose-lg max-w-none text-gray-300 space-y-6">
-          <p>Vivek Patel ("I", "me", or "my") operates the https://www.vivekapatel.com website (the "Service"). This page informs you of my policies regarding the collection, use, and disclosure of personal data when you use my Service and the choices you have associated with that data. This Privacy Policy is compliant with the General Data Protection Regulation (GDPR).</p>
+          <p>Vivek Patel (“I”, “me”, or “my”) operates the https://www.vivekapatel.com website (the “Service”). This page informs you of my policies regarding the collection, use, and disclosure of personal data when you use my Service and the choices you have associated with that data. This Privacy Policy is compliant with the General Data Protection Regulation (GDPR).</p>
 
           <h2 className="text-2xl font-bold text-white mt-8">Data Controller</h2>
           <p>Vivek Patel is the data controller of your personal information.</p>
@@ -31,13 +31,13 @@ const Legal = () => {
           <h2 className="text-2xl font-bold text-white mt-8">Information Collection and Use</h2>
           <p>I collect several different types of information for various purposes to provide and improve my Service to you.</p>
           <h3 className="text-xl font-semibold text-white mt-4">Types of Data Collected</h3>
-          <p><strong>Personal Data (Contact Form):</strong> While using my Service, specifically the contact form, I may ask you to provide me with certain personally identifiable information that can be used to contact or identify you ("Personal Data"). Personally identifiable information may include, but is not limited to:</p>
+          <p><strong>Personal Data (Contact Form):</strong> While using my Service, specifically the contact form, I may ask you to provide me with certain personally identifiable information that can be used to contact or identify you (“Personal Data”). Personally identifiable information may include, but is not limited to:</p>
           <ul className="list-disc pl-5 space-y-2">
             <li>Email address</li>
             <li>Full Name</li>
             <li>Project Description and Budget</li>
           </ul>
-          <p><strong>Usage Data (with consent):</strong> With your explicit consent via our cookie banner, I may also collect information on how the Service is accessed and used ("Usage Data") through Google Analytics and Sentry. This Usage Data may include information such as your computer's Internet Protocol address (e.g. IP address), browser type, browser version, pages visited, time and date of visits, time spent on pages, performance data, and error diagnostics.</p>
+          <p><strong>Usage Data (with consent):</strong> With your explicit consent via our cookie banner, I may also collect information on how the Service is accessed and used (“Usage Data”) through Google Analytics and Sentry. This Usage Data may include information such as your computer's Internet Protocol address (e.g. IP address), browser type, browser version, pages visited, time and date of visits, time spent on pages, performance data, and error diagnostics.</p>
           <p><strong>Cookies Data:</strong> I use cookies and similar tracking technologies to track the activity on our Service. Please see my <Link to="/data-policy/" className="text-accent-purple-text underline underline-offset-2">Cookie Policy</Link> for more details.</p>
 
           <h2 className="text-2xl font-bold text-white mt-8">Legal Basis for Processing under GDPR</h2>
@@ -60,7 +60,7 @@ const Legal = () => {
           <p>To exercise any of these rights, please contact me at my email address listed above. Please note that I may ask you to verify your identity before responding to such requests.</p>
           
           <h2 className="text-2xl font-bold text-white mt-8">Data Processors</h2>
-          <p>I use third-party services to facilitate my service ("Service Providers"), and these are my main data processors:</p>
+          <p>I use third-party services to facilitate my service (“Service Providers”), and these are my main data processors:</p>
           <ul className="list-disc pl-5 space-y-2">
               <li><strong><a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-accent-purple-text underline underline-offset-2">Resend</a>:</strong> For transactional email delivery when you submit the contact form.</li>
               <li><strong><a href="https://www.convex.dev/legal/privacy" target="_blank" rel="noopener noreferrer" className="text-accent-purple-text underline underline-offset-2">Convex</a>:</strong> For database hosting and backend services (contact form submissions).</li>
