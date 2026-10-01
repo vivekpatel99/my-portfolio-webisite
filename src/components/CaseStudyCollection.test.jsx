@@ -43,6 +43,25 @@ describe('CaseStudyCollection', () => {
     expect(container.querySelector('.md\\:grid-cols-2.lg\\:grid-cols-3')).toBeTruthy();
   });
 
+  it('prioritizes only the first collection cover', () => {
+    const storiesWithImages = stories.map((story, index) => ({
+      ...story,
+      image: {
+        src: `/synthetic-cover-${index}.png`,
+        alt: `Synthetic cover ${index}`,
+        width: 1280,
+        height: 720,
+      },
+    }));
+    render(<MemoryRouter><CaseStudyCollection stories={storiesWithImages} /></MemoryRouter>);
+
+    const [first, second] = screen.getAllByRole('img');
+    expect(first.getAttribute('loading')).toBe('eager');
+    expect(first.getAttribute('fetchpriority')).toBe('high');
+    expect(second.getAttribute('loading')).toBe('lazy');
+    expect(second.hasAttribute('fetchpriority')).toBe(false);
+  });
+
   it('renders a readable empty state', () => {
     render(
       <MemoryRouter>

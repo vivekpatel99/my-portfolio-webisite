@@ -1,0 +1,78 @@
+[
+  {
+    "profile": "mobile",
+    "label": "before",
+    "geometry": {
+      "src": "http://127.0.0.1:4179/assets/case-studies/ai-invoice-processing-automation-f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png",
+      "loaded": true,
+      "natural": [
+        2448,
+        684
+      ],
+      "rect": {
+        "width": 354,
+        "height": 300
+      },
+      "horizontalOverflow": false
+    }
+  },
+  {
+    "profile": "mobile",
+    "label": "final",
+    "geometry": {
+      "src": "http://127.0.0.1:4178/assets/case-studies/case-study-display-f36fee637d46-5ad6c7685bd1.webp",
+      "loaded": true,
+      "natural": [
+        2448,
+        684
+      ],
+      "rect": {
+        "width": 354,
+        "height": 300
+      },
+      "horizontalOverflow": false
+    }
+  },
+  {
+    "profile": "article",
+    "label": "before",
+    "geometry": {
+      "src": "http://127.0.0.1:4179/assets/case-studies/n8n-openai-data-extraction-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png",
+      "loaded": true,
+      "natural": [
+        2984,
+        874
+      ],
+      "rect": {
+        "width": 674,
+        "height": 179.015625
+      },
+      "horizontalOverflow": false
+    }
+  },
+  {
+    "profile": "article",
+    "label": "final",
+    "geometry": {
+      "src": "http://127.0.0.1:4178/assets/case-studies/case-study-display-b11f57c86cd2-3d31a82cd9be.webp",
+      "loaded": true,
+      "natural": [
+        2049,
+        600
+      ],
+      "rect": {
+        "width": 674,
+        "height": 179.015625
+      },
+      "horizontalOverflow": false
+    }
+  },
+  {
+    "keyboard": {
+      "initialFocus": "Close enlarged image",
+      "trapped": true,
+      "restored": true,
+      "expandedSource": "/assets/case-studies/n8n-openai-data-extraction-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png"
+    }
+  }
+]
