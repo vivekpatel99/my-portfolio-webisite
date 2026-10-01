@@ -86,6 +86,7 @@ test('service cards have working keyboard and click scope links', async ({ page 
   const services = page.locator('#services');
   await expect(services.getByRole('article')).toHaveCount(serviceOffers.length);
   await expect(services.locator('[aria-expanded]')).toHaveCount(0);
+  await expect(services).toBeFocused();
 
   const firstLink = services.getByRole('article', { name: serviceOffers[0].title }).getByRole('link', { name: /Scope details/i });
   await firstLink.focus();

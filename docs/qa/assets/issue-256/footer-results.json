@@ -1,0 +1,162 @@
+{
+  "base": "db399db4726132371c85f7600bbf221d1cf89023",
+  "axeSha256": "880970c081707360e64f34cea25ff91892f5bc95675b0776925b9709dd8a68bb",
+  "projects": [
+    {
+      "project": "chromium-1440-no-preference",
+      "routeChecks": 21,
+      "controlChecks": 210,
+      "minHeight": 24,
+      "minWidth": 30.890625,
+      "targetSizeViolations": 0,
+      "incompleteAudits": 0,
+      "overflowRoutes": [],
+      "axeVersion": "4.10.3"
+    },
+    {
+      "project": "chromium-1440-reduce",
+      "routeChecks": 21,
+      "controlChecks": 210,
+      "minHeight": 24,
+      "minWidth": 30.890625,
+      "targetSizeViolations": 0,
+      "incompleteAudits": 0,
+      "overflowRoutes": [],
+      "axeVersion": "4.10.3"
+    },
+    {
+      "project": "chromium-320-no-preference",
+      "routeChecks": 21,
+      "controlChecks": 210,
+      "minHeight": 24,
+      "minWidth": 30.890625,
+      "targetSizeViolations": 0,
+      "incompleteAudits": 0,
+      "overflowRoutes": [],
+      "axeVersion": "4.10.3"
+    },
+    {
+      "project": "chromium-320-reduce",
+      "routeChecks": 21,
+      "controlChecks": 210,
+      "minHeight": 24,
+      "minWidth": 30.890625,
+      "targetSizeViolations": 0,
+      "incompleteAudits": 0,
+      "overflowRoutes": [],
+      "axeVersion": "4.10.3"
+    },
+    {
+      "project": "chromium-390-no-preference",
+      "routeChecks": 21,
+      "controlChecks": 210,
+      "minHeight": 24,
+      "minWidth": 30.890625,
+      "targetSizeViolations": 0,
+      "incompleteAudits": 0,
+      "overflowRoutes": [],
+      "axeVersion": "4.10.3"
+    },
+    {
+      "project": "chromium-390-reduce",
+      "routeChecks": 21,
+      "controlChecks": 210,
+      "minHeight": 24,
+      "minWidth": 30.890625,
+      "targetSizeViolations": 0,
+      "incompleteAudits": 0,
+      "overflowRoutes": [],
+      "axeVersion": "4.10.3"
+    },
+    {
+      "project": "webkit-1440-no-preference",
+      "routeChecks": 21,
+      "controlChecks": 210,
+      "minHeight": 24,
+      "minWidth": 31.609375,
+      "targetSizeViolations": 0,
+      "incompleteAudits": 0,
+      "overflowRoutes": [],
+      "axeVersion": "4.10.3"
+    },
+    {
+      "project": "webkit-1440-reduce",
+      "routeChecks": 21,
+      "controlChecks": 210,
+      "minHeight": 24,
+      "minWidth": 31.609375,
+      "targetSizeViolations": 0,
+      "incompleteAudits": 0,
+      "overflowRoutes": [],
+      "axeVersion": "4.10.3"
+    },
+    {
+      "project": "webkit-320-no-preference",
+      "routeChecks": 21,
+      "controlChecks": 210,
+      "minHeight": 24,
+      "minWidth": 31.609375,
+      "targetSizeViolations": 0,
+      "incompleteAudits": 0,
+      "overflowRoutes": [],
+      "axeVersion": "4.10.3"
+    },
+    {
+      "project": "webkit-320-reduce",
+      "routeChecks": 21,
+      "controlChecks": 210,
+      "minHeight": 24,
+      "minWidth": 31.609375,
+      "targetSizeViolations": 0,
+      "incompleteAudits": 0,
+      "overflowRoutes": [],
+      "axeVersion": "4.10.3"
+    },
+    {
+      "project": "webkit-390-no-preference",
+      "routeChecks": 21,
+      "controlChecks": 210,
+      "minHeight": 24,
+      "minWidth": 31.609375,
+      "targetSizeViolations": 0,
+      "incompleteAudits": 0,
+      "overflowRoutes": [],
+      "axeVersion": "4.10.3"
+    },
+    {
+      "project": "webkit-390-reduce",
+      "routeChecks": 21,
+      "controlChecks": 210,
+      "minHeight": 24,
+      "minWidth": 31.609375,
+      "targetSizeViolations": 0,
+      "incompleteAudits": 0,
+      "overflowRoutes": [],
+      "axeVersion": "4.10.3"
+    }
+  ],
+  "totalRouteChecks": 252,
+  "routes": [
+    "/",
+    "/contact",
+    "/legal",
+    "/data-policy",
+    "/case-studies",
+    "/services/data-extraction-automation-sprint",
+    "/services/computer-vision-production-optimization",
+    "/services/ai-workflow-buildout",
+    "/project/n8n-openai-data-extraction",
+    "/project/invoice-ocr-extraction",
+    "/project/yolo-computer-vision-optimization",
+    "/project/ai-invoice-processing-automation",
+    "/project/ai-project-planning-assistant",
+    "/project/browser-search-to-spreadsheet",
+    "/project/depth-based-distance-estimation",
+    "/project/healthcare-document-intelligence",
+    "/project/n8n-python-ai-agents",
+    "/project/python-ci-workflow-automation",
+    "/project/resumable-listing-data-extraction",
+    "/project/sports-video-analytics-yolo",
+    "/missing-page/"
+  ]
+}
