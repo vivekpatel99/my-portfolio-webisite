@@ -73,9 +73,9 @@ const displayDerivativesBySourceHash = Object.freeze({
     width: 960, height: 540,
   }),
   'f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275': Object.freeze({
-    src: '/assets/case-studies/case-study-display-f36fee637d46-dfc9dfc26ce1.webp',
-    sha256: 'dfc9dfc26ce1cdea96ba38833cb92adf07de57b1076981d227d2247a3998f9d0',
-    width: 2147, height: 600,
+    src: '/assets/case-studies/case-study-display-f36fee637d46-5ad6c7685bd1.webp',
+    sha256: '5ad6c7685bd1866256108fa1a87da53660f435629cd59e84e4dea8fdad567b0a',
+    width: 2448, height: 684,
   }),
   'c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9': Object.freeze({
     src: '/assets/case-studies/case-study-display-c69906586afb-c5d214b1513f.webp',

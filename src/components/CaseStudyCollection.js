@@ -134,10 +134,11 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies, children = null 
   const grid = React.createElement(
     'div',
     { id: gridId, className: 'grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3' },
-    visibleStories.map((story) => React.createElement(CaseStudyCard, {
+    visibleStories.map((story, index) => React.createElement(CaseStudyCard, {
       key: story.slug,
       project: story,
       fromCollection: true,
+      priorityImage: index === 0,
     })),
   );
   const noscriptLinks = isStaticRender && hasMore

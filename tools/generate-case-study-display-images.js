@@ -12,6 +12,14 @@ const LANDSCAPE_SHORT_EDGE = 600;
 const PORTRAIT_WIDTH = 720;
 const QUALITY_STEPS = [86, 84, 82, 80, 78, 76, 74, 72, 70, 68, 66, 64, 62, 60];
 const IMAGE_EXTENSION = /\.(?:avif|jpe?g|png|webp)$/i;
+const reviewedProfilesBySourceHash = Object.freeze({
+  // Resampling this workflow's 2448x684 dot grid erases the pattern at card size.
+  // Preserve its natural dimensions while converting the approved PNG to bounded WebP.
+  'f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275': Object.freeze({
+    resize: false,
+    webp: Object.freeze({ quality: 59, nearLossless: true, effort: 6 }),
+  }),
+});
 
 sharp.cache(false);
 sharp.concurrency(1);
@@ -41,6 +49,18 @@ export const caseStudyImageSources = (publication) => {
 export const encodeCaseStudyDisplay = async (sourceBytes) => {
   const metadata = await sharp(sourceBytes, { failOn: 'error' }).metadata();
   if (!(metadata.width > 0 && metadata.height > 0)) throw new Error('Cannot read case-study source dimensions');
+  const reviewedProfile = reviewedProfilesBySourceHash[sha256(sourceBytes)];
+  if (reviewedProfile) {
+    const source = sharp(sourceBytes, { failOn: 'error' });
+    const encoder = reviewedProfile.resize ? source.resize(reviewedProfile.resize) : source;
+    const { data, info } = await encoder
+      .webp(reviewedProfile.webp)
+      .toBuffer({ resolveWithObject: true });
+    if (data.byteLength > MAX_DISPLAY_BYTES) {
+      throw new Error(`Reviewed case-study display profile exceeds the ${MAX_DISPLAY_BYTES}-byte limit`);
+    }
+    return { data, quality: reviewedProfile.webp.quality, width: info.width, height: info.height };
+  }
   const resize = metadata.width < metadata.height
     ? { width: PORTRAIT_WIDTH }
     : { height: LANDSCAPE_SHORT_EDGE };

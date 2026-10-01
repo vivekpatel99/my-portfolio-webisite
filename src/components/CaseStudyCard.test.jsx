@@ -55,12 +55,20 @@ describe('CaseStudyCard', () => {
     render(<MemoryRouter><CaseStudyCard project={{ ...project, image }} /></MemoryRouter>);
 
     const cover = screen.getByAltText(image.alt);
-    expect(cover.getAttribute('src')).toBe('/assets/case-studies/case-study-display-f36fee637d46-dfc9dfc26ce1.webp');
+    expect(cover.getAttribute('src')).toBe('/assets/case-studies/case-study-display-f36fee637d46-5ad6c7685bd1.webp');
     expect(cover.getAttribute('src')).not.toBe(image.src);
     expect(cover.getAttribute('width')).toBe(String(image.width));
     expect(cover.getAttribute('height')).toBe(String(image.height));
     expect(cover.getAttribute('loading')).toBe('lazy');
     expect(cover.className).toContain('object-cover');
+  });
+
+  it('loads an explicitly prioritized cover eagerly with high fetch priority', () => {
+    render(<MemoryRouter><CaseStudyCard project={project} priorityImage /></MemoryRouter>);
+
+    const cover = screen.getByAltText(project.image.alt);
+    expect(cover.getAttribute('loading')).toBe('eager');
+    expect(cover.getAttribute('fetchpriority')).toBe('high');
   });
 
   it('keeps the Upwork destination separate from the full-card article link', () => {

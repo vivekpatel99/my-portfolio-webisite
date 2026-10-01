@@ -1,5 +1,5 @@
 {
-  "baseline": "448af6aff86db8304d21e15caf90a849f11fbf58",
+  "baseline": "282d2a20e4eec5bf947303d88efe7df91d3dc860",
   "conditions": {
     "cpu": 4,
     "rtt": 150,
@@ -15,18 +15,18 @@
       },
       "deviceScaleFactor": 1.75,
       "beforeLcpMs": [
-        4280,
         4272,
-        4280
+        4272,
+        4260
       ],
       "afterLcpMs": [
-        1860,
-        1856,
-        1868
+        1720,
+        1728,
+        1736
       ],
       "beforeImageResourceBytes": 645089,
-      "afterImageResourceBytes": 378174,
-      "afterMaxImageRequestBytes": 79588
+      "afterImageResourceBytes": 414050,
+      "afterMaxImageRequestBytes": 87896
     },
     {
       "route": "/project/n8n-openai-data-extraction/",
@@ -36,14 +36,14 @@
       },
       "deviceScaleFactor": 1,
       "beforeLcpMs": [
-        4124,
+        4116,
         4112,
-        4112
+        4116
       ],
       "afterLcpMs": [
-        1768,
         1760,
-        1752
+        1744,
+        1756
       ],
       "beforeImageResourceBytes": 577400,
       "afterImageResourceBytes": 328642,
@@ -57,13 +57,13 @@
       },
       "deviceScaleFactor": 1,
       "beforeLcpMs": [
-        1800,
-        1796,
-        1796
+        1772,
+        1788,
+        1808
       ],
       "afterLcpMs": [
-        1800,
         1804,
+        1800,
         1796
       ],
       "beforeImageResourceBytes": 700793,

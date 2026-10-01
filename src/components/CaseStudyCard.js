@@ -34,6 +34,7 @@ const ArrowGlyph = () =>
 const CaseStudyCard = ({
   project,
   fromCollection = false,
+  priorityImage = false,
 }) => {
   const completionDate = formatCompletionDate(project.completedAt);
   const upworkLink = project.externalLinks?.find((link) => link.label === 'Upwork project');
@@ -57,7 +58,9 @@ const CaseStudyCard = ({
         project.image ? React.createElement('img', {
           className: 'absolute inset-0 w-full h-full object-cover block',
           alt: project.image.alt, src: caseStudyDisplaySrc(project.image),
-          width: project.image.width, height: project.image.height, loading: 'lazy',
+          width: project.image.width, height: project.image.height,
+          loading: priorityImage ? 'eager' : 'lazy',
+          fetchpriority: priorityImage ? 'high' : undefined,
         }) : null,
         React.createElement('div', { className: 'scrim absolute inset-0 bg-gradient-to-b from-transparent via-[rgba(12,13,13,0.35)] to-[rgba(12,13,13,0.92)] z-[1]', 'aria-hidden': true }),
         React.createElement(
