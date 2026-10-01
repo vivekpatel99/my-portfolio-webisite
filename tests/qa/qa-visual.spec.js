@@ -30,8 +30,8 @@ test('home request CTA is visible, usable, and separated from its companion link
   await settleLayout(page);
 
   const viewport = viewportBox(page);
-  const cta = page.getByRole('button', { name: /Request a Project Estimate/i }).first();
-  const companion = page.getByRole('link', { name: 'View Case Studies' });
+  const cta = page.getByRole('link', { name: /Request a Project Estimate/i }).first();
+  const companion = page.getByRole('link', { name: 'View Case Studies', exact: true });
   await expect(cta).toBeVisible();
   await expect(companion).toBeVisible();
   const ctaBox = await cta.boundingBox();
@@ -93,7 +93,7 @@ test('mobile cookie dialog and its controls remain visible and do not cover the 
     });
   }
 
-  const cta = page.getByRole('button', { name: /Request a Project Estimate/i }).first();
+  const cta = page.getByRole('link', { name: /Request a Project Estimate/i }).first();
   await expect(cta).toBeVisible();
   assertVisualLayout({
     label: 'hero request estimate CTA beside cookie dialog',
@@ -130,7 +130,7 @@ test('hero invoice proof fold design (#176): proofs visible, CTA routes correctl
   await expect(dialog).toBeVisible({ timeout: 5000 });
   const dialogBox = await dialog.boundingBox();
   
-  const cta = page.getByRole('button', { name: 'Request a Project Estimate' }).first();
+  const cta = page.getByRole('link', { name: 'Request a Project Estimate' }).first();
   await expect(cta).toBeVisible();
   const ctaBox = await cta.boundingBox();
   
@@ -178,7 +178,7 @@ test('desktop hero invoice proof fold: all elements visible, no clip', async ({ 
   await expect(dialog).toBeVisible({ timeout: 5000 });
   const dialogBox = await dialog.boundingBox();
   
-  const cta = page.getByRole('button', { name: 'Request a Project Estimate' }).first();
+  const cta = page.getByRole('link', { name: 'Request a Project Estimate' }).first();
   await expect(cta).toBeVisible();
   const ctaBox = await cta.boundingBox();
   

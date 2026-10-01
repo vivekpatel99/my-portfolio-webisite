@@ -51,7 +51,7 @@ test.describe('route chunk recovery', () => {
     await page.goto('/');
     await failChunk(page, CHUNKS.contact);
 
-    const cta = page.locator('#main-content').getByRole('button', { name: 'Request a Project Estimate' }).first();
+    const cta = page.locator('#main-content').getByRole('link', { name: 'Request a Project Estimate' }).first();
     await cta.focus();
     await page.keyboard.press('Enter');
 
@@ -72,9 +72,9 @@ test.describe('route chunk recovery', () => {
       await page.keyboard.press('Enter');
       const menu = page.getByRole('dialog', { name: 'Navigation menu' });
       await expect(menu).toBeVisible();
-      await menu.getByRole('button', { name: 'Request a Project Estimate' }).focus();
+      await menu.getByRole('link', { name: 'Request a Project Estimate' }).focus();
     } else {
-      await page.locator('header').getByRole('button', { name: 'Request Estimate', exact: true }).focus();
+      await page.locator('header').getByRole('link', { name: 'Request Estimate', exact: true }).focus();
     }
     await page.keyboard.press('Enter');
 
@@ -119,7 +119,7 @@ test.describe('route chunk recovery', () => {
 
     await expect(page).toHaveURL(/\/$/);
     await expect(page.getByRole('heading', { name: HEADING })).toHaveCount(0);
-    await expect(page.locator('#main-content').getByRole('button', { name: 'Request a Project Estimate' }).first())
+    await expect(page.locator('#main-content').getByRole('link', { name: 'Request a Project Estimate' }).first())
       .toBeVisible();
   });
 

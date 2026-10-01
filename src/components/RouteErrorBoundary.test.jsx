@@ -104,16 +104,18 @@ describe('RouteErrorBoundary', () => {
 
     expect(screen.queryByRole('heading', { name: ROUTE_ERROR_HEADING })).toBeNull();
     expect(screen.getByRole('heading', { name: 'Healthy page' })).toBeTruthy();
-    expect(document.activeElement).toBe(document.getElementById('main-content'));
+    await waitFor(() => expect(document.activeElement).toBe(document.getElementById('main-content')));
   });
 
-  it('focuses the recovery heading when navigation reaches a route that throws', () => {
+  it('preserves recovery heading focus after navigation reaches a route that throws', async () => {
     renderApp('/healthy');
 
     act(() => navigate('/render-broken'));
 
     const heading = screen.getByRole('heading', { level: 1, name: ROUTE_ERROR_HEADING });
     expectShellIntact();
+    expect(document.activeElement).toBe(heading);
+    await act(async () => { await new Promise(window.requestAnimationFrame); });
     expect(document.activeElement).toBe(heading);
   });
 
@@ -125,6 +127,8 @@ describe('RouteErrorBoundary', () => {
     const heading = await screen.findByRole('heading', { level: 1, name: ROUTE_ERROR_HEADING });
     expectShellIntact();
     await waitFor(() => expect(document.activeElement).toBe(heading));
+    await act(async () => { await new Promise(window.requestAnimationFrame); });
+    expect(document.activeElement).toBe(heading);
   });
 
   it('clears the fallback after navigation with a hash', () => {

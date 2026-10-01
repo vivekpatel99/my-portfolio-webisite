@@ -155,7 +155,7 @@ test('header hash nav from contact page lands on services', async ({ page }) => 
 test('primary estimate CTA navigates to contact', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/');
-  await page.getByRole('banner').getByRole('button', { name: /Request Estimate/i }).click();
+  await page.getByRole('banner').getByRole('link', { name: /Request Estimate/i }).click();
   await expect(page).toHaveURL(/\/contact/);
 });
 

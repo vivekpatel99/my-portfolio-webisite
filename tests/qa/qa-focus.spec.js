@@ -203,7 +203,7 @@ test.describe('keyboard focus regressions', () => {
       await expect(background).not.toHaveAttribute('inert', '');
       await expect(background).not.toHaveAttribute('aria-hidden', 'true');
     }
-    const desktopEstimate = page.getByRole('button', { name: 'Request Estimate', exact: true });
+    const desktopEstimate = page.getByRole('link', { name: 'Request Estimate', exact: true });
     await expect(desktopEstimate).toBeVisible();
     await expect(desktopEstimate).toBeFocused();
     const caseStudies = page.getByRole('navigation').getByRole('link', { name: 'Case Studies' });
@@ -261,15 +261,15 @@ test.describe('keyboard focus regressions', () => {
     await expect(header).not.toHaveAttribute('inert', '');
     await expect(main).not.toHaveAttribute('inert', '');
     await expect(siteFooter).not.toHaveAttribute('inert', '');
-    await expect(header.getByRole('button', { name: 'Request Estimate' })).toBeFocused();
+    await expect(header.getByRole('link', { name: 'Request Estimate' })).toBeFocused();
 
     const desktopControls = [
       page.getByRole('navigation').getByRole('link', { name: 'Services', exact: true }),
       page.getByRole('navigation').getByRole('link', { name: 'About', exact: true }),
       page.getByRole('navigation').getByRole('link', { name: 'Case Studies', exact: true }),
       page.getByRole('navigation').getByRole('link', { name: 'Testimonials', exact: true }),
-      header.getByRole('button', { name: 'Request Estimate' }),
-      main.getByRole('button', { name: 'Request a Project Estimate' }).first(),
+      header.getByRole('link', { name: 'Request Estimate' }),
+      main.getByRole('link', { name: 'Request a Project Estimate' }).first(),
     ];
     for (const control of desktopControls) {
       await expect(control).toBeVisible();
@@ -397,7 +397,7 @@ test.describe('keyboard focus regressions', () => {
         await expectDrawerScrollable(menu);
       }
       if (useNativeWheel) {
-        await wheelDrawerToCta(page, menu, menu.getByRole('button', { name: 'Request a Project Estimate' }));
+        await wheelDrawerToCta(page, menu, menu.getByRole('link', { name: 'Request a Project Estimate' }));
       }
 
       await page.keyboard.press('Escape');
@@ -412,7 +412,7 @@ test.describe('keyboard focus regressions', () => {
       // The final CTA is reachable by a real pointer hit at its measured centre.
       await toggle.click();
       await expect(menu).toBeVisible();
-      const cta = menu.getByRole('button', { name: 'Request a Project Estimate' });
+      const cta = menu.getByRole('link', { name: 'Request a Project Estimate' });
       if (isShortDrawer) {
         await expectDrawerScrollable(menu);
       }
@@ -437,7 +437,7 @@ test.describe('keyboard focus regressions', () => {
     const { route, viewport } = drawerCase;
     test(`short mobile menu scrolled to its CTA releases landmarks at 768px on ${route} (${viewport.width}x${viewport.height})`, async ({ page }) => {
       const { menu } = await openDrawer(page, drawerCase);
-      const cta = menu.getByRole('button', { name: 'Request a Project Estimate' });
+      const cta = menu.getByRole('link', { name: 'Request a Project Estimate' });
       await cta.focus();
       await expectDrawerActionVisible(cta, 'Request a Project Estimate before resize');
 
@@ -447,7 +447,7 @@ test.describe('keyboard focus regressions', () => {
         await expect(landmark).not.toHaveAttribute('inert', '');
         await expect(landmark).not.toHaveAttribute('aria-hidden', 'true');
       }
-      await expect(page.locator('header').getByRole('button', { name: 'Request Estimate', exact: true })).toBeFocused();
+      await expect(page.locator('header').getByRole('link', { name: 'Request Estimate', exact: true })).toBeFocused();
     });
   }
 });
