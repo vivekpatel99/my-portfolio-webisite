@@ -1,0 +1,314 @@
+{
+  "base_sha": "282d2a20e4eec5bf947303d88efe7df91d3dc860",
+  "conditions": {
+    "browser": "Chromium",
+    "viewport": {
+      "width": 1350,
+      "height": 940
+    },
+    "cpu_throttling_rate": 4,
+    "duration_target_ms": 2000,
+    "pointer_moves": 241,
+    "scroll_y": 1200,
+    "consent": {
+      "necessary": true,
+      "analytics": false
+    }
+  },
+  "baseline": [
+    {
+      "reducedMotion": "no-preference",
+      "run": 1,
+      "moves": 241,
+      "elapsedMs": 2004,
+      "commits": 241,
+      "scriptMs": 116.426,
+      "taskMs": 406.186
+    },
+    {
+      "reducedMotion": "no-preference",
+      "run": 2,
+      "moves": 241,
+      "elapsedMs": 2005,
+      "commits": 241,
+      "scriptMs": 116.569,
+      "taskMs": 377.892
+    },
+    {
+      "reducedMotion": "no-preference",
+      "run": 3,
+      "moves": 241,
+      "elapsedMs": 2004,
+      "commits": 241,
+      "scriptMs": 98.593,
+      "taskMs": 318.82099999999997
+    },
+    {
+      "reducedMotion": "reduce",
+      "run": 1,
+      "moves": 241,
+      "elapsedMs": 2001,
+      "commits": 0,
+      "scriptMs": 10.468,
+      "taskMs": 56.408
+    },
+    {
+      "reducedMotion": "reduce",
+      "run": 2,
+      "moves": 241,
+      "elapsedMs": 2004,
+      "commits": 0,
+      "scriptMs": 10.791,
+      "taskMs": 50.696999999999996
+    },
+    {
+      "reducedMotion": "reduce",
+      "run": 3,
+      "moves": 241,
+      "elapsedMs": 2001,
+      "commits": 0,
+      "scriptMs": 7.508,
+      "taskMs": 40.067
+    }
+  ],
+  "delivered": [
+    {
+      "reducedMotion": "no-preference",
+      "run": 1,
+      "moves": 241,
+      "elapsedMs": 2003,
+      "commits": 0,
+      "scriptMs": 66.77,
+      "taskMs": 355.313,
+      "styleMs": 23.362000000000002,
+      "layoutMs": 0,
+      "styleCount": 241,
+      "layoutCount": 0
+    },
+    {
+      "reducedMotion": "no-preference",
+      "run": 2,
+      "moves": 241,
+      "elapsedMs": 2008,
+      "commits": 0,
+      "scriptMs": 37.845,
+      "taskMs": 232.922,
+      "styleMs": 7.054,
+      "layoutMs": 0,
+      "styleCount": 241,
+      "layoutCount": 0
+    },
+    {
+      "reducedMotion": "no-preference",
+      "run": 3,
+      "moves": 241,
+      "elapsedMs": 2006,
+      "commits": 0,
+      "scriptMs": 34.366,
+      "taskMs": 241.709,
+      "styleMs": 9.895,
+      "layoutMs": 0,
+      "styleCount": 241,
+      "layoutCount": 0
+    },
+    {
+      "reducedMotion": "reduce",
+      "run": 1,
+      "moves": 241,
+      "elapsedMs": 2006,
+      "commits": 0,
+      "scriptMs": 13.458,
+      "taskMs": 86.639,
+      "styleMs": 0,
+      "layoutMs": 0,
+      "styleCount": 0,
+      "layoutCount": 0
+    },
+    {
+      "reducedMotion": "reduce",
+      "run": 2,
+      "moves": 241,
+      "elapsedMs": 2001,
+      "commits": 0,
+      "scriptMs": 10.187,
+      "taskMs": 51.461000000000006,
+      "styleMs": 0,
+      "layoutMs": 0,
+      "styleCount": 0,
+      "layoutCount": 0
+    },
+    {
+      "reducedMotion": "reduce",
+      "run": 3,
+      "moves": 241,
+      "elapsedMs": 2001,
+      "commits": 0,
+      "scriptMs": 7.079000000000001,
+      "taskMs": 46.690000000000005,
+      "styleMs": 0,
+      "layoutMs": 0,
+      "styleCount": 0,
+      "layoutCount": 0
+    }
+  ],
+  "unshipped_will_change_trial": [
+    {
+      "reducedMotion": "no-preference",
+      "run": 1,
+      "moves": 241,
+      "elapsedMs": 2004,
+      "commits": 0,
+      "scriptMs": 53.961,
+      "taskMs": 299.077,
+      "styleMs": 12.981,
+      "layoutMs": 0,
+      "styleCount": 241,
+      "layoutCount": 0
+    },
+    {
+      "reducedMotion": "no-preference",
+      "run": 2,
+      "moves": 241,
+      "elapsedMs": 2003,
+      "commits": 0,
+      "scriptMs": 32.576,
+      "taskMs": 235.313,
+      "styleMs": 11.192,
+      "layoutMs": 0,
+      "styleCount": 241,
+      "layoutCount": 0
+    },
+    {
+      "reducedMotion": "no-preference",
+      "run": 3,
+      "moves": 241,
+      "elapsedMs": 2005,
+      "commits": 0,
+      "scriptMs": 40.635,
+      "taskMs": 258.411,
+      "styleMs": 9.519,
+      "layoutMs": 0,
+      "styleCount": 241,
+      "layoutCount": 0
+    },
+    {
+      "reducedMotion": "reduce",
+      "run": 1,
+      "moves": 241,
+      "elapsedMs": 2004,
+      "commits": 0,
+      "scriptMs": 8.591,
+      "taskMs": 55.801,
+      "styleMs": 0,
+      "layoutMs": 0,
+      "styleCount": 0,
+      "layoutCount": 0
+    },
+    {
+      "reducedMotion": "reduce",
+      "run": 2,
+      "moves": 241,
+      "elapsedMs": 2004,
+      "commits": 0,
+      "scriptMs": 10.194999999999999,
+      "taskMs": 48.025,
+      "styleMs": 0,
+      "layoutMs": 0,
+      "styleCount": 0,
+      "layoutCount": 0
+    },
+    {
+      "reducedMotion": "reduce",
+      "run": 3,
+      "moves": 241,
+      "elapsedMs": 2006,
+      "commits": 0,
+      "scriptMs": 11.933,
+      "taskMs": 71.629,
+      "styleMs": 0,
+      "layoutMs": 0,
+      "styleCount": 0,
+      "layoutCount": 0
+    }
+  ],
+  "unshipped_body_placement_trial": [
+    {
+      "reducedMotion": "no-preference",
+      "run": 1,
+      "moves": 241,
+      "elapsedMs": 2010,
+      "commits": 0,
+      "scriptMs": 55.387,
+      "taskMs": 285.354,
+      "styleMs": 14.885,
+      "layoutMs": 0,
+      "styleCount": 242,
+      "layoutCount": 0
+    },
+    {
+      "reducedMotion": "no-preference",
+      "run": 2,
+      "moves": 241,
+      "elapsedMs": 2009,
+      "commits": 0,
+      "scriptMs": 30.368,
+      "taskMs": 223.605,
+      "styleMs": 4.354,
+      "layoutMs": 0,
+      "styleCount": 242,
+      "layoutCount": 0
+    },
+    {
+      "reducedMotion": "no-preference",
+      "run": 3,
+      "moves": 241,
+      "elapsedMs": 2011,
+      "commits": 0,
+      "scriptMs": 37.574000000000005,
+      "taskMs": 240.693,
+      "styleMs": 7.832000000000001,
+      "layoutMs": 0,
+      "styleCount": 242,
+      "layoutCount": 0
+    },
+    {
+      "reducedMotion": "reduce",
+      "run": 1,
+      "moves": 241,
+      "elapsedMs": 2005,
+      "commits": 0,
+      "scriptMs": 13.508,
+      "taskMs": 69.87400000000001,
+      "styleMs": 0,
+      "layoutMs": 0,
+      "styleCount": 0,
+      "layoutCount": 0
+    },
+    {
+      "reducedMotion": "reduce",
+      "run": 2,
+      "moves": 241,
+      "elapsedMs": 2005,
+      "commits": 0,
+      "scriptMs": 10.996,
+      "taskMs": 51.142,
+      "styleMs": 0,
+      "layoutMs": 0,
+      "styleCount": 0,
+      "layoutCount": 0
+    },
+    {
+      "reducedMotion": "reduce",
+      "run": 3,
+      "moves": 241,
+      "elapsedMs": 2007,
+      "commits": 0,
+      "scriptMs": 12.491999999999999,
+      "taskMs": 65.205,
+      "styleMs": 0,
+      "layoutMs": 0,
+      "styleCount": 0,
+      "layoutCount": 0
+    }
+  ]
+}
