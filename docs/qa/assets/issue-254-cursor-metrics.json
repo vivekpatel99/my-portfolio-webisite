@@ -630,5 +630,85 @@
       "styleCount": 0,
       "layoutCount": 0
     }
+  ],
+  "current_base_c4619c2": [
+    {
+      "reducedMotion": "no-preference",
+      "run": 1,
+      "moves": 241,
+      "elapsedMs": 2009,
+      "commits": 0,
+      "scriptMs": 73.34599999999999,
+      "taskMs": 401.48300000000006,
+      "styleMs": 21.27,
+      "layoutMs": 0,
+      "styleCount": 241,
+      "layoutCount": 0
+    },
+    {
+      "reducedMotion": "no-preference",
+      "run": 2,
+      "moves": 241,
+      "elapsedMs": 2003,
+      "commits": 0,
+      "scriptMs": 37.17,
+      "taskMs": 259.309,
+      "styleMs": 8.621,
+      "layoutMs": 0,
+      "styleCount": 241,
+      "layoutCount": 0
+    },
+    {
+      "reducedMotion": "no-preference",
+      "run": 3,
+      "moves": 241,
+      "elapsedMs": 2002,
+      "commits": 0,
+      "scriptMs": 31.966,
+      "taskMs": 241.94100000000003,
+      "styleMs": 7.357,
+      "layoutMs": 0,
+      "styleCount": 241,
+      "layoutCount": 0
+    },
+    {
+      "reducedMotion": "reduce",
+      "run": 1,
+      "moves": 241,
+      "elapsedMs": 2001,
+      "commits": 0,
+      "scriptMs": 24.698,
+      "taskMs": 140.987,
+      "styleMs": 0,
+      "layoutMs": 0,
+      "styleCount": 0,
+      "layoutCount": 0
+    },
+    {
+      "reducedMotion": "reduce",
+      "run": 2,
+      "moves": 241,
+      "elapsedMs": 2001,
+      "commits": 0,
+      "scriptMs": 25.821,
+      "taskMs": 149.171,
+      "styleMs": 0,
+      "layoutMs": 0,
+      "styleCount": 0,
+      "layoutCount": 0
+    },
+    {
+      "reducedMotion": "reduce",
+      "run": 3,
+      "moves": 241,
+      "elapsedMs": 2001,
+      "commits": 0,
+      "scriptMs": 18.971999999999998,
+      "taskMs": 119.953,
+      "styleMs": 0,
+      "layoutMs": 0,
+      "styleCount": 0,
+      "layoutCount": 0
+    }
   ]
 }
