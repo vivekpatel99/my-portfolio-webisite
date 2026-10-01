@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { getPageLoadDetectedFields } from '@/lib/heroDetectedFields';
 import { profileImages } from '@/config/links';
 
@@ -58,7 +58,6 @@ const useIsInViewport = (ref) => {
 const Hero = () => {
   const heroRef = useRef(null);
   const bgBoxesRef = useRef([]);
-  const navigate = useNavigate();
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   const hasFinePointer = useMediaQuery('(pointer: fine)');
   const isInViewport = useIsInViewport(heroRef);
@@ -68,10 +67,6 @@ const Hero = () => {
     'data-hero-field': id,
     className: `${detectedFields.has(id) ? 'invoice-field-corners ' : ''}${className}`,
   });
-
-  const handleCTAClick = () => {
-    navigate('/contact/');
-  };
 
   useEffect(() => {
     const hero = heroRef.current;
@@ -348,10 +343,10 @@ const Hero = () => {
 
             <div className="relative z-[1] flex flex-wrap gap-3 mt-1 lg:mt-4 lg:col-start-1 lg:row-start-2 max-md:flex-col max-md:mt-4">
               <Button
-                onClick={handleCTAClick}
-                className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-0"
+                asChild
+                className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-center font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-0"
               >
-                Request a Project Estimate
+                <Link to="/contact/">Request a Project Estimate</Link>
               </Button>
               <Button
                 asChild

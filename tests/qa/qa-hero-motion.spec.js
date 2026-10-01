@@ -111,7 +111,7 @@ test.describe('hero motion work (#232)', () => {
     await expect.poll(() => runningHeroAnimations(page)).toEqual(IN_VIEW_ANIMATIONS);
     expect(await writesDuring(page), 'idle --px/--py writes').toBe(0);
 
-    const cta = page.getByRole('button', { name: 'Request a Project Estimate' });
+    const cta = page.locator('section[data-hero-motion]').getByRole('link', { name: 'Request a Project Estimate', exact: true });
     for (let presses = 0; presses < 40 && !(await cta.evaluate((el) => el === document.activeElement)); presses += 1) {
       await page.keyboard.press('Tab');
     }
