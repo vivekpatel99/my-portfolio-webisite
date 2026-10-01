@@ -138,7 +138,7 @@ const Hero = () => {
     <section 
       ref={heroRef}
       data-hero-motion={isInViewport ? 'running' : 'paused'}
-      className="relative h-auto flex flex-col justify-start pt-14 pb-40 bg-[#0C0D0D] max-md:pb-36 max-md:pt-0 max-md:justify-start"
+      className="relative h-auto flex flex-col justify-start pt-14 pb-40 bg-[#0C0D0D] max-md:pb-36 max-md:pt-3 max-md:justify-start [@media(max-height:800px)]:pt-3"
     >
       {/* Grid background */}
       <div 
@@ -214,7 +214,7 @@ const Hero = () => {
       <div className="container mx-auto px-6 md:px-12 relative z-10 py-0 max-md:px-4 max-md:py-0">
         <div className="max-w-[1320px] mx-auto flex flex-col gap-0 max-md:gap-0">
           {/* Status badge */}
-          <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center justify-between gap-4 flex-wrap mb-5">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/[0.12] bg-white/[0.03]">
               <span className="w-[7px] h-[7px] rounded-full bg-[#8B5CF6] shadow-[0_0_8px_rgba(139,92,246,0.65)]" />
               <span className="text-[11px] font-mono tracking-wider uppercase text-gray-400">Inference online</span>
@@ -226,7 +226,7 @@ const Hero = () => {
             {/* Left: Profile Invoice */}
             <div className="flex flex-col gap-0.5 min-w-0 w-full max-lg:gap-0 lg:col-start-1 lg:row-start-1">
               <article 
-                className="relative w-full max-w-[760px] border border-[#8B5CF6]/[0.28] rounded-lg px-5 py-1.5 max-md:px-2.5 max-md:pt-3 max-md:pb-2"
+                className="relative w-full max-w-[760px] border border-[#8B5CF6]/[0.28] rounded-lg px-5 pt-4 pb-1.5 max-md:px-2.5 max-md:pb-2"
                 style={{
                   background: 'linear-gradient(165deg, #141318 0%, #0f1012 55%, #0e0e10 100%)',
                   boxShadow: '0 0 0 1px rgba(255,255,255,0.03) inset, 0 24px 64px rgba(0,0,0,0.45), 0 0 48px rgba(139,92,246,0.1)'
@@ -279,7 +279,7 @@ const Hero = () => {
                 </div>
 
                 {/* Proofs folded under role */}
-                <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 mb-0.5 max-md:gap-x-3 max-md:mb-1" role="group" aria-label="Detected credentials">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 mb-4 max-md:gap-x-3" role="group" aria-label="Detected credentials">
                   <div className="min-w-0">
                     <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-400 max-md:mb-[5px]">Credential</span>
                     <span {...fieldBoxProps('credential', 'relative inline-flex items-center gap-[7px] px-[9px] py-[5px] max-w-full max-[359px]:px-1.5')}>
@@ -346,7 +346,7 @@ const Hero = () => {
               </article>
             </div>
 
-            <div className="relative z-[1] flex flex-wrap gap-3 mt-1 lg:col-start-1 lg:row-start-2 max-md:flex-col max-md:mt-4">
+            <div className="relative z-[1] flex flex-wrap gap-3 mt-1 lg:mt-4 lg:col-start-1 lg:row-start-2 max-md:flex-col max-md:mt-4">
               <Button
                 onClick={handleCTAClick}
                 className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-0"
