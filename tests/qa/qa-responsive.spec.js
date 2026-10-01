@@ -1,4 +1,5 @@
 import { expect, test } from './qa-test.js';
+import { waitForConsentBannerEntrance } from './qa-consent-banner.js';
 
 const viewports = [
   { name: 'narrow-phone', width: 320, height: 568 },
@@ -309,6 +310,7 @@ test('mobile cookie banner leaves the hero estimate CTA clickable', async ({ pag
   await page.goto('/');
   const banner = page.getByRole('dialog', { name: /we value your privacy/i });
   await expect(banner).toBeVisible({ timeout: 5000 });
+  await waitForConsentBannerEntrance(banner);
   const cta = page.getByRole('link', { name: /Request a Project Estimate/i }).first();
   const bannerBox = await banner.boundingBox();
   const ctaBox = await cta.boundingBox();
@@ -325,6 +327,7 @@ test('desktop cookie banner is a full-width horizontal strip', async ({ page }) 
   await page.goto('/');
   const banner = page.getByRole('dialog', { name: /we value your privacy/i });
   await expect(banner).toBeVisible({ timeout: 5000 });
+  await waitForConsentBannerEntrance(banner);
   const box = await banner.boundingBox();
   expect(box.width).toBeGreaterThan(1200);
   expect(box.x).toBeLessThan(10);
@@ -352,6 +355,7 @@ test('reduced motion still shows a safe cookie banner layout', async ({ page }) 
   await page.goto('/');
   const banner = page.getByRole('dialog', { name: /we value your privacy/i });
   await expect(banner).toBeVisible({ timeout: 5000 });
+  await waitForConsentBannerEntrance(banner);
   const cta = page.getByRole('link', { name: /Request a Project Estimate/i }).first();
   const bannerBox = await banner.boundingBox();
   const ctaBox = await cta.boundingBox();

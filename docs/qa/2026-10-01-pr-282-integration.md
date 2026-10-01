@@ -27,3 +27,11 @@ The complete browser rerun on the corrected artifact passed all 56 layout cases 
 A second review comment found that the new shallow tests did not honor the documented `QA_CONSENT_PROBE=1` measurement mode. Their defect assertions now use the existing `!probeOnly` convention. Normal-mode assertions and tolerances remain identical; probe mode retains every interaction and measurement attachment. Application source is unchanged.
 
 Normal and probe modes each passed all 16 shallow cases. Each report contains eight arrival attachments and eight change attachments covering 72 state transitions. Fresh separate Standards and Spec reviewers passed pinned candidate `f6eaecf6020edf4ad34b986c478c4d4aa98696dd` against `70788c846eb8d6edb1bb88d2943e2d7581c59c2a`. Scoped ESLint and diff checks passed.
+
+## CI entrance synchronization
+
+CI run `36884450170` sampled the desktop banner at 59.9839 px during its entrance and failed the existing strict `y > 60` check. Codex independently sampled the rendered entrance in T3: the first frame was 59 px with opacity zero and a -10 px transform; the settled frame was 69 px with opacity one and no transform. Visibility alone does not establish settled geometry.
+
+Local repetitions of the old test passed 30 of 30 runs, so no local red-to-green claim is made. The CI failure and rendered frame samples establish the measurement race. A shared `waitForConsentBannerEntrance` helper now reuses the existing consent suite's exact opacity/translation poll before responsive geometry measurements. The existing width, position, overlap, and CTA assertions remain unchanged. Application code, timing, and motion remain unchanged.
+
+The corrected tests pass 80 repeated responsive consent cases and all 32 Chromium/WebKit consent regressions. Fresh separate Standards and Spec reviewers passed pinned candidate `4f91fd31ad640a040e2cb39d61bccc0c0d982633` against `3f480daa4112a9a4fc864925ad3fd4210a6341c2`. Scoped ESLint and diff checks passed. Fresh CI on the pushed head remains the merge gate.

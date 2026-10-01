@@ -1,4 +1,5 @@
 import { expect, test } from './qa-test.js';
+import { waitForConsentBannerEntrance } from './qa-consent-banner.js';
 
 const COOKIE_KEY = 'cookie_consent_preferences';
 const TELEMETRY_HOSTS = /googletagmanager\.com|google-analytics\.com|sentry\.io|ingest\.sentry|telemetry\.invalid/;
@@ -142,10 +143,7 @@ for (const width of WIDTHS) {
       const dialog = dialogOf(page);
       await expect(dialog).toBeVisible({ timeout: 5000 });
       // The approved entrance reserves its final height before its transform settles.
-      await expect.poll(() => dialog.evaluate((el) => {
-        const style = getComputedStyle(el);
-        return Number(style.opacity) === 1 && (style.transform === 'none' || new DOMMatrixReadOnly(style.transform).m42 === 0);
-      })).toBe(true);
+      await waitForConsentBannerEntrance(dialog);
       const shown = await geometry(page);
       expect(shown.mainTop).toBeGreaterThanOrEqual(Math.floor(shown.dialogBottom));
       expect(shown.mainTop - shown.dialogBottom).toBeLessThan(2);
