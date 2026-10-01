@@ -12,17 +12,27 @@ export const socialLinks = {
   contactEmail: 'contact@vivekapatel.com',
 };
 
+// /assets/* is served immutable for a year (public/.htaccess), so derivative
+// filenames end in the first 12 hex chars of their own SHA-256. links.test.js
+// rejects a derivative whose name or recorded source digest no longer matches.
+// To regenerate one, rebuild it from the source, rename it with its new hash
+// and update the source digest in links.test.js (#252).
 export const logos = {
   favicon: '/assets/logos/mylogo.png',
   faviconLight: '/assets/logos/favicon-light-scheme.png',
-  logo: '/assets/logos/mylogo.png',
+  // The header mark renders at 30px; these are 60/90px derivatives of mylogo.png (#252).
+  logo: '/assets/logos/mylogo-60-c6065baa4d50.webp',
+  logoSrcSet: '/assets/logos/mylogo-60-c6065baa4d50.webp 2x, /assets/logos/mylogo-90-cbffb31a1bdc.webp 3x',
 };
 
 export const profileImages = {
-  aboutPhoto: '/assets/images/vivek-black-and-white.webp',
+  portrait: '/assets/images/vivek-black-and-white.webp',
+  // Display-size derivatives of portrait (1008×1367), same crop (#252).
+  portraitSrcSet: '/assets/images/vivek-black-and-white-480w-3a7a7a1ab19c.webp 480w, /assets/images/vivek-black-and-white-720w-aa13477551ed.webp 720w, /assets/images/vivek-black-and-white.webp 1008w',
   teamCollaboration: `${BASE_URLS.hostingerCdn}/michael-t-rxri-ho62y4-unsplash-2-tvxRc.jpg`,
 };
 
 export const assetsLinks = {
-  logo: logos.logo,
+  // Full-size mark for any future SEO/structured-data use, not the 30px header derivative.
+  logo: logos.favicon,
 };
