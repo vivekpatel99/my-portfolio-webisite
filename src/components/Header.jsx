@@ -188,7 +188,7 @@ const Header = () => {
       >
         <div className="max-w-[1120px] mx-auto px-7 h-[68px] flex items-center gap-[22px]">
           <Link to="/" onClick={handleHomeClick} className="flex items-center flex-shrink-0" aria-label="Vivek Patel Logo">
-            <img src={logos.logo} alt="" width="30" height="30" className="w-[30px] h-[30px] object-contain" />
+            <img src={logos.logo} srcSet={logos.logoSrcSet} alt="" width="30" height="30" className="w-[30px] h-[30px] object-contain" />
           </Link>
 
           <nav className="hidden md:flex items-center gap-7 ml-auto">
@@ -242,7 +242,7 @@ const Header = () => {
         >
           <div className="h-[68px] flex items-center justify-between border-b border-[rgba(139,92,246,0.38)]">
             <Link to="/" onClick={handleHomeClick} className="flex items-center" aria-label="Vivek Patel Logo">
-              <img src={logos.logo} alt="" width="30" height="30" className="w-[30px] h-[30px] object-contain" />
+              <img src={logos.logo} srcSet={logos.logoSrcSet} alt="" width="30" height="30" className="w-[30px] h-[30px] object-contain" />
             </Link>
             <button
               ref={closeButtonRef}

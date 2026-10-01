@@ -227,6 +227,44 @@ for (const vp of heroFoldViewports) {
   });
 }
 
+// #252: the portrait `sizes` values are hard-coded to the measured frames. If a frame
+// widens without a `sizes` update, the browser keeps picking a candidate that is too small.
+const portraitDensityCases = [
+  { width: 390, height: 844, dpr: 3 },
+  { width: 412, height: 823, dpr: 1.75 },
+  { width: 768, height: 1024, dpr: 2 },
+  { width: 1440, height: 900, dpr: 2 },
+];
+
+const loadedPortraitDensity = (image) => image.evaluate(async (img) => {
+  // A plain Image without srcset reports the chosen file's real pixel width.
+  const file = new Image();
+  file.src = img.currentSrc;
+  await file.decode();
+  return {
+    currentSrc: img.currentSrc,
+    fileWidth: file.naturalWidth,
+    neededWidth: img.getBoundingClientRect().width * window.devicePixelRatio,
+  };
+});
+
+for (const vp of portraitDensityCases) {
+  test.describe(`portrait candidates at ${vp.width}x${vp.height}@${vp.dpr}`, () => {
+    test.use({ viewport: { width: vp.width, height: vp.height }, deviceScaleFactor: vp.dpr });
+
+    test('hero and About portraits load a file at least as wide as their device pixels', async ({ page }) => {
+      await page.goto('/');
+      for (const alt of ['Tracked engineer portrait', 'Portrait of Vivek Patel']) {
+        const image = page.getByAltText(alt);
+        await image.scrollIntoViewIfNeeded();
+        await expect.poll(() => image.evaluate((img) => img.complete && img.naturalWidth > 0)).toBe(true);
+        const density = await loadedPortraitDensity(image);
+        expect(density.fileWidth, `${alt} → ${density.currentSrc}`).toBeGreaterThanOrEqual(Math.floor(density.neededWidth));
+      }
+    });
+  });
+}
+
 test('mobile cookie banner leaves the hero estimate CTA clickable', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.addInitScript(() => localStorage.removeItem('cookie_consent_preferences'));
