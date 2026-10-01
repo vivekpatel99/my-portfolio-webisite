@@ -34,10 +34,12 @@ const ArrowGlyph = () =>
 const CaseStudyCard = ({
   project,
   fromCollection = false,
+  headingLevel = 3,
   priorityImage = false,
 }) => {
   const completionDate = formatCompletionDate(project.completedAt);
   const upworkLink = project.externalLinks?.find((link) => link.label === 'Upwork project');
+  const headingTag = headingLevel === 2 ? 'h2' : 'h3';
 
   return React.createElement(
     'article',
@@ -71,7 +73,7 @@ const CaseStudyCard = ({
             ' · ',
             React.createElement('em', { className: 'not-italic text-white' }, 'CASE STUDY')
           ) : null,
-          React.createElement('h3', { className: 'text-[1.05rem] font-[650] tracking-[-0.015em] leading-[1.3] text-white' }, project.cardTitle || project.title),
+          React.createElement(headingTag, { className: 'text-[1.05rem] font-[650] tracking-[-0.015em] leading-[1.3] text-white' }, project.cardTitle || project.title),
         ),
         React.createElement('span', { className: 'glyph-hit absolute right-3 bottom-3 z-[3] w-11 h-11 grid place-items-center text-[#d8caff] border border-[rgba(139,92,246,0.35)] bg-[rgba(12,13,13,0.55)]', 'aria-hidden': true }, React.createElement(ArrowGlyph)),
       ),

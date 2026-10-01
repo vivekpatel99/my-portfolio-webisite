@@ -177,7 +177,7 @@ describe('Header', () => {
     const links = [
       nav.getByRole('link', { name: 'Services' }),
       nav.getByRole('link', { name: 'Case Studies' }),
-      screen.getAllByRole('link', { name: 'Vivek Patel Logo' })[0],
+      screen.getAllByRole('link', { name: 'Vivek Patel home' })[0],
     ];
     links.forEach((link) => {
       expect(fireEvent.click(link, modifiers)).toBe(true);
@@ -245,8 +245,9 @@ describe('Header', () => {
       </MemoryRouter>,
     );
 
-    const home = screen.getAllByRole('link', { name: 'Vivek Patel Logo' })[0];
+    const home = screen.getAllByRole('link', { name: 'Vivek Patel home' })[0];
     expect(home.querySelector('img')?.getAttribute('src')).toBe('/assets/logos/mylogo-60-c6065baa4d50.webp');
+    expect(home.querySelector('img')?.getAttribute('alt')).toBe('');
     expect(screen.queryByText(/NAV ·/i)).toBeNull();
   });
 
@@ -261,7 +262,7 @@ describe('Header', () => {
 
     // The open drawer makes the bar inert, so include hidden links to reach both marks.
     const marks = screen
-      .getAllByRole('link', { name: 'Vivek Patel Logo', hidden: true })
+      .getAllByRole('link', { name: 'Vivek Patel home', hidden: true })
       .map((link) => link.querySelector('img'));
     expect(marks).toHaveLength(2);
     marks.forEach((img) => {

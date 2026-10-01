@@ -187,7 +187,7 @@ const Header = () => {
           className="max-w-[1120px] mx-auto px-7 flex items-center gap-[22px]"
           style={{ height: 'calc(var(--site-header-height) - 1px)' }}
         >
-          <Link to="/" onClick={handleHomeClick} className="flex items-center flex-shrink-0" aria-label="Vivek Patel Logo">
+          <Link to="/" onClick={handleHomeClick} className="flex items-center flex-shrink-0" aria-label="Vivek Patel home">
             <img src={logos.logo} srcSet={logos.logoSrcSet} alt="" width="30" height="30" className="w-[30px] h-[30px] object-contain" />
           </Link>
 
@@ -241,7 +241,7 @@ const Header = () => {
           style={{ overscrollBehavior: 'contain', touchAction: 'pan-y' }}
         >
           <div className="h-[68px] flex items-center justify-between border-b border-[rgba(139,92,246,0.38)]">
-            <Link to="/" onClick={handleHomeClick} className="flex items-center" aria-label="Vivek Patel Logo">
+            <Link to="/" onClick={handleHomeClick} className="flex items-center" aria-label="Vivek Patel home">
               <img src={logos.logo} srcSet={logos.logoSrcSet} alt="" width="30" height="30" className="w-[30px] h-[30px] object-contain" />
             </Link>
             <button

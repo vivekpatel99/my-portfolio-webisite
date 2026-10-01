@@ -69,6 +69,7 @@ describe('CookieConsentBanner', () => {
   it('sits under the header on small screens so hero CTAs stay free', () => {
     render(<CookieConsentBanner onConsent={vi.fn()} show onHide={vi.fn()} />);
     const dialog = screen.getByRole('dialog', { name: /we value your privacy/i });
+    expect(screen.getByRole('heading', { level: 2, name: /we value your privacy/i })).toBeTruthy();
     const classes = dialog.className.split(/\s+/);
     expect(dialog.style.top).toBe('var(--site-header-height)');
     expect(classes).toContain('left-0');

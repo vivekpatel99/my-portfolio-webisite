@@ -208,7 +208,7 @@ const Contact = () => {
           {/* Layout: aside + form */}
           <div className="layout grid md:grid-cols-[0.82fr_1.18fr] gap-7 items-start">
             {/* Aside */}
-            <aside className="aside border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] p-6 px-[22px]">
+            <div className="aside border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] p-6 px-[22px]">
               <h2 className="text-[1.15rem] font-bold uppercase tracking-[-0.01em] mb-[18px]">
                 WHAT HAPPENS NEXT
               </h2>
@@ -228,7 +228,7 @@ const Contact = () => {
                   {socialLinks.contactEmail}
                 </a>
               </div>
-            </aside>
+            </div>
 
             {/* Form panel with detection box */}
             <form
