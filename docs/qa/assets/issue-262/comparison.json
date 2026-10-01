@@ -60,7 +60,6 @@
     }
   ],
   "finalRunBase": "a24d051862881235d919140ef6d704a91baf3696",
-  "finalHead": "5b01a0099e4171f90f298681092945017ec8d61a",
   "currentHeadTestCells": 8,
   "developChange": "PR #284 adds text-wrap: balance to h1, h2 and h3 in src/index.css. The changed title glyph arrangement is from the updated base.",
   "current": [
@@ -656,5 +655,8 @@
       "geometryMatches2895Baseline": true,
       "changedPixelsComparedWith2895Baseline": 14028
     }
-  ]
+  ],
+  "unitTestHead": "05ad2f475e310dc543dc7d3aeaeae849e7dfcfb2",
+  "unitTestResult": "735 tests passed in 63 files",
+  "browserVerificationHead": "5b01a0099e4171f90f298681092945017ec8d61a"
 }

@@ -33,8 +33,8 @@ Codex independently inspected the source diff and drove the updated production b
 
 ## Checks and rerun
 
-- The original baseline passed 729 tests in 63 files; the original implementation passed 731. After #281 and #284 merged into `develop`, the automated review correctly flagged that the updated tree had not been tested. On the exact reviewed head `5b01a0099e4171f90f298681092945017ec8d61a`, `npm test` passed 735 tests in 63 files. This rerun resolves that finding.
-- The exact reviewed head passed `npm run build`, including display-image checks, sitemap and 21 static routes. The existing chunk-size warning remains. The route metadata matrix also passed all 8 cells against its production build.
+- The original baseline passed 729 tests in 63 files; the original implementation passed 731. After #281 and #284 merged into `develop`, the automated review correctly flagged that the updated tree had not been tested. On commit `05ad2f475e310dc543dc7d3aeaeae849e7dfcfb2`, `npm test` passed 735 tests in 63 files. This rerun resolves that finding.
+- `npm run build` and the route metadata matrix passed on `5b01a0099e4171f90f298681092945017ec8d61a`. Commit `05ad2f475e310dc543dc7d3aeaeae849e7dfcfb2` changes only QA documentation and evidence relative to that app tree, so the build and browser results apply to the delivered application code. The matrix passed all 8 cells. The build generated the sitemap and 21 static routes; the existing chunk-size warning remains.
 - Scoped ESLint passed with explicit React JSX, unused-variable and undefined-name rules. The repository has no project ESLint configuration or typecheck script.
 - `git diff --check` passed. A fresh comment review found no added comments or suppressions to remove.
 - Fresh isolated requirements and code-quality reviews are recorded in [the review report](2026-10-01-issue-262-code-review.md).
@@ -62,4 +62,4 @@ The suite aborts the contact chunk itself, guards external network access, seeds
 
 Search-engine treatment, deployed host behavior, Firefox, physical Safari/iOS and assistive-technology speech are unverified. Playwright WebKit is not a physical Safari test. Retry behavior is unchanged; #263 remains separate. This task changes runtime fallback metadata and does not establish an HTTP error status or server-side crawler behavior.
 
-The issue remains open until required checks and merge conditions are met. No merge or production deployment is authorized by this delivery.
+The issue remains open until required checks pass and the pull request merges. Production deployment remains a separate release step.
