@@ -2,7 +2,7 @@
 
 Two fresh, isolated read-only subagents reviewed requirements and code quality separately. Neither implemented the change. They followed the code-review skill and `.claude/commands/code_review.md`.
 
-The pinned base was `2895fe79bc933ef4bf5caf236fa2bc60fd688672`. The immutable local precommit snapshot was `9a8a2cf6462a0814701fa8206a60c2796ad2b506`. Its diff contained `RouteErrorBoundary.jsx`, `RouteErrorBoundary.test.jsx`, `qa-route-metadata.config.js` and `qa-route-metadata.spec.js`. The final delivered versions of those four files match that snapshot. Evidence documents were added afterward and inspected by Codex.
+The initial review pinned `2895fe79bc933ef4bf5caf236fa2bc60fd688672` and precommit snapshot `9a8a2cf6462a0814701fa8206a60c2796ad2b506`. PR #283 later absorbed current `develop` at `a24d051862881235d919140ef6d704a91baf3696` and reached `5b01a0099e4171f90f298681092945017ec8d61a`. The code fix and focused tests are unchanged. The exact updated head was rebuilt, fully tested, and passed the route metadata browser matrix before the review finding was fixed.
 
 ## Standards
 
@@ -18,9 +18,9 @@ The reviewer checked AGENTS.md, repository review instructions, neighboring patt
 
 PASS. All four issue acceptance criteria have supporting evidence. No requirements blockers or scope creep.
 
-The exact fallback title and `noindex, nofollow` appear for both component failure cases and all eight browser cells. Navigation restores healthy title and robots metadata. All ten component cases pass, including the eight existing cases. The complete suite passes 731 tests in 63 files, and the production build passes.
+The exact fallback title and `noindex, nofollow` appear for both component failure cases and all eight browser cells. Navigation restores healthy title and robots metadata. All ten component cases pass, including the eight existing cases. The automated review found the suite had not been rerun after `develop` changed the test set. Codex reran `npm test` on the exact reported head. All 735 tests in 63 files pass. The production build also passes.
 
-The reviewer independently inspected the baseline and final browser JSON and comparison data. Eight baseline cells fail on the stale title; eight final cells pass without skips. Geometry matches and all eight fallback crops have zero changed pixels. Keyboard heading, Retry, Back to Home and recovered main-content focus are covered. WebKit uses Option-Tab for native link traversal.
+The route metadata matrix passed all eight original-head baseline and fixed-build comparisons. After the base advanced, the repeated eight-cell matrix also passed. All measured boxes match the original results. Screenshots on the updated head have text pixel differences where merged PR #284 applies `text-wrap: balance` to headings. PR #284 accounts for that line-wrapping change. Keyboard heading, Retry, Back to Home and recovered main-content focus are covered. WebKit uses Option-Tab for native link traversal.
 
 Retry activation, physical Safari/iOS, Firefox and search-engine treatment were not newly verified. Retry code is unchanged, and issue #263 remains separate.
 

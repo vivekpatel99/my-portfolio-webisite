@@ -21,11 +21,11 @@ The fallback now mounts the existing `Seo` component with an error-specific titl
 | Metadata restored after navigation | Keyboard Back to Home restores the original home title and `index, follow`; subsequent Privacy Policy navigation restores its title and `index, follow` in all 8 cells |
 | Existing boundary tests | All 8 existing cases and 2 new cases pass |
 
-The matched production-build matrix covers Chromium and Playwright WebKit at 390×844 and 1280×800, with normal and reduced motion. All 8 starting-build checks failed on the expected stale title. All 8 final checks pass. Every measured rectangle, color and font size matches the baseline, and all 8 fallback crops have zero changed pixels. Neither width has horizontal overflow. [The comparison data](assets/issue-262/comparison.json) records each cell and its before/after measurements.
+The original matched production-build matrix covers Chromium and Playwright WebKit at 390×844 and 1280×800, with normal and reduced motion. All 8 starting-build checks failed on the stale title; all 8 final checks passed. Geometry matched in every cell and the fallback crops were pixel-identical at the original PR head. After `develop` advanced, the repeated matrix passed in all 8 cells with no horizontal overflow and identical measured geometry. Screenshot text wrapping changed with merged PR #284, which adds `text-wrap: balance` to all `h1`, `h2` and `h3` elements. The fallback title now balances onto different lines at mobile width. This style change is already part of `develop`; the metadata fix adds no visible content or layout. [The comparison data](assets/issue-262/comparison.json) records the original and updated-base results.
 
 Each final browser test activates Contact Me by keyboard, checks recovery-heading focus, traverses Retry and Back to Home, activates Back to Home and verifies main-content focus. On macOS WebKit, Option-Tab includes links in traversal; plain Tab skipped the native Back to Home anchor in the first run. The corrected full keyboard traversal passes in all WebKit cells. No application change was made for that platform behavior.
 
-Codex independently inspected the source diff and the T3 desktop/mobile renders. T3 measured unchanged fallback geometry, the exact error title and `noindex, nofollow`. Tab reached Retry with `:focus-visible` and a solid outline. Tab then reached Back to Home; Enter restored `/`, the home title, `index, follow` and main-content focus.
+Codex independently inspected the source diff and drove the updated production build in T3 at desktop and mobile widths. T3 confirmed the heading wraps onto two balanced lines on mobile, measured its 80 px box, and read the exact error title and `noindex, nofollow`. Tab reached Retry with `:focus-visible` and a solid outline. Tab then reached Back to Home; Enter restored `/`, the home title, `index, follow` and main-content focus.
 
 ![Desktop fallback at 1280 px](assets/issue-262/fallback-1280.png)
 
@@ -33,8 +33,8 @@ Codex independently inspected the source diff and the T3 desktop/mobile renders.
 
 ## Checks and rerun
 
-- Baseline unit suite passed 729 tests in 63 files. Final unit suite passed 731 tests in 63 files.
-- Production build passed, including display-image checks, sitemap and 21 static routes. The existing chunk-size warning remains.
+- The original baseline passed 729 tests in 63 files; the original implementation passed 731. After #281 and #284 merged into `develop`, the automated review correctly flagged that the updated tree had not been tested. On the exact reviewed head `5b01a0099e4171f90f298681092945017ec8d61a`, `npm test` passed 735 tests in 63 files. This rerun resolves that finding.
+- The exact reviewed head passed `npm run build`, including display-image checks, sitemap and 21 static routes. The existing chunk-size warning remains. The route metadata matrix also passed all 8 cells against its production build.
 - Scoped ESLint passed with explicit React JSX, unused-variable and undefined-name rules. The repository has no project ESLint configuration or typecheck script.
 - `git diff --check` passed. A fresh comment review found no added comments or suppressions to remove.
 - Fresh isolated requirements and code-quality reviews are recorded in [the review report](2026-10-01-issue-262-code-review.md).
