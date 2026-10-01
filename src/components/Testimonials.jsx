@@ -139,9 +139,9 @@ const Testimonials = () => {
                                 PROJECT · <span className="text-[#c1b8da]">{testimonial.projectTitle || testimonial.project || 'Automated Data Extraction Workflow'}</span>
                             </div>
                             <blockquote className="quote mt-[19px] max-w-[790px] text-[clamp(1.2rem,2.35vw,2.12rem)] leading-[1.42] tracking-[-0.025em] font-[430]">
-                                <span className="text-[#8B5CF6] mr-[5px]">"</span>
+                                <span className="text-[#8B5CF6] mr-[5px]">“</span>
                                 {testimonial.content}
-                                <span className="text-[#8B5CF6]">"</span>
+                                <span className="text-[#8B5CF6]">”</span>
                             </blockquote>
                             <footer className="tf-foot flex items-end justify-between gap-5 mt-auto pt-[31px] flex-wrap">
                                 <div className="identity">

@@ -52,6 +52,16 @@
 .case-study-cta p { margin: 0 0 8px; color: #d3cfd8; }
 .case-study-cta a { display: inline-block; min-height: 44px; padding-top: 8px; font-size: 14px; }
 
+@media (min-width: 451px) {
+  .case-study-sections,
+  .case-study-cta p { font-size: 17px; }
+  .case-study-sections p,
+  .case-study-sections ul,
+  .case-study-sections ol,
+  .case-study-sections blockquote,
+  .case-study-cta p { max-width: 56ch; }
+}
+
 @media (max-width: 450px) {
   .case-study-article { padding: 124px 22px 48px; }
   .case-study-summary { font-size: 15px; }

@@ -320,7 +320,7 @@ const Contact = () => {
                   <textarea
                   id="description"
                   name="description"
-                  placeholder="Example: We need invoice OCR or a data extraction workflow that exports clean records to our CRM within 4 weeks..."
+                  placeholder="Example: We need invoice OCR or a data extraction workflow that exports clean records to our CRM within 4 weeks…"
                   value={formState.description}
                   onChange={handleInputChange}
                   rows={5}
@@ -372,7 +372,7 @@ const Contact = () => {
                   {isSubmitting ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Sending...
+                      Sending…
                     </>
                   ) : (
                     'Send project request'

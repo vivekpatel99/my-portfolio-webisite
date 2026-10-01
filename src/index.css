@@ -52,6 +52,12 @@
     scroll-padding-top: max(8rem, var(--consent-banner-bottom, 0px));
   }
 
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
   @media print {
     [data-section-animator] {
       transform: none !important;
