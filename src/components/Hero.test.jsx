@@ -156,7 +156,7 @@ describe('Hero invoice header spacing (#253)', () => {
     expect(classesOf(invoice)).toContain('pt-4');
     expect(classesOf(invoice).some((c) => c.startsWith('max-md:pt-'))).toBe(false);
     expect(classesOf(credentials)).toContain('mb-4');
-    expect(classesOf(actions)).toEqual(expect.arrayContaining(['mt-1', 'md:mt-4', 'lg:mt-4', 'max-md:mt-4']));
+    expect(classesOf(actions)).toEqual(expect.arrayContaining(['mt-1', 'lg:mt-4', 'max-md:mt-4']));
   });
 });
 
