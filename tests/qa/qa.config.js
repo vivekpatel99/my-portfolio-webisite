@@ -90,15 +90,15 @@ const liveProjects = includeLiveContactSubmit && !localOnly
 
 // Keep the additional browser family bounded to the interactions that regressed.
 // These projects are never pointed at the public deployment.
-const focusProjects = localOnly ? [
+const webkitRegressionProjects = localOnly ? [
   {
     name: 'preview-webkit-desktop',
-    testMatch: 'qa-focus.spec.js',
+    testMatch: ['qa-focus.spec.js', 'qa-cursor.spec.js'],
     use: { ...devices['Desktop Safari'], baseURL: previewURL, ...qaNetworkOptions({ localOnly }) },
   },
   {
     name: 'preview-webkit-mobile',
-    testMatch: 'qa-focus.spec.js',
+    testMatch: ['qa-focus.spec.js', 'qa-cursor.spec.js'],
     use: { ...devices['iPhone 14'], baseURL: previewURL, ...qaNetworkOptions({ localOnly }) },
   },
 ] : [];
@@ -128,5 +128,5 @@ export default defineConfig({
   use: qaCaptureOptions(),
   outputDir: path.join(artifactDir, 'test-results'),
   reporter: [['list'], ['json', { outputFile: path.join(artifactDir, 'qa-results.json') }]],
-  projects: [...passiveProjects, ...focusProjects, ...liveProjects],
+  projects: [...passiveProjects, ...webkitRegressionProjects, ...liveProjects],
 });
