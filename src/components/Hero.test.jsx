@@ -138,6 +138,28 @@ describe('Hero invoice proof fold (#176)', () => {
   });
 });
 
+// jsdom has no layout; tests/qa/qa-responsive.spec.js measures the real gaps.
+describe('Hero invoice header spacing (#253)', () => {
+  const classesOf = (element) => element.className.split(/\s+/);
+
+  it('spaces the status pill, scan label, title, credentials and actions apart', () => {
+    const { container } = renderHero();
+    const section = container.querySelector('section');
+    const pillRow = screen.getByText('Inference online').parentElement.parentElement;
+    const invoice = screen.getByRole('article', { name: 'Profile invoice field parse' });
+    const credentials = screen.getByRole('group', { name: 'Detected credentials' });
+    const actions = screen.getByRole('button', { name: 'Request a Project Estimate' }).parentElement;
+
+    expect(classesOf(section)).toContain('max-md:pt-3');
+    expect(classesOf(section)).toContain('[@media(max-height:800px)]:pt-3');
+    expect(classesOf(pillRow)).toContain('mb-5');
+    expect(classesOf(invoice)).toContain('pt-4');
+    expect(classesOf(invoice).some((c) => c.startsWith('max-md:pt-'))).toBe(false);
+    expect(classesOf(credentials)).toContain('mb-4');
+    expect(classesOf(actions)).toEqual(expect.arrayContaining(['mt-1', 'lg:mt-4', 'max-md:mt-4']));
+  });
+});
+
 describe('Hero portrait sizing (#252)', () => {
   it('offers display-size candidates for the 216px (mobile) and 236px (md+) frame', () => {
     renderHero();
