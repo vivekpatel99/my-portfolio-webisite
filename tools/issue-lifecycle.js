@@ -27,6 +27,8 @@ export function issueReferences(body = '') {
     }
     if (/^ {0,3}No issue:\s*\S.+$/i.test(line)) references.noIssue = true;
   }
+  const conflict = references.closes.find((number) => references.refs.includes(number));
+  if (conflict) throw new Error(`#${conflict} has both Closes and Refs declarations. Choose complete or partial work.`);
   return references;
 }
 

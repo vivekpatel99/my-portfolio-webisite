@@ -147,6 +147,13 @@ describe('merged develop issue closure', () => {
 });
 
 describe('PR issue-reference check', () => {
+  it.each(['pull_request', 'push'])('rejects conflicting completion and partial declarations on %s without writes', async (eventName) => {
+    const state = fixture({ body: 'Closes #206\nRefs #206' });
+    state.context.eventName = eventName;
+    await expect(runIssueLifecycle(state)).rejects.toThrow('both Closes and Refs');
+    expect(state.github.rest.issues.update).not.toHaveBeenCalled();
+  });
+
   it.each(['Closes #206', 'Refs #206', 'No issue: Repository maintenance'])('accepts %s without writes', async (body) => {
     const state = fixture({ body });
     state.context.eventName = 'pull_request';
