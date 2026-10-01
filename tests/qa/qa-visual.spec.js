@@ -388,6 +388,7 @@ test('custom cursor mounts on desktop fine pointer', async ({ page }, testInfo) 
   test.skip(testInfo.project.name.includes('mobile'), 'Desktop fine pointer assertion is covered by the desktop project.');
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/');
+  await expect(page.locator('[data-custom-cursor]')).toHaveCount(1);
   await page.mouse.move(400, 400);
   await expect(page.locator('html')).toHaveClass(/custom-cursor-enabled/);
 });
