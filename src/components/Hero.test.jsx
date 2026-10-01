@@ -88,13 +88,14 @@ describe('Hero invoice proof fold (#176)', () => {
     expect(screen.queryByText(/Starting at/)).toBeNull();
     const rateLabel = screen.getByText('Rate', { exact: true });
     expect(rateLabel.parentElement.textContent).toContain('€45/hour');
-    expect(screen.getByText('Based in Linz, Austria', { exact: true })).toBeTruthy();
   });
 
-  it('displays exact location: Linz, Austria', () => {
-    renderHero();
-    const location = screen.getByText('Linz, Austria', { exact: true });
-    expect(location).toBeTruthy();
+  it('shows the location once, in the invoice LOCATION field (#266)', () => {
+    const { container } = renderHero();
+    expect(container.textContent.match(/Linz, Austria/g)).toHaveLength(1);
+    const locationLabel = screen.getByText('Location', { exact: true });
+    expect(locationLabel.parentElement.textContent).toContain('Linz, Austria');
+    expect(screen.queryByText('Based in Linz, Austria', { exact: true })).toBeNull();
   });
 
   it('renders proof icons with aria-hidden', () => {
