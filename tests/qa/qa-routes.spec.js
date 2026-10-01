@@ -1,4 +1,4 @@
-import { collectGalleryImages, galleryThumbnailSrc } from '../../src/components/CaseStudyGallery.js';
+import { caseStudyDisplaySrc, collectGalleryImages, galleryThumbnailSrc } from '../../src/components/CaseStudyGallery.js';
 import { expect, test } from './qa-test.js';
 import { caseStudies, featuredCaseStudies } from '../../src/data/caseStudies.js';
 import { containsCaseStudyCopyLeak } from '../case-study-copy.js';
@@ -56,7 +56,7 @@ for (const slug of ['depth-based-distance-estimation', 'yolo-computer-vision-opt
   });
 }
 
-test('multi-image gallery uses bounded previews and loads selected originals on demand', async ({ page }) => {
+test('multi-image gallery uses bounded previews and loads originals only when expanded', async ({ page }) => {
   const requests = [];
   page.on('request', (request) => requests.push(request.url()));
   await page.goto('/project/n8n-openai-data-extraction/');
@@ -73,11 +73,15 @@ test('multi-image gallery uses bounded previews and loads selected originals on 
   expect(thumbnailSources).toEqual(images.map((image) => new URL(galleryThumbnailSrc(image), page.url()).href));
   const originals = images.map((image) => new URL(image.src, page.url()).href);
   const requestedOriginals = () => [...new Set(requests.filter((url) => originals.includes(url)))];
-  await expect.poll(requestedOriginals).toEqual([originals[0]]);
+  await expect.poll(requestedOriginals).toEqual([]);
+  await expect(gallery.locator('.case-gallery-open img')).toHaveAttribute('src', caseStudyDisplaySrc(images[0]));
 
   await gallery.getByRole('button', { name: `Show image 2: ${images[1].alt}` }).click();
-  await expect(gallery.locator('.case-gallery-open img')).toHaveAttribute('src', images[1].src);
-  await expect.poll(requestedOriginals).toEqual([originals[0], originals[1]]);
+  await expect(gallery.locator('.case-gallery-open img')).toHaveAttribute('src', caseStudyDisplaySrc(images[1]));
+  await expect.poll(requestedOriginals).toEqual([]);
+  await gallery.getByRole('button', { name: `Enlarge image: ${images[1].alt}` }).click();
+  await expect(page.getByRole('dialog').locator('.case-gallery-viewport img')).toHaveAttribute('src', images[1].src);
+  await expect.poll(requestedOriginals).toEqual([originals[1]]);
 });
 
 test('unknown route renders a noindex 404 page', async ({ page }) => {

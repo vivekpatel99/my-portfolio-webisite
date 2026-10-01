@@ -14,7 +14,7 @@ afterEach(() => outputDirectories.splice(0).forEach((directory) => rmSync(direct
 
 const explicitApproval = (sha256) => ({ kind: 'explicit', sha256, approvedBy: 'Viv', approvedAt: '2026-09-08T00:00:00Z', evidence: 'https://example.invalid/approval/43' });
 const unitAssetPath = '/assets/case-studies/fixture-unit.webp';
-const unitAssetBytes = Buffer.from('UklGRiIAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEALAAAAAABAAgAAQUxQSDIAAA=', 'base64');
+const unitAssetBytes = Buffer.from('UklGRiYAAABXRUJQVlA4IBoAAAAwAQCdASoBAAEAAQAaJaQAA3AA/v5HgAAAAA==', 'base64');
 const fixtureContent = (id) => ({
   title: `${id} title`, cardTitle: `${id} card`, category: 'Fixture', summary: `${id} summary`,
   projectStatus: 'completed', completedAt: '2026-08',
@@ -66,7 +66,45 @@ const outputFiles = (directory) => readdirSync(directory, { withFileTypes: true 
   return entry.isDirectory() ? outputFiles(file) : [file];
 });
 const validFixturePng = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64');
-const validFixtureWebp = Buffer.from('UklGRiIAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEALAAAAAABAAgAAQUxQSDIAAA=', 'base64');
+const validFixtureWebp = Buffer.from('UklGRiYAAABXRUJQVlA4IBoAAAAwAQCdASoBAAEAAQAaJaQAA3AA/v5HgAAAAA==', 'base64');
+const validFixtureJpeg = readFileSync('public/assets/case-studies/n8n-openai-data-extraction-e6fbcc7caa954b217adfa063990d460059e44d08808ad85c9e8988418920104c-thumb-bd1dc61ef269.jpg');
+
+const writeFixtureDerivativeRegistry = (directory) => {
+  const assetDirectory = path.join(directory, 'public/assets/case-studies');
+  const thumbnailSha256 = digest(validFixtureJpeg);
+  const thumbnailPath = `/assets/case-studies/fixture-thumb-${thumbnailSha256.slice(0, 12)}.jpg`;
+  writeFileSync(path.join(assetDirectory, path.basename(thumbnailPath)), validFixtureJpeg);
+  const generated = JSON.parse(execFileSync('node', [
+    path.join(directory, 'tools/generate-case-study-display-images.js'),
+    '--write',
+  ], { cwd: directory, encoding: 'utf8', stdio: 'pipe', timeout: 60_000 }));
+  const registry = Object.fromEntries(generated.bindings.map((binding) => [
+    binding.sourcePath,
+    {
+      src: thumbnailPath,
+      sourceSha256: binding.sourceSha256,
+      thumbnailSha256,
+      display: {
+        src: binding.displayPath,
+        sha256: binding.displaySha256,
+        width: binding.displayWidth,
+        height: binding.displayHeight,
+      },
+    },
+  ]));
+
+  writeFileSync(path.join(directory, 'src/lib/caseStudyThumbnails.js'), `
+export const caseStudyThumbnailRegistry = Object.freeze(${JSON.stringify(registry, null, 2)});
+export const galleryThumbnailSrc = (item) => {
+  const derivative = caseStudyThumbnailRegistry[item?.src] || caseStudyThumbnailRegistry[item?.poster];
+  return derivative?.src || item?.poster || item?.src;
+};
+export const caseStudyDisplaySrc = (item) => {
+  const derivative = caseStudyThumbnailRegistry[item?.src] || caseStudyThumbnailRegistry[item?.poster];
+  return derivative?.display?.src || item?.src || item?.poster;
+};
+`);
+};
 
 function buildFixture() {
   const directory = mkdtempSync(path.join(realpathSync(tmpdir()), 'case-study-publication-fixture-'));
@@ -84,13 +122,16 @@ function buildFixture() {
   return directory;
 }
 
-const runPublicationBuild = (directory) => execFileSync('npm', ['run', 'build'], {
-  cwd: directory,
-  encoding: 'utf8',
-  stdio: 'pipe',
-  timeout: 60_000,
-  killSignal: 'SIGTERM',
-});
+const runPublicationBuild = (directory) => {
+  writeFixtureDerivativeRegistry(directory);
+  return execFileSync('npm', ['run', 'build'], {
+    cwd: directory,
+    encoding: 'utf8',
+    stdio: 'pipe',
+    timeout: 60_000,
+    killSignal: 'SIGTERM',
+  });
+};
 const runAffectedTests = (directory) => execFileSync(path.join(directory, 'node_modules/.bin/vitest'), [
   'run',
   'src/data/caseStudies.test.js',
@@ -598,7 +639,7 @@ describe('case-study publication boundary', () => {
 
   it('withdraws baseline identities through the CLI while retaining a genuinely shared public asset', () => {
     const directory = buildFixture();
-    const sharedBytes = Buffer.from('UklGRiIAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEALAAAAAABAAgAAQUxQSDIAAA=', 'base64');
+    const sharedBytes = validFixtureWebp;
     const sharedPath = path.join(directory, 'public/assets/case-studies/shared-fixture.webp');
     writeFileSync(sharedPath, sharedBytes);
     const manifestPath = path.join(directory, 'publication/case-study-manifest.js');
