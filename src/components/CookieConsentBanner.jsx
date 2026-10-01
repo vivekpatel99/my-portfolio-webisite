@@ -151,7 +151,7 @@ const CookieConsentBanner = ({ onConsent, show, onHide, onReservedBottomChange }
               <Cookie className="w-5 h-5 text-accent-purple" />
             </div>
             <div className="flex-grow min-w-0">
-              <h3 id="cookie-consent-title" className="text-xs sm:text-sm font-bold text-white mb-1 sm:mb-1.5">We value your privacy</h3>
+              <h2 id="cookie-consent-title" className="text-xs sm:text-sm font-bold text-white mb-1 sm:mb-1.5">We value your privacy</h2>
               <p className="text-[11px] sm:text-xs text-gray-300 leading-tight hidden sm:block">
                 We use optional analytics. Customize below or accept all to continue.
               </p>

@@ -184,7 +184,7 @@ const Header = () => {
         className="sticky top-0 z-40 bg-gradient-to-b from-[rgba(139,92,246,0.05)] to-[rgba(12,13,13,0.92)] backdrop-blur-[14px] border-b border-[rgba(139,92,246,0.38)]"
       >
         <div className="max-w-[1120px] mx-auto px-7 h-[68px] flex items-center gap-[22px]">
-          <Link to="/" onClick={handleHomeClick} className="flex items-center flex-shrink-0" aria-label="Vivek Patel Logo">
+          <Link to="/" onClick={handleHomeClick} className="flex items-center flex-shrink-0" aria-label="Vivek Patel home">
             <img src={logos.logo} srcSet={logos.logoSrcSet} alt="" width="30" height="30" className="w-[30px] h-[30px] object-contain" />
           </Link>
 
@@ -238,7 +238,7 @@ const Header = () => {
           style={{ overscrollBehavior: 'contain', touchAction: 'pan-y' }}
         >
           <div className="h-[68px] flex items-center justify-between border-b border-[rgba(139,92,246,0.38)]">
-            <Link to="/" onClick={handleHomeClick} className="flex items-center" aria-label="Vivek Patel Logo">
+            <Link to="/" onClick={handleHomeClick} className="flex items-center" aria-label="Vivek Patel home">
               <img src={logos.logo} srcSet={logos.logoSrcSet} alt="" width="30" height="30" className="w-[30px] h-[30px] object-contain" />
             </Link>
             <button

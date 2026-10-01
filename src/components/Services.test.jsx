@@ -102,4 +102,20 @@ describe('Services offers', () => {
       expect(card.textContent).toContain(String(index + 1).padStart(2, '0'));
     });
   });
+
+  it('keeps each definition group limited to terms and descriptions', () => {
+    renderServices();
+
+    section().querySelectorAll('dl > div').forEach((group) => {
+      const elementNames = Array.from(group.children, (child) => child.tagName);
+      const nonWhitespaceText = Array.from(group.childNodes)
+        .filter((node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim());
+      const separator = group.querySelector('dt > span[aria-hidden="true"]');
+
+      expect(elementNames).toEqual(['DT', 'DD']);
+      expect(nonWhitespaceText).toHaveLength(0);
+      expect(separator?.textContent).toBe(' · ');
+      expect(separator?.className).toContain('tracking-[0.04em]');
+    });
+  });
 });

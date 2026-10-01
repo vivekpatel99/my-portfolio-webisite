@@ -37,8 +37,10 @@ describe('CaseStudyCollection', () => {
       </MemoryRouter>,
     );
 
-    const cards = screen.getAllByRole('article');
-    expect(cards.map((card) => card.querySelector('h3').textContent)).toEqual(['Newer synthetic story', 'Older synthetic story']);
+    expect(screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent)).toEqual([
+      'Newer synthetic story',
+      'Older synthetic story',
+    ]);
     expect(container.querySelector('.grid.grid-cols-1')).toBeTruthy();
     expect(container.querySelector('.md\\:grid-cols-2.lg\\:grid-cols-3')).toBeTruthy();
   });

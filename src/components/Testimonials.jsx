@@ -115,7 +115,7 @@ const Testimonials = () => {
                         <i className="corner br absolute w-[22px] h-[22px] pointer-events-none right-[7px] bottom-[7px] border-r-[1.5px] border-b-[1.5px] border-[rgba(255,255,255,0.62)]"></i>
 
                         {/* Rail */}
-                        <aside className="rail border-r md:border-r border-b md:border-b-0 border-[rgba(139,92,246,0.19)] py-4 md:py-8 px-5 md:px-6 flex md:flex-col flex-row justify-between items-center md:items-start">
+                        <div className="rail border-r md:border-r border-b md:border-b-0 border-[rgba(139,92,246,0.19)] py-4 md:py-8 px-5 md:px-6 flex md:flex-col flex-row justify-between items-center md:items-start">
                             <div className="glyph w-[40px] h-[40px] md:w-[54px] md:h-[54px] relative text-[#8B5CF6]">
                                 <span className="absolute inset-[5px] md:inset-[7px] border border-current rotate-45"></span>
                                 <span className="absolute inset-[12px] md:inset-[17px] border border-[rgba(255,255,255,0.42)] rotate-45"></span>
@@ -128,7 +128,7 @@ const Testimonials = () => {
                                     {String(activeIndex + 1).padStart(2, '0')} / {String(testimonials.length).padStart(2, '0')}
                                 </b>
                             </div>
-                        </aside>
+                        </div>
 
                         {/* Quote area */}
                         <article className="quote-area py-[24px] md:py-[34px] px-5 md:px-12 flex flex-col">

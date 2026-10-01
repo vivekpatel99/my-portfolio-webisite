@@ -78,6 +78,13 @@ describe('Testimonials Carousel', () => {
     expect(quoteArea.textContent).toContain(testimonials[0].content);
   });
 
+  it('keeps the visual rail out of the complementary landmark tree', () => {
+    const { container } = render(<Testimonials />);
+
+    expect(container.querySelector('.rail')?.tagName).toBe('DIV');
+    expect(container.querySelector('.rail[role="complementary"]')).toBeNull();
+  });
+
   it('renders correct number of testimonial dots', () => {
     render(<Testimonials />);
     
