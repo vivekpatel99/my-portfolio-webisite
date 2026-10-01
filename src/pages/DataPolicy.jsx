@@ -44,7 +44,7 @@ const DataPolicy = () => {
           </ul>
 
           <h2 className="text-2xl font-bold text-white mt-8">How Can I Control My Cookie Preferences?</h2>
-          <p>You can manage your cookie preferences at any time by clicking the "Manage Consent" link in the footer of our website. This will let you revisit the cookie consent banner and change your preferences or withdraw your consent right away.</p>
+          <p>You can manage your cookie preferences at any time by clicking the “Manage Consent” link in the footer of our website. This will let you revisit the cookie consent banner and change your preferences or withdraw your consent right away.</p>
           <p>In addition to this, different browsers provide different methods to block and delete cookies used by websites. You can change the settings of your browser to block/delete the cookies. To find out more about how to manage and delete cookies, visit wikipedia.org, www.allaboutcookies.org.</p>
         </div>
 
