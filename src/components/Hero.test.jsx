@@ -88,13 +88,14 @@ describe('Hero invoice proof fold (#176)', () => {
     expect(screen.queryByText(/Starting at/)).toBeNull();
     const rateLabel = screen.getByText('Rate', { exact: true });
     expect(rateLabel.parentElement.textContent).toContain('€45/hour');
-    expect(screen.getByText('Based in Linz, Austria', { exact: true })).toBeTruthy();
   });
 
-  it('displays exact location: Linz, Austria', () => {
-    renderHero();
-    const location = screen.getByText('Linz, Austria', { exact: true });
-    expect(location).toBeTruthy();
+  it('shows the location once, in the invoice LOCATION field (#266)', () => {
+    const { container } = renderHero();
+    expect(container.textContent.match(/Linz, Austria/g)).toHaveLength(1);
+    const locationLabel = screen.getByText('Location', { exact: true });
+    expect(locationLabel.parentElement.textContent).toContain('Linz, Austria');
+    expect(screen.queryByText('Based in Linz, Austria', { exact: true })).toBeNull();
   });
 
   it('renders proof icons with aria-hidden', () => {
@@ -156,6 +157,21 @@ describe('Hero invoice header spacing (#253)', () => {
     expect(classesOf(invoice).some((c) => c.startsWith('max-md:pt-'))).toBe(false);
     expect(classesOf(credentials)).toContain('mb-4');
     expect(classesOf(actions)).toEqual(expect.arrayContaining(['mt-1', 'lg:mt-4', 'max-md:mt-4']));
+  });
+});
+
+describe('Hero portrait sizing (#252)', () => {
+  it('offers display-size candidates for the 216px (mobile) and 236px (md+) frame', () => {
+    renderHero();
+    const portrait = screen.getByRole('img', { name: 'Tracked engineer portrait' });
+    expect(portrait.getAttribute('src')).toBe('/assets/images/vivek-black-and-white.webp');
+    expect(portrait.getAttribute('srcset')).toBe(
+      '/assets/images/vivek-black-and-white-480w-3a7a7a1ab19c.webp 480w, /assets/images/vivek-black-and-white-720w-aa13477551ed.webp 720w, /assets/images/vivek-black-and-white.webp 1008w'
+    );
+    expect(portrait.getAttribute('sizes')).toBe('(min-width: 768px) 236px, 216px');
+    expect(portrait.getAttribute('width')).toBe('1008');
+    expect(portrait.getAttribute('height')).toBe('1367');
+    expect(portrait.getAttribute('loading')).toBeNull();
   });
 });
 

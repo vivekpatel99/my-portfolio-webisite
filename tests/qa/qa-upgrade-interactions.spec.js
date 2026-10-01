@@ -222,7 +222,7 @@ test('Detection Bar keeps its purple border and configured logo', async ({ page 
   // The configured logo is exposed through the home link.
   const vpMark = page.locator('header').getByRole('link', { name: 'Vivek Patel Logo' }).first();
   await expect(vpMark).toBeVisible();
-  await expect(vpMark.locator('img')).toHaveAttribute('src', '/assets/logos/mylogo.png');
+  await expect(vpMark.locator('img')).toHaveAttribute('src', '/assets/logos/mylogo-60-c6065baa4d50.webp');
 });
 
 test('craft signal surfaces: Services cards keep offer markers and metadata', async ({ page }) => {
@@ -370,7 +370,7 @@ test('e2e: Mobile nav → Menu → Request Estimate → Contact', async ({ page 
   // Verify the configured logo in the header.
   const vpMark = page.locator('header').getByRole('link', { name: 'Vivek Patel Logo' }).first();
   await expect(vpMark).toBeVisible();
-  await expect(vpMark.locator('img')).toHaveAttribute('src', '/assets/logos/mylogo.png');
+  await expect(vpMark.locator('img')).toHaveAttribute('src', '/assets/logos/mylogo-60-c6065baa4d50.webp');
   
   // Open mobile menu
   await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
@@ -380,7 +380,7 @@ test('e2e: Mobile nav → Menu → Request Estimate → Contact', async ({ page 
   // Verify the configured logo in the open menu.
   const menuLogo = menu.getByRole('link', { name: 'Vivek Patel Logo' });
   await expect(menuLogo).toBeVisible();
-  await expect(menuLogo.locator('img')).toHaveAttribute('src', '/assets/logos/mylogo.png');
+  await expect(menuLogo.locator('img')).toHaveAttribute('src', '/assets/logos/mylogo-60-c6065baa4d50.webp');
   
   // Click Request Estimate
   await menu.getByRole('button', { name: /Request a Project Estimate/i }).click();

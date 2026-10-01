@@ -34,6 +34,11 @@ Convex agent skills for common tasks can be installed by running
   through a pull request.
 - See `docs/git-workflow.md` for the complete branch, testing, release, and
   rollback procedure.
+- Every PR into `develop` must include a standalone `Closes #123` line when
+  all issue acceptance criteria are met, `Refs #123` for partial work, or
+  `No issue: <specific reason>`. Use one line per same-repository issue.
+  Merged `develop` PRs close only explicitly completed issues. Keep issues
+  requiring production verification on `Refs` until that verification passes.
 
 ## Task completion and cleanup
 

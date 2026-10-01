@@ -4,8 +4,9 @@ import { createConvexTransportMock } from './qa-convex-transport-mock.js';
 
 const SAFE_FAILURE_MESSAGE = "We couldn't send your request. Please try again, or use the email address on this page.";
 
-// Route roots and the consent banner must not translate or scale on entrance
-// under reduced motion, while keeping their fade; normal entrances are unchanged.
+// Route roots, the consent banner and toasts must not translate or scale on
+// entrance under reduced motion (roots and banner keep their fade); normal
+// entrances are unchanged.
 
 const ROUTES = ['/contact/', '/legal/', '/data-policy/'];
 const SAMPLE_TIMES_MS = [0, 100, 300, 1000];
@@ -54,6 +55,7 @@ function installEntranceSampler(sampleTimes) {
   const targets = {
     route: '#main-content > div:has(h1)',
     consent: '[role="dialog"][aria-labelledby="cookie-consent-title"]',
+    toast: 'li[data-state="open"]',
   };
   window.__motionSamples = {};
 
@@ -121,6 +123,15 @@ async function collectEntranceSamples(page, route) {
   // The consent banner mounts ~1.5s after load for first-time visitors.
   await waitForSamples(page, ['route', 'consent']);
   return page.evaluate(() => window.__motionSamples);
+}
+
+// The empty-submit validation toast is the first toast on /contact/.
+async function collectValidationToastSamples(page) {
+  await page.addInitScript(installEntranceSampler, SAMPLE_TIMES_MS);
+  await page.goto('/contact/');
+  await page.locator('form[data-sensitive-telemetry] button[type="submit"]').click();
+  await waitForSamples(page, ['toast']);
+  return page.evaluate(() => window.__motionSamples.toast);
 }
 
 // A full page load would reset the in-page samples, so a completed sample set
@@ -276,6 +287,12 @@ test.describe('reduced motion', () => {
   test('contact validation, pending, failure and success feedback stay visible', async ({ page, contactTransport }) => {
     await expectContactFeedbackVisible(page, contactTransport);
   });
+
+  test('contact validation toast appears in place without sliding', async ({ page }) => {
+    const samples = await collectValidationToastSamples(page);
+    expectIdentityTransform(samples, 'validation toast');
+    expectSettled(samples, 'validation toast');
+  });
 });
 
 test.describe('normal motion', () => {
@@ -294,6 +311,13 @@ test.describe('normal motion', () => {
 
   test('contact validation, pending, failure and success feedback stay visible', async ({ page, contactTransport }) => {
     await expectContactFeedbackVisible(page, contactTransport);
+  });
+
+  test('contact validation toast keeps its slide-in entrance and settles', async ({ page }) => {
+    const samples = await collectValidationToastSamples(page);
+    // Starts above its resting place (slide-in-from-top-full), then settles.
+    expect(samples[0].y, `validation toast mount y (${samples[0].transform})`).toBeLessThan(-1);
+    expectSettled(samples, 'validation toast');
   });
 });
 
