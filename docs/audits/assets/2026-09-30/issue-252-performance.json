@@ -1,0 +1,741 @@
+{
+  "issue": 252,
+  "base": "a792461",
+  "conditions": {
+    "harness": "lane-perf probe-load: Playwright 1.60 Chromium headless, fresh context per run (cold cache), non-loopback hosts blocked by host-resolver rules, CDP CPU 4x, network RTT 150 ms / 1.6 Mbps down / 750 kbps up, consent seeded (returning visitor)",
+    "profiles": {
+      "mobile": "412x823 DPR 1.75 touch",
+      "desktop": "1350x940 DPR 1"
+    },
+    "server": "vite preview of npm run build output on loopback"
+  },
+  "before": {
+    "home-mobile": [
+      {
+        "fcpMs": 1332,
+        "lcpMs": 2744,
+        "lcpElement": "IMG /assets/images/vivek-black-and-white.webp",
+        "portrait": {
+          "url": "/assets/images/vivek-black-and-white.webp",
+          "bytes": 73414
+        },
+        "logo": {
+          "url": "/assets/logos/mylogo.png",
+          "bytes": 51548
+        },
+        "imageBytesAfterFullScroll": 809880,
+        "totalBytesAfterFullScroll": 977538
+      },
+      {
+        "fcpMs": 1336,
+        "lcpMs": 2748,
+        "lcpElement": "IMG /assets/images/vivek-black-and-white.webp",
+        "portrait": {
+          "url": "/assets/images/vivek-black-and-white.webp",
+          "bytes": 73414
+        },
+        "logo": {
+          "url": "/assets/logos/mylogo.png",
+          "bytes": 51548
+        },
+        "imageBytesAfterFullScroll": 809880,
+        "totalBytesAfterFullScroll": 977538
+      },
+      {
+        "fcpMs": 1332,
+        "lcpMs": 2740,
+        "lcpElement": "IMG /assets/images/vivek-black-and-white.webp",
+        "portrait": {
+          "url": "/assets/images/vivek-black-and-white.webp",
+          "bytes": 73414
+        },
+        "logo": {
+          "url": "/assets/logos/mylogo.png",
+          "bytes": 51548
+        },
+        "imageBytesAfterFullScroll": 809880,
+        "totalBytesAfterFullScroll": 977538
+      }
+    ],
+    "home-desktop": [
+      {
+        "fcpMs": 1356,
+        "lcpMs": 2928,
+        "lcpElement": "IMG /assets/images/vivek-black-and-white.webp",
+        "portrait": {
+          "url": "/assets/images/vivek-black-and-white.webp",
+          "bytes": 73414
+        },
+        "logo": {
+          "url": "/assets/logos/mylogo.png",
+          "bytes": 51548
+        },
+        "imageBytesAfterFullScroll": 809880,
+        "totalBytesAfterFullScroll": 977538
+      },
+      {
+        "fcpMs": 1356,
+        "lcpMs": 2940,
+        "lcpElement": "IMG /assets/images/vivek-black-and-white.webp",
+        "portrait": {
+          "url": "/assets/images/vivek-black-and-white.webp",
+          "bytes": 73414
+        },
+        "logo": {
+          "url": "/assets/logos/mylogo.png",
+          "bytes": 51548
+        },
+        "imageBytesAfterFullScroll": 809880,
+        "totalBytesAfterFullScroll": 977538
+      },
+      {
+        "fcpMs": 1360,
+        "lcpMs": 2932,
+        "lcpElement": "IMG /assets/images/vivek-black-and-white.webp",
+        "portrait": {
+          "url": "/assets/images/vivek-black-and-white.webp",
+          "bytes": 73414
+        },
+        "logo": {
+          "url": "/assets/logos/mylogo.png",
+          "bytes": 51548
+        },
+        "imageBytesAfterFullScroll": 809880,
+        "totalBytesAfterFullScroll": 977538
+      }
+    ],
+    "contact-mobile": [
+      {
+        "fcpMs": 1248,
+        "lcpMs": 1752,
+        "lcpElement": "IMG /assets/logos/mylogo.png",
+        "portrait": null,
+        "logo": {
+          "url": "/assets/logos/mylogo.png",
+          "bytes": 51548
+        },
+        "imageBytesAfterFullScroll": 51548,
+        "totalBytesAfterFullScroll": 245818
+      },
+      {
+        "fcpMs": 1236,
+        "lcpMs": 1736,
+        "lcpElement": "IMG /assets/logos/mylogo.png",
+        "portrait": null,
+        "logo": {
+          "url": "/assets/logos/mylogo.png",
+          "bytes": 51548
+        },
+        "imageBytesAfterFullScroll": 51548,
+        "totalBytesAfterFullScroll": 245818
+      },
+      {
+        "fcpMs": 1252,
+        "lcpMs": 1752,
+        "lcpElement": "IMG /assets/logos/mylogo.png",
+        "portrait": null,
+        "logo": {
+          "url": "/assets/logos/mylogo.png",
+          "bytes": 51548
+        },
+        "imageBytesAfterFullScroll": 51548,
+        "totalBytesAfterFullScroll": 245818
+      }
+    ],
+    "legal-mobile": [
+      {
+        "fcpMs": 1240,
+        "lcpMs": 1652,
+        "lcpElement": "IMG /assets/logos/mylogo.png",
+        "portrait": null,
+        "logo": {
+          "url": "/assets/logos/mylogo.png",
+          "bytes": 51548
+        },
+        "imageBytesAfterFullScroll": 51548,
+        "totalBytesAfterFullScroll": 222647
+      },
+      {
+        "fcpMs": 1240,
+        "lcpMs": 1648,
+        "lcpElement": "IMG /assets/logos/mylogo.png",
+        "portrait": null,
+        "logo": {
+          "url": "/assets/logos/mylogo.png",
+          "bytes": 51548
+        },
+        "imageBytesAfterFullScroll": 51548,
+        "totalBytesAfterFullScroll": 222647
+      }
+    ],
+    "data-policy-mobile": [
+      {
+        "fcpMs": 1252,
+        "lcpMs": 1660,
+        "lcpElement": "IMG /assets/logos/mylogo.png",
+        "portrait": null,
+        "logo": {
+          "url": "/assets/logos/mylogo.png",
+          "bytes": 51548
+        },
+        "imageBytesAfterFullScroll": 51548,
+        "totalBytesAfterFullScroll": 222115
+      },
+      {
+        "fcpMs": 1236,
+        "lcpMs": 1640,
+        "lcpElement": "IMG /assets/logos/mylogo.png",
+        "portrait": null,
+        "logo": {
+          "url": "/assets/logos/mylogo.png",
+          "bytes": 51548
+        },
+        "imageBytesAfterFullScroll": 51548,
+        "totalBytesAfterFullScroll": 222115
+      }
+    ]
+  },
+  "after": {
+    "home-mobile": [
+      {
+        "fcpMs": 1340,
+        "lcpMs": 1700,
+        "lcpElement": "IMG /assets/images/vivek-black-and-white-480w.webp",
+        "portrait": {
+          "url": "/assets/images/vivek-black-and-white-480w.webp",
+          "bytes": 15902
+        },
+        "logo": {
+          "url": "/assets/logos/mylogo-60.webp",
+          "bytes": 1544
+        },
+        "imageBytesAfterFullScroll": 731876,
+        "totalBytesAfterFullScroll": 899679
+      },
+      {
+        "fcpMs": 1336,
+        "lcpMs": 1716,
+        "lcpElement": "IMG /assets/images/vivek-black-and-white-480w.webp",
+        "portrait": {
+          "url": "/assets/images/vivek-black-and-white-480w.webp",
+          "bytes": 15902
+        },
+        "logo": {
+          "url": "/assets/logos/mylogo-60.webp",
+          "bytes": 1544
+        },
+        "imageBytesAfterFullScroll": 731876,
+        "totalBytesAfterFullScroll": 899679
+      },
+      {
+        "fcpMs": 1344,
+        "lcpMs": 1708,
+        "lcpElement": "IMG /assets/images/vivek-black-and-white-480w.webp",
+        "portrait": {
+          "url": "/assets/images/vivek-black-and-white-480w.webp",
+          "bytes": 15902
+        },
+        "logo": {
+          "url": "/assets/logos/mylogo-60.webp",
+          "bytes": 1544
+        },
+        "imageBytesAfterFullScroll": 731876,
+        "totalBytesAfterFullScroll": 899679
+      }
+    ],
+    "home-desktop": [
+      {
+        "fcpMs": 1356,
+        "lcpMs": 1796,
+        "lcpElement": "IMG /assets/images/vivek-black-and-white-480w.webp",
+        "portrait": {
+          "url": "/assets/images/vivek-black-and-white-480w.webp",
+          "bytes": 15902
+        },
+        "logo": {
+          "url": "/assets/logos/mylogo-60.webp",
+          "bytes": 1544
+        },
+        "imageBytesAfterFullScroll": 702364,
+        "totalBytesAfterFullScroll": 870167
+      },
+      {
+        "fcpMs": 1356,
+        "lcpMs": 1796,
+        "lcpElement": "IMG /assets/images/vivek-black-and-white-480w.webp",
+        "portrait": {
+          "url": "/assets/images/vivek-black-and-white-480w.webp",
+          "bytes": 15902
+        },
+        "logo": {
+          "url": "/assets/logos/mylogo-60.webp",
+          "bytes": 1544
+        },
+        "imageBytesAfterFullScroll": 702364,
+        "totalBytesAfterFullScroll": 870167
+      },
+      {
+        "fcpMs": 1356,
+        "lcpMs": 1800,
+        "lcpElement": "IMG /assets/images/vivek-black-and-white-480w.webp",
+        "portrait": {
+          "url": "/assets/images/vivek-black-and-white-480w.webp",
+          "bytes": 15902
+        },
+        "logo": {
+          "url": "/assets/logos/mylogo-60.webp",
+          "bytes": 1544
+        },
+        "imageBytesAfterFullScroll": 702364,
+        "totalBytesAfterFullScroll": 870167
+      }
+    ],
+    "contact-mobile": [
+      {
+        "fcpMs": 1252,
+        "lcpMs": 1424,
+        "lcpElement": "IMG /assets/logos/mylogo-60.webp",
+        "portrait": null,
+        "logo": {
+          "url": "/assets/logos/mylogo-60.webp",
+          "bytes": 1544
+        },
+        "imageBytesAfterFullScroll": 1544,
+        "totalBytesAfterFullScroll": 195957
+      },
+      {
+        "fcpMs": 1252,
+        "lcpMs": 1424,
+        "lcpElement": "IMG /assets/logos/mylogo-60.webp",
+        "portrait": null,
+        "logo": {
+          "url": "/assets/logos/mylogo-60.webp",
+          "bytes": 1544
+        },
+        "imageBytesAfterFullScroll": 1544,
+        "totalBytesAfterFullScroll": 195957
+      },
+      {
+        "fcpMs": 1252,
+        "lcpMs": 1424,
+        "lcpElement": "IMG /assets/logos/mylogo-60.webp",
+        "portrait": null,
+        "logo": {
+          "url": "/assets/logos/mylogo-60.webp",
+          "bytes": 1544
+        },
+        "imageBytesAfterFullScroll": 1544,
+        "totalBytesAfterFullScroll": 195957
+      }
+    ],
+    "legal-mobile": [
+      {
+        "fcpMs": 1240,
+        "lcpMs": 1420,
+        "lcpElement": "IMG /assets/logos/mylogo-60.webp",
+        "portrait": null,
+        "logo": {
+          "url": "/assets/logos/mylogo-60.webp",
+          "bytes": 1544
+        },
+        "imageBytesAfterFullScroll": 1544,
+        "totalBytesAfterFullScroll": 172787
+      },
+      {
+        "fcpMs": 1244,
+        "lcpMs": 1416,
+        "lcpElement": "IMG /assets/logos/mylogo-60.webp",
+        "portrait": null,
+        "logo": {
+          "url": "/assets/logos/mylogo-60.webp",
+          "bytes": 1544
+        },
+        "imageBytesAfterFullScroll": 1544,
+        "totalBytesAfterFullScroll": 172787
+      }
+    ],
+    "data-policy-mobile": [
+      {
+        "fcpMs": 1248,
+        "lcpMs": 1428,
+        "lcpElement": "IMG /assets/logos/mylogo-60.webp",
+        "portrait": null,
+        "logo": {
+          "url": "/assets/logos/mylogo-60.webp",
+          "bytes": 1544
+        },
+        "imageBytesAfterFullScroll": 1544,
+        "totalBytesAfterFullScroll": 172256
+      },
+      {
+        "fcpMs": 1248,
+        "lcpMs": 1440,
+        "lcpElement": "IMG /assets/logos/mylogo-60.webp",
+        "portrait": null,
+        "logo": {
+          "url": "/assets/logos/mylogo-60.webp",
+          "bytes": 1544
+        },
+        "imageBytesAfterFullScroll": 1544,
+        "totalBytesAfterFullScroll": 172256
+      }
+    ]
+  },
+  "rejectedExperiments": {
+    "img fetchpriority=high (with derivatives)": [
+      {
+        "fcpMs": 1344,
+        "lcpMs": 1676
+      },
+      {
+        "fcpMs": 1344,
+        "lcpMs": 1692
+      },
+      {
+        "fcpMs": 1348,
+        "lcpMs": 1700
+      },
+      {
+        "fcpMs": 1360,
+        "lcpMs": 1764
+      },
+      {
+        "fcpMs": 1356,
+        "lcpMs": 1816
+      },
+      {
+        "fcpMs": 1356,
+        "lcpMs": 1804
+      }
+    ],
+    "home-only <link rel=preload as=image imagesrcset fetchpriority=high> (scratch edit of built index.html)": [
+      {
+        "fcpMs": 1424,
+        "lcpMs": 1424
+      },
+      {
+        "fcpMs": 1420,
+        "lcpMs": 1420
+      },
+      {
+        "fcpMs": 1420,
+        "lcpMs": 1420
+      },
+      {
+        "fcpMs": 1432,
+        "lcpMs": 1432
+      },
+      {
+        "fcpMs": 1436,
+        "lcpMs": 1436
+      },
+      {
+        "fcpMs": 1440,
+        "lcpMs": 1440
+      }
+    ],
+    "note": "first 3 entries mobile, last 3 desktop"
+  },
+  "visual": {
+    "method": "element screenshots at rendered size, reduced motion, before vs after build; per-channel absolute difference over RGB",
+    "selectedCandidates": {
+      "desktop-dpr1-logo": {
+        "before": "/assets/logos/mylogo.png",
+        "after": "/assets/logos/mylogo-60.webp",
+        "renderedCss": [
+          30,
+          30
+        ]
+      },
+      "desktop-dpr1-hero": {
+        "before": "/assets/images/vivek-black-and-white.webp",
+        "after": "/assets/images/vivek-black-and-white-480w.webp",
+        "renderedCss": [
+          236,
+          276.4
+        ]
+      },
+      "desktop-dpr1-about": {
+        "before": "/assets/images/vivek-black-and-white.webp",
+        "after": "/assets/images/vivek-black-and-white-480w.webp",
+        "renderedCss": [
+          460.5,
+          344.9
+        ]
+      },
+      "desktop-dpr2-logo": {
+        "before": "/assets/logos/mylogo.png",
+        "after": "/assets/logos/mylogo-60.webp",
+        "renderedCss": [
+          30,
+          30
+        ]
+      },
+      "desktop-dpr2-hero": {
+        "before": "/assets/images/vivek-black-and-white.webp",
+        "after": "/assets/images/vivek-black-and-white-480w.webp",
+        "renderedCss": [
+          236,
+          276.4
+        ]
+      },
+      "desktop-dpr2-about": {
+        "before": "/assets/images/vivek-black-and-white.webp",
+        "after": "/assets/images/vivek-black-and-white.webp",
+        "renderedCss": [
+          460.5,
+          344.9
+        ]
+      },
+      "mobile-dpr1.75-logo": {
+        "before": "/assets/logos/mylogo.png",
+        "after": "/assets/logos/mylogo-60.webp",
+        "renderedCss": [
+          30,
+          30
+        ]
+      },
+      "mobile-dpr1.75-hero": {
+        "before": "/assets/images/vivek-black-and-white.webp",
+        "after": "/assets/images/vivek-black-and-white-480w.webp",
+        "renderedCss": [
+          216,
+          253
+        ]
+      },
+      "mobile-dpr1.75-about": {
+        "before": "/assets/images/vivek-black-and-white.webp",
+        "after": "/assets/images/vivek-black-and-white-720w.webp",
+        "renderedCss": [
+          304,
+          227.5
+        ]
+      },
+      "mobile-dpr2-logo": {
+        "before": "/assets/logos/mylogo.png",
+        "after": "/assets/logos/mylogo-60.webp",
+        "renderedCss": [
+          30,
+          30
+        ]
+      },
+      "mobile-dpr2-hero": {
+        "before": "/assets/images/vivek-black-and-white.webp",
+        "after": "/assets/images/vivek-black-and-white-480w.webp",
+        "renderedCss": [
+          216,
+          253
+        ]
+      },
+      "mobile-dpr2-about": {
+        "before": "/assets/images/vivek-black-and-white.webp",
+        "after": "/assets/images/vivek-black-and-white-720w.webp",
+        "renderedCss": [
+          282,
+          211
+        ]
+      },
+      "mobile-dpr3-logo": {
+        "before": "/assets/logos/mylogo.png",
+        "after": "/assets/logos/mylogo-90.webp",
+        "renderedCss": [
+          30,
+          30
+        ]
+      },
+      "mobile-dpr3-hero": {
+        "before": "/assets/images/vivek-black-and-white.webp",
+        "after": "/assets/images/vivek-black-and-white-720w.webp",
+        "renderedCss": [
+          216,
+          253
+        ]
+      },
+      "mobile-dpr3-about": {
+        "before": "/assets/images/vivek-black-and-white.webp",
+        "after": "/assets/images/vivek-black-and-white.webp",
+        "renderedCss": [
+          282,
+          211
+        ]
+      }
+    },
+    "stats": {
+      "desktop-dpr1": {
+        "logo": {
+          "size": [
+            30,
+            30
+          ],
+          "sameSize": true,
+          "meanAbsDiff": 3.75,
+          "maxDiff": 77,
+          "pctPixelsOver16": 9.89,
+          "psnr": 26.9
+        },
+        "hero": {
+          "size": [
+            237,
+            278
+          ],
+          "sameSize": true,
+          "meanAbsDiff": 1,
+          "maxDiff": 49,
+          "pctPixelsOver16": 0.26,
+          "psnr": 41.5
+        },
+        "about": {
+          "size": [
+            461,
+            346
+          ],
+          "sameSize": true,
+          "meanAbsDiff": 1.2,
+          "maxDiff": 58,
+          "pctPixelsOver16": 0.34,
+          "psnr": 40.2
+        }
+      },
+      "desktop-dpr2": {
+        "logo": {
+          "size": [
+            60,
+            60
+          ],
+          "sameSize": true,
+          "meanAbsDiff": 2.15,
+          "maxDiff": 85,
+          "pctPixelsOver16": 5.42,
+          "psnr": 29.5
+        },
+        "hero": {
+          "size": [
+            474,
+            556
+          ],
+          "sameSize": true,
+          "meanAbsDiff": 1.14,
+          "maxDiff": 61,
+          "pctPixelsOver16": 0.26,
+          "psnr": 40.7
+        },
+        "about": {
+          "size": [
+            922,
+            692
+          ],
+          "sameSize": true,
+          "meanAbsDiff": 0,
+          "maxDiff": 0,
+          "pctPixelsOver16": 0,
+          "psnr": null
+        }
+      },
+      "mobile-dpr1.75": {
+        "logo": {
+          "size": [
+            53,
+            53
+          ],
+          "sameSize": true,
+          "meanAbsDiff": 1.77,
+          "maxDiff": 77,
+          "pctPixelsOver16": 5.38,
+          "psnr": 31.4
+        },
+        "hero": {
+          "size": [
+            378,
+            445
+          ],
+          "sameSize": true,
+          "meanAbsDiff": 1.29,
+          "maxDiff": 66,
+          "pctPixelsOver16": 0.36,
+          "psnr": 39.8
+        },
+        "about": {
+          "size": [
+            532,
+            401
+          ],
+          "sameSize": true,
+          "meanAbsDiff": 1.33,
+          "maxDiff": 71,
+          "pctPixelsOver16": 0.87,
+          "psnr": 37.7
+        }
+      },
+      "mobile-dpr2": {
+        "logo": {
+          "size": [
+            60,
+            60
+          ],
+          "sameSize": true,
+          "meanAbsDiff": 2.16,
+          "maxDiff": 85,
+          "pctPixelsOver16": 5.42,
+          "psnr": 29.4
+        },
+        "hero": {
+          "size": [
+            432,
+            508
+          ],
+          "sameSize": true,
+          "meanAbsDiff": 1.31,
+          "maxDiff": 78,
+          "pctPixelsOver16": 0.45,
+          "psnr": 39.5
+        },
+        "about": {
+          "size": [
+            564,
+            424
+          ],
+          "sameSize": true,
+          "meanAbsDiff": 2.23,
+          "maxDiff": 137,
+          "pctPixelsOver16": 3.11,
+          "psnr": 31.9
+        }
+      },
+      "mobile-dpr3": {
+        "logo": {
+          "size": [
+            90,
+            90
+          ],
+          "sameSize": true,
+          "meanAbsDiff": 1.07,
+          "maxDiff": 76,
+          "pctPixelsOver16": 2.85,
+          "psnr": 33.7
+        },
+        "hero": {
+          "size": [
+            648,
+            762
+          ],
+          "sameSize": true,
+          "meanAbsDiff": 1.46,
+          "maxDiff": 121,
+          "pctPixelsOver16": 0.7,
+          "psnr": 37.8
+        },
+        "about": {
+          "size": [
+            846,
+            636
+          ],
+          "sameSize": true,
+          "meanAbsDiff": 0,
+          "maxDiff": 0,
+          "pctPixelsOver16": 0,
+          "psnr": null
+        }
+      }
+    }
+  }
+}
