@@ -56,7 +56,17 @@ export async function runIssueLifecycle({ github, context, core }) {
     if (!pr.merged || pr.base.ref !== 'develop' || pr.merge_commit_sha !== sha
       || pr.base.repo.full_name.toLowerCase() !== `${repository.owner}/${repository.repo}`.toLowerCase()) continue;
     matched = true;
-    for (const issue_number of issueReferences(pr.body).closes) {
+    const { repository: { pullRequest: declaration } } = await github.graphql(`
+      query($owner: String!, $name: String!, $number: Int!) {
+        repository(owner: $owner, name: $name) {
+          pullRequest(number: $number) { body lastEditedAt mergedAt }
+        }
+      }
+    `, { owner: repository.owner, name: repository.repo, number: pr.number });
+    if (declaration.lastEditedAt && declaration.lastEditedAt > declaration.mergedAt) {
+      throw new Error(`PR #${pr.number} was edited after merging. Verify its original issue declarations manually.`);
+    }
+    for (const issue_number of issueReferences(declaration.body).closes) {
       const { data: issue } = await github.rest.issues.get({ ...repository, issue_number });
       if (issue.pull_request) throw new Error(`#${issue_number} is a pull request, not an issue.`);
       if (issue.state === 'closed') continue;

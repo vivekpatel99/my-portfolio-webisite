@@ -57,6 +57,11 @@ issues as completed. Existing closed issues are skipped on reruns. PR-body issue
 references provide the issue/PR cross-reference; GitHub's Development sidebar
 auto-linking still follows its default-branch rules.
 
+The job reads the PR body and its edit timestamp together. If the body was edited
+after the merge, it fails before closing any issues. Check the original reviewed
+declarations and reconcile issue state manually in that case; editing a merged
+PR cannot add or remove automatic closure targets on a rerun.
+
 This uses the reviewed code on `develop`; it does not need the workflow on
 `main` or execute an unmerged PR with an issue-write token. It covers merges
 through the protected-branch PR workflow, including squash, merge, and rebase

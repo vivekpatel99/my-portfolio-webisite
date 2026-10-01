@@ -10,6 +10,9 @@ function fixture(prOverrides = {}, issueOverrides = {}) {
     ...prOverrides,
   };
   const github = {
+    graphql: vi.fn().mockResolvedValue({ repository: { pullRequest: {
+      body: pr.body, lastEditedAt: null, mergedAt: '2026-10-01T06:00:00Z',
+    } } }),
     paginate: vi.fn().mockResolvedValue([{ number: 9 }]),
     rest: {
       repos: { listPullRequestsAssociatedWithCommit: vi.fn() },
@@ -84,6 +87,28 @@ describe('merged develop issue closure', () => {
     const state = fixture({ body: 'Refs #206' });
     await runIssueLifecycle(state);
     expect(state.github.rest.issues.update).not.toHaveBeenCalled();
+  });
+
+  it('rejects post-merge body edits, including removed completion lines, before any writes', async () => {
+    for (const body of ['Closes #999', 'Refs #206']) {
+      const state = fixture();
+      state.github.graphql.mockResolvedValue({ repository: { pullRequest: {
+        body, lastEditedAt: '2026-10-01T06:01:00Z', mergedAt: '2026-10-01T06:00:00Z',
+      } } });
+      await expect(runIssueLifecycle(state)).rejects.toThrow('edited after merging');
+      expect(state.github.rest.issues.update).not.toHaveBeenCalled();
+    }
+  });
+
+  it('accepts pre-merge body edits and uses the body returned with its edit timestamp', async () => {
+    const state = fixture({ body: 'Closes #999' });
+    state.github.graphql.mockResolvedValue({ repository: { pullRequest: {
+      body: 'Closes #206', lastEditedAt: '2026-10-01T05:00:00Z', mergedAt: '2026-10-01T06:00:00Z',
+    } } });
+    await runIssueLifecycle(state);
+    expect(state.github.rest.issues.update).toHaveBeenCalledExactlyOnceWith({
+      owner: 'owner', repo: 'repo', issue_number: 206, state: 'closed', state_reason: 'completed',
+    });
   });
 
   it.each(['main', 'feature'])('ignores pushes to %s', async (branch) => {
