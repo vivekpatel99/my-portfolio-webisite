@@ -7,8 +7,8 @@ import { caseStudyThumbnailRegistry } from '../src/lib/caseStudyThumbnails.js';
 
 const normalize = (value) => path.resolve(value).split(path.sep).join('/');
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
-const thumbnailSourceFor = (thumbnailPath) => Object.entries(caseStudyThumbnailRegistry)
-  .find(([, entry]) => entry.src === thumbnailPath)?.[0];
+const IMAGE_EXTENSION = /\.(?:avif|jpe?g|png|webp)$/i;
+const MAX_DISPLAY_BYTES = 100_000;
 const assertRegularAsset = (assetPath, publicPath) => {
   const info = lstatSync(assetPath);
   if (!info.isFile() || info.isSymbolicLink()) throw new Error(`Case-study delivery asset must be a regular file: ${publicPath}`);
@@ -22,22 +22,58 @@ export const assertThumbnailFilenameHash = (thumbnailPath, thumbnailSha256) => {
   const filenameHash = path.posix.basename(thumbnailPath).match(/-thumb-([a-f0-9]{12})\.jpg$/i)?.[1]?.toLowerCase();
   if (filenameHash !== thumbnailSha256.slice(0, 12)) throw new Error(`Case-study thumbnail filename must contain its derivative hash: ${thumbnailPath}`);
 };
-export const assertThumbnailBinding = (publicDirectory, thumbnailPath) => {
-  const sourcePath = thumbnailSourceFor(thumbnailPath);
-  if (!sourcePath) return;
+export const assertDisplayDimensions = (dimensions, displayPath, display) => {
+  if (String(dimensions.type).toLowerCase() !== 'webp') {
+    throw new Error(`Case-study display derivative must be WebP: ${displayPath}`);
+  }
+  if (dimensions.width !== display.width || dimensions.height !== display.height) {
+    throw new Error(`Case-study display derivative dimensions do not match its registry: ${displayPath}`);
+  }
+};
+export const assertDisplayFilenameHash = (displayPath, sourceSha256, displaySha256) => {
+  const hashes = path.posix.basename(displayPath)
+    .match(/^case-study-display-([a-f0-9]{12})-([a-f0-9]{12})\.webp$/i)
+    ?.slice(1)
+    .map((value) => value.toLowerCase());
+  if (hashes?.[0] !== sourceSha256.slice(0, 12) || hashes?.[1] !== displaySha256.slice(0, 12)) {
+    throw new Error(`Case-study display filename must contain its source and derivative hashes: ${displayPath}`);
+  }
+};
+export const assertCaseStudyBinding = (publicDirectory, sourcePath, { requireDisplay = false } = {}) => {
   const entry = caseStudyThumbnailRegistry[sourcePath];
-  assertThumbnailFilenameHash(thumbnailPath, entry.thumbnailSha256);
+  if (!entry) {
+    if (requireDisplay) throw new Error(`Published case-study image has no display derivative binding: ${sourcePath}`);
+    return;
+  }
   const sourceFile = path.join(publicDirectory, sourcePath.replace(/^\//, ''));
-  const thumbnailFile = path.join(publicDirectory, thumbnailPath.replace(/^\//, ''));
   assertRegularAsset(sourceFile, sourcePath);
-  assertRegularAsset(thumbnailFile, thumbnailPath);
   const sourceBytes = readFileSync(sourceFile);
+  if (digest(sourceBytes) !== entry.sourceSha256) throw new Error(`Case-study source changed without updating its derivative registry: ${sourcePath}`);
+
+  const thumbnailPath = entry.src;
+  const thumbnailFile = path.join(publicDirectory, thumbnailPath.replace(/^\//, ''));
+  assertThumbnailFilenameHash(thumbnailPath, entry.thumbnailSha256);
+  assertRegularAsset(thumbnailFile, thumbnailPath);
   const thumbnailBytes = readFileSync(thumbnailFile);
-  if (digest(sourceBytes) !== entry.sourceSha256) throw new Error(`Case-study thumbnail source changed without updating its registry: ${sourcePath}`);
   if (digest(thumbnailBytes) !== entry.thumbnailSha256) throw new Error(`Case-study thumbnail changed without updating its registry: ${thumbnailPath}`);
-  let dimensions;
-  try { dimensions = imageSize(thumbnailBytes); } catch { throw new Error(`Case-study thumbnail is not a valid image: ${thumbnailPath}`); }
-  assertThumbnailDimensions(dimensions, thumbnailPath);
+  let thumbnailDimensions;
+  try { thumbnailDimensions = imageSize(thumbnailBytes); } catch { throw new Error(`Case-study thumbnail is not a valid image: ${thumbnailPath}`); }
+  assertThumbnailDimensions(thumbnailDimensions, thumbnailPath);
+
+  if (!entry.display) {
+    if (requireDisplay) throw new Error(`Published case-study image has no display derivative binding: ${sourcePath}`);
+    return;
+  }
+  const displayPath = entry.display.src;
+  const displayFile = path.join(publicDirectory, displayPath.replace(/^\//, ''));
+  assertDisplayFilenameHash(displayPath, entry.sourceSha256, entry.display.sha256);
+  assertRegularAsset(displayFile, displayPath);
+  const displayBytes = readFileSync(displayFile);
+  if (displayBytes.byteLength > MAX_DISPLAY_BYTES) throw new Error(`Case-study display derivative exceeds ${MAX_DISPLAY_BYTES} bytes: ${displayPath}`);
+  if (digest(displayBytes) !== entry.display.sha256) throw new Error(`Case-study display derivative changed without updating its registry: ${displayPath}`);
+  let displayDimensions;
+  try { displayDimensions = imageSize(displayBytes); } catch { throw new Error(`Case-study display derivative is not a valid image: ${displayPath}`); }
+  assertDisplayDimensions(displayDimensions, displayPath, entry.display);
 };
 const referencedAssetUrls = (publication) => publication.flatMap((record) => {
   const urls = [record.image, ...(record.gallery ?? [])]
@@ -50,11 +86,13 @@ const referencedAssetUrls = (publication) => publication.flatMap((record) => {
   (record.sections ?? []).forEach((section) => walk(section.nodes));
   return urls;
 });
+const referencedImageUrls = (publication) => referencedAssetUrls(publication).filter((url) => IMAGE_EXTENSION.test(url));
 const referencedDeliveryUrls = (publication) => {
   const referenced = referencedAssetUrls(publication);
   return new Set([
     ...referenced,
     ...referenced.map((publicPath) => caseStudyThumbnailRegistry[publicPath]?.src).filter(Boolean),
+    ...referenced.map((publicPath) => caseStudyThumbnailRegistry[publicPath]?.display?.src).filter(Boolean),
   ]);
 };
 
@@ -107,7 +145,13 @@ export default function caseStudyPublicationPlugin({ root = process.cwd() } = {}
               response.statusCode = 404;
               return response.end();
             }
-            assertThumbnailBinding(path.join(projectRoot, 'public'), pathname);
+            const referencedImages = referencedImageUrls(publication);
+            for (const sourcePath of referencedImages) {
+              const binding = caseStudyThumbnailRegistry[sourcePath];
+              if (sourcePath === pathname || binding?.src === pathname || binding?.display?.src === pathname) {
+                assertCaseStudyBinding(path.join(projectRoot, 'public'), sourcePath, { requireDisplay: true });
+              }
+            }
           }
           next();
         } catch (error) { next(error); }
@@ -131,12 +175,14 @@ export default function caseStudyPublicationPlugin({ root = process.cwd() } = {}
       }
       copyPublicFiles(this, publicDirectory);
       const publication = compileCaseStudyPublication({ root: projectRoot });
+      for (const sourcePath of referencedImageUrls(publication)) {
+        assertCaseStudyBinding(publicDirectory, sourcePath, { requireDisplay: true });
+      }
       const referencedAssets = referencedDeliveryUrls(publication);
       for (const publicPath of referencedAssets) {
         const relative = publicPath.replace(/^\//, '');
         const assetPath = path.join(publicDirectory, relative);
         assertRegularAsset(assetPath, publicPath);
-        assertThumbnailBinding(publicDirectory, publicPath);
         this.emitFile({ type: 'asset', fileName: relative, source: readFileSync(assetPath) });
       }
       const template = readFileSync(path.join(publicDirectory, '.htaccess'), 'utf8');

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { galleryThumbnailSrc } from '../lib/caseStudyThumbnails.js';
+import { caseStudyDisplaySrc, galleryThumbnailSrc } from '../lib/caseStudyThumbnails.js';
 const h = React.createElement;
-export { galleryThumbnailSrc };
+export { caseStudyDisplaySrc, galleryThumbnailSrc };
 
 // Wide canvases own the inline stage; 4:3 is the floor so portrait media stay framed.
 export function galleryStageAspectRatio(media = {}) {
@@ -109,7 +109,7 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
   const media = (item, fitted = true) => isVideo(item)
     ? h('video', {
       src: item.src,
-      poster: item.poster,
+      poster: caseStudyDisplaySrc({ src: item.poster }),
       controls: true,
       preload: 'metadata',
       'aria-label': item.alt,
@@ -124,7 +124,7 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
     loading,
   });
   const cover = (image, loading = 'eager') => h('figure', { className: 'case-study-cover', key: image.src },
-    isVideo(image) ? media(image, false) : h('a', { href: image.src }, h('img', { src: image.src, alt: image.alt, width: image.width, height: image.height, loading })),
+    isVideo(image) ? media(image, false) : h('a', { href: image.src }, h('img', { src: caseStudyDisplaySrc(image), alt: image.alt, width: image.width, height: image.height, loading })),
     image.caption ? h('figcaption', null, image.caption) : null);
   if (images.length === 1) return cover(selected);
   const button = (label, action, content, props = {}) => h('button', { type: 'button', 'aria-label': label, onClick: action, ...props }, content);
@@ -155,8 +155,8 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
         : large ? h('div', { className: 'case-gallery-viewport', tabIndex: 0, 'aria-label': 'Enlarged image; scroll to inspect when zoomed' },
         h('img', { src: selected.src, alt: selected.alt, style: { width: `${zoom * 100}%`, maxWidth: 'none', height: `${zoom * 100}%` } }))
         : interactive
-          ? button(`Enlarge image: ${selected.alt}`, (event) => { opener.current = event.currentTarget; setExpanded(true); }, h('img', { src: selected.src, alt: selected.alt, width: selected.width, height: selected.height }), { className: 'case-gallery-open' })
-          : h('a', { href: selected.src, className: 'case-gallery-open', style: { display: 'block', width: '100%', height: '100%', padding: '12px' } }, h('img', { src: selected.src, alt: selected.alt, width: selected.width, height: selected.height })),
+          ? button(`Enlarge image: ${selected.alt}`, (event) => { opener.current = event.currentTarget; setExpanded(true); }, h('img', { src: caseStudyDisplaySrc(selected), alt: selected.alt, width: selected.width, height: selected.height }), { className: 'case-gallery-open' })
+          : h('a', { href: selected.src, className: 'case-gallery-open', style: { display: 'block', width: '100%', height: '100%', padding: '12px' } }, h('img', { src: caseStudyDisplaySrc(selected), alt: selected.alt, width: selected.width, height: selected.height })),
       interactive ? button('Previous image', () => select(index - 1), '‹', { className: 'case-gallery-arrow case-gallery-prev' }) : null,
       interactive ? button('Next image', () => select(index + 1), '›', { className: 'case-gallery-arrow case-gallery-next' }) : null),
     h('p', { className: 'case-gallery-count', 'aria-live': 'polite', 'aria-atomic': true }, `${index + 1} of ${images.length}`),
