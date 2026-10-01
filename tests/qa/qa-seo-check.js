@@ -322,7 +322,12 @@ for (const [ref, source] of [['index.html', indexHtml], ['src/lib/seoConfig.js',
   }
 }
 
-pin('Hero.jsx missing Based in Linz, Austria', 'src/components/Hero.jsx', hero.includes('Based in Linz, Austria'));
+pin(
+  'Hero.jsx must keep Linz, Austria once in the invoice location field',
+  'src/components/Hero.jsx',
+  /fieldBoxProps\('location',[\s\S]*?Linz, Austria/.test(hero)
+    && (hero.match(/Linz, Austria/g) ?? []).length === 1,
+);
 pin(
   'defaultSeo.description is not the locked Linz sentence',
   'src/lib/seoConfig.js',
