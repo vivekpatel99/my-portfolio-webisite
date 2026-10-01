@@ -5,6 +5,7 @@ import React, { lazy, useEffect } from 'react';
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { Seo } from '@/lib/seo';
 import ErrorBoundary from './ErrorBoundary';
 import Layout from './Layout';
 import { ROUTE_ERROR_HEADING } from './RouteErrorBoundary';
@@ -27,6 +28,16 @@ vi.mock('@/components/CookieConsentBanner', () => ({ default: () => null }));
 
 const FailingChunk = lazy(() => Promise.reject(new Error('Failed to fetch dynamically imported module')));
 const ThrowingRoute = () => { throw new Error('render failure'); };
+const HealthyRoute = () => (
+  <>
+    <Seo
+      title="Healthy route | Vivek Patel"
+      description="A healthy route used to verify route metadata recovery."
+      path="/healthy"
+    />
+    <h1>Healthy page</h1>
+  </>
+);
 let homeMounts = 0;
 const StatefulHome = () => {
   useEffect(() => { homeMounts += 1; }, []);
@@ -49,7 +60,7 @@ const renderApp = (entry) => render(
           <Route index element={<StatefulHome />} />
           <Route path="lazy-broken" element={<FailingChunk />} />
           <Route path="render-broken" element={<ThrowingRoute />} />
-          <Route path="healthy" element={<h1>Healthy page</h1>} />
+          <Route path="healthy" element={<HealthyRoute />} />
         </Route>
       </Routes>
     </MemoryRouter>
@@ -94,6 +105,35 @@ describe('RouteErrorBoundary', () => {
 
     expect(screen.getByRole('heading', { level: 1, name: ROUTE_ERROR_HEADING })).toBeTruthy();
     expectShellIntact();
+  });
+
+  it.each([
+    ['a lazy route import rejects', '/lazy-broken'],
+    ['a route throws while rendering', '/render-broken'],
+  ])('sets error metadata when %s and restores healthy route metadata', async (_scenario, failedPath) => {
+    renderApp('/healthy');
+    await waitFor(() => {
+      expect(document.title).toBe('Healthy route | Vivek Patel');
+      expect(document.head.querySelector('meta[name="robots"]')?.getAttribute('content')).toBe('index, follow');
+    });
+
+    act(() => navigate(failedPath));
+    await screen.findByRole('heading', { level: 1, name: ROUTE_ERROR_HEADING });
+
+    await waitFor(() => {
+      expect(document.title).toBe('Page unavailable | Vivek Patel');
+      expect(document.head.querySelector('meta[name="robots"]')?.getAttribute('content')).toBe('noindex, nofollow');
+      expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href'))
+        .toBe(`https://www.vivekapatel.com${failedPath}/`);
+    });
+
+    act(() => navigate('/healthy'));
+
+    expect(await screen.findByRole('heading', { level: 1, name: 'Healthy page' })).toBeTruthy();
+    await waitFor(() => {
+      expect(document.title).toBe('Healthy route | Vivek Patel');
+      expect(document.head.querySelector('meta[name="robots"]')?.getAttribute('content')).toBe('index, follow');
+    });
   });
 
   it('clears the fallback after navigating to another route', async () => {
