@@ -20,11 +20,11 @@ const CTA = () => {
         <h2 className="text-[clamp(2rem,4.2vw,3.6rem)] font-bold tracking-[-0.03em] leading-[1.05] uppercase mb-5">
           READY TO START YOUR <span className="text-[#8B5CF6]">PROJECT</span>?
         </h2>
-        <p className="body text-[0.95rem] leading-[1.55] text-[#9ca3af] mb-4 max-w-[720px] mx-auto">
+        <p className="body text-[0.95rem] leading-[1.55] text-[#9ca3af] mb-4 max-w-[60ch] mx-auto">
           Let's build your next AI solution together. You'll get production-ready code, clear communication at every milestone, and 30 days of support after delivery—so your team never feels stuck.
         </p>
         <div className="rate font-mono text-[11px] leading-[1.4] tracking-[0.06em] text-[#9ca3af] mb-10">
-          <span className="lab tracking-[0.1em] uppercase">RATE</span> · <strong className="font-medium text-[#d8caff] font-sans text-[0.92rem] tracking-normal">{HOURLY_FROM_LABEL}</strong> &nbsp;·&nbsp; <span className="lab tracking-[0.1em] uppercase">ESTIMATES</span> · <strong className="font-medium text-[#d8caff] font-sans text-[0.92rem] tracking-normal">via contact form</strong>
+          <span className="lab tracking-[0.1em] uppercase">RATE</span> · <strong className="font-medium text-[#d8caff] font-sans text-[0.92rem] tracking-normal whitespace-nowrap">{HOURLY_FROM_LABEL}</strong> &nbsp;·&nbsp; <span className="lab tracking-[0.1em] uppercase">ESTIMATES</span> · <strong className="font-medium text-[#d8caff] font-sans text-[0.92rem] tracking-normal whitespace-nowrap">via contact form</strong>
         </div>
 
         <div className="actions flex flex-col items-center gap-[22px]">
