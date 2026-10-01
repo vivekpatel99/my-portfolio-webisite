@@ -172,11 +172,8 @@ const Header = () => {
     }
   }
 
-  const handleCTA = () => {
-    navigate('/contact/');
-    if (isOpen) {
-      setIsOpen(false);
-    }
+  const handleEstimateClick = (event) => {
+    if (!isModifiedClick(event)) setIsOpen(false);
   };
 
   return (
@@ -207,14 +204,14 @@ const Header = () => {
             ))}
           </nav>
 
-          <button
+          <Link
             ref={desktopEstimateRef}
-            onClick={handleCTA}
+            to="/contact/"
             className="hidden md:inline-flex flex-shrink-0 items-center gap-[10px] border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.05)] px-[14px] py-[10px] font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.1)] hover:text-[#d8caff] transition-colors"
           >
             Request Estimate
             <ArrowRight className="w-3 h-3 text-[#a78bfa]" />
-          </button>
+          </Link>
 
           <button
             ref={toggleButtonRef}
@@ -268,14 +265,15 @@ const Header = () => {
             ))}
           </nav>
 
-          <button
-            onClick={handleCTA}
+          <Link
+            to="/contact/"
+            onClick={handleEstimateClick}
             aria-label="Request a Project Estimate"
             className="flex items-center justify-center gap-[10px] border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.05)] px-[14px] py-[14px] font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.1)] hover:text-[#d8caff]"
           >
             Request Estimate
             <ArrowRight className="w-3 h-3 text-[#a78bfa]" />
-          </button>
+          </Link>
         </div>
       )}
     </>

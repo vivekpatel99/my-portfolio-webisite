@@ -2,8 +2,8 @@
  * @vitest-environment jsdom
  */
 import React from 'react';
-import { cleanup, render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { MemoryRouter, useLocation } from 'react-router-dom';
 import { afterEach, describe, expect, it } from 'vitest';
 import CTA from './CTA.jsx';
 
@@ -68,15 +68,29 @@ describe('CTA Action Field', () => {
     expect(container.textContent).toContain('DETECTED');
   });
 
-  it('has secondary View case studies button', () => {
+  it('has secondary View case studies link', () => {
     render(
       <MemoryRouter>
         <CTA />
       </MemoryRouter>,
     );
 
-    const viewCaseStudies = screen.getByRole('button', { name: /view case studies/i });
-    expect(viewCaseStudies).toBeTruthy();
+    const viewCaseStudies = screen.getByRole('link', { name: /view case studies/i });
+    expect(viewCaseStudies.getAttribute('href')).toBe('/case-studies/');
+  });
+
+  it.each([
+    ['Cmd-click', { metaKey: true }],
+    ['Ctrl-click', { ctrlKey: true }],
+    ['middle-click', { button: 1 }],
+  ])('leaves %s to the browser, then client-routes a plain click', (_, modifiers) => {
+    const LocationProbe = () => <output data-testid="location">{useLocation().pathname}</output>;
+    render(<MemoryRouter><CTA /><LocationProbe /></MemoryRouter>);
+    const link = screen.getByRole('link', { name: /view case studies/i });
+    expect(fireEvent.click(link, modifiers)).toBe(true);
+    expect(screen.getByTestId('location').textContent).toBe('/');
+    expect(fireEvent.click(link)).toBe(false);
+    expect(screen.getByTestId('location').textContent).toBe('/case-studies/');
   });
 
   it('renders heading with project estimate text', () => {

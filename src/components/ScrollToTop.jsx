@@ -16,10 +16,19 @@ const ScrollToTop = () => {
     const shouldFocusMain = !isInitialRenderRef.current;
     isInitialRenderRef.current = false;
 
+    const focusMainAfterNavigation = () => {
+      if (!shouldFocusMain) return undefined;
+      // WebKit needs a frame after drawer inert cleanup before main can receive focus.
+      const frameId = window.requestAnimationFrame(() => {
+        const main = document.getElementById('main-content');
+        if (!main?.querySelector('[data-route-error]')) focusNavigationTarget(main);
+      });
+      return () => window.cancelAnimationFrame(frameId);
+    };
+
     if (pathname === '/case-studies' || pathname === '/case-studies/') {
       if (navigationType === 'PUSH') window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-      if (shouldFocusMain) focusNavigationTarget(document.getElementById('main-content'));
-      return undefined;
+      return focusMainAfterNavigation();
     }
     if (hash) {
       const id = decodeURIComponent(hash.slice(1));
@@ -43,8 +52,7 @@ const ScrollToTop = () => {
     }
 
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    if (shouldFocusMain) focusNavigationTarget(document.getElementById('main-content'));
-    return undefined;
+    return focusMainAfterNavigation();
   }, [pathname, hash, key, navigationType]);
 
   return null;

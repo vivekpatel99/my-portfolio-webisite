@@ -35,9 +35,9 @@ for (const width of [390, 1280]) {
     if (width === 390) {
       await header.getByRole('button', { name: 'Toggle navigation menu' }).click();
       await expect(page.getByRole('dialog', { name: 'Navigation menu' })
-        .getByRole('button', { name: /Request a Project Estimate/i })).toBeVisible();
+        .getByRole('link', { name: /Request a Project Estimate/i })).toBeVisible();
     } else {
-      await expect(header.getByRole('button', { name: /Request Estimate/i })).toBeVisible();
+      await expect(header.getByRole('link', { name: /Request Estimate/i })).toBeVisible();
     }
   });
 }
@@ -92,7 +92,7 @@ test('mobile menu CTA navigates to contact', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
-  await page.getByRole('dialog', { name: 'Navigation menu' }).getByRole('button', { name: /Request a Project Estimate/i }).click();
+  await page.getByRole('dialog', { name: 'Navigation menu' }).getByRole('link', { name: /Request a Project Estimate/i }).click();
   await expect(page).toHaveURL(/\/contact/);
 });
 
@@ -163,8 +163,8 @@ for (const vp of heroFoldViewports) {
     const hero = page.locator('#main-content section').first();
     const invoiceElement = hero.getByRole('article', { name: 'Profile invoice field parse' });
     const invoice = await invoiceElement.boundingBox();
-    const estimate = await hero.getByRole('button', { name: 'Request a Project Estimate' }).boundingBox();
-    const caseStudies = await hero.getByRole('link', { name: 'View Case Studies' }).boundingBox();
+    const estimate = await hero.getByRole('link', { name: 'Request a Project Estimate' }).boundingBox();
+    const caseStudies = await hero.getByRole('link', { name: 'View Case Studies', exact: true }).boundingBox();
     const portrait = hero.getByAltText('Tracked engineer portrait');
     await expect(portrait).toBeVisible();
     const portraitBox = await portrait.boundingBox();
@@ -247,7 +247,7 @@ for (const width of [320, 390, 720, 768, 1024, 1440]) {
     const scanLabel = await box(invoice.getByText('doc · extract · 0.97', { exact: true }));
     const title = await box(invoice.getByText('Profile Invoice', { exact: true }));
     const panel = await box(invoice);
-    const estimate = await box(hero.getByRole('button', { name: 'Request a Project Estimate' }));
+    const estimate = await box(hero.getByRole('link', { name: 'Request a Project Estimate' }));
     const credentialValue = await box(invoice.getByText('Top Rated Plus', { exact: true }));
     const caption = await box(invoice.getByText('Upwork freelancer', { exact: true }));
     const rateLabel = await box(invoice.getByText('Rate', { exact: true }));
@@ -309,7 +309,7 @@ test('mobile cookie banner leaves the hero estimate CTA clickable', async ({ pag
   await page.goto('/');
   const banner = page.getByRole('dialog', { name: /we value your privacy/i });
   await expect(banner).toBeVisible({ timeout: 5000 });
-  const cta = page.getByRole('button', { name: /Request a Project Estimate/i }).first();
+  const cta = page.getByRole('link', { name: /Request a Project Estimate/i }).first();
   const bannerBox = await banner.boundingBox();
   const ctaBox = await cta.boundingBox();
   expect(bannerBox).toBeTruthy();
@@ -352,7 +352,7 @@ test('reduced motion still shows a safe cookie banner layout', async ({ page }) 
   await page.goto('/');
   const banner = page.getByRole('dialog', { name: /we value your privacy/i });
   await expect(banner).toBeVisible({ timeout: 5000 });
-  const cta = page.getByRole('button', { name: /Request a Project Estimate/i }).first();
+  const cta = page.getByRole('link', { name: /Request a Project Estimate/i }).first();
   const bannerBox = await banner.boundingBox();
   const ctaBox = await cta.boundingBox();
   expect(boxesOverlap(bannerBox, ctaBox)).toBe(false);

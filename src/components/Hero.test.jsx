@@ -125,10 +125,10 @@ describe('Hero invoice proof fold (#176)', () => {
     expect(title).toBeTruthy();
   });
 
-  it('renders Request a Project Estimate CTA', () => {
+  it('renders Request a Project Estimate link to the contact route', () => {
     renderHero();
-    const cta = screen.getByRole('button', { name: 'Request a Project Estimate' });
-    expect(cta).toBeTruthy();
+    const cta = screen.getByRole('link', { name: 'Request a Project Estimate' });
+    expect(cta.getAttribute('href')).toBe('/contact/');
   });
 
   it('renders View Case Studies secondary CTA', () => {
@@ -148,7 +148,7 @@ describe('Hero invoice header spacing (#253)', () => {
     const pillRow = screen.getByText('Inference online').parentElement.parentElement;
     const invoice = screen.getByRole('article', { name: 'Profile invoice field parse' });
     const credentials = screen.getByRole('group', { name: 'Detected credentials' });
-    const actions = screen.getByRole('button', { name: 'Request a Project Estimate' }).parentElement;
+    const actions = screen.getByRole('link', { name: 'Request a Project Estimate' }).parentElement;
 
     expect(classesOf(section)).toContain('max-md:pt-3');
     expect(classesOf(section)).toContain('[@media(max-height:800px)]:pt-3');
@@ -230,7 +230,7 @@ describe('Hero randomized field bboxes (#206)', () => {
     });
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe(FIELD_VALUES.role);
     expect(screen.getByText('doc · extract · 0.97', { exact: true })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Request a Project Estimate' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Request a Project Estimate' })).toBeTruthy();
   });
 
   it('keeps the selection stable across rerenders and remounts in one page load', async () => {
@@ -543,7 +543,7 @@ describe('Hero motion lifecycle (#232)', () => {
 
   it('does not start the loop from keyboard focus on the hero CTAs', () => {
     renderMotionHero();
-    screen.getByRole('button', { name: 'Request a Project Estimate' }).focus();
+    screen.getByRole('link', { name: 'Request a Project Estimate' }).focus();
     screen.getByRole('link', { name: 'View Case Studies' }).focus();
     expect(frames.size).toBe(0);
     expect(writes).toBe(0);

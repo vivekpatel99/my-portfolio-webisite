@@ -1192,7 +1192,7 @@ test('filled primary CTAs keep white text readable at rest, hover, and focus', a
   await page.goto('/');
   await expectFilledPrimaryStates(
     page,
-    page.locator('#main-content').getByRole('button', { name: 'Request a Project Estimate' }).first(),
+    page.locator('#main-content').getByRole('link', { name: 'Request a Project Estimate' }).first(),
     'Hero primary CTA',
   );
 
@@ -1328,9 +1328,9 @@ test('estimate action stays reachable after deep scrolling', async ({ page }) =>
   if ((await page.viewportSize()).width < 768) {
     await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
     await page.getByRole('dialog', { name: 'Navigation menu' })
-      .getByRole('button', { name: 'Request a Project Estimate' }).click();
+      .getByRole('link', { name: 'Request a Project Estimate' }).click();
   } else {
-    await page.locator('header').getByRole('button', { name: 'Request Estimate' }).click();
+    await page.locator('header').getByRole('link', { name: 'Request Estimate' }).click();
   }
   await expect(page).toHaveURL(/\/contact\/?$/);
 });

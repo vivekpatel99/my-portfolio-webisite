@@ -72,7 +72,7 @@ describe('Header', () => {
     await waitFor(() => {
       expect(screen.queryByRole('dialog', { name: 'Navigation menu' })).toBeNull();
     });
-    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Request Estimate' }));
+    expect(document.activeElement).toBe(screen.getByRole('link', { name: 'Request Estimate' }));
     expect(document.getElementById('main-content').hasAttribute('inert')).toBe(false);
     expect(document.getElementById('site-footer').hasAttribute('inert')).toBe(false);
   });
@@ -128,7 +128,7 @@ describe('Header', () => {
     expect(main.hasAttribute('inert')).toBe(false);
     expect(siteFooter.hasAttribute('inert')).toBe(false);
     expect(siteFooter.getAttribute('aria-hidden')).toBe('false');
-    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Request Estimate' }));
+    expect(document.activeElement).toBe(screen.getByRole('link', { name: 'Request Estimate' }));
     expect(desktopQuery.removeEventListener).toHaveBeenCalledWith('change', onChange);
     act(() => { desktopQuery.matches = false; });
     await user.click(screen.getByRole('button', { name: 'Toggle navigation menu' }));
@@ -204,6 +204,38 @@ describe('Header', () => {
     await user.click(link);
 
     await waitFor(() => expect(screen.getByTestId('location').textContent).toBe('/case-studies/'));
+  });
+
+  it.each([
+    ['Cmd-click', { metaKey: true }],
+    ['Ctrl-click', { ctrlKey: true }],
+    ['middle-click', { button: 1 }],
+  ])('preserves the source drawer for %s and restores it on plain estimate navigation', (_, modifiers) => {
+    const LocationProbe = () => <output data-testid="location">{useLocation().pathname}</output>;
+    render(
+      <MemoryRouter>
+        <Header />
+        <main id="main-content">Content</main>
+        <footer id="site-footer">Footer</footer>
+        <LocationProbe />
+      </MemoryRouter>,
+    );
+    const desktopLink = screen.getByRole('link', { name: 'Request Estimate', exact: true });
+    expect(desktopLink.getAttribute('href')).toBe('/contact/');
+    expect(fireEvent.click(desktopLink, modifiers)).toBe(true);
+    expect(screen.getByTestId('location').textContent).toBe('/');
+    fireEvent.click(screen.getByRole('button', { name: 'Toggle navigation menu' }));
+    const drawerLink = within(screen.getByRole('dialog')).getByRole('link', { name: 'Request a Project Estimate' });
+    expect(drawerLink.getAttribute('href')).toBe('/contact/');
+    expect(fireEvent.click(drawerLink, modifiers)).toBe(true);
+    expect(screen.getByRole('dialog')).toBeTruthy();
+    expect(screen.getByTestId('location').textContent).toBe('/');
+    expect(document.getElementById('main-content').hasAttribute('inert')).toBe(true);
+    expect(fireEvent.click(drawerLink)).toBe(false);
+    expect(screen.getByTestId('location').textContent).toBe('/contact/');
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.getElementById('main-content').hasAttribute('inert')).toBe(false);
+    expect(document.getElementById('site-footer').hasAttribute('inert')).toBe(false);
   });
 
   it('shows the logo instead of a VP text mark', () => {

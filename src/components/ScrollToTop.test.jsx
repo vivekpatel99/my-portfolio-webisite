@@ -4,14 +4,32 @@
 import React from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import ScrollToTop from './ScrollToTop';
 
 describe('ScrollToTop', () => {
+  let frames;
+  beforeEach(() => {
+    vi.useFakeTimers();
+    frames = new Map();
+    let nextFrame = 0;
+    vi.stubGlobal('requestAnimationFrame', vi.fn((callback) => {
+      frames.set(++nextFrame, callback);
+      return nextFrame;
+    }));
+    vi.stubGlobal('cancelAnimationFrame', vi.fn((frameId) => frames.delete(frameId)));
+  });
+  const runFrame = () => act(() => {
+    const callbacks = [...frames.values()];
+    frames.clear();
+    callbacks.forEach((callback) => callback(0));
+  });
+
   afterEach(() => {
     cleanup();
     vi.useRealTimers();
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   let navigate;
@@ -24,7 +42,7 @@ describe('ScrollToTop', () => {
       <ScrollToTop />
       <NavigateProbe />
       <a href="/#services">Services</a>
-      <main id="main-content"><section id="services">Services</section></main>
+      <main id="main-content"><button>Source action</button><section id="services">Services</section></main>
     </MemoryRouter>,
   );
 
@@ -58,6 +76,8 @@ describe('ScrollToTop', () => {
     const main = document.getElementById('main-content');
 
     act(() => navigate('/contact'));
+    expect(document.activeElement).toBe(document.body);
+    runFrame();
     expect(document.activeElement).toBe(main);
     expect(main.getAttribute('tabindex')).toBe('-1');
 
@@ -65,6 +85,19 @@ describe('ScrollToTop', () => {
     expect(main.hasAttribute('tabindex')).toBe(false);
 
     act(() => navigate(-1));
+    runFrame();
+    expect(document.activeElement).toBe(main);
+  });
+
+  it('moves focus off a source action still mounted during route navigation', () => {
+    vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    renderAt('/');
+    const main = document.getElementById('main-content');
+    const sourceAction = main.querySelector('button');
+    sourceAction.focus();
+    act(() => navigate('/contact'));
+    expect(document.activeElement).toBe(sourceAction);
+    runFrame();
     expect(document.activeElement).toBe(main);
   });
 
@@ -76,6 +109,7 @@ describe('ScrollToTop', () => {
     act(() => navigate('/case-studies/'));
 
     expect(scrollTo).toHaveBeenCalledWith({ top: 0, left: 0, behavior: 'auto' });
+    runFrame();
     expect(document.activeElement).toBe(document.getElementById('main-content'));
   });
 
@@ -88,11 +122,35 @@ describe('ScrollToTop', () => {
     act(() => navigate(-1));
 
     expect(scrollTo).not.toHaveBeenCalled();
+    runFrame();
     expect(document.activeElement).toBe(document.getElementById('main-content'));
   });
 
+  it('cancels stale route focus when navigation changes to a hash before the frame', () => {
+    vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    window.HTMLElement.prototype.scrollIntoView = vi.fn();
+    renderAt('/');
+    act(() => navigate('/contact'));
+    expect(frames.size).toBe(1);
+    act(() => navigate('/#services'));
+    expect(frames.size).toBe(0);
+    act(() => vi.advanceTimersByTime(100));
+    const target = document.getElementById('services');
+    expect(document.activeElement).toBe(target);
+    runFrame();
+    expect(document.activeElement).toBe(target);
+  });
+
+  it('cancels pending route focus when the router unmounts', () => {
+    vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    const { unmount } = renderAt('/');
+    act(() => navigate('/contact'));
+    expect(frames.size).toBe(1);
+    unmount();
+    expect(frames.size).toBe(0);
+  });
+
   it('moves focus to the hash destination after an anchor jump', () => {
-    vi.useFakeTimers();
     vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
     window.HTMLElement.prototype.scrollIntoView = vi.fn();
     renderAt('/');
@@ -108,7 +166,6 @@ describe('ScrollToTop', () => {
   });
 
   it('refocuses a hash destination when navigating to the same hash again', () => {
-    vi.useFakeTimers();
     vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
     window.HTMLElement.prototype.scrollIntoView = vi.fn();
     renderAt('/#services');

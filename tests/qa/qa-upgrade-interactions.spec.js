@@ -58,7 +58,7 @@ test('hero and header CTAs activate the expected routes and sections', async ({ 
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/');
 
-  await page.getByRole('link', { name: 'View Case Studies' }).click();
+  await page.getByRole('link', { name: 'View Case Studies', exact: true }).click();
   await expect
     .poll(async () => {
       const box = await page.locator('#portfolio').boundingBox();
@@ -67,7 +67,7 @@ test('hero and header CTAs activate the expected routes and sections', async ({ 
     .toBeTruthy();
 
   await page.goto('/');
-  await page.getByRole('button', { name: 'Request a Project Estimate' }).first().click();
+  await page.getByRole('link', { name: 'Request a Project Estimate' }).first().click();
   await expect(page).toHaveURL(/\/contact/);
   await expect(page.getByRole('heading', { name: /Request a Project Estimate/i })).toBeVisible();
 
@@ -198,7 +198,7 @@ test('mobile navigation menu links and CTA work', async ({ page }) => {
   await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
   await expect(page.getByRole('dialog', { name: 'Navigation menu' })).toBeVisible();
   await page.waitForTimeout(600);
-  await page.getByRole('dialog', { name: 'Navigation menu' }).getByRole('button', {
+  await page.getByRole('dialog', { name: 'Navigation menu' }).getByRole('link', {
     name: /Request a Project Estimate/i,
   }).click();
   await expect(page).toHaveURL(/\/contact\/?$/);
@@ -383,7 +383,7 @@ test('e2e: Mobile nav → Menu → Request Estimate → Contact', async ({ page 
   await expect(menuLogo.locator('img')).toHaveAttribute('src', '/assets/logos/mylogo-60-c6065baa4d50.webp');
   
   // Click Request Estimate
-  await menu.getByRole('button', { name: /Request a Project Estimate/i }).click();
+  await menu.getByRole('link', { name: /Request a Project Estimate/i }).click();
   
   // Should navigate to contact
   await expect(page).toHaveURL(/\/contact\/?$/);

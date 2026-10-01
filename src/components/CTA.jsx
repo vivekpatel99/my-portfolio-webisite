@@ -1,19 +1,9 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { HOURLY_FROM_LABEL } from '@/data/serviceOffers';
 
 const CTA = () => {
-  const navigate = useNavigate();
-
-  const handleCTAClick = () => {
-    navigate('/contact/');
-  };
-
-  const handleSecondaryClick = () => {
-    navigate('/case-studies/');
-  };
-
   const ActionGlyph = () => (
     <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" className="w-[18px] h-[18px]">
       <rect x="2" y="2" width="14" height="14" />
@@ -39,8 +29,8 @@ const CTA = () => {
 
         <div className="actions flex flex-col items-center gap-[22px]">
           {/* Detected action field link */}
-          <a
-            href="/contact/"
+          <Link
+            to="/contact/"
             aria-label="Request a Project Estimate"
             className="action-field relative inline-flex items-center justify-center gap-4 border border-[rgba(139,92,246,0.72)] bg-gradient-to-b from-[rgba(139,92,246,0.06)] to-transparent bg-[length:100%_55%] bg-no-repeat py-[22px] px-9 pr-9 min-w-[min(420px,92vw)] hover:border-[rgba(139,92,246,0.95)] hover:bg-gradient-to-b hover:from-[rgba(139,92,246,0.1)] hover:to-transparent hover:bg-[length:100%_55%] transition-all focus-visible:outline focus-visible:outline-1 focus-visible:outline-[#8B5CF6] focus-visible:outline-offset-4 no-underline"
           >
@@ -60,14 +50,14 @@ const CTA = () => {
             <span className="arrow flex-shrink-0 w-5 h-5 text-[#a78bfa] ml-1 group-hover:text-white transition-colors">
               <ArrowRight className="w-full h-full" />
             </span>
-          </a>
+          </Link>
 
-          <button
-            onClick={handleSecondaryClick}
+          <Link
+            to="/case-studies/"
             className="secondary font-mono text-[11px] tracking-[0.12em] uppercase text-[#9ca3af] border-b border-[rgba(107,114,128,0.45)] pb-[3px] hover:text-[#a78bfa] hover:border-[rgba(167,139,250,0.55)] transition-colors"
           >
             View case studies
-          </button>
+          </Link>
         </div>
 
       </div>
