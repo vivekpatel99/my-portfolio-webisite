@@ -91,6 +91,14 @@ describe("Contact form", () => {
     mockSubmitLead.mockResolvedValue({ success: true });
   });
 
+  it("keeps the next-steps panel out of the complementary landmark tree", () => {
+    const { container } = render(<Contact />);
+    const nextSteps = container.querySelector(".aside");
+
+    expect(nextSteps?.tagName).toBe("DIV");
+    expect(nextSteps?.getAttribute("role")).not.toBe("complementary");
+  });
+
   it("FE-001: empty submit click shows missing fields toast, mutation not called", async () => {
     const user = userEvent.setup();
     const { container } = render(<Contact />);

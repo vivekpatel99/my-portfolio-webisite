@@ -4,7 +4,7 @@ const clearFocusToBody = (page) => page.evaluate(() => document.activeElement?.b
 
 // Issue #234: every mobile-drawer action must stay reachable in short viewports.
 const MENU_ACTIONS = [
-  'Vivek Patel Logo', 'Close navigation menu', 'Services', 'About', 'Case Studies',
+  'Vivek Patel home', 'Close navigation menu', 'Services', 'About', 'Case Studies',
   'Testimonials', 'Request a Project Estimate',
 ];
 const DRAWER_VIEWPORTS = [
@@ -158,7 +158,7 @@ test.describe('keyboard focus regressions', () => {
     await expect.poll(() => focusables.evaluateAll((elements) => elements.map((element) => (
       element.getAttribute('aria-label') || element.querySelector('img')?.alt || element.textContent.trim()
     )))).toEqual([
-      'Vivek Patel Logo', 'Close navigation menu', 'Services', 'About', 'Case Studies',
+      'Vivek Patel home', 'Close navigation menu', 'Services', 'About', 'Case Studies',
       'Testimonials', 'Request a Project Estimate',
     ]);
 
@@ -247,7 +247,7 @@ test.describe('keyboard focus regressions', () => {
     const header = page.locator('header');
     const main = page.locator('#main-content');
     const siteFooter = page.locator('#site-footer');
-    const logo = page.getByRole('link', { name: 'Vivek Patel Logo' }).first();
+    const logo = page.getByRole('link', { name: 'Vivek Patel home' }).first();
     const toggle = page.getByRole('button', { name: 'Toggle navigation menu' });
     const menu = page.getByRole('dialog', { name: 'Navigation menu' });
 

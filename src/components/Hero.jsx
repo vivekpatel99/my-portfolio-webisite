@@ -432,13 +432,13 @@ const Hero = () => {
                     )}
 
                   </div>
-                  <span className="absolute top-[22px] left-[22px] z-[4] inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm max-lg:top-0 max-lg:left-3 max-lg:-translate-y-1/2 max-lg:whitespace-nowrap max-md:text-[10px] max-md:px-2 max-md:py-1">
+                  <span aria-hidden="true" className="absolute top-[22px] left-[22px] z-[4] inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm max-lg:top-0 max-lg:left-3 max-lg:-translate-y-1/2 max-lg:whitespace-nowrap max-md:text-[10px] max-md:px-2 max-md:py-1">
                     engineer · 0.99
                   </span>
-                  <span className="absolute bottom-[22px] left-[22px] z-[4] inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm max-lg:bottom-0 max-lg:left-3 max-lg:translate-y-1/2 max-lg:whitespace-nowrap max-md:text-[10px] max-md:px-2 max-md:py-1">
+                  <span aria-hidden="true" className="absolute bottom-[22px] left-[22px] z-[4] inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm max-lg:bottom-0 max-lg:left-3 max-lg:translate-y-1/2 max-lg:whitespace-nowrap max-md:text-[10px] max-md:px-2 max-md:py-1">
                     ID 001 · TRACKED
                   </span>
-                  <span className="absolute bottom-[22px] right-[22px] z-[4] inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-red-400/35 font-mono text-[11px] text-red-400 tracking-wide backdrop-blur-sm max-lg:bottom-0 max-lg:right-3 max-lg:translate-y-1/2 max-lg:whitespace-nowrap max-md:text-[10px] max-md:px-2 max-md:py-1">
+                  <span aria-hidden="true" className="absolute bottom-[22px] right-[22px] z-[4] inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-red-400/35 font-mono text-[11px] text-red-400 tracking-wide backdrop-blur-sm max-lg:bottom-0 max-lg:right-3 max-lg:translate-y-1/2 max-lg:whitespace-nowrap max-md:text-[10px] max-md:px-2 max-md:py-1">
                     <span className="w-[7px] h-[7px] rounded-full bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.7)]" />
                     REC
                   </span>

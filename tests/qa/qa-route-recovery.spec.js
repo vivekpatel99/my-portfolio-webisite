@@ -32,7 +32,7 @@ async function expectRecoveryState(page) {
   await expect(heading).toBeVisible();
   await expect(heading).toBeFocused();
   await expect(page.locator('header')).toBeVisible();
-  await expect(page.locator('header').getByRole('link', { name: 'Vivek Patel Logo' })).toBeVisible();
+  await expect(page.locator('header').getByRole('link', { name: 'Vivek Patel home' })).toBeVisible();
   await expect(page.locator('#site-footer')).toBeVisible();
   await expect(main.getByRole('button', { name: 'Retry' })).toBeVisible();
   await expect(main.getByRole('link', { name: 'Back to Home' })).toBeVisible();

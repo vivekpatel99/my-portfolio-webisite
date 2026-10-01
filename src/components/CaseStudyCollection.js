@@ -138,6 +138,7 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies, children = null 
       key: story.slug,
       project: story,
       fromCollection: true,
+      headingLevel: 2,
       priorityImage: index === 0,
     })),
   );

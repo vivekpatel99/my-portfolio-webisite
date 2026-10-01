@@ -125,6 +125,14 @@ describe('Hero invoice proof fold (#176)', () => {
     expect(title).toBeTruthy();
   });
 
+  it('hides decorative portrait tracking chips from assistive technology', () => {
+    renderHero();
+
+    ['engineer · 0.99', 'ID 001 · TRACKED', 'REC'].forEach((label) => {
+      expect(screen.getByText(label, { exact: true }).closest('[aria-hidden="true"]')).toBeTruthy();
+    });
+  });
+
   it('renders Request a Project Estimate link to the contact route', () => {
     renderHero();
     const cta = screen.getByRole('link', { name: 'Request a Project Estimate' });
