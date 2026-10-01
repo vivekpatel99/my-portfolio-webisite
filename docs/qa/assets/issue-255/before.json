@@ -1,0 +1,1394 @@
+[
+  {
+    "key": "chromium-390-no-preference-legal",
+    "axe": {
+      "violations": [
+        {
+          "id": "link-in-text-block",
+          "targets": [
+            [
+              ".text-accent-purple-text.hover\\:underline[href$=\"data-policy/\"]"
+            ]
+          ]
+        }
+      ],
+      "incomplete": []
+    },
+    "links": [
+      {
+        "text": "contact@vivekapatel.com",
+        "href": "mailto:contact@vivekapatel.com",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 133.15625,
+            "y": 656.009765625,
+            "width": 186.21875,
+            "height": 18
+          }
+        ]
+      },
+      {
+        "text": "Cookie Policy",
+        "href": "/data-policy/",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 222.578125,
+            "y": 1580.009765625,
+            "width": 97.609375,
+            "height": 18
+          }
+        ]
+      },
+      {
+        "text": "Resend",
+        "href": "https://resend.com/legal/privacy-policy",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 44,
+            "y": 2892.009765625,
+            "width": 57.71875,
+            "height": 18
+          }
+        ]
+      },
+      {
+        "text": "Convex",
+        "href": "https://www.convex.dev/legal/privacy",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 44,
+            "y": 2948.009765625,
+            "width": 57.234375,
+            "height": 18
+          }
+        ]
+      },
+      {
+        "text": "Sentry",
+        "href": "https://sentry.io/privacy/",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 44,
+            "y": 3060.009765625,
+            "width": 51.859375,
+            "height": 18
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "width": 390,
+      "scrollWidth": 390,
+      "h1": {
+        "x": 24,
+        "y": 165.009765625,
+        "width": 342,
+        "height": 40,
+        "top": 165.009765625,
+        "right": 366,
+        "bottom": 205.009765625,
+        "left": 24
+      },
+      "mainHeight": 3412,
+      "reducedMotion": false
+    },
+    "keyboard": [],
+    "errors": []
+  },
+  {
+    "key": "chromium-390-no-preference-data-policy",
+    "axe": {
+      "violations": [
+        {
+          "id": "link-in-text-block",
+          "targets": [
+            [
+              ".text-accent-purple-text"
+            ]
+          ]
+        }
+      ],
+      "incomplete": []
+    },
+    "links": [
+      {
+        "text": "Privacy Policy",
+        "href": "/legal/",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 24,
+            "y": 528.009765625,
+            "width": 99.015625,
+            "height": 18
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "width": 390,
+      "scrollWidth": 390,
+      "h1": {
+        "x": 24,
+        "y": 165.009765625,
+        "width": 342,
+        "height": 40,
+        "top": 165.009765625,
+        "right": 366,
+        "bottom": 205.009765625,
+        "left": 24
+      },
+      "mainHeight": 2241,
+      "reducedMotion": false
+    },
+    "keyboard": [],
+    "errors": []
+  },
+  {
+    "key": "chromium-390-reduce-legal",
+    "axe": {
+      "violations": [
+        {
+          "id": "link-in-text-block",
+          "targets": [
+            [
+              ".text-accent-purple-text.hover\\:underline[href$=\"data-policy/\"]"
+            ]
+          ]
+        }
+      ],
+      "incomplete": []
+    },
+    "links": [
+      {
+        "text": "contact@vivekapatel.com",
+        "href": "mailto:contact@vivekapatel.com",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 133.15625,
+            "y": 656,
+            "width": 186.21875,
+            "height": 18
+          }
+        ]
+      },
+      {
+        "text": "Cookie Policy",
+        "href": "/data-policy/",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 222.578125,
+            "y": 1580,
+            "width": 97.609375,
+            "height": 18
+          }
+        ]
+      },
+      {
+        "text": "Resend",
+        "href": "https://resend.com/legal/privacy-policy",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 44,
+            "y": 2892,
+            "width": 57.71875,
+            "height": 18
+          }
+        ]
+      },
+      {
+        "text": "Convex",
+        "href": "https://www.convex.dev/legal/privacy",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 44,
+            "y": 2948,
+            "width": 57.234375,
+            "height": 18
+          }
+        ]
+      },
+      {
+        "text": "Sentry",
+        "href": "https://sentry.io/privacy/",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 44,
+            "y": 3060,
+            "width": 51.859375,
+            "height": 18
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "width": 390,
+      "scrollWidth": 390,
+      "h1": {
+        "x": 24,
+        "y": 165,
+        "width": 342,
+        "height": 40,
+        "top": 165,
+        "right": 366,
+        "bottom": 205,
+        "left": 24
+      },
+      "mainHeight": 3412,
+      "reducedMotion": true
+    },
+    "keyboard": [],
+    "errors": []
+  },
+  {
+    "key": "chromium-390-reduce-data-policy",
+    "axe": {
+      "violations": [
+        {
+          "id": "link-in-text-block",
+          "targets": [
+            [
+              ".text-accent-purple-text"
+            ]
+          ]
+        }
+      ],
+      "incomplete": []
+    },
+    "links": [
+      {
+        "text": "Privacy Policy",
+        "href": "/legal/",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 24,
+            "y": 528,
+            "width": 99.015625,
+            "height": 18
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "width": 390,
+      "scrollWidth": 390,
+      "h1": {
+        "x": 24,
+        "y": 165,
+        "width": 342,
+        "height": 40,
+        "top": 165,
+        "right": 366,
+        "bottom": 205,
+        "left": 24
+      },
+      "mainHeight": 2241,
+      "reducedMotion": true
+    },
+    "keyboard": [],
+    "errors": []
+  },
+  {
+    "key": "chromium-1440-no-preference-legal",
+    "axe": {
+      "violations": [
+        {
+          "id": "link-in-text-block",
+          "targets": [
+            [
+              ".text-accent-purple-text.hover\\:underline[href$=\"data-policy/\"]"
+            ]
+          ]
+        }
+      ],
+      "incomplete": []
+    },
+    "links": [
+      {
+        "text": "contact@vivekapatel.com",
+        "href": "mailto:contact@vivekapatel.com",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 405.15625,
+            "y": 552.009765625,
+            "width": 186.21875,
+            "height": 18
+          }
+        ]
+      },
+      {
+        "text": "Cookie Policy",
+        "href": "/data-policy/",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 296,
+            "y": 1108.009765625,
+            "width": 97.609375,
+            "height": 18
+          }
+        ]
+      },
+      {
+        "text": "Resend",
+        "href": "https://resend.com/legal/privacy-policy",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 316,
+            "y": 1924.009765625,
+            "width": 57.71875,
+            "height": 18
+          }
+        ]
+      },
+      {
+        "text": "Convex",
+        "href": "https://www.convex.dev/legal/privacy",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 316,
+            "y": 1956.009765625,
+            "width": 57.234375,
+            "height": 18
+          }
+        ]
+      },
+      {
+        "text": "Sentry",
+        "href": "https://sentry.io/privacy/",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 316,
+            "y": 2020.009765625,
+            "width": 51.859375,
+            "height": 18
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "h1": {
+        "x": 296,
+        "y": 197.009765625,
+        "width": 848,
+        "height": 48,
+        "top": 197.009765625,
+        "right": 1144,
+        "bottom": 245.009765625,
+        "left": 296
+      },
+      "mainHeight": 2284,
+      "reducedMotion": false
+    },
+    "keyboard": [],
+    "errors": []
+  },
+  {
+    "key": "chromium-1440-no-preference-data-policy",
+    "axe": {
+      "violations": [
+        {
+          "id": "link-in-text-block",
+          "targets": [
+            [
+              ".text-accent-purple-text"
+            ]
+          ]
+        }
+      ],
+      "incomplete": []
+    },
+    "links": [
+      {
+        "text": "Privacy Policy",
+        "href": "/legal/",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 950.765625,
+            "y": 424.009765625,
+            "width": 99.015625,
+            "height": 18
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "h1": {
+        "x": 296,
+        "y": 197.009765625,
+        "width": 848,
+        "height": 48,
+        "top": 197.009765625,
+        "right": 1144,
+        "bottom": 245.009765625,
+        "left": 296
+      },
+      "mainHeight": 1481,
+      "reducedMotion": false
+    },
+    "keyboard": [],
+    "errors": []
+  },
+  {
+    "key": "chromium-1440-reduce-legal",
+    "axe": {
+      "violations": [
+        {
+          "id": "link-in-text-block",
+          "targets": [
+            [
+              ".text-accent-purple-text.hover\\:underline[href$=\"data-policy/\"]"
+            ]
+          ]
+        }
+      ],
+      "incomplete": []
+    },
+    "links": [
+      {
+        "text": "contact@vivekapatel.com",
+        "href": "mailto:contact@vivekapatel.com",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 405.15625,
+            "y": 552,
+            "width": 186.21875,
+            "height": 18
+          }
+        ]
+      },
+      {
+        "text": "Cookie Policy",
+        "href": "/data-policy/",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 296,
+            "y": 1108,
+            "width": 97.609375,
+            "height": 18
+          }
+        ]
+      },
+      {
+        "text": "Resend",
+        "href": "https://resend.com/legal/privacy-policy",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 316,
+            "y": 1924,
+            "width": 57.71875,
+            "height": 18
+          }
+        ]
+      },
+      {
+        "text": "Convex",
+        "href": "https://www.convex.dev/legal/privacy",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 316,
+            "y": 1956,
+            "width": 57.234375,
+            "height": 18
+          }
+        ]
+      },
+      {
+        "text": "Sentry",
+        "href": "https://sentry.io/privacy/",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 316,
+            "y": 2020,
+            "width": 51.859375,
+            "height": 18
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "h1": {
+        "x": 296,
+        "y": 197,
+        "width": 848,
+        "height": 48,
+        "top": 197,
+        "right": 1144,
+        "bottom": 245,
+        "left": 296
+      },
+      "mainHeight": 2284,
+      "reducedMotion": true
+    },
+    "keyboard": [],
+    "errors": []
+  },
+  {
+    "key": "chromium-1440-reduce-data-policy",
+    "axe": {
+      "violations": [
+        {
+          "id": "link-in-text-block",
+          "targets": [
+            [
+              ".text-accent-purple-text"
+            ]
+          ]
+        }
+      ],
+      "incomplete": []
+    },
+    "links": [
+      {
+        "text": "Privacy Policy",
+        "href": "/legal/",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 950.765625,
+            "y": 424,
+            "width": 99.015625,
+            "height": 18
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "h1": {
+        "x": 296,
+        "y": 197,
+        "width": 848,
+        "height": 48,
+        "top": 197,
+        "right": 1144,
+        "bottom": 245,
+        "left": 296
+      },
+      "mainHeight": 1481,
+      "reducedMotion": true
+    },
+    "keyboard": [],
+    "errors": []
+  },
+  {
+    "key": "webkit-390-no-preference-legal",
+    "axe": {
+      "violations": [
+        {
+          "id": "link-in-text-block",
+          "targets": [
+            [
+              ".text-accent-purple-text.hover\\:underline[href$=\"data-policy/\"]"
+            ]
+          ]
+        }
+      ],
+      "incomplete": []
+    },
+    "links": [
+      {
+        "text": "contact@vivekapatel.com",
+        "href": "mailto:contact@vivekapatel.com",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 133.1484375,
+            "y": 655.587890625,
+            "width": 186.21875,
+            "height": 18.84375
+          }
+        ]
+      },
+      {
+        "text": "Cookie Policy",
+        "href": "/data-policy/",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 222.5703125,
+            "y": 1579.587890625,
+            "width": 97.6015625,
+            "height": 18.84375
+          }
+        ]
+      },
+      {
+        "text": "Resend",
+        "href": "https://resend.com/legal/privacy-policy",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 44,
+            "y": 2891.587890625,
+            "width": 57.70703125,
+            "height": 18.84375
+          }
+        ]
+      },
+      {
+        "text": "Convex",
+        "href": "https://www.convex.dev/legal/privacy",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 44,
+            "y": 2947.587890625,
+            "width": 57.22265625,
+            "height": 18.84375
+          }
+        ]
+      },
+      {
+        "text": "Sentry",
+        "href": "https://sentry.io/privacy/",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 44,
+            "y": 3059.587890625,
+            "width": 51.84765625,
+            "height": 18.84375
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "width": 390,
+      "scrollWidth": 390,
+      "h1": {
+        "x": 24,
+        "y": 165.009765625,
+        "width": 342,
+        "height": 40,
+        "top": 165.009765625,
+        "right": 366,
+        "bottom": 205.009765625,
+        "left": 24
+      },
+      "mainHeight": 3412,
+      "reducedMotion": false
+    },
+    "keyboard": [],
+    "errors": []
+  },
+  {
+    "key": "webkit-390-no-preference-data-policy",
+    "axe": {
+      "violations": [
+        {
+          "id": "link-in-text-block",
+          "targets": [
+            [
+              ".text-accent-purple-text"
+            ]
+          ]
+        }
+      ],
+      "incomplete": []
+    },
+    "links": [
+      {
+        "text": "Privacy Policy",
+        "href": "/legal/",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 24,
+            "y": 527.587890625,
+            "width": 100.1875,
+            "height": 18.84375
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "width": 390,
+      "scrollWidth": 390,
+      "h1": {
+        "x": 24,
+        "y": 165.009765625,
+        "width": 342,
+        "height": 40,
+        "top": 165.009765625,
+        "right": 366,
+        "bottom": 205.009765625,
+        "left": 24
+      },
+      "mainHeight": 2240,
+      "reducedMotion": false
+    },
+    "keyboard": [],
+    "errors": []
+  },
+  {
+    "key": "webkit-390-reduce-legal",
+    "axe": {
+      "violations": [
+        {
+          "id": "link-in-text-block",
+          "targets": [
+            [
+              ".text-accent-purple-text.hover\\:underline[href$=\"data-policy/\"]"
+            ]
+          ]
+        }
+      ],
+      "incomplete": []
+    },
+    "links": [
+      {
+        "text": "contact@vivekapatel.com",
+        "href": "mailto:contact@vivekapatel.com",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 133.1484375,
+            "y": 655.578125,
+            "width": 186.21875,
+            "height": 18.84375
+          }
+        ]
+      },
+      {
+        "text": "Cookie Policy",
+        "href": "/data-policy/",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 222.5703125,
+            "y": 1579.578125,
+            "width": 97.6015625,
+            "height": 18.84375
+          }
+        ]
+      },
+      {
+        "text": "Resend",
+        "href": "https://resend.com/legal/privacy-policy",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 44,
+            "y": 2891.578125,
+            "width": 57.70703125,
+            "height": 18.84375
+          }
+        ]
+      },
+      {
+        "text": "Convex",
+        "href": "https://www.convex.dev/legal/privacy",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 44,
+            "y": 2947.578125,
+            "width": 57.22265625,
+            "height": 18.84375
+          }
+        ]
+      },
+      {
+        "text": "Sentry",
+        "href": "https://sentry.io/privacy/",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 44,
+            "y": 3059.578125,
+            "width": 51.84765625,
+            "height": 18.84375
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "width": 390,
+      "scrollWidth": 390,
+      "h1": {
+        "x": 24,
+        "y": 165,
+        "width": 342,
+        "height": 40,
+        "top": 165,
+        "right": 366,
+        "bottom": 205,
+        "left": 24
+      },
+      "mainHeight": 3412,
+      "reducedMotion": true
+    },
+    "keyboard": [],
+    "errors": []
+  },
+  {
+    "key": "webkit-390-reduce-data-policy",
+    "axe": {
+      "violations": [
+        {
+          "id": "link-in-text-block",
+          "targets": [
+            [
+              ".text-accent-purple-text"
+            ]
+          ]
+        }
+      ],
+      "incomplete": []
+    },
+    "links": [
+      {
+        "text": "Privacy Policy",
+        "href": "/legal/",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 24,
+            "y": 527.578125,
+            "width": 100.1875,
+            "height": 18.84375
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "width": 390,
+      "scrollWidth": 390,
+      "h1": {
+        "x": 24,
+        "y": 165,
+        "width": 342,
+        "height": 40,
+        "top": 165,
+        "right": 366,
+        "bottom": 205,
+        "left": 24
+      },
+      "mainHeight": 2240,
+      "reducedMotion": true
+    },
+    "keyboard": [],
+    "errors": []
+  },
+  {
+    "key": "webkit-1440-no-preference-legal",
+    "axe": {
+      "violations": [
+        {
+          "id": "link-in-text-block",
+          "targets": [
+            [
+              ".text-accent-purple-text.hover\\:underline[href$=\"data-policy/\"]"
+            ]
+          ]
+        }
+      ],
+      "incomplete": []
+    },
+    "links": [
+      {
+        "text": "contact@vivekapatel.com",
+        "href": "mailto:contact@vivekapatel.com",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 405.1484375,
+            "y": 551.587890625,
+            "width": 186.21875,
+            "height": 18.84375
+          }
+        ]
+      },
+      {
+        "text": "Cookie Policy",
+        "href": "/data-policy/",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 296,
+            "y": 1107.587890625,
+            "width": 97.6015625,
+            "height": 18.84375
+          }
+        ]
+      },
+      {
+        "text": "Resend",
+        "href": "https://resend.com/legal/privacy-policy",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 316,
+            "y": 1923.587890625,
+            "width": 57.70703125,
+            "height": 18.84375
+          }
+        ]
+      },
+      {
+        "text": "Convex",
+        "href": "https://www.convex.dev/legal/privacy",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 316,
+            "y": 1955.587890625,
+            "width": 57.22265625,
+            "height": 18.84375
+          }
+        ]
+      },
+      {
+        "text": "Sentry",
+        "href": "https://sentry.io/privacy/",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 316,
+            "y": 2019.587890625,
+            "width": 51.84765625,
+            "height": 18.84375
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "h1": {
+        "x": 296,
+        "y": 197.009765625,
+        "width": 848,
+        "height": 48,
+        "top": 197.009765625,
+        "right": 1144,
+        "bottom": 245.009765625,
+        "left": 296
+      },
+      "mainHeight": 2284,
+      "reducedMotion": false
+    },
+    "keyboard": [],
+    "errors": []
+  },
+  {
+    "key": "webkit-1440-no-preference-data-policy",
+    "axe": {
+      "violations": [
+        {
+          "id": "link-in-text-block",
+          "targets": [
+            [
+              ".text-accent-purple-text"
+            ]
+          ]
+        }
+      ],
+      "incomplete": []
+    },
+    "links": [
+      {
+        "text": "Privacy Policy",
+        "href": "/legal/",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 950.765625,
+            "y": 423.587890625,
+            "width": 100.1875,
+            "height": 18.84375
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "h1": {
+        "x": 296,
+        "y": 197.009765625,
+        "width": 848,
+        "height": 48,
+        "top": 197.009765625,
+        "right": 1144,
+        "bottom": 245.009765625,
+        "left": 296
+      },
+      "mainHeight": 1480,
+      "reducedMotion": false
+    },
+    "keyboard": [],
+    "errors": []
+  },
+  {
+    "key": "webkit-1440-reduce-legal",
+    "axe": {
+      "violations": [
+        {
+          "id": "link-in-text-block",
+          "targets": [
+            [
+              ".text-accent-purple-text.hover\\:underline[href$=\"data-policy/\"]"
+            ]
+          ]
+        }
+      ],
+      "incomplete": []
+    },
+    "links": [
+      {
+        "text": "contact@vivekapatel.com",
+        "href": "mailto:contact@vivekapatel.com",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 405.1484375,
+            "y": 551.578125,
+            "width": 186.21875,
+            "height": 18.84375
+          }
+        ]
+      },
+      {
+        "text": "Cookie Policy",
+        "href": "/data-policy/",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 296,
+            "y": 1107.578125,
+            "width": 97.6015625,
+            "height": 18.84375
+          }
+        ]
+      },
+      {
+        "text": "Resend",
+        "href": "https://resend.com/legal/privacy-policy",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 316,
+            "y": 1923.578125,
+            "width": 57.70703125,
+            "height": 18.84375
+          }
+        ]
+      },
+      {
+        "text": "Convex",
+        "href": "https://www.convex.dev/legal/privacy",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 316,
+            "y": 1955.578125,
+            "width": 57.22265625,
+            "height": 18.84375
+          }
+        ]
+      },
+      {
+        "text": "Sentry",
+        "href": "https://sentry.io/privacy/",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 316,
+            "y": 2019.578125,
+            "width": 51.84765625,
+            "height": 18.84375
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "h1": {
+        "x": 296,
+        "y": 197,
+        "width": 848,
+        "height": 48,
+        "top": 197,
+        "right": 1144,
+        "bottom": 245,
+        "left": 296
+      },
+      "mainHeight": 2284,
+      "reducedMotion": true
+    },
+    "keyboard": [],
+    "errors": []
+  },
+  {
+    "key": "webkit-1440-reduce-data-policy",
+    "axe": {
+      "violations": [
+        {
+          "id": "link-in-text-block",
+          "targets": [
+            [
+              ".text-accent-purple-text"
+            ]
+          ]
+        }
+      ],
+      "incomplete": []
+    },
+    "links": [
+      {
+        "text": "Privacy Policy",
+        "href": "/legal/",
+        "target": "",
+        "rel": "",
+        "color": "rgb(167, 139, 250)",
+        "decoration": "none",
+        "offset": "auto",
+        "rects": [
+          {
+            "x": 950.765625,
+            "y": 423.578125,
+            "width": 100.1875,
+            "height": 18.84375
+          }
+        ]
+      }
+    ],
+    "geometry": {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "h1": {
+        "x": 296,
+        "y": 197,
+        "width": 848,
+        "height": 48,
+        "top": 197,
+        "right": 1144,
+        "bottom": 245,
+        "left": 296
+      },
+      "mainHeight": 1480,
+      "reducedMotion": true
+    },
+    "keyboard": [],
+    "errors": []
+  }
+]
