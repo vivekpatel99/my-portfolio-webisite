@@ -32,6 +32,55 @@ Ordinary feature, fix, documentation, and unreleased-revert work targets
 Do not fix or revert by committing directly on `develop`. The pull request is
 the audit trail for why the integration changed.
 
+## Issue completion
+
+The repository default branch is `main`. GitHub's native closing keywords only
+close issues when a PR targets the default branch. A `Refs #123` mention requests
+no closure on any branch.
+
+Every PR into `develop` must include one of the following outside Markdown
+comments, quotes, or code blocks. Use one standalone line per issue.
+
+- `Closes #123` when all acceptance criteria are met. `Fixes` and `Resolves`
+  are also supported.
+- `Refs #123` for partial work or outstanding acceptance or release verification.
+- `No issue: <specific reason>` for work without a tracked issue.
+
+The `issue-reference` check validates this declaration and rejects PR numbers
+used as issue numbers. Select it as an additional required branch check to
+prevent merges without a declaration. This PR does not change branch protection.
+
+The Issue lifecycle workflow runs on each push to `develop`, finds the PR
+associated with that exact commit, verifies that its merge commit and base
+repository match, and closes only its explicitly completed same-repository
+issues as completed. Existing closed issues are skipped on reruns. PR-body issue
+references provide the issue/PR cross-reference; GitHub's Development sidebar
+auto-linking still follows its default-branch rules.
+
+The job reads the PR body and its edit timestamp together. If the body was edited
+at or after the merge timestamp, it fails before closing any issues. GitHub's
+timestamps have second precision, so a same-second edit needs manual review too.
+Check the original reviewed
+declarations and reconcile issue state manually in that case; editing a merged
+PR cannot add or remove automatic closure targets on a rerun.
+
+This uses the reviewed code on `develop`; it does not need the workflow on
+`main` or execute an unmerged PR with an issue-write token. It covers merges
+through the protected-branch PR workflow, including squash, merge, and rebase
+merges whose final commit matches GitHub's `merge_commit_sha`. It does not sweep
+historical PRs or infer completion from `Refs`. If a run fails, inspect its error
+and rerun that exact push workflow. A merge performed with `GITHUB_TOKEN` will
+not trigger another workflow; use the normal maintainer-authorized merge path.
+
+Closing an integration issue means its acceptance criteria are met on `develop`.
+It does not prove deployment. Keep issues that require live verification open
+with `Refs`, even after an integration merge. Check workflow success and issue
+state after every authorized merge.
+
+Sources: [GitHub issue linking](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue),
+[workflow events](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows),
+and [commit-associated PRs](https://docs.github.com/en/rest/commits/commits#list-pull-requests-associated-with-a-commit).
+
 ## Production release
 
 1. Confirm `develop` contains the exact release candidate.
