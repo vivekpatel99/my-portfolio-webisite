@@ -29,6 +29,9 @@ export function issueReferences(body = '') {
   }
   const conflict = references.closes.find((number) => references.refs.includes(number));
   if (conflict) throw new Error(`#${conflict} has both Closes and Refs declarations. Choose complete or partial work.`);
+  if (references.noIssue && (references.closes.length || references.refs.length)) {
+    throw new Error('No issue cannot be combined with Closes or Refs declarations.');
+  }
   return references;
 }
 
