@@ -221,7 +221,7 @@ test('Detection Bar keeps its purple border and configured logo', async ({ page 
   expect(headerStyles.borderBottom).toContain('139');
   
   // The configured logo is exposed through the home link.
-  const vpMark = page.locator('header').getByRole('link', { name: 'Vivek Patel Logo' }).first();
+  const vpMark = page.locator('header').getByRole('link', { name: 'Vivek Patel home' }).first();
   await expect(vpMark).toBeVisible();
   await expect(vpMark.locator('img')).toHaveAttribute('src', '/assets/logos/mylogo-60-c6065baa4d50.webp');
 });
@@ -230,9 +230,9 @@ test('craft signal surfaces: Services cards keep offer markers and metadata', as
   await page.goto('/#services');
   const firstService = page.locator('#services article').first();
   await expect(firstService.getByText(/SERVICE · OFFER \d+/i)).toBeVisible();
-  await expect(firstService.getByText('Rate', { exact: true })).toBeVisible();
+  await expect(firstService.locator('dt').filter({ hasText: /^Rate/ })).toBeVisible();
   await expect(firstService).toContainText('€45/hour');
-  await expect(firstService.getByText('Timeline', { exact: true })).toBeVisible();
+  await expect(firstService.locator('dt').filter({ hasText: /^Timeline/ })).toBeVisible();
   await expect(firstService).toContainText('Typically');
   await expect(firstService.getByRole('link', { name: /Scope details/i })).toBeVisible();
 });
@@ -369,7 +369,7 @@ test('e2e: Mobile nav → Menu → Request Estimate → Contact', async ({ page 
   await page.goto('/');
   
   // Verify the configured logo in the header.
-  const vpMark = page.locator('header').getByRole('link', { name: 'Vivek Patel Logo' }).first();
+  const vpMark = page.locator('header').getByRole('link', { name: 'Vivek Patel home' }).first();
   await expect(vpMark).toBeVisible();
   await expect(vpMark.locator('img')).toHaveAttribute('src', '/assets/logos/mylogo-60-c6065baa4d50.webp');
   
@@ -379,7 +379,7 @@ test('e2e: Mobile nav → Menu → Request Estimate → Contact', async ({ page 
   await expect(menu).toBeVisible();
   
   // Verify the configured logo in the open menu.
-  const menuLogo = menu.getByRole('link', { name: 'Vivek Patel Logo' });
+  const menuLogo = menu.getByRole('link', { name: 'Vivek Patel home' });
   await expect(menuLogo).toBeVisible();
   await expect(menuLogo.locator('img')).toHaveAttribute('src', '/assets/logos/mylogo-60-c6065baa4d50.webp');
   

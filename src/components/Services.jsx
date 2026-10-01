@@ -59,11 +59,11 @@ const Services = () => {
 
                 <dl className="mt-auto flex flex-wrap gap-[10px] gap-x-7 mb-5 pt-4 border-t border-[rgba(255,255,255,0.06)] font-mono text-[11px] leading-[1.4] tracking-[0.04em] text-[#9ca3af]">
                   <div>
-                    <dt className="inline tracking-[0.08em] uppercase">Timeline</dt> ·{' '}
+                    <dt className="inline tracking-[0.08em] uppercase">Timeline<span aria-hidden="true" className="contents normal-case tracking-[0.04em]"> ·{' '}</span></dt>
                     <dd className="inline font-medium text-[#d8caff] font-sans text-[0.88rem] tracking-normal">{serviceTimelineLabel(service)}</dd>
                   </div>
                   <div>
-                    <dt className="inline tracking-[0.08em] uppercase">Rate</dt> ·{' '}
+                    <dt className="inline tracking-[0.08em] uppercase">Rate<span aria-hidden="true" className="contents normal-case tracking-[0.04em]"> ·{' '}</span></dt>
                     <dd className="inline font-medium text-[#d8caff] font-sans text-[0.88rem] tracking-normal">{HOURLY_FROM_LABEL}</dd>
                   </div>
                 </dl>

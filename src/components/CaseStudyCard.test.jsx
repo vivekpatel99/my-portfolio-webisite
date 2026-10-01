@@ -40,7 +40,7 @@ describe('CaseStudyCard', () => {
     const cardLink = screen.getByRole('link', { name: `Read case study: ${project.title}` });
     expect(cardLink.getAttribute('href')).toBe(`/project/${project.slug}/`);
     expect(cardLink.getAttribute('href')).not.toContain('from=collection');
-    expect(cardLink.contains(screen.getByRole('heading', { name: project.title }))).toBe(true);
+    expect(cardLink.contains(screen.getByRole('heading', { level: 3, name: project.title }))).toBe(true);
     expect(cardLink.contains(screen.getByAltText(project.image.alt))).toBe(true);
     expect(screen.getAllByRole('link')).toHaveLength(1);
   });
@@ -119,6 +119,7 @@ describe('CaseStudyCard', () => {
     expect(screen.getByRole('link', { name: `Read case study: ${project.title}` }).getAttribute('href')).toBe(
       `/project/${project.slug}/?from=collection`,
     );
+    expect(screen.getByRole('heading', { level: 3, name: project.title })).toBeTruthy();
     await user.click(screen.getByRole('link', { name: `Read case study: ${project.title}` }));
     expect(JSON.parse(screen.getByText(/fromCollection/).textContent)).toEqual({ fromCollection: true });
   });
