@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { compileCaseStudyPublication } from '../../publication/compile-case-studies.js';
 import { caseStudyPublicationBaseline } from '../../publication/case-study-manifest.js';
-import Gallery, { collectGalleryImages, galleryStageAspectRatio, galleryThumbnailSrc } from './CaseStudyGallery.js';
+import Gallery, { caseStudyDisplaySrc, collectGalleryImages, galleryStageAspectRatio, galleryThumbnailSrc } from './CaseStudyGallery.js';
 afterEach(cleanup);
 const images = ['Input', 'Output', 'Workflow'].map((alt, i) => ({ src: `/image-${i}.png`, alt, width: 800, height: 600 }));
 describe('case study gallery', () => {
@@ -93,6 +93,14 @@ describe('case study gallery', () => {
     expect(screen.queryByRole('button')).toBeNull();
     expect(screen.getByRole('link').getAttribute('href')).toBe(images[0].src);
   });
+  it('uses a display derivative for a single cover while its link keeps the original', () => {
+    const image = compileCaseStudyPublication().find(({ slug }) => slug === 'depth-based-distance-estimation').image;
+    render(<Gallery images={[image]} />);
+    const link = screen.getByRole('link');
+    expect(link.getAttribute('href')).toBe(image.src);
+    expect(link.querySelector('img').getAttribute('src')).toBe(caseStudyDisplaySrc(image));
+    expect(link.querySelector('img').getAttribute('src')).not.toBe(image.src);
+  });
   it('preserves and renders video sources while using the poster as a preview', () => {
     const video = {
       src: '/football-tracking.mp4',
@@ -112,21 +120,37 @@ describe('case study gallery', () => {
       .toBe('/assets/case-studies/yoga-pose-thumb-734c037c9f53.jpg');
     expect(galleryThumbnailSrc({ src: '/assets/case-studies/n8n-excel-to-json.png', poster: '/preview.webp' }))
       .toBe('/assets/case-studies/n8n-excel-to-json-thumb-7d0eae27bff6.jpg');
+    expect(galleryThumbnailSrc({ src: '/assets/case-studies/n8n-python-ai-agents-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png' }))
+      .toBe('/assets/case-studies/n8n-openai-data-extraction-e6fbcc7caa954b217adfa063990d460059e44d08808ad85c9e8988418920104c-thumb-bd1dc61ef269.jpg');
+    expect(caseStudyDisplaySrc({ src: '/assets/case-studies/n8n-python-ai-agents-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png' }))
+      .toBe('/assets/case-studies/case-study-display-b11f57c86cd2-3d31a82cd9be.webp');
     expect(galleryThumbnailSrc({ src: '/image-0.png', poster: '/preview.webp' })).toBe('/preview.webp');
     expect(galleryThumbnailSrc({ src: '/image-0.png' })).toBe('/image-0.png');
+    expect(caseStudyDisplaySrc({ src: '/image-0.png', poster: '/preview.webp' })).toBe('/image-0.png');
+    expect(caseStudyDisplaySrc({ src: '/image-0.png' })).toBe('/image-0.png');
   });
-  it('keeps the selected stage on the original while thumbnails use derivatives', () => {
-    const selected = { src: '/assets/case-studies/n8n-excel-to-json.png', alt: 'Excel workflow', width: 3400, height: 955 };
-    const other = { src: '/assets/case-studies/n8n-table-to-json.png', alt: 'Table workflow', width: 2645, height: 967 };
+  it('uses display derivatives inline while the enlarged image keeps the original', () => {
+    const published = compileCaseStudyPublication().find(({ slug }) => slug === 'n8n-openai-data-extraction');
+    const [selected, other] = collectGalleryImages(published);
     const { container } = render(<Gallery images={[selected, other]} />);
-    expect(container.querySelector('.case-gallery-open img')?.getAttribute('src')).toBe(selected.src);
+    expect(container.querySelector('.case-gallery-open img')?.getAttribute('src')).toBe(caseStudyDisplaySrc(selected));
+    expect(container.querySelector('.case-gallery-open img')?.getAttribute('src')).not.toBe(selected.src);
     expect([...container.querySelectorAll('.case-gallery-thumbnail img')].map((image) => image.getAttribute('src')))
       .toEqual([
-        '/assets/case-studies/n8n-excel-to-json-thumb-7d0eae27bff6.jpg',
-        '/assets/case-studies/n8n-table-to-json-thumb-a03edc14e212.jpg',
+        '/assets/case-studies/n8n-openai-data-extraction-e6fbcc7caa954b217adfa063990d460059e44d08808ad85c9e8988418920104c-thumb-bd1dc61ef269.jpg',
+        '/assets/case-studies/n8n-openai-data-extraction-72c334f819d00fb872bea5cdb429e07a540b18794a627f758d0c8e092cb84636-thumb-a9dbf544caf7.jpg',
       ]);
-    fireEvent.click(screen.getByRole('button', { name: 'Show image 2: Table workflow' }));
-    expect(container.querySelector('.case-gallery-open img')?.getAttribute('src')).toBe(other.src);
+    fireEvent.click(screen.getByRole('button', { name: `Show image 2: ${other.alt}` }));
+    expect(container.querySelector('.case-gallery-open img')?.getAttribute('src')).toBe(caseStudyDisplaySrc(other));
+    fireEvent.click(screen.getByRole('button', { name: `Enlarge image: ${other.alt}` }));
+    expect(screen.getByLabelText('Enlarged image; scroll to inspect when zoomed').querySelector('img').getAttribute('src')).toBe(other.src);
+  });
+  it('keeps the original href in the static multi-image fallback', () => {
+    const published = compileCaseStudyPublication().find(({ slug }) => slug === 'n8n-openai-data-extraction');
+    const selected = collectGalleryImages(published)[0];
+    const html = renderToStaticMarkup(<Gallery images={collectGalleryImages(published)} interactive={false} />);
+    expect(html).toContain(`href="${selected.src}"`);
+    expect(html).toContain(`src="${caseStudyDisplaySrc(selected)}"`);
   });
   it('leaves arrow keys to focused video controls', () => {
     const video = { src: '/football-tracking.mp4', poster: '/football-tracking.webp', alt: 'Tracked football players' };

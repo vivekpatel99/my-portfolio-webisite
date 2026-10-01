@@ -45,6 +45,24 @@ describe('CaseStudyCard', () => {
     expect(screen.getAllByRole('link')).toHaveLength(1);
   });
 
+  it('uses a bounded display derivative for a published cover', () => {
+    const image = {
+      alt: 'Published workflow cover',
+      src: '/assets/case-studies/ai-invoice-processing-automation-f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png',
+      width: 2448,
+      height: 684,
+    };
+    render(<MemoryRouter><CaseStudyCard project={{ ...project, image }} /></MemoryRouter>);
+
+    const cover = screen.getByAltText(image.alt);
+    expect(cover.getAttribute('src')).toBe('/assets/case-studies/case-study-display-f36fee637d46-dfc9dfc26ce1.webp');
+    expect(cover.getAttribute('src')).not.toBe(image.src);
+    expect(cover.getAttribute('width')).toBe(String(image.width));
+    expect(cover.getAttribute('height')).toBe(String(image.height));
+    expect(cover.getAttribute('loading')).toBe('lazy');
+    expect(cover.className).toContain('object-cover');
+  });
+
   it('keeps the Upwork destination separate from the full-card article link', () => {
     render(<MemoryRouter><CaseStudyCard project={{ ...project, cardTitle: 'Reference card title', externalLinks: [{ label: 'Upwork project', href: 'https://www.upwork.com/example' }] }} /></MemoryRouter>);
     const articleLink = screen.getByRole('link', { name: 'Read case study: Reference card title' });

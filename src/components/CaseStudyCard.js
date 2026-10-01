@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { caseStudyDisplaySrc } from '../lib/caseStudyThumbnails.js';
 
 const MONTH_NAMES = [
   'Jan',
@@ -55,7 +56,7 @@ const CaseStudyCard = ({
         { className: 'media relative min-h-[300px] bg-[#111] overflow-hidden' },
         project.image ? React.createElement('img', {
           className: 'absolute inset-0 w-full h-full object-cover block',
-          alt: project.image.alt, src: project.image.src,
+          alt: project.image.alt, src: caseStudyDisplaySrc(project.image),
           width: project.image.width, height: project.image.height, loading: 'lazy',
         }) : null,
         React.createElement('div', { className: 'scrim absolute inset-0 bg-gradient-to-b from-transparent via-[rgba(12,13,13,0.35)] to-[rgba(12,13,13,0.92)] z-[1]', 'aria-hidden': true }),
