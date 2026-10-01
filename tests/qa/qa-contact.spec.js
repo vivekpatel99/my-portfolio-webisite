@@ -130,6 +130,57 @@ test('empty submit shows custom missing-fields validation without Convex mutatio
   expect(convexMutationRequests).toEqual([]);
 });
 
+test('missing-fields toast has an opaque surface and a named close control', async ({ page }, testInfo) => {
+  await page.getByRole('button', { name: /Send project request/i }).click();
+  const toast = page.locator('li[data-state="open"]');
+  await expect(toast).toContainText('Uh oh! Missing fields.');
+
+  // A transparent surface lets page text show through the message on mobile.
+  const surfaceAlpha = await toast.evaluate((element) => {
+    const channels = getComputedStyle(element).backgroundColor.match(/[\d.]+/g).map(Number);
+    return channels[3] ?? 1;
+  });
+  expect(surfaceAlpha).toBe(1);
+
+  const description = toast.getByText('Please fill out all required fields before sending.');
+  const { toastLayer, foreignLayersAbove, contrast } = await description.evaluate((element) => {
+    const item = element.closest('li');
+    const box = element.getBoundingClientRect();
+    const stack = document.elementsFromPoint(box.x + box.width / 2, box.y + box.height / 2);
+    const toastIndex = stack.indexOf(item);
+    const rgb = (value) => value.match(/[\d.]+/g).slice(0, 3).map(Number);
+    const luminance = (channels) => channels
+      .map((channel) => channel / 255)
+      .map((channel) => (channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4))
+      .reduce((sum, channel, index) => sum + channel * [0.2126, 0.7152, 0.0722][index], 0);
+    const surface = rgb(getComputedStyle(item).backgroundColor);
+    // The description is rendered at reduced opacity, so blend it over the surface first.
+    const alpha = Number(getComputedStyle(element).opacity);
+    const text = rgb(getComputedStyle(element).color)
+      .map((channel, index) => channel * alpha + surface[index] * (1 - alpha));
+    const [lighter, darker] = [luminance(text), luminance(surface)].sort((a, b) => b - a);
+    return {
+      toastLayer: toastIndex,
+      foreignLayersAbove: stack.slice(0, Math.max(toastIndex, 0)).filter((node) => !item.contains(node)).length,
+      contrast: (lighter + 0.05) / (darker + 0.05),
+    };
+  });
+  // Anything painted above the surface at the message must belong to the toast itself.
+  expect(toastLayer).toBeGreaterThanOrEqual(0);
+  expect(foreignLayersAbove).toBe(0);
+  expect(contrast).toBeGreaterThanOrEqual(4.5);
+
+  const close = toast.getByRole('button', { name: 'Dismiss notification', exact: true });
+  await expect(close).toHaveCount(1);
+  // Without hover there is no way to reveal a hover-only control, so touch keeps it visible.
+  const touchProject = Boolean(testInfo.project.use.hasTouch);
+  const coarsePointer = await page.evaluate(() => matchMedia('(any-pointer: coarse)').matches);
+  expect(coarsePointer).toBe(touchProject);
+  if (!touchProject) await page.mouse.move(0, 0);
+  await expect(close).toHaveCSS('opacity', touchProject ? '1' : '0');
+  expect(convexMutationRequests).toEqual([]);
+});
+
 test('whitespace-only required fields are rejected before Convex mutation', async ({ page }) => {
   await page.getByLabel('Full Name *').fill('   ');
   await page.getByLabel('Email Address *').fill('   ');

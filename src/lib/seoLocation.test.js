@@ -54,9 +54,10 @@ describe('public location copy', () => {
   const homeTokens = keywordTokens(defaultSeo.keywords);
   const contactTokens = keywordTokens(routeSeo['/contact'].keywords);
 
-  it('puts Linz, Austria on the hero pill and shows the €45 rate once (#195)', () => {
-    expect(hero).toContain('Based in Linz, Austria');
-    expect(hero).toMatch(/rounded-full[\s\S]*Based in Linz, Austria/);
+  it('puts Linz, Austria in the hero LOCATION field and shows the €45 rate once (#195, #266)', () => {
+    expect(hero).toMatch(/fieldBoxProps\('location',[\s\S]*?Linz, Austria/);
+    expect(hero.match(/Linz, Austria/g)).toHaveLength(1);
+    expect(hero).not.toContain('Based in Linz, Austria');
     expect(hero).not.toContain('Starting at €45/hour');
     expect(hero.match(/€45\/hour/g)).toHaveLength(1);
     expect(hero.replace(/\s+/g, ' ')).not.toMatch(LEFTOVER_BASE);
