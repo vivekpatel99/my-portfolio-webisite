@@ -24,14 +24,16 @@ for (const width of [390, 1280]) {
       await page.goto('/');
       await page.locator('main p').first().waitFor();
       await page.evaluate(() => window.scrollTo({ top: 50, behavior: 'instant' }));
-      await expect(dialog(page)).toBeHidden();
+      if (!probeOnly) await expect(dialog(page)).toBeHidden();
       const before = await readAnchor(page);
       await dialog(page).waitFor();
       await page.waitForTimeout(1700);
       const after = await readAnchor(page);
       await attach(testInfo, 'shallow-arrival', { before, after });
-      expect(before.y).toBe(50);
-      expect(Math.abs(after.top - before.top), JSON.stringify({ before, after })).toBeLessThanOrEqual(2);
+      if (!probeOnly) {
+        expect(before.y).toBe(50);
+        expect(Math.abs(after.top - before.top), JSON.stringify({ before, after })).toBeLessThanOrEqual(2);
+      }
     });
 
     test(`shallow consent changes and top clamp ${width} ${motion}`, async ({ page }, testInfo) => {
@@ -56,8 +58,10 @@ for (const width of [390, 1280]) {
           const expectedY = before.y > 0 ? Math.max(0, before.y + delta) : 0;
           const expectedTop = before.top + delta - (expectedY - before.y);
           states.push({ depth, action, before, after, expectedY, expectedTop });
-          expect(Math.abs(after.y - expectedY), JSON.stringify(states)).toBeLessThanOrEqual(2);
-          expect(Math.abs(after.top - expectedTop), JSON.stringify(states)).toBeLessThanOrEqual(2);
+          if (!probeOnly) {
+            expect(Math.abs(after.y - expectedY), JSON.stringify(states)).toBeLessThanOrEqual(2);
+            expect(Math.abs(after.top - expectedTop), JSON.stringify(states)).toBeLessThanOrEqual(2);
+          }
         }
       }
       await attach(testInfo, 'shallow-changes', states);

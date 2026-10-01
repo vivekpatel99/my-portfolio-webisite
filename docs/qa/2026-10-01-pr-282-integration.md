@@ -21,3 +21,9 @@ All 16 new cases pass across Chromium/WebKit, widths 390/1280, and normal/reduce
 The 1500 ms delay and known first-visit CLS limitation remain. This review correction does not satisfy the remaining CLS acceptance criterion.
 
 The complete browser rerun on the corrected artifact passed all 56 layout cases and all 32 existing consent regressions. The geometry matrix still covers 64 desktop/mobile route and motion combinations. Scoped ESLint and diff checks passed. One redundant test comment was removed after a separate comment review; application behavior was unchanged.
+
+## Probe-mode review correction
+
+A second review comment found that the new shallow tests did not honor the documented `QA_CONSENT_PROBE=1` measurement mode. Their defect assertions now use the existing `!probeOnly` convention. Normal-mode assertions and tolerances remain identical; probe mode retains every interaction and measurement attachment. Application source is unchanged.
+
+Normal and probe modes each passed all 16 shallow cases. Each report contains eight arrival attachments and eight change attachments covering 72 state transitions. Fresh separate Standards and Spec reviewers passed pinned candidate `f6eaecf6020edf4ad34b986c478c4d4aa98696dd` against `70788c846eb8d6edb1bb88d2943e2d7581c59c2a`. Scoped ESLint and diff checks passed.
