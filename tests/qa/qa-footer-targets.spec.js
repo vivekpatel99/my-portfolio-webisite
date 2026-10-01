@@ -60,9 +60,11 @@ test('footer keyboard order, policy navigation and consent settings remain usabl
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/\/legal\/$/);
   await expect(page.getByRole('heading', { level: 1, name: 'Privacy Policy' })).toBeVisible();
+  await expect(page.locator('#main-content')).toBeFocused();
   await footer.getByRole('link', { name: 'Cookie Policy', exact: true }).focus();
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/\/data-policy\/$/);
+  await expect(page.locator('#main-content')).toBeFocused();
   await footer.getByRole('link', { name: 'Home', exact: true }).focus();
   const controls = footer.locator('a,button');
   for (let index = 0; index < 10; index += 1) {
