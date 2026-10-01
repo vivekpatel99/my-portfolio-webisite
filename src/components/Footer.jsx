@@ -17,23 +17,23 @@ const Footer = () => {
 
                 <div className="flex items-center justify-between gap-4 mb-3 flex-wrap">
                     <div className="flex flex-wrap gap-2 gap-x-[22px]">
-                        <Link to="/" className="font-mono text-[11px] tracking-[0.1em] uppercase text-[#c4c4cc] hover:text-[#a78bfa] transition-colors">Home</Link>
-                        <Link to="/#services" className="font-mono text-[11px] tracking-[0.1em] uppercase text-[#c4c4cc] hover:text-[#a78bfa] transition-colors">Services</Link>
-                        <Link to="/#portfolio" className="font-mono text-[11px] tracking-[0.1em] uppercase text-[#c4c4cc] hover:text-[#a78bfa] transition-colors">Portfolio</Link>
-                        <Link to="/#about" className="font-mono text-[11px] tracking-[0.1em] uppercase text-[#c4c4cc] hover:text-[#a78bfa] transition-colors">About</Link>
-                        <Link to="/contact/" className="font-mono text-[11px] tracking-[0.1em] uppercase text-[#c4c4cc] hover:text-[#a78bfa] transition-colors">Contact Me</Link>
+                        <Link to="/" className="inline-flex min-h-6 items-center font-mono text-[11px] tracking-[0.1em] uppercase text-[#c4c4cc] hover:text-[#a78bfa] transition-colors">Home</Link>
+                        <Link to="/#services" className="inline-flex min-h-6 items-center font-mono text-[11px] tracking-[0.1em] uppercase text-[#c4c4cc] hover:text-[#a78bfa] transition-colors">Services</Link>
+                        <Link to="/#portfolio" className="inline-flex min-h-6 items-center font-mono text-[11px] tracking-[0.1em] uppercase text-[#c4c4cc] hover:text-[#a78bfa] transition-colors">Portfolio</Link>
+                        <Link to="/#about" className="inline-flex min-h-6 items-center font-mono text-[11px] tracking-[0.1em] uppercase text-[#c4c4cc] hover:text-[#a78bfa] transition-colors">About</Link>
+                        <Link to="/contact/" className="inline-flex min-h-6 items-center font-mono text-[11px] tracking-[0.1em] uppercase text-[#c4c4cc] hover:text-[#a78bfa] transition-colors">Contact Me</Link>
                     </div>
                     <div className="flex gap-4 font-mono text-[11px] tracking-[0.1em] uppercase text-[#9ca3af]">
-                        <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" className="hover:text-[#a78bfa] transition-colors">Github</a>
-                        <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-[#a78bfa] transition-colors">Linkedin</a>
+                        <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-6 items-center hover:text-[#a78bfa] transition-colors">Github</a>
+                        <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-6 items-center hover:text-[#a78bfa] transition-colors">Linkedin</a>
                     </div>
                 </div>
 
                 <div className="flex items-center justify-between gap-4 pt-3 border-t border-[rgba(255,255,255,0.07)] flex-wrap">
                     <div className="flex flex-wrap gap-2 gap-x-4">
-                        <Link to="/legal/" className="font-mono text-[10px] tracking-[0.1em] uppercase text-[#9ca3af] hover:text-[#d1d5db] transition-colors">Privacy Policy</Link>
-                        <Link to="/data-policy/" className="font-mono text-[10px] tracking-[0.1em] uppercase text-[#9ca3af] hover:text-[#d1d5db] transition-colors">Cookie Policy</Link>
-                        <button onClick={handleManageCookies} className="font-mono text-[10px] tracking-[0.1em] uppercase text-[#9ca3af] hover:text-[#d1d5db] transition-colors">Manage Consent</button>
+                        <Link to="/legal/" className="inline-flex min-h-6 items-center font-mono text-[10px] tracking-[0.1em] uppercase text-[#9ca3af] hover:text-[#d1d5db] transition-colors">Privacy Policy</Link>
+                        <Link to="/data-policy/" className="inline-flex min-h-6 items-center font-mono text-[10px] tracking-[0.1em] uppercase text-[#9ca3af] hover:text-[#d1d5db] transition-colors">Cookie Policy</Link>
+                        <button onClick={handleManageCookies} className="inline-flex min-h-6 items-center font-mono text-[10px] tracking-[0.1em] uppercase text-[#9ca3af] hover:text-[#d1d5db] transition-colors">Manage Consent</button>
                     </div>
                     <div className="font-mono text-[10px] tracking-[0.08em] uppercase text-[#9ca3af]">
                         © {new Date().getFullYear()} Vivek Patel. All Rights Reserved.
