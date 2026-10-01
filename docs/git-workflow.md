@@ -58,7 +58,9 @@ references provide the issue/PR cross-reference; GitHub's Development sidebar
 auto-linking still follows its default-branch rules.
 
 The job reads the PR body and its edit timestamp together. If the body was edited
-after the merge, it fails before closing any issues. Check the original reviewed
+at or after the merge timestamp, it fails before closing any issues. GitHub's
+timestamps have second precision, so a same-second edit needs manual review too.
+Check the original reviewed
 declarations and reconcile issue state manually in that case; editing a merged
 PR cannot add or remove automatic closure targets on a rerun.
 

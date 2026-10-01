@@ -90,12 +90,16 @@ describe('merged develop issue closure', () => {
   });
 
   it('rejects post-merge body edits, including removed completion lines, before any writes', async () => {
-    for (const body of ['Closes #999', 'Refs #206']) {
+    for (const [body, lastEditedAt] of [
+      ['Closes #999', '2026-10-01T06:01:00Z'],
+      ['Refs #206', '2026-10-01T06:01:00Z'],
+      ['Closes #999', '2026-10-01T06:00:00Z'],
+    ]) {
       const state = fixture();
       state.github.graphql.mockResolvedValue({ repository: { pullRequest: {
-        body, lastEditedAt: '2026-10-01T06:01:00Z', mergedAt: '2026-10-01T06:00:00Z',
+        body, lastEditedAt, mergedAt: '2026-10-01T06:00:00Z',
       } } });
-      await expect(runIssueLifecycle(state)).rejects.toThrow('edited after merging');
+      await expect(runIssueLifecycle(state)).rejects.toThrow('edited at or after merging');
       expect(state.github.rest.issues.update).not.toHaveBeenCalled();
     }
   });

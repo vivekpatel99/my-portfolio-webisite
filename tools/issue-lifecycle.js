@@ -63,8 +63,8 @@ export async function runIssueLifecycle({ github, context, core }) {
         }
       }
     `, { owner: repository.owner, name: repository.repo, number: pr.number });
-    if (declaration.lastEditedAt && declaration.lastEditedAt > declaration.mergedAt) {
-      throw new Error(`PR #${pr.number} was edited after merging. Verify its original issue declarations manually.`);
+    if (declaration.lastEditedAt && declaration.lastEditedAt >= declaration.mergedAt) {
+      throw new Error(`PR #${pr.number} was edited at or after merging. Verify its original issue declarations manually.`);
     }
     for (const issue_number of issueReferences(declaration.body).closes) {
       const { data: issue } = await github.rest.issues.get({ ...repository, issue_number });
