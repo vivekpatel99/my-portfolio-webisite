@@ -256,7 +256,7 @@ for (const width of [320, 390, 720, 768, 1024, 1440]) {
     expect(scanLabel.y - bottom(pill)).toBeGreaterThanOrEqual(4);
     expect(title.y - bottom(scanLabel)).toBeGreaterThanOrEqual(4);
     // #191 asks for one consistent panel-to-actions gap inside 16-24 px.
-    expect(estimate.y - bottom(panel)).toBeCloseTo(20, 0);
+    expect(estimate.y - bottom(panel)).toBeCloseTo(16, 0);
     const captionToNextLabel = rateLabel.y - bottom(caption);
     expect(captionToNextLabel).toBeGreaterThanOrEqual(rateValue.y - bottom(rateLabel));
     expect(captionToNextLabel).toBeGreaterThanOrEqual(caption.y - bottom(credentialValue) + 4);

@@ -150,12 +150,12 @@ describe('Hero invoice header spacing (#253)', () => {
     const actions = screen.getByRole('button', { name: 'Request a Project Estimate' }).parentElement;
 
     expect(classesOf(section)).toContain('max-md:pt-3');
+    expect(classesOf(section)).toContain('[@media(max-height:800px)]:pt-3');
     expect(classesOf(pillRow)).toContain('mb-5');
-    expect(classesOf(invoice)).toContain('pt-5');
-    // A max-md top padding would override pt-5 on mobile and bring the label/title collision back.
+    expect(classesOf(invoice)).toContain('pt-4');
     expect(classesOf(invoice).some((c) => c.startsWith('max-md:pt-'))).toBe(false);
     expect(classesOf(credentials)).toContain('mb-4');
-    expect(classesOf(actions)).toEqual(expect.arrayContaining(['mt-2', 'lg:mt-5', 'max-md:mt-5']));
+    expect(classesOf(actions)).toEqual(expect.arrayContaining(['mt-1', 'lg:mt-4', 'max-md:mt-4']));
   });
 });
 

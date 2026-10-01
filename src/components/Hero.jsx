@@ -137,7 +137,7 @@ const Hero = () => {
     <section 
       ref={heroRef}
       data-hero-motion={isInViewport ? 'running' : 'paused'}
-      className="relative h-auto flex flex-col justify-start pt-14 pb-40 bg-[#0C0D0D] max-md:pb-36 max-md:pt-3 max-md:justify-start"
+      className="relative h-auto flex flex-col justify-start pt-14 pb-40 bg-[#0C0D0D] max-md:pb-36 max-md:pt-3 max-md:justify-start [@media(max-height:800px)]:pt-3"
     >
       {/* Grid background */}
       <div 
@@ -225,7 +225,7 @@ const Hero = () => {
             {/* Left: Profile Invoice */}
             <div className="flex flex-col gap-0.5 min-w-0 w-full max-lg:gap-0 lg:col-start-1 lg:row-start-1">
               <article 
-                className="relative w-full max-w-[760px] border border-[#8B5CF6]/[0.28] rounded-lg px-5 pt-5 pb-1.5 max-md:px-2.5 max-md:pb-2"
+                className="relative w-full max-w-[760px] border border-[#8B5CF6]/[0.28] rounded-lg px-5 pt-4 pb-1.5 max-md:px-2.5 max-md:pb-2"
                 style={{
                   background: 'linear-gradient(165deg, #141318 0%, #0f1012 55%, #0e0e10 100%)',
                   boxShadow: '0 0 0 1px rgba(255,255,255,0.03) inset, 0 24px 64px rgba(0,0,0,0.45), 0 0 48px rgba(139,92,246,0.1)'
@@ -345,7 +345,7 @@ const Hero = () => {
               </article>
             </div>
 
-            <div className="relative z-[1] flex flex-wrap gap-3 mt-2 lg:mt-5 lg:col-start-1 lg:row-start-2 max-md:flex-col max-md:mt-5">
+            <div className="relative z-[1] flex flex-wrap gap-3 mt-1 lg:mt-4 lg:col-start-1 lg:row-start-2 max-md:flex-col max-md:mt-4">
               <Button
                 onClick={handleCTAClick}
                 className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-0"
