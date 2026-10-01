@@ -4,11 +4,65 @@ const key = 'cookie_consent_preferences';
 const probeOnly = process.env.QA_CONSENT_PROBE === '1';
 const dialog = (page) => page.getByRole('dialog', { name: /we value your privacy/i });
 const settle = (page) => page.waitForTimeout(350);
+const readAnchor = (page) => page.locator('main p').first().evaluate((el) => ({
+  top: el.getBoundingClientRect().top,
+  y: scrollY,
+  spacerHeight: document.querySelector('[data-testid="cookie-consent-spacer"]').getBoundingClientRect().height,
+}));
 async function attach(testInfo, name, value) {
   await testInfo.attach(name, { body: JSON.stringify(value, null, 2), contentType: 'application/json' });
 }
 async function seed(page) {
   await page.addInitScript((key) => localStorage.setItem(key, JSON.stringify({ necessary: true, analytics: false })), key);
+}
+
+for (const width of [390, 1280]) {
+  for (const motion of ['no-preference', 'reduce']) {
+    test(`shallow delayed arrival ${width} ${motion}`, async ({ page }, testInfo) => {
+      await page.setViewportSize({ width, height: 900 });
+      await page.emulateMedia({ reducedMotion: motion });
+      await page.goto('/');
+      await page.locator('main p').first().waitFor();
+      await page.evaluate(() => window.scrollTo({ top: 50, behavior: 'instant' }));
+      await expect(dialog(page)).toBeHidden();
+      const before = await readAnchor(page);
+      await dialog(page).waitFor();
+      await page.waitForTimeout(1700);
+      const after = await readAnchor(page);
+      await attach(testInfo, 'shallow-arrival', { before, after });
+      expect(before.y).toBe(50);
+      expect(Math.abs(after.top - before.top), JSON.stringify({ before, after })).toBeLessThanOrEqual(2);
+    });
+
+    test(`shallow consent changes and top clamp ${width} ${motion}`, async ({ page }, testInfo) => {
+      await seed(page);
+      await page.setViewportSize({ width, height: 900 });
+      await page.emulateMedia({ reducedMotion: motion });
+      await page.goto('/');
+      await page.locator('main p').first().waitFor();
+      const states = [];
+      for (const depth of [100, 50, 0]) {
+        await page.evaluate(() => window.dispatchEvent(new Event('manage-cookies')));
+        await dialog(page).waitFor();
+        await settle(page);
+        await page.evaluate((depth) => window.scrollTo({ top: depth, behavior: 'instant' }), depth);
+        await settle(page);
+        for (const action of ['options', 'collapse', 'reject']) {
+          const before = await readAnchor(page);
+          await dialog(page).getByRole('button', { name: action === 'reject' ? 'Reject' : 'Options', exact: true }).click();
+          await settle(page);
+          const after = await readAnchor(page);
+          const delta = after.spacerHeight - before.spacerHeight;
+          const expectedY = before.y > 0 ? Math.max(0, before.y + delta) : 0;
+          const expectedTop = before.top + delta - (expectedY - before.y);
+          states.push({ depth, action, before, after, expectedY, expectedTop });
+          expect(Math.abs(after.y - expectedY), JSON.stringify(states)).toBeLessThanOrEqual(2);
+          expect(Math.abs(after.top - expectedTop), JSON.stringify(states)).toBeLessThanOrEqual(2);
+        }
+      }
+      await attach(testInfo, 'shallow-changes', states);
+    });
+  }
 }
 
 for (const route of ['/', '/contact/', '/case-studies/', '/project/ai-invoice-processing-automation/']) {

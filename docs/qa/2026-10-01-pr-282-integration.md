@@ -9,3 +9,15 @@ Validation on the integrated source passed 741 unit tests, the production build,
 The prior CLS measurements in the original report belong to head `89d3d990`. They were not rerun for the semantic-only integration. The gap and reading-position checks were rerun on the integrated artifact.
 
 Fresh CI must pass on the pushed integration head before the authorized merge into `develop`. This integration does not authorize production deployment. #258 remains open for the known CLS limitation.
+
+## Shallow-scroll review correction
+
+A later PR review identified reading-position changes above the former spacer cutoff. New browser regressions failed 12 of 16 cases on `aea3515076adf724dcdb0ec1c0170d452dee2e2a`. Options moved the paragraph by 214 px at mobile width and 230 px at desktop width in both engines. WebKit delayed arrival at scroll position 50 px moved the paragraph by 69 px and 77 px respectively.
+
+The correction compensates every nonzero scroll position and clamps the destination at zero. At the true page top, the existing reservation behavior remains. Dismissing a banner near the page start can still move content by the amount that cannot be compensated without scrolling above zero. The tests explicitly check that physical limit.
+
+All 16 new cases pass across Chromium/WebKit, widths 390/1280, and normal/reduced motion. Separate fresh Standards and Spec reviewers passed pinned code candidate `67004df46c13f229a9b89d52128eb6be59d6b5bd` against `aea3515076adf724dcdb0ec1c0170d452dee2e2a`. The new code also passes 741 unit tests and a production build. Codex independently checked the rendered mobile contact page in T3: opening at scroll position 50 px and expanding Options at 100 px both produce zero paragraph drift, with header bottom and banner top at 69 px.
+
+The 1500 ms delay and known first-visit CLS limitation remain. This review correction does not satisfy the remaining CLS acceptance criterion.
+
+The complete browser rerun on the corrected artifact passed all 56 layout cases and all 32 existing consent regressions. The geometry matrix still covers 64 desktop/mobile route and motion combinations. Scoped ESLint and diff checks passed. One redundant test comment was removed after a separate comment review; application behavior was unchanged.

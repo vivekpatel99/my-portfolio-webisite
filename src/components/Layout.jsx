@@ -59,8 +59,8 @@ const Layout = () => {
     rootStyle.overflowAnchor = 'none';
     // Reserve before paint and before scrolling; a queued React update would leave the old scroll range.
     spacer.style.height = `${nextHeight}px`;
-    if (scrollY >= spacerTop + oldHeight) {
-      window.scrollTo({ top: scrollY + nextHeight - oldHeight, behavior: 'instant' });
+    if (scrollY > 0) {
+      window.scrollTo({ top: Math.max(0, scrollY + nextHeight - oldHeight), behavior: 'instant' });
     }
     anchoringFrameRef.current = window.requestAnimationFrame(restoreScrollAnchoring);
   }, [restoreScrollAnchoring]);
