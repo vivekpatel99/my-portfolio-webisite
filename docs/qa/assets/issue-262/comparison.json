@@ -1,0 +1,1114 @@
+[
+  {
+    "project": "chromium-390-no-preference",
+    "beforeStatus": "failed",
+    "afterStatus": "passed",
+    "geometryIdentical": true,
+    "changedPixels": 0,
+    "before": {
+      "section": {
+        "x": 0,
+        "y": 69,
+        "width": 390,
+        "height": 590.796875
+      },
+      "elements": [
+        {
+          "text": "Page unavailable",
+          "rect": {
+            "x": 24,
+            "y": 213,
+            "width": 342,
+            "height": 24
+          },
+          "color": "rgb(167, 139, 250)",
+          "fontSize": "16px"
+        },
+        {
+          "text": "This page didn't load",
+          "rect": {
+            "x": 24,
+            "y": 253,
+            "width": 342,
+            "height": 80
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "36px"
+        },
+        {
+          "text": "Something interrupted loading this page. Check your connection and try again, or return to the homepage.",
+          "rect": {
+            "x": 24,
+            "y": 357,
+            "width": 342,
+            "height": 84
+          },
+          "color": "rgb(209, 213, 219)",
+          "fontSize": "18px"
+        },
+        {
+          "text": "Retry",
+          "rect": {
+            "x": 24,
+            "y": 473,
+            "width": 95.359375,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        },
+        {
+          "text": "Back to Home",
+          "rect": {
+            "x": 135.359375,
+            "y": 473,
+            "width": 154.203125,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        }
+      ],
+      "overflow": false
+    },
+    "after": {
+      "section": {
+        "x": 0,
+        "y": 69,
+        "width": 390,
+        "height": 590.796875
+      },
+      "elements": [
+        {
+          "text": "Page unavailable",
+          "rect": {
+            "x": 24,
+            "y": 213,
+            "width": 342,
+            "height": 24
+          },
+          "color": "rgb(167, 139, 250)",
+          "fontSize": "16px"
+        },
+        {
+          "text": "This page didn't load",
+          "rect": {
+            "x": 24,
+            "y": 253,
+            "width": 342,
+            "height": 80
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "36px"
+        },
+        {
+          "text": "Something interrupted loading this page. Check your connection and try again, or return to the homepage.",
+          "rect": {
+            "x": 24,
+            "y": 357,
+            "width": 342,
+            "height": 84
+          },
+          "color": "rgb(209, 213, 219)",
+          "fontSize": "18px"
+        },
+        {
+          "text": "Retry",
+          "rect": {
+            "x": 24,
+            "y": 473,
+            "width": 95.359375,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        },
+        {
+          "text": "Back to Home",
+          "rect": {
+            "x": 135.359375,
+            "y": 473,
+            "width": 154.203125,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        }
+      ],
+      "overflow": false
+    }
+  },
+  {
+    "project": "chromium-390-reduce",
+    "beforeStatus": "failed",
+    "afterStatus": "passed",
+    "geometryIdentical": true,
+    "changedPixels": 0,
+    "before": {
+      "section": {
+        "x": 0,
+        "y": 69,
+        "width": 390,
+        "height": 590.796875
+      },
+      "elements": [
+        {
+          "text": "Page unavailable",
+          "rect": {
+            "x": 24,
+            "y": 213,
+            "width": 342,
+            "height": 24
+          },
+          "color": "rgb(167, 139, 250)",
+          "fontSize": "16px"
+        },
+        {
+          "text": "This page didn't load",
+          "rect": {
+            "x": 24,
+            "y": 253,
+            "width": 342,
+            "height": 80
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "36px"
+        },
+        {
+          "text": "Something interrupted loading this page. Check your connection and try again, or return to the homepage.",
+          "rect": {
+            "x": 24,
+            "y": 357,
+            "width": 342,
+            "height": 84
+          },
+          "color": "rgb(209, 213, 219)",
+          "fontSize": "18px"
+        },
+        {
+          "text": "Retry",
+          "rect": {
+            "x": 24,
+            "y": 473,
+            "width": 95.359375,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        },
+        {
+          "text": "Back to Home",
+          "rect": {
+            "x": 135.359375,
+            "y": 473,
+            "width": 154.203125,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        }
+      ],
+      "overflow": false
+    },
+    "after": {
+      "section": {
+        "x": 0,
+        "y": 69,
+        "width": 390,
+        "height": 590.796875
+      },
+      "elements": [
+        {
+          "text": "Page unavailable",
+          "rect": {
+            "x": 24,
+            "y": 213,
+            "width": 342,
+            "height": 24
+          },
+          "color": "rgb(167, 139, 250)",
+          "fontSize": "16px"
+        },
+        {
+          "text": "This page didn't load",
+          "rect": {
+            "x": 24,
+            "y": 253,
+            "width": 342,
+            "height": 80
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "36px"
+        },
+        {
+          "text": "Something interrupted loading this page. Check your connection and try again, or return to the homepage.",
+          "rect": {
+            "x": 24,
+            "y": 357,
+            "width": 342,
+            "height": 84
+          },
+          "color": "rgb(209, 213, 219)",
+          "fontSize": "18px"
+        },
+        {
+          "text": "Retry",
+          "rect": {
+            "x": 24,
+            "y": 473,
+            "width": 95.359375,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        },
+        {
+          "text": "Back to Home",
+          "rect": {
+            "x": 135.359375,
+            "y": 473,
+            "width": 154.203125,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        }
+      ],
+      "overflow": false
+    }
+  },
+  {
+    "project": "chromium-1280-no-preference",
+    "beforeStatus": "failed",
+    "afterStatus": "passed",
+    "geometryIdentical": true,
+    "changedPixels": 0,
+    "before": {
+      "section": {
+        "x": 0,
+        "y": 69,
+        "width": 1280,
+        "height": 560
+      },
+      "elements": [
+        {
+          "text": "Page unavailable",
+          "rect": {
+            "x": 280,
+            "y": 213,
+            "width": 720,
+            "height": 24
+          },
+          "color": "rgb(167, 139, 250)",
+          "fontSize": "16px"
+        },
+        {
+          "text": "This page didn't load",
+          "rect": {
+            "x": 280,
+            "y": 253,
+            "width": 720,
+            "height": 60
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "60px"
+        },
+        {
+          "text": "Something interrupted loading this page. Check your connection and try again, or return to the homepage.",
+          "rect": {
+            "x": 280,
+            "y": 337,
+            "width": 720,
+            "height": 56
+          },
+          "color": "rgb(209, 213, 219)",
+          "fontSize": "18px"
+        },
+        {
+          "text": "Retry",
+          "rect": {
+            "x": 280,
+            "y": 425,
+            "width": 95.359375,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        },
+        {
+          "text": "Back to Home",
+          "rect": {
+            "x": 391.359375,
+            "y": 425,
+            "width": 154.203125,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        }
+      ],
+      "overflow": false
+    },
+    "after": {
+      "section": {
+        "x": 0,
+        "y": 69,
+        "width": 1280,
+        "height": 560
+      },
+      "elements": [
+        {
+          "text": "Page unavailable",
+          "rect": {
+            "x": 280,
+            "y": 213,
+            "width": 720,
+            "height": 24
+          },
+          "color": "rgb(167, 139, 250)",
+          "fontSize": "16px"
+        },
+        {
+          "text": "This page didn't load",
+          "rect": {
+            "x": 280,
+            "y": 253,
+            "width": 720,
+            "height": 60
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "60px"
+        },
+        {
+          "text": "Something interrupted loading this page. Check your connection and try again, or return to the homepage.",
+          "rect": {
+            "x": 280,
+            "y": 337,
+            "width": 720,
+            "height": 56
+          },
+          "color": "rgb(209, 213, 219)",
+          "fontSize": "18px"
+        },
+        {
+          "text": "Retry",
+          "rect": {
+            "x": 280,
+            "y": 425,
+            "width": 95.359375,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        },
+        {
+          "text": "Back to Home",
+          "rect": {
+            "x": 391.359375,
+            "y": 425,
+            "width": 154.203125,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        }
+      ],
+      "overflow": false
+    }
+  },
+  {
+    "project": "chromium-1280-reduce",
+    "beforeStatus": "failed",
+    "afterStatus": "passed",
+    "geometryIdentical": true,
+    "changedPixels": 0,
+    "before": {
+      "section": {
+        "x": 0,
+        "y": 69,
+        "width": 1280,
+        "height": 560
+      },
+      "elements": [
+        {
+          "text": "Page unavailable",
+          "rect": {
+            "x": 280,
+            "y": 213,
+            "width": 720,
+            "height": 24
+          },
+          "color": "rgb(167, 139, 250)",
+          "fontSize": "16px"
+        },
+        {
+          "text": "This page didn't load",
+          "rect": {
+            "x": 280,
+            "y": 253,
+            "width": 720,
+            "height": 60
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "60px"
+        },
+        {
+          "text": "Something interrupted loading this page. Check your connection and try again, or return to the homepage.",
+          "rect": {
+            "x": 280,
+            "y": 337,
+            "width": 720,
+            "height": 56
+          },
+          "color": "rgb(209, 213, 219)",
+          "fontSize": "18px"
+        },
+        {
+          "text": "Retry",
+          "rect": {
+            "x": 280,
+            "y": 425,
+            "width": 95.359375,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        },
+        {
+          "text": "Back to Home",
+          "rect": {
+            "x": 391.359375,
+            "y": 425,
+            "width": 154.203125,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        }
+      ],
+      "overflow": false
+    },
+    "after": {
+      "section": {
+        "x": 0,
+        "y": 69,
+        "width": 1280,
+        "height": 560
+      },
+      "elements": [
+        {
+          "text": "Page unavailable",
+          "rect": {
+            "x": 280,
+            "y": 213,
+            "width": 720,
+            "height": 24
+          },
+          "color": "rgb(167, 139, 250)",
+          "fontSize": "16px"
+        },
+        {
+          "text": "This page didn't load",
+          "rect": {
+            "x": 280,
+            "y": 253,
+            "width": 720,
+            "height": 60
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "60px"
+        },
+        {
+          "text": "Something interrupted loading this page. Check your connection and try again, or return to the homepage.",
+          "rect": {
+            "x": 280,
+            "y": 337,
+            "width": 720,
+            "height": 56
+          },
+          "color": "rgb(209, 213, 219)",
+          "fontSize": "18px"
+        },
+        {
+          "text": "Retry",
+          "rect": {
+            "x": 280,
+            "y": 425,
+            "width": 95.359375,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        },
+        {
+          "text": "Back to Home",
+          "rect": {
+            "x": 391.359375,
+            "y": 425,
+            "width": 154.203125,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        }
+      ],
+      "overflow": false
+    }
+  },
+  {
+    "project": "webkit-390-no-preference",
+    "beforeStatus": "failed",
+    "afterStatus": "passed",
+    "geometryIdentical": true,
+    "changedPixels": 0,
+    "before": {
+      "section": {
+        "x": 0,
+        "y": 69,
+        "width": 390,
+        "height": 590.796875
+      },
+      "elements": [
+        {
+          "text": "Page unavailable",
+          "rect": {
+            "x": 24,
+            "y": 213,
+            "width": 342,
+            "height": 24
+          },
+          "color": "rgb(167, 139, 250)",
+          "fontSize": "16px"
+        },
+        {
+          "text": "This page didn't load",
+          "rect": {
+            "x": 24,
+            "y": 253,
+            "width": 342,
+            "height": 80
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "36px"
+        },
+        {
+          "text": "Something interrupted loading this page. Check your connection and try again, or return to the homepage.",
+          "rect": {
+            "x": 24,
+            "y": 357,
+            "width": 342,
+            "height": 84
+          },
+          "color": "rgb(209, 213, 219)",
+          "fontSize": "18px"
+        },
+        {
+          "text": "Retry",
+          "rect": {
+            "x": 24,
+            "y": 473,
+            "width": 95.359375,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        },
+        {
+          "text": "Back to Home",
+          "rect": {
+            "x": 135.359375,
+            "y": 473,
+            "width": 154.203125,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        }
+      ],
+      "overflow": false
+    },
+    "after": {
+      "section": {
+        "x": 0,
+        "y": 69,
+        "width": 390,
+        "height": 590.796875
+      },
+      "elements": [
+        {
+          "text": "Page unavailable",
+          "rect": {
+            "x": 24,
+            "y": 213,
+            "width": 342,
+            "height": 24
+          },
+          "color": "rgb(167, 139, 250)",
+          "fontSize": "16px"
+        },
+        {
+          "text": "This page didn't load",
+          "rect": {
+            "x": 24,
+            "y": 253,
+            "width": 342,
+            "height": 80
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "36px"
+        },
+        {
+          "text": "Something interrupted loading this page. Check your connection and try again, or return to the homepage.",
+          "rect": {
+            "x": 24,
+            "y": 357,
+            "width": 342,
+            "height": 84
+          },
+          "color": "rgb(209, 213, 219)",
+          "fontSize": "18px"
+        },
+        {
+          "text": "Retry",
+          "rect": {
+            "x": 24,
+            "y": 473,
+            "width": 95.359375,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        },
+        {
+          "text": "Back to Home",
+          "rect": {
+            "x": 135.359375,
+            "y": 473,
+            "width": 154.203125,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        }
+      ],
+      "overflow": false
+    }
+  },
+  {
+    "project": "webkit-390-reduce",
+    "beforeStatus": "failed",
+    "afterStatus": "passed",
+    "geometryIdentical": true,
+    "changedPixels": 0,
+    "before": {
+      "section": {
+        "x": 0,
+        "y": 69,
+        "width": 390,
+        "height": 590.796875
+      },
+      "elements": [
+        {
+          "text": "Page unavailable",
+          "rect": {
+            "x": 24,
+            "y": 213,
+            "width": 342,
+            "height": 24
+          },
+          "color": "rgb(167, 139, 250)",
+          "fontSize": "16px"
+        },
+        {
+          "text": "This page didn't load",
+          "rect": {
+            "x": 24,
+            "y": 253,
+            "width": 342,
+            "height": 80
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "36px"
+        },
+        {
+          "text": "Something interrupted loading this page. Check your connection and try again, or return to the homepage.",
+          "rect": {
+            "x": 24,
+            "y": 357,
+            "width": 342,
+            "height": 84
+          },
+          "color": "rgb(209, 213, 219)",
+          "fontSize": "18px"
+        },
+        {
+          "text": "Retry",
+          "rect": {
+            "x": 24,
+            "y": 473,
+            "width": 95.359375,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        },
+        {
+          "text": "Back to Home",
+          "rect": {
+            "x": 135.359375,
+            "y": 473,
+            "width": 154.203125,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        }
+      ],
+      "overflow": false
+    },
+    "after": {
+      "section": {
+        "x": 0,
+        "y": 69,
+        "width": 390,
+        "height": 590.796875
+      },
+      "elements": [
+        {
+          "text": "Page unavailable",
+          "rect": {
+            "x": 24,
+            "y": 213,
+            "width": 342,
+            "height": 24
+          },
+          "color": "rgb(167, 139, 250)",
+          "fontSize": "16px"
+        },
+        {
+          "text": "This page didn't load",
+          "rect": {
+            "x": 24,
+            "y": 253,
+            "width": 342,
+            "height": 80
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "36px"
+        },
+        {
+          "text": "Something interrupted loading this page. Check your connection and try again, or return to the homepage.",
+          "rect": {
+            "x": 24,
+            "y": 357,
+            "width": 342,
+            "height": 84
+          },
+          "color": "rgb(209, 213, 219)",
+          "fontSize": "18px"
+        },
+        {
+          "text": "Retry",
+          "rect": {
+            "x": 24,
+            "y": 473,
+            "width": 95.359375,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        },
+        {
+          "text": "Back to Home",
+          "rect": {
+            "x": 135.359375,
+            "y": 473,
+            "width": 154.203125,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        }
+      ],
+      "overflow": false
+    }
+  },
+  {
+    "project": "webkit-1280-no-preference",
+    "beforeStatus": "failed",
+    "afterStatus": "passed",
+    "geometryIdentical": true,
+    "changedPixels": 0,
+    "before": {
+      "section": {
+        "x": 0,
+        "y": 69,
+        "width": 1280,
+        "height": 560
+      },
+      "elements": [
+        {
+          "text": "Page unavailable",
+          "rect": {
+            "x": 280,
+            "y": 213,
+            "width": 720,
+            "height": 24
+          },
+          "color": "rgb(167, 139, 250)",
+          "fontSize": "16px"
+        },
+        {
+          "text": "This page didn't load",
+          "rect": {
+            "x": 280,
+            "y": 253,
+            "width": 720,
+            "height": 60
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "60px"
+        },
+        {
+          "text": "Something interrupted loading this page. Check your connection and try again, or return to the homepage.",
+          "rect": {
+            "x": 280,
+            "y": 337,
+            "width": 720,
+            "height": 56
+          },
+          "color": "rgb(209, 213, 219)",
+          "fontSize": "18px"
+        },
+        {
+          "text": "Retry",
+          "rect": {
+            "x": 280,
+            "y": 425,
+            "width": 95.359375,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        },
+        {
+          "text": "Back to Home",
+          "rect": {
+            "x": 391.359375,
+            "y": 425,
+            "width": 154.203125,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        }
+      ],
+      "overflow": false
+    },
+    "after": {
+      "section": {
+        "x": 0,
+        "y": 69,
+        "width": 1280,
+        "height": 560
+      },
+      "elements": [
+        {
+          "text": "Page unavailable",
+          "rect": {
+            "x": 280,
+            "y": 213,
+            "width": 720,
+            "height": 24
+          },
+          "color": "rgb(167, 139, 250)",
+          "fontSize": "16px"
+        },
+        {
+          "text": "This page didn't load",
+          "rect": {
+            "x": 280,
+            "y": 253,
+            "width": 720,
+            "height": 60
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "60px"
+        },
+        {
+          "text": "Something interrupted loading this page. Check your connection and try again, or return to the homepage.",
+          "rect": {
+            "x": 280,
+            "y": 337,
+            "width": 720,
+            "height": 56
+          },
+          "color": "rgb(209, 213, 219)",
+          "fontSize": "18px"
+        },
+        {
+          "text": "Retry",
+          "rect": {
+            "x": 280,
+            "y": 425,
+            "width": 95.359375,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        },
+        {
+          "text": "Back to Home",
+          "rect": {
+            "x": 391.359375,
+            "y": 425,
+            "width": 154.203125,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        }
+      ],
+      "overflow": false
+    }
+  },
+  {
+    "project": "webkit-1280-reduce",
+    "beforeStatus": "failed",
+    "afterStatus": "passed",
+    "geometryIdentical": true,
+    "changedPixels": 0,
+    "before": {
+      "section": {
+        "x": 0,
+        "y": 69,
+        "width": 1280,
+        "height": 560
+      },
+      "elements": [
+        {
+          "text": "Page unavailable",
+          "rect": {
+            "x": 280,
+            "y": 213,
+            "width": 720,
+            "height": 24
+          },
+          "color": "rgb(167, 139, 250)",
+          "fontSize": "16px"
+        },
+        {
+          "text": "This page didn't load",
+          "rect": {
+            "x": 280,
+            "y": 253,
+            "width": 720,
+            "height": 60
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "60px"
+        },
+        {
+          "text": "Something interrupted loading this page. Check your connection and try again, or return to the homepage.",
+          "rect": {
+            "x": 280,
+            "y": 337,
+            "width": 720,
+            "height": 56
+          },
+          "color": "rgb(209, 213, 219)",
+          "fontSize": "18px"
+        },
+        {
+          "text": "Retry",
+          "rect": {
+            "x": 280,
+            "y": 425,
+            "width": 95.359375,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        },
+        {
+          "text": "Back to Home",
+          "rect": {
+            "x": 391.359375,
+            "y": 425,
+            "width": 154.203125,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        }
+      ],
+      "overflow": false
+    },
+    "after": {
+      "section": {
+        "x": 0,
+        "y": 69,
+        "width": 1280,
+        "height": 560
+      },
+      "elements": [
+        {
+          "text": "Page unavailable",
+          "rect": {
+            "x": 280,
+            "y": 213,
+            "width": 720,
+            "height": 24
+          },
+          "color": "rgb(167, 139, 250)",
+          "fontSize": "16px"
+        },
+        {
+          "text": "This page didn't load",
+          "rect": {
+            "x": 280,
+            "y": 253,
+            "width": 720,
+            "height": 60
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "60px"
+        },
+        {
+          "text": "Something interrupted loading this page. Check your connection and try again, or return to the homepage.",
+          "rect": {
+            "x": 280,
+            "y": 337,
+            "width": 720,
+            "height": 56
+          },
+          "color": "rgb(209, 213, 219)",
+          "fontSize": "18px"
+        },
+        {
+          "text": "Retry",
+          "rect": {
+            "x": 280,
+            "y": 425,
+            "width": 95.359375,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        },
+        {
+          "text": "Back to Home",
+          "rect": {
+            "x": 391.359375,
+            "y": 425,
+            "width": 154.203125,
+            "height": 40
+          },
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px"
+        }
+      ],
+      "overflow": false
+    }
+  }
+]

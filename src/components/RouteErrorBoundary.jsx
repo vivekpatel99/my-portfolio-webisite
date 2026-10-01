@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ArrowLeft, RotateCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { focusNavigationTarget } from '@/lib/focusTarget';
+import { Seo } from '@/lib/seo';
 
 export const ROUTE_ERROR_HEADING = "This page didn't load";
 
@@ -11,6 +12,7 @@ const reloadCurrentPage = () => window.location.reload();
 
 const RouteErrorFallback = () => {
   const headingRef = useRef(null);
+  const { pathname } = useLocation();
 
   useEffect(() => {
     focusNavigationTarget(headingRef.current);
@@ -22,6 +24,12 @@ const RouteErrorFallback = () => {
       className="min-h-[70vh] bg-[#0C0D0D] text-white pt-36 pb-24"
       data-route-error
     >
+      <Seo
+        title="Page unavailable | Vivek Patel"
+        description="The requested page could not be loaded. Try again or return to the homepage."
+        path={pathname}
+        noindex
+      />
       <div className="container mx-auto px-6 max-w-3xl">
         <p className="text-accent-purple-text font-semibold uppercase tracking-wide mb-4">Page unavailable</p>
         <h1
