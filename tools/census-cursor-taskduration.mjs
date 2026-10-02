@@ -81,6 +81,24 @@ try {
 
         await page.goto(baseURL);
         await page.waitForTimeout(2000);
+
+        // Pause testimonials via the real Pause control (isUserPaused) BEFORE
+        // establishing the probe position. Playwright click() may scroll the
+        // control into view and move the pointer; doing that after scrollY 1200
+        // / (300,500) would desync the normal-motion arm from the stated probe
+        // (reduced-motion has no Pause button). isUserPaused keeps autoplay off.
+        const pauseTestimonials = page.getByRole('button', { name: /^pause testimonials$/i });
+        if (await pauseTestimonials.count()) {
+          await pauseTestimonials.click();
+          await page.evaluate(() => document.activeElement?.blur?.());
+        }
+        await page.evaluate(() => {
+          document.querySelectorAll('video').forEach((v) => {
+            try { v.pause(); } catch {}
+          });
+        });
+
+        // Establish matched probe position after any pause-induced scroll/pointer move.
         await page.evaluate(() => window.scrollTo(0, 1200));
         await page.mouse.move(300, 500);
         await page.waitForTimeout(1000);
@@ -107,19 +125,6 @@ try {
 
         // Do not inject a self-scheduling rAF loop into the measured window;
         // that harness work would inflate TaskDuration / TaskOtherDuration.
-        // Pause testimonials via the real Pause control (isUserPaused) so the
-        // six-second carousel timer cannot land in the CDP getMetrics gaps.
-        // Reduced-motion arm has no control (autoplay already off).
-        const pauseTestimonials = page.getByRole('button', { name: /^pause testimonials$/i });
-        if (await pauseTestimonials.count()) {
-          await pauseTestimonials.click();
-          await page.evaluate(() => document.activeElement?.blur?.());
-        }
-        await page.evaluate(() => {
-          document.querySelectorAll('video').forEach((v) => {
-            try { v.pause(); } catch {}
-          });
-        });
 
         const before = await metrics();
         // Count commits only while measuring — brackets the move loop and

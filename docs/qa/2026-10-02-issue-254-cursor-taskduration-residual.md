@@ -119,7 +119,7 @@ Addressed in the census lever before merge:
 - Withhold commit-attribution and absolute-gate notes until every normal run completes 241 moves inside 2s.
 - Keep whole-page `prefers-reduced-motion` control labeled as such (cursor-only disable is follow-up).
 - Gate `cursorCommits` behind `__censusMeasuring`, but validate hook injection with ungated `__censusHookCommits` so init does not require the measuring flag.
-- Pause testimonials by clicking the real **Pause testimonials** control (`isUserPaused`) instead of inert `data-census-paused` attributes; reduced-motion arm already has autoplay off.
+- Pause testimonials by clicking the real **Pause testimonials** control (`isUserPaused`) **before** establishing scrollY 1200 / pointer (300,500), so click-induced scroll does not desync the normal-motion probe; reduced-motion arm already has autoplay off.
 
 ## Artifact validity
 
