@@ -3,14 +3,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { ArrowLeft, RotateCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { focusNavigationTarget } from '@/lib/focusTarget';
+import { clearPendingRetryGeneration, retryLazyRoutes } from '@/lib/lazyRoute';
 import { Seo } from '@/lib/seo';
 
 export const ROUTE_ERROR_HEADING = "This page didn't load";
 
-// React.lazy caches a rejected import, so only a user-initiated reload can retry a failed chunk.
-const reloadCurrentPage = () => window.location.reload();
-
-const RouteErrorFallback = () => {
+const RouteErrorFallback = ({ onRetry }) => {
   const headingRef = useRef(null);
   const { pathname } = useLocation();
 
@@ -46,7 +44,7 @@ const RouteErrorFallback = () => {
         <div className="flex flex-wrap gap-4">
           <Button
             type="button"
-            onClick={reloadCurrentPage}
+            onClick={onRetry}
             className="bg-accent-purple text-white hover:bg-accent-purple/90 rounded-full"
           >
             <RotateCw className="mr-2 h-5 w-5" aria-hidden="true" />
@@ -68,24 +66,102 @@ const RouteErrorFallback = () => {
   );
 };
 
+function focusRecoveredRouteContent() {
+  const main = document.getElementById('main-content');
+  if (!main) return false;
+  // Still showing the recovery UI (retry failed again).
+  if (main.querySelector('[data-route-error]')) return false;
+  // Suspense fallback while the remounted lazy factory loads.
+  if (main.querySelector('[role="status"][aria-label="Loading page"]')) return false;
+
+  const heading = main.querySelector('h1');
+  focusNavigationTarget(heading || main);
+  return true;
+}
+
 class RouteErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false };
+    this.focusObserver = null;
+    this.focusTimeoutId = null;
   }
 
   static getDerivedStateFromError() {
     return { hasError: true };
   }
 
+  componentWillUnmount() {
+    this.teardownFocusRecovery();
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (prevState.hasError && this.state.hasError && prevProps.resetKey !== this.props.resetKey) {
+      // Leaving the error UI via navigation — drop any unconsumed Retry token.
+      clearPendingRetryGeneration();
       this.setState({ hasError: false });
+    }
+
+    // Retry unmounts the focused button without a location change, so ScrollToTop
+    // never runs. Move focus to the recovered main / heading once content appears.
+    if (prevState.hasError && !this.state.hasError) {
+      this.scheduleFocusAfterRecovery();
+    }
+
+    // Re-entered error after Retry (e.g. synchronous render throw): no lazyRoute
+    // consumed pendingRetryGeneration — clear so a later cached lazy visit is not
+    // forced onto attempt 1.
+    if (!prevState.hasError && this.state.hasError) {
+      clearPendingRetryGeneration();
     }
   }
 
+  teardownFocusRecovery() {
+    if (this.focusObserver) {
+      this.focusObserver.disconnect();
+      this.focusObserver = null;
+    }
+    if (this.focusTimeoutId != null) {
+      window.clearTimeout(this.focusTimeoutId);
+      this.focusTimeoutId = null;
+    }
+  }
+
+  scheduleFocusAfterRecovery() {
+    this.teardownFocusRecovery();
+
+    if (focusRecoveredRouteContent()) return;
+
+    const main = document.getElementById('main-content');
+    if (!main || typeof MutationObserver === 'undefined') {
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          focusRecoveredRouteContent();
+        });
+      });
+      return;
+    }
+
+    this.focusObserver = new MutationObserver(() => {
+      if (focusRecoveredRouteContent()) this.teardownFocusRecovery();
+    });
+    this.focusObserver.observe(main, { childList: true, subtree: true });
+    // Keep observing until content, another error, or unmount — slow cache-bust
+    // downloads can exceed a short timeout and ScrollToTop will not run.
+  }
+
+  handleRetry = () => {
+    // Remount lazy factories with a cache-busting import; do not reload the document.
+    // WebKit will not re-request a module URL that already failed in this tab.
+    // (Obsolete chunk URLs still fall back to document.location.reload inside lazyRoute.)
+    retryLazyRoutes();
+    this.setState({ hasError: false });
+  };
+
   render() {
-    return this.state.hasError ? <RouteErrorFallback /> : this.props.children;
+    return this.state.hasError
+      ? <RouteErrorFallback onRetry={this.handleRetry} />
+      : this.props.children;
   }
 }
 
