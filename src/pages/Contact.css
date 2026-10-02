@@ -79,6 +79,8 @@
 }
 
 .contact-detection-select {
+  /* Preserve this control's existing native chrome within the dark page. */
+  color-scheme: normal;
   color: #9ca3af;
   cursor: pointer;
 }
