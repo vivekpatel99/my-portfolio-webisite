@@ -125,15 +125,15 @@ try {
 
         // Do not inject a self-scheduling rAF loop into the measured window;
         // that harness work would inflate TaskDuration / TaskOtherDuration.
-
-        const before = await metrics();
-        // Count commits only while measuring — brackets the move loop and
-        // excludes React work during either Performance.getMetrics call.
+        // Enable the commit counter before the before-snapshot and keep it on
+        // until after the after-snapshot so TaskDuration and cursorCommits share
+        // the same boundaries (no uncounted harness/React gap inside the delta).
         await page.evaluate(() => {
           window.cursorCommits = 0;
           window.cursorCommitTimes = [];
           window.__censusMeasuring = true;
         });
+        const before = await metrics();
         const start = Date.now();
         let movesDone = 0;
         for (let move = 0; move < MOVES; move++) {
@@ -149,10 +149,10 @@ try {
         // sampleComplete falsely fails after a paced 2s move loop.
         const elapsedMs = Date.now() - start;
         const paceSlipMs = Math.max(0, elapsedMs - WINDOW_MS);
+        const after = await metrics();
         await page.evaluate(() => {
           window.__censusMeasuring = false;
         });
-        const after = await metrics();
 
         const census = await page.evaluate(() => ({
           commits: window.cursorCommits,

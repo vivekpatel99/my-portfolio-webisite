@@ -72,7 +72,7 @@ Share of normal-motion TaskDuration (absolute only): **~77% other / TaskOtherDur
 ## Residual conclusion
 
 1. **Per-frame React work is gone.** Baseline was 241 commits / 2s. Current is 0–1 one-shot commits. That part of P-4 acceptance holds in spirit; investigate the rare one-shot only if it regresses toward N≈moves.
-2. **Leftover TaskDuration is spring/compositor-adjacent main-thread bookkeeping** (TaskOther), not a React commit storm and not layout. Absolute normal-motion TaskDuration medians on this box are **≈825–893ms** with attributedOther the majority share; the reduced-motion arm is lower in absolute terms but those runs are also incomplete (~4s elapsed), so **do not use whole-page motion-mode Δ from this census as gate evidence**. When a future complete sample sets `comparativeValid: true`, treat any Δ as whole-page (not cursor-only): testimonials carousel and other motion-gated actors also differ under `prefers-reduced-motion`.
+2. **Leftover TaskDuration is unattributed whole-page main-thread work** (mostly TaskOther in the incomplete census), not a React commit storm and not layout. Absolute normal-motion TaskDuration medians on this box are **≈825–893ms** with attributedOther the majority share; the reduced-motion arm shows a similar TaskOther share and those runs are also incomplete (~4s elapsed), so **do not use whole-page motion-mode Δ from this census as gate evidence** and **do not attribute the residual to the spring** until a complete cursor-only control exists. When a future complete sample sets `comparativeValid: true`, treat any Δ as whole-page (not cursor-only): testimonials carousel and other motion-gated actors also differ under `prefers-reduced-motion`.
 3. **The absolute ≤200ms gate is wrong for this probe + spring + 4× CPU combination.** Evidence:
    - Committed paced runs in `docs/qa/assets/issue-254-cursor-metrics.json`: `delivered` **232.922–355.313ms** and `current_base_c4619c2` **241.941–401.483ms** (0 commits, elapsed≈2s).
    - This host’s pace slip (~4s) inflates both cursor-on and control; even the reduced-motion control alone can exceed 200ms here.
@@ -120,6 +120,8 @@ Addressed in the census lever before merge:
 - Keep whole-page `prefers-reduced-motion` control labeled as such (cursor-only disable is follow-up).
 - Gate `cursorCommits` behind `__censusMeasuring`, but validate hook injection with ungated `__censusHookCommits` so init does not require the measuring flag.
 - Pause testimonials by clicking the real **Pause testimonials** control (`isUserPaused`) **before** establishing scrollY 1200 / pointer (300,500), so click-induced scroll does not desync the normal-motion probe; reduced-motion arm already has autoplay off.
+- Enable measuring before the before-snapshot and disable only after the after-snapshot so TaskDuration and `cursorCommits` share the same boundaries.
+- Describe leftover TaskDuration as unattributed whole-page work (not spring/compositor-adjacent) until a complete cursor-only control exists.
 
 ## Artifact validity
 
