@@ -93,8 +93,10 @@ const writeFixtureDerivativeRegistry = (directory) => {
     },
   ]));
 
+  writeFileSync(path.join(directory, 'publication/case-study-derivatives.js'), `export const caseStudyThumbnailRegistry = Object.freeze(${JSON.stringify(registry, null, 2)});\n`);
+  const browserRegistry = Object.fromEntries(Object.entries(registry).map(([sourcePath, entry]) => [sourcePath, { src: entry.src, display: { src: entry.display.src } }]));
   writeFileSync(path.join(directory, 'src/lib/caseStudyThumbnails.js'), `
-export const caseStudyThumbnailRegistry = Object.freeze(${JSON.stringify(registry, null, 2)});
+export const caseStudyThumbnailRegistry = Object.freeze(${JSON.stringify(browserRegistry, null, 2)});
 export const galleryThumbnailSrc = (item) => {
   const derivative = caseStudyThumbnailRegistry[item?.src] || caseStudyThumbnailRegistry[item?.poster];
   return derivative?.src || item?.poster || item?.src;

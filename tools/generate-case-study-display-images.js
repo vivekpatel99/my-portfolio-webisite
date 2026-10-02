@@ -5,7 +5,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import sharp from 'sharp';
 import { compileCaseStudyPublication, repositoryRoot } from '../publication/compile-case-studies.js';
-import { caseStudyThumbnailRegistry } from '../src/lib/caseStudyThumbnails.js';
+import { caseStudyThumbnailRegistry } from '../publication/case-study-derivatives.js';
 
 export const MAX_DISPLAY_BYTES = 100_000;
 const LANDSCAPE_SHORT_EDGE = 600;

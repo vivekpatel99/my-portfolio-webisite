@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 
 const ENTRANCE_OFFSET_PX = 12;
 
@@ -7,7 +7,7 @@ const SectionAnimator = ({ children, className }) => {
   const reduceMotion = useReducedMotion();
 
   return (
-    <motion.div
+    <m.div
       data-section-animator=""
       initial={reduceMotion ? false : { y: ENTRANCE_OFFSET_PX }}
       whileInView={{ y: 0 }}
@@ -16,7 +16,7 @@ const SectionAnimator = ({ children, className }) => {
       className={className}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 };
 

@@ -2,7 +2,8 @@
  * @vitest-environment jsdom
  */
 import React from 'react';
-import { render, screen, waitFor, cleanup, act, fireEvent } from '@testing-library/react';
+import { renderWithMotion as render } from '@/test/renderWithMotion';
+import { screen, waitFor, cleanup, act, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import CookieConsentBanner from './CookieConsentBanner';
@@ -13,17 +14,6 @@ const storage = new Map();
 vi.mock('@/components/ui/use-toast', () => ({
   toast: vi.fn(),
 }));
-
-vi.mock('framer-motion', () => {
-  const MotionDiv = React.forwardRef(({ children, ...props }, ref) => (
-    <div ref={ref} {...props}>{children}</div>
-  ));
-
-  return {
-    AnimatePresence: ({ children }) => <>{children}</>,
-    motion: { div: MotionDiv },
-  };
-});
 
 describe('CookieConsentBanner', () => {
   beforeEach(() => {

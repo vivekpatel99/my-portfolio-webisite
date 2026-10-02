@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { m, useMotionValue, useSpring } from 'framer-motion';
 
 const cursorSpring = { stiffness: 500, damping: 28 };
 
@@ -95,7 +95,7 @@ const CustomCursor = () => {
   }
 
   return (
-    <motion.div
+    <m.div
       aria-hidden="true"
       data-custom-cursor=""
       ref={setCursorNode}

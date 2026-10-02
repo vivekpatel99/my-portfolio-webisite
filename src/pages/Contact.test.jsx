@@ -2,7 +2,8 @@
  * @vitest-environment jsdom
  */
 import React from "react";
-import { act, fireEvent, render, screen, waitFor, cleanup } from "@testing-library/react";
+import { renderWithMotion as render } from '@/test/renderWithMotion';
+import { act, fireEvent, screen, waitFor, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { toast } from "@/components/ui/use-toast";
@@ -64,25 +65,6 @@ vi.mock("@/lib/sentryTelemetry", () => ({
 vi.mock("react-helmet", () => ({
   Helmet: ({ children }) => <>{children}</>,
 }));
-
-vi.mock("framer-motion", () => {
-  // Cache per tag so re-renders keep the same component type (no remount, focus survives).
-  const cache = new Map();
-  const motion = new Proxy(
-    {},
-    {
-      get: (_, tag) => {
-        if (!cache.has(tag)) {
-          cache.set(tag, function MotionComponent({ children, ...props }) {
-            return React.createElement(String(tag), props, children);
-          });
-        }
-        return cache.get(tag);
-      },
-    },
-  );
-  return { motion, useReducedMotion: () => false };
-});
 
 describe("Contact form", () => {
   beforeEach(() => {

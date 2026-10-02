@@ -3,7 +3,7 @@ import { lstatSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { imageSize } from 'image-size';
 import { compileCaseStudyPublication, renderPublicCaseStudyModule } from '../publication/compile-case-studies.js';
-import { caseStudyThumbnailRegistry } from '../src/lib/caseStudyThumbnails.js';
+import { caseStudyThumbnailRegistry } from '../publication/case-study-derivatives.js';
 
 const normalize = (value) => path.resolve(value).split(path.sep).join('/');
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
