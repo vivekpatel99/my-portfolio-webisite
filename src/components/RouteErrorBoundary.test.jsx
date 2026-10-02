@@ -9,6 +9,7 @@ import { Seo } from '@/lib/seo';
 import ErrorBoundary from './ErrorBoundary';
 import Layout from './Layout';
 import { ROUTE_ERROR_HEADING } from './RouteErrorBoundary';
+import { getLazyRouteGeneration, lazyRoute, resetLazyRouteGenerationForTests } from '@/lib/lazyRoute';
 import ScrollToTop from './ScrollToTop';
 
 const shell = vi.hoisted(() => ({ headerThrows: false }));
@@ -27,6 +28,15 @@ vi.mock('@/components/SentryTelemetry', () => ({ default: () => null }));
 vi.mock('@/components/CookieConsentBanner', () => ({ default: () => null }));
 
 const FailingChunk = lazy(() => Promise.reject(new Error('Failed to fetch dynamically imported module')));
+let recoverableShouldFail = true;
+const RecoverableChunk = lazyRoute(() => {
+  if (recoverableShouldFail) {
+    return Promise.reject(new Error('Failed to fetch dynamically imported module'));
+  }
+  return Promise.resolve({
+    default: () => <h1>Recovered page</h1>,
+  });
+});
 const ThrowingRoute = () => { throw new Error('render failure'); };
 const HealthyRoute = () => (
   <>
@@ -59,6 +69,7 @@ const renderApp = (entry) => render(
         <Route path="/" element={<Layout />}>
           <Route index element={<StatefulHome />} />
           <Route path="lazy-broken" element={<FailingChunk />} />
+          <Route path="lazy-recoverable" element={<RecoverableChunk />} />
           <Route path="render-broken" element={<ThrowingRoute />} />
           <Route path="healthy" element={<HealthyRoute />} />
         </Route>
@@ -79,10 +90,13 @@ describe('RouteErrorBoundary', () => {
     vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
     shell.headerThrows = false;
     homeMounts = 0;
+    recoverableShouldFail = true;
+    resetLazyRouteGenerationForTests();
   });
 
   afterEach(() => {
     cleanup();
+    resetLazyRouteGenerationForTests();
     vi.restoreAllMocks();
   });
 
@@ -99,6 +113,19 @@ describe('RouteErrorBoundary', () => {
     expect(retry.getAttribute('type')).toBe('button');
     expect(screen.getByRole('link', { name: 'Back to Home' }).getAttribute('href')).toBe('/');
   });
+
+  it('Retry bumps lazy-route generation so remounts can cache-bust', async () => {
+    renderApp('/lazy-broken');
+    await screen.findByRole('heading', { level: 1, name: ROUTE_ERROR_HEADING });
+    expect(getLazyRouteGeneration()).toBe(0);
+
+    await act(async () => {
+      screen.getByRole('button', { name: 'Retry' }).click();
+    });
+
+    expect(getLazyRouteGeneration()).toBe(1);
+  });
+
 
   it('keeps the shell when a route throws while rendering', () => {
     renderApp('/render-broken');
@@ -195,4 +222,26 @@ describe('RouteErrorBoundary', () => {
     expect(screen.getByText(/Something went wrong\./)).toBeTruthy();
     expect(screen.queryByRole('heading', { name: ROUTE_ERROR_HEADING })).toBeNull();
   });
+
+  it('restores focus to the recovered heading after in-page Retry', async () => {
+    renderApp('/lazy-recoverable');
+    const errorHeading = await screen.findByRole('heading', { level: 1, name: ROUTE_ERROR_HEADING });
+    await waitFor(() => expect(document.activeElement).toBe(errorHeading));
+
+    recoverableShouldFail = false;
+
+    await act(async () => {
+      screen.getByRole('button', { name: 'Retry' }).click();
+    });
+
+    const recovered = await screen.findByRole('heading', { level: 1, name: 'Recovered page' });
+    expect(screen.queryByRole('heading', { name: ROUTE_ERROR_HEADING })).toBeNull();
+    await waitFor(() => {
+      const active = document.activeElement;
+      expect(
+        active === recovered || active === document.getElementById('main-content'),
+      ).toBe(true);
+    });
+  });
+
 });
