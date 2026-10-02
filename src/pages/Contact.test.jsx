@@ -3,15 +3,29 @@
  */
 import React from "react";
 import { renderWithMotion as render } from '@/test/renderWithMotion';
-import { act, fireEvent, screen, waitFor, cleanup } from "@testing-library/react";
+import { act, fireEvent, renderHook, screen, waitFor, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { toast } from "@/components/ui/use-toast";
 import { captureException } from "@/lib/sentryTelemetry";
 import Contact from "./Contact";
+import { useContactDraft } from '@/lib/useContactDraft';
 import { CONTACT_LEAD_VALIDATION_ERROR } from "../../convex/lib/leadValidation";
 
 const mockSubmitLead = vi.fn();
+
+beforeEach(() => {
+  cleanup();
+  const draft = renderHook(() => useContactDraft());
+  act(() => draft.result.current.setFormState({ name: '', email: '', budget: '', description: '' }));
+  draft.unmount();
+});
+
+function unloadIsPrevented() {
+  const event = new Event('beforeunload', { cancelable: true });
+  window.dispatchEvent(event);
+  return event.defaultPrevented;
+}
 
 const GLOBAL_RATE_LIMIT_ERROR =
   "The site is receiving too many requests. Please wait a few minutes and try again.";
@@ -71,6 +85,108 @@ describe("Contact form", () => {
     cleanup();
     vi.clearAllMocks();
     mockSubmitLead.mockResolvedValue({ success: true });
+  });
+
+  it('#265: restores every unsent field after navigation unmounts the contact route', () => {
+    const first = render(<Contact />);
+    fillValidLead(first.container, { budget: '€5k-€10k' });
+    fireEvent.change(screen.getByLabelText('Project Description *'), {
+      target: { value: 'First line\nSecond line' },
+    });
+    first.unmount();
+
+    const returned = render(<Contact />);
+    expect(returned.container.querySelector('[name="name"]').value).toBe('Jane Doe');
+    expect(returned.container.querySelector('[name="email"]').value).toBe('jane@example.com');
+    expect(returned.container.querySelector('#budget').value).toBe('€5k-€10k');
+    expect(returned.container.querySelector('textarea[name="description"]').value).toBe('First line\nSecond line');
+  });
+
+  it('#265: protects a dirty draft on reload/close even after leaving the contact route', () => {
+    const first = render(<Contact />);
+    expect(unloadIsPrevented()).toBe(false);
+    fireEvent.change(screen.getByLabelText('Full Name *'), { target: { value: 'Jane Doe' } });
+    expect(unloadIsPrevented()).toBe(true);
+    first.unmount();
+    expect(unloadIsPrevented()).toBe(true);
+  });
+
+  it('#265: successful submission clears the saved draft and unload protection', async () => {
+    const first = render(<Contact />);
+    fillValidLead(first.container, { budget: '€5k-€10k' });
+    fireEvent.submit(first.container.querySelector('form'));
+    await screen.findByRole('status', { name: 'Request received' });
+    expect(unloadIsPrevented()).toBe(false);
+    first.unmount();
+
+    render(<Contact />);
+    for (const label of ['Full Name *', 'Email Address *', 'Budget Range', 'Project Description *']) {
+      expect(screen.getByLabelText(label).value).toBe('');
+    }
+    expect(unloadIsPrevented()).toBe(false);
+  });
+
+  it('#265: failed submission retains the saved draft and unload protection on return', async () => {
+    mockSubmitLead.mockRejectedValueOnce({ data: EMAIL_RATE_LIMIT_ERROR });
+    const first = render(<Contact />);
+    fillValidLead(first.container, { budget: '€5k-€10k' });
+    fireEvent.submit(first.container.querySelector('form'));
+    await waitFor(() => expect(toast).toHaveBeenCalled());
+    first.unmount();
+
+    render(<Contact />);
+    expect(screen.getByLabelText('Full Name *').value).toBe('Jane Doe');
+    expect(screen.getByLabelText('Budget Range').value).toBe('€5k-€10k');
+    expect(screen.getByLabelText('Project Description *').value).toBe('Need help.');
+    expect(unloadIsPrevented()).toBe(true);
+  });
+
+  it.each(['before returning', 'after returning'])('#265: success %s while navigation interrupted a pending send never restores sent fields', async (timing) => {
+    let resolveSubmission;
+    mockSubmitLead.mockImplementationOnce(() => new Promise((resolve) => { resolveSubmission = resolve; }));
+    const first = render(<Contact />);
+    fillValidLead(first.container);
+    fireEvent.submit(first.container.querySelector('form'));
+    first.unmount();
+
+    if (timing === 'before returning') {
+      await act(async () => resolveSubmission({ success: true }));
+      render(<Contact />);
+    } else {
+      const returned = render(<Contact />);
+      expect(screen.getByRole('button', { name: /sending/i }).disabled).toBe(true);
+      fireEvent.submit(returned.container.querySelector('form'));
+      expect(mockSubmitLead).toHaveBeenCalledTimes(1);
+      await act(async () => resolveSubmission({ success: true }));
+    }
+    expect(screen.getByLabelText('Full Name *').value).toBe('');
+    expect(screen.getByLabelText('Project Description *').value).toBe('');
+    expect(screen.getByRole('button', { name: /send project request/i }).disabled).toBe(false);
+    expect(unloadIsPrevented()).toBe(false);
+
+    fireEvent.change(screen.getByLabelText('Full Name *'), { target: { value: 'New draft' } });
+    cleanup();
+    render(<Contact />);
+    expect(screen.getByLabelText('Full Name *').value).toBe('New draft');
+    expect(unloadIsPrevented()).toBe(true);
+  });
+
+  it('#265: pending failure after navigation leaves the restored fields available for retry', async () => {
+    let rejectSubmission;
+    mockSubmitLead.mockImplementationOnce(() => new Promise((_resolve, reject) => { rejectSubmission = reject; }));
+    const first = render(<Contact />);
+    fillValidLead(first.container);
+    fireEvent.submit(first.container.querySelector('form'));
+    first.unmount();
+    render(<Contact />);
+    await act(async () => rejectSubmission({ data: EMAIL_RATE_LIMIT_ERROR }));
+
+    expect(screen.getByLabelText('Full Name *').value).toBe('Jane Doe');
+    expect(screen.getByRole('button', { name: /send project request/i }).disabled).toBe(false);
+    expect(unloadIsPrevented()).toBe(true);
+    fireEvent.submit(screen.getByRole('button', { name: /send project request/i }).closest('form'));
+    await screen.findByRole('status', { name: 'Request received' });
+    expect(mockSubmitLead).toHaveBeenCalledTimes(2);
   });
 
   it("keeps the next-steps panel out of the complementary landmark tree", () => {
