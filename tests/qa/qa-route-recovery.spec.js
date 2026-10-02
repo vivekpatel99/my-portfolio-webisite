@@ -1,6 +1,7 @@
 import { expect, test } from './qa-test.js';
 
 const HEADING = "This page didn't load";
+const CONTACT_ESTIMATE = /REQUEST A\s+PROJECT ESTIMATE/i;
 const CHUNKS = {
   contact: /\/assets\/ContactRoute-[^/]+\.js(?:\?.*)?$/,
   legal: /\/assets\/Legal-[^/]+\.js(?:\?.*)?$/,
@@ -9,9 +10,10 @@ const CHUNKS = {
 test.skip(process.env.QA_LOCAL_ONLY !== '1', 'Chunk-failure injection runs only against a loopback preview.');
 
 async function failChunk(page, pattern) {
-  const state = { failing: true, requests: 0 };
+  const state = { failing: true, requests: 0, urls: [] };
   await page.route(pattern, (route) => {
     state.requests += 1;
+    state.urls.push(route.request().url());
     return state.failing ? route.abort('failed') : route.fallback();
   });
   return state;
@@ -37,6 +39,12 @@ async function expectRecoveryState(page) {
   await expect(main.getByRole('button', { name: 'Retry' })).toBeVisible();
   await expect(main.getByRole('link', { name: 'Back to Home' })).toBeVisible();
   return heading;
+}
+
+async function expectContactPage(page) {
+  await expect(page.getByRole('heading', { name: CONTACT_ESTIMATE })).toBeVisible();
+  await expect(page.getByLabel('Full Name *')).toBeVisible();
+  await expect(page.getByRole('heading', { name: HEADING })).toHaveCount(0);
 }
 
 test.beforeEach(async ({ page }) => {
@@ -123,27 +131,31 @@ test.describe('route chunk recovery', () => {
       .toBeVisible();
   });
 
-  test('keyboard Retry reloads once and renders the page after transport recovers', async ({ page }) => {
+  test('keyboard Retry recovers contact content after transport returns without a new tab', async ({ page }) => {
     const tracked = trackPage(page);
     const chunk = await failChunk(page, CHUNKS.contact);
     await page.goto('/contact/');
     await expectRecoveryState(page);
     expect(tracked.loads).toBe(1);
+    const requestsAfterFailure = chunk.requests;
+    const pagesBefore = page.context().pages().length;
 
     chunk.failing = false;
     await page.locator('#main-content').getByRole('button', { name: 'Retry' }).focus();
-    await Promise.all([
-      page.waitForEvent('load'),
-      page.keyboard.press('Enter'),
-    ]);
+    await page.keyboard.press('Enter');
 
-    await expect(page.getByLabel('Full Name *')).toBeVisible();
-    await expect(page.getByRole('heading', { name: HEADING })).toHaveCount(0);
-    expect(tracked.loads).toBe(2);
+    await expectContactPage(page);
+    expect(page.context().pages().length).toBe(pagesBefore);
+    expect(tracked.loads).toBe(1);
+    expect(chunk.requests).toBeGreaterThan(requestsAfterFailure);
+    // WebKit keeps failing the exact module URL; recovery must cache-bust. Chromium may reuse it.
+    if (test.info().project.name.includes('webkit')) {
+      expect(chunk.urls.some((url) => /[?&]retry=\d+/.test(url))).toBe(true);
+    }
     expect(tracked.posts).toEqual([]);
   });
 
-  test('persistent failure never reloads without a user activation', async ({ page }) => {
+  test('persistent failure never retries without a user activation', async ({ page }) => {
     const tracked = trackPage(page);
     const chunk = await failChunk(page, CHUNKS.contact);
     await page.goto('/contact/');
@@ -155,16 +167,13 @@ test.describe('route chunk recovery', () => {
     expect(chunk.requests).toBe(requestsAfterFailure);
 
     await page.locator('#main-content').getByRole('button', { name: 'Retry' }).focus();
-    await Promise.all([
-      page.waitForEvent('load'),
-      page.keyboard.press('Space'),
-    ]);
+    await page.keyboard.press('Space');
     await expectRecoveryState(page);
     const requestsAfterRetry = chunk.requests;
     expect(requestsAfterRetry).toBeGreaterThan(requestsAfterFailure);
 
     await page.waitForTimeout(2_000);
-    expect(tracked.loads).toBe(2);
+    expect(tracked.loads).toBe(1);
     expect(chunk.requests).toBe(requestsAfterRetry);
     expect(tracked.posts).toEqual([]);
   });
