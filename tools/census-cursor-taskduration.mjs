@@ -59,6 +59,7 @@ try {
           );
           window.cursorCommits = 0;
           window.cursorCommitTimes = [];
+          window.__censusHookCommits = 0;
           window.__censusMeasuring = false;
           window.__REACT_DEVTOOLS_GLOBAL_HOOK__ = {
             supportsFiber: true,
@@ -68,6 +69,8 @@ try {
               return 1;
             },
             onCommitFiberRoot() {
+              // Ungated: prove the hook saw the initial render before measuring starts.
+              window.__censusHookCommits++;
               if (!window.__censusMeasuring) return;
               window.cursorCommits++;
               window.cursorCommitTimes.push(performance.now());
@@ -85,7 +88,7 @@ try {
         const initialized = await page.evaluate(
           () =>
             window.__REACT_DEVTOOLS_GLOBAL_HOOK__.renderers.size > 0
-            && window.cursorCommits > 0,
+            && window.__censusHookCommits > 0,
         );
         if (!initialized) {
           throw new Error('React commit counter did not observe the initial render');
@@ -104,12 +107,15 @@ try {
 
         // Do not inject a self-scheduling rAF loop into the measured window;
         // that harness work would inflate TaskDuration / TaskOtherDuration.
-        // Pause non-cursor timed UI (testimonials autoplay) for the probe so a
-        // rotation cannot land in the CDP getMetrics gaps.
+        // Pause testimonials via the real Pause control (isUserPaused) so the
+        // six-second carousel timer cannot land in the CDP getMetrics gaps.
+        // Reduced-motion arm has no control (autoplay already off).
+        const pauseTestimonials = page.getByRole('button', { name: /^pause testimonials$/i });
+        if (await pauseTestimonials.count()) {
+          await pauseTestimonials.click();
+          await page.evaluate(() => document.activeElement?.blur?.());
+        }
         await page.evaluate(() => {
-          document.querySelectorAll('[data-testimonials-track], .testimonials-track, [data-autoplay]').forEach((el) => {
-            el.setAttribute('data-census-paused', 'true');
-          });
           document.querySelectorAll('video').forEach((v) => {
             try { v.pause(); } catch {}
           });

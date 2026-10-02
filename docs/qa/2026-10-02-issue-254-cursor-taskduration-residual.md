@@ -118,6 +118,8 @@ Addressed in the census lever before merge:
 - Require both motion arms complete before comparative Δ (`comparativeValid`); otherwise null `wholePageMotionModeDeltaMedian`.
 - Withhold commit-attribution and absolute-gate notes until every normal run completes 241 moves inside 2s.
 - Keep whole-page `prefers-reduced-motion` control labeled as such (cursor-only disable is follow-up).
+- Gate `cursorCommits` behind `__censusMeasuring`, but validate hook injection with ungated `__censusHookCommits` so init does not require the measuring flag.
+- Pause testimonials by clicking the real **Pause testimonials** control (`isUserPaused`) instead of inert `data-census-paused` attributes; reduced-motion arm already has autoplay off.
 
 ## Artifact validity
 
