@@ -205,6 +205,33 @@ const census = {
 
 const paceSlipMedian = census.paceSlipMs.normalMedian;
 const movesDoneMedian = census.movesDone.normalMedian;
+const reducedPaceSlipMedian = census.paceSlipMs.reducedMedian;
+const reducedMovesDoneMedian = census.movesDone.reducedMedian;
+
+const armWorkloadComplete = (arm) =>
+  census.movesDone[arm].values.every((n) => n === MOVES) &&
+  census.paceSlipMs[arm].values.every((n) => n === 0);
+
+const normalSampleComplete =
+  movesDoneMedian === MOVES &&
+  paceSlipMedian === 0 &&
+  armWorkloadComplete('normal');
+const reducedSampleComplete =
+  reducedMovesDoneMedian === MOVES &&
+  reducedPaceSlipMedian === 0 &&
+  armWorkloadComplete('reduced');
+const comparativeSampleComplete = normalSampleComplete && reducedSampleComplete;
+
+if (!comparativeSampleComplete) {
+  for (const key of Object.keys(census)) {
+    census[key].wholePageMotionModeDeltaMedian = null;
+    census[key].comparativeValid = false;
+  }
+} else {
+  for (const key of Object.keys(census)) {
+    census[key].comparativeValid = true;
+  }
+}
 
 const residualConclusionNotes = (() => {
   const notes = [];
@@ -214,11 +241,6 @@ const residualConclusionNotes = (() => {
   const taskValues = census.taskMs.normal.values;
   const taskMedian = census.taskMs.normalMedian;
   const reducedTaskMedian = census.taskMs.reducedMedian;
-  const sampleComplete =
-    movesDoneMedian === MOVES &&
-    paceSlipMedian === 0 &&
-    census.movesDone.normal.values.every((n) => n === MOVES) &&
-    census.paceSlipMs.normal.values.every((n) => n === 0);
   const commitsNearZero = commitMax <= 1;
   const taskWithinGate = taskValues.every((ms) => ms <= 200);
 
@@ -240,18 +262,26 @@ const residualConclusionNotes = (() => {
   notes.push(
     'Harness no longer injects a self-scheduling rAF loop into the measured window (rafTicks stay 0).',
   );
-  if (!sampleComplete) {
+  if (!normalSampleComplete) {
     notes.push(
-      `Incomplete sample vs declared workload/window (normal median movesDone ${movesDoneMedian}/${MOVES}, paceSlipMs ${paceSlipMedian}; per-run movesDone ${JSON.stringify(census.movesDone.normal.values)}, paceSlipMs ${JSON.stringify(census.paceSlipMs.normal.values)}). Discard or flag slipped runs; withhold absolute-gate conclusions until every normal run completes ${MOVES} moves inside ${WINDOW_MS}ms.`,
+      `Incomplete normal-motion sample vs declared workload/window (median movesDone ${movesDoneMedian}/${MOVES}, paceSlipMs ${paceSlipMedian}; per-run movesDone ${JSON.stringify(census.movesDone.normal.values)}, paceSlipMs ${JSON.stringify(census.paceSlipMs.normal.values)}). Discard or flag slipped runs; withhold absolute-gate conclusions until every normal run completes ${MOVES} moves inside ${WINDOW_MS}ms.`,
     );
   }
-  // Gate conclusions only when the declared workload/window is fully satisfied.
-  // Match measure-cursor-performance: any normal run >200ms fails the gate.
-  if (sampleComplete && commitsNearZero && !taskWithinGate) {
+  if (!reducedSampleComplete) {
     notes.push(
-      `Normal-motion TaskDuration exceeds 200ms on at least one run (max ${taskMax}ms, values ${JSON.stringify(taskValues)}, median ${taskMedian}ms) while every run has near-zero commits (reduce control ${reducedTaskMedian}ms). Absolute <=200ms gate is wrong for this probe+spring+4xCPU combination; prefer 0 commits + documented residual + owner feel.`,
+      `Incomplete reduced-motion control vs declared workload/window (median movesDone ${reducedMovesDoneMedian}/${MOVES}, paceSlipMs ${reducedPaceSlipMedian}; per-run movesDone ${JSON.stringify(census.movesDone.reduced.values)}, paceSlipMs ${JSON.stringify(census.paceSlipMs.reduced.values)}). Mark reduced control medians and wholePageMotionModeDeltaMedian invalid; do not compare arms until every reduced run completes ${MOVES} moves inside ${WINDOW_MS}ms.`,
     );
-  } else if (sampleComplete && commitsNearZero && taskWithinGate) {
+  }
+  // Absolute gate: normal arm only. Cite reduce control / deltas only when both arms complete.
+  // Match measure-cursor-performance: any normal run >200ms fails the gate.
+  if (normalSampleComplete && commitsNearZero && !taskWithinGate) {
+    const reduceCite = comparativeSampleComplete
+      ? ` (reduce control ${reducedTaskMedian}ms)`
+      : ' (reduced control incomplete — not cited)';
+    notes.push(
+      `Normal-motion TaskDuration exceeds 200ms on at least one run (max ${taskMax}ms, values ${JSON.stringify(taskValues)}, median ${taskMedian}ms) while every run has near-zero commits${reduceCite}. Absolute <=200ms gate is wrong for this probe+spring+4xCPU combination; prefer 0 commits + documented residual + owner feel.`,
+    );
+  } else if (normalSampleComplete && commitsNearZero && taskWithinGate) {
     notes.push(
       `Normal-motion TaskDuration meets <=200ms on every run (max ${taskMax}ms, values ${JSON.stringify(taskValues)}, median ${taskMedian}ms) with near-zero commits.`,
     );
@@ -275,6 +305,7 @@ const report = {
   },
   runs,
   census,
+  comparativeValid: comparativeSampleComplete,
   residualConclusionNotes,
 };
 
