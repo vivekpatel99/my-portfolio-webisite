@@ -51,6 +51,12 @@ const test = base.extend({
   }, { auto: true }],
 });
 
+test.afterEach(async ({ context }) => {
+  // Finish intercepted home-page asset fetches before the page fixture closes.
+  // Local-only guards remain active throughout each test's interactions.
+  await context.unrouteAll({ behavior: 'wait' });
+});
+
 async function fillContactForm(page) {
   await page.getByLabel('Full Name *').fill('Synthetic QA Contact');
   await page.getByLabel('Email Address *').fill('qa-contact@example.invalid');
@@ -63,6 +69,194 @@ async function expectPreservedValues(page) {
   await expect(page.getByLabel('Email Address *')).toHaveValue('qa-contact@example.invalid');
   await expect(page.getByLabel('Budget Range')).toHaveValue(SELECTED_BUDGET);
   await expect(page.getByLabel('Project Description *')).toHaveValue('Synthetic transport lifecycle test.');
+}
+
+async function navigateToServicesByKeyboard(page) {
+  let navigation = page.locator('header');
+  if (page.viewportSize().width < 768) {
+    const toggle = page.getByRole('button', { name: 'Toggle navigation menu' });
+    await toggle.focus();
+    await expect(toggle).toBeFocused();
+    await toggle.press('Enter');
+    navigation = page.getByRole('dialog', { name: 'Navigation menu', exact: true });
+    await expect(navigation.getByRole('button', { name: 'Close navigation menu' })).toBeFocused();
+  }
+  const services = navigation.getByRole('link', { name: 'Services', exact: true });
+  await services.focus();
+  await expect(services).toBeFocused();
+  await services.press('Enter');
+  await expect(page).toHaveURL(/\/#services$/);
+  await expect(page.locator('#services')).toBeFocused();
+}
+
+async function returnToContactByBack(page) {
+  await page.goBack();
+  // ScrollToTop focuses main on the next frame. Wait for that focus handoff
+  // before the test focuses a form field or opens the mobile menu again.
+  await expect(page.locator('#main-content')).toBeFocused();
+  await expect(page.getByLabel('Full Name *')).toBeVisible();
+}
+
+async function unloadIsPrevented(page) {
+  return page.evaluate(() => {
+    const event = new Event('beforeunload', { cancelable: true });
+    window.dispatchEvent(event);
+    return event.defaultPrevented;
+  });
+}
+
+async function readBrowserStorage(page) {
+  return page.evaluate(() => ({
+    local: Object.entries(localStorage),
+    session: Object.entries(sessionStorage),
+  }));
+}
+
+async function expectEmptyContactForm(page) {
+  for (const label of ['Full Name *', 'Email Address *', 'Budget Range', 'Project Description *']) {
+    await expect(page.getByLabel(label)).toHaveValue('');
+  }
+}
+
+test('restores all tab-memory draft fields after keyboard navigation and Back without storage writes', async ({ page, context, contactTransport: transport }) => {
+  await page.goto('/contact/');
+  await expect(page.getByLabel('Full Name *')).toBeVisible();
+  const initialStorage = await readBrowserStorage(page);
+  expect(await unloadIsPrevented(page)).toBe(false);
+  await fillContactForm(page);
+  await page.getByLabel('Project Description *').fill('Synthetic first line\nSynthetic second line');
+  expect(await unloadIsPrevented(page)).toBe(true);
+  await navigateToServicesByKeyboard(page);
+  expect(await unloadIsPrevented(page)).toBe(true);
+  await returnToContactByBack(page);
+
+  await expect(page.getByLabel('Full Name *')).toHaveValue('Synthetic QA Contact');
+  await expect(page.getByLabel('Email Address *')).toHaveValue('qa-contact@example.invalid');
+  await expect(page.getByLabel('Budget Range')).toHaveValue(SELECTED_BUDGET);
+  await expect(page.getByLabel('Project Description *')).toHaveValue('Synthetic first line\nSynthetic second line');
+  expect(await readBrowserStorage(page)).toEqual(initialStorage);
+  await page.getByLabel('Project Description *').focus();
+  await expect(page.getByLabel('Project Description *')).toBeFocused();
+  const focusedFrame = await page.getByLabel('Project Description *').evaluate((field) => {
+    const frame = field.closest('.contact-detection-frame');
+    const style = getComputedStyle(frame);
+    return {
+      focused: frame.matches(':focus-within'),
+      cornerColor: style.getPropertyValue('--corner-color').trim(),
+      cornerWidth: style.getPropertyValue('--corner-width').trim(),
+      backgroundImage: style.backgroundImage,
+    };
+  });
+  expect(focusedFrame.focused).toBe(true);
+  expect(focusedFrame.cornerColor).toBe('#a78bfa');
+  expect(focusedFrame.cornerWidth).toBe('2px');
+  expect(focusedFrame.backgroundImage).toContain('rgb(167, 139, 250)');
+  const viewport = page.viewportSize();
+  assertVisualLayout({
+    label: 'Restored contact form',
+    box: await page.locator('form[data-sensitive-telemetry]').boundingBox(),
+    viewport: { x: 0, y: 0, width: viewport.width, height: viewport.height },
+    withinViewport: { horizontal: true, vertical: false },
+  });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+
+  const freshTab = await context.newPage();
+  await freshTab.bringToFront();
+  await freshTab.goto('/contact/');
+  await expect(freshTab.getByRole('heading', { name: /Request a Project Estimate/i })).toBeVisible();
+  await expectEmptyContactForm(freshTab);
+  expect(await unloadIsPrevented(freshTab)).toBe(false);
+  // Let the context fixture close this tab after the route-draining afterEach;
+  // closing it here can cancel intercepted assets still being fulfilled.
+  await page.bringToFront();
+
+  for (const label of ['Full Name *', 'Email Address *', 'Project Description *']) {
+    await page.getByLabel(label).fill('');
+  }
+  await page.getByLabel('Budget Range').selectOption('');
+  expect(await unloadIsPrevented(page)).toBe(false);
+  await navigateToServicesByKeyboard(page);
+  await returnToContactByBack(page);
+  await expectEmptyContactForm(page);
+  expect(await readBrowserStorage(page)).toEqual(initialStorage);
+  expect(transport.state.mutations).toHaveLength(0);
+});
+
+test('reload warns before discarding a dirty tab-memory draft and starts empty when confirmed', async ({ page, browserName, contactTransport: transport }) => {
+  await page.goto('/contact/');
+  await fillContactForm(page);
+  const initialStorage = await readBrowserStorage(page);
+  const dismissedDialog = page.waitForEvent('dialog', { timeout: 5_000 }).catch(() => null);
+  const dismissHandler = (dialog) => dialog.dismiss();
+  page.once('dialog', dismissHandler);
+  await page.evaluate(() => {
+    window.__qaContactReloadMarker = true;
+    // Dismissing beforeunload cancels navigation, so awaiting page.reload's
+    // load event would hang. Trigger a real reload after evaluation returns.
+    setTimeout(() => window.location.reload(), 0);
+  });
+  const dialog = await dismissedDialog;
+  if (!dialog) {
+    page.off('dialog', dismissHandler);
+    // Record the observed engine limit only when reload actually discarded the
+    // draft without presenting a dialog; do not infer it from the engine name.
+    await expectEmptyContactForm(page);
+    expect(await page.evaluate(() => window.__qaContactReloadMarker)).toBeUndefined();
+    expect(await unloadIsPrevented(page)).toBe(false);
+    expect(await readBrowserStorage(page)).toEqual(initialStorage);
+    expect(transport.state.mutations).toHaveLength(0);
+    test.skip(browserName === 'webkit', 'Observed headless WebKit reload discard the draft without firing a beforeunload dialog; handler/memory checks pass.');
+    expect(dialog, 'Chromium should offer reload confirmation after form interaction').not.toBeNull();
+  }
+  expect(dialog.type()).toBe('beforeunload');
+  await expectPreservedValues(page);
+  expect(await page.evaluate(() => window.__qaContactReloadMarker)).toBe(true);
+
+  const acceptedDialog = page.waitForEvent('dialog');
+  page.once('dialog', (dialog) => dialog.accept());
+  await page.evaluate(() => {
+    setTimeout(() => window.location.reload(), 0);
+  });
+  expect((await acceptedDialog).type()).toBe('beforeunload');
+  await expectEmptyContactForm(page);
+  expect(await page.evaluate(() => window.__qaContactReloadMarker)).toBeUndefined();
+  expect(await unloadIsPrevented(page)).toBe(false);
+  expect(await readBrowserStorage(page)).toEqual(initialStorage);
+  expect(transport.state.mutations).toHaveLength(0);
+});
+
+for (const outcome of ['success', 'failure']) {
+  test(`a pending send remains single across route remount and ${outcome} updates the retained draft`, async ({ page, contactTransport: transport }) => {
+    await page.goto('/contact/');
+    await fillContactForm(page);
+    const initialStorage = await readBrowserStorage(page);
+    await page.getByLabel('Full Name *').press('Enter');
+    await expect.poll(() => transport.state.mutations.length).toBe(1);
+    await navigateToServicesByKeyboard(page);
+    expect(await unloadIsPrevented(page)).toBe(true);
+    await returnToContactByBack(page);
+    const form = page.locator('form[data-sensitive-telemetry]');
+    await expect(form.locator('button[type="submit"]')).toBeDisabled();
+    await expectPreservedValues(page);
+    await form.evaluate((element) => element.requestSubmit());
+    expect(transport.state.mutations).toHaveLength(1);
+
+    transport.releasePending(outcome);
+    await expect(form.locator('button[type="submit"]')).toBeEnabled();
+    if (outcome === 'success') {
+      await expectEmptyContactForm(page);
+      expect(await unloadIsPrevented(page)).toBe(false);
+    } else {
+      await expectPreservedValues(page);
+      expect(await unloadIsPrevented(page)).toBe(true);
+    }
+    await navigateToServicesByKeyboard(page);
+    await returnToContactByBack(page);
+    if (outcome === 'success') await expectEmptyContactForm(page);
+    else await expectPreservedValues(page);
+    expect(await readBrowserStorage(page)).toEqual(initialStorage);
+    expect(transport.state.mutations).toHaveLength(1);
+  });
 }
 
 function failureToastLocator(page) {
@@ -156,8 +350,8 @@ test('holds one pending keyboard submit, blocks duplicates, shows safe failure g
     const style = getComputedStyle(element);
     return {
       fitsForm: rect.left >= formRect.left && rect.right <= formRect.right,
-      inViewport: rect.top >= 0 && rect.bottom <= innerHeight,
-      overflow: document.documentElement.scrollWidth > innerWidth,
+      inViewport: rect.top >= 0 && rect.bottom <= window.innerHeight,
+      overflow: document.documentElement.scrollWidth > window.innerWidth,
       animation: style.animationName,
       transition: style.transitionDuration,
       transform: style.transform,
