@@ -8,6 +8,7 @@ import { api } from '@convex/api';
 import { socialLinks } from '@/config/links';
 import { Seo, routeSeo } from '@/lib/seo';
 import { usePageMotion } from '@/lib/pageMotion';
+import { useContactDraft } from '@/lib/useContactDraft';
 import { captureException } from '@/lib/sentryTelemetry';
 import { BUDGET_LABELS, BUDGET_OPTIONS } from '@/lib/budgetOptions';
 import { SENSITIVE_TELEMETRY_REGION_PROPS } from '@/lib/sensitiveTelemetry';
@@ -59,9 +60,8 @@ const SUBMIT_FAILURE_FALLBACK =
   "We couldn't send your request. Please try again, or use the email address on this page.";
 
 const Contact = () => {
-  const [formState, setFormState] = useState({ name: '', email: '', budget: '', description: '' });
+  const { formState, setFormState, isSubmitting, beginSubmission, finishSubmission } = useContactDraft();
   const [fieldErrors, setFieldErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [outcome, setOutcome] = useState('idle');
   const submittingRef = useRef(false);
   const submitButtonRef = useRef(null);
@@ -134,8 +134,9 @@ const Contact = () => {
     }
 
     if (submittingRef.current) return;
+    const submittedFields = beginSubmission();
+    if (!submittedFields) return;
     submittingRef.current = true;
-    setIsSubmitting(true);
     setOutcome('idle');
     feedbackToastRef.current?.dismiss();
     feedbackToastRef.current = null;
@@ -164,15 +165,14 @@ const Contact = () => {
         variant: "destructive",
       });
       submittingRef.current = false;
-      setIsSubmitting(false);
+      finishSubmission(submittedFields, false);
       setOutcome('error');
       return;
     }
 
     submittingRef.current = false;
-    setIsSubmitting(false);
+    finishSubmission(submittedFields, true);
     setOutcome('success');
-    setFormState({ name: '', email: '', budget: '', description: '' });
     setFieldErrors({});
   };
 
