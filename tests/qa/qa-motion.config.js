@@ -35,7 +35,7 @@ export default defineConfig({
   testMatch: 'qa-motion.spec.js',
   timeout: 60_000,
   expect: { timeout: 10_000 },
-  fullyParallel: false,
+  // Real animation sampling needs an uncontended browser on each runner.
   workers: 1,
   use: {
     baseURL,

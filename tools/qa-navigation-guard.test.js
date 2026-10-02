@@ -90,6 +90,19 @@ describe('local-only browser navigation', () => {
     expect(response.dispose).not.toHaveBeenCalled();
   });
 
+  it.each(['\n', '\r\n'])('allows an exact browser cancellation followed by a Playwright call log (%j)', async (newline) => {
+    const { route } = navigation({
+      fetchError: new Error(`route.fetch: Target page, context or browser has been closed${newline}Call log:${newline}  - GET http://127.0.0.1:3000/image.png`),
+    });
+    await expect(guardLocalNavigation(route)).resolves.toBeUndefined();
+  });
+
+  it('still rejects a different error that only starts with a cancellation message', async () => {
+    const message = 'route.fetch: Target page, context or browser has been closed unexpectedly by a transport failure';
+    const { route } = navigation({ fetchError: new Error(message) });
+    await expect(guardLocalNavigation(route)).rejects.toThrow(message);
+  });
+
   it('preserves unexpected fulfillment errors', async () => {
     const { route, response } = navigation({ fulfillError: new Error('network write failed') });
     await expect(guardLocalNavigation(route)).rejects.toThrow('network write failed');

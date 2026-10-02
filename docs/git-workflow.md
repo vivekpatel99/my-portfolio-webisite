@@ -81,6 +81,35 @@ Sources: [GitHub issue linking](https://docs.github.com/en/issues/tracking-your-
 [workflow events](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows),
 and [commit-associated PRs](https://docs.github.com/en/rest/commits/commits#list-pull-requests-associated-with-a-commit).
 
+## CI execution
+
+Full CI runs for pull requests into `develop` or `main` and pushes to those
+integration/release branches. Feature-branch pushes do not start a second full
+pipeline; open a pull request to request remote verification. New commits cancel
+older runs for the same pull request or branch.
+
+Unit tests, the production build, contact lifecycle QA, reduced-motion QA, and
+fake telemetry QA run independently. Two passive browser QA shards consume the
+same validated production build. Its archive preserves hidden deployment files
+such as `.htaccess`. Each shard publishes its own reconstructed, sanitized JSON
+artifact for seven days; raw browser captures are disabled.
+
+The required `test-and-build` check aggregates every CI job. It runs even when
+dependencies fail and rejects failures, cancellations, skipped jobs, and missing
+results. Do not replace this gate with a check that merely starts the tests.
+
+CI limits unit-test file workers and passive/contact browser workers to two.
+Passive shards balance individual tests, and contact cases use isolated contexts.
+Motion QA splits Chromium and WebKit onto separate runners with one worker each
+so real animation measurements do not compete within a runner.
+WebKit motion checks use a browser window under Xvfb so native fades are rendered
+while wall-clock samples run; other browser suites retain their existing mode.
+Timer assertions advance the browser clock through the full
+tested intervals; motion measurements continue using real animation timing.
+Publication fixtures run independent lifecycle chains concurrently, retain two
+full application production builds, and use the real publication pipeline with
+a smaller browser entry for the remaining transitions.
+
 ## Production release
 
 1. Confirm `develop` contains the exact release candidate.
