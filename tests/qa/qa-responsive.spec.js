@@ -229,42 +229,73 @@ for (const vp of heroFoldViewports) {
 }
 
 // #253: the invoice header stack, credential captions and actions keep visible gaps.
-// 720 is the 1440 px desktop at 200% zoom (#191).
+// Width 720 is a half-width layout check (useful reflow), not native browser zoom.
+// AC6 (#191 200% zoom) is covered by the dedicated Chromium CDP page-scale test below.
+const assertHeroInvoiceGaps = async (page, { requireMobileHeaderGap = false } = {}) => {
+  const hero = page.locator('#main-content section').first();
+  const invoice = hero.getByRole('article', { name: 'Profile invoice field parse' });
+  const box = async (locator) => {
+    await expect(locator).toBeVisible();
+    return locator.boundingBox();
+  };
+  const bottom = (b) => b.y + b.height;
+
+  const header = await box(page.getByRole('banner'));
+  const pill = await box(hero.getByText('Inference online', { exact: true }).locator('..'));
+  const scanLabel = await box(invoice.getByText('doc · extract · 0.97', { exact: true }));
+  const title = await box(invoice.getByText('Profile Invoice', { exact: true }));
+  const panel = await box(invoice);
+  const estimate = await box(hero.getByRole('link', { name: 'Request a Project Estimate' }));
+  const credentialValue = await box(invoice.getByText('Top Rated Plus', { exact: true }));
+  const caption = await box(invoice.getByText('Upwork freelancer', { exact: true }));
+  const rateLabel = await box(invoice.getByText('Rate', { exact: true }));
+  const rateValue = await box(invoice.getByText('€45/hour', { exact: true }));
+
+  expect(scanLabel.y - bottom(pill)).toBeGreaterThanOrEqual(4);
+  expect(title.y - bottom(scanLabel)).toBeGreaterThanOrEqual(4);
+  // #191 asks for one consistent panel-to-actions gap inside 16-24 px.
+  expect(estimate.y - bottom(panel)).toBeCloseTo(16, 0);
+  const captionToNextLabel = rateLabel.y - bottom(caption);
+  expect(captionToNextLabel).toBeGreaterThanOrEqual(rateValue.y - bottom(rateLabel));
+  expect(captionToNextLabel).toBeGreaterThanOrEqual(caption.y - bottom(credentialValue) + 4);
+  if (requireMobileHeaderGap) expect(pill.y - bottom(header)).toBeGreaterThanOrEqual(8);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
+
+  await expect(invoice).toBeVisible();
+  for (const badge of ['engineer · 0.99', 'ID 001 · TRACKED', 'REC']) {
+    await expect(hero.getByText(badge, { exact: true })).toBeVisible();
+  }
+  // Violet portrait L-brackets (the static frame corners) stay in the DOM.
+  await expect(hero.locator('div.absolute.inset-1.pointer-events-none > span')).toHaveCount(4);
+};
+
 for (const width of [320, 390, 720, 768, 1024, 1440]) {
   test(`hero invoice labels and actions keep their gaps at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/');
-    const hero = page.locator('#main-content section').first();
-    const invoice = hero.getByRole('article', { name: 'Profile invoice field parse' });
-    const box = async (locator) => {
-      await expect(locator).toBeVisible();
-      return locator.boundingBox();
-    };
-    const bottom = (b) => b.y + b.height;
-
-    const header = await box(page.getByRole('banner'));
-    const pill = await box(hero.getByText('Inference online', { exact: true }).locator('..'));
-    const scanLabel = await box(invoice.getByText('doc · extract · 0.97', { exact: true }));
-    const title = await box(invoice.getByText('Profile Invoice', { exact: true }));
-    const panel = await box(invoice);
-    const estimate = await box(hero.getByRole('link', { name: 'Request a Project Estimate' }));
-    const credentialValue = await box(invoice.getByText('Top Rated Plus', { exact: true }));
-    const caption = await box(invoice.getByText('Upwork freelancer', { exact: true }));
-    const rateLabel = await box(invoice.getByText('Rate', { exact: true }));
-    const rateValue = await box(invoice.getByText('€45/hour', { exact: true }));
-
-    expect(scanLabel.y - bottom(pill)).toBeGreaterThanOrEqual(4);
-    expect(title.y - bottom(scanLabel)).toBeGreaterThanOrEqual(4);
-    // #191 asks for one consistent panel-to-actions gap inside 16-24 px.
-    expect(estimate.y - bottom(panel)).toBeCloseTo(16, 0);
-    const captionToNextLabel = rateLabel.y - bottom(caption);
-    expect(captionToNextLabel).toBeGreaterThanOrEqual(rateValue.y - bottom(rateLabel));
-    expect(captionToNextLabel).toBeGreaterThanOrEqual(caption.y - bottom(credentialValue) + 4);
-    if (width < 768) expect(pill.y - bottom(header)).toBeGreaterThanOrEqual(8);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
+    await assertHeroInvoiceGaps(page, { requireMobileHeaderGap: width < 768 });
   });
 }
+
+// #253 AC6 / #191: native Chromium page zoom at a full 1440×900 viewport.
+// Emulation.setPageScaleFactor is not the same as shrinking the viewport to 720.
+test('hero invoice gaps hold under native Chromium 200% page zoom', async ({ page, context, browserName }) => {
+  test.skip(browserName !== 'chromium', 'CDP Emulation.setPageScaleFactor is Chromium-only.');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  const cdp = await context.newCDPSession(page);
+  await cdp.send('Emulation.setPageScaleFactor', { pageScaleFactor: 2 });
+  await expect.poll(() => page.evaluate(() => window.visualViewport?.scale ?? 1)).toBe(2);
+  const viewportMetrics = await page.evaluate(() => ({
+    innerWidth: window.innerWidth,
+    visualViewportWidth: window.visualViewport?.width ?? null,
+  }));
+  expect(viewportMetrics.innerWidth).toBe(1440);
+  expect(viewportMetrics.visualViewportWidth).toBeCloseTo(720, 0);
+  await assertHeroInvoiceGaps(page);
+});
 
 // #252: the portrait `sizes` values are hard-coded to the measured frames. If a frame
 // widens without a `sizes` update, the browser keeps picking a candidate that is too small.
