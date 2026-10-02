@@ -181,7 +181,7 @@ const delta = (key) => {
   return {
     normalMedian: n.median,
     reducedMedian: r.median,
-    cursorAttributableMedian: n.median - r.median,
+    wholePageMotionModeDeltaMedian: n.median - r.median,
     normal: n,
     reduced: r,
   };

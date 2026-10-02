@@ -177,7 +177,6 @@
     "taskMs": {
       "normalMedian": 892.769,
       "reducedMedian": 242.48600000000002,
-      "cursorAttributableMedian": 650.283,
       "normal": {
         "min": 835.881,
         "max": 1153.6840000000002,
@@ -197,12 +196,12 @@
           242.48600000000002,
           213.226
         ]
-      }
+      },
+      "wholePageMotionModeDeltaMedian": 650.283
     },
     "scriptMs": {
       "normalMedian": 167.95399999999998,
       "reducedMedian": 53.187,
-      "cursorAttributableMedian": 114.76699999999998,
       "normal": {
         "min": 152.76000000000002,
         "max": 213.502,
@@ -222,12 +221,12 @@
           53.496,
           43.324
         ]
-      }
+      },
+      "wholePageMotionModeDeltaMedian": 114.76699999999998
     },
     "styleMs": {
       "normalMedian": 35.293,
       "reducedMedian": 0,
-      "cursorAttributableMedian": 35.293,
       "normal": {
         "min": 33.02,
         "max": 41.925,
@@ -247,12 +246,12 @@
           0,
           0
         ]
-      }
+      },
+      "wholePageMotionModeDeltaMedian": 35.293
     },
     "layoutMs": {
       "normalMedian": 6.149,
       "reducedMedian": 0,
-      "cursorAttributableMedian": 6.149,
       "normal": {
         "min": 5.114,
         "max": 19.355,
@@ -272,12 +271,12 @@
           0,
           0
         ]
-      }
+      },
+      "wholePageMotionModeDeltaMedian": 6.149
     },
     "attributedOtherMs": {
       "normalMedian": 685.6460000000001,
       "reducedMedian": 188.99,
-      "cursorAttributableMedian": 496.65600000000006,
       "normal": {
         "min": 642.7139999999999,
         "max": 878.9020000000003,
@@ -297,12 +296,12 @@
           188.99,
           169.902
         ]
-      }
+      },
+      "wholePageMotionModeDeltaMedian": 496.65600000000006
     },
     "taskOtherMs": {
       "normalMedian": 685.1080000000001,
       "reducedMedian": 187.7,
-      "cursorAttributableMedian": 497.4080000000001,
       "normal": {
         "min": 642.5640000000001,
         "max": 878.2869999999999,
@@ -322,12 +321,12 @@
           187.7,
           169.38099999999997
         ]
-      }
+      },
+      "wholePageMotionModeDeltaMedian": 497.4080000000001
     },
     "commits": {
       "normalMedian": 1,
       "reducedMedian": 0,
-      "cursorAttributableMedian": 1,
       "normal": {
         "min": 1,
         "max": 1,
@@ -347,12 +346,12 @@
           0,
           0
         ]
-      }
+      },
+      "wholePageMotionModeDeltaMedian": 1
     },
     "elapsedMs": {
       "normalMedian": 4021,
       "reducedMedian": 4025,
-      "cursorAttributableMedian": -4,
       "normal": {
         "min": 4012,
         "max": 4063,
@@ -372,12 +371,12 @@
           4013,
           4033
         ]
-      }
+      },
+      "wholePageMotionModeDeltaMedian": -4
     },
     "rafTicks": {
       "normalMedian": 243,
       "reducedMedian": 243,
-      "cursorAttributableMedian": 0,
       "normal": {
         "min": 242,
         "max": 244,
@@ -397,12 +396,12 @@
           242,
           243
         ]
-      }
+      },
+      "wholePageMotionModeDeltaMedian": 0
     },
     "styleCount": {
       "normalMedian": 241,
       "reducedMedian": 0,
-      "cursorAttributableMedian": 241,
       "normal": {
         "min": 241,
         "max": 242,
@@ -422,13 +421,14 @@
           0,
           0
         ]
-      }
+      },
+      "wholePageMotionModeDeltaMedian": 241
     }
   },
   "residualConclusionNotes": [
-    "Near-zero React commits (0–1 one-shot, not 241) means leftover TaskDuration is not per-frame React commit work.",
-    "attributedOtherMs ≈ TaskDuration − Script − Style − Layout; under spring motion this residual is primarily animation/compositor-adjacent main-thread bookkeeping not deletable by MotionValue tweaks already tried.",
-    "paceSlipMs > 0 lengthens the spring animation wall-clock window; TaskDuration scales with how long springs keep scheduling work under 4× CPU.",
-    "If normal-motion median TaskDuration stays >200ms after #277 while commits≈0 and reduced-motion control is far lower, the absolute ≤200ms gate is wrong for this probe+spring combination; prefer 0 commits + documented residual + owner feel."
+    "Near-zero React commits (0\u20131 one-shot, not 241) means leftover TaskDuration is not per-frame React commit work.",
+    "attributedOtherMs \u2248 TaskDuration \u2212 Script \u2212 Style \u2212 Layout; under spring motion this residual is primarily animation/compositor-adjacent main-thread bookkeeping not deletable by MotionValue tweaks already tried.",
+    "paceSlipMs > 0 lengthens the spring animation wall-clock window; TaskDuration scales with how long springs keep scheduling work under 4\u00d7 CPU.",
+    "If normal-motion median TaskDuration stays >200ms after #277 while commits\u22480 and reduced-motion control is far lower, the absolute \u2264200ms gate is wrong for this probe+spring combination; prefer 0 commits + documented residual + owner feel."
   ]
 }
