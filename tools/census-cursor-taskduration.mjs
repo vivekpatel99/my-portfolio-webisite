@@ -244,27 +244,20 @@ const residualConclusionNotes = (() => {
   const commitsNearZero = commitMax <= 1;
   const taskWithinGate = taskValues.every((ms) => ms <= 200);
   const movesValues = census.movesDone.normal.values;
-  // Incomplete short runs can be 1 commit / 1 move — that is not evidence against per-frame commits.
-  const nonPerFrameVsMovesDone = commitValues.every((commits, i) => {
-    const moves = movesValues[i] ?? 0;
-    return moves > 1 && commits <= 1;
-  });
 
-  if (normalSampleComplete && commitsNearZero) {
+  // Commit attribution needs a complete normal workload. Short incomplete runs
+  // (e.g. 2 moves / 1 commit) are not enough evidence against per-frame work.
+  if (!normalSampleComplete) {
+    notes.push(
+      `Withholding React commit-attribution conclusions until every normal run completes ${MOVES} moves inside ${WINDOW_MS}ms (commits ${JSON.stringify(commitValues)}, movesDone ${JSON.stringify(movesValues)}). Short incomplete samples can look near-zero without proving non-per-frame React work.`,
+    );
+  } else if (commitsNearZero) {
     notes.push(
       `Near-zero React commits on every normal run (max ${commitMax}, values ${JSON.stringify(commitValues)}, not ${MOVES}) means leftover TaskDuration is not per-frame React commit work.`,
     );
-  } else if (!normalSampleComplete && nonPerFrameVsMovesDone) {
-    notes.push(
-      `Normal runs are incomplete, but commits stay <=1 while movesDone >1 on every normal run (commits ${JSON.stringify(commitValues)}, movesDone ${JSON.stringify(movesValues)}). That still argues against per-frame React commit work; withhold absolute-gate conclusions until the workload completes.`,
-    );
-  } else if (normalSampleComplete && !commitsNearZero) {
-    notes.push(
-      `React commits still high on at least one normal run (max ${commitMax}, values ${JSON.stringify(commitValues)} vs ${MOVES} moves). Residual TaskDuration cannot be attributed away from React until every run is near zero.`,
-    );
   } else {
     notes.push(
-      `Withholding React commit-attribution conclusions until every normal run completes ${MOVES} moves inside ${WINDOW_MS}ms (commits ${JSON.stringify(commitValues)}, movesDone ${JSON.stringify(movesValues)}). A short run with commits≈movesDone can falsely look near-zero.`,
+      `React commits still high on at least one normal run (max ${commitMax}, values ${JSON.stringify(commitValues)} vs ${MOVES} moves). Residual TaskDuration cannot be attributed away from React until every run is near zero.`,
     );
   }
   notes.push(
