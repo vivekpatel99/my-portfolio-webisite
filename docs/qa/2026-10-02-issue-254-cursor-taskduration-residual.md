@@ -1,6 +1,6 @@
 # Issue #254 leftover TaskDuration residual (Attack-the-Premise)
 
-Base: `develop` `a0622e6`. Branch: `fix/254-cursor-taskcache-residual`.
+Base: `develop` `a0622e6`. Branch: `fix/254-cursor-taskduration-residual`.
 Partial delivery from #277 remains on develop: MotionValues + springs, `z-[10001]`, first-move before hiding the native cursor. Q1/Q4 visibility and the stop-per-frame-React goal are retained.
 
 ## Premise under attack
@@ -53,7 +53,7 @@ Raw census: [issue-254-cursor-taskduration-census.json](assets/issue-254-cursor-
 
 Census medians (same probe conditions):
 
-| metric | normal median | reduce median | cursor-attributable Δ |
+| metric | normal median | reduce median | motion-mode Δ (whole-page) |
 |--------|---------------|---------------|------------------------|
 | TaskDuration | 892.769ms | 242.486ms | **650.283ms** |
 | ScriptDuration | 167.954ms | 53.187ms | 114.767ms |
@@ -70,7 +70,7 @@ Share of normal-motion TaskDuration: **~77% other / TaskOtherDuration**, ~19% sc
 ## Residual conclusion
 
 1. **Per-frame React work is gone.** Baseline was 241 commits / 2s. Current is 0–1 one-shot commits. That part of P-4 acceptance holds in spirit; investigate the rare one-shot only if it regresses toward N≈moves.
-2. **Leftover TaskDuration is spring/compositor-adjacent main-thread bookkeeping** (TaskOther), not a React commit storm and not layout. Cursor-on vs reduced-motion delta ≈ **500–650ms** of TaskDuration on this box, mostly in `attributedOtherMs`.
+2. **Leftover TaskDuration is spring/compositor-adjacent main-thread bookkeeping** (TaskOther), not a React commit storm and not layout. Normal vs reduced-motion delta ≈ **500–650ms** of TaskDuration on this box, mostly in `attributedOtherMs`. That delta is a **whole-page motion-mode delta** (not cursor-only): other motion-gated actors such as the testimonials carousel also differ under `prefers-reduced-motion`.
 3. **The absolute ≤200ms gate is wrong for this probe + spring + 4× CPU combination.** Evidence:
    - Prior paced (elapsed≈2s) post-#277 runs still sat at 227–423ms with 0 commits.
    - This host’s pace slip (~4s) inflates both cursor-on and control; even the reduced-motion control alone can exceed 200ms here.
@@ -82,7 +82,7 @@ Share of normal-motion TaskDuration: **~77% other / TaskOtherDuration**, ~19% sc
 Revise leftover acceptance to:
 
 - **0 React commits during movement** (document ≤1 one-shot if it remains non-per-frame), and
-- **Document the measured TaskDuration residual** (median, range, reduced-motion control, cursor-attributable Δ), and
+- **Document the measured TaskDuration residual** (median, range, reduced-motion control, motion-mode Δ (whole-page)), and
 - **Owner feel** for the spring cursor (side-by-side / physical mouse) as the remaining product gate.
 
 Keep `tools/measure-cursor-performance.mjs`’s 200ms exit check until product acceptance is explicitly revised; treat current nonzero exit as documenting the residual, not as a mandate for another spring experiment.
@@ -94,7 +94,12 @@ Keep `tools/measure-cursor-performance.mjs`’s 200ms exit check until product a
 
 ## Codex Sol 6.1 review
 
-`codex` is **not installed** on this box (`which codex` / `type codex` → not found). **Blocker for Portfolio Chief / parent:** run Codex Sol 6.1 on Mac CLI against this branch diff + this residual report before merge. Address or dismiss findings with reason. Do **not** use Cursor CloudAgent / Background Agent.
+Ran on Mac CLI: `codex exec review -m gpt-6.1-sol --commit 52a255c` (Sol 6.1). Findings addressed in follow-up commit:
+
+1. **[P2] Isolate cursor state before attributing motion-mode delta** — **Addressed by labeling.** Census and this report now call the normal vs reduced-motion comparison a **whole-page motion-mode delta**, not cursor-only cost. Testimonials carousel and other motion-gated actors also change under reduced motion. A cursor-only on/off control was not added (smallest change that removes the overclaim). Prior #277 paced TaskDuration evidence (227–423ms, 0 commits) remains independent of this census delta.
+2. **[P2] Derive residual conclusions from measured results** — **Addressed.** `tools/census-cursor-taskduration.mjs` now builds `residualConclusionNotes` from the measured commit/TaskDuration medians instead of unconditional near-zero-commit claims.
+
+Do **not** use Cursor CloudAgent / Background Agent.
 
 ## Limits
 

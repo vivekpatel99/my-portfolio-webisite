@@ -3,7 +3,7 @@
  * Attributes CDP Performance.getMetrics during the matched cursor probe
  * (Chromium 1350x940, 4x CPU, 241 paced moves / ~2s target) to:
  *   scripting | style | layout | other(=task - script - style - layout)
- * and reports cursor-on vs reduced-motion control delta.
+ * and reports normal vs reduced-motion control delta (whole-page motion-mode delta, not cursor-only).
  *
  * Usage:
  *   QA_PREVIEW_URL=http://127.0.0.1:PORT node tools/census-cursor-taskduration.mjs [out.json]
@@ -211,12 +211,42 @@ const report = {
     rafTicks: delta('rafTicks'),
     styleCount: delta('styleCount'),
   },
-  residualConclusionNotes: [
-    'Near-zero React commits (0-1 one-shot, not 241) means leftover TaskDuration is not per-frame React commit work.',
-    'attributedOtherMs approximately TaskDuration minus Script minus Style minus Layout; under spring motion this residual is primarily animation/compositor-adjacent main-thread bookkeeping not deletable by MotionValue tweaks already tried.',
-    'paceSlipMs > 0 lengthens the spring animation wall-clock window; TaskDuration scales with how long springs keep scheduling work under 4x CPU.',
-    'If normal-motion median TaskDuration stays >200ms after #277 while commits are near zero and reduced-motion control is far lower, the absolute <=200ms gate is wrong for this probe+spring combination; prefer 0 commits + documented residual + owner feel.',
-  ],
+  residualConclusionNotes: (() => {
+    const notes = [];
+    const commitMedian = census.commits.normalMedian;
+    const taskMedian = census.taskMs.normalMedian;
+    const reduceTaskMedian = census.taskMs.reduceMedian;
+    if (commitMedian <= 1) {
+      notes.push(
+        `Near-zero React commits (median ${commitMedian}, not ${MOVES}) means leftover TaskDuration is not per-frame React commit work.`,
+      );
+    } else {
+      notes.push(
+        `React commits still high (normal median ${commitMedian} vs ${MOVES} moves). Residual TaskDuration cannot be attributed away from React until commits are near zero.`,
+      );
+    }
+    notes.push(
+      'attributedOtherMs is TaskDuration minus Script minus Style minus Layout for the whole page under the probe window.',
+    );
+    notes.push(
+      'IMPORTANT: normal vs reduced-motion delta is a whole-page motion-mode delta, not a cursor-only attribution. Other motion-gated actors (e.g. testimonials carousel) also change under prefers-reduced-motion.',
+    );
+    if (paceSlipMs > 0) {
+      notes.push(
+        `paceSlipMs ${paceSlipMs} lengthens the wall-clock window; TaskDuration scales with how long work keeps scheduling under 4x CPU.`,
+      );
+    }
+    if (commitMedian <= 1 && taskMedian > 200) {
+      notes.push(
+        `Normal-motion median TaskDuration ${taskMedian}ms stays >200ms while commits are near zero (reduce control ${reduceTaskMedian}ms). Absolute <=200ms gate is wrong for this probe+spring+4xCPU combination; prefer 0 commits + documented residual + owner feel.`,
+      );
+    } else if (taskMedian <= 200 && commitMedian <= 1) {
+      notes.push(
+        `Normal-motion median TaskDuration ${taskMedian}ms meets <=200ms with near-zero commits on this run.`,
+      );
+    }
+    return notes;
+  })()
 };
 
 const output = `${JSON.stringify(report, null, 2)}\n`;
