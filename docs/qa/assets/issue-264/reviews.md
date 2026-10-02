@@ -18,20 +18,19 @@ Totals: 0 documented violations, 0 blocking bugs, 1 optional P3 heuristic. Expen
 
 ## Spec
 
-Implementation PASS; acceptance PARTIAL — no implementation defects or scope creep; one outstanding visual validation gate.
+PASS — implementation and local #264 acceptance. No spec defects or scope creep. Required PR CI remains a delivery gate; supplemental WebKit limitations remain explicit.
 
-Reviewed `e17a0a817f2a492acac1b76b5f16260f531fb3b7...01e719c0f73059721894945cef4cb8922cc63841`, parent-owned entry-QA tests and durable QA report/assets.
+Reviewed the diff from `e17a0a817f2a492acac1b76b5f16260f531fb3b7` through `01e719c`, plus parent-owned entry-QA tests and durable QA report/assets.
 
 - “LazyMotion features={domAnimation} strict” and “all six must change”: implemented in Layout and all six consumers. Animation props/CSS remain unchanged; isolated affected component tests use the real strict provider.
-- “Move the digests to a build-only module imported by the plugin”: implemented for source, thumbnail and display integrity metadata. I independently deep-equaled the moved build registry against baseline and checked all 46 browser URL bindings. Helpers/fallbacks and plugin guards are preserved; article sections remain synchronous.
-- “Entry chunk ≤ 452 KB min and gzip reduced by ≥ 10 KB”: locked baseline 502,252/154,624 bytes, final 451,922/140,228; gzip reduction 14,396. Independent final-entry scan confirmed both final sizes and “no 64-hex digests other than content-addressed filenames.”
-- “Plugin guard tests still reject stale thumbnails” and “Unit: npm test”: targeted guard/build fixture evidence passes; completed serial full suite passes 750 tests across 65 files.
-- “No strict runtime error on any route”: eight engine/viewport/motion sweeps cover 21 routes each with no errors. I independently deep-equaled all eight raw captures against baseline: geometry, sources, opacity and image checks match exactly. All eight keyboard-state checks pass. “npm run qa:motion” passes all 64 checks in the fresh managed-server run.
+- “Move the digests to a build-only module imported by the plugin”: implemented for source, thumbnail and display metadata. Independently deep-equaled the moved build registry against baseline and checked all 46 browser URL bindings. Helpers/fallbacks and plugin guards are preserved; article sections remain synchronous.
+- “Entry chunk ≤ 452 KB min and gzip reduced by ≥ 10 KB”: locked baseline 502,252/154,624 bytes, final 451,922/140,228; gzip reduction 14,396. Independent final-entry scan confirmed sizes and “no 64-hex digests other than content-addressed filenames.”
+- “Plugin guard tests still reject stale thumbnails” and “Unit: npm test”: guard/build fixtures pass; completed full serial suite passes 750 tests across 65 files.
+- “No strict runtime error on any route”: eight engine/viewport/motion sweeps cover 21 routes each without errors. Independently deep-equaled all eight raw captures against baseline; geometry, sources and image checks match exactly. All eight keyboard-state checks pass.
+- “Visual QA and npm run qa:motion pass”: all 64 motion checks pass. Structured supplementary results confirm the standard configured visual checks pass: Chromium visual 27 passed/1 intentional skip; Chromium hero 8 passed/2 skips; cursor across four projects 20 passed/12 skips. Independent rendered inspection and screenshots support visual preservation.
 
-Outstanding acceptance finding:
+Limit, not a #264 finding: the broader temporary configuration added WebKit hero/gallery coverage beyond `qa.config.js:93–105`, whose WebKit projects run only focus/cursor. That supplemental coverage has five failures, reproduced exactly on the pinned baseline: three desktop hero checks and two wide-gallery ratios. The issue targets Chromium and does not require this expansion. These failures remain documented; neither local acceptance nor a green standard CI run proves those excluded checks pass.
 
-“Visual QA and npm run qa:motion pass”: motion passes, but the supplementary local visual/cursor/hero run reports 85 passed, 18 skipped and five WebKit failures (three desktop hero checks, wide-gallery ratio on both viewports). `baseline-visual.log` reproduces exactly those five failures on the pinned baseline under identical host conditions. They are pre-existing locally, with no related CSS/Hero/gallery changes in this diff; this is not evidence of a #264 regression. Supported PR CI remains the outstanding visual acceptance gate. Do not claim all visual checks passed or close #264 yet.
+PR delivery/required CI, remote-head verification, preservation/cleanup, and keeping #264 open remain parent obligations. No merge or production release is authorized.
 
-PR delivery to develop with `Refs #264`, verified remote head and preservation/cleanup remain parent obligations. No merge or production release is authorized.
-
-Summary: Standards has 0 violations, 0 blocking bugs and 1 optional P3 observation. Spec implementation has 0 defects; local visual acceptance has 1 pending supported-environment gate covering 5 reproduced baseline failures.
+Summary: Standards has 0 violations, 0 blocking bugs and 1 optional P3 observation. Spec has 0 defects or scope creep; local acceptance passes with explicit supplemental WebKit limitations. Required PR CI remains pending.

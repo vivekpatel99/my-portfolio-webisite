@@ -102,17 +102,25 @@ These are bundle measurements, not claims about LCP, TBT or field performance.
   them. All Chromium visual cases pass, as do other WebKit visual cases.
 - The pinned develop's official CI run
   [36977455730](https://github.com/vivekpatel99/my-portfolio-webisite/actions/runs/36977455730)
-  passed on the supported Playwright Noble image. The PR's required CI must
-  establish the remaining visual acceptance gate in that environment before
-  this issue can be marked complete.
+  passed on the supported Playwright Noble image. The PR's required CI remains
+  the integration gate. Standard visual/hero
+  QA is configured for Chromium; WebKit regression projects run focus/cursor
+  only (`qa.config.js:93–105`). Our supplementary configuration selected all
+  three visual/cursor/hero files in all four projects. Official CI does not
+  execute the five extra WebKit cases and cannot prove they passed.
+- Standard configured local coverage from this run: Chromium visual **27 pass,
+  1 skip**; Chromium hero **8 pass, 2 skips**; cursor across all four projects
+  **20 pass, 12 skips**. All standard configured cases executed here pass.
+  The five supplemental baseline failures remain limitations beyond #264's
+  requested Chromium visual scope.
 
 ## Fresh review
 
 The separate implementation agent did not review its own work. Fresh Standards
 and Spec agents reviewed the diff against pinned develop and #264. Standards:
 PASS, no documented violations or blocking defects, one optional P3 URL-map
-synchronization observation. Spec: implementation matches scope; local visual
-acceptance remains partial for the five reproduced baseline host failures above.
+synchronization observation. Spec: PASS for implementation and local acceptance, with
+the supplemental baseline WebKit limitations above. Required PR CI is pending.
 [Full review reports](assets/issue-264/reviews.md) preserve the two axes separately.
 Codex independently inspected the source and rendered behavior.
 
