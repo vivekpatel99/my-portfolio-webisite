@@ -1,5 +1,6 @@
 import { chromium, expect, test } from './qa-test.js';
 import { waitForConsentBannerEntrance } from './qa-consent-banner.js';
+import { guardLocalNavigation, guardLocalWebSocket } from './qa-navigation-guard.js';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
@@ -294,18 +295,34 @@ test('hero invoice gaps hold under Chromium 200% browser zoom', async ({ browser
   const userDataDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'qa-browser-zoom-'));
   let context;
   try {
-    // Clear project-use deviceScaleFactor (Desktop Chrome sets 1); incompatible with viewport:null.
+    // Claim project-merged keys so runBeforeCreateBrowserContext cannot inject
+    // iPhone isMobile/hasTouch or Desktop/iPhone deviceScaleFactor (incompatible with
+    // viewport:null). Always allow service workers so the zoom extension SW can load
+    // even under QA_LOCAL_ONLY (project would otherwise set serviceWorkers:block).
     context = await chromium.launchPersistentContext(userDataDir, {
       channel: 'chromium',
       headless: true,
       viewport: null,
+      isMobile: false,
+      hasTouch: false,
+      // undefined claims the key so runBeforeCreateBrowserContext will not merge
+      // project deviceScaleFactor (Desktop Chrome=1 / iPhone=3); omit would still merge.
       deviceScaleFactor: undefined,
+      serviceWorkers: 'allow',
       args: [
         `--disable-extensions-except=${extensionPath}`,
         `--load-extension=${extensionPath}`,
         '--window-size=1440,900',
       ],
     });
+
+    // Persistent context bypasses qa-test.js auto fixtures — install guards explicitly.
+    if (process.env.QA_LOCAL_ONLY === '1') {
+      await context.routeWebSocket('**/*', guardLocalWebSocket);
+      await context.route('**/*', async (route) => {
+        await guardLocalNavigation(route);
+      });
+    }
 
     let [serviceWorker] = context.serviceWorkers();
     if (!serviceWorker) {
