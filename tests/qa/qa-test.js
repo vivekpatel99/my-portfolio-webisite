@@ -1,4 +1,4 @@
-import { test as base, expect } from '@playwright/test';
+import { chromium, test as base, expect } from '@playwright/test';
 import { guardLocalNavigation, guardLocalWebSocket } from './qa-navigation-guard.js';
 
 async function drainActiveRouteHandlers(activeHandlers, timeout = 250) {
@@ -41,4 +41,4 @@ export const test = base.extend({
   }, { auto: true }],
 });
 
-export { expect };
+export { chromium, expect };

@@ -1,5 +1,10 @@
-import { expect, test } from './qa-test.js';
+import { chromium, expect, test } from './qa-test.js';
 import { waitForConsentBannerEntrance } from './qa-consent-banner.js';
+import { guardLocalNavigation, guardLocalWebSocket } from './qa-navigation-guard.js';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const viewports = [
   { name: 'narrow-phone', width: 320, height: 568 },
@@ -229,42 +234,144 @@ for (const vp of heroFoldViewports) {
 }
 
 // #253: the invoice header stack, credential captions and actions keep visible gaps.
-// 720 is the 1440 px desktop at 200% zoom (#191).
+// Width 720 is a half-width layout check (useful reflow), not native browser zoom.
+// AC6 (#191 200% zoom) is covered by the Chromium browser-zoom test below (chrome.tabs.setZoom).
+const assertHeroInvoiceGaps = async (page, { requireMobileHeaderGap = false } = {}) => {
+  const hero = page.locator('#main-content section').first();
+  const invoice = hero.getByRole('article', { name: 'Profile invoice field parse' });
+  const box = async (locator) => {
+    await expect(locator).toBeVisible();
+    return locator.boundingBox();
+  };
+  const bottom = (b) => b.y + b.height;
+
+  const header = await box(page.getByRole('banner'));
+  const pill = await box(hero.getByText('Inference online', { exact: true }).locator('..'));
+  const scanLabel = await box(invoice.getByText('doc · extract · 0.97', { exact: true }));
+  const title = await box(invoice.getByText('Profile Invoice', { exact: true }));
+  const panel = await box(invoice);
+  const estimate = await box(hero.getByRole('link', { name: 'Request a Project Estimate' }));
+  const credentialValue = await box(invoice.getByText('Top Rated Plus', { exact: true }));
+  const caption = await box(invoice.getByText('Upwork freelancer', { exact: true }));
+  const rateLabel = await box(invoice.getByText('Rate', { exact: true }));
+  const rateValue = await box(invoice.getByText('€45/hour', { exact: true }));
+
+  expect(scanLabel.y - bottom(pill)).toBeGreaterThanOrEqual(4);
+  expect(title.y - bottom(scanLabel)).toBeGreaterThanOrEqual(4);
+  // #191 asks for one consistent panel-to-actions gap inside 16-24 px.
+  expect(estimate.y - bottom(panel)).toBeCloseTo(16, 0);
+  const captionToNextLabel = rateLabel.y - bottom(caption);
+  expect(captionToNextLabel).toBeGreaterThanOrEqual(rateValue.y - bottom(rateLabel));
+  expect(captionToNextLabel).toBeGreaterThanOrEqual(caption.y - bottom(credentialValue) + 4);
+  if (requireMobileHeaderGap) expect(pill.y - bottom(header)).toBeGreaterThanOrEqual(8);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
+
+  await expect(invoice).toBeVisible();
+  for (const badge of ['engineer · 0.99', 'ID 001 · TRACKED', 'REC']) {
+    await expect(hero.getByText(badge, { exact: true })).toBeVisible();
+  }
+  // Violet portrait L-brackets (the static frame corners) stay in the DOM.
+  await expect(hero.locator('div.absolute.inset-1.pointer-events-none > span')).toHaveCount(4);
+};
+
 for (const width of [320, 390, 720, 768, 1024, 1440]) {
   test(`hero invoice labels and actions keep their gaps at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/');
-    const hero = page.locator('#main-content section').first();
-    const invoice = hero.getByRole('article', { name: 'Profile invoice field parse' });
-    const box = async (locator) => {
-      await expect(locator).toBeVisible();
-      return locator.boundingBox();
-    };
-    const bottom = (b) => b.y + b.height;
-
-    const header = await box(page.getByRole('banner'));
-    const pill = await box(hero.getByText('Inference online', { exact: true }).locator('..'));
-    const scanLabel = await box(invoice.getByText('doc · extract · 0.97', { exact: true }));
-    const title = await box(invoice.getByText('Profile Invoice', { exact: true }));
-    const panel = await box(invoice);
-    const estimate = await box(hero.getByRole('link', { name: 'Request a Project Estimate' }));
-    const credentialValue = await box(invoice.getByText('Top Rated Plus', { exact: true }));
-    const caption = await box(invoice.getByText('Upwork freelancer', { exact: true }));
-    const rateLabel = await box(invoice.getByText('Rate', { exact: true }));
-    const rateValue = await box(invoice.getByText('€45/hour', { exact: true }));
-
-    expect(scanLabel.y - bottom(pill)).toBeGreaterThanOrEqual(4);
-    expect(title.y - bottom(scanLabel)).toBeGreaterThanOrEqual(4);
-    // #191 asks for one consistent panel-to-actions gap inside 16-24 px.
-    expect(estimate.y - bottom(panel)).toBeCloseTo(16, 0);
-    const captionToNextLabel = rateLabel.y - bottom(caption);
-    expect(captionToNextLabel).toBeGreaterThanOrEqual(rateValue.y - bottom(rateLabel));
-    expect(captionToNextLabel).toBeGreaterThanOrEqual(caption.y - bottom(credentialValue) + 4);
-    if (width < 768) expect(pill.y - bottom(header)).toBeGreaterThanOrEqual(8);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
+    await assertHeroInvoiceGaps(page, { requireMobileHeaderGap: width < 768 });
   });
 }
+
+// #253 AC6 / #191: real Chromium browser zoom (chrome.tabs.setZoom), not CDP page scale.
+// Browser zoom changes the layout viewport (innerWidth halves); pinch/visual zoom does not.
+test('hero invoice gaps hold under Chromium 200% browser zoom', async ({ browserName }, testInfo) => {
+  test.skip(browserName !== 'chromium', 'chrome.tabs.setZoom needs Chromium with a loaded MV3 extension.');
+
+  const extensionPath = path.resolve(
+    path.dirname(fileURLToPath(import.meta.url)),
+    'fixtures/browser-zoom-extension',
+  );
+  const userDataDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'qa-browser-zoom-'));
+  let context;
+  try {
+    // Claim project-merged keys so runBeforeCreateBrowserContext cannot inject
+    // iPhone isMobile/hasTouch or Desktop/iPhone deviceScaleFactor (incompatible with
+    // viewport:null). Always allow service workers so the zoom extension SW can load
+    // even under QA_LOCAL_ONLY (project would otherwise set serviceWorkers:block).
+    context = await chromium.launchPersistentContext(userDataDir, {
+      channel: 'chromium',
+      headless: true,
+      viewport: null,
+      isMobile: false,
+      hasTouch: false,
+      // undefined claims the key so runBeforeCreateBrowserContext will not merge
+      // project deviceScaleFactor (Desktop Chrome=1 / iPhone=3); omit would still merge.
+      deviceScaleFactor: undefined,
+      serviceWorkers: 'allow',
+      args: [
+        `--disable-extensions-except=${extensionPath}`,
+        `--load-extension=${extensionPath}`,
+        '--window-size=1440,900',
+      ],
+    });
+
+    // Persistent context bypasses qa-test.js auto fixtures — install guards explicitly.
+    if (process.env.QA_LOCAL_ONLY === '1') {
+      await context.routeWebSocket('**/*', guardLocalWebSocket);
+      await context.route('**/*', async (route) => {
+        await guardLocalNavigation(route);
+      });
+    }
+
+    let [serviceWorker] = context.serviceWorkers();
+    if (!serviceWorker) {
+      serviceWorker = await context.waitForEvent('serviceworker', { timeout: 15_000 });
+    }
+
+    const page = context.pages()[0] || await context.newPage();
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    const baseURL = testInfo.project.use.baseURL;
+    await page.goto(baseURL);
+
+    const before = await page.evaluate(() => ({
+      innerWidth: window.innerWidth,
+      scale: window.visualViewport?.scale ?? 1,
+    }));
+
+    await serviceWorker.evaluate(async (targetOrigin) => {
+      const tabs = await chrome.tabs.query({});
+      const tab = tabs.find((candidate) => candidate.url?.startsWith(targetOrigin))
+        || tabs.find((candidate) => candidate.active);
+      if (!tab?.id) throw new Error(`No tab found for ${targetOrigin}`);
+      await chrome.tabs.setZoom(tab.id, 2);
+    }, new URL(baseURL).origin);
+
+    await expect.poll(async () => {
+      const metrics = await page.evaluate(() => ({
+        innerWidth: window.innerWidth,
+        scale: window.visualViewport?.scale ?? 1,
+      }));
+      return metrics.innerWidth <= before.innerWidth * 0.55 && Math.abs(metrics.scale - 1) < 0.05;
+    }, { timeout: 15_000 }).toBe(true);
+
+    const after = await page.evaluate(() => ({
+      innerWidth: window.innerWidth,
+      scale: window.visualViewport?.scale ?? 1,
+    }));
+    // Prove browser zoom (layout viewport shrinks), not pinch/visual zoom.
+    expect(after.scale).toBeCloseTo(1, 1);
+    expect(after.innerWidth).toBeGreaterThanOrEqual(Math.floor(before.innerWidth / 2) - 2);
+    expect(after.innerWidth).toBeLessThanOrEqual(Math.ceil(before.innerWidth / 2) + 2);
+
+    await assertHeroInvoiceGaps(page, {
+      requireMobileHeaderGap: after.innerWidth < 768,
+    });
+  } finally {
+    await context?.close();
+    await fs.promises.rm(userDataDir, { recursive: true, force: true });
+  }
+});
 
 // #252: the portrait `sizes` values are hard-coded to the measured frames. If a frame
 // widens without a `sizes` update, the browser keeps picking a candidate that is too small.
