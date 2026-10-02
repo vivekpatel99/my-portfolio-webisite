@@ -120,7 +120,7 @@ Addressed in the census lever before merge:
 - Keep whole-page `prefers-reduced-motion` control labeled as such (cursor-only disable is follow-up).
 - Gate `cursorCommits` behind `__censusMeasuring`, but validate hook injection with ungated `__censusHookCommits` so init does not require the measuring flag.
 - Pause testimonials by clicking the real **Pause testimonials** control (`isUserPaused`) **before** establishing scrollY 1200 / pointer (300,500), so click-induced scroll does not desync the normal-motion probe; reduced-motion arm already has autoplay off.
-- Enable measuring before the before-snapshot and disable only after the after-snapshot so TaskDuration and `cursorCommits` share the same boundaries.
+- Count commits only during the move loop (inside the before/after metrics pair) so async CDP getMetrics gaps cannot inflate `commitMax`; accept tiny non-React enable/disable evaluate noise inside TaskDuration.
 - Describe leftover TaskDuration as unattributed whole-page work (not spring/compositor-adjacent) until a complete cursor-only control exists.
 
 ## Artifact validity
