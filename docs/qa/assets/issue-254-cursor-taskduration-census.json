@@ -197,7 +197,8 @@
           213.226
         ]
       },
-      "wholePageMotionModeDeltaMedian": 650.283
+      "wholePageMotionModeDeltaMedian": null,
+      "comparativeValid": false
     },
     "scriptMs": {
       "normalMedian": 167.95399999999998,
@@ -222,7 +223,8 @@
           43.324
         ]
       },
-      "wholePageMotionModeDeltaMedian": 114.76699999999998
+      "wholePageMotionModeDeltaMedian": null,
+      "comparativeValid": false
     },
     "styleMs": {
       "normalMedian": 35.293,
@@ -247,7 +249,8 @@
           0
         ]
       },
-      "wholePageMotionModeDeltaMedian": 35.293
+      "wholePageMotionModeDeltaMedian": null,
+      "comparativeValid": false
     },
     "layoutMs": {
       "normalMedian": 6.149,
@@ -272,7 +275,8 @@
           0
         ]
       },
-      "wholePageMotionModeDeltaMedian": 6.149
+      "wholePageMotionModeDeltaMedian": null,
+      "comparativeValid": false
     },
     "attributedOtherMs": {
       "normalMedian": 685.6460000000001,
@@ -297,7 +301,8 @@
           169.902
         ]
       },
-      "wholePageMotionModeDeltaMedian": 496.65600000000006
+      "wholePageMotionModeDeltaMedian": null,
+      "comparativeValid": false
     },
     "taskOtherMs": {
       "normalMedian": 685.1080000000001,
@@ -322,7 +327,8 @@
           169.38099999999997
         ]
       },
-      "wholePageMotionModeDeltaMedian": 497.4080000000001
+      "wholePageMotionModeDeltaMedian": null,
+      "comparativeValid": false
     },
     "commits": {
       "normalMedian": 1,
@@ -347,7 +353,8 @@
           0
         ]
       },
-      "wholePageMotionModeDeltaMedian": 1
+      "wholePageMotionModeDeltaMedian": null,
+      "comparativeValid": false
     },
     "elapsedMs": {
       "normalMedian": 4021,
@@ -372,7 +379,8 @@
           4033
         ]
       },
-      "wholePageMotionModeDeltaMedian": -4
+      "wholePageMotionModeDeltaMedian": null,
+      "comparativeValid": false
     },
     "rafTicks": {
       "normalMedian": 243,
@@ -397,7 +405,8 @@
           243
         ]
       },
-      "wholePageMotionModeDeltaMedian": 0
+      "wholePageMotionModeDeltaMedian": null,
+      "comparativeValid": false
     },
     "styleCount": {
       "normalMedian": 241,
@@ -422,13 +431,17 @@
           0
         ]
       },
-      "wholePageMotionModeDeltaMedian": 241
+      "wholePageMotionModeDeltaMedian": null,
+      "comparativeValid": false
     }
   },
   "residualConclusionNotes": [
-    "Near-zero React commits (0\u20131 one-shot, not 241) means leftover TaskDuration is not per-frame React commit work.",
-    "attributedOtherMs \u2248 TaskDuration \u2212 Script \u2212 Style \u2212 Layout; under spring motion this residual is primarily animation/compositor-adjacent main-thread bookkeeping not deletable by MotionValue tweaks already tried.",
-    "paceSlipMs > 0 lengthens the spring animation wall-clock window; TaskDuration scales with how long springs keep scheduling work under 4\u00d7 CPU.",
-    "If normal-motion median TaskDuration stays >200ms after #277 while commits\u22480 and reduced-motion control is far lower, the absolute \u2264200ms gate is wrong for this probe+spring combination; prefer 0 commits + documented residual + owner feel."
-  ]
+    "Committed artifact runs are pre-fix incomplete samples (elapsed\u22484s, missing movesDone). comparativeValid=false; wholePageMotionModeDeltaMedian nulled to match the final census lever.",
+    "Do not use normal vs reduced-motion deltas from this artifact to revise the acceptance gate. Use absolute TaskDuration medians and prior paced #277 labs (elapsed\u22482s, 227\u2013423ms, 0 commits) instead.",
+    "attributedOtherMs is TaskDuration minus Script minus Style minus Layout for the whole page under the probe window.",
+    "IMPORTANT: when comparativeValid is true, normal vs reduced-motion delta is a whole-page motion-mode delta, not a cursor-only attribution.",
+    "Harness no longer injects a self-scheduling rAF loop into the measured window (rafTicks stay 0 on regenerated runs).",
+    "Withholding absolute-gate and commit-attribution conclusions until every normal run completes 241 moves inside 2000ms with paceSlipMs==0."
+  ],
+  "comparativeValid": false
 }

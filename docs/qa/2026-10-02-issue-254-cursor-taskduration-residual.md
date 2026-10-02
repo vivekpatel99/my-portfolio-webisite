@@ -51,26 +51,28 @@ QA_PREVIEW_URL=http://127.0.0.1:PORT node tools/census-cursor-taskduration.mjs d
 
 Raw census: [issue-254-cursor-taskduration-census.json](assets/issue-254-cursor-taskduration-census.json).
 
-Census medians (same probe conditions):
+Census absolute medians (same probe conditions; **comparative deltas withheld**):
 
 | metric | normal median | reduce median | motion-mode Δ (whole-page) |
 |--------|---------------|---------------|------------------------|
-| TaskDuration | 892.769ms | 242.486ms | **650.283ms** |
-| ScriptDuration | 167.954ms | 53.187ms | 114.767ms |
-| RecalcStyleDuration | 35.293ms | 0 | 35.293ms |
-| LayoutDuration | 6.149ms | 0 | 6.149ms |
-| attributedOther (task−script−style−layout) | 685.646ms | 188.990ms | **496.656ms** |
-| commits | 1 | 0 | 1 |
-| elapsedMs | 4021 | 4025 | ≈0 |
-| styleCount | 241 | 0 | 241 |
-| rafTicks | 243 | 243 | 0 |
+| TaskDuration | 892.769ms | 242.486ms | **null (invalid)** |
+| ScriptDuration | 167.954ms | 53.187ms | **null (invalid)** |
+| RecalcStyleDuration | 35.293ms | 0 | **null (invalid)** |
+| LayoutDuration | 6.149ms | 0 | **null (invalid)** |
+| attributedOther (task−script−style−layout) | 685.646ms | 188.990ms | **null (invalid)** |
+| commits | 1 | 0 | **null (invalid)** |
+| elapsedMs | 4021 | 4025 | **null (invalid)** |
+| styleCount | 241 | 0 | **null (invalid)** |
+| rafTicks | 243 | 243 | **null (invalid)** |
 
-Share of normal-motion TaskDuration: **~77% other / TaskOtherDuration**, ~19% script, ~4% style, ~1% layout. Style recalc count tracks the 241 moves when the spring cursor is on; layout stays near zero. The one React commit is a single timestamp mid-window (~6.2–6.7s `performance.now()`), not per-move commits.
+The committed census JSON was captured under the pre-fix harness (elapsed≈4s, no `movesDone` / `comparativeValid`). The final lever sets `comparativeValid: false` and nulls every `wholePageMotionModeDeltaMedian` whenever either arm misses 241 moves inside 2s — so this report must not treat those deltas as evidence. Absolute medians above remain descriptive of that incomplete sample; regenerate on a host that holds the 2s window before citing comparative Δ again.
+
+Share of normal-motion TaskDuration (absolute only): **~77% other / TaskOtherDuration**, ~19% script, ~4% style, ~1% layout. Style recalc count tracks the 241 moves when the spring cursor is on; layout stays near zero. The one React commit is a single timestamp mid-window (~6.2–6.7s `performance.now()`), not per-move commits.
 
 ## Residual conclusion
 
 1. **Per-frame React work is gone.** Baseline was 241 commits / 2s. Current is 0–1 one-shot commits. That part of P-4 acceptance holds in spirit; investigate the rare one-shot only if it regresses toward N≈moves.
-2. **Leftover TaskDuration is spring/compositor-adjacent main-thread bookkeeping** (TaskOther), not a React commit storm and not layout. Normal vs reduced-motion delta ≈ **500–650ms** of TaskDuration on this box, mostly in `attributedOtherMs`. That delta is a **whole-page motion-mode delta** (not cursor-only): other motion-gated actors such as the testimonials carousel also differ under `prefers-reduced-motion`.
+2. **Leftover TaskDuration is spring/compositor-adjacent main-thread bookkeeping** (TaskOther), not a React commit storm and not layout. Absolute normal-motion TaskDuration medians on this box are **≈825–893ms** with attributedOther the majority share; the reduced-motion arm is lower in absolute terms but those runs are also incomplete (~4s elapsed), so **do not use whole-page motion-mode Δ from this census as gate evidence**. When a future complete sample sets `comparativeValid: true`, treat any Δ as whole-page (not cursor-only): testimonials carousel and other motion-gated actors also differ under `prefers-reduced-motion`.
 3. **The absolute ≤200ms gate is wrong for this probe + spring + 4× CPU combination.** Evidence:
    - Prior paced (elapsed≈2s) post-#277 runs still sat at 227–423ms with 0 commits.
    - This host’s pace slip (~4s) inflates both cursor-on and control; even the reduced-motion control alone can exceed 200ms here.
@@ -82,7 +84,7 @@ Share of normal-motion TaskDuration: **~77% other / TaskOtherDuration**, ~19% sc
 Revise leftover acceptance to:
 
 - **0 React commits during movement** (document ≤1 one-shot if it remains non-per-frame), and
-- **Document the measured TaskDuration residual** (median, range, reduced-motion control, motion-mode Δ (whole-page)), and
+- **Document the measured TaskDuration residual** (median, range, reduced-motion control, and motion-mode Δ (whole-page) **only when `comparativeValid`**), and
 - **Owner feel** for the spring cursor (side-by-side / physical mouse) as the remaining product gate.
 
 Keep `tools/measure-cursor-performance.mjs`’s 200ms exit check until product acceptance is explicitly revised; treat current nonzero exit as documenting the residual, not as a mandate for another spring experiment.
@@ -111,13 +113,14 @@ Principles: Attack-the-Premise, Build-the-Lever, Prove-It-Works, Laziness Protoc
 
 Addressed in the census lever before merge:
 
-- Build  /  with real bindings (fixes ).
-- Stop mouse sampling at the 2s deadline ( + ).
+- Stop mouse sampling at the 2s deadline (`paceSlipMs` / `movesDone`).
 - Remove self-scheduling rAF from the measured window.
-- Keep whole-page  control labeled as such (cursor-only disable is follow-up).
+- Require both motion arms complete before comparative Δ (`comparativeValid`); otherwise null `wholePageMotionModeDeltaMedian`.
+- Withhold commit-attribution and absolute-gate notes until every normal run completes 241 moves inside 2s.
+- Keep whole-page `prefers-reduced-motion` control labeled as such (cursor-only disable is follow-up).
 
-Committed census JSON under  may still reflect the pre-fix harness until a fresh preview run regenerates it; conclusions in this report remain tied to the prior #277 paced labs + develop probe medians already cited above.
+## Artifact validity
 
-## Harness validity (Codex follow-up)
+The committed census JSON under `docs/qa/assets/` is a **pre-fix incomplete sample**. It now carries `comparativeValid: false` and nulled whole-page deltas so it cannot be misread as a valid arm comparison. Absolute TaskDuration / commit figures remain for context. Gate-revision evidence leans on prior #277 paced labs (elapsed≈2s, 227–423ms, 0 commits) plus the develop measure tables above — not on nulled census Δ.
 
-Absolute-gate conclusions in the census lever now require a complete sample: every normal run finishes all 241 moves inside the 2s window (`paceSlipMs == 0`). Commit attribution uses the **max** across normal runs (not the median), so one failed run cannot hide per-frame React work.
+Absolute-gate conclusions in the live census lever require a complete sample: every normal run finishes all 241 moves inside the 2s window (`paceSlipMs == 0`). Commit attribution uses the **max** across normal runs (not the median), so one failed run cannot hide per-frame React work.
