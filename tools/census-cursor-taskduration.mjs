@@ -125,8 +125,10 @@ try {
         // sampleComplete falsely fails after a paced 2s move loop.
         const elapsedMs = Date.now() - start;
         const paceSlipMs = Math.max(0, elapsedMs - WINDOW_MS);
-        const windowEnd = await page.evaluate(() => performance.now());
+        // Take the after metrics snapshot first so TaskDuration and commit
+        // filtering share the same trailing boundary (CDP wait included).
         const after = await metrics();
+        const windowEnd = await page.evaluate(() => performance.now());
 
         // Keep only commits whose timestamps fall inside the metrics window.
         const census = await page.evaluate(({ windowStart, windowEnd }) => {
