@@ -81,8 +81,11 @@ describe('lazyRoute helpers', () => {
   });
 
   it('derives the route asset prefix from a hashed chunk specifier', () => {
-    expect(routeAssetPrefix('./ContactRoute-abc123.js')).toBe('ContactRoute');
-    expect(routeAssetPrefix('/assets/Legal-XYZ.js')).toBe('Legal');
+    expect(routeAssetPrefix('./ContactRoute-Dv4Ieurc.js')).toBe('ContactRoute');
+    expect(routeAssetPrefix('/assets/Legal-XYZABCDE.js')).toBe('Legal');
+    // Vite base64url hashes may include hyphens (8 chars total).
+    expect(routeAssetPrefix('./ContactRoute-CFpe8O-z.js')).toBe('ContactRoute');
+    expect(routeAssetPrefix('./ContactRoute-D4-jsGsd.css')).toBe('ContactRoute');
   });
 
   it('classifyAssetFailure marks 404/410 as missing and 5xx as transient', async () => {
@@ -256,7 +259,7 @@ describe('lazyRoute CSS dependency retry', () => {
   });
 
   it('reloads when a reachable obsolete stylesheet still fails on retry', async () => {
-    noteFailedPreloadCssUrlForTests('/assets/ContactRoute-old.css');
+    noteFailedPreloadCssUrlForTests('/assets/ContactRoute-D4-jsGsd.css');
     const reload = vi.fn();
     const fetchImpl = vi.fn(async () => ({ ok: false, status: 404 }));
 
@@ -270,7 +273,7 @@ describe('lazyRoute CSS dependency retry', () => {
     });
 
     const importer = importerWithSource(
-      '()=>import("./ContactRoute-old.js")',
+      '()=>import("./ContactRoute-Dv4Ieurc.js")',
       () => Promise.resolve({ default: () => null }),
     );
 
@@ -289,7 +292,7 @@ describe('lazyRoute CSS dependency retry', () => {
   });
 
   it('keeps the error path when stylesheet retry fails while offline (no unstyled render)', async () => {
-    noteFailedPreloadCssUrlForTests('/assets/ContactRoute-x.css');
+    noteFailedPreloadCssUrlForTests('/assets/ContactRoute-D4-jsGsd.css');
     const reload = vi.fn();
     const fetchImpl = vi.fn(async () => { throw new TypeError('Failed to fetch'); });
 
@@ -303,7 +306,7 @@ describe('lazyRoute CSS dependency retry', () => {
     });
 
     const importer = importerWithSource(
-      '()=>import("./ContactRoute-x.js")',
+      '()=>import("./ContactRoute-Dv4Ieurc.js")',
       () => Promise.resolve({ default: () => null }),
     );
 

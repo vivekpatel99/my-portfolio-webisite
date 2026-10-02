@@ -145,7 +145,10 @@ export function routeAssetPrefix(specifier) {
   if (!specifier) return null;
   const file = specifier.split('/').pop() || '';
   const withoutExt = file.replace(/\.[^/.]+$/, '');
-  const prefix = withoutExt.replace(/-[A-Za-z0-9_]+$/, '');
+  // Vite default content-hash is 8 base64url chars and may include "-" / "_".
+  // Strip the full hash (`ContactRoute-CFpe8O-z` → `ContactRoute`), not only the
+  // final hyphen segment.
+  const prefix = withoutExt.replace(/-[A-Za-z0-9_-]{8}$/, '');
   return prefix || null;
 }
 
@@ -332,13 +335,13 @@ export function lazyRoute(importer) {
       getLazyRouteGeneration,
       getLazyRouteGeneration,
     );
-    if (mountBaseline === null) {
-      if (pendingRetryGeneration != null && pendingRetryGeneration === currentGeneration) {
-        mountBaseline = currentGeneration - 1;
-        pendingRetryGeneration = null;
-      } else {
-        mountBaseline = currentGeneration;
-      }
+    // Consume pending Retry even when mountBaseline was set during a Suspense
+    // render that rejected before useEffect committed (cleanup never ran).
+    if (pendingRetryGeneration != null && pendingRetryGeneration === currentGeneration) {
+      mountBaseline = currentGeneration - 1;
+      pendingRetryGeneration = null;
+    } else if (mountBaseline === null) {
+      mountBaseline = currentGeneration;
     }
     const localAttempt = Math.max(0, currentGeneration - mountBaseline);
 
