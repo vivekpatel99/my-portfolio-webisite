@@ -43,23 +43,6 @@ const test = base.extend({
   }, { auto: true }],
 });
 
-test.beforeEach(async ({ page, browserName }) => {
-  if (browserName !== 'webkit') return;
-  // Start and finish a native fade on about:blank before measuring app entrances.
-  await page.evaluate(async () => {
-    const element = document.createElement('div');
-    Object.assign(element.style, {
-      position: 'fixed', width: '1px', height: '1px', background: '#000',
-    });
-    document.body.append(element);
-    try {
-      await element.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 1 }).finished;
-    } finally {
-      element.remove();
-    }
-  });
-});
-
 // Guards against the emulation silently not applying.
 async function expectMotionPreference(page, reduce) {
   const matches = await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches);

@@ -102,6 +102,8 @@ CI limits unit-test file workers and passive/contact browser workers to two.
 Passive shards balance individual tests, and contact cases use isolated contexts.
 Motion QA splits Chromium and WebKit onto separate runners with one worker each
 so real animation measurements do not compete within a runner.
+WebKit motion checks use a browser window under Xvfb so native fades are rendered
+while wall-clock samples run; other browser suites retain their existing mode.
 Timer assertions advance the browser clock through the full
 tested intervals; motion measurements continue using real animation timing.
 Publication fixtures run independent lifecycle chains concurrently, retain two

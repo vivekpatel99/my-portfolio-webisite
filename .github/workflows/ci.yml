@@ -243,7 +243,12 @@ jobs:
           export QA_MOTION_OUTPUT_DIR
           trap 'rm -rf "$QA_MOTION_OUTPUT_DIR"' EXIT
 
-          npm run qa:motion -- --project=motion-${{ matrix.browser }}-desktop --project=motion-${{ matrix.browser }}-mobile
+          motion_projects=(--project=motion-${{ matrix.browser }}-desktop --project=motion-${{ matrix.browser }}-mobile)
+          if [[ "${{ matrix.browser }}" == "webkit" ]]; then
+            xvfb-run --auto-servernum npm run qa:motion -- --headed "${motion_projects[@]}"
+          else
+            npm run qa:motion -- "${motion_projects[@]}"
+          fi
   telemetry-qa:
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.60.0-noble

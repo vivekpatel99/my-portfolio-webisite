@@ -70,6 +70,7 @@ describe('parallel CI and sanitized QA artifacts', () => {
     const run = namedStep('motion-qa', 'Run reduced-motion regression QA').run;
     expect(run).toContain('--project=motion-${{ matrix.browser }}-desktop');
     expect(run).toContain('--project=motion-${{ matrix.browser }}-mobile');
+    expect(run).toContain('xvfb-run --auto-servernum npm run qa:motion -- --headed');
   });
 
   it('uploads reconstructed allowlisted JSON under unique shard names for seven days', () => {
