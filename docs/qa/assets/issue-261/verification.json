@@ -1,0 +1,1800 @@
+{
+  "base": "920e45e95efb5c8f26b3b9840edf4e8e479347b0",
+  "routes": [
+    "/",
+    "/contact",
+    "/legal",
+    "/data-policy",
+    "/case-studies",
+    "/services/data-extraction-automation-sprint",
+    "/services/computer-vision-production-optimization",
+    "/services/ai-workflow-buildout",
+    "/project/n8n-openai-data-extraction",
+    "/project/invoice-ocr-extraction",
+    "/project/yolo-computer-vision-optimization",
+    "/project/ai-invoice-processing-automation",
+    "/project/ai-project-planning-assistant",
+    "/project/browser-search-to-spreadsheet",
+    "/project/depth-based-distance-estimation",
+    "/project/healthcare-document-intelligence",
+    "/project/n8n-python-ai-agents",
+    "/project/python-ci-workflow-automation",
+    "/project/resumable-listing-data-extraction",
+    "/project/sports-video-analytics-yolo",
+    "/404.html",
+    "/qa-missing-page/",
+    "/services/qa-missing-service/",
+    "/project/qa-missing-project/"
+  ],
+  "projects": [
+    {
+      "project": "chromium-390-no-preference",
+      "routeProbes": 24,
+      "beforeScheme": "normal",
+      "afterScheme": "dark",
+      "afterTheme": "#0C0D0D",
+      "reducedMotion": false,
+      "contactEqual": true,
+      "propertyDifferences": [],
+      "controls": [
+        {
+          "state": "default",
+          "reducedMotion": false,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 54
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(156, 163, 175)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 143.984375
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "select-focused",
+          "reducedMotion": false,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 54
+              },
+              "focused": true,
+              "value": "",
+              "color": "rgb(156, 163, 175)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 143.984375
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "textarea-focused",
+          "reducedMotion": false,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 54
+              },
+              "focused": false,
+              "value": "< €5k",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 143.984375
+              },
+              "focused": true,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "populated",
+          "reducedMotion": false,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 54
+              },
+              "focused": false,
+              "value": "< €5k",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 143.984375
+              },
+              "focused": false,
+              "value": "Synthetic QA project description.",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project": "chromium-390-reduce",
+      "routeProbes": 24,
+      "beforeScheme": "normal",
+      "afterScheme": "dark",
+      "afterTheme": "#0C0D0D",
+      "reducedMotion": true,
+      "contactEqual": true,
+      "propertyDifferences": [],
+      "controls": [
+        {
+          "state": "default",
+          "reducedMotion": true,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 54
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(156, 163, 175)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 143.984375
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "select-focused",
+          "reducedMotion": true,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 54
+              },
+              "focused": true,
+              "value": "",
+              "color": "rgb(156, 163, 175)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 143.984375
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "textarea-focused",
+          "reducedMotion": true,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 54
+              },
+              "focused": false,
+              "value": "< €5k",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 143.984375
+              },
+              "focused": true,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "populated",
+          "reducedMotion": true,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 54
+              },
+              "focused": false,
+              "value": "< €5k",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 143.984375
+              },
+              "focused": false,
+              "value": "Synthetic QA project description.",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project": "chromium-1440-no-preference",
+      "routeProbes": 24,
+      "beforeScheme": "normal",
+      "afterScheme": "dark",
+      "afterTheme": "#0C0D0D",
+      "reducedMotion": false,
+      "contactEqual": false,
+      "propertyDifferences": [
+        {
+          "state": "default",
+          "control": "budget",
+          "key": "rect",
+          "before": {
+            "x": 664.515625,
+            "width": 578.484375,
+            "height": 53.99993896484375
+          },
+          "after": {
+            "x": 664.515625,
+            "width": 578.484375,
+            "height": 54
+          }
+        }
+      ],
+      "controls": [
+        {
+          "state": "default",
+          "reducedMotion": false,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 54
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(156, 163, 175)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 143.984375
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "select-focused",
+          "reducedMotion": false,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 54
+              },
+              "focused": true,
+              "value": "",
+              "color": "rgb(156, 163, 175)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 143.984375
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "textarea-focused",
+          "reducedMotion": false,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 54
+              },
+              "focused": false,
+              "value": "< €5k",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 143.984375
+              },
+              "focused": true,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "populated",
+          "reducedMotion": false,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 54
+              },
+              "focused": false,
+              "value": "< €5k",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 143.984375
+              },
+              "focused": false,
+              "value": "Synthetic QA project description.",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project": "chromium-1440-reduce",
+      "routeProbes": 24,
+      "beforeScheme": "normal",
+      "afterScheme": "dark",
+      "afterTheme": "#0C0D0D",
+      "reducedMotion": true,
+      "contactEqual": true,
+      "propertyDifferences": [],
+      "controls": [
+        {
+          "state": "default",
+          "reducedMotion": true,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 54
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(156, 163, 175)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 143.984375
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "select-focused",
+          "reducedMotion": true,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 54
+              },
+              "focused": true,
+              "value": "",
+              "color": "rgb(156, 163, 175)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 143.984375
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "textarea-focused",
+          "reducedMotion": true,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 54
+              },
+              "focused": false,
+              "value": "< €5k",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 143.984375
+              },
+              "focused": true,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "populated",
+          "reducedMotion": true,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 54
+              },
+              "focused": false,
+              "value": "< €5k",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 143.984375
+              },
+              "focused": false,
+              "value": "Synthetic QA project description.",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project": "webkit-390-no-preference",
+      "routeProbes": 24,
+      "beforeScheme": "normal",
+      "afterScheme": "dark",
+      "afterTheme": "#0C0D0D",
+      "reducedMotion": false,
+      "contactEqual": false,
+      "propertyDifferences": [
+        {
+          "state": "default",
+          "control": "budget",
+          "key": "rect",
+          "before": {
+            "x": 55,
+            "width": 280,
+            "height": 54
+          },
+          "after": {
+            "x": 55,
+            "width": 280,
+            "height": 53.99993896484375
+          }
+        },
+        {
+          "state": "select-focused",
+          "control": "budget",
+          "key": "frameBackground",
+          "before": "rgba(255, 255, 255, 0.024)",
+          "after": "rgba(167, 139, 250, 0.07)"
+        }
+      ],
+      "controls": [
+        {
+          "state": "default",
+          "reducedMotion": false,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 53.99993896484375
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(156, 163, 175)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 143.90625
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "select-focused",
+          "reducedMotion": false,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 54
+              },
+              "focused": true,
+              "value": "",
+              "color": "rgb(156, 163, 175)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 143.90625
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "textarea-focused",
+          "reducedMotion": false,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 54
+              },
+              "focused": false,
+              "value": "< €5k",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 143.90625
+              },
+              "focused": true,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "populated",
+          "reducedMotion": false,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 54
+              },
+              "focused": false,
+              "value": "< €5k",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 143.90625
+              },
+              "focused": false,
+              "value": "Synthetic QA project description.",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project": "webkit-390-reduce",
+      "routeProbes": 24,
+      "beforeScheme": "normal",
+      "afterScheme": "dark",
+      "afterTheme": "#0C0D0D",
+      "reducedMotion": true,
+      "contactEqual": true,
+      "propertyDifferences": [],
+      "controls": [
+        {
+          "state": "default",
+          "reducedMotion": true,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 54
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(156, 163, 175)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 143.90625
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "select-focused",
+          "reducedMotion": true,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 54
+              },
+              "focused": true,
+              "value": "",
+              "color": "rgb(156, 163, 175)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 143.90625
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "textarea-focused",
+          "reducedMotion": true,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 54
+              },
+              "focused": false,
+              "value": "< €5k",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 143.90625
+              },
+              "focused": true,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "populated",
+          "reducedMotion": true,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 54
+              },
+              "focused": false,
+              "value": "< €5k",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 55,
+                "width": 280,
+                "height": 143.90625
+              },
+              "focused": false,
+              "value": "Synthetic QA project description.",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project": "webkit-1440-no-preference",
+      "routeProbes": 24,
+      "beforeScheme": "normal",
+      "afterScheme": "dark",
+      "afterTheme": "#0C0D0D",
+      "reducedMotion": false,
+      "contactEqual": true,
+      "propertyDifferences": [],
+      "controls": [
+        {
+          "state": "default",
+          "reducedMotion": false,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 54
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(156, 163, 175)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 143.90625
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "select-focused",
+          "reducedMotion": false,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 54
+              },
+              "focused": true,
+              "value": "",
+              "color": "rgb(156, 163, 175)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 143.90625
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "textarea-focused",
+          "reducedMotion": false,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 54
+              },
+              "focused": false,
+              "value": "< €5k",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 143.90625
+              },
+              "focused": true,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "populated",
+          "reducedMotion": false,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 54
+              },
+              "focused": false,
+              "value": "< €5k",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 143.90625
+              },
+              "focused": false,
+              "value": "Synthetic QA project description.",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project": "webkit-1440-reduce",
+      "routeProbes": 24,
+      "beforeScheme": "normal",
+      "afterScheme": "dark",
+      "afterTheme": "#0C0D0D",
+      "reducedMotion": true,
+      "contactEqual": true,
+      "propertyDifferences": [],
+      "controls": [
+        {
+          "state": "default",
+          "reducedMotion": true,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 54
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(156, 163, 175)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 143.90625
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "select-focused",
+          "reducedMotion": true,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 54
+              },
+              "focused": true,
+              "value": "",
+              "color": "rgb(156, 163, 175)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 143.90625
+              },
+              "focused": false,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "textarea-focused",
+          "reducedMotion": true,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 54
+              },
+              "focused": false,
+              "value": "< €5k",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 143.90625
+              },
+              "focused": true,
+              "value": "",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "populated",
+          "reducedMotion": true,
+          "overflow": false,
+          "controls": [
+            {
+              "id": "budget",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 54
+              },
+              "focused": false,
+              "value": "< €5k",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "rect": {
+                "x": 664.515625,
+                "width": 578.484375,
+                "height": 143.90625
+              },
+              "focused": false,
+              "value": "Synthetic QA project description.",
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(0, 0, 0, 0)",
+              "transitionDuration": "0s"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "name": "chromium-390-no-preference-default-budget.png",
+      "width": 280,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 15400
+    },
+    {
+      "name": "chromium-390-no-preference-default-description.png",
+      "width": 280,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 40600
+    },
+    {
+      "name": "chromium-390-no-preference-select-focused-budget.png",
+      "width": 280,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 15400
+    },
+    {
+      "name": "chromium-390-no-preference-select-focused-description.png",
+      "width": 280,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 40600
+    },
+    {
+      "name": "chromium-390-no-preference-textarea-focused-budget.png",
+      "width": 280,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 15400
+    },
+    {
+      "name": "chromium-390-no-preference-textarea-focused-description.png",
+      "width": 280,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 40600
+    },
+    {
+      "name": "chromium-390-no-preference-populated-budget.png",
+      "width": 280,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 15400
+    },
+    {
+      "name": "chromium-390-no-preference-populated-description.png",
+      "width": 280,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 40600
+    },
+    {
+      "name": "chromium-390-reduce-default-budget.png",
+      "width": 280,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 15400
+    },
+    {
+      "name": "chromium-390-reduce-default-description.png",
+      "width": 280,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 40600
+    },
+    {
+      "name": "chromium-390-reduce-select-focused-budget.png",
+      "width": 280,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 15400
+    },
+    {
+      "name": "chromium-390-reduce-select-focused-description.png",
+      "width": 280,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 40600
+    },
+    {
+      "name": "chromium-390-reduce-textarea-focused-budget.png",
+      "width": 280,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 15400
+    },
+    {
+      "name": "chromium-390-reduce-textarea-focused-description.png",
+      "width": 280,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 40600
+    },
+    {
+      "name": "chromium-390-reduce-populated-budget.png",
+      "width": 280,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 15400
+    },
+    {
+      "name": "chromium-390-reduce-populated-description.png",
+      "width": 280,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 40600
+    },
+    {
+      "name": "chromium-1440-no-preference-default-budget.png",
+      "width": 579,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 31845
+    },
+    {
+      "name": "chromium-1440-no-preference-default-description.png",
+      "width": 579,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 83955
+    },
+    {
+      "name": "chromium-1440-no-preference-select-focused-budget.png",
+      "width": 579,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 31845
+    },
+    {
+      "name": "chromium-1440-no-preference-select-focused-description.png",
+      "width": 579,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 83955
+    },
+    {
+      "name": "chromium-1440-no-preference-textarea-focused-budget.png",
+      "width": 579,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 31845
+    },
+    {
+      "name": "chromium-1440-no-preference-textarea-focused-description.png",
+      "width": 579,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 83955
+    },
+    {
+      "name": "chromium-1440-no-preference-populated-budget.png",
+      "width": 579,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 31845
+    },
+    {
+      "name": "chromium-1440-no-preference-populated-description.png",
+      "width": 579,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 83955
+    },
+    {
+      "name": "chromium-1440-reduce-default-budget.png",
+      "width": 579,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 31845
+    },
+    {
+      "name": "chromium-1440-reduce-default-description.png",
+      "width": 579,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 83955
+    },
+    {
+      "name": "chromium-1440-reduce-select-focused-budget.png",
+      "width": 579,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 31845
+    },
+    {
+      "name": "chromium-1440-reduce-select-focused-description.png",
+      "width": 579,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 83955
+    },
+    {
+      "name": "chromium-1440-reduce-textarea-focused-budget.png",
+      "width": 579,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 31845
+    },
+    {
+      "name": "chromium-1440-reduce-textarea-focused-description.png",
+      "width": 579,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 83955
+    },
+    {
+      "name": "chromium-1440-reduce-populated-budget.png",
+      "width": 579,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 31845
+    },
+    {
+      "name": "chromium-1440-reduce-populated-description.png",
+      "width": 579,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 83955
+    },
+    {
+      "name": "webkit-390-no-preference-default-budget.png",
+      "width": 280,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 15400
+    },
+    {
+      "name": "webkit-390-no-preference-default-description.png",
+      "width": 280,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 40600
+    },
+    {
+      "name": "webkit-390-no-preference-select-focused-budget.png",
+      "width": 280,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 15400
+    },
+    {
+      "name": "webkit-390-no-preference-select-focused-description.png",
+      "width": 280,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 40600
+    },
+    {
+      "name": "webkit-390-no-preference-textarea-focused-budget.png",
+      "width": 280,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 15400
+    },
+    {
+      "name": "webkit-390-no-preference-textarea-focused-description.png",
+      "width": 280,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 40600
+    },
+    {
+      "name": "webkit-390-no-preference-populated-budget.png",
+      "width": 280,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 15400
+    },
+    {
+      "name": "webkit-390-no-preference-populated-description.png",
+      "width": 280,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 40600
+    },
+    {
+      "name": "webkit-390-reduce-default-budget.png",
+      "width": 280,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 15400
+    },
+    {
+      "name": "webkit-390-reduce-default-description.png",
+      "width": 280,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 40600
+    },
+    {
+      "name": "webkit-390-reduce-select-focused-budget.png",
+      "width": 280,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 15400
+    },
+    {
+      "name": "webkit-390-reduce-select-focused-description.png",
+      "width": 280,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 40600
+    },
+    {
+      "name": "webkit-390-reduce-textarea-focused-budget.png",
+      "width": 280,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 15400
+    },
+    {
+      "name": "webkit-390-reduce-textarea-focused-description.png",
+      "width": 280,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 40600
+    },
+    {
+      "name": "webkit-390-reduce-populated-budget.png",
+      "width": 280,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 15400
+    },
+    {
+      "name": "webkit-390-reduce-populated-description.png",
+      "width": 280,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 40600
+    },
+    {
+      "name": "webkit-1440-no-preference-default-budget.png",
+      "width": 579,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 31845
+    },
+    {
+      "name": "webkit-1440-no-preference-default-description.png",
+      "width": 579,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 83955
+    },
+    {
+      "name": "webkit-1440-no-preference-select-focused-budget.png",
+      "width": 579,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 31845
+    },
+    {
+      "name": "webkit-1440-no-preference-select-focused-description.png",
+      "width": 579,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 83955
+    },
+    {
+      "name": "webkit-1440-no-preference-textarea-focused-budget.png",
+      "width": 579,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 31845
+    },
+    {
+      "name": "webkit-1440-no-preference-textarea-focused-description.png",
+      "width": 579,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 83955
+    },
+    {
+      "name": "webkit-1440-no-preference-populated-budget.png",
+      "width": 579,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 31845
+    },
+    {
+      "name": "webkit-1440-no-preference-populated-description.png",
+      "width": 579,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 83955
+    },
+    {
+      "name": "webkit-1440-reduce-default-budget.png",
+      "width": 579,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 31845
+    },
+    {
+      "name": "webkit-1440-reduce-default-description.png",
+      "width": 579,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 83955
+    },
+    {
+      "name": "webkit-1440-reduce-select-focused-budget.png",
+      "width": 579,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 31845
+    },
+    {
+      "name": "webkit-1440-reduce-select-focused-description.png",
+      "width": 579,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 83955
+    },
+    {
+      "name": "webkit-1440-reduce-textarea-focused-budget.png",
+      "width": 579,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 31845
+    },
+    {
+      "name": "webkit-1440-reduce-textarea-focused-description.png",
+      "width": 579,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 83955
+    },
+    {
+      "name": "webkit-1440-reduce-populated-budget.png",
+      "width": 579,
+      "height": 55,
+      "changedPixels": 0,
+      "totalPixels": 31845
+    },
+    {
+      "name": "webkit-1440-reduce-populated-description.png",
+      "width": 579,
+      "height": 145,
+      "changedPixels": 0,
+      "totalPixels": 83955
+    }
+  ],
+  "staticHtml": [
+    {
+      "file": "index.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    },
+    {
+      "file": "404.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    },
+    {
+      "file": "contact/index.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    },
+    {
+      "file": "legal/index.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    },
+    {
+      "file": "data-policy/index.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    },
+    {
+      "file": "case-studies/index.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    },
+    {
+      "file": "services/data-extraction-automation-sprint/index.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    },
+    {
+      "file": "services/computer-vision-production-optimization/index.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    },
+    {
+      "file": "services/ai-workflow-buildout/index.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    },
+    {
+      "file": "project/n8n-openai-data-extraction/index.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    },
+    {
+      "file": "project/invoice-ocr-extraction/index.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    },
+    {
+      "file": "project/yolo-computer-vision-optimization/index.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    },
+    {
+      "file": "project/ai-invoice-processing-automation/index.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    },
+    {
+      "file": "project/ai-project-planning-assistant/index.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    },
+    {
+      "file": "project/browser-search-to-spreadsheet/index.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    },
+    {
+      "file": "project/depth-based-distance-estimation/index.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    },
+    {
+      "file": "project/healthcare-document-intelligence/index.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    },
+    {
+      "file": "project/n8n-python-ai-agents/index.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    },
+    {
+      "file": "project/python-ci-workflow-automation/index.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    },
+    {
+      "file": "project/resumable-listing-data-extraction/index.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    },
+    {
+      "file": "project/sports-video-analytics-yolo/index.html",
+      "tags": [
+        "#0C0D0D"
+      ]
+    }
+  ]
+}

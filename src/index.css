@@ -49,6 +49,7 @@
   }
 
   html {
+    color-scheme: dark;
     scroll-padding-top: max(8rem, var(--consent-banner-bottom, 0px));
   }
 

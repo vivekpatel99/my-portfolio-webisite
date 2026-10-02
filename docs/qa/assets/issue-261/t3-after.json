@@ -1,0 +1,66 @@
+{
+  "mobile": {
+    "controls": [
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "color": "rgb(156, 163, 175)",
+        "fontSize": "15.2px",
+        "id": "budget",
+        "rect": {
+          "height": 54,
+          "width": 265,
+          "x": 55,
+          "y": 458.767578125
+        }
+      },
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "color": "rgb(255, 255, 255)",
+        "fontSize": "15.2px",
+        "id": "description",
+        "rect": {
+          "height": 144.0234375,
+          "width": 265,
+          "x": 55,
+          "y": 542.767578125
+        }
+      }
+    ],
+    "overflow": false,
+    "scheme": "dark",
+    "selectScheme": "normal",
+    "theme": "#0C0D0D"
+  },
+  "desktop": {
+    "controls": [
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "color": "rgb(156, 163, 175)",
+        "fontSize": "15.2px",
+        "id": "budget",
+        "rect": {
+          "height": 54,
+          "width": 578.484375,
+          "x": 657.015625,
+          "y": 486.759765625
+        }
+      },
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "color": "rgb(255, 255, 255)",
+        "fontSize": "15.2px",
+        "id": "description",
+        "rect": {
+          "height": 144.0234375,
+          "width": 578.484375,
+          "x": 657.015625,
+          "y": 570.759765625
+        }
+      }
+    ],
+    "overflow": false,
+    "scheme": "dark",
+    "selectScheme": "normal",
+    "theme": "#0C0D0D"
+  }
+}
