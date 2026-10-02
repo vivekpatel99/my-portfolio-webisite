@@ -43,6 +43,14 @@ const test = base.extend({
   }, { auto: true }],
 });
 
+test.beforeEach(async ({ page, browserName }) => {
+  if (browserName !== 'webkit') return;
+  // Initialize the cold rendering loop on about:blank before measuring app entrances.
+  await page.evaluate(() => new Promise((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(resolve));
+  }));
+});
+
 // Guards against the emulation silently not applying.
 async function expectMotionPreference(page, reduce) {
   const matches = await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -180,8 +188,9 @@ function expectIdentityTransform(samples, label) {
 
 function expectSettled(samples, label) {
   const last = samples.at(-1);
-  expect(last.opacity, `${label} final opacity`).toBeGreaterThan(READABLE_OPACITY);
-  expect(Math.abs(last.y), `${label} final y (${last.transform})`).toBeLessThan(IDENTITY_TOLERANCE);
+  const diagnostics = JSON.stringify(samples);
+  expect(last.opacity, `${label} final opacity; samples: ${diagnostics}`).toBeGreaterThan(READABLE_OPACITY);
+  expect(Math.abs(last.y), `${label} final y (${last.transform}); samples: ${diagnostics}`).toBeLessThan(IDENTITY_TOLERANCE);
 }
 
 // Reduced motion: no translation or scale at any sample, but the fade is kept.
