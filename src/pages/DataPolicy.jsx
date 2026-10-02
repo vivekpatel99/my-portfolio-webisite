@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Seo } from '@/lib/seo';
@@ -13,7 +13,7 @@ const DataPolicy = () => {
   };
 
   return (
-    <motion.div
+    <m.div
       {...pageMotion}
       className="bg-[#0C0D0D] text-white py-24 sm:py-32"
     >
@@ -54,7 +54,7 @@ const DataPolicy = () => {
             </Button>
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 };
 

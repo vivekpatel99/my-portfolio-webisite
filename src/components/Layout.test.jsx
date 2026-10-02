@@ -2,6 +2,7 @@
  * @vitest-environment jsdom
  */
 import React from 'react';
+import { m } from 'framer-motion';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -28,24 +29,22 @@ vi.mock('@/components/SentryTelemetry', () => ({
     return null;
   },
 }));
-vi.mock('framer-motion', () => {
-  const MotionDiv = React.forwardRef(({ children, initial, animate, exit, transition, ...props }, ref) => (
-    <div ref={ref} {...props}>{children}</div>
-  ));
-  return { AnimatePresence: ({ children }) => <>{children}</>, motion: { div: MotionDiv } };
-});
 
 const HEADER_HEIGHT = 69;
 const BANNER_HEIGHT = 77;
 let scrollPosition;
 const SETTINGS_HEIGHT = 240;
 
+function MotionConfiguration() {
+  return <m.div aria-label="Animated route" initial={{ scale: 0.5 }} animate={{ scale: 1 }} transition={{ duration: 0.01 }}>Contact animation</m.div>;
+}
+
 function renderLayout() {
   return render(
     <MemoryRouter initialEntries={['/contact']}>
       <Routes>
         <Route element={<Layout />}>
-          <Route path="/contact" element={<p>Contact page</p>} />
+          <Route path="/contact" element={<><p>Contact page</p><MotionConfiguration /></>} />
         </Route>
       </Routes>
     </MemoryRouter>
@@ -94,6 +93,12 @@ describe('Layout consent spacer', () => {
     cleanup();
     vi.restoreAllMocks();
     vi.useRealTimers();
+  });
+
+  it('provides animation features to routed content', async () => {
+    renderLayout();
+    await act(async () => vi.advanceTimersByTime(1000));
+    expect(screen.getByLabelText('Animated route').style.transform).toBe('none');
   });
 
   it.each([

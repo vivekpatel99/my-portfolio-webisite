@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from "@/components/ui/checkbox.jsx";
 import { Cookie, X, Settings } from 'lucide-react';
@@ -132,7 +132,7 @@ const CookieConsentBanner = ({ onConsent, show, onHide, onReservedBottomChange }
 
   return (
     isManaging ? (
-        <motion.div
+        <m.div
           ref={bannerRef}
           role="dialog"
           aria-modal="false"
@@ -206,7 +206,7 @@ const CookieConsentBanner = ({ onConsent, show, onHide, onReservedBottomChange }
               <X size={20} />
             </button>
           </div>
-        </motion.div>
+        </m.div>
     ) : null
   );
 };

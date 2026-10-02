@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import React, { Profiler } from 'react';
-import { act, cleanup, render, waitFor } from '@testing-library/react';
+import { renderWithMotion as render } from '@/test/renderWithMotion';
+import { act, cleanup, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import CustomCursor from './CustomCursor';
 

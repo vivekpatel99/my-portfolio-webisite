@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import './Contact.css';
 import { toast } from '@/components/ui/use-toast';
 import { Github, Linkedin, Mail, Loader2, CheckCircle2 } from 'lucide-react';
@@ -177,7 +177,7 @@ const Contact = () => {
   };
 
   return (
-    <motion.div {...pageMotion}>
+    <m.div {...pageMotion}>
       <Seo {...routeSeo['/contact']} />
 
       <section className="contact relative bg-[#0C0D0D] text-white py-12 px-7 md:px-10 min-h-[900px]">
@@ -413,7 +413,7 @@ const Contact = () => {
           </div>
         </div>
       </section>
-    </motion.div>
+    </m.div>
   );
 };
 

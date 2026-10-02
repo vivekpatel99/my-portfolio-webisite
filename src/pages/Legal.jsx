@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { socialLinks } from '@/config/links';
 import { Seo } from '@/lib/seo';
@@ -8,7 +8,7 @@ import { usePageMotion } from '@/lib/pageMotion';
 const Legal = () => {
   const pageMotion = usePageMotion();
   return (
-    <motion.div
+    <m.div
       {...pageMotion}
       className="bg-[#0C0D0D] text-white py-24 sm:py-32"
     >
@@ -73,7 +73,7 @@ const Legal = () => {
           <p>I may update my Privacy Policy from time to time. I will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes.</p>
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 };
 

@@ -1,0 +1,45 @@
+{
+  "cells": [
+    {
+      "cell": "entry-chromium-desktop-no-preference-geometry.json",
+      "routes": 21,
+      "maximumGeometryDelta": 0
+    },
+    {
+      "cell": "entry-chromium-desktop-reduce-geometry.json",
+      "routes": 21,
+      "maximumGeometryDelta": 0
+    },
+    {
+      "cell": "entry-chromium-mobile-no-preference-geometry.json",
+      "routes": 21,
+      "maximumGeometryDelta": 0
+    },
+    {
+      "cell": "entry-chromium-mobile-reduce-geometry.json",
+      "routes": 21,
+      "maximumGeometryDelta": 0
+    },
+    {
+      "cell": "entry-webkit-desktop-no-preference-geometry.json",
+      "routes": 21,
+      "maximumGeometryDelta": 0
+    },
+    {
+      "cell": "entry-webkit-desktop-reduce-geometry.json",
+      "routes": 21,
+      "maximumGeometryDelta": 0
+    },
+    {
+      "cell": "entry-webkit-mobile-no-preference-geometry.json",
+      "routes": 21,
+      "maximumGeometryDelta": 0
+    },
+    {
+      "cell": "entry-webkit-mobile-reduce-geometry.json",
+      "routes": 21,
+      "maximumGeometryDelta": 0
+    }
+  ],
+  "differences": []
+}
