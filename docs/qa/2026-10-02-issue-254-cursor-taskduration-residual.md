@@ -37,7 +37,7 @@ Pass 2 (`docs/qa/assets/issue-254-cursor-metrics-2026-10-02-develop-rerun.json`)
 | reduce | 2 | 0 | 224.433 | 40.547 | 4000 |
 | reduce | 3 | 0 | 231.741 | 42.982 | 4002 |
 
-Normal-motion medians: commits **1** (one-shot, not 241), TaskDuration **≈892ms** / **≈824ms**. Reduced-motion control TaskDuration **≈212–232ms**. Wall-clock elapsed is **≈4.0s** on this host (pace slip ≈2s): Playwright `mouse.move` under 4× CPU cannot hold the 2s pacing window. Prior #277 lab runs that held elapsed≈2s still measured normal TaskDuration **227–423ms**, all above 200ms, with **0** commits.
+Normal-motion medians: commits **1** (one-shot, not 241), TaskDuration **≈892ms** / **≈824ms**. Reduced-motion control TaskDuration **≈212–232ms**. Wall-clock elapsed is **≈4.0s** on this host (pace slip ≈2s): Playwright `mouse.move` under 4× CPU cannot hold the 2s pacing window. Committed paced labs in [`issue-254-cursor-metrics.json`](assets/issue-254-cursor-metrics.json) (elapsed≈2.00–2.01s, 0 commits) still measured normal TaskDuration **232.922–355.313ms** (`delivered`) and **241.941–401.483ms** (`current_base_c4619c2`) — all above 200ms.
 
 The measure script exit gate (`commits !== 0 || taskMs > 200` for normal motion) therefore fails here. That failure is expected under the residual conclusion below; the gate was not rewritten.
 
@@ -74,7 +74,7 @@ Share of normal-motion TaskDuration (absolute only): **~77% other / TaskOtherDur
 1. **Per-frame React work is gone.** Baseline was 241 commits / 2s. Current is 0–1 one-shot commits. That part of P-4 acceptance holds in spirit; investigate the rare one-shot only if it regresses toward N≈moves.
 2. **Leftover TaskDuration is spring/compositor-adjacent main-thread bookkeeping** (TaskOther), not a React commit storm and not layout. Absolute normal-motion TaskDuration medians on this box are **≈825–893ms** with attributedOther the majority share; the reduced-motion arm is lower in absolute terms but those runs are also incomplete (~4s elapsed), so **do not use whole-page motion-mode Δ from this census as gate evidence**. When a future complete sample sets `comparativeValid: true`, treat any Δ as whole-page (not cursor-only): testimonials carousel and other motion-gated actors also differ under `prefers-reduced-motion`.
 3. **The absolute ≤200ms gate is wrong for this probe + spring + 4× CPU combination.** Evidence:
-   - Prior paced (elapsed≈2s) post-#277 runs still sat at 227–423ms with 0 commits.
+   - Committed paced runs in `docs/qa/assets/issue-254-cursor-metrics.json`: `delivered` **232.922–355.313ms** and `current_base_c4619c2` **241.941–401.483ms** (0 commits, elapsed≈2s).
    - This host’s pace slip (~4s) inflates both cursor-on and control; even the reduced-motion control alone can exceed 200ms here.
    - Further spring-path micro-optimizations share the failed premise and the discarded experiment set.
 4. **No deletable critical-path actor** showed up in the census that prior experiments did not already try. Do not ship another spring tweak to chase 200ms.
@@ -98,7 +98,7 @@ Keep `tools/measure-cursor-performance.mjs`’s 200ms exit check until product a
 
 Ran on Mac CLI: `codex exec review -m gpt-6.1-sol --commit 52a255c` (Sol 6.1). Findings addressed in follow-up commit:
 
-1. **[P2] Isolate cursor state before attributing motion-mode delta** — **Addressed by labeling.** Census and this report now call the normal vs reduced-motion comparison a **whole-page motion-mode delta**, not cursor-only cost. Testimonials carousel and other motion-gated actors also change under reduced motion. A cursor-only on/off control was not added (smallest change that removes the overclaim). Prior #277 paced TaskDuration evidence (227–423ms, 0 commits) remains independent of this census delta.
+1. **[P2] Isolate cursor state before attributing motion-mode delta** — **Addressed by labeling.** Census and this report now call the normal vs reduced-motion comparison a **whole-page motion-mode delta**, not cursor-only cost. Testimonials carousel and other motion-gated actors also change under reduced motion. A cursor-only on/off control was not added (smallest change that removes the overclaim). Committed paced TaskDuration evidence in `issue-254-cursor-metrics.json` (`delivered` 232.922–355.313ms; `current_base_c4619c2` 241.941–401.483ms; 0 commits) remains independent of this census delta.
 2. **[P2] Derive residual conclusions from measured results** — **Addressed.** `tools/census-cursor-taskduration.mjs` now builds `residualConclusionNotes` from the measured commit/TaskDuration medians instead of unconditional near-zero-commit claims.
 
 Do **not** use Cursor CloudAgent / Background Agent.
@@ -121,6 +121,6 @@ Addressed in the census lever before merge:
 
 ## Artifact validity
 
-The committed census JSON under `docs/qa/assets/` is a **pre-fix incomplete sample**. It now carries `comparativeValid: false` and nulled whole-page deltas so it cannot be misread as a valid arm comparison. Absolute TaskDuration / commit figures remain for context. Gate-revision evidence leans on prior #277 paced labs (elapsed≈2s, 227–423ms, 0 commits) plus the develop measure tables above — not on nulled census Δ.
+The committed census JSON under `docs/qa/assets/` is a **pre-fix incomplete sample**. It now carries `comparativeValid: false` and nulled whole-page deltas so it cannot be misread as a valid arm comparison. Absolute TaskDuration / commit figures remain for context. Gate-revision evidence leans on committed paced labs in `issue-254-cursor-metrics.json` (`delivered` 232.922–355.313ms; `current_base_c4619c2` 241.941–401.483ms; 0 commits; elapsed≈2s) plus the develop measure tables above — not on nulled census Δ.
 
 Absolute-gate conclusions in the live census lever require a complete sample: every normal run finishes all 241 moves with `paceSlipMs <= 32` (scheduler jitter after the final paced sleep; movement overruns that stop early still fail). Commit attribution uses the **max** across normal runs (not the median), so one failed run cannot hide per-frame React work.

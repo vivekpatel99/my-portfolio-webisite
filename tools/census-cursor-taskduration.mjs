@@ -59,6 +59,7 @@ try {
           );
           window.cursorCommits = 0;
           window.cursorCommitTimes = [];
+          window.__censusMeasuring = false;
           window.__REACT_DEVTOOLS_GLOBAL_HOOK__ = {
             supportsFiber: true,
             renderers: new Map(),
@@ -67,6 +68,7 @@ try {
               return 1;
             },
             onCommitFiberRoot() {
+              if (!window.__censusMeasuring) return;
               window.cursorCommits++;
               window.cursorCommitTimes.push(performance.now());
             },
@@ -102,13 +104,24 @@ try {
 
         // Do not inject a self-scheduling rAF loop into the measured window;
         // that harness work would inflate TaskDuration / TaskOtherDuration.
+        // Pause non-cursor timed UI (testimonials autoplay) for the probe so a
+        // rotation cannot land in the CDP getMetrics gaps.
+        await page.evaluate(() => {
+          document.querySelectorAll('[data-testimonials-track], .testimonials-track, [data-autoplay]').forEach((el) => {
+            el.setAttribute('data-census-paused', 'true');
+          });
+          document.querySelectorAll('video').forEach((v) => {
+            try { v.pause(); } catch {}
+          });
+        });
+
         const before = await metrics();
-        // Reset the commit counter at the same boundary as the metrics window
-        // start so testimonials/carousel commits during getMetrics are excluded.
-        const windowStart = await page.evaluate(() => {
+        // Count commits only while measuring — brackets the move loop and
+        // excludes React work during either Performance.getMetrics call.
+        await page.evaluate(() => {
           window.cursorCommits = 0;
           window.cursorCommitTimes = [];
-          return performance.now();
+          window.__censusMeasuring = true;
         });
         const start = Date.now();
         let movesDone = 0;
@@ -125,22 +138,16 @@ try {
         // sampleComplete falsely fails after a paced 2s move loop.
         const elapsedMs = Date.now() - start;
         const paceSlipMs = Math.max(0, elapsedMs - WINDOW_MS);
-        // Take the after metrics snapshot first so TaskDuration and commit
-        // filtering share the same trailing boundary (CDP wait included).
+        await page.evaluate(() => {
+          window.__censusMeasuring = false;
+        });
         const after = await metrics();
-        const windowEnd = await page.evaluate(() => performance.now());
 
-        // Keep only commits whose timestamps fall inside the metrics window.
-        const census = await page.evaluate(({ windowStart, windowEnd }) => {
-          const commitTimes = window.cursorCommitTimes.filter(
-            (t) => t >= windowStart && t <= windowEnd,
-          );
-          return {
-            commits: commitTimes.length,
-            commitTimes,
-            rafTicks: 0,
-          };
-        }, { windowStart, windowEnd });
+        const census = await page.evaluate(() => ({
+          commits: window.cursorCommits,
+          commitTimes: window.cursorCommitTimes.slice(),
+          rafTicks: 0,
+        }));
 
         const scriptMs = metricDeltaMs(before, after, 'ScriptDuration');
         const styleMs = metricDeltaMs(before, after, 'RecalcStyleDuration');

@@ -437,7 +437,7 @@
   },
   "residualConclusionNotes": [
     "Committed artifact runs are pre-fix incomplete samples (elapsed\u22484s, missing movesDone). comparativeValid=false; wholePageMotionModeDeltaMedian nulled to match the final census lever.",
-    "Do not use normal vs reduced-motion deltas from this artifact to revise the acceptance gate. Use absolute TaskDuration medians and prior paced #277 labs (elapsed\u22482s, 227\u2013423ms, 0 commits) instead.",
+    "Do not use normal vs reduced-motion deltas from this artifact to revise the acceptance gate. Use absolute TaskDuration medians and committed paced labs in issue-254-cursor-metrics.json (delivered 232.922\u2013355.313ms; current_base_c4619c2 241.941\u2013401.483ms; 0 commits; elapsed\u22482s) instead.",
     "attributedOtherMs is TaskDuration minus Script minus Style minus Layout for the whole page under the probe window.",
     "IMPORTANT: when comparativeValid is true, normal vs reduced-motion delta is a whole-page motion-mode delta, not a cursor-only attribution.",
     "Harness no longer injects a self-scheduling rAF loop into the measured window (rafTicks stay 0 on regenerated runs).",
