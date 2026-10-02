@@ -25,6 +25,11 @@ export function retryLazyRoutes() {
   subscribers.forEach((notify) => notify());
 }
 
+/** Drop an unconsumed pending Retry (e.g. render-throw recovery left it set). */
+export function clearPendingRetryGeneration() {
+  pendingRetryGeneration = null;
+}
+
 /** @visibleForTesting */
 export function resetLazyRouteGenerationForTests() {
   generation = 0;
@@ -250,7 +255,8 @@ export async function retryRouteStylesheets(importer, attempt, fetchImpl = fetch
         if (abs && stripRetryParam(abs) === url) failedPreloadCssUrls.delete(failed);
       }
     } catch (error) {
-      if (await shouldReloadForAssetFailure(url, fetchImpl)) {
+      // Probe the URL that actually failed (with ?retry=), not the bare asset.
+      if (await shouldReloadForAssetFailure(busted, fetchImpl)) {
         throw staleStylesheetError(url);
       }
       // Transient HTTP or offline — keep the recovery UI; do not render without CSS.
@@ -292,10 +298,12 @@ export async function loadRouteModule(
     if (!url) throw error;
     // WebKit keeps failing the exact URL after a failed module import; a query bust recovers.
     // Transitive deps may still be stuck in WebKit's module map when the entry URL is present.
+    const busted = cacheBustImportUrl(url, attempt);
     try {
-      return await dynamicImport(cacheBustImportUrl(url, attempt));
+      return await dynamicImport(busted);
     } catch (bustError) {
-      if (await shouldReloadForAssetFailure(url, fetchImpl)) {
+      // Probe the URL that actually failed (with ?retry=), not the bare asset.
+      if (await shouldReloadForAssetFailure(busted, fetchImpl)) {
         reload();
       }
       throw bustError;

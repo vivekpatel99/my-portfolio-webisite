@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { ArrowLeft, RotateCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { focusNavigationTarget } from '@/lib/focusTarget';
-import { retryLazyRoutes } from '@/lib/lazyRoute';
+import { clearPendingRetryGeneration, retryLazyRoutes } from '@/lib/lazyRoute';
 import { Seo } from '@/lib/seo';
 
 export const ROUTE_ERROR_HEADING = "This page didn't load";
@@ -97,6 +97,8 @@ class RouteErrorBoundary extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.hasError && this.state.hasError && prevProps.resetKey !== this.props.resetKey) {
+      // Leaving the error UI via navigation — drop any unconsumed Retry token.
+      clearPendingRetryGeneration();
       this.setState({ hasError: false });
     }
 
@@ -104,6 +106,13 @@ class RouteErrorBoundary extends React.Component {
     // never runs. Move focus to the recovered main / heading once content appears.
     if (prevState.hasError && !this.state.hasError) {
       this.scheduleFocusAfterRecovery();
+    }
+
+    // Re-entered error after Retry (e.g. synchronous render throw): no lazyRoute
+    // consumed pendingRetryGeneration — clear so a later cached lazy visit is not
+    // forced onto attempt 1.
+    if (!prevState.hasError && this.state.hasError) {
+      clearPendingRetryGeneration();
     }
   }
 
