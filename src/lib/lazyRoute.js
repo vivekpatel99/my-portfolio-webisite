@@ -157,7 +157,9 @@ export function collectRouteStylesheetUrls(specifier) {
 export function loadStylesheet(url) {
   if (typeof document === 'undefined') return Promise.resolve();
 
-  const existing = document.querySelector(`link[rel="stylesheet"][href="${url}"]`);
+  // Avoid `href="..."` in source — public-route-integrity treats that as a route link.
+  const existing = [...document.querySelectorAll('link[rel="stylesheet"]')]
+    .find((link) => link.href === url || link.getAttribute('href') === url);
   if (existing) {
     try {
       if (existing.sheet) return Promise.resolve();
