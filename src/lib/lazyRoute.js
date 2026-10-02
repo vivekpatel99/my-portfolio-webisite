@@ -324,10 +324,11 @@ export function lazyRoute(importer) {
     return component;
   }
 
-  // Per-factory baseline. Reset on unmount so a later revisit after retries
-  // elsewhere starts at attempt 0. Retry remounts consume pendingRetryGeneration
-  // so the recovering route still gets attempt ≥ 1.
+  // Per-factory retry epoch. Each user Retry bumps epoch and clears this
+  // factory's lazy cache so a second Retry cannot reuse a rejected React.lazy.
+  // Fresh visits (no pending retry) start at epoch 0.
   let mountBaseline = null;
+  let retryEpoch = 0;
 
   function LazyRoute(props) {
     const currentGeneration = useSyncExternalStore(
@@ -338,15 +339,21 @@ export function lazyRoute(importer) {
     // Consume pending Retry even when mountBaseline was set during a Suspense
     // render that rejected before useEffect committed (cleanup never ran).
     if (pendingRetryGeneration != null && pendingRetryGeneration === currentGeneration) {
-      mountBaseline = currentGeneration - 1;
       pendingRetryGeneration = null;
+      retryEpoch += 1;
+      cache.clear();
+      if (mountBaseline === null) {
+        mountBaseline = currentGeneration - retryEpoch;
+      }
     } else if (mountBaseline === null) {
       mountBaseline = currentGeneration;
+      retryEpoch = 0;
     }
-    const localAttempt = Math.max(0, currentGeneration - mountBaseline);
+    const localAttempt = retryEpoch;
 
     useEffect(() => () => {
       mountBaseline = null;
+      retryEpoch = 0;
     }, []);
 
     return React.createElement(getLazy(localAttempt), props);
