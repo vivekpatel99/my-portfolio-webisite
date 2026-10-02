@@ -3,6 +3,10 @@ import React, { lazy, useSyncExternalStore } from 'react';
 let generation = 0;
 const subscribers = new Set();
 
+/** CSS URLs Vite marked seen but failed to preload (offline / abort). */
+const failedPreloadCssUrls = new Set();
+let preloadErrorListenerBound = false;
+
 function subscribe(notify) {
   subscribers.add(notify);
   return () => subscribers.delete(notify);
@@ -21,7 +25,33 @@ export function retryLazyRoutes() {
 /** @visibleForTesting */
 export function resetLazyRouteGenerationForTests() {
   generation = 0;
+  failedPreloadCssUrls.clear();
   subscribers.forEach((notify) => notify());
+}
+
+/**
+ * Listen for Vite preload failures so Retry can re-fetch CSS that was marked
+ * "seen" before it loaded (offline stylesheet preload).
+ */
+export function bindVitePreloadErrorListener() {
+  if (preloadErrorListenerBound || typeof window === 'undefined') return;
+  preloadErrorListenerBound = true;
+  window.addEventListener('vite:preloadError', (event) => {
+    const reason = event?.payload;
+    const message = reason?.message ?? String(reason ?? '');
+    const match = message.match(/Unable to preload CSS for (.+)$/);
+    if (match?.[1]) failedPreloadCssUrls.add(match[1]);
+  });
+}
+
+/** @visibleForTesting */
+export function noteFailedPreloadCssUrlForTests(url) {
+  failedPreloadCssUrls.add(url);
+}
+
+/** @visibleForTesting */
+export function getFailedPreloadCssUrlsForTests() {
+  return [...failedPreloadCssUrls];
 }
 
 /**
@@ -63,10 +93,125 @@ export function cacheBustImportUrl(url, attempt) {
   return busted.href;
 }
 
-async function loadRouteModule(importer, attempt, baseUrl) {
+/** Full document reload when an obsolete hashed chunk cannot be recovered in-page. */
+export function reloadDocument() {
+  if (typeof document !== 'undefined' && typeof document.location?.reload === 'function') {
+    document.location.reload();
+  }
+}
+
+/**
+ * Route name prefix from a Vite chunk specifier (`./ContactRoute-abc.js` → `ContactRoute`).
+ * Used to find sibling stylesheets Vite already inserted during a failed preload.
+ */
+export function routeAssetPrefix(specifier) {
+  if (!specifier) return null;
+  const file = specifier.split('/').pop() || '';
+  const withoutExt = file.replace(/\.[^/.]+$/, '');
+  const prefix = withoutExt.replace(/-[A-Za-z0-9_]+$/, '');
+  return prefix || null;
+}
+
+function absoluteAssetUrl(url) {
+  if (!url) return null;
+  if (/^https?:\/\//i.test(url)) return url;
+  if (typeof window !== 'undefined' && window.location?.origin) {
+    return new URL(url, window.location.origin).href;
+  }
+  return url;
+}
+
+function stripRetryParam(url) {
+  const parsed = new URL(url);
+  parsed.searchParams.delete('retry');
+  return parsed.href;
+}
+
+/**
+ * Discover stylesheet hrefs for this route: failed Vite preloads plus any
+ * matching `/assets/<prefix>-*.css` links already in the document.
+ */
+export function collectRouteStylesheetUrls(specifier) {
+  const urls = new Set();
+  for (const failed of failedPreloadCssUrls) {
+    const abs = absoluteAssetUrl(failed);
+    if (abs) urls.add(stripRetryParam(abs));
+  }
+
+  if (typeof document === 'undefined') return [...urls];
+
+  const prefix = routeAssetPrefix(specifier);
+  if (prefix) {
+    document.querySelectorAll('link[rel="stylesheet"]').forEach((link) => {
+      const href = link.href;
+      if (!href) return;
+      if (href.includes(`/${prefix}-`) && /\.css(?:\?|$)/.test(href)) {
+        urls.add(stripRetryParam(href));
+      }
+    });
+  }
+
+  return [...urls];
+}
+
+export function loadStylesheet(url) {
+  if (typeof document === 'undefined') return Promise.resolve();
+
+  const existing = document.querySelector(`link[rel="stylesheet"][href="${url}"]`);
+  if (existing) {
+    try {
+      if (existing.sheet) return Promise.resolve();
+    } catch {
+      // Cross-origin sheet access can throw; still treat as present.
+      return Promise.resolve();
+    }
+  }
+
+  return new Promise((resolve, reject) => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = url;
+    link.addEventListener('load', () => resolve());
+    link.addEventListener('error', () => reject(new Error(`Unable to load CSS for ${url}`)));
+    document.head.appendChild(link);
+  });
+}
+
+/**
+ * Vite skips stylesheets it already marked "seen" after an offline preload failure.
+ * Cache-bust and re-insert those CSS deps so Contact.css (etc.) load on Retry.
+ */
+export async function retryRouteStylesheets(importer, attempt) {
+  const specifier = extractImportSpecifier(importer);
+  const urls = collectRouteStylesheetUrls(specifier);
+  if (urls.length === 0) return;
+
+  await Promise.all(urls.map(async (url) => {
+    const busted = cacheBustImportUrl(url, attempt);
+    await loadStylesheet(busted);
+    // Clear tracked failure once a busted load is attempted successfully.
+    for (const failed of [...failedPreloadCssUrls]) {
+      const abs = absoluteAssetUrl(failed);
+      if (abs && stripRetryParam(abs) === url) failedPreloadCssUrls.delete(failed);
+    }
+  }));
+}
+
+/** @visibleForTesting */
+export async function loadRouteModule(
+  importer,
+  attempt,
+  baseUrl,
+  dynamicImport = (url) => import(/* @vite-ignore */ url),
+  reload = reloadDocument,
+) {
   if (attempt === 0) {
     return importer();
   }
+
+  // After a prior offline CSS preload failure, Vite skips the stylesheet on the
+  // next importer() call; re-fetch CSS deps with a cache-bust before JS retry.
+  await retryRouteStylesheets(importer, attempt);
 
   // Chromium re-requests the same module URL after connectivity returns.
   try {
@@ -76,7 +221,13 @@ async function loadRouteModule(importer, attempt, baseUrl) {
     const url = resolveImportUrl(specifier, baseUrl);
     if (!url) throw error;
     // WebKit keeps failing the exact URL after a failed module import; a query bust recovers.
-    return import(/* @vite-ignore */ cacheBustImportUrl(url, attempt));
+    try {
+      return await dynamicImport(cacheBustImportUrl(url, attempt));
+    } catch (bustError) {
+      // Obsolete hashed chunk after deploy — only a full document reload picks up the new mapping.
+      reload();
+      throw bustError;
+    }
   }
 }
 
@@ -85,6 +236,7 @@ async function loadRouteModule(importer, attempt, baseUrl) {
  * instead of window.location.reload() (which does not re-fetch the chunk in WebKit).
  */
 export function lazyRoute(importer) {
+  bindVitePreloadErrorListener();
   const baseUrl = import.meta.url;
   const cache = new Map();
 

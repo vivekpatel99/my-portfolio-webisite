@@ -66,25 +66,84 @@ const RouteErrorFallback = ({ onRetry }) => {
   );
 };
 
+function focusRecoveredRouteContent() {
+  const main = document.getElementById('main-content');
+  if (!main) return false;
+  // Still showing the recovery UI (retry failed again).
+  if (main.querySelector('[data-route-error]')) return false;
+  // Suspense fallback while the remounted lazy factory loads.
+  if (main.querySelector('[role="status"][aria-label="Loading page"]')) return false;
+
+  const heading = main.querySelector('h1');
+  focusNavigationTarget(heading || main);
+  return true;
+}
+
 class RouteErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false };
+    this.focusObserver = null;
+    this.focusTimeoutId = null;
   }
 
   static getDerivedStateFromError() {
     return { hasError: true };
   }
 
+  componentWillUnmount() {
+    this.teardownFocusRecovery();
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (prevState.hasError && this.state.hasError && prevProps.resetKey !== this.props.resetKey) {
       this.setState({ hasError: false });
     }
+
+    // Retry unmounts the focused button without a location change, so ScrollToTop
+    // never runs. Move focus to the recovered main / heading once content appears.
+    if (prevState.hasError && !this.state.hasError) {
+      this.scheduleFocusAfterRecovery();
+    }
+  }
+
+  teardownFocusRecovery() {
+    if (this.focusObserver) {
+      this.focusObserver.disconnect();
+      this.focusObserver = null;
+    }
+    if (this.focusTimeoutId != null) {
+      window.clearTimeout(this.focusTimeoutId);
+      this.focusTimeoutId = null;
+    }
+  }
+
+  scheduleFocusAfterRecovery() {
+    this.teardownFocusRecovery();
+
+    if (focusRecoveredRouteContent()) return;
+
+    const main = document.getElementById('main-content');
+    if (!main || typeof MutationObserver === 'undefined') {
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          focusRecoveredRouteContent();
+        });
+      });
+      return;
+    }
+
+    this.focusObserver = new MutationObserver(() => {
+      if (focusRecoveredRouteContent()) this.teardownFocusRecovery();
+    });
+    this.focusObserver.observe(main, { childList: true, subtree: true });
+    this.focusTimeoutId = window.setTimeout(() => this.teardownFocusRecovery(), 5000);
   }
 
   handleRetry = () => {
     // Remount lazy factories with a cache-busting import; do not reload the document.
     // WebKit will not re-request a module URL that already failed in this tab.
+    // (Obsolete chunk URLs still fall back to document.location.reload inside lazyRoute.)
     retryLazyRoutes();
     this.setState({ hasError: false });
   };
