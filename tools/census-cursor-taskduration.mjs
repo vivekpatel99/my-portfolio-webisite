@@ -101,18 +101,17 @@ try {
         await page.evaluate(() => {
           window.cursorCommits = 0;
           window.cursorCommitTimes = [];
-          window.__censusRaf = 0;
-          const loop = () => {
-            window.__censusRaf++;
-            window.__censusRafHandle = requestAnimationFrame(loop);
-          };
-          window.__censusRafHandle = requestAnimationFrame(loop);
+          // Do not inject a self-scheduling rAF loop into the measured window;
+          // that harness work would inflate TaskDuration / TaskOtherDuration.
         });
 
         const before = await metrics();
         const start = Date.now();
+        let movesDone = 0;
         for (let move = 0; move < MOVES; move++) {
+          if (Date.now() - start >= WINDOW_MS) break;
           await page.mouse.move(300 + move * 2, 500 + Math.sin(move / 15) * 60);
+          movesDone += 1;
           const remaining = start + ((move + 1) * WINDOW_MS) / MOVES - Date.now();
           if (remaining > 0) {
             await new Promise((resolve) => setTimeout(resolve, remaining));
@@ -120,13 +119,13 @@ try {
         }
         const after = await metrics();
         const elapsedMs = Date.now() - start;
+        const paceSlipMs = Math.max(0, elapsedMs - WINDOW_MS);
 
         const census = await page.evaluate(() => {
-          if (window.__censusRafHandle) cancelAnimationFrame(window.__censusRafHandle);
           return {
             commits: window.cursorCommits,
             commitTimes: window.cursorCommitTimes.slice(),
-            rafTicks: window.__censusRaf,
+            rafTicks: 0,
           };
         });
 
@@ -142,6 +141,8 @@ try {
           run,
           moves: MOVES,
           elapsedMs,
+          movesDone,
+          paceSlipMs,
           windowTargetMs: WINDOW_MS,
           paceSlipMs: Math.max(0, elapsedMs - WINDOW_MS),
           commits: census.commits,
@@ -186,6 +187,64 @@ const delta = (key) => {
   };
 };
 
+const census = {
+  taskMs: delta('taskMs'),
+  scriptMs: delta('scriptMs'),
+  styleMs: delta('styleMs'),
+  layoutMs: delta('layoutMs'),
+  attributedOtherMs: delta('attributedOtherMs'),
+  taskOtherMs: delta('taskOtherMs'),
+  commits: delta('commits'),
+  elapsedMs: delta('elapsedMs'),
+  movesDone: delta('movesDone'),
+  paceSlipMs: delta('paceSlipMs'),
+  rafTicks: delta('rafTicks'),
+  styleCount: delta('styleCount'),
+};
+
+const paceSlipMedian = census.paceSlipMs.normalMedian;
+const movesDoneMedian = census.movesDone.normalMedian;
+
+const residualConclusionNotes = (() => {
+  const notes = [];
+  const commitMedian = census.commits.normalMedian;
+  const taskMedian = census.taskMs.normalMedian;
+  const reducedTaskMedian = census.taskMs.reducedMedian;
+  if (commitMedian <= 1) {
+    notes.push(
+      `Near-zero React commits (median ${commitMedian}, not ${MOVES}) means leftover TaskDuration is not per-frame React commit work.`,
+    );
+  } else {
+    notes.push(
+      `React commits still high (normal median ${commitMedian} vs ${MOVES} moves). Residual TaskDuration cannot be attributed away from React until commits are near zero.`,
+    );
+  }
+  notes.push(
+    'attributedOtherMs is TaskDuration minus Script minus Style minus Layout for the whole page under the probe window.',
+  );
+  notes.push(
+    'IMPORTANT: normal vs reduced-motion delta is a whole-page motion-mode delta, not a cursor-only attribution. Other motion-gated actors (e.g. testimonials carousel) also change under prefers-reduced-motion. Cursor-only disable is a follow-up harness improvement, not required to reject the absolute <=200ms gate.',
+  );
+  notes.push(
+    'Harness no longer injects a self-scheduling rAF loop into the measured window (rafTicks stay 0).',
+  );
+  if (paceSlipMedian > 0 || movesDoneMedian < MOVES) {
+    notes.push(
+      `Sampling stops at the ${WINDOW_MS}ms deadline (normal median movesDone ${movesDoneMedian}/${MOVES}, paceSlipMs ${paceSlipMedian}). Discard or flag slipped runs when comparing to the absolute gate.`,
+    );
+  }
+  if (commitMedian <= 1 && taskMedian > 200) {
+    notes.push(
+      `Normal-motion median TaskDuration ${taskMedian}ms stays >200ms while commits are near zero (reduce control ${reducedTaskMedian}ms). Absolute <=200ms gate is wrong for this probe+spring+4xCPU combination; prefer 0 commits + documented residual + owner feel.`,
+    );
+  } else if (taskMedian <= 200 && commitMedian <= 1) {
+    notes.push(
+      `Normal-motion median TaskDuration ${taskMedian}ms meets <=200ms with near-zero commits on this run.`,
+    );
+  }
+  return notes;
+})();
+
 const report = {
   premise:
     'Further optimizing the spring-driven CustomCursor path under this matched probe will bring TaskDuration under 200ms.',
@@ -197,56 +256,12 @@ const report = {
     windowTargetMs: WINDOW_MS,
     scrollY: 1200,
     consent: { necessary: true, analytics: false },
+    samplingPolicy: 'stop-at-window-deadline',
+    motionControl: 'whole-page-prefers-reduced-motion',
   },
   runs,
-  census: {
-    taskMs: delta('taskMs'),
-    scriptMs: delta('scriptMs'),
-    styleMs: delta('styleMs'),
-    layoutMs: delta('layoutMs'),
-    attributedOtherMs: delta('attributedOtherMs'),
-    taskOtherMs: delta('taskOtherMs'),
-    commits: delta('commits'),
-    elapsedMs: delta('elapsedMs'),
-    rafTicks: delta('rafTicks'),
-    styleCount: delta('styleCount'),
-  },
-  residualConclusionNotes: (() => {
-    const notes = [];
-    const commitMedian = census.commits.normalMedian;
-    const taskMedian = census.taskMs.normalMedian;
-    const reduceTaskMedian = census.taskMs.reduceMedian;
-    if (commitMedian <= 1) {
-      notes.push(
-        `Near-zero React commits (median ${commitMedian}, not ${MOVES}) means leftover TaskDuration is not per-frame React commit work.`,
-      );
-    } else {
-      notes.push(
-        `React commits still high (normal median ${commitMedian} vs ${MOVES} moves). Residual TaskDuration cannot be attributed away from React until commits are near zero.`,
-      );
-    }
-    notes.push(
-      'attributedOtherMs is TaskDuration minus Script minus Style minus Layout for the whole page under the probe window.',
-    );
-    notes.push(
-      'IMPORTANT: normal vs reduced-motion delta is a whole-page motion-mode delta, not a cursor-only attribution. Other motion-gated actors (e.g. testimonials carousel) also change under prefers-reduced-motion.',
-    );
-    if (paceSlipMs > 0) {
-      notes.push(
-        `paceSlipMs ${paceSlipMs} lengthens the wall-clock window; TaskDuration scales with how long work keeps scheduling under 4x CPU.`,
-      );
-    }
-    if (commitMedian <= 1 && taskMedian > 200) {
-      notes.push(
-        `Normal-motion median TaskDuration ${taskMedian}ms stays >200ms while commits are near zero (reduce control ${reduceTaskMedian}ms). Absolute <=200ms gate is wrong for this probe+spring+4xCPU combination; prefer 0 commits + documented residual + owner feel.`,
-      );
-    } else if (taskMedian <= 200 && commitMedian <= 1) {
-      notes.push(
-        `Normal-motion median TaskDuration ${taskMedian}ms meets <=200ms with near-zero commits on this run.`,
-      );
-    }
-    return notes;
-  })()
+  census,
+  residualConclusionNotes,
 };
 
 const output = `${JSON.stringify(report, null, 2)}\n`;

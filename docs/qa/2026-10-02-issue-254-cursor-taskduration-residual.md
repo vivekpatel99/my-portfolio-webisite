@@ -106,3 +106,15 @@ Do **not** use Cursor CloudAgent / Background Agent.
 No application code change in this follow-up (census + QA docs only). Physical cursor feel still needs owner acceptance. Issue #254 must stay open. Use `Refs #254` on any PR — not `Closes #254`.
 
 Principles: Attack-the-Premise, Build-the-Lever, Prove-It-Works, Laziness Protocol.
+
+## Harness follow-up (Codex review on PR #287)
+
+Addressed in the census lever before merge:
+
+- Build  /  with real bindings (fixes ).
+- Stop mouse sampling at the 2s deadline ( + ).
+- Remove self-scheduling rAF from the measured window.
+- Keep whole-page  control labeled as such (cursor-only disable is follow-up).
+
+Committed census JSON under  may still reflect the pre-fix harness until a fresh preview run regenerates it; conclusions in this report remain tied to the prior #277 paced labs + develop probe medians already cited above.
+
