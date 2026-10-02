@@ -9,6 +9,7 @@ import {
   extractImportSpecifier,
   getFailedPreloadCssUrlsForTests,
   getLazyRouteGeneration,
+  isAssetRequestReachable,
   loadRouteModule,
   loadStylesheet,
   noteFailedPreloadCssUrlForTests,
@@ -82,6 +83,16 @@ describe('lazyRoute helpers', () => {
     expect(routeAssetPrefix('./ContactRoute-abc123.js')).toBe('ContactRoute');
     expect(routeAssetPrefix('/assets/Legal-XYZ.js')).toBe('Legal');
   });
+
+  it('isAssetRequestReachable is true when fetch gets a response', async () => {
+    const fetchImpl = vi.fn(async () => ({ ok: false, status: 404 }));
+    await expect(isAssetRequestReachable('http://127.0.0.1/assets/x.js', fetchImpl)).resolves.toBe(true);
+  });
+
+  it('isAssetRequestReachable is false when fetch cannot connect', async () => {
+    const fetchImpl = vi.fn(async () => { throw new TypeError('Failed to fetch'); });
+    await expect(isAssetRequestReachable('http://127.0.0.1/assets/x.js', fetchImpl)).resolves.toBe(false);
+  });
 });
 
 describe('lazyRoute reload fallback (obsolete chunk)', () => {
@@ -94,8 +105,9 @@ describe('lazyRoute reload fallback (obsolete chunk)', () => {
     vi.restoreAllMocks();
   });
 
-  it('reloads the document when importer and cache-bust import both fail', async () => {
+  it('reloads when cache-bust fails but the asset URL is reachable (stale deploy / transitive map)', async () => {
     const reload = vi.fn();
+    const fetchImpl = vi.fn(async () => ({ ok: false, status: 404 }));
     const importer = importerWithSource(
       '()=>import("./ContactRoute-oldhash.js")',
       () => Promise.reject(new Error('Failed to fetch dynamically imported module')),
@@ -103,7 +115,7 @@ describe('lazyRoute reload fallback (obsolete chunk)', () => {
     const dynamicImport = vi.fn(() => Promise.reject(new Error('404 obsolete chunk')));
 
     await expect(
-      loadRouteModule(importer, 1, 'http://127.0.0.1:3000/assets/index.js', dynamicImport, reload),
+      loadRouteModule(importer, 1, 'http://127.0.0.1:3000/assets/index.js', dynamicImport, reload, fetchImpl),
     ).rejects.toThrow(/404 obsolete chunk/);
 
     expect(dynamicImport).toHaveBeenCalledWith(
@@ -112,8 +124,25 @@ describe('lazyRoute reload fallback (obsolete chunk)', () => {
     expect(reload).toHaveBeenCalledTimes(1);
   });
 
+  it('does not reload when cache-bust fails while offline (unreachable)', async () => {
+    const reload = vi.fn();
+    const fetchImpl = vi.fn(async () => { throw new TypeError('Failed to fetch'); });
+    const importer = importerWithSource(
+      '()=>import("./ContactRoute-oldhash.js")',
+      () => Promise.reject(new Error('Failed to fetch dynamically imported module')),
+    );
+    const dynamicImport = vi.fn(() => Promise.reject(new Error('still offline')));
+
+    await expect(
+      loadRouteModule(importer, 1, 'http://127.0.0.1:3000/assets/index.js', dynamicImport, reload, fetchImpl),
+    ).rejects.toThrow(/still offline/);
+
+    expect(reload).not.toHaveBeenCalled();
+  });
+
   it('does not reload when cache-bust import succeeds', async () => {
     const reload = vi.fn();
+    const fetchImpl = vi.fn(async () => ({ ok: true, status: 200 }));
     const importer = importerWithSource(
       '()=>import("./ContactRoute-abc.js")',
       () => Promise.reject(new Error('webkit module map')),
@@ -122,12 +151,11 @@ describe('lazyRoute reload fallback (obsolete chunk)', () => {
     const dynamicImport = vi.fn(() => Promise.resolve(mod));
 
     await expect(
-      loadRouteModule(importer, 1, 'http://127.0.0.1:3000/assets/index.js', dynamicImport, reload),
+      loadRouteModule(importer, 1, 'http://127.0.0.1:3000/assets/index.js', dynamicImport, reload, fetchImpl),
     ).resolves.toBe(mod);
 
     expect(reload).not.toHaveBeenCalled();
   });
-
 });
 
 describe('lazyRoute CSS dependency retry', () => {
@@ -211,6 +239,73 @@ describe('lazyRoute CSS dependency retry', () => {
     await loadRouteModule(importer, 1, 'http://127.0.0.1:3000/assets/index.js');
     expect(loadOrder[0]).toBe('css');
     expect(loadOrder).toContain('js');
+  });
+
+  it('reloads when a reachable obsolete stylesheet still fails on retry', async () => {
+    noteFailedPreloadCssUrlForTests('/assets/ContactRoute-old.css');
+    const reload = vi.fn();
+    const fetchImpl = vi.fn(async () => ({ ok: false, status: 404 }));
+
+    const appendSpy = vi.spyOn(document.head, 'appendChild');
+    appendSpy.mockImplementation((node) => {
+      HTMLElement.prototype.appendChild.call(document.head, node);
+      if (node.rel === 'stylesheet') {
+        queueMicrotask(() => node.dispatchEvent(new Event('error')));
+      }
+      return node;
+    });
+
+    const importer = importerWithSource(
+      '()=>import("./ContactRoute-old.js")',
+      () => Promise.resolve({ default: () => null }),
+    );
+
+    await expect(
+      loadRouteModule(
+        importer,
+        1,
+        'http://127.0.0.1:3000/assets/index.js',
+        (url) => import(/* @vite-ignore */ url),
+        reload,
+        fetchImpl,
+      ),
+    ).rejects.toThrow(/Stale route stylesheet/);
+
+    expect(reload).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not reload when stylesheet retry fails while offline', async () => {
+    noteFailedPreloadCssUrlForTests('/assets/ContactRoute-x.css');
+    const reload = vi.fn();
+    const fetchImpl = vi.fn(async () => { throw new TypeError('Failed to fetch'); });
+
+    const appendSpy = vi.spyOn(document.head, 'appendChild');
+    appendSpy.mockImplementation((node) => {
+      HTMLElement.prototype.appendChild.call(document.head, node);
+      if (node.rel === 'stylesheet') {
+        queueMicrotask(() => node.dispatchEvent(new Event('error')));
+      }
+      return node;
+    });
+
+    const mod = { default: () => null };
+    const importer = importerWithSource(
+      '()=>import("./ContactRoute-x.js")',
+      () => Promise.resolve(mod),
+    );
+
+    await expect(
+      loadRouteModule(
+        importer,
+        1,
+        'http://127.0.0.1:3000/assets/index.js',
+        (url) => import(/* @vite-ignore */ url),
+        reload,
+        fetchImpl,
+      ),
+    ).resolves.toBe(mod);
+
+    expect(reload).not.toHaveBeenCalled();
   });
 
   it('loadStylesheet resolves when the link fires load', async () => {

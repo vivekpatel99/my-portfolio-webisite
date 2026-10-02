@@ -101,6 +101,25 @@ export function reloadDocument() {
 }
 
 /**
+ * True when the browser can reach the asset URL (any HTTP status).
+ * False when offline / aborted — Retry should stay in-page, not reload.
+ */
+export async function isAssetRequestReachable(url, fetchImpl = fetch) {
+  if (!url || typeof fetchImpl !== 'function') return false;
+  try {
+    await fetchImpl(url, { method: 'HEAD', cache: 'no-store' });
+    return true;
+  } catch {
+    try {
+      await fetchImpl(url, { method: 'GET', cache: 'no-store' });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+}
+
+/**
  * Route name prefix from a Vite chunk specifier (`./ContactRoute-abc.js` → `ContactRoute`).
  * Used to find sibling stylesheets Vite already inserted during a failed preload.
  */
@@ -179,22 +198,36 @@ export function loadStylesheet(url) {
   });
 }
 
+function staleStylesheetError(url) {
+  const error = new Error(`Stale route stylesheet: ${url}`);
+  error.staleAsset = true;
+  return error;
+}
+
 /**
  * Vite skips stylesheets it already marked "seen" after an offline preload failure.
  * Cache-bust and re-insert those CSS deps so Contact.css (etc.) load on Retry.
+ * If the stylesheet is reachable but still fails (obsolete hash after deploy), throw
+ * a staleAsset error so callers can fall back to document reload.
  */
-export async function retryRouteStylesheets(importer, attempt) {
+export async function retryRouteStylesheets(importer, attempt, fetchImpl = fetch) {
   const specifier = extractImportSpecifier(importer);
   const urls = collectRouteStylesheetUrls(specifier);
   if (urls.length === 0) return;
 
   await Promise.all(urls.map(async (url) => {
     const busted = cacheBustImportUrl(url, attempt);
-    await loadStylesheet(busted);
-    // Clear tracked failure once a busted load is attempted successfully.
-    for (const failed of [...failedPreloadCssUrls]) {
-      const abs = absoluteAssetUrl(failed);
-      if (abs && stripRetryParam(abs) === url) failedPreloadCssUrls.delete(failed);
+    try {
+      await loadStylesheet(busted);
+      for (const failed of [...failedPreloadCssUrls]) {
+        const abs = absoluteAssetUrl(failed);
+        if (abs && stripRetryParam(abs) === url) failedPreloadCssUrls.delete(failed);
+      }
+    } catch (error) {
+      if (await isAssetRequestReachable(url, fetchImpl)) {
+        throw staleStylesheetError(url);
+      }
+      // Offline / aborted — leave tracked so a later Retry can try again.
     }
   }));
 }
@@ -206,6 +239,7 @@ export async function loadRouteModule(
   baseUrl,
   dynamicImport = (url) => import(/* @vite-ignore */ url),
   reload = reloadDocument,
+  fetchImpl = fetch,
 ) {
   if (attempt === 0) {
     return importer();
@@ -213,7 +247,15 @@ export async function loadRouteModule(
 
   // After a prior offline CSS preload failure, Vite skips the stylesheet on the
   // next importer() call; re-fetch CSS deps with a cache-bust before JS retry.
-  await retryRouteStylesheets(importer, attempt);
+  try {
+    await retryRouteStylesheets(importer, attempt, fetchImpl);
+  } catch (cssError) {
+    // Obsolete hashed CSS after deploy — only a full reload gets the new mapping.
+    if (cssError?.staleAsset) {
+      reload();
+    }
+    throw cssError;
+  }
 
   // Chromium re-requests the same module URL after connectivity returns.
   try {
@@ -223,11 +265,14 @@ export async function loadRouteModule(
     const url = resolveImportUrl(specifier, baseUrl);
     if (!url) throw error;
     // WebKit keeps failing the exact URL after a failed module import; a query bust recovers.
+    // Transitive deps (e.g. pageMotion) may still be stuck in WebKit's module map — if the
+    // network is reachable, fall back to a document reload for a fresh module graph.
     try {
       return await dynamicImport(cacheBustImportUrl(url, attempt));
     } catch (bustError) {
-      // Obsolete hashed chunk after deploy — only a full document reload picks up the new mapping.
-      reload();
+      if (await isAssetRequestReachable(url, fetchImpl)) {
+        reload();
+      }
       throw bustError;
     }
   }
