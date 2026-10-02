@@ -1,7 +1,9 @@
-import React, { lazy, useSyncExternalStore } from 'react';
+import React, { lazy, useEffect, useSyncExternalStore } from 'react';
 
 let generation = 0;
 const subscribers = new Set();
+/** Set by retryLazyRoutes; consumed by the recovering route on remount. */
+let pendingRetryGeneration = null;
 
 /** CSS URLs Vite marked seen but failed to preload (offline / abort). */
 const failedPreloadCssUrls = new Set();
@@ -19,12 +21,14 @@ export function getLazyRouteGeneration() {
 /** Bump the lazy-route generation so Retry remounts with a fresh React.lazy factory. */
 export function retryLazyRoutes() {
   generation += 1;
+  pendingRetryGeneration = generation;
   subscribers.forEach((notify) => notify());
 }
 
 /** @visibleForTesting */
 export function resetLazyRouteGenerationForTests() {
   generation = 0;
+  pendingRetryGeneration = null;
   failedPreloadCssUrls.clear();
   subscribers.forEach((notify) => notify());
 }
@@ -166,14 +170,19 @@ function stripRetryParam(url) {
  */
 export function collectRouteStylesheetUrls(specifier) {
   const urls = new Set();
+  const prefix = routeAssetPrefix(specifier);
+
   for (const failed of failedPreloadCssUrls) {
     const abs = absoluteAssetUrl(failed);
-    if (abs) urls.add(stripRetryParam(abs));
+    if (!abs) continue;
+    // Only retry stylesheets that belong to this route (Contact failure must not
+    // block a later Legal retry).
+    if (prefix && !abs.includes(`/${prefix}-`)) continue;
+    urls.add(stripRetryParam(abs));
   }
 
   if (typeof document === 'undefined') return [...urls];
 
-  const prefix = routeAssetPrefix(specifier);
   if (prefix) {
     document.querySelectorAll('link[rel="stylesheet"]').forEach((link) => {
       const href = link.href;
@@ -312,9 +321,9 @@ export function lazyRoute(importer) {
     return component;
   }
 
-  // Closure baseline survives error-boundary remounts after Retry, but each
-  // lazyRoute() factory (Contact vs Legal) keeps its own baseline so a prior
-  // Retry on another route does not force attempt > 0 on first visit.
+  // Per-factory baseline. Reset on unmount so a later revisit after retries
+  // elsewhere starts at attempt 0. Retry remounts consume pendingRetryGeneration
+  // so the recovering route still gets attempt ≥ 1.
   let mountBaseline = null;
 
   function LazyRoute(props) {
@@ -324,9 +333,19 @@ export function lazyRoute(importer) {
       getLazyRouteGeneration,
     );
     if (mountBaseline === null) {
-      mountBaseline = currentGeneration;
+      if (pendingRetryGeneration != null && pendingRetryGeneration === currentGeneration) {
+        mountBaseline = currentGeneration - 1;
+        pendingRetryGeneration = null;
+      } else {
+        mountBaseline = currentGeneration;
+      }
     }
     const localAttempt = Math.max(0, currentGeneration - mountBaseline);
+
+    useEffect(() => () => {
+      mountBaseline = null;
+    }, []);
+
     return React.createElement(getLazy(localAttempt), props);
   }
 

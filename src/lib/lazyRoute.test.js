@@ -183,6 +183,15 @@ describe('lazyRoute CSS dependency retry', () => {
     expect(getFailedPreloadCssUrlsForTests()).toContain('/assets/ContactRoute-D4-jsGsd.css');
   });
 
+  
+  it('scopes failed CSS preloads to the current route prefix', () => {
+    noteFailedPreloadCssUrlForTests('/assets/ContactRoute-D4-jsGsd.css');
+    noteFailedPreloadCssUrlForTests('/assets/Legal-abc.css');
+    const contactUrls = collectRouteStylesheetUrls('./ContactRoute-Dv4Ieurc.js');
+    expect(contactUrls.some((u) => u.includes('ContactRoute-'))).toBe(true);
+    expect(contactUrls.some((u) => u.includes('Legal-'))).toBe(false);
+  });
+
   it('collects failed and DOM stylesheet URLs for the route prefix', () => {
     noteFailedPreloadCssUrlForTests('/assets/ContactRoute-D4-jsGsd.css');
     const link = document.createElement('link');
