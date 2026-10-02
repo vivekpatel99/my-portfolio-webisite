@@ -100,14 +100,16 @@ try {
           ]),
         );
 
-        await page.evaluate(() => {
+        // Do not inject a self-scheduling rAF loop into the measured window;
+        // that harness work would inflate TaskDuration / TaskOtherDuration.
+        const before = await metrics();
+        // Reset the commit counter at the same boundary as the metrics window
+        // start so testimonials/carousel commits during getMetrics are excluded.
+        const windowStart = await page.evaluate(() => {
           window.cursorCommits = 0;
           window.cursorCommitTimes = [];
-          // Do not inject a self-scheduling rAF loop into the measured window;
-          // that harness work would inflate TaskDuration / TaskOtherDuration.
+          return performance.now();
         });
-
-        const before = await metrics();
         const start = Date.now();
         let movesDone = 0;
         for (let move = 0; move < MOVES; move++) {
@@ -123,15 +125,20 @@ try {
         // sampleComplete falsely fails after a paced 2s move loop.
         const elapsedMs = Date.now() - start;
         const paceSlipMs = Math.max(0, elapsedMs - WINDOW_MS);
+        const windowEnd = await page.evaluate(() => performance.now());
         const after = await metrics();
 
-        const census = await page.evaluate(() => {
+        // Keep only commits whose timestamps fall inside the metrics window.
+        const census = await page.evaluate(({ windowStart, windowEnd }) => {
+          const commitTimes = window.cursorCommitTimes.filter(
+            (t) => t >= windowStart && t <= windowEnd,
+          );
           return {
-            commits: window.cursorCommits,
-            commitTimes: window.cursorCommitTimes.slice(),
+            commits: commitTimes.length,
+            commitTimes,
             rafTicks: 0,
           };
-        });
+        }, { windowStart, windowEnd });
 
         const scriptMs = metricDeltaMs(before, after, 'ScriptDuration');
         const styleMs = metricDeltaMs(before, after, 'RecalcStyleDuration');
