@@ -441,7 +441,7 @@
     "attributedOtherMs is TaskDuration minus Script minus Style minus Layout for the whole page under the probe window.",
     "IMPORTANT: when comparativeValid is true, normal vs reduced-motion delta is a whole-page motion-mode delta, not a cursor-only attribution.",
     "Harness no longer injects a self-scheduling rAF loop into the measured window (rafTicks stay 0 on regenerated runs).",
-    "Withholding absolute-gate and commit-attribution conclusions until every normal run completes 241 moves with paceSlipMs<=32 with paceSlipMs<=32."
+    "Withholding absolute-gate and commit-attribution conclusions until every normal run completes 241 moves with paceSlipMs<=32 (scheduler jitter after the final paced sleep)."
   ],
   "comparativeValid": false
 }
