@@ -18,6 +18,8 @@ assertLoopbackPreviewUrl(baseURL);
 const RUNS = Number(process.env.CENSUS_RUNS || 3);
 const MOVES = 241;
 const WINDOW_MS = 2000;
+// Final paced sleep targets start+WINDOW_MS exactly; timer jitter often lands at 2001–2008ms.
+const PACE_SLIP_TOLERANCE_MS = 32;
 
 const metricDeltaMs = (before, after, name) =>
   ((after[name] ?? 0) - (before[name] ?? 0)) * 1000;
@@ -208,17 +210,21 @@ const movesDoneMedian = census.movesDone.normalMedian;
 const reducedPaceSlipMedian = census.paceSlipMs.reducedMedian;
 const reducedMovesDoneMedian = census.movesDone.reducedMedian;
 
+// Completeness: all moves done. Allow tiny slip only when the full move count
+// finished — that is final pacing-sleep jitter, not a movement overrun.
 const armWorkloadComplete = (arm) =>
-  census.movesDone[arm].values.every((n) => n === MOVES) &&
-  census.paceSlipMs[arm].values.every((n) => n === 0);
+  census.movesDone[arm].values.every((n, i) => {
+    const slip = census.paceSlipMs[arm].values[i] ?? 0;
+    return n === MOVES && slip <= PACE_SLIP_TOLERANCE_MS;
+  });
 
 const normalSampleComplete =
   movesDoneMedian === MOVES &&
-  paceSlipMedian === 0 &&
+  paceSlipMedian <= PACE_SLIP_TOLERANCE_MS &&
   armWorkloadComplete('normal');
 const reducedSampleComplete =
   reducedMovesDoneMedian === MOVES &&
-  reducedPaceSlipMedian === 0 &&
+  reducedPaceSlipMedian <= PACE_SLIP_TOLERANCE_MS &&
   armWorkloadComplete('reduced');
 const comparativeSampleComplete = normalSampleComplete && reducedSampleComplete;
 
@@ -249,7 +255,7 @@ const residualConclusionNotes = (() => {
   // (e.g. 2 moves / 1 commit) are not enough evidence against per-frame work.
   if (!normalSampleComplete) {
     notes.push(
-      `Withholding React commit-attribution conclusions until every normal run completes ${MOVES} moves inside ${WINDOW_MS}ms (commits ${JSON.stringify(commitValues)}, movesDone ${JSON.stringify(movesValues)}). Short incomplete samples can look near-zero without proving non-per-frame React work.`,
+      `Withholding React commit-attribution conclusions until every normal run completes ${MOVES} moves with paceSlipMs<=${PACE_SLIP_TOLERANCE_MS} (scheduler jitter after the final paced sleep) (commits ${JSON.stringify(commitValues)}, movesDone ${JSON.stringify(movesValues)}). Short incomplete samples can look near-zero without proving non-per-frame React work.`,
     );
   } else if (commitsNearZero) {
     notes.push(
@@ -271,12 +277,12 @@ const residualConclusionNotes = (() => {
   );
   if (!normalSampleComplete) {
     notes.push(
-      `Incomplete normal-motion sample vs declared workload/window (median movesDone ${movesDoneMedian}/${MOVES}, paceSlipMs ${paceSlipMedian}; per-run movesDone ${JSON.stringify(census.movesDone.normal.values)}, paceSlipMs ${JSON.stringify(census.paceSlipMs.normal.values)}). Discard or flag slipped runs; withhold absolute-gate conclusions until every normal run completes ${MOVES} moves inside ${WINDOW_MS}ms.`,
+      `Incomplete normal-motion sample vs declared workload/window (median movesDone ${movesDoneMedian}/${MOVES}, paceSlipMs ${paceSlipMedian}; per-run movesDone ${JSON.stringify(census.movesDone.normal.values)}, paceSlipMs ${JSON.stringify(census.paceSlipMs.normal.values)}). Discard or flag slipped runs; withhold absolute-gate conclusions until every normal run completes ${MOVES} moves with paceSlipMs<=${PACE_SLIP_TOLERANCE_MS} (scheduler jitter after the final paced sleep).`,
     );
   }
   if (!reducedSampleComplete) {
     notes.push(
-      `Incomplete reduced-motion control vs declared workload/window (median movesDone ${reducedMovesDoneMedian}/${MOVES}, paceSlipMs ${reducedPaceSlipMedian}; per-run movesDone ${JSON.stringify(census.movesDone.reduced.values)}, paceSlipMs ${JSON.stringify(census.paceSlipMs.reduced.values)}). Mark reduced control medians and wholePageMotionModeDeltaMedian invalid; do not compare arms until every reduced run completes ${MOVES} moves inside ${WINDOW_MS}ms.`,
+      `Incomplete reduced-motion control vs declared workload/window (median movesDone ${reducedMovesDoneMedian}/${MOVES}, paceSlipMs ${reducedPaceSlipMedian}; per-run movesDone ${JSON.stringify(census.movesDone.reduced.values)}, paceSlipMs ${JSON.stringify(census.paceSlipMs.reduced.values)}). Mark reduced control medians and wholePageMotionModeDeltaMedian invalid; do not compare arms until every reduced run completes ${MOVES} moves with paceSlipMs<=${PACE_SLIP_TOLERANCE_MS}.`,
     );
   }
   // Absolute gate: normal arm only. Cite reduce control / deltas only when both arms complete.
@@ -308,6 +314,7 @@ const report = {
     scrollY: 1200,
     consent: { necessary: true, analytics: false },
     samplingPolicy: 'stop-at-window-deadline',
+    paceSlipToleranceMs: PACE_SLIP_TOLERANCE_MS,
     motionControl: 'whole-page-prefers-reduced-motion',
   },
   runs,

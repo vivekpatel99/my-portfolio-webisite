@@ -123,4 +123,4 @@ Addressed in the census lever before merge:
 
 The committed census JSON under `docs/qa/assets/` is a **pre-fix incomplete sample**. It now carries `comparativeValid: false` and nulled whole-page deltas so it cannot be misread as a valid arm comparison. Absolute TaskDuration / commit figures remain for context. Gate-revision evidence leans on prior #277 paced labs (elapsed≈2s, 227–423ms, 0 commits) plus the develop measure tables above — not on nulled census Δ.
 
-Absolute-gate conclusions in the live census lever require a complete sample: every normal run finishes all 241 moves inside the 2s window (`paceSlipMs == 0`). Commit attribution uses the **max** across normal runs (not the median), so one failed run cannot hide per-frame React work.
+Absolute-gate conclusions in the live census lever require a complete sample: every normal run finishes all 241 moves with `paceSlipMs <= 32` (scheduler jitter after the final paced sleep; movement overruns that stop early still fail). Commit attribution uses the **max** across normal runs (not the median), so one failed run cannot hide per-frame React work.
