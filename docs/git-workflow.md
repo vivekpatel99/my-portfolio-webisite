@@ -98,9 +98,11 @@ The required `test-and-build` check aggregates every CI job. It runs even when
 dependencies fail and rejects failures, cancellations, skipped jobs, and missing
 results. Do not replace this gate with a check that merely starts the tests.
 
-CI limits unit-test file workers and browser workers to two. Passive browser
-shards balance individual tests, and contact/motion cases run in parallel with
-isolated contexts. Timer assertions advance the browser clock through the full
+CI limits unit-test file workers and passive/contact browser workers to two.
+Passive shards balance individual tests, and contact cases use isolated contexts.
+Motion QA splits Chromium and WebKit onto separate runners with one worker each
+so real animation measurements do not compete within a runner.
+Timer assertions advance the browser clock through the full
 tested intervals; motion measurements continue using real animation timing.
 Publication fixtures run independent lifecycle chains concurrently, retain two
 full application production builds, and use the real publication pipeline with

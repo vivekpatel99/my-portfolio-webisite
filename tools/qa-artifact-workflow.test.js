@@ -63,6 +63,15 @@ describe('parallel CI and sanitized QA artifacts', () => {
     }
   });
 
+  it('runs both complete motion browser groups on separate runners', () => {
+    const motion = workflow.jobs['motion-qa'];
+    expect(motion.strategy['fail-fast']).toBe(false);
+    expect(motion.strategy.matrix.browser).toEqual(['chromium', 'webkit']);
+    const run = namedStep('motion-qa', 'Run reduced-motion regression QA').run;
+    expect(run).toContain('--project=motion-${{ matrix.browser }}-desktop');
+    expect(run).toContain('--project=motion-${{ matrix.browser }}-mobile');
+  });
+
   it('uploads reconstructed allowlisted JSON under unique shard names for seven days', () => {
     const sanitize = namedStep('passive-qa', 'Reconstruct sanitized passive QA artifacts');
     expect(sanitize.id).toBe('sanitize-qa-artifacts');

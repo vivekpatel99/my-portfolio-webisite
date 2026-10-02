@@ -211,6 +211,12 @@ jobs:
           QA_ARTIFACT_SAFE_MODE: "1"
         run: npm run qa:contact-lifecycle
   motion-qa:
+    strategy:
+      fail-fast: false
+      matrix:
+        browser:
+          - chromium
+          - webkit
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.60.0-noble
     timeout-minutes: 15
@@ -237,7 +243,7 @@ jobs:
           export QA_MOTION_OUTPUT_DIR
           trap 'rm -rf "$QA_MOTION_OUTPUT_DIR"' EXIT
 
-          npm run qa:motion
+          npm run qa:motion -- --project=motion-${{ matrix.browser }}-desktop --project=motion-${{ matrix.browser }}-mobile
   telemetry-qa:
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.60.0-noble
