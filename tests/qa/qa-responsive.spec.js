@@ -1,5 +1,9 @@
-import { expect, test } from './qa-test.js';
+import { chromium, expect, test } from './qa-test.js';
 import { waitForConsentBannerEntrance } from './qa-consent-banner.js';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const viewports = [
   { name: 'narrow-phone', width: 320, height: 568 },
@@ -230,7 +234,7 @@ for (const vp of heroFoldViewports) {
 
 // #253: the invoice header stack, credential captions and actions keep visible gaps.
 // Width 720 is a half-width layout check (useful reflow), not native browser zoom.
-// AC6 (#191 200% zoom) is covered by the dedicated Chromium CDP page-scale test below.
+// AC6 (#191 200% zoom) is covered by the Chromium browser-zoom test below (chrome.tabs.setZoom).
 const assertHeroInvoiceGaps = async (page, { requireMobileHeaderGap = false } = {}) => {
   const hero = page.locator('#main-content section').first();
   const invoice = hero.getByRole('article', { name: 'Profile invoice field parse' });
@@ -278,23 +282,78 @@ for (const width of [320, 390, 720, 768, 1024, 1440]) {
   });
 }
 
-// #253 AC6 / #191: native Chromium page zoom at a full 1440×900 viewport.
-// Emulation.setPageScaleFactor is not the same as shrinking the viewport to 720.
-test('hero invoice gaps hold under native Chromium 200% page zoom', async ({ page, context, browserName }) => {
-  test.skip(browserName !== 'chromium', 'CDP Emulation.setPageScaleFactor is Chromium-only.');
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/');
-  const cdp = await context.newCDPSession(page);
-  await cdp.send('Emulation.setPageScaleFactor', { pageScaleFactor: 2 });
-  await expect.poll(() => page.evaluate(() => window.visualViewport?.scale ?? 1)).toBe(2);
-  const viewportMetrics = await page.evaluate(() => ({
-    innerWidth: window.innerWidth,
-    visualViewportWidth: window.visualViewport?.width ?? null,
-  }));
-  expect(viewportMetrics.innerWidth).toBe(1440);
-  expect(viewportMetrics.visualViewportWidth).toBeCloseTo(720, 0);
-  await assertHeroInvoiceGaps(page);
+// #253 AC6 / #191: real Chromium browser zoom (chrome.tabs.setZoom), not CDP page scale.
+// Browser zoom changes the layout viewport (innerWidth halves); pinch/visual zoom does not.
+test('hero invoice gaps hold under Chromium 200% browser zoom', async ({ browserName }, testInfo) => {
+  test.skip(browserName !== 'chromium', 'chrome.tabs.setZoom needs Chromium with a loaded MV3 extension.');
+
+  const extensionPath = path.resolve(
+    path.dirname(fileURLToPath(import.meta.url)),
+    'fixtures/browser-zoom-extension',
+  );
+  const userDataDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'qa-browser-zoom-'));
+  let context;
+  try {
+    // Clear project-use deviceScaleFactor (Desktop Chrome sets 1); incompatible with viewport:null.
+    context = await chromium.launchPersistentContext(userDataDir, {
+      channel: 'chromium',
+      headless: true,
+      viewport: null,
+      deviceScaleFactor: undefined,
+      args: [
+        `--disable-extensions-except=${extensionPath}`,
+        `--load-extension=${extensionPath}`,
+        '--window-size=1440,900',
+      ],
+    });
+
+    let [serviceWorker] = context.serviceWorkers();
+    if (!serviceWorker) {
+      serviceWorker = await context.waitForEvent('serviceworker', { timeout: 15_000 });
+    }
+
+    const page = context.pages()[0] || await context.newPage();
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    const baseURL = testInfo.project.use.baseURL;
+    await page.goto(baseURL);
+
+    const before = await page.evaluate(() => ({
+      innerWidth: window.innerWidth,
+      scale: window.visualViewport?.scale ?? 1,
+    }));
+
+    await serviceWorker.evaluate(async (targetOrigin) => {
+      const tabs = await chrome.tabs.query({});
+      const tab = tabs.find((candidate) => candidate.url?.startsWith(targetOrigin))
+        || tabs.find((candidate) => candidate.active);
+      if (!tab?.id) throw new Error(`No tab found for ${targetOrigin}`);
+      await chrome.tabs.setZoom(tab.id, 2);
+    }, new URL(baseURL).origin);
+
+    await expect.poll(async () => {
+      const metrics = await page.evaluate(() => ({
+        innerWidth: window.innerWidth,
+        scale: window.visualViewport?.scale ?? 1,
+      }));
+      return metrics.innerWidth <= before.innerWidth * 0.55 && Math.abs(metrics.scale - 1) < 0.05;
+    }, { timeout: 15_000 }).toBe(true);
+
+    const after = await page.evaluate(() => ({
+      innerWidth: window.innerWidth,
+      scale: window.visualViewport?.scale ?? 1,
+    }));
+    // Prove browser zoom (layout viewport shrinks), not pinch/visual zoom.
+    expect(after.scale).toBeCloseTo(1, 1);
+    expect(after.innerWidth).toBeGreaterThanOrEqual(Math.floor(before.innerWidth / 2) - 2);
+    expect(after.innerWidth).toBeLessThanOrEqual(Math.ceil(before.innerWidth / 2) + 2);
+
+    await assertHeroInvoiceGaps(page, {
+      requireMobileHeaderGap: after.innerWidth < 768,
+    });
+  } finally {
+    await context?.close();
+    await fs.promises.rm(userDataDir, { recursive: true, force: true });
+  }
 });
 
 // #252: the portrait `sizes` values are hard-coded to the measured frames. If a frame
