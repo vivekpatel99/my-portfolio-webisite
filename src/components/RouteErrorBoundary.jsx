@@ -137,7 +137,8 @@ class RouteErrorBoundary extends React.Component {
       if (focusRecoveredRouteContent()) this.teardownFocusRecovery();
     });
     this.focusObserver.observe(main, { childList: true, subtree: true });
-    this.focusTimeoutId = window.setTimeout(() => this.teardownFocusRecovery(), 5000);
+    // Keep observing until content, another error, or unmount — slow cache-bust
+    // downloads can exceed a short timeout and ScrollToTop will not run.
   }
 
   handleRetry = () => {

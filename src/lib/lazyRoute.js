@@ -101,22 +101,36 @@ export function reloadDocument() {
 }
 
 /**
- * True when the browser can reach the asset URL (any HTTP status).
- * False when offline / aborted — Retry should stay in-page, not reload.
+ * Classify whether a document reload can recover from a failed in-page retry.
+ * - `missing`: 404/410 obsolete hash after deploy → reload
+ * - `present`: 2xx/304 but import still failed (stuck module map / transitive) → reload
+ * - `transient`: 5xx / other HTTP errors → stay on recovery UI
+ * - `unreachable`: offline / aborted → stay on recovery UI
  */
-export async function isAssetRequestReachable(url, fetchImpl = fetch) {
-  if (!url || typeof fetchImpl !== 'function') return false;
+export async function classifyAssetFailure(url, fetchImpl = fetch) {
+  if (!url || typeof fetchImpl !== 'function') return 'unreachable';
+
+  const classifyResponse = (res) => {
+    if (res.status === 404 || res.status === 410) return 'missing';
+    if (res.ok || res.status === 304) return 'present';
+    return 'transient';
+  };
+
   try {
-    await fetchImpl(url, { method: 'HEAD', cache: 'no-store' });
-    return true;
+    return classifyResponse(await fetchImpl(url, { method: 'HEAD', cache: 'no-store' }));
   } catch {
     try {
-      await fetchImpl(url, { method: 'GET', cache: 'no-store' });
-      return true;
+      return classifyResponse(await fetchImpl(url, { method: 'GET', cache: 'no-store' }));
     } catch {
-      return false;
+      return 'unreachable';
     }
   }
+}
+
+/** True when a full document reload is the right recovery for this asset failure. */
+export async function shouldReloadForAssetFailure(url, fetchImpl = fetch) {
+  const kind = await classifyAssetFailure(url, fetchImpl);
+  return kind === 'missing' || kind === 'present';
 }
 
 /**
@@ -207,8 +221,8 @@ function staleStylesheetError(url) {
 /**
  * Vite skips stylesheets it already marked "seen" after an offline preload failure.
  * Cache-bust and re-insert those CSS deps so Contact.css (etc.) load on Retry.
- * If the stylesheet is reachable but still fails (obsolete hash after deploy), throw
- * a staleAsset error so callers can fall back to document reload.
+ * Failures are not swallowed: missing/present → staleAsset (reload); otherwise rethrow
+ * so the route error fallback stays up instead of rendering unstyled content.
  */
 export async function retryRouteStylesheets(importer, attempt, fetchImpl = fetch) {
   const specifier = extractImportSpecifier(importer);
@@ -224,10 +238,11 @@ export async function retryRouteStylesheets(importer, attempt, fetchImpl = fetch
         if (abs && stripRetryParam(abs) === url) failedPreloadCssUrls.delete(failed);
       }
     } catch (error) {
-      if (await isAssetRequestReachable(url, fetchImpl)) {
+      if (await shouldReloadForAssetFailure(url, fetchImpl)) {
         throw staleStylesheetError(url);
       }
-      // Offline / aborted — leave tracked so a later Retry can try again.
+      // Transient HTTP or offline — keep the recovery UI; do not render without CSS.
+      throw error;
     }
   }));
 }
@@ -250,7 +265,6 @@ export async function loadRouteModule(
   try {
     await retryRouteStylesheets(importer, attempt, fetchImpl);
   } catch (cssError) {
-    // Obsolete hashed CSS after deploy — only a full reload gets the new mapping.
     if (cssError?.staleAsset) {
       reload();
     }
@@ -265,12 +279,11 @@ export async function loadRouteModule(
     const url = resolveImportUrl(specifier, baseUrl);
     if (!url) throw error;
     // WebKit keeps failing the exact URL after a failed module import; a query bust recovers.
-    // Transitive deps (e.g. pageMotion) may still be stuck in WebKit's module map — if the
-    // network is reachable, fall back to a document reload for a fresh module graph.
+    // Transitive deps may still be stuck in WebKit's module map when the entry URL is present.
     try {
       return await dynamicImport(cacheBustImportUrl(url, attempt));
     } catch (bustError) {
-      if (await isAssetRequestReachable(url, fetchImpl)) {
+      if (await shouldReloadForAssetFailure(url, fetchImpl)) {
         reload();
       }
       throw bustError;
@@ -281,6 +294,9 @@ export async function loadRouteModule(
 /**
  * Like React.lazy, but Retry can remount with a cache-busted dynamic import
  * instead of window.location.reload() (which does not re-fetch the chunk in WebKit).
+ *
+ * Each mount captures a generation baseline so a prior Retry on another route does
+ * not make a newly visited route start on attempt > 0 (cache-bust / reload) by default.
  */
 export function lazyRoute(importer) {
   bindVitePreloadErrorListener();
@@ -296,13 +312,22 @@ export function lazyRoute(importer) {
     return component;
   }
 
+  // Closure baseline survives error-boundary remounts after Retry, but each
+  // lazyRoute() factory (Contact vs Legal) keeps its own baseline so a prior
+  // Retry on another route does not force attempt > 0 on first visit.
+  let mountBaseline = null;
+
   function LazyRoute(props) {
-    const attempt = useSyncExternalStore(
+    const currentGeneration = useSyncExternalStore(
       subscribe,
       getLazyRouteGeneration,
       getLazyRouteGeneration,
     );
-    return React.createElement(getLazy(attempt), props);
+    if (mountBaseline === null) {
+      mountBaseline = currentGeneration;
+    }
+    const localAttempt = Math.max(0, currentGeneration - mountBaseline);
+    return React.createElement(getLazy(localAttempt), props);
   }
 
   return LazyRoute;
