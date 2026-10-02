@@ -358,4 +358,3 @@ export const caseStudyThumbnailRegistry = Object.freeze(Object.fromEntries(
     return [sourcePath, Object.freeze({ ...entry, ...(display ? { display } : {}) })];
   }),
 ));
-
