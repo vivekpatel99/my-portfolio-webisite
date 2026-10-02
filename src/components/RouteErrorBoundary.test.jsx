@@ -9,6 +9,7 @@ import { Seo } from '@/lib/seo';
 import ErrorBoundary from './ErrorBoundary';
 import Layout from './Layout';
 import { ROUTE_ERROR_HEADING } from './RouteErrorBoundary';
+import { getLazyRouteGeneration, resetLazyRouteGenerationForTests } from '@/lib/lazyRoute';
 import ScrollToTop from './ScrollToTop';
 
 const shell = vi.hoisted(() => ({ headerThrows: false }));
@@ -79,10 +80,12 @@ describe('RouteErrorBoundary', () => {
     vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
     shell.headerThrows = false;
     homeMounts = 0;
+    resetLazyRouteGenerationForTests();
   });
 
   afterEach(() => {
     cleanup();
+    resetLazyRouteGenerationForTests();
     vi.restoreAllMocks();
   });
 
@@ -99,6 +102,19 @@ describe('RouteErrorBoundary', () => {
     expect(retry.getAttribute('type')).toBe('button');
     expect(screen.getByRole('link', { name: 'Back to Home' }).getAttribute('href')).toBe('/');
   });
+
+  it('Retry bumps lazy-route generation so remounts can cache-bust', async () => {
+    renderApp('/lazy-broken');
+    await screen.findByRole('heading', { level: 1, name: ROUTE_ERROR_HEADING });
+    expect(getLazyRouteGeneration()).toBe(0);
+
+    await act(async () => {
+      screen.getByRole('button', { name: 'Retry' }).click();
+    });
+
+    expect(getLazyRouteGeneration()).toBe(1);
+  });
+
 
   it('keeps the shell when a route throws while rendering', () => {
     renderApp('/render-broken');

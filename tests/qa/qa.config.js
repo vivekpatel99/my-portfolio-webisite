@@ -93,12 +93,12 @@ const liveProjects = includeLiveContactSubmit && !localOnly
 const webkitRegressionProjects = localOnly ? [
   {
     name: 'preview-webkit-desktop',
-    testMatch: ['qa-focus.spec.js', 'qa-cursor.spec.js'],
+    testMatch: ['qa-focus.spec.js', 'qa-cursor.spec.js', 'qa-route-recovery.spec.js'],
     use: { ...devices['Desktop Safari'], baseURL: previewURL, ...qaNetworkOptions({ localOnly }) },
   },
   {
     name: 'preview-webkit-mobile',
-    testMatch: ['qa-focus.spec.js', 'qa-cursor.spec.js'],
+    testMatch: ['qa-focus.spec.js', 'qa-cursor.spec.js', 'qa-route-recovery.spec.js'],
     use: { ...devices['iPhone 14'], baseURL: previewURL, ...qaNetworkOptions({ localOnly }) },
   },
 ] : [];

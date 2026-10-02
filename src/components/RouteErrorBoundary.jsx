@@ -3,14 +3,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { ArrowLeft, RotateCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { focusNavigationTarget } from '@/lib/focusTarget';
+import { retryLazyRoutes } from '@/lib/lazyRoute';
 import { Seo } from '@/lib/seo';
 
 export const ROUTE_ERROR_HEADING = "This page didn't load";
 
-// React.lazy caches a rejected import, so only a user-initiated reload can retry a failed chunk.
-const reloadCurrentPage = () => window.location.reload();
-
-const RouteErrorFallback = () => {
+const RouteErrorFallback = ({ onRetry }) => {
   const headingRef = useRef(null);
   const { pathname } = useLocation();
 
@@ -46,7 +44,7 @@ const RouteErrorFallback = () => {
         <div className="flex flex-wrap gap-4">
           <Button
             type="button"
-            onClick={reloadCurrentPage}
+            onClick={onRetry}
             className="bg-accent-purple text-white hover:bg-accent-purple/90 rounded-full"
           >
             <RotateCw className="mr-2 h-5 w-5" aria-hidden="true" />
@@ -84,8 +82,17 @@ class RouteErrorBoundary extends React.Component {
     }
   }
 
+  handleRetry = () => {
+    // Remount lazy factories with a cache-busting import; do not reload the document.
+    // WebKit will not re-request a module URL that already failed in this tab.
+    retryLazyRoutes();
+    this.setState({ hasError: false });
+  };
+
   render() {
-    return this.state.hasError ? <RouteErrorFallback /> : this.props.children;
+    return this.state.hasError
+      ? <RouteErrorFallback onRetry={this.handleRetry} />
+      : this.props.children;
   }
 }
 
