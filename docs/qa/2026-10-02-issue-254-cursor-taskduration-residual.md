@@ -118,3 +118,6 @@ Addressed in the census lever before merge:
 
 Committed census JSON under  may still reflect the pre-fix harness until a fresh preview run regenerates it; conclusions in this report remain tied to the prior #277 paced labs + develop probe medians already cited above.
 
+## Harness validity (Codex follow-up)
+
+Absolute-gate conclusions in the census lever now require a complete sample: every normal run finishes all 241 moves inside the 2s window (`paceSlipMs == 0`). Commit attribution uses the **max** across normal runs (not the median), so one failed run cannot hide per-frame React work.

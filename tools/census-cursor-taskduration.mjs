@@ -207,16 +207,24 @@ const movesDoneMedian = census.movesDone.normalMedian;
 
 const residualConclusionNotes = (() => {
   const notes = [];
-  const commitMedian = census.commits.normalMedian;
+  const commitMax = census.commits.normal.max;
+  const commitValues = census.commits.normal.values;
   const taskMedian = census.taskMs.normalMedian;
   const reducedTaskMedian = census.taskMs.reducedMedian;
-  if (commitMedian <= 1) {
+  const sampleComplete =
+    movesDoneMedian === MOVES &&
+    paceSlipMedian === 0 &&
+    census.movesDone.normal.values.every((n) => n === MOVES) &&
+    census.paceSlipMs.normal.values.every((n) => n === 0);
+  const commitsNearZero = commitMax <= 1;
+
+  if (commitsNearZero) {
     notes.push(
-      `Near-zero React commits (median ${commitMedian}, not ${MOVES}) means leftover TaskDuration is not per-frame React commit work.`,
+      `Near-zero React commits on every normal run (max ${commitMax}, values ${JSON.stringify(commitValues)}, not ${MOVES}) means leftover TaskDuration is not per-frame React commit work.`,
     );
   } else {
     notes.push(
-      `React commits still high (normal median ${commitMedian} vs ${MOVES} moves). Residual TaskDuration cannot be attributed away from React until commits are near zero.`,
+      `React commits still high on at least one normal run (max ${commitMax}, values ${JSON.stringify(commitValues)} vs ${MOVES} moves). Residual TaskDuration cannot be attributed away from React until every run is near zero.`,
     );
   }
   notes.push(
@@ -228,18 +236,19 @@ const residualConclusionNotes = (() => {
   notes.push(
     'Harness no longer injects a self-scheduling rAF loop into the measured window (rafTicks stay 0).',
   );
-  if (paceSlipMedian > 0 || movesDoneMedian < MOVES) {
+  if (!sampleComplete) {
     notes.push(
-      `Sampling stops at the ${WINDOW_MS}ms deadline (normal median movesDone ${movesDoneMedian}/${MOVES}, paceSlipMs ${paceSlipMedian}). Discard or flag slipped runs when comparing to the absolute gate.`,
+      `Incomplete sample vs declared workload/window (normal median movesDone ${movesDoneMedian}/${MOVES}, paceSlipMs ${paceSlipMedian}; per-run movesDone ${JSON.stringify(census.movesDone.normal.values)}, paceSlipMs ${JSON.stringify(census.paceSlipMs.normal.values)}). Discard or flag slipped runs; withhold absolute-gate conclusions until every normal run completes ${MOVES} moves inside ${WINDOW_MS}ms.`,
     );
   }
-  if (commitMedian <= 1 && taskMedian > 200) {
+  // Gate conclusions only when the declared workload/window is fully satisfied.
+  if (sampleComplete && commitsNearZero && taskMedian > 200) {
     notes.push(
-      `Normal-motion median TaskDuration ${taskMedian}ms stays >200ms while commits are near zero (reduce control ${reducedTaskMedian}ms). Absolute <=200ms gate is wrong for this probe+spring+4xCPU combination; prefer 0 commits + documented residual + owner feel.`,
+      `Normal-motion median TaskDuration ${taskMedian}ms stays >200ms while every run has near-zero commits (reduce control ${reducedTaskMedian}ms). Absolute <=200ms gate is wrong for this probe+spring+4xCPU combination; prefer 0 commits + documented residual + owner feel.`,
     );
-  } else if (taskMedian <= 200 && commitMedian <= 1) {
+  } else if (sampleComplete && commitsNearZero && taskMedian <= 200) {
     notes.push(
-      `Normal-motion median TaskDuration ${taskMedian}ms meets <=200ms with near-zero commits on this run.`,
+      `Normal-motion median TaskDuration ${taskMedian}ms meets <=200ms with near-zero commits on every normal run.`,
     );
   }
   return notes;
