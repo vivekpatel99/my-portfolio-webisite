@@ -117,9 +117,11 @@ try {
             await new Promise((resolve) => setTimeout(resolve, remaining));
           }
         }
-        const after = await metrics();
+        // Workload elapsed time must exclude CDP getMetrics latency, or
+        // sampleComplete falsely fails after a paced 2s move loop.
         const elapsedMs = Date.now() - start;
         const paceSlipMs = Math.max(0, elapsedMs - WINDOW_MS);
+        const after = await metrics();
 
         const census = await page.evaluate(() => {
           return {
@@ -144,7 +146,6 @@ try {
           movesDone,
           paceSlipMs,
           windowTargetMs: WINDOW_MS,
-          paceSlipMs: Math.max(0, elapsedMs - WINDOW_MS),
           commits: census.commits,
           commitTimesMs: census.commitTimes,
           rafTicks: census.rafTicks,
@@ -209,6 +210,8 @@ const residualConclusionNotes = (() => {
   const notes = [];
   const commitMax = census.commits.normal.max;
   const commitValues = census.commits.normal.values;
+  const taskMax = census.taskMs.normal.max;
+  const taskValues = census.taskMs.normal.values;
   const taskMedian = census.taskMs.normalMedian;
   const reducedTaskMedian = census.taskMs.reducedMedian;
   const sampleComplete =
@@ -217,6 +220,7 @@ const residualConclusionNotes = (() => {
     census.movesDone.normal.values.every((n) => n === MOVES) &&
     census.paceSlipMs.normal.values.every((n) => n === 0);
   const commitsNearZero = commitMax <= 1;
+  const taskWithinGate = taskValues.every((ms) => ms <= 200);
 
   if (commitsNearZero) {
     notes.push(
@@ -242,13 +246,14 @@ const residualConclusionNotes = (() => {
     );
   }
   // Gate conclusions only when the declared workload/window is fully satisfied.
-  if (sampleComplete && commitsNearZero && taskMedian > 200) {
+  // Match measure-cursor-performance: any normal run >200ms fails the gate.
+  if (sampleComplete && commitsNearZero && !taskWithinGate) {
     notes.push(
-      `Normal-motion median TaskDuration ${taskMedian}ms stays >200ms while every run has near-zero commits (reduce control ${reducedTaskMedian}ms). Absolute <=200ms gate is wrong for this probe+spring+4xCPU combination; prefer 0 commits + documented residual + owner feel.`,
+      `Normal-motion TaskDuration exceeds 200ms on at least one run (max ${taskMax}ms, values ${JSON.stringify(taskValues)}, median ${taskMedian}ms) while every run has near-zero commits (reduce control ${reducedTaskMedian}ms). Absolute <=200ms gate is wrong for this probe+spring+4xCPU combination; prefer 0 commits + documented residual + owner feel.`,
     );
-  } else if (sampleComplete && commitsNearZero && taskMedian <= 200) {
+  } else if (sampleComplete && commitsNearZero && taskWithinGate) {
     notes.push(
-      `Normal-motion median TaskDuration ${taskMedian}ms meets <=200ms with near-zero commits on every normal run.`,
+      `Normal-motion TaskDuration meets <=200ms on every run (max ${taskMax}ms, values ${JSON.stringify(taskValues)}, median ${taskMedian}ms) with near-zero commits.`,
     );
   }
   return notes;
