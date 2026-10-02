@@ -71,6 +71,14 @@ function installEntranceSampler(sampleTimes) {
       scaleX: matrix.m11,
       scaleY: matrix.m22,
       opacity: Number(style.opacity),
+      connected: element.isConnected,
+      inlineOpacity: element.style.opacity,
+      animations: element.getAnimations().map((animation) => ({
+        pending: animation.pending,
+        playState: animation.playState,
+        currentTime: animation.currentTime,
+        startTime: animation.startTime,
+      })),
     });
   };
 
@@ -180,8 +188,9 @@ function expectIdentityTransform(samples, label) {
 
 function expectSettled(samples, label) {
   const last = samples.at(-1);
-  expect(last.opacity, `${label} final opacity`).toBeGreaterThan(READABLE_OPACITY);
-  expect(Math.abs(last.y), `${label} final y (${last.transform})`).toBeLessThan(IDENTITY_TOLERANCE);
+  const diagnostics = JSON.stringify(samples);
+  expect(last.opacity, `${label} final opacity; samples: ${diagnostics}`).toBeGreaterThan(READABLE_OPACITY);
+  expect(Math.abs(last.y), `${label} final y (${last.transform}); samples: ${diagnostics}`).toBeLessThan(IDENTITY_TOLERANCE);
 }
 
 // Reduced motion: no translation or scale at any sample, but the fade is kept.

@@ -9,6 +9,8 @@ const slideCount = testimonialData.length;
 const counterFor = (index) => `${String(index + 1).padStart(2, '0')} / ${String(slideCount).padStart(2, '0')}`;
 
 test.beforeEach(async ({ page }) => {
+  // Install before application timers; keep rendering and interactions running normally.
+  await page.clock.install();
   // Keep the consent banner from covering the controls on narrow viewports.
   await page.addInitScript(() => {
     localStorage.setItem(
@@ -54,12 +56,13 @@ test('pause by tap or click keeps the slide for 20s after hover and focus leave'
   const pausedAt = await counter.textContent();
 
   await leaveCarousel(page);
-  await page.waitForTimeout(PERSISTENT_PAUSE_MS);
+  await page.clock.runFor(PERSISTENT_PAUSE_MS);
   await expect(counter).toHaveText(pausedAt);
 
   await activate(toggle, hasTouch);
   await expect(toggle).toHaveAccessibleName('Pause testimonials');
   await leaveCarousel(page);
+  await page.clock.runFor(OVER_ONE_INTERVAL_MS);
   await expect(counter).not.toHaveText(pausedAt, { timeout: OVER_ONE_INTERVAL_MS + 2_000 });
 });
 
@@ -81,6 +84,7 @@ test('tapping Pause then Play resumes rotation without any mouse movement', asyn
   });
   expect(await page.evaluate(() => document.activeElement?.tagName)).toBe('BODY');
   const resumedFrom = await counter.textContent();
+  await page.clock.runFor(OVER_ONE_INTERVAL_MS);
   await expect(counter).not.toHaveText(resumedFrom, { timeout: OVER_ONE_INTERVAL_MS + 2_000 });
 });
 
@@ -111,7 +115,7 @@ test('keyboard traversal reaches quote, slides, and pause; chosen slide persists
   await expect(toggle).toHaveAccessibleName('Play testimonials');
 
   await leaveCarousel(page);
-  await page.waitForTimeout(PERSISTENT_PAUSE_MS);
+  await page.clock.runFor(PERSISTENT_PAUSE_MS);
   await expect(counter).toHaveText(counterFor(1));
 });
 
@@ -123,12 +127,13 @@ test('focusing the quote or a control stops auto-advance until focus leaves', as
   for (const target of [quote, slides.nth(4)]) {
     await target.focus();
     const heldAt = await counter.textContent();
-    await page.waitForTimeout(OVER_ONE_INTERVAL_MS);
+    await page.clock.runFor(OVER_ONE_INTERVAL_MS);
     await expect(counter).toHaveText(heldAt);
   }
 
   await leaveCarousel(page);
   const releasedAt = await counter.textContent();
+  await page.clock.runFor(OVER_ONE_INTERVAL_MS);
   await expect(counter).not.toHaveText(releasedAt, { timeout: OVER_ONE_INTERVAL_MS + 2_000 });
 });
 
@@ -141,15 +146,16 @@ test('overlapping hover and focus reasons each keep rotation stopped', async ({ 
   await quote.focus();
   await page.mouse.move(1, 1);
   const heldByFocus = await counter.textContent();
-  await page.waitForTimeout(OVER_ONE_INTERVAL_MS);
+  await page.clock.runFor(OVER_ONE_INTERVAL_MS);
   await expect(counter).toHaveText(heldByFocus);
 
   await carousel.hover();
   await page.evaluate(() => document.activeElement?.blur());
-  await page.waitForTimeout(OVER_ONE_INTERVAL_MS);
+  await page.clock.runFor(OVER_ONE_INTERVAL_MS);
   await expect(counter).toHaveText(heldByFocus);
 
   await page.mouse.move(1, 1);
+  await page.clock.runFor(OVER_ONE_INTERVAL_MS);
   await expect(counter).not.toHaveText(heldByFocus, { timeout: OVER_ONE_INTERVAL_MS + 2_000 });
 });
 
@@ -234,7 +240,7 @@ test('reduced motion shows autoplay off, offers no playback control, and keeps m
   await expect(slides.nth(2)).toHaveAttribute('aria-current', 'true');
 
   await leaveCarousel(page);
-  await page.waitForTimeout(OVER_ONE_INTERVAL_MS * 2);
+  await page.clock.runFor(OVER_ONE_INTERVAL_MS * 2);
   await expect(counter).toHaveText(counterFor(2));
 });
 
@@ -252,5 +258,6 @@ test('rotation resumes after a motion-preference change removes the focused Paus
   await leaveCarousel(page);
   expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
   const releasedAt = await counter.textContent();
+  await page.clock.runFor(OVER_ONE_INTERVAL_MS);
   await expect(counter).not.toHaveText(releasedAt, { timeout: OVER_ONE_INTERVAL_MS + 2_000 });
 });

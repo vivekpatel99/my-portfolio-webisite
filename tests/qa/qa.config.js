@@ -125,6 +125,9 @@ export default defineConfig({
   testDir,
   timeout: 60_000,
   expect: { timeout: 10_000 },
+  // Split CI shards by individual test while bounding concurrent browser work.
+  fullyParallel: Boolean(process.env.CI),
+  workers: process.env.CI ? 2 : undefined,
   use: qaCaptureOptions(),
   outputDir: path.join(artifactDir, 'test-results'),
   reporter: [['list'], ['json', { outputFile: path.join(artifactDir, 'qa-results.json') }]],
