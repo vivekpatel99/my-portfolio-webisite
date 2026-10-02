@@ -35,8 +35,8 @@ export default defineConfig({
   testMatch: 'qa-motion.spec.js',
   timeout: 60_000,
   expect: { timeout: 10_000 },
-  fullyParallel: false,
-  workers: 1,
+  fullyParallel: Boolean(process.env.CI),
+  workers: process.env.CI ? 2 : 1,
   use: {
     baseURL,
     serviceWorkers: 'block',

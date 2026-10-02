@@ -97,6 +97,8 @@ async function expectSettledToastFitsViewport(page, toast) {
 }
 
 test('holds one pending keyboard submit, blocks duplicates, shows safe failure guidance and focuses retry, then keeps a focused receipt', async ({ page, contactTransport: transport }) => {
+  // Install before app/Toast timers; let motion settle normally before the lifetime check.
+  await page.clock.install();
   const mutationHttpRequests = [];
   page.on('request', (request) => {
     if (request.method() === 'POST' && request.url().includes('/api/mutation')) {
@@ -174,7 +176,7 @@ test('holds one pending keyboard submit, blocks duplicates, shows safe failure g
   await expect(page.getByLabel('Budget Range')).toHaveValue('');
   await expect(page.getByLabel('Project Description *')).toHaveValue('');
 
-  await page.waitForTimeout(10_500);
+  await page.clock.runFor(10_500);
   await expect(receipt).toBeVisible();
   await expect(receipt).toBeFocused();
   await page.keyboard.press('Tab');

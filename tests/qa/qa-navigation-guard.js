@@ -5,9 +5,12 @@ import {
 } from './qa-local-only.js';
 
 function isBrowserCancelledRoute(error) {
-  return error instanceof Error && (
-    error.message === 'route.fulfill: Route is already handled!'
-    || error.message === 'route.fetch: Target page, context or browser has been closed'
+  if (!(error instanceof Error)) return false;
+  // Playwright can append request diagnostics to the same cancellation message.
+  const message = error.message.split(/\r?\nCall log:\r?\n/, 1)[0];
+  return (
+    message === 'route.fulfill: Route is already handled!'
+    || message === 'route.fetch: Target page, context or browser has been closed'
   );
 }
 
