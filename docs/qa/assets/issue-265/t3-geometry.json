@@ -1,0 +1,149 @@
+{
+  "comparison": "Ten rectangles per viewport compared manually with pinned starting-develop T3 measurements; all x/y/width/height values equal.",
+  "conditions": {
+    "motion": "no-preference",
+    "consent": "rejected",
+    "fonts": "loaded",
+    "engine": "T3 Chromium",
+    "startingBase": "e17a0a817f2a492acac1b76b5f16260f531fb3b7"
+  },
+  "desktop": {
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    },
+    "overflow": false,
+    "rects": {
+      "#budget": {
+        "height": 54,
+        "width": 578.484375,
+        "x": 577.015625,
+        "y": 572.759765625
+      },
+      "#description": {
+        "height": 144.0234375,
+        "width": 578.484375,
+        "x": 577.015625,
+        "y": 656.759765625
+      },
+      "#email": {
+        "height": 54,
+        "width": 578.484375,
+        "x": 577.015625,
+        "y": 488.759765625
+      },
+      "#name": {
+        "height": 54,
+        "width": 578.484375,
+        "x": 577.015625,
+        "y": 404.759765625
+      },
+      ".contact": {
+        "height": 1309.2734375,
+        "width": 1265,
+        "x": 0,
+        "y": 69.009765625
+      },
+      ".contact .aside": {
+        "height": 347.1796875,
+        "width": 439.515625,
+        "x": 82.5,
+        "y": 330.759765625
+      },
+      ".contact .hero": {
+        "height": 113.75,
+        "width": 720,
+        "x": 272.5,
+        "y": 117.009765625
+      },
+      ".contact .proof": {
+        "height": 36,
+        "width": 1100,
+        "x": 82.5,
+        "y": 258.759765625
+      },
+      ".form-panel": {
+        "height": 721.5234375,
+        "width": 632.484375,
+        "x": 550.015625,
+        "y": 330.759765625
+      },
+      ".form-panel button[type=submit]": {
+        "height": 50.5,
+        "width": 236.453125,
+        "x": 748.03125,
+        "y": 974.783203125
+      }
+    }
+  },
+  "mobile": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "overflow": false,
+    "rects": {
+      "#budget": {
+        "height": 54,
+        "width": 265,
+        "x": 55,
+        "y": 1033.767578125
+      },
+      "#description": {
+        "height": 144.0234375,
+        "width": 265,
+        "x": 55,
+        "y": 1117.767578125
+      },
+      "#email": {
+        "height": 54,
+        "width": 265,
+        "x": 55,
+        "y": 949.767578125
+      },
+      "#name": {
+        "height": 54,
+        "width": 265,
+        "x": 55,
+        "y": 865.767578125
+      },
+      ".contact": {
+        "height": 2096.28125,
+        "width": 375,
+        "x": 0,
+        "y": 69.009765625
+      },
+      ".contact .aside": {
+        "height": 347.1796875,
+        "width": 319,
+        "x": 28,
+        "y": 416.587890625
+      },
+      ".contact .hero": {
+        "height": 199.578125,
+        "width": 319,
+        "x": 28,
+        "y": 117.009765625
+      },
+      ".contact .proof": {
+        "height": 36,
+        "width": 319,
+        "x": 28,
+        "y": 344.587890625
+      },
+      ".form-panel": {
+        "height": 821.5234375,
+        "width": 319,
+        "x": 28,
+        "y": 791.767578125
+      },
+      ".form-panel button[type=submit]": {
+        "height": 50.5,
+        "width": 236.453125,
+        "x": 69.2734375,
+        "y": 1535.791015625
+      }
+    },
+    "unloadPrevented": false
+  }
+}
