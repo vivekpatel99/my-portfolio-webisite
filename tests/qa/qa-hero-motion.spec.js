@@ -137,7 +137,7 @@ test.describe('hero motion work (#232)', () => {
     for (const badge of ['Inference online', 'doc · extract · 0.97', 'engineer · 0.99', 'ID 001 · TRACKED', 'REC']) {
       await expect(hero.getByText(badge, { exact: true })).toBeVisible();
     }
-    await expect(hero.locator('[data-hero-field].invoice-field-corners')).toHaveCount(3);
+    await expect(hero.locator('[data-hero-field].invoice-field-corners')).toHaveCount(2);
     await expect.poll(() => runningHeroAnimations(page)).toEqual(IN_VIEW_ANIMATIONS);
 
     const outside = await outsideHeroPointer(page);

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { getPageLoadDetectedFields } from '@/lib/heroDetectedFields';
+import { HERO_DETECTED_FIELD_WINDOWS, HERO_INVOICE_FIELDS } from '@/lib/heroDetectedFields';
 import { profileImages } from '@/config/links';
 
 const BACKGROUND_BOXES = [
@@ -71,6 +71,18 @@ const useIsInViewport = (ref) => {
   return isInViewport;
 };
 
+const useDocumentVisible = () => {
+  const [isVisible, setIsVisible] = useState(() => typeof document === 'undefined' || document.visibilityState !== 'hidden');
+
+  useEffect(() => {
+    const sync = () => setIsVisible(document.visibilityState !== 'hidden');
+    document.addEventListener('visibilitychange', sync);
+    return () => document.removeEventListener('visibilitychange', sync);
+  }, []);
+
+  return isVisible;
+};
+
 const Hero = () => {
   const heroRef = useRef(null);
   const bgBoxesRef = useRef([]);
@@ -78,11 +90,46 @@ const Hero = () => {
   const hasFinePointer = useMediaQuery('(pointer: fine)');
   const isInViewport = useIsInViewport(heroRef);
   const parallaxEnabled = isInViewport && hasFinePointer && !reduceMotion;
-  const detectedFields = getPageLoadDetectedFields();
-  const fieldBoxProps = (id, className) => ({
-    'data-hero-field': id,
-    className: `hero-ocr-field ${detectedFields.has(id) ? 'invoice-field-corners ' : ''}${className}`,
-  });
+  const isDocumentVisible = useDocumentVisible();
+  const [highlightsPaused, setHighlightsPaused] = useState(false);
+  const [highlight, setHighlight] = useState({ index: 0, phase: 'initial' });
+  const highlightsRunning = !highlightsPaused && !reduceMotion && isInViewport && isDocumentVisible;
+  const highlightIndex = reduceMotion ? 0 : highlight.index;
+  const highlightPhase = highlightsRunning ? highlight.phase : 'initial';
+  const detectedFields = HERO_DETECTED_FIELD_WINDOWS[highlightIndex];
+  const fieldBoxProps = (id, className) => {
+    const rotates = HERO_INVOICE_FIELDS.includes(id);
+    const selected = detectedFields.includes(id);
+    const leaving = highlightPhase === 'leaving';
+    return {
+      'data-hero-field': id,
+      className: `hero-ocr-field ${rotates ? 'hero-rotating-annotation ' : ''}${selected ? 'invoice-field-corners ' : ''}${className}`,
+      style: rotates ? { '--hero-annotation-opacity': selected && !leaving ? 1 : 0 } : undefined,
+    };
+  };
+
+  useEffect(() => {
+    if (!highlightsRunning) {
+      setHighlight((current) => {
+        const index = reduceMotion ? 0 : current.index;
+        return current.index === index && current.phase === 'initial'
+          ? current
+          : { index, phase: 'initial' };
+      });
+      return undefined;
+    }
+
+    const delay = highlight.phase === 'initial' ? 2000 : highlight.phase === 'steady' ? 1800 : 100;
+    const timer = setTimeout(() => {
+      setHighlight((current) => {
+        if (current.phase === 'leaving') {
+          return { index: (current.index + 1) % HERO_DETECTED_FIELD_WINDOWS.length, phase: 'entering' };
+        }
+        return { index: current.index, phase: current.phase === 'entering' ? 'steady' : 'leaving' };
+      });
+    }, delay);
+    return () => clearTimeout(timer);
+  }, [highlight, highlightsRunning, reduceMotion]);
 
   useEffect(() => {
     const hero = heroRef.current;
@@ -149,6 +196,9 @@ const Hero = () => {
     <section 
       ref={heroRef}
       data-hero-motion={isInViewport ? 'running' : 'paused'}
+      data-hero-highlight-index={highlightIndex}
+      data-hero-highlight-phase={highlightPhase}
+      data-hero-highlights={highlightsRunning ? 'running' : 'paused'}
       className="relative h-auto flex flex-col justify-start pt-14 pb-40 bg-[#0C0D0D] max-md:pb-36 max-md:pt-3 max-md:justify-start [@media(max-height:800px)]:pt-3"
     >
       {/* Grid background */}
@@ -225,11 +275,20 @@ const Hero = () => {
       <div className="container mx-auto px-6 md:px-12 relative z-10 py-0 max-md:px-4 max-md:py-0">
         <div className="max-w-[1320px] mx-auto flex flex-col gap-0 max-md:gap-0">
           {/* Status badge */}
-          <div className="flex items-center justify-between gap-4 flex-wrap mb-5">
+          <div className="relative flex items-center justify-between gap-4 flex-wrap mb-5 pr-[104px]">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/[0.12] bg-white/[0.03]">
               <span className="w-[7px] h-[7px] rounded-full bg-[#8B5CF6] shadow-[0_0_8px_rgba(139,92,246,0.65)]" />
               <span className="text-[11px] font-mono tracking-wider uppercase text-gray-400">Inference online</span>
             </div>
+            <button
+              type="button"
+              className="hero-highlight-control"
+              disabled={reduceMotion}
+              aria-label={highlightsPaused ? 'Resume highlights' : 'Pause highlights'}
+              onClick={() => setHighlightsPaused((paused) => !paused)}
+            >
+              <span>{highlightsPaused ? 'Resume' : 'Pause'}</span>
+            </button>
           </div>
 
           {/* Two columns: invoice | photo */}

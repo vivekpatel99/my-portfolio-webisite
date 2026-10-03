@@ -4,7 +4,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import { HERO_INVOICE_FIELDS } from '@/lib/heroDetectedFields';
+import { HERO_DETECTED_FIELD_WINDOWS, HERO_INVOICE_FIELDS } from '@/lib/heroDetectedFields';
 import Hero from './Hero';
 
 afterEach(() => {
@@ -170,7 +170,7 @@ describe('Hero illustrative OCR labels (#297)', () => {
       expect(label.closest('[tabindex], [aria-live]')).toBeNull();
     });
     expect(screen.getByText('OCR simulation', { exact: true })).toBeTruthy();
-    expect(container.querySelectorAll('.invoice-field-corners')).toHaveLength(3);
+    expect(container.querySelectorAll('.invoice-field-corners')).toHaveLength(2);
     expect(container.querySelector('[data-hero-field="tags"]').classList.contains('invoice-field-corners')).toBe(false);
   });
 
@@ -232,95 +232,216 @@ describe('Hero portrait sizing (#252)', () => {
   });
 });
 
-describe('Hero randomized field bboxes (#206)', () => {
-  const FIELD_VALUES = {
-    name: 'Vivek Patel',
-    role: 'Computer Vision & AI Engineer',
-    credential: 'Top Rated Plus',
-    success: '100% Job Success',
-    rate: '€45/hour',
-    location: 'Linz, Austria',
-  };
+describe('Hero rotating annotations', () => {
+  let reducedMotion;
+  let visibility;
+  let mediaListeners;
+  let viewportCallback;
 
-  const loadFreshPageHeroWithRandom = async (randomValue) => {
-    vi.resetModules();
-    vi.spyOn(Math, 'random').mockReturnValue(randomValue);
-    const { default: FreshHero } = await import('./Hero');
-    return FreshHero;
-  };
-
-  const renderFresh = (Component) =>
-    render(
-      <BrowserRouter>
-        <Component />
-      </BrowserRouter>
-    );
-
-  const detectedIds = (container) =>
-    Array.from(container.querySelectorAll('[data-hero-field].invoice-field-corners'))
-      .map((el) => el.getAttribute('data-hero-field'))
-      .sort();
-
-  it('frames exactly 3 eligible invoice fields and keeps Rate and Tags unboxed', async () => {
-    const FreshHero = await loadFreshPageHeroWithRandom(0);
-    const { container } = renderFresh(FreshHero);
-
-    const fields = container.querySelectorAll('[data-hero-field]');
-    expect(fields).toHaveLength(7);
-    expect(Array.from(fields, (el) => el.getAttribute('data-hero-field')).sort()).toEqual(
-      [...HERO_INVOICE_FIELDS, 'rate', 'tags'].sort()
-    );
-    expect(container.querySelectorAll('.invoice-field-corners')).toHaveLength(3);
-    expect(detectedIds(container)).toEqual(['credential', 'role', 'success']);
-    expect(container.querySelector('[data-hero-field="rate"].invoice-field-corners')).toBeNull();
-    expect(container.querySelector('[data-hero-field="tags"].invoice-field-corners')).toBeNull();
-  });
-
-  it('keeps every label and value visible regardless of selection', async () => {
-    const FreshHero = await loadFreshPageHeroWithRandom(0.999999);
-    const { container } = renderFresh(FreshHero);
-
-    ['Name', 'Role', 'Credential', 'Success', 'Rate', 'Location'].forEach((label) => {
-      expect(screen.getByText(label, { exact: true })).toBeTruthy();
+  beforeEach(() => {
+    vi.useFakeTimers();
+    reducedMotion = false;
+    visibility = 'visible';
+    mediaListeners = new Set();
+    vi.spyOn(document, 'visibilityState', 'get').mockImplementation(() => visibility);
+    window.matchMedia = vi.fn((query) => ({
+      get matches() { return query === '(prefers-reduced-motion: reduce)' && reducedMotion; },
+      addEventListener: (_type, listener) => mediaListeners.add(listener),
+      removeEventListener: (_type, listener) => mediaListeners.delete(listener),
+    }));
+    vi.stubGlobal('IntersectionObserver', class {
+      constructor(callback) { viewportCallback = callback; }
+      observe() {}
+      disconnect() {}
     });
-    Object.entries(FIELD_VALUES).forEach(([id, value]) => {
-      const field = container.querySelector(`[data-hero-field="${id}"]`);
-      expect(field.textContent).toContain(value);
-    });
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe(FIELD_VALUES.role);
-    expect(screen.getByText('doc · extract · 0.97', { exact: true })).toBeTruthy();
-    expect(screen.getByRole('link', { name: 'Request a Project Estimate' })).toBeTruthy();
   });
 
-  it('keeps the selection stable across rerenders and remounts in one page load', async () => {
-    const FreshHero = await loadFreshPageHeroWithRandom(0);
-    const { container, rerender, unmount } = renderFresh(FreshHero);
-    const initial = detectedIds(container);
-
-    vi.mocked(Math.random).mockReturnValue(0.999999);
-    rerender(
-      <BrowserRouter>
-        <FreshHero />
-      </BrowserRouter>
-    );
-    expect(detectedIds(container)).toEqual(initial);
-
-    unmount();
-    const remounted = renderFresh(FreshHero);
-    expect(detectedIds(remounted.container)).toEqual(initial);
-  });
-
-  it('can pick a different selection after a fresh page load', async () => {
-    const first = renderFresh(await loadFreshPageHeroWithRandom(0));
-    const firstIds = detectedIds(first.container);
+  afterEach(() => {
     cleanup();
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+    delete window.matchMedia;
+  });
 
-    const second = renderFresh(await loadFreshPageHeroWithRandom(0.999999));
-    const secondIds = detectedIds(second.container);
+  const advance = (ms) => act(() => vi.advanceTimersByTime(ms));
+  const ids = (container) => Array.from(container.querySelectorAll('[data-hero-field].invoice-field-corners'), (field) => field.dataset.heroField).sort();
+  const expected = (index) => [...HERO_DETECTED_FIELD_WINDOWS[index]].sort();
+  const phase = (container) => container.querySelector('section').dataset.heroHighlightPhase;
+  const opacity = (container, id) => container.querySelector(`[data-hero-field="${id}"]`).style.getPropertyValue('--hero-annotation-opacity');
+  const changeReducedMotion = (matches) => act(() => {
+    reducedMotion = matches;
+    mediaListeners.forEach((listener) => listener());
+  });
+  const changeVisibility = (state) => act(() => {
+    visibility = state;
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  const changeViewport = (isIntersecting) => act(() => viewportCallback([{ isIntersecting }]));
 
-    expect(firstIds).toHaveLength(3);
-    expect(secondIds).toHaveLength(3);
-    expect(secondIds).not.toEqual(firstIds);
+  it('starts with two annotations while every factual value and all label rows remain mounted', () => {
+    const { container } = renderHero();
+    expect(ids(container)).toEqual(expected(0));
+    expect(container.querySelectorAll('[data-hero-field]')).toHaveLength(7);
+    expect(container.querySelectorAll('.hero-field-label')).toHaveLength(7);
+    const values = ['Vivek Patel', 'Computer Vision & AI Engineer', 'Top Rated Plus', '100% Job Success', '€45/hour', 'Linz, Austria'];
+    values.forEach((value) => expect(screen.getByText(value, { exact: true }).closest('.hero-field-value').style.opacity).toBe(''));
+    HERO_INVOICE_FIELDS.forEach((id) => expect(opacity(container, id)).toBe(HERO_DETECTED_FIELD_WINDOWS[0].includes(id) ? '1' : '0'));
+    expect(container.querySelector('[data-hero-field="tags"]').classList.contains('hero-rotating-annotation')).toBe(false);
+    expect(container.querySelector('[data-hero-field="rate"]').classList.contains('hero-rotating-annotation')).toBe(true);
+    expect(vi.getTimerCount()).toBe(1);
+  });
+
+  it('fades both outgoing annotations for 100ms before both incoming annotations, on a 2 second start cadence', () => {
+    const { container } = renderHero();
+    advance(1999);
+    expect(phase(container)).toBe('initial');
+    advance(1);
+    expect(phase(container)).toBe('leaving');
+    expect(ids(container)).toEqual(expected(0));
+    expect(opacity(container, 'name')).toBe('0');
+    expect(opacity(container, 'role')).toBe('0');
+    expect(opacity(container, 'credential')).toBe('0');
+    expect(opacity(container, 'success')).toBe('0');
+    advance(100);
+    expect(phase(container)).toBe('entering');
+    expect(ids(container)).toEqual(expected(1));
+    expect(opacity(container, 'credential')).toBe('1');
+    expect(opacity(container, 'success')).toBe('1');
+    expect(opacity(container, 'name')).toBe('0');
+    expect(opacity(container, 'role')).toBe('0');
+    advance(100);
+    expect(phase(container)).toBe('steady');
+    advance(1799);
+    expect(phase(container)).toBe('steady');
+    advance(1);
+    expect(phase(container)).toBe('leaving');
+    expect(vi.getTimerCount()).toBe(1);
+  });
+
+  it('cycles through all three row pairs and preserves fixed scores, mounted labels and values', () => {
+    const { container } = renderHero();
+    const labels = [...container.querySelectorAll('.hero-field-label')];
+    const values = [...container.querySelectorAll('.hero-field-value')];
+    const scores = labels.map((label) => label.textContent);
+    for (let step = 1; step <= 3; step += 1) {
+      advance(step === 1 ? 2000 : 1800);
+      advance(100);
+      advance(100);
+      expect(ids(container)).toEqual(expected(step % 3));
+      expect([...container.querySelectorAll('.hero-field-label')]).toEqual(labels);
+      expect([...container.querySelectorAll('.hero-field-value')]).toEqual(values);
+      expect(labels.map((label) => label.textContent)).toEqual(scores);
+      expect(container.querySelectorAll('.invoice-field-corners')).toHaveLength(2);
+    }
+  });
+
+  it.each(['leaving', 'entering'])('pause settles the current window during %s and resume waits a full interval', (targetPhase) => {
+    const { container } = renderHero();
+    const control = screen.getByRole('button', { name: 'Pause highlights' });
+    expect(control.textContent).toBe('Pause');
+    control.focus();
+    advance(2000);
+    if (targetPhase === 'entering') advance(100);
+    const currentIndex = targetPhase === 'leaving' ? 0 : 1;
+    fireEvent.click(control);
+    expect(screen.getByRole('button', { name: 'Resume highlights' })).toBe(document.activeElement);
+    expect(control.textContent).toBe('Resume');
+    expect(ids(container)).toEqual(expected(currentIndex));
+    expected(currentIndex).forEach((id) => expect(opacity(container, id)).toBe('1'));
+    expect(phase(container)).toBe('initial');
+    expect(container.querySelector('section').dataset.heroHighlights).toBe('paused');
+    expect(vi.getTimerCount()).toBe(0);
+    advance(10000);
+    expect(ids(container)).toEqual(expected(currentIndex));
+    fireEvent.click(control);
+    advance(1999);
+    expect(phase(container)).toBe('initial');
+    advance(1);
+    expect(phase(container)).toBe('leaving');
+  });
+
+  it.each(['leaving', 'entering'])('hidden tabs settle %s and resume without catch-up', (targetPhase) => {
+    const { container } = renderHero();
+    advance(2000);
+    if (targetPhase === 'entering') advance(100);
+    const current = ids(container);
+    changeVisibility('hidden');
+    expect(vi.getTimerCount()).toBe(0);
+    expect(ids(container)).toEqual(current);
+    current.forEach((id) => expect(opacity(container, id)).toBe('1'));
+    advance(10000);
+    changeVisibility('visible');
+    advance(1999);
+    expect(phase(container)).toBe('initial');
+    advance(1);
+    expect(phase(container)).toBe('leaving');
+  });
+
+  it.each(['leaving', 'entering'])('offscreen settles %s, preserves manual pause across return, then resumes from a full dwell', (targetPhase) => {
+    const { container } = renderHero();
+    advance(2000);
+    if (targetPhase === 'entering') advance(100);
+    const currentIndex = targetPhase === 'leaving' ? 0 : 1;
+    changeViewport(false);
+    expect(ids(container)).toEqual(expected(currentIndex));
+    expected(currentIndex).forEach((id) => expect(opacity(container, id)).toBe('1'));
+    expect(vi.getTimerCount()).toBe(0);
+    fireEvent.click(screen.getByRole('button', { name: 'Pause highlights' }));
+    changeViewport(true);
+    expect(vi.getTimerCount()).toBe(0);
+    fireEvent.click(screen.getByRole('button', { name: 'Resume highlights' }));
+    advance(1999);
+    expect(ids(container)).toEqual(expected(currentIndex));
+    expect(phase(container)).toBe('initial');
+    advance(1);
+    expect(phase(container)).toBe('leaving');
+  });
+
+  it('uses the first window without any timer when reduced motion is enabled at load', () => {
+    reducedMotion = true;
+    const { container } = renderHero();
+    expect(ids(container)).toEqual(expected(0));
+    expect(vi.getTimerCount()).toBe(0);
+    expect(screen.getByRole('button', { name: 'Pause highlights' }).disabled).toBe(true);
+    advance(10000);
+    expect(ids(container)).toEqual(expected(0));
+  });
+
+  it.each(['leaving', 'entering'])('honors live reduced motion during %s and restarts from the first window', (targetPhase) => {
+    const { container } = renderHero();
+    advance(2000);
+    if (targetPhase === 'entering') advance(100);
+    changeReducedMotion(true);
+    expect(ids(container)).toEqual(expected(0));
+    expect(vi.getTimerCount()).toBe(0);
+    changeReducedMotion(false);
+    advance(1999);
+    expect(phase(container)).toBe('initial');
+    advance(1);
+    expect(phase(container)).toBe('leaving');
+  });
+
+  it('does not schedule rotation when the document starts hidden', () => {
+    visibility = 'hidden';
+    const { container } = renderHero();
+    expect(ids(container)).toEqual(expected(0));
+    expect(vi.getTimerCount()).toBe(0);
+    changeVisibility('visible');
+    expect(vi.getTimerCount()).toBe(1);
+    advance(1999);
+    expect(phase(container)).toBe('initial');
+  });
+
+  it.each(['initial', 'leaving', 'entering'])('cleans up the single timer and listeners on unmount during %s', (targetPhase) => {
+    const removeListener = vi.spyOn(document, 'removeEventListener');
+    const { unmount } = renderHero();
+    if (targetPhase !== 'initial') advance(2000);
+    if (targetPhase === 'entering') advance(100);
+    expect(vi.getTimerCount()).toBe(1);
+    unmount();
+    expect(vi.getTimerCount()).toBe(0);
+    expect(mediaListeners.size).toBe(0);
+    expect(removeListener.mock.calls.some(([event]) => event === 'visibilitychange')).toBe(true);
   });
 });
 
