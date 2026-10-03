@@ -130,12 +130,12 @@ Corner decoration does not intercept clicks, create tab stops, announce motion, 
 
 Confirmed intent from #296 is that buttons look like one family with small differences in emphasis. Geometry, label treatment, border weight, arrow shape, and states remain consistent across pages.
 
-Confirmed on 3 October 2026, the hero's Request a Project Estimate and View Case Studies links, the header's Request Estimate link in the bar and drawer, and the final Request a Project Estimate link use the shared corner family. These actions have square dark surfaces, no continuous border, and opposing corners that follow SH-03. Primary estimate links use a stronger dark purple tint and weight; the hero secondary stays darker. Each has one decorative trailing ArrowRight icon and a separate keyboard focus outline at least 2px wide. Preserve the existing text, accessible names, destinations, and navigation behavior.
+Confirmed on 3 October 2026, the hero's Request a Project Estimate and View Case Studies links, the header's Request Estimate link in the bar and drawer, and the final Request a Project Estimate link use the shared corner family. These actions have square surfaces with subtle purple at the top fading to black, no continuous border, and opposing corners that follow SH-03. All named actions share the existing final CTA background: `#0C0D0D` beneath a purple-to-transparent gradient covering the top 55%, with purple opacity 0.06 at rest and 0.1 on hover or keyboard focus. Primary estimate links use weight 650; the hero secondary uses weight 600. Each has one decorative trailing ArrowRight icon and a separate keyboard focus outline at least 2px wide. Preserve the existing text, accessible names, destinations, and navigation behavior.
 
 | Variant | Purpose | Treatment |
 | --- | --- | --- |
-| Primary | Named estimate navigation links | Square dark purple surface, readable white text, opposing corners, and one trailing arrow. |
-| Secondary | Hero View Case Studies link | Matching height and geometry, darker surface, and one trailing arrow. |
+| Primary | Named estimate navigation links | Purple top fading to black, readable white text at weight 650, opposing corners, and one trailing arrow. |
+| Secondary | Hero View Case Studies link | Matching background, height, and geometry, text at weight 600, and one trailing arrow. |
 | Text action | Scope details, back links, footer navigation | Readable link styling and visible focus without a filled button. |
 | Utility | Gallery, menu, close, zoom, pause, consent, retry | Compact compatible styling with conventional icons and accessible names. |
 

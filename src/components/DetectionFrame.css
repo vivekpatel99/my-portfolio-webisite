@@ -85,7 +85,7 @@
 }
 
 .detection-action {
-  --detection-label-background: #121015;
+  --detection-label-background: #0c0d0d;
   align-items: center;
   justify-content: center;
   gap: 12px;
@@ -93,7 +93,10 @@
   padding: 14px 24px;
   border: 0;
   border-radius: 0;
-  background: #121015;
+  background-color: #0c0d0d;
+  background-image: linear-gradient(to bottom, rgba(139, 92, 246, 0.06), transparent);
+  background-size: 100% 55%;
+  background-repeat: no-repeat;
   color: white;
   font-size: 1rem;
   font-weight: 600;
@@ -105,20 +108,11 @@
 
 .detection-action:hover,
 .detection-action:focus-visible {
-  --detection-label-background: #1a1720;
-  background: #1a1720;
+  background-image: linear-gradient(to bottom, rgba(139, 92, 246, 0.1), transparent);
 }
 
 .detection-action--primary {
-  --detection-label-background: #20172f;
-  background: #20172f;
   font-weight: 650;
-}
-
-.detection-action--primary:hover,
-.detection-action--primary:focus-visible {
-  --detection-label-background: #2b1d40;
-  background: #2b1d40;
 }
 
 .detection-action:focus-visible {
