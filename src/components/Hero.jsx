@@ -314,11 +314,9 @@ const Hero = () => {
                 <div className="flex justify-between items-start mb-1 pb-1.5 border-b border-white/[0.08] max-md:mb-1 max-md:pb-1">
                   <div>
                     <div className="text-[clamp(1.25rem,2.4vw,1.75rem)] font-bold tracking-tight leading-[1.2] uppercase text-white">Profile Invoice</div>
-                    <div className="mt-1 font-mono text-[10px] text-gray-400 tracking-wide">OCR simulation</div>
                   </div>
                   <div className="text-right font-mono text-[10px] leading-relaxed text-gray-400">
                     <strong className="block text-gray-400 font-medium tracking-wider">INV-VP-0045</strong>
-                    OCR surface
                   </div>
                 </div>
 

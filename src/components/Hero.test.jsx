@@ -168,7 +168,6 @@ describe('Hero illustrative OCR labels (#297)', () => {
       expect(label.querySelector('[aria-hidden="true"]').textContent).toBe(` · ${score}`);
       expect(label.closest('[tabindex], [aria-live]')).toBeNull();
     });
-    expect(screen.getByText('OCR simulation', { exact: true })).toBeTruthy();
     expect(container.querySelectorAll('.invoice-field-corners')).toHaveLength(2);
     expect(container.querySelector('[data-hero-field="tags"]')).toBeNull();
     expect(screen.queryByText('Tags', { exact: true })).toBeNull();

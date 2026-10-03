@@ -1374,6 +1374,5 @@ test('hero invoice proof fold structure per #176', async ({ page }) => {
   await expect(locationField.getByText('Linz, Austria', { exact: true })).toBeVisible();
   
   await expect(page.getByText('doc · extract · 0.97', { exact: true })).toHaveCount(0);
-  await expect(invoice.getByText('OCR simulation', { exact: true })).toBeVisible();
   await expect(page.getByText('INV-VP-0045')).toBeVisible();
 });

@@ -16,7 +16,7 @@ This experiment supersedes the earlier three-highlight cycle, the Rate exclusion
 
 ## Label and portrait attachment
 
-The six rotating invoice labels retain their fixed illustrative confidence scores. `Tags · 0.93` is removed because the topic chips are not detected fields. The header says `OCR simulation`. The outer `DOC · EXTRACT · 0.97` badge is removed at Vivek's request. Each field uses one intrinsic grid for its label and value. A label begins 17 CSS pixels from the frame's left edge, leaving a 5px gap after its 12px corner stroke. Its 12px line box is centered on the 6px top-edge guide. Hidden annotations keep their reserved row and geometry.
+The six rotating invoice labels retain their fixed illustrative confidence scores. `Tags · 0.93` is removed because the topic chips are not detected fields. The `OCR simulation` and `OCR surface` captions are removed at Vivek's request. The outer `DOC · EXTRACT · 0.97` badge is removed at Vivek's request. Each field uses one intrinsic grid for its label and value. A label begins 17 CSS pixels from the frame's left edge, leaving a 5px gap after its 12px corner stroke. Its 12px line box is centered on the 6px top-edge guide. Hidden annotations keep their reserved row and geometry.
 
 The portrait tag begins 29px from the strongest outer frame's left edge, leaving a 5px gap after its 24px stroke. Its vertical center matches that frame guide within half a CSS pixel. The engineer annotation now uses the same plain grey label and quieter score treatment as the invoice fields, with no outlined badge, rounded box, padding, or blur. Lower badges, portrait source, factual values, h1, invoice outer padding, and action destinations remain intact.
 
@@ -32,7 +32,7 @@ The selection also stops when the document is hidden, the hero is offscreen, and
 
 ## Desktop verification
 
-Vivek requested desktop/laptop verification only until the animation direction is agreed. Automated annotation checks use an actual 1440 × 900 CSS viewport, with an additional laptop fold check at 1280 × 720. The live Codex browser reports 1349 × 1331 CSS pixels and remains open with the animation running. Its screenshot records that desktop feedback view.
+Vivek requested desktop/laptop verification only until the animation direction is agreed. Automated annotation checks use an actual 1440 × 900 CSS viewport, with an additional laptop fold check at 1280 × 720. The live Codex browser reports 1234 × 1331 CSS pixels and remains open with the animation running. Its screenshot records that desktop feedback view.
 
 - All three pair states pass label clearance, value containment, fixed-score, and portrait-anchor checks.
 - A real six-second cycle reaches Credential/Success, Rate/Location, and Name/Role in order. Field and action rectangles remain unchanged.
@@ -73,11 +73,11 @@ Keep both issues open with `Refs #297` and `Refs #292` while visual agreement an
 
 ## Visual evidence
 
-The desktop screenshot captures the current cleanup in the Name/Role state. The replacement clip captures the current design through the full three-pair cycle, including the uppercase title, white location value, and removed document badge.
+The desktop screenshot captures the current cleanup in the Rate/Location state. The lossless clip captures the full three-pair cycle before the two OCR header captions were removed. The screenshot reflects their removal.
 
 ![Current desktop two-box annotation experiment](hero-ocr-labels-297/after-desktop.jpg)
 
-[Current desktop animation clip, without compression shimmer](hero-ocr-labels-297/desktop-animation.webm)
+[Desktop animation clip before header-caption removal, without compression shimmer](hero-ocr-labels-297/desktop-animation.webm)
 
 ### Original desktop baseline
 
@@ -104,3 +104,5 @@ The document-badge followup starts from `247478d34f77138c61766f41b33c881a1ecbae9
 The final capitalization and location-color followup changes only two Tailwind classes. Desktop inspection confirms uppercase title presentation, location `rgb(255, 255, 255)`, and one h1. Six existing desktop annotation and laptop-fold cases pass again, alongside 828 unit tests and the production build. Fresh Standards and Spec reviews find no actionable issues. The starting commit is `a56854272edb393f6e14c52655d5f78e71aa2b77`; baseline and ownership records are retained in `/private/tmp/hero-title-color-300-kK4A`.
 
 The recording-only followup starts from `a0232cfaa45c5c319c6c977fe66c551e20d24e8d` and replaces only the evidence clip and this report. Its baseline and ownership records are retained in `/private/tmp/hero-still-300-wA60`. Shared feedback previews and all pre-existing untracked files are preserved. Capture and encoding processes are temporary; their disposable source frames and scripts are removed after the replacement recording is verified and pushed.
+
+The header-caption followup removes `OCR simulation` and `OCR surface`, and drops their obsolete positive assertions. It refreshes the desktop screenshot and the existing feedback preview. The production build, all 45 Hero unit tests, and eight desktop/laptop annotation, spacing, accessibility, and fold checks pass. Direct browser inspection confirms both captions are absent. Its starting commit is `d9e540a9ff1f79907fa5959b8e5fbf77e5ae68db`; baseline and ownership records are retained in `/private/tmp/hero-header-300-ABaKwR`.
