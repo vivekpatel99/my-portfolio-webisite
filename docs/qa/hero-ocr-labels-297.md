@@ -16,7 +16,7 @@ This experiment supersedes the earlier three-highlight cycle, the Rate exclusion
 
 ## Label and portrait attachment
 
-The six rotating invoice labels retain their fixed illustrative confidence scores. `Tags · 0.93` is removed because the topic chips are not detected fields. The header says `OCR simulation`. Each field uses one intrinsic grid for its label and value. A label begins 17 CSS pixels from the frame's left edge, leaving a 5px gap after its 12px corner stroke. Its 12px line box is centered on the 6px top-edge guide. Hidden annotations keep their reserved row and geometry.
+The six rotating invoice labels retain their fixed illustrative confidence scores. `Tags · 0.93` is removed because the topic chips are not detected fields. The header says `OCR simulation`. The outer `DOC · EXTRACT · 0.97` badge is removed at Vivek's request. Each field uses one intrinsic grid for its label and value. A label begins 17 CSS pixels from the frame's left edge, leaving a 5px gap after its 12px corner stroke. Its 12px line box is centered on the 6px top-edge guide. Hidden annotations keep their reserved row and geometry.
 
 The portrait tag begins 29px from the strongest outer frame's left edge, leaving a 5px gap after its 24px stroke. Its vertical center matches that frame guide within half a CSS pixel. The engineer annotation now uses the same plain grey label and quieter score treatment as the invoice fields, with no outlined badge, rounded box, padding, or blur. Lower badges, portrait source, factual values, h1, invoice outer padding, and action destinations remain intact.
 
@@ -32,7 +32,7 @@ The selection also stops when the document is hidden, the hero is offscreen, and
 
 ## Desktop verification
 
-Vivek requested desktop/laptop verification only until the animation direction is agreed. The final browser checks use an actual 1440 × 900 CSS viewport. The Codex browser remains open at that size with the animation running.
+Vivek requested desktop/laptop verification only until the animation direction is agreed. Automated annotation checks use an actual 1440 × 900 CSS viewport, with an additional laptop fold check at 1280 × 720. The live Codex browser reports 1309 × 818 CSS pixels and remains open with the animation running. Its screenshot records that desktop feedback view.
 
 - All three pair states pass label clearance, value containment, fixed-score, and portrait-anchor checks.
 - A real six-second cycle reaches Credential/Success, Rate/Location, and Name/Role in order. Field and action rectangles remain unchanged.
@@ -41,13 +41,13 @@ Vivek requested desktop/laptop verification only until the animation direction i
 - Existing desktop hero motion checks pass. One coarse-pointer test is intentionally skipped on the desktop fine-pointer configuration.
 - Direct Codex-browser interaction confirmed the two selected field wrappers and Pause/Resume state. The same desktop preview is available for feedback.
 
-The earlier desktop batch passed 10 cases with one expected skip. For this cleanup, all five targeted annotation cases pass at 1440 × 900, including the three pair states, per-frame handoff sampling, keyboard Pause/Resume, reduced motion, and offscreen suspension. This pass also checks the enlarged title, single h1, static chips, absence of Tags metadata, and border-free portrait label. Desktop hero motion tests were run on the earlier experiment, not repeated for this styling cleanup.
+The earlier desktop batch passed 10 cases with one expected skip. For this cleanup, all five targeted annotation cases pass at 1440 × 900, including the three pair states, per-frame handoff sampling, keyboard Pause/Resume, reduced motion, and offscreen suspension. This pass also checks the enlarged title, single h1, static chips, absence of Tags metadata and the document detection badge, and border-free portrait label. After the document-badge removal, the combined desktop annotation, motion, and laptop-fold batch passes 10 cases with one expected coarse-pointer skip. Separate desktop invoice-spacing and proof-fold accessibility checks also pass.
 
 ## Automated verification and review
 
 The full unit suite passes all 828 tests in 68 files, including timer cleanup during both fade phases, hidden/offscreen state, live reduced motion, and unmount. The production build passes image derivative checks, bundling, sitemap generation, and static output checks for 36 public links and 21 routes. Scoped ESLint and `git diff --check` pass.
 
-Fresh independent Standards and Spec reviews cover this cleanup before commit. The Spec review prompted the final title hierarchy adjustment, followed by a build and desktop-check confirmation. The scoped Impeccable detector reports no findings. No animation logic changes are included.
+Fresh independent Standards and Spec reviews cover the title and annotation cleanup, followed by a further precommit review of the document-badge removal. The Spec review prompted the final title hierarchy adjustment, followed by a build and desktop-check confirmation. The title and annotation cleanup's scoped Impeccable detector reported no findings. The document-badge followup deletes one decorative element and adds no UI styling. No animation logic changes are included. The document-badge comment review found zero added comments. The Prove It Works principle led to checking the actual desktop preview; the Laziness Protocol kept this followup to removing the badge and updating its dependent assertions.
 
 The Model the Domain principle led to an explicit row-pair table and local phase state. The Prove It Works principle led to real desktop frame sampling and direct control interaction.
 
@@ -65,7 +65,7 @@ Keep both issues open with `Refs #297` and `Refs #292` while visual agreement an
 
 ## Visual evidence
 
-The desktop screenshot captures the current cleanup in the Name/Role state. The earlier clip shows the unchanged top-to-bottom cycle before the title, engineer-label, and Tags cleanup; it does not show those final visual changes.
+The desktop screenshot captures the current cleanup in the Name/Role state. The earlier clip shows the unchanged top-to-bottom cycle before the title, engineer-label, Tags, and document-badge cleanup; it does not show those final visual changes.
 
 ![Current desktop two-box annotation experiment](hero-ocr-labels-297/after-desktop.jpg)
 
@@ -90,3 +90,5 @@ The following mobile and tablet captures record the earlier label-attachment imp
 ## Cleanup delivery scope
 
 The cleanup continues draft PR #300 on `codex/297-hero-ocr-labels`, from `195cd720a378adb3a85b5c3a35f5ccaa02a38124`. The baseline and recovery material in `/private/tmp/hero-297-Q7c4` and its parent-owned preview process are preserved. A separate feedback preview is retained at `http://127.0.0.1:4310/`, using `/private/tmp/hero-cleanup-300-rbrV/after-dist`. Its task directory keeps the captured dirty-state baseline and ownership record while feedback remains pending. Disposable verification logs and runner configuration are removed after delivery. The ignored local `dist/` directory was rebuilt; no tracked generated output is added. Pre-existing untracked files remain untouched.
+
+The document-badge followup starts from `247478d34f77138c61766f41b33c881a1ecbae95`. Its preserved baseline and ownership record are in `/private/tmp/hero-doc-badge-300-BBuD`. It refreshes the existing port 4310 preview output without starting or stopping any preview process.

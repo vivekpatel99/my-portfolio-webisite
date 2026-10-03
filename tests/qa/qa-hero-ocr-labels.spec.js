@@ -41,6 +41,7 @@ for (const { width, height } of viewports) {
       await page.clock.pauseAt(new Date('2026-10-03T08:00:01Z'));
       const invoice = page.getByRole('article', { name: 'Profile invoice field parse' });
       await expect(invoice.getByText('OCR simulation', { exact: true })).toBeVisible();
+      await expect(invoice.getByText('doc · extract · 0.97', { exact: true })).toHaveCount(0);
       await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
       await expect(invoice.getByText('Tags · 0.93', { exact: true })).toHaveCount(0);
       for (const tag of ['OCR', 'CV', 'n8n']) await expect(invoice.getByText(tag, { exact: true })).toBeVisible();

@@ -115,12 +115,12 @@ describe('Hero invoice proof fold (#176)', () => {
     expect(bio).toBeTruthy();
   });
 
-  it('renders invoice detection chrome and scan label', () => {
+  it('renders the invoice header without a document detection badge', () => {
     renderHero();
-    const scanLabel = screen.getByText('doc · extract · 0.97', { exact: true });
+    const scanLabel = screen.queryByText('doc · extract · 0.97', { exact: true });
     const docId = screen.getByText('INV-VP-0045', { exact: true });
     const title = screen.getByText('Profile Invoice', { exact: true });
-    expect(scanLabel).toBeTruthy();
+    expect(scanLabel).toBeNull();
     expect(docId).toBeTruthy();
     expect(title).toBeTruthy();
   });
@@ -200,7 +200,7 @@ describe('Hero illustrative OCR labels (#297)', () => {
 describe('Hero invoice header spacing (#253)', () => {
   const classesOf = (element) => element.className.split(/\s+/);
 
-  it('spaces the status pill, scan label, title, credentials and actions apart', () => {
+  it('spaces the status pill, title, credentials and actions apart', () => {
     const { container } = renderHero();
     const section = container.querySelector('section');
     const pillRow = screen.getByText('Inference online').parentElement.parentElement;

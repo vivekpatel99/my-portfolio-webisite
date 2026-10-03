@@ -134,7 +134,7 @@ test.describe('hero motion work (#232)', () => {
     expect(await writesDuring(page), 'settled --px/--py writes').toBe(0);
 
     expect(await layoutRects(page)).toEqual(layoutBefore);
-    for (const badge of ['Inference online', 'doc · extract · 0.97', 'engineer · 0.99', 'ID 001 · TRACKED', 'REC']) {
+    for (const badge of ['Inference online', 'engineer · 0.99', 'ID 001 · TRACKED', 'REC']) {
       await expect(hero.getByText(badge, { exact: true })).toBeVisible();
     }
     await expect(hero.locator('[data-hero-field].invoice-field-corners')).toHaveCount(2);

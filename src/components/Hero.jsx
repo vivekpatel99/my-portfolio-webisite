@@ -302,13 +302,6 @@ const Hero = () => {
                 }}
                 aria-label="Profile invoice field parse"
               >
-                {/* Scan label */}
-                <span 
-                  className="absolute -top-[13px] left-[18px] font-mono text-[10px] tracking-wider uppercase text-purple-200 bg-[rgba(12,13,13,0.95)] px-2 py-[3px] border border-[#8B5CF6]/35 rounded-[2px]"
-                >
-                  doc · extract · 0.97
-                </span>
-
                 {/* Corner brackets */}
                 <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
                   <i className="absolute top-[7px] left-[7px] w-3 h-3 border-l-[1.5px] border-t-[1.5px] border-[rgba(192,132,252,0.65)]" />

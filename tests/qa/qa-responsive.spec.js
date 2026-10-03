@@ -193,8 +193,6 @@ for (const vp of heroFoldViewports) {
       } else {
         expect(role.x).toBeGreaterThan(name.x);
       }
-      const scanLabel = await invoiceElement.getByText('doc · extract · 0.97').boundingBox();
-      expect(boxesOverlap(scanLabel, await invoiceTitle.boundingBox())).toBe(false);
     }
 
     const ctaGap = vp.width < 768
@@ -251,7 +249,6 @@ const assertHeroInvoiceGaps = async (page, { requireMobileHeaderGap = false } = 
 
   const header = await box(page.getByRole('banner'));
   const pill = await box(hero.getByText('Inference online', { exact: true }).locator('..'));
-  const scanLabel = await box(invoice.getByText('doc · extract · 0.97', { exact: true }));
   const title = await box(invoice.getByText('Profile Invoice', { exact: true }));
   const panel = await box(invoice);
   const estimate = await box(hero.getByRole('link', { name: 'Request a Project Estimate' }));
@@ -260,8 +257,7 @@ const assertHeroInvoiceGaps = async (page, { requireMobileHeaderGap = false } = 
   const rateLabel = await box(invoice.getByText('Rate', { exact: true }));
   const rateValue = await box(invoice.getByText('€45/hour', { exact: true }));
 
-  expect(scanLabel.y - bottom(pill)).toBeGreaterThanOrEqual(4);
-  expect(title.y - bottom(scanLabel)).toBeGreaterThanOrEqual(4);
+  expect(title.y - bottom(pill)).toBeGreaterThanOrEqual(8);
   // #191 asks for one consistent panel-to-actions gap inside 16-24 px.
   expect(estimate.y - bottom(panel)).toBeCloseTo(16, 0);
   const captionToNextLabel = rateLabel.y - bottom(caption);
