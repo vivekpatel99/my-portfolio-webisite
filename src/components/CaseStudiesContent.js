@@ -1,7 +1,6 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { collectionCaseStudies, otherWorkCaseStudies } from '../data/caseStudies.js';
-import CaseStudyCard from './CaseStudyCard.js';
+import { collectionCaseStudies } from '../data/caseStudies.js';
 import CaseStudyCollection from './CaseStudyCollection.js';
 
 const CaseStudiesContent = ({ stories }) => React.createElement(
@@ -28,29 +27,6 @@ const CaseStudiesContent = ({ stories }) => React.createElement(
     React.createElement(
       CaseStudyCollection,
       { stories: stories ?? collectionCaseStudies },
-      otherWorkCaseStudies.length === 0 ? null : React.createElement(
-        'section',
-        { className: 'mt-16', 'aria-labelledby': 'other-work-heading' },
-        React.createElement(
-          'div',
-          { className: 'mb-12 max-w-3xl' },
-          React.createElement(
-            'h2',
-            { id: 'other-work-heading', className: 'text-2xl font-bold uppercase leading-tight text-white' },
-            'OTHER WORK',
-          ),
-          React.createElement('p', { className: 'mt-6 text-lg text-[#9ca3af]' }, 'Published work outside the main extraction, OCR, and computer vision collection.'),
-        ),
-        React.createElement(
-          'div',
-          { className: 'grid grid-cols-1 gap-[22px] md:grid-cols-2 lg:grid-cols-3' },
-          otherWorkCaseStudies.map((project) => React.createElement(CaseStudyCard, {
-            key: project.slug,
-            project,
-            fromCollection: true,
-          })),
-        ),
-      ),
     ),
   ),
 );

@@ -3,7 +3,6 @@ import {
   caseStudies,
   collectionCaseStudies,
   featuredCaseStudies,
-  otherWorkCaseStudies,
 } from '../../src/data/caseStudies.js';
 import { HOURLY_FROM_LABEL, serviceOffers, serviceTimelineLabel } from '../../src/data/serviceOffers.js';
 
@@ -437,6 +436,7 @@ const settledScrollY = async (page) => {
 };
 
 const openAndReturnToCard = async (page, card, activate) => {
+  await expect(card).toHaveCount(1);
   await card.evaluate((element) => element.scrollIntoView({ block: 'center', behavior: 'instant' }));
   const departureY = await settledScrollY(page);
   const slug = (await card.getAttribute('href')).match(/\/project\/([^/]+)\//)[1];
@@ -458,10 +458,8 @@ const pressEnterOnCard = (page) => async (card) => {
 
 const CORE_PAGE_SIZE = 6;
 const initialCoreCount = Math.min(CORE_PAGE_SIZE, collectionCaseStudies.length);
-const otherWorkIndices = otherWorkCaseStudies.map((_, index) => index);
-const otherWorkCards = (page) => page
-  .getByRole('region', { name: /other work/i })
-  .getByRole('link', { name: /Read case study:/ });
+const migratedSlugs = ['ai-project-planning-assistant', 'python-ci-workflow-automation'];
+const migratedCard = (page, slug) => page.locator(`[id^="case-study-grid-"] a[href="/project/${slug}/?from=collection"]`);
 const loadMoreControl = (page) => page.locator('button[aria-controls^="case-study-grid-"]');
 const coreCards = (page) => page
   .locator('[id^="case-study-grid-"]')
@@ -489,7 +487,9 @@ const openCollection = async (page) => {
   });
   await page.reload();
   await expect(coreCards(page)).toHaveCount(initialCoreCount);
-  await expect(otherWorkCards(page)).toHaveCount(otherWorkCaseStudies.length);
+  await expect(page.getByRole('region', { name: /other work/i })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: /other work/i })).toHaveCount(0);
+  await expect(page.getByRole('status')).toHaveText('Showing 6 of 12 case studies');
 };
 
 test.describe('collection return', () => {
@@ -501,47 +501,55 @@ test.describe('collection return', () => {
         await page.emulateMedia({ reducedMotion });
       });
 
-      test('fresh session restores each Other Work card by pointer click', async ({ page }) => {
-        for (const index of otherWorkIndices) {
+      test('fresh session restores each migrated card by pointer click', async ({ page }) => {
+        for (const slug of migratedSlugs) {
           await openCollection(page);
-          const departureY = await openAndReturnToCard(page, otherWorkCards(page).nth(index), clickCard);
+          await loadMoreControl(page).click();
+          await expect(coreCards(page)).toHaveCount(12);
+          const departureY = await openAndReturnToCard(page, migratedCard(page, slug), clickCard);
+          await expect(coreCards(page)).toHaveCount(12);
           expect(departureY).toBeGreaterThan(0);
         }
       });
 
-      test('a core return snapshot is replaced by the next Other Work departure', async ({ page }) => {
-        for (const index of otherWorkIndices) {
+      test('a first-batch return snapshot is replaced by the next migrated-card departure', async ({ page }) => {
+        for (const slug of migratedSlugs) {
           await openCollection(page);
           const coreDepartureY = await openAndReturnToCard(page, coreCards(page).nth(1), clickCard);
           await expect(coreCards(page)).toHaveCount(initialCoreCount);
-          const otherWorkDepartureY = await openAndReturnToCard(page, otherWorkCards(page).nth(index), clickCard);
-          expect(Math.abs(otherWorkDepartureY - coreDepartureY)).toBeGreaterThan(100);
-          await expect(coreCards(page)).toHaveCount(initialCoreCount);
+          await loadMoreControl(page).click();
+          await expect(coreCards(page)).toHaveCount(12);
+          const migratedDepartureY = await openAndReturnToCard(page, migratedCard(page, slug), clickCard);
+          expect(Math.abs(migratedDepartureY - coreDepartureY)).toBeGreaterThan(100);
+          await expect(coreCards(page)).toHaveCount(12);
         }
       });
 
-      test('keyboard Load more keeps focus and keyboard Other Work returns preserve the loaded count', async ({ page }) => {
-        for (const index of otherWorkIndices) {
+      test('keyboard Load more keeps focus and keyboard migrated-card returns preserve the loaded count', async ({ page }) => {
+        for (const slug of migratedSlugs) {
           await openCollection(page);
           await loadAllCoresByKeyboard(page);
-          await openAndReturnToCard(page, otherWorkCards(page).nth(index), pressEnterOnCard(page));
+          await openAndReturnToCard(page, migratedCard(page, slug), pressEnterOnCard(page));
           await expect(coreCards(page)).toHaveCount(collectionCaseStudies.length);
         }
       });
 
-      test('browser Back from an Other Work article restores position and loaded count', async ({ page }) => {
-        await openCollection(page);
-        await loadAllCoresByKeyboard(page);
-        const card = otherWorkCards(page).first();
-        await card.evaluate((element) => element.scrollIntoView({ block: 'center', behavior: 'instant' }));
-        const departureY = await settledScrollY(page);
-        await card.click();
-        await expect(page).toHaveURL(/\/project\/[^/]+\/$/);
-        await page.goBack();
-        await expect(page).toHaveURL(/\/case-studies\/$/);
-        await expect(coreCards(page)).toHaveCount(collectionCaseStudies.length);
-        await expect(otherWorkCards(page).first()).toBeInViewport();
-        expect(Math.abs((await settledScrollY(page)) - departureY)).toBeLessThanOrEqual(100);
+      test('browser Back from each migrated article restores position and loaded count', async ({ page }) => {
+        for (const slug of migratedSlugs) {
+          await openCollection(page);
+          await loadAllCoresByKeyboard(page);
+          const card = migratedCard(page, slug);
+          await expect(card).toHaveCount(1);
+          await card.evaluate((element) => element.scrollIntoView({ block: 'center', behavior: 'instant' }));
+          const departureY = await settledScrollY(page);
+          await card.click();
+          await expect(page).toHaveURL(new RegExp(`/project/${slug}/$`));
+          await page.goBack();
+          await expect(page).toHaveURL(/\/case-studies\/$/);
+          await expect(coreCards(page)).toHaveCount(12);
+          await expect(migratedCard(page, slug)).toBeInViewport();
+          expect(Math.abs((await settledScrollY(page)) - departureY)).toBeLessThanOrEqual(100);
+        }
       });
     });
   }

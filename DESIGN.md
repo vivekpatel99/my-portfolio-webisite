@@ -112,6 +112,8 @@ Confirmed on 3 October 2026, Vivek selected the **Corners + labels** prototype. 
 
 The case-study collection page uses its Selected Case Studies heading without a separate Collection badge.
 
+Confirmed on 3 October 2026, all twelve approved completed case studies share one collection, sorted together by completion date. The first six remain the initial batch and Load more reveals the next six. AI Project Planning Assistant and Python CI Workflow Automation appear once in that same grid; there is no separate Other Work section. Preserve the three handpicked homepage features, publication eligibility, and collection return position and loaded count. Existing ten-card browsing snapshots remain valid and can load the final two cards.
+
 Confirmed on 3 October 2026, testimonial controls show slide dots without a Pause/Play button. Selecting a dot stops automatic rotation for the mounted carousel; all dots remain usable for reading other quotes. Mouse hover and keyboard focus temporarily hold rotation, and reduced motion disables autoplay.
 
 Paragraphs, navigation links, individual footer links, legal text, gallery thumbnails, and captions receive no extra decorative boxes. Do not add a frame around every item inside a framed panel. Action styling remains under BT-01.
