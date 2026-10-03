@@ -443,8 +443,9 @@ test('portfolio section shows Detection Card craft signals on homepage', async (
   await portfolio.scrollIntoViewIfNeeded();
   await expect(portfolio).toBeVisible();
 
-  await expect(portfolio.getByText(/PORTFOLIO.*CASE STUDIES/i)).toBeVisible();
-  await expect(portfolio.getByRole('heading', { name: /Featured.*Case Studies/i })).toBeVisible();
+  const heading = portfolio.getByRole('heading', { name: /Featured.*Case Studies/i });
+  await expect(heading).toBeVisible();
+  await expect(heading.getByText('Selected work', { exact: true })).toBeVisible();
 
   const cards = portfolio.locator('article').all();
   expect((await cards).length).toBeGreaterThan(0);
@@ -452,7 +453,7 @@ test('portfolio section shows Detection Card craft signals on homepage', async (
   const firstCard = portfolio.locator('article').first();
   await expect(firstCard).toBeVisible();
   
-  const metaLine = firstCard.locator('div').filter({ hasText: /·.*CASE STUDY/i }).first();
+  const metaLine = firstCard.locator('.detection-label').filter({ hasText: /·.*CASE STUDY/i });
   await expect(metaLine).toBeVisible();
   
   const svg = firstCard.locator('svg[viewBox="0 0 16 16"]').first();

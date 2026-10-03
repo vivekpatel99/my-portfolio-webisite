@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { testimonials } from '@/data/testimonials';
+import { DetectionHeading, DetectionLabel } from './DetectionFrame';
 
 const INTERVAL = 6000;
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
@@ -37,12 +38,6 @@ const Testimonials = () => {
         return () => query.removeListener?.(syncPreference);
     }, []);
 
-    // Removing the focused playback control on a preference change emits no blur,
-    // so re-derive focus-within from the actual active element after each switch.
-    useEffect(() => {
-        setHasFocusWithin(carouselRef.current?.contains(document.activeElement) ?? false);
-    }, [prefersReducedMotion]);
-
     useEffect(() => {
         if (!isRotating) return undefined;
 
@@ -53,7 +48,6 @@ const Testimonials = () => {
         return () => clearInterval(timer);
     }, [isRotating]);
 
-    // Choosing a slide is an explicit request to read it, so it stops rotation until Play.
     const goToSlide = (index) => {
         setActiveIndex(index);
         setIsUserPaused(true);
@@ -81,12 +75,9 @@ const Testimonials = () => {
         <section id="testimonials" className="section relative py-[92px] px-5 sm:px-12 overflow-hidden bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.035),transparent_42%),#0C0D0D]">
             <div className="inner relative z-[2] w-full max-w-[1120px] mx-auto">
                 <div className="section-head mb-[54px]">
-                    <div className="eyebrow font-mono text-[10px] text-[#9ca3af] mb-[19px] tracking-[0.15em] uppercase">
-                        TESTIMONIALS · <span className="text-[#a78bfa]">DETECTED</span>
-                    </div>
-                    <h2 className="text-[clamp(2.35rem,4vw,4rem)] leading-[0.98] tracking-[-0.045em] uppercase font-[730]">
+                    <DetectionHeading label="Testimonials" className="text-[clamp(2.35rem,4vw,4rem)] leading-[0.98] tracking-[-0.045em] uppercase font-[730]">
                         CLIENT <span className="text-[#8B5CF6]">RESULTS</span>
-                    </h2>
+                    </DetectionHeading>
                     <p className="sub mt-[17px] text-[#9ca3af] text-[15px] leading-[1.6]">
                         Real projects. Real impact.
                     </p>
@@ -108,14 +99,14 @@ const Testimonials = () => {
                         aria-label={`${activeIndex + 1} of ${testimonials.length}`}
                         aria-live={isRotating ? 'off' : 'polite'}
                         tabIndex={0}
-                        className="field relative border border-[rgba(139,92,246,0.55)] min-h-[337px] grid grid-cols-1 md:grid-cols-[148px_1fr] bg-gradient-to-r from-[rgba(139,92,246,0.035)] to-transparent hover:border-[rgba(139,92,246,0.82)] focus-visible:border-[rgba(139,92,246,0.82)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a78bfa] transition-colors"
+                        className="field detection-panel relative min-h-[337px] grid grid-cols-1 md:grid-cols-[148px_1fr] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a78bfa] transition-colors"
                     >
-                        {/* Corner brackets */}
-                        <i className="corner tl absolute w-[22px] h-[22px] pointer-events-none top-[7px] left-[7px] border-t-[1.5px] border-l-[1.5px] border-[#8B5CF6]"></i>
-                        <i className="corner br absolute w-[22px] h-[22px] pointer-events-none right-[7px] bottom-[7px] border-r-[1.5px] border-b-[1.5px] border-[rgba(255,255,255,0.62)]"></i>
+                        <DetectionLabel>
+                            TESTIMONIAL · <b className="font-medium">{testimonial.clientName}</b>
+                        </DetectionLabel>
 
                         {/* Rail */}
-                        <div className="rail border-r md:border-r border-b md:border-b-0 border-[rgba(139,92,246,0.19)] py-4 md:py-8 px-5 md:px-6 flex md:flex-col flex-row justify-between items-center md:items-start">
+                        <div className="rail py-4 md:py-8 px-5 md:px-6 flex md:flex-col flex-row justify-between items-center md:items-start">
                             <div className="glyph w-[40px] h-[40px] md:w-[54px] md:h-[54px] relative text-[#8B5CF6]">
                                 <span className="absolute inset-[5px] md:inset-[7px] border border-current rotate-45"></span>
                                 <span className="absolute inset-[12px] md:inset-[17px] border border-[rgba(255,255,255,0.42)] rotate-45"></span>
@@ -132,10 +123,7 @@ const Testimonials = () => {
 
                         {/* Quote area */}
                         <article className="quote-area py-[24px] md:py-[34px] px-5 md:px-12 flex flex-col">
-                            <div className="meta font-mono text-[10px] text-[#9ca3af] pb-[19px] border-b border-[rgba(255,255,255,0.08)]">
-                                TESTIMONIAL · <b className="text-[#a78bfa] font-medium">{testimonial.clientName}</b>
-                            </div>
-                            <div className="project font-mono mt-[27px] text-[#9ca3af] text-[10px]">
+                            <div className="project font-mono mt-2 text-[#9ca3af] text-[10px]">
                                 PROJECT · <span className="text-[#c1b8da]">{testimonial.projectTitle || testimonial.project || 'Automated Data Extraction Workflow'}</span>
                             </div>
                             <blockquote className="quote mt-[19px] max-w-[790px] text-[clamp(1.2rem,2.35vw,2.12rem)] leading-[1.42] tracking-[-0.025em] font-[430]">
@@ -152,15 +140,9 @@ const Testimonials = () => {
                                         </span>
                                     )}
                                 </div>
-                                <div className="font-mono text-[8px] text-[#9ca3af]">
-                                    CLIENT RESPONSE · DETECTED
-                                </div>
                             </footer>
                         </article>
 
-                        <span className="micro absolute right-0 top-[-24px] text-[#9ca3af] text-[8px] font-mono">
-                            BBOX · ACTIVE
-                        </span>
                     </div>
 
                     {/* Diamonds are decorative marks inside unrotated, larger hit targets. */}
@@ -182,24 +164,10 @@ const Testimonials = () => {
                                 </button>
                             ))}
                         </div>
-                        {prefersReducedMotion ? (
+                        {prefersReducedMotion && (
                             <span className="autoplay-status inline-flex items-center min-h-[44px] px-3 font-mono text-[10px] uppercase tracking-[0.15em] text-[#9ca3af]">
                                 Autoplay off · Reduced motion
                             </span>
-                        ) : (
-                            <button
-                                type="button"
-                                className="pause-toggle inline-flex items-center justify-center gap-2 min-w-[44px] min-h-[44px] px-3 border border-[rgba(255,255,255,0.13)] bg-transparent font-mono text-[10px] uppercase tracking-[0.15em] text-[#9ca3af] hover:text-[#c4b5fd] hover:border-[rgba(139,92,246,0.55)] focus-visible:text-[#c4b5fd] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a78bfa] transition-colors"
-                                aria-label={isUserPaused ? 'Play testimonials' : 'Pause testimonials'}
-                                onClick={() => setIsUserPaused((paused) => !paused)}
-                            >
-                                {isUserPaused ? (
-                                    <span aria-hidden="true" className="block w-0 h-0 border-y-[4px] border-y-transparent border-l-[7px] border-l-current"></span>
-                                ) : (
-                                    <span aria-hidden="true" className="block w-[7px] h-2 border-x-2 border-current"></span>
-                                )}
-                                {isUserPaused ? 'Play' : 'Pause'}
-                            </button>
                         )}
                     </div>
                 </div>
