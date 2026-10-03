@@ -4,7 +4,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import { HERO_INVOICE_FIELDS } from '@/lib/heroDetectedFields';
+import { HERO_DETECTED_FIELD_WINDOWS, HERO_INVOICE_FIELDS } from '@/lib/heroDetectedFields';
 import Hero from './Hero';
 
 afterEach(() => {
@@ -87,14 +87,14 @@ describe('Hero invoice proof fold (#176)', () => {
     expect(container.textContent.match(/€45/g)).toHaveLength(1);
     expect(screen.queryByText(/Starting at/)).toBeNull();
     const rateLabel = screen.getByText('Rate', { exact: true });
-    expect(rateLabel.parentElement.textContent).toContain('€45/hour');
+    expect(rateLabel.closest('.hero-ocr-field').textContent).toContain('€45/hour');
   });
 
   it('shows the location once, in the invoice LOCATION field (#266)', () => {
     const { container } = renderHero();
     expect(container.textContent.match(/Linz, Austria/g)).toHaveLength(1);
     const locationLabel = screen.getByText('Location', { exact: true });
-    expect(locationLabel.parentElement.textContent).toContain('Linz, Austria');
+    expect(locationLabel.closest('.hero-ocr-field').textContent).toContain('Linz, Austria');
     expect(screen.queryByText('Based in Linz, Austria', { exact: true })).toBeNull();
   });
 
@@ -115,12 +115,12 @@ describe('Hero invoice proof fold (#176)', () => {
     expect(bio).toBeTruthy();
   });
 
-  it('renders invoice detection chrome and scan label', () => {
+  it('renders the invoice header without a document detection badge', () => {
     renderHero();
-    const scanLabel = screen.getByText('doc · extract · 0.97', { exact: true });
+    const scanLabel = screen.queryByText('doc · extract · 0.97', { exact: true });
     const docId = screen.getByText('INV-VP-0045', { exact: true });
     const title = screen.getByText('Profile Invoice', { exact: true });
-    expect(scanLabel).toBeTruthy();
+    expect(scanLabel).toBeNull();
     expect(docId).toBeTruthy();
     expect(title).toBeTruthy();
   });
@@ -128,7 +128,7 @@ describe('Hero invoice proof fold (#176)', () => {
   it('hides decorative portrait tracking chips from assistive technology', () => {
     renderHero();
 
-    ['engineer · 0.99', 'ID 001 · TRACKED', 'REC'].forEach((label) => {
+    ['engineer', 'ID 001 · TRACKED', 'REC'].forEach((label) => {
       expect(screen.getByText(label, { exact: true }).closest('[aria-hidden="true"]')).toBeTruthy();
     });
   });
@@ -147,10 +147,59 @@ describe('Hero invoice proof fold (#176)', () => {
 });
 
 // jsdom has no layout; tests/qa/qa-responsive.spec.js measures the real gaps.
+describe('Hero illustrative OCR labels (#297)', () => {
+  const labels = {
+    name: ['Name', '0.99'],
+    role: ['Role', '0.97'],
+    credential: ['Credential', '0.98'],
+    success: ['Success', '0.96'],
+    rate: ['Rate', '0.95'],
+    location: ['Location', '0.94'],
+  };
+
+  it('attaches the fixed label and decorative score to each field', () => {
+    const { container } = renderHero();
+    Object.entries(labels).forEach(([id, [name, score]]) => {
+      const field = container.querySelector(`[data-hero-field="${id}"]`);
+      const nameLabel = screen.getByText(name, { exact: true });
+      const label = nameLabel.closest('.hero-field-label');
+      expect(field.contains(nameLabel)).toBe(true);
+      expect(label.textContent).toBe(`${name} · ${score}`);
+      expect(label.querySelector('[aria-hidden="true"]').textContent).toBe(` · ${score}`);
+      expect(label.closest('[tabindex], [aria-live]')).toBeNull();
+    });
+    expect(container.querySelectorAll('.invoice-field-corners')).toHaveLength(2);
+    expect(container.querySelector('[data-hero-field="tags"]')).toBeNull();
+    expect(screen.queryByText('Tags', { exact: true })).toBeNull();
+    ['OCR', 'CV', 'n8n'].forEach((tag) => expect(screen.getByText(tag, { exact: true })).toBeTruthy());
+  });
+
+  it('keeps all scores fixed across pointer interaction and reduced motion', () => {
+    let reducedMotion = false;
+    const listeners = new Set();
+    window.matchMedia = vi.fn((query) => ({
+      get matches() { return query === '(prefers-reduced-motion: reduce)' && reducedMotion; },
+      addEventListener: (_event, listener) => listeners.add(listener),
+      removeEventListener: (_event, listener) => listeners.delete(listener),
+    }));
+    const { container } = renderHero();
+    const getLabels = () => Array.from(container.querySelectorAll('article .hero-field-label'), (label) => label.textContent);
+    const before = getLabels();
+    expect(before).toHaveLength(6);
+    fireEvent.mouseMove(container.querySelector('section'), { clientX: 100, clientY: 100 });
+    act(() => {
+      reducedMotion = true;
+      listeners.forEach((listener) => listener());
+    });
+    expect(getLabels()).toEqual(before);
+    delete window.matchMedia;
+  });
+});
+
 describe('Hero invoice header spacing (#253)', () => {
   const classesOf = (element) => element.className.split(/\s+/);
 
-  it('spaces the status pill, scan label, title, credentials and actions apart', () => {
+  it('spaces the status pill, title, credentials and actions apart', () => {
     const { container } = renderHero();
     const section = container.querySelector('section');
     const pillRow = screen.getByText('Inference online').parentElement.parentElement;
@@ -183,93 +232,188 @@ describe('Hero portrait sizing (#252)', () => {
   });
 });
 
-describe('Hero randomized field bboxes (#206)', () => {
-  const FIELD_VALUES = {
-    name: 'Vivek Patel',
-    role: 'Computer Vision & AI Engineer',
-    credential: 'Top Rated Plus',
-    success: '100% Job Success',
-    rate: '€45/hour',
-    location: 'Linz, Austria',
-  };
+describe('Hero rotating annotations', () => {
+  let reducedMotion;
+  let visibility;
+  let mediaListeners;
+  let viewportCallback;
 
-  const loadFreshPageHeroWithRandom = async (randomValue) => {
-    vi.resetModules();
-    vi.spyOn(Math, 'random').mockReturnValue(randomValue);
-    const { default: FreshHero } = await import('./Hero');
-    return FreshHero;
-  };
-
-  const renderFresh = (Component) =>
-    render(
-      <BrowserRouter>
-        <Component />
-      </BrowserRouter>
-    );
-
-  const detectedIds = (container) =>
-    Array.from(container.querySelectorAll('[data-hero-field].invoice-field-corners'))
-      .map((el) => el.getAttribute('data-hero-field'))
-      .sort();
-
-  it('frames exactly 3 of the 6 invoice fields', async () => {
-    const FreshHero = await loadFreshPageHeroWithRandom(0);
-    const { container } = renderFresh(FreshHero);
-
-    const fields = container.querySelectorAll('[data-hero-field]');
-    expect(fields).toHaveLength(6);
-    expect(Array.from(fields, (el) => el.getAttribute('data-hero-field')).sort()).toEqual(
-      [...HERO_INVOICE_FIELDS].sort()
-    );
-    expect(container.querySelectorAll('.invoice-field-corners')).toHaveLength(3);
-    expect(detectedIds(container)).toEqual(['credential', 'role', 'success']);
-  });
-
-  it('keeps every label and value visible regardless of selection', async () => {
-    const FreshHero = await loadFreshPageHeroWithRandom(0.999999);
-    const { container } = renderFresh(FreshHero);
-
-    ['Name', 'Role', 'Credential', 'Success', 'Rate', 'Location'].forEach((label) => {
-      expect(screen.getByText(label, { exact: true })).toBeTruthy();
+  beforeEach(() => {
+    vi.useFakeTimers();
+    reducedMotion = false;
+    visibility = 'visible';
+    mediaListeners = new Set();
+    vi.spyOn(document, 'visibilityState', 'get').mockImplementation(() => visibility);
+    window.matchMedia = vi.fn((query) => ({
+      get matches() { return query === '(prefers-reduced-motion: reduce)' && reducedMotion; },
+      addEventListener: (_type, listener) => mediaListeners.add(listener),
+      removeEventListener: (_type, listener) => mediaListeners.delete(listener),
+    }));
+    vi.stubGlobal('IntersectionObserver', class {
+      constructor(callback) { viewportCallback = callback; }
+      observe() {}
+      disconnect() {}
     });
-    Object.entries(FIELD_VALUES).forEach(([id, value]) => {
-      const field = container.querySelector(`[data-hero-field="${id}"]`);
-      expect(field.textContent).toContain(value);
-    });
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe(FIELD_VALUES.role);
-    expect(screen.getByText('doc · extract · 0.97', { exact: true })).toBeTruthy();
-    expect(screen.getByRole('link', { name: 'Request a Project Estimate' })).toBeTruthy();
   });
 
-  it('keeps the selection stable across rerenders and remounts in one page load', async () => {
-    const FreshHero = await loadFreshPageHeroWithRandom(0);
-    const { container, rerender, unmount } = renderFresh(FreshHero);
-    const initial = detectedIds(container);
-
-    vi.mocked(Math.random).mockReturnValue(0.999999);
-    rerender(
-      <BrowserRouter>
-        <FreshHero />
-      </BrowserRouter>
-    );
-    expect(detectedIds(container)).toEqual(initial);
-
-    unmount();
-    const remounted = renderFresh(FreshHero);
-    expect(detectedIds(remounted.container)).toEqual(initial);
-  });
-
-  it('can pick a different selection after a fresh page load', async () => {
-    const first = renderFresh(await loadFreshPageHeroWithRandom(0));
-    const firstIds = detectedIds(first.container);
+  afterEach(() => {
     cleanup();
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+    delete window.matchMedia;
+  });
 
-    const second = renderFresh(await loadFreshPageHeroWithRandom(0.999999));
-    const secondIds = detectedIds(second.container);
+  const advance = (ms) => act(() => vi.advanceTimersByTime(ms));
+  const ids = (container) => Array.from(container.querySelectorAll('[data-hero-field].invoice-field-corners'), (field) => field.dataset.heroField).sort();
+  const expected = (index) => [...HERO_DETECTED_FIELD_WINDOWS[index]].sort();
+  const phase = (container) => container.querySelector('section').dataset.heroHighlightPhase;
+  const opacity = (container, id) => container.querySelector(`[data-hero-field="${id}"]`).style.getPropertyValue('--hero-annotation-opacity');
+  const changeReducedMotion = (matches) => act(() => {
+    reducedMotion = matches;
+    mediaListeners.forEach((listener) => listener());
+  });
+  const changeVisibility = (state) => act(() => {
+    visibility = state;
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  const changeViewport = (isIntersecting) => act(() => viewportCallback([{ isIntersecting }]));
 
-    expect(firstIds).toHaveLength(3);
-    expect(secondIds).toHaveLength(3);
-    expect(secondIds).not.toEqual(firstIds);
+  it('starts with two annotations while every factual value and all label rows remain mounted', () => {
+    const { container } = renderHero();
+    expect(ids(container)).toEqual(expected(0));
+    expect(container.querySelectorAll('[data-hero-field]')).toHaveLength(6);
+    expect(container.querySelectorAll('article .hero-field-label')).toHaveLength(6);
+    const values = ['Vivek Patel', 'Computer Vision & AI Engineer', 'Top Rated Plus', '100% Job Success', '€45/hour', 'Linz, Austria'];
+    values.forEach((value) => expect(screen.getByText(value, { exact: true }).closest('.hero-field-value').style.opacity).toBe(''));
+    HERO_INVOICE_FIELDS.forEach((id) => expect(opacity(container, id)).toBe(HERO_DETECTED_FIELD_WINDOWS[0].includes(id) ? '1' : '0'));
+    expect(container.querySelector('[data-hero-field="tags"]')).toBeNull();
+    expect(container.querySelector('[data-hero-field="rate"]').classList.contains('hero-rotating-annotation')).toBe(true);
+    expect(vi.getTimerCount()).toBe(1);
+  });
+
+  it('fades both outgoing annotations for 100ms before both incoming annotations, on a 2 second start cadence', () => {
+    const { container } = renderHero();
+    advance(1999);
+    expect(phase(container)).toBe('initial');
+    advance(1);
+    expect(phase(container)).toBe('leaving');
+    expect(ids(container)).toEqual(expected(0));
+    expect(opacity(container, 'name')).toBe('0');
+    expect(opacity(container, 'role')).toBe('0');
+    expect(opacity(container, 'credential')).toBe('0');
+    expect(opacity(container, 'success')).toBe('0');
+    advance(100);
+    expect(phase(container)).toBe('entering');
+    expect(ids(container)).toEqual(expected(1));
+    expect(opacity(container, 'credential')).toBe('1');
+    expect(opacity(container, 'success')).toBe('1');
+    expect(opacity(container, 'name')).toBe('0');
+    expect(opacity(container, 'role')).toBe('0');
+    advance(100);
+    expect(phase(container)).toBe('steady');
+    advance(1799);
+    expect(phase(container)).toBe('steady');
+    advance(1);
+    expect(phase(container)).toBe('leaving');
+    expect(vi.getTimerCount()).toBe(1);
+  });
+
+  it('cycles through all three row pairs and preserves fixed scores, mounted labels and values', () => {
+    const { container } = renderHero();
+    const labels = [...container.querySelectorAll('article .hero-field-label')];
+    const values = [...container.querySelectorAll('.hero-field-value')];
+    const scores = labels.map((label) => label.textContent);
+    for (let step = 1; step <= 3; step += 1) {
+      advance(step === 1 ? 2000 : 1800);
+      advance(100);
+      advance(100);
+      expect(ids(container)).toEqual(expected(step % 3));
+      expect([...container.querySelectorAll('article .hero-field-label')]).toEqual(labels);
+      expect([...container.querySelectorAll('.hero-field-value')]).toEqual(values);
+      expect(labels.map((label) => label.textContent)).toEqual(scores);
+      expect(container.querySelectorAll('.invoice-field-corners')).toHaveLength(2);
+    }
+  });
+
+  it.each(['leaving', 'entering'])('hidden tabs settle %s and resume without catch-up', (targetPhase) => {
+    const { container } = renderHero();
+    advance(2000);
+    if (targetPhase === 'entering') advance(100);
+    const current = ids(container);
+    changeVisibility('hidden');
+    expect(vi.getTimerCount()).toBe(0);
+    expect(ids(container)).toEqual(current);
+    current.forEach((id) => expect(opacity(container, id)).toBe('1'));
+    advance(10000);
+    changeVisibility('visible');
+    advance(1999);
+    expect(phase(container)).toBe('initial');
+    advance(1);
+    expect(phase(container)).toBe('leaving');
+  });
+
+  it.each(['leaving', 'entering'])('offscreen settles %s, then resumes from a full dwell', (targetPhase) => {
+    const { container } = renderHero();
+    advance(2000);
+    if (targetPhase === 'entering') advance(100);
+    const currentIndex = targetPhase === 'leaving' ? 0 : 1;
+    changeViewport(false);
+    expect(ids(container)).toEqual(expected(currentIndex));
+    expected(currentIndex).forEach((id) => expect(opacity(container, id)).toBe('1'));
+    expect(vi.getTimerCount()).toBe(0);
+    changeViewport(true);
+    expect(vi.getTimerCount()).toBe(1);
+    advance(1999);
+    expect(ids(container)).toEqual(expected(currentIndex));
+    expect(phase(container)).toBe('initial');
+    advance(1);
+    expect(phase(container)).toBe('leaving');
+  });
+
+  it('uses the first window without any timer when reduced motion is enabled at load', () => {
+    reducedMotion = true;
+    const { container } = renderHero();
+    expect(ids(container)).toEqual(expected(0));
+    expect(vi.getTimerCount()).toBe(0);
+    advance(10000);
+    expect(ids(container)).toEqual(expected(0));
+  });
+
+  it.each(['leaving', 'entering'])('honors live reduced motion during %s and restarts from the first window', (targetPhase) => {
+    const { container } = renderHero();
+    advance(2000);
+    if (targetPhase === 'entering') advance(100);
+    changeReducedMotion(true);
+    expect(ids(container)).toEqual(expected(0));
+    expect(vi.getTimerCount()).toBe(0);
+    changeReducedMotion(false);
+    advance(1999);
+    expect(phase(container)).toBe('initial');
+    advance(1);
+    expect(phase(container)).toBe('leaving');
+  });
+
+  it('does not schedule rotation when the document starts hidden', () => {
+    visibility = 'hidden';
+    const { container } = renderHero();
+    expect(ids(container)).toEqual(expected(0));
+    expect(vi.getTimerCount()).toBe(0);
+    changeVisibility('visible');
+    expect(vi.getTimerCount()).toBe(1);
+    advance(1999);
+    expect(phase(container)).toBe('initial');
+  });
+
+  it.each(['initial', 'leaving', 'entering'])('cleans up the single timer and listeners on unmount during %s', (targetPhase) => {
+    const removeListener = vi.spyOn(document, 'removeEventListener');
+    const { unmount } = renderHero();
+    if (targetPhase !== 'initial') advance(2000);
+    if (targetPhase === 'entering') advance(100);
+    expect(vi.getTimerCount()).toBe(1);
+    unmount();
+    expect(vi.getTimerCount()).toBe(0);
+    expect(mediaListeners.size).toBe(0);
+    expect(removeListener.mock.calls.some(([event]) => event === 'visibilitychange')).toBe(true);
   });
 });
 

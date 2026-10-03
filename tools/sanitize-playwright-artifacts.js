@@ -21,6 +21,7 @@ const suites = Object.freeze({
   'qa-edge.spec.js': { label: 'edge-behavior' },
   'qa-focus.spec.js': { label: 'focus-regressions' },
   'qa-hero-motion.spec.js': { label: 'hero-motion' },
+  'qa-hero-ocr-labels.spec.js': { label: 'hero-ocr-labels' },
   'qa-local-navigation.spec.js': { label: 'local-navigation' },
   'qa-responsive.spec.js': { label: 'responsive-layout' },
   'qa-route-recovery.spec.js': { label: 'route-recovery' },
