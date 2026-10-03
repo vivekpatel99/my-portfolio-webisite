@@ -1186,8 +1186,9 @@ const expectFilledPrimaryStates = async (page, button, label) => {
 };
 
 const expectPaintedCornerAction = async (page, button, cornerColor, label) => {
+  const box = await button.boundingBox();
   const png = await button.screenshot({ animations: 'disabled' });
-  const pixels = await page.evaluate(async ({ base64, cornerColor }) => {
+  const pixels = await page.evaluate(async ({ base64, cornerColor, cssWidth }) => {
     const image = new Image();
     image.src = `data:image/png;base64,${base64}`;
     await image.decode();
@@ -1198,10 +1199,13 @@ const expectPaintedCornerAction = async (page, button, cornerColor, label) => {
     context.drawImage(image, 0, 0);
     const pixel = (x, y) => [...context.getImageData(x, y, 1, 1).data].slice(0, 3);
     const expected = cornerColor.split(',').map(Number);
+    const scale = image.width / cssWidth;
     const nearestCorner = (right, bottom) => {
       let distance = Infinity;
-      for (let x = Math.floor(image.width * 0.02); x < image.width * 0.05; x += 1) {
-        for (let y = 0; y < 3; y += 1) {
+      // The 23px stroke is fixed in CSS pixels; clipping may add one CSS pixel
+      // before the edge, so sample its first three CSS pixels at the image scale.
+      for (let x = Math.ceil(5 * scale); x < 18 * scale; x += 1) {
+        for (let y = 0; y < Math.ceil(3 * scale); y += 1) {
           const color = pixel(right ? image.width - x - 1 : x, bottom ? image.height - y - 1 : y);
           distance = Math.min(distance, Math.max(...color.map((channel, index) => Math.abs(channel - expected[index]))));
         }
@@ -1211,10 +1215,10 @@ const expectPaintedCornerAction = async (page, button, cornerColor, label) => {
     return {
       topLeft: nearestCorner(false, false),
       bottomRight: nearestCorner(true, true),
-      top: pixel(Math.floor(image.width / 2), 4),
-      bottom: pixel(Math.floor(image.width / 2), image.height - 5),
+      top: pixel(Math.floor(image.width / 2), Math.round(4 * scale)),
+      bottom: pixel(Math.floor(image.width / 2), image.height - Math.round(5 * scale)),
     };
-  }, { base64: png.toString('base64'), cornerColor });
+  }, { base64: png.toString('base64'), cornerColor, cssWidth: box.width });
   expect(pixels.topLeft, `${label} painted top-left corner`).toBeLessThanOrEqual(3);
   expect(pixels.bottomRight, `${label} painted bottom-right corner`).toBeLessThanOrEqual(3);
   expect(pixels.top[2] - pixels.top[0], `${label} purple tint at top`).toBeGreaterThan(2);
