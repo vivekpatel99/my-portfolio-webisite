@@ -33,4 +33,12 @@ describe('pickDetectedFields (#206)', () => {
     const distinct = new Set(Array.from({ length: 50 }, (_, i) => key(i + 1)));
     expect(distinct.size).toBeGreaterThan(1);
   });
+
+  it('leaves Rate and Tags unboxed for every page-load selection (#297)', () => {
+    for (let seed = 1; seed <= 200; seed += 1) {
+      const picked = pickDetectedFields(mulberry32(seed));
+      expect(picked.has('rate')).toBe(false);
+      expect(picked.has('tags')).toBe(false);
+    }
+  });
 });

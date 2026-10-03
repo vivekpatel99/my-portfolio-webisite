@@ -87,14 +87,14 @@ describe('Hero invoice proof fold (#176)', () => {
     expect(container.textContent.match(/€45/g)).toHaveLength(1);
     expect(screen.queryByText(/Starting at/)).toBeNull();
     const rateLabel = screen.getByText('Rate', { exact: true });
-    expect(rateLabel.parentElement.textContent).toContain('€45/hour');
+    expect(rateLabel.closest('.hero-ocr-field').textContent).toContain('€45/hour');
   });
 
   it('shows the location once, in the invoice LOCATION field (#266)', () => {
     const { container } = renderHero();
     expect(container.textContent.match(/Linz, Austria/g)).toHaveLength(1);
     const locationLabel = screen.getByText('Location', { exact: true });
-    expect(locationLabel.parentElement.textContent).toContain('Linz, Austria');
+    expect(locationLabel.closest('.hero-ocr-field').textContent).toContain('Linz, Austria');
     expect(screen.queryByText('Based in Linz, Austria', { exact: true })).toBeNull();
   });
 
@@ -147,6 +147,55 @@ describe('Hero invoice proof fold (#176)', () => {
 });
 
 // jsdom has no layout; tests/qa/qa-responsive.spec.js measures the real gaps.
+describe('Hero illustrative OCR labels (#297)', () => {
+  const labels = {
+    name: ['Name', '0.99'],
+    role: ['Role', '0.97'],
+    credential: ['Credential', '0.98'],
+    success: ['Success', '0.96'],
+    rate: ['Rate', '0.95'],
+    location: ['Location', '0.94'],
+    tags: ['Tags', '0.93'],
+  };
+
+  it('attaches the fixed label and decorative score to each field', () => {
+    const { container } = renderHero();
+    Object.entries(labels).forEach(([id, [name, score]]) => {
+      const field = container.querySelector(`[data-hero-field="${id}"]`);
+      const nameLabel = screen.getByText(name, { exact: true });
+      const label = nameLabel.closest('.hero-field-label');
+      expect(field.contains(nameLabel)).toBe(true);
+      expect(label.textContent).toBe(`${name} · ${score}`);
+      expect(label.querySelector('[aria-hidden="true"]').textContent).toBe(` · ${score}`);
+      expect(label.closest('[tabindex], [aria-live]')).toBeNull();
+    });
+    expect(screen.getByText('OCR simulation', { exact: true })).toBeTruthy();
+    expect(container.querySelectorAll('.invoice-field-corners')).toHaveLength(3);
+    expect(container.querySelector('[data-hero-field="tags"]').classList.contains('invoice-field-corners')).toBe(false);
+  });
+
+  it('keeps all scores fixed across pointer interaction and reduced motion', () => {
+    let reducedMotion = false;
+    const listeners = new Set();
+    window.matchMedia = vi.fn((query) => ({
+      get matches() { return query === '(prefers-reduced-motion: reduce)' && reducedMotion; },
+      addEventListener: (_event, listener) => listeners.add(listener),
+      removeEventListener: (_event, listener) => listeners.delete(listener),
+    }));
+    const { container } = renderHero();
+    const getLabels = () => Array.from(container.querySelectorAll('.hero-field-label'), (label) => label.textContent);
+    const before = getLabels();
+    expect(before).toHaveLength(7);
+    fireEvent.mouseMove(container.querySelector('section'), { clientX: 100, clientY: 100 });
+    act(() => {
+      reducedMotion = true;
+      listeners.forEach((listener) => listener());
+    });
+    expect(getLabels()).toEqual(before);
+    delete window.matchMedia;
+  });
+});
+
 describe('Hero invoice header spacing (#253)', () => {
   const classesOf = (element) => element.className.split(/\s+/);
 
@@ -212,17 +261,19 @@ describe('Hero randomized field bboxes (#206)', () => {
       .map((el) => el.getAttribute('data-hero-field'))
       .sort();
 
-  it('frames exactly 3 of the 6 invoice fields', async () => {
+  it('frames exactly 3 eligible invoice fields and keeps Rate and Tags unboxed', async () => {
     const FreshHero = await loadFreshPageHeroWithRandom(0);
     const { container } = renderFresh(FreshHero);
 
     const fields = container.querySelectorAll('[data-hero-field]');
-    expect(fields).toHaveLength(6);
+    expect(fields).toHaveLength(7);
     expect(Array.from(fields, (el) => el.getAttribute('data-hero-field')).sort()).toEqual(
-      [...HERO_INVOICE_FIELDS].sort()
+      [...HERO_INVOICE_FIELDS, 'rate', 'tags'].sort()
     );
     expect(container.querySelectorAll('.invoice-field-corners')).toHaveLength(3);
     expect(detectedIds(container)).toEqual(['credential', 'role', 'success']);
+    expect(container.querySelector('[data-hero-field="rate"].invoice-field-corners')).toBeNull();
+    expect(container.querySelector('[data-hero-field="tags"].invoice-field-corners')).toBeNull();
   });
 
   it('keeps every label and value visible regardless of selection', async () => {

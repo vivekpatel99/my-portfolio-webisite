@@ -188,7 +188,11 @@ for (const vp of heroFoldViewports) {
     if (vp.width < 768) {
       const name = await invoiceElement.getByText('Name', { exact: true }).boundingBox();
       const role = await invoiceElement.getByText('Role', { exact: true }).boundingBox();
-      expect(role.x).toBeGreaterThan(name.x);
+      if (vp.width < 360) {
+        expect(role.y).toBeGreaterThanOrEqual(name.y + name.height);
+      } else {
+        expect(role.x).toBeGreaterThan(name.x);
+      }
       const scanLabel = await invoiceElement.getByText('doc · extract · 0.97').boundingBox();
       expect(boxesOverlap(scanLabel, await invoiceTitle.boundingBox())).toBe(false);
     }

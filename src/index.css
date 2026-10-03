@@ -88,6 +88,43 @@
 }
 
 @layer components {
+  .hero-ocr-field {
+    --hero-label-height: 12px;
+    position: relative;
+    display: inline-grid;
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 100%;
+    padding-inline: 17px;
+    row-gap: 2px;
+    vertical-align: top;
+  }
+
+  .hero-field-label {
+    justify-self: start;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 9px;
+    line-height: var(--hero-label-height);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #9ca3af;
+    white-space: nowrap;
+  }
+
+  .hero-field-score {
+    color: #a994c6;
+    letter-spacing: 0.04em;
+  }
+
+  .hero-field-value {
+    margin-inline: -10px;
+    padding-block: 3px;
+    min-width: 0;
+  }
+
+  .hero-ocr-field.invoice-field-corners::before {
+    top: calc(var(--hero-label-height) / 2);
+  }
+
   .invoice-field-corners::before {
     content: '';
     position: absolute;

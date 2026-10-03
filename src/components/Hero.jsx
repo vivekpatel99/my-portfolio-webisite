@@ -19,6 +19,22 @@ const PARALLAX_MAX_SHIFT_PX = 20;
 const PARALLAX_EASING = 0.1;
 const PARALLAX_SETTLE_EPSILON_PX = 0.05;
 
+const OCR_FIELD_LABELS = {
+  name: { label: 'Name', score: '0.99' },
+  role: { label: 'Role', score: '0.97' },
+  credential: { label: 'Credential', score: '0.98' },
+  success: { label: 'Success', score: '0.96' },
+  rate: { label: 'Rate', score: '0.95' },
+  location: { label: 'Location', score: '0.94' },
+  tags: { label: 'Tags', score: '0.93' },
+};
+
+const FieldLabel = ({ field }) => (
+  <span className="hero-field-label">
+    <span>{OCR_FIELD_LABELS[field].label}</span><span className="hero-field-score" aria-hidden="true"> · {OCR_FIELD_LABELS[field].score}</span>
+  </span>
+);
+
 // framer-motion 10's useReducedMotion only reads the preference once.
 const useMediaQuery = (query) => {
   const [matches, setMatches] = useState(
@@ -65,7 +81,7 @@ const Hero = () => {
   const detectedFields = getPageLoadDetectedFields();
   const fieldBoxProps = (id, className) => ({
     'data-hero-field': id,
-    className: `${detectedFields.has(id) ? 'invoice-field-corners ' : ''}${className}`,
+    className: `hero-ocr-field ${detectedFields.has(id) ? 'invoice-field-corners ' : ''}${className}`,
   });
 
   useEffect(() => {
@@ -247,7 +263,7 @@ const Hero = () => {
                 <div className="flex justify-between items-start mb-1 pb-1.5 border-b border-white/[0.08] max-md:mb-1 max-md:pb-1">
                   <div>
                     <div className="font-mono text-[11px] font-semibold tracking-[0.14em] uppercase text-purple-200/[0.78]">Profile Invoice</div>
-                    <div className="mt-1 font-mono text-[10px] text-gray-400 tracking-wide">field parse</div>
+                    <div className="mt-1 font-mono text-[10px] text-gray-400 tracking-wide">OCR simulation</div>
                   </div>
                   <div className="text-right font-mono text-[10px] leading-relaxed text-gray-400">
                     <strong className="block text-gray-400 font-medium tracking-wider">INV-VP-0045</strong>
@@ -255,65 +271,77 @@ const Hero = () => {
                   </div>
                 </div>
 
-                <div className="max-md:grid max-md:grid-cols-[minmax(0,0.95fr)_minmax(0,1.85fr)] max-md:gap-x-2">
+                <div className="max-md:grid max-md:grid-cols-[minmax(0,0.95fr)_minmax(0,1.85fr)] max-md:gap-x-2 max-[359px]:grid-cols-1">
                   <div className="mb-1 max-md:min-w-0">
-                    <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-400 max-md:mb-[5px]">Name</span>
-                    <span {...fieldBoxProps('name', 'relative inline-block px-[7px] py-[3px]')}>
-                      <span className="text-[1.3rem] font-semibold tracking-tight text-white max-md:text-[0.95rem]">Vivek Patel</span>
-                    </span>
+                    <div {...fieldBoxProps('name', '')}>
+                      <FieldLabel field="name" />
+                      <span className="hero-field-value">
+                        <span className="text-[1.3rem] font-semibold tracking-tight text-white max-md:text-[0.95rem]">Vivek Patel</span>
+                      </span>
+                    </div>
                   </div>
 
                   <div className="mb-1 max-md:min-w-0">
-                    <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-400 max-md:mb-[5px]">Role</span>
-                    <span {...fieldBoxProps('role', 'relative inline-block max-w-full px-2 py-1')}>
-                      <h1 className="text-[clamp(1.25rem,2.1vw,1.65rem)] font-bold text-white tracking-tight leading-[1.2] max-md:text-[1rem] max-md:leading-[1.1]">
-                        Computer Vision & AI Engineer
-                      </h1>
-                    </span>
+                    <div {...fieldBoxProps('role', '')}>
+                      <FieldLabel field="role" />
+                      <div className="hero-field-value">
+                        <h1 className="text-[clamp(1.25rem,2.1vw,1.65rem)] font-bold text-white tracking-tight leading-[1.2] max-md:text-[1rem] max-md:leading-[1.1]">
+                          Computer Vision & AI Engineer
+                        </h1>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Proofs folded under role */}
-                <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 mb-4 max-md:gap-x-3" role="group" aria-label="Detected credentials">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 mb-4 max-md:gap-x-3 max-[359px]:grid-cols-1 max-[359px]:gap-y-2" role="group" aria-label="Detected credentials">
                   <div className="min-w-0">
-                    <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-400 max-md:mb-[5px]">Credential</span>
-                    <span {...fieldBoxProps('credential', 'relative inline-flex items-center gap-[7px] px-[9px] py-[5px] max-w-full max-[359px]:px-1.5')}>
-                      <span className="flex-shrink-0 w-3 h-3 text-purple-400 opacity-90 max-[359px]:hidden" aria-hidden="true">
-                        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" className="w-full h-full">
-                          <path d="M7 1.5l1.4 2.8 3.1.45-2.25 2.2.53 3.1L7 8.6 4.22 10.05l.53-3.1L2.5 4.75l3.1-.45L7 1.5z"/>
-                        </svg>
+                    <div {...fieldBoxProps('credential', '')}>
+                      <FieldLabel field="credential" />
+                      <span className="hero-field-value flex items-center gap-[7px]">
+                        <span className="flex-shrink-0 w-3 h-3 text-purple-400 opacity-90 max-[359px]:hidden" aria-hidden="true">
+                          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" className="w-full h-full">
+                            <path d="M7 1.5l1.4 2.8 3.1.45-2.25 2.2.53 3.1L7 8.6 4.22 10.05l.53-3.1L2.5 4.75l3.1-.45L7 1.5z"/>
+                          </svg>
+                        </span>
+                        <span className="text-[0.88rem] font-semibold tracking-[-0.01em] text-white leading-[1.2] whitespace-nowrap max-md:text-[0.84rem] max-md:whitespace-normal max-[359px]:text-[0.75rem] max-[359px]:whitespace-nowrap">Top Rated Plus</span>
                       </span>
-                      <span className="text-[0.88rem] font-semibold tracking-[-0.01em] text-white leading-[1.2] whitespace-nowrap max-md:text-[0.84rem] max-md:whitespace-normal max-[359px]:text-[0.75rem] max-[359px]:whitespace-nowrap">Top Rated Plus</span>
-                    </span>
+                    </div>
                     <p className="mt-[5px] ml-[2px] font-mono text-[9px] leading-[1.2] tracking-[0.04em] text-gray-400">Upwork freelancer</p>
                   </div>
                   <div className="min-w-0">
-                    <span className="block mb-2 font-mono text-[9px] tracking-[0.12em] uppercase text-gray-400 max-md:mb-[5px]">Success</span>
-                    <span {...fieldBoxProps('success', 'relative inline-flex items-center gap-[7px] px-[9px] py-[5px] max-w-full max-[359px]:px-1.5')}>
-                      <span className="flex-shrink-0 w-3 h-3 text-purple-400 opacity-90 max-[359px]:hidden" aria-hidden="true">
-                        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" className="w-full h-full">
-                          <path d="M2.5 7.2l3.2 3.1L11.5 3.8"/>
-                        </svg>
+                    <div {...fieldBoxProps('success', '')}>
+                      <FieldLabel field="success" />
+                      <span className="hero-field-value flex items-center gap-[7px]">
+                        <span className="flex-shrink-0 w-3 h-3 text-purple-400 opacity-90 max-[359px]:hidden" aria-hidden="true">
+                          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" className="w-full h-full">
+                            <path d="M2.5 7.2l3.2 3.1L11.5 3.8"/>
+                          </svg>
+                        </span>
+                        <span className="text-[0.88rem] font-semibold tracking-[-0.01em] text-white leading-[1.2] whitespace-nowrap max-md:text-[0.84rem] max-md:whitespace-normal max-[359px]:text-[0.75rem] max-[359px]:whitespace-nowrap">100% Job Success</span>
                       </span>
-                      <span className="text-[0.88rem] font-semibold tracking-[-0.01em] text-white leading-[1.2] whitespace-nowrap max-md:text-[0.84rem] max-md:whitespace-normal max-[359px]:text-[0.75rem] max-[359px]:whitespace-nowrap">100% Job Success</span>
-                    </span>
+                    </div>
                     <p className="mt-[5px] ml-[2px] font-mono text-[9px] leading-[1.2] tracking-[0.04em] text-gray-400">Client delivery record</p>
                   </div>
                 </div>
 
                 {/* Rate & Location columns */}
-                <div className="grid grid-cols-2 gap-x-[18px] gap-y-3 mb-2.5 max-md:mb-1.5 max-md:gap-y-2 max-[359px]:mb-0">
+                <div className="grid grid-cols-2 gap-x-[18px] gap-y-3 mb-2.5 max-md:mb-1.5 max-md:gap-y-2 max-[359px]:mb-0 max-[359px]:gap-x-2">
                   <div>
-                    <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-400 max-md:mb-[5px]">Rate</span>
-                    <span {...fieldBoxProps('rate', 'relative inline-block px-[7px] py-[3px]')}>
-                      <span className="font-mono text-[1.05rem] font-semibold text-white leading-[1.2]">€45/hour</span>
-                    </span>
+                    <div {...fieldBoxProps('rate', '')}>
+                      <FieldLabel field="rate" />
+                      <span className="hero-field-value">
+                        <span className="font-mono text-[1.05rem] font-semibold text-white leading-[1.2]">€45/hour</span>
+                      </span>
+                    </div>
                   </div>
                   <div>
-                    <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-400 max-md:mb-[5px]">Location</span>
-                    <span {...fieldBoxProps('location', 'relative inline-block px-[7px] py-[3px]')}>
-                      <span className="font-medium text-[0.92rem] text-gray-300 leading-[1.3]">Linz, Austria</span>
-                    </span>
+                    <div {...fieldBoxProps('location', '')}>
+                      <FieldLabel field="location" />
+                      <span className="hero-field-value">
+                        <span className="font-medium text-[0.92rem] text-gray-300 leading-[1.3]">Linz, Austria</span>
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -325,9 +353,9 @@ const Hero = () => {
                 </div>
 
                 {/* Tags field */}
-                <div className="max-[359px]:flex max-[359px]:items-center max-[359px]:gap-2">
-                  <span className="block mb-[7px] font-mono text-[9px] tracking-[0.12em] uppercase text-gray-400 max-md:mb-[5px] max-[359px]:mb-0">Tags</span>
-                  <span className="inline-flex flex-wrap gap-1.5">
+                <div data-hero-field="tags" className="hero-ocr-field">
+                  <FieldLabel field="tags" />
+                  <span className="hero-field-value inline-flex flex-wrap gap-1.5">
                     {['OCR', 'CV', 'n8n'].map((tag) => (
                       <span
                         key={tag}
@@ -395,6 +423,9 @@ const Hero = () => {
 
                 {/* Purple L-brackets (static on top) */}
                 <div className="absolute inset-1 pointer-events-none z-[3]" aria-hidden="true">
+                  <div className="absolute top-0 left-[29px] -translate-y-1/2 z-[4] inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm whitespace-nowrap max-md:text-[10px] max-md:px-2 max-md:py-1">
+                    engineer · 0.99
+                  </div>
                   <span className="absolute top-0 left-0 w-6 h-6 border-l-[2.5px] border-t-[2.5px] border-[#8B5CF6]" style={{ filter: 'drop-shadow(0 0 4px rgba(139,92,246,0.55))' }} />
                   <span className="absolute top-0 right-0 w-6 h-6 border-r-[2.5px] border-t-[2.5px] border-[#8B5CF6]" style={{ filter: 'drop-shadow(0 0 4px rgba(139,92,246,0.55))' }} />
                   <span className="absolute bottom-0 left-0 w-6 h-6 border-l-[2.5px] border-b-[2.5px] border-[#8B5CF6]" style={{ filter: 'drop-shadow(0 0 4px rgba(139,92,246,0.55))' }} />
@@ -432,9 +463,6 @@ const Hero = () => {
                     )}
 
                   </div>
-                  <span aria-hidden="true" className="absolute top-[22px] left-[22px] z-[4] inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm max-lg:top-0 max-lg:left-3 max-lg:-translate-y-1/2 max-lg:whitespace-nowrap max-md:text-[10px] max-md:px-2 max-md:py-1">
-                    engineer · 0.99
-                  </span>
                   <span aria-hidden="true" className="absolute bottom-[22px] left-[22px] z-[4] inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm max-lg:bottom-0 max-lg:left-3 max-lg:translate-y-1/2 max-lg:whitespace-nowrap max-md:text-[10px] max-md:px-2 max-md:py-1">
                     ID 001 · TRACKED
                   </span>

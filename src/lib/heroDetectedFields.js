@@ -1,4 +1,4 @@
-export const HERO_INVOICE_FIELDS = ['name', 'role', 'credential', 'success', 'rate', 'location'];
+export const HERO_INVOICE_FIELDS = ['name', 'role', 'credential', 'success', 'location'];
 
 export const HERO_DETECTED_FIELD_COUNT = 3;
 
