@@ -151,7 +151,7 @@ describe('CaseStudyCard', () => {
   });
 
   describe('Detection Card design (Option A)', () => {
-    it('renders L-brackets TL purple and BR white corner registration marks', () => {
+    it('keeps the labeled panel unclipped while its cover remains cropped', () => {
       const { container } = render(
         <MemoryRouter>
           <CaseStudyCard project={project} />
@@ -159,42 +159,12 @@ describe('CaseStudyCard', () => {
       );
 
       const article = container.querySelector('article');
-      expect(article).toBeTruthy();
-      const tlBracket = container.querySelector('span.bracket-tl');
-      const brBracket = container.querySelector('span.bracket-br');
-
-      expect(tlBracket).toBeTruthy();
-      expect(brBracket).toBeTruthy();
-      expect(tlBracket.className).toContain('border-[rgba(139,92,246,0.85)]');
-      expect(brBracket.className).toContain('border-[rgba(255,255,255,0.45)]');
-      expect(tlBracket.className).toContain('border-t-[1.5px]');
-      expect(tlBracket.className).toContain('border-l-[1.5px]');
-      expect(brBracket.className).toContain('border-b-[1.5px]');
-      expect(brBracket.className).toContain('border-r-[1.5px]');
+      expect(article.className).toContain('detection-panel');
+      expect(article.className).not.toContain('overflow-hidden');
+      expect(article.querySelector('.media').className).toContain('overflow-hidden');
     });
 
-    it('displays category as CATEGORY · CASE STUDY meta line not rounded pill', () => {
-      const { container } = render(
-        <MemoryRouter>
-          <CaseStudyCard project={project} />
-        </MemoryRouter>,
-      );
-
-      const metaLine = container.querySelector('.cat');
-      expect(metaLine).toBeTruthy();
-      expect(metaLine.textContent).toContain(`${project.category.toUpperCase()} ·`);
-      expect(metaLine.textContent).toContain('CASE STUDY');
-      expect(metaLine.className).toContain('font-mono');
-      expect(metaLine.className).toContain('tracking-[0.12em]');
-      expect(metaLine.className).toContain('uppercase');
-      expect(metaLine.className).toContain('border-b');
-      expect(metaLine.className).not.toContain('rounded-full');
-      const caseStudyLabel = metaLine.querySelector('em.not-italic.text-white');
-      expect(caseStudyLabel).toBeTruthy();
-      expect(caseStudyLabel.textContent).toBe('CASE STUDY');
-    });
-
-    it('applies square corners and purple craft border to card frame', () => {
+    it('places category and CASE STUDY once on the panel edge', () => {
       const { container } = render(
         <MemoryRouter>
           <CaseStudyCard project={project} />
@@ -202,11 +172,25 @@ describe('CaseStudyCard', () => {
       );
 
       const article = container.querySelector('article');
-      expect(article.className).toContain('border-[rgba(139,92,246,0.4)]');
-      expect(article.className).toContain('bg-[#0C0D0D]');
-      expect(article.className).toContain('hover:border-[#8B5CF6]');
+      const label = article.querySelector('.cat');
+      expect(label.parentElement).toBe(article);
+      expect(label.textContent).toBe(`${project.category.toUpperCase()} · CASE STUDY`);
+      expect(article.querySelector('.media-meta .cat')).toBeNull();
+      expect(article.querySelectorAll('.cat')).toHaveLength(1);
+    });
+
+    it('preserves a visible focus boundary on the interactive panel', () => {
+      const { container } = render(
+        <MemoryRouter>
+          <CaseStudyCard project={project} />
+        </MemoryRouter>,
+      );
+
+      const article = container.querySelector('article');
+      expect(article.className).toContain('focus-within:outline-2');
+      expect(article.className).toContain('detection-panel--interactive');
+      expect(article.className).not.toContain('border-[rgba(139,92,246,0.4)]');
       expect(article.className).not.toContain('rounded-lg');
-      expect(article.className).not.toContain('border-white/10');
     });
 
     it('renders geometric arrow glyph as SVG not filled circle with text', () => {

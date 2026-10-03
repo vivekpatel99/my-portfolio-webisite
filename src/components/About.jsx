@@ -1,25 +1,21 @@
 import React from 'react';
 import { profileImages } from '@/config/links';
+import { DetectionHeading, DetectionLabel } from './DetectionFrame';
 
 const About = () => {
   return (
     <section id="about" className="relative bg-[#0C0D0D] py-14 px-7 md:px-12">
       <div className="relative z-[2] max-w-[1120px] mx-auto">
-        <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[#9ca3af] mb-4">
-          ABOUT · <em className="not-italic text-[#a78bfa]">DETECTED</em>
-        </div>
-        <h2 className="text-[clamp(1.85rem,3.4vw,2.75rem)] font-bold tracking-[-0.02em] leading-[1.1] uppercase mb-7">
+        <DetectionHeading label="Profile" className="text-[clamp(1.85rem,3.4vw,2.75rem)] font-bold tracking-[-0.02em] leading-[1.1] uppercase mb-7">
           WHO I <span className="text-[#8B5CF6]">AM</span>
-        </h2>
+        </DetectionHeading>
 
         {/* Dual field columns */}
         <div className="dual quiet-grid grid md:grid-cols-[1fr_1.15fr] gap-[18px] mb-12">
           {/* Photo field */}
-          <article className="field relative border border-[rgba(139,92,246,0.32)] p-[22px] px-6 pb-[26px] bg-transparent md:min-h-[320px]">
-            <span className="f-tl absolute top-[5px] left-[5px] w-[14px] h-[14px] border-t-[1.5px] border-l-[1.5px] border-[rgba(139,92,246,0.75)] pointer-events-none"></span>
-            <span className="f-br absolute bottom-[5px] right-[5px] w-[14px] h-[14px] border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.4)] pointer-events-none"></span>
-
-            <div className="photo-area aspect-[4/3] bg-[#161718] border border-[rgba(255,255,255,0.08)] overflow-hidden">
+          <article className="field detection-panel relative p-[22px] px-6 pb-[26px] bg-transparent md:min-h-[320px]">
+            <DetectionLabel>Portrait</DetectionLabel>
+            <div className="photo-area aspect-[4/3] bg-[#161718] overflow-hidden">
               <img
                 src={profileImages.portrait}
                 srcSet={profileImages.portraitSrcSet}
@@ -34,13 +30,10 @@ const About = () => {
           </article>
 
           {/* Bio field */}
-          <article className="field relative border border-[rgba(139,92,246,0.32)] p-[22px] px-6 pb-[26px] bg-transparent min-h-[320px]">
-            <span className="f-tl absolute top-[5px] left-[5px] w-[14px] h-[14px] border-t-[1.5px] border-l-[1.5px] border-[rgba(139,92,246,0.75)] pointer-events-none"></span>
-            <span className="f-br absolute bottom-[5px] right-[5px] w-[14px] h-[14px] border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.4)] pointer-events-none"></span>
-
-            <div className="field-meta font-mono text-[10px] tracking-[0.14em] uppercase text-[#9ca3af] mb-[18px]">
+          <article className="field detection-panel relative p-[22px] px-6 pb-[26px] bg-transparent min-h-[320px]">
+            <DetectionLabel>
               BIO · <em className="not-italic text-[#a78bfa]">FIELD</em>
-            </div>
+            </DetectionLabel>
 
             <div className="name-line text-[clamp(1.05rem,1.7vw,1.3rem)] font-bold leading-[1.3] tracking-[-0.015em] text-white mb-4">
               Vivek Patel — AI Engineer specializing in Computer Vision
@@ -67,9 +60,9 @@ const About = () => {
 
         {/* When you hire me */}
         <div className="hire-head mb-5">
-          <h2 className="text-[clamp(1.85rem,3.4vw,2.75rem)] font-bold tracking-[-0.02em] leading-[1.1] uppercase mb-3">
+          <DetectionHeading label="Delivery" className="text-[clamp(1.85rem,3.4vw,2.75rem)] font-bold tracking-[-0.02em] leading-[1.1] uppercase mb-3">
             WHEN YOU <span className="text-[#8B5CF6]">HIRE ME</span>
-          </h2>
+          </DetectionHeading>
           <p className="hire-blurb text-[0.95rem] leading-[1.55] text-[#9ca3af] max-w-[640px]">
             Here's exactly what to expect. I deliver a clear process, regular updates, and production-ready results.
           </p>
@@ -101,9 +94,9 @@ const About = () => {
 
         {/* Process quiet */}
         <div className="process-quiet mt-10 pt-7 border-t border-[rgba(255,255,255,0.06)]">
-          <h2 className="text-[1.35rem] font-bold tracking-[-0.02em] leading-[1.1] uppercase mb-[18px]">
+          <DetectionHeading label="Process" className="text-[1.35rem] font-bold tracking-[-0.02em] leading-[1.1] uppercase mb-[18px]">
             MY <span className="text-[#8B5CF6]">PROCESS</span>
-          </h2>
+          </DetectionHeading>
           <div className="process-grid grid md:grid-cols-2 gap-6">
             <div>
               <h3 className="text-[0.95rem] font-bold mb-2 text-[#e5e7eb]">Strategy & Discovery</h3>

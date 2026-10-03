@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { socialLinks } from '@/config/links';
+import { DetectionLabel } from './DetectionFrame';
 
 const Footer = () => {
     const handleManageCookies = (e) => {
@@ -10,10 +11,8 @@ const Footer = () => {
 
     return (
         <footer id="site-footer" className="flex-shrink-0 px-7 pb-[22px] bg-[#0C0D0D]">
-            <div className="relative max-w-[1120px] mx-auto border border-[rgba(139,92,246,0.38)] bg-gradient-to-b from-[rgba(139,92,246,0.035)] to-transparent bg-[length:100%_50%] bg-no-repeat px-6 pt-[18px] pb-4">
-                {/* Corner brackets */}
-                <span className="absolute top-[5px] left-[5px] w-4 h-4 border-t-[1.5px] border-l-[1.5px] border-[#8B5CF6] pointer-events-none"></span>
-                <span className="absolute bottom-[5px] right-[5px] w-4 h-4 border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.5)] pointer-events-none"></span>
+            <div className="detection-panel relative max-w-[1120px] mx-auto bg-gradient-to-b from-[rgba(139,92,246,0.035)] to-transparent bg-[length:100%_50%] bg-no-repeat px-6 pt-[18px] pb-4">
+                <DetectionLabel>CONTACT · LINKS</DetectionLabel>
 
                 <div className="flex items-center justify-between gap-4 mb-3 flex-wrap">
                     <div className="flex flex-wrap gap-2 gap-x-[22px]">

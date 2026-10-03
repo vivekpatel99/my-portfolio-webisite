@@ -1,0 +1,87 @@
+.detection-panel,
+.detection-heading {
+  --detection-top: rgba(139, 92, 246, 0.85);
+  --detection-bottom: rgba(255, 255, 255, 0.45);
+  --detection-label-background: #0c0d0d;
+  position: relative;
+}
+
+.detection-panel::before,
+.detection-heading::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.detection-panel::before {
+  background:
+    linear-gradient(var(--detection-top), var(--detection-top)) left top / 23px 1.5px no-repeat,
+    linear-gradient(var(--detection-top), var(--detection-top)) left top / 1.5px 23px no-repeat,
+    linear-gradient(var(--detection-top), var(--detection-top)) right top / 23px 1.5px no-repeat,
+    linear-gradient(var(--detection-top), var(--detection-top)) right top / 1.5px 23px no-repeat,
+    linear-gradient(var(--detection-bottom), var(--detection-bottom)) left bottom / 23px 1.5px no-repeat,
+    linear-gradient(var(--detection-bottom), var(--detection-bottom)) left bottom / 1.5px 23px no-repeat,
+    linear-gradient(var(--detection-bottom), var(--detection-bottom)) right bottom / 23px 1.5px no-repeat,
+    linear-gradient(var(--detection-bottom), var(--detection-bottom)) right bottom / 1.5px 23px no-repeat;
+}
+
+.detection-heading {
+  width: fit-content;
+  max-width: 100%;
+  padding: 19px 23px 17px;
+}
+
+.detection-heading::before {
+  background:
+    linear-gradient(var(--detection-top), var(--detection-top)) left top / 19px 1px no-repeat,
+    linear-gradient(var(--detection-top), var(--detection-top)) left top / 1px 19px no-repeat,
+    linear-gradient(var(--detection-bottom), var(--detection-bottom)) right bottom / 19px 1px no-repeat,
+    linear-gradient(var(--detection-bottom), var(--detection-bottom)) right bottom / 1px 19px no-repeat;
+}
+
+.detection-label {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  left: 29px;
+  max-width: calc(100% - 58px);
+  transform: translateY(-50%);
+  padding-inline: 6px;
+  background: var(--detection-label-background);
+  color: #c4b5fd;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.detection-heading > .detection-label {
+  left: 25px;
+  max-width: calc(100% - 50px);
+  padding-inline: 5px;
+  white-space: nowrap;
+}
+
+.detection-panel--interactive:hover,
+.detection-panel--interactive:focus-within {
+  --detection-top: #a78bfa;
+  --detection-bottom: rgba(255, 255, 255, 0.7);
+}
+
+.detection-panel--hero {
+  --detection-label-background: #141318;
+}
+
+.detection-panel--hero > .detection-label {
+  font-family: inherit;
+  font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: white;
+}
