@@ -2,7 +2,6 @@
 .detection-heading {
   --detection-top: #6b7280;
   --detection-bottom: #6b7280;
-  --detection-label-background: #0c0d0d;
   position: relative;
 }
 
@@ -45,7 +44,6 @@
   max-width: calc(100% - 58px);
   transform: translateY(-50%);
   padding-inline: 6px;
-  background: var(--detection-label-background);
   color: #c4b5fd;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 10px;
@@ -63,16 +61,16 @@
   white-space: nowrap;
 }
 
+.card > .detection-label {
+  transform: translateY(calc(-100% - 3px));
+}
+
 .detection-panel:hover,
 .detection-panel:focus-within,
 .detection-heading:hover,
 .detection-heading:focus-within {
   --detection-top: #a78bfa;
   --detection-bottom: #a78bfa;
-}
-
-.detection-panel--hero {
-  --detection-label-background: #141318;
 }
 
 .detection-panel--hero > .detection-label {
@@ -85,7 +83,6 @@
 }
 
 .detection-action {
-  --detection-label-background: #0c0d0d;
   align-items: center;
   justify-content: center;
   gap: 12px;
