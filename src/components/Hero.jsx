@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { HERO_DETECTED_FIELD_WINDOWS, HERO_INVOICE_FIELDS } from '@/lib/heroDetectedFields';
 import { profileImages } from '@/config/links';
@@ -398,21 +398,20 @@ const Hero = () => {
             </div>
 
             <div className="relative z-[1] flex flex-wrap gap-3 mt-1 lg:mt-4 lg:col-start-1 lg:row-start-2 max-md:flex-col max-md:mt-4">
-              <Button
-                asChild
-                className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-center font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-0"
+              <Link
+                to="/contact/"
+                className="detection-panel detection-action detection-action--primary inline-flex min-w-[220px] max-md:w-full"
               >
-                <Link to="/contact/">Request a Project Estimate</Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                className="border border-white/[0.14] hover:bg-[#8B5CF6]/8 hover:border-purple-400/35 text-white px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[150px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-0"
+                Request a Project Estimate
+                <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+              </Link>
+              <a
+                href="#portfolio"
+                className="detection-panel detection-action inline-flex min-w-[150px] max-md:w-full"
               >
-                <a href="#portfolio">
-                  View Case Studies
-                </a>
-              </Button>
+                View Case Studies
+                <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+              </a>
             </div>
 
             {/* Right: Photo detection card */}

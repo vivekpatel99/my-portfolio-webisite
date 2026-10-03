@@ -130,20 +130,22 @@ Corner decoration does not intercept clicks, create tab stops, announce motion, 
 
 Confirmed intent from #296 is that buttons look like one family with small differences in emphasis. Geometry, label treatment, border weight, arrow shape, and states remain consistent across pages.
 
-| Variant | Purpose | Proposed default |
+Confirmed on 3 October 2026, the hero's Request a Project Estimate and View Case Studies links, the header's Request Estimate link in the bar and drawer, and the final Request a Project Estimate link use the shared corner family. These actions have square dark surfaces, no continuous border, and opposing corners that follow SH-03. Primary estimate links use a stronger dark purple tint and weight; the hero secondary stays darker. Each has one decorative trailing ArrowRight icon and a separate keyboard focus outline at least 2px wide. Preserve the existing text, accessible names, destinations, and navigation behavior.
+
+| Variant | Purpose | Treatment |
 | --- | --- | --- |
-| Primary | Estimate navigation and contact submission | Angular purple fill, readable white label. A trailing arrow accompanies navigation where useful. |
-| Secondary | Browse case studies and other prominent alternatives | Same geometry and label treatment, dark fill, visible outline. |
+| Primary | Named estimate navigation links | Square dark purple surface, readable white text, opposing corners, and one trailing arrow. |
+| Secondary | Hero View Case Studies link | Matching height and geometry, darker surface, and one trailing arrow. |
 | Text action | Scope details, back links, footer navigation | Readable link styling and visible focus without a filled button. |
 | Utility | Gallery, menu, close, zoom, pause, consent, retry | Compact compatible styling with conventional icons and accessible names. |
 
-The proposed geometry is square corners for prominent actions. Header controls can be smaller than hero actions. The hero pair has matching heights when side by side. Size differences must remain recognizable variants of the same family.
+The hero pair has matching heights when side by side. Header estimate links use the compact variant with a minimum height of 44px; the final estimate link keeps its larger text and target width. The final CTA retains its existing `REQUEST · ESTIMATE` edge label, hidden from assistive technology, and removes the redundant leading boxed arrow. Other named actions receive no extra metadata. The final View case studies link stays plain.
 
 All interactive variants have visible keyboard focus and clear hover, pressed, disabled, loading, and selected states where relevant. Normal standalone action targets are at least 44 by 44 CSS pixels under #296. Text links within prose keep their normal reading layout.
 
 Keep anchors for navigation and buttons for actions. Preserve destinations, new-tab behavior, modal behavior, and submitting protection. A loading label must not shift the button or permit another submission. Review consent and gallery callers before changing a generic button default.
 
-Use restrained corners on prominent CTAs when they improve continuity. Utility controls and text links do not each need a decorative frame. Review the repeated `REQUEST · ESTIMATE` label and extra glyph in the final CTA under #296.
+This confirmed family is scoped to the named navigation links. Form submission, gallery, consent, menu controls, and other buttons retain their existing defaults. Utility controls and text links do not each need a decorative frame.
 
 ### OC-01. Simulated OCR placement
 

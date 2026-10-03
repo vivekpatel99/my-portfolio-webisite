@@ -210,10 +210,10 @@ const Header = () => {
           <Link
             ref={desktopEstimateRef}
             to="/contact/"
-            className="hidden md:inline-flex flex-shrink-0 items-center gap-[10px] border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.05)] px-[14px] py-[10px] font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.1)] hover:text-[#d8caff] transition-colors"
+            className="detection-panel detection-action detection-action--primary detection-action--compact hidden md:inline-flex"
           >
             Request Estimate
-            <ArrowRight className="w-3 h-3 text-[#a78bfa]" />
+            <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           </Link>
 
           <button
@@ -272,10 +272,10 @@ const Header = () => {
             to="/contact/"
             onClick={handleEstimateClick}
             aria-label="Request a Project Estimate"
-            className="flex items-center justify-center gap-[10px] border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.05)] px-[14px] py-[14px] font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.1)] hover:text-[#d8caff]"
+            className="detection-panel detection-action detection-action--primary detection-action--compact inline-flex w-full"
           >
             Request Estimate
-            <ArrowRight className="w-3 h-3 text-[#a78bfa]" />
+            <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           </Link>
         </div>
       )}

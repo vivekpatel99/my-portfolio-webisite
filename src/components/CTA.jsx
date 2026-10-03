@@ -1,17 +1,10 @@
 import React from 'react';
-import { DetectionHeading } from './DetectionFrame';
+import { DetectionHeading, DetectionLabel } from './DetectionFrame';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { HOURLY_FROM_LABEL } from '@/data/serviceOffers';
 
 const CTA = () => {
-  const ActionGlyph = () => (
-    <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" className="w-[18px] h-[18px]">
-      <rect x="2" y="2" width="14" height="14" />
-      <path d="M6 9h6M10 6l3 3-3 3" />
-    </svg>
-  );
-
   return (
     <section id="cta" className="cta-sec relative bg-[radial-gradient(ellipse_at_50%_40%,rgba(139,92,246,0.045),transparent_55%),#0C0D0D] py-14 px-7 md:px-12 flex items-center">
       <div className="inner relative z-[2] max-w-[1040px] mx-auto w-full text-center">
@@ -26,28 +19,18 @@ const CTA = () => {
         </div>
 
         <div className="actions flex flex-col items-center gap-[22px]">
-          {/* Detected action field link */}
           <Link
             to="/contact/"
             aria-label="Request a Project Estimate"
-            className="action-field relative inline-flex items-center justify-center gap-4 border border-[rgba(139,92,246,0.72)] bg-gradient-to-b from-[rgba(139,92,246,0.06)] to-transparent bg-[length:100%_55%] bg-no-repeat py-[22px] px-9 pr-9 min-w-[min(420px,92vw)] hover:border-[rgba(139,92,246,0.95)] hover:bg-gradient-to-b hover:from-[rgba(139,92,246,0.1)] hover:to-transparent hover:bg-[length:100%_55%] transition-all focus-visible:outline focus-visible:outline-1 focus-visible:outline-[#8B5CF6] focus-visible:outline-offset-4 no-underline"
+            className="action-field detection-panel detection-action detection-action--primary detection-action--large inline-flex min-w-[min(420px,92vw)]"
           >
-            <span className="bracket-tl absolute top-[5px] left-[5px] w-4 h-4 border-t-[1.5px] border-l-[1.5px] border-[rgba(139,92,246,0.95)] pointer-events-none z-[5]"></span>
-            <span className="bracket-br absolute bottom-[5px] right-[5px] w-4 h-4 border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.55)] pointer-events-none z-[5]"></span>
-
-            <span className="field-meta absolute -top-[9px] left-[18px] px-2 bg-[#0C0D0D] font-mono text-[9px] tracking-[0.14em] uppercase text-[#a78bfa]">
+            <DetectionLabel className="field-meta" aria-hidden="true">
               REQUEST · ESTIMATE
-            </span>
-
-            <span className="glyph flex-shrink-0 text-[#8B5CF6]">
-              <ActionGlyph />
-            </span>
+            </DetectionLabel>
             <span className="action-label text-[1.05rem] font-bold tracking-[0.02em] uppercase text-white">
               Request a Project Estimate
             </span>
-            <span className="arrow flex-shrink-0 w-5 h-5 text-[#a78bfa] ml-1 group-hover:text-white transition-colors">
-              <ArrowRight className="w-full h-full" />
-            </span>
+            <ArrowRight className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
           </Link>
 
           <Link
