@@ -19,10 +19,6 @@
   background:
     linear-gradient(var(--detection-top), var(--detection-top)) left top / 23px 1.5px no-repeat,
     linear-gradient(var(--detection-top), var(--detection-top)) left top / 1.5px 23px no-repeat,
-    linear-gradient(var(--detection-top), var(--detection-top)) right top / 23px 1.5px no-repeat,
-    linear-gradient(var(--detection-top), var(--detection-top)) right top / 1.5px 23px no-repeat,
-    linear-gradient(var(--detection-bottom), var(--detection-bottom)) left bottom / 23px 1.5px no-repeat,
-    linear-gradient(var(--detection-bottom), var(--detection-bottom)) left bottom / 1.5px 23px no-repeat,
     linear-gradient(var(--detection-bottom), var(--detection-bottom)) right bottom / 23px 1.5px no-repeat,
     linear-gradient(var(--detection-bottom), var(--detection-bottom)) right bottom / 1.5px 23px no-repeat;
 }

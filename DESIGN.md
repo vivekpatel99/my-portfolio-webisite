@@ -93,20 +93,20 @@ Button hierarchy comes from fill, outline, and spacing. Additional gradients, gl
 | Interactive form boundary | Identifies an editable control and its focus state | Four corners, grey at rest and purple on focus. Follow the contact-field reference. |
 | Simulated extraction frame | Illustrates recognized fields in the hero or a marked OCR demonstration | Four field corners with an attached label. Scores are illustrative when simulated. |
 
-Confirmed on 3 October 2026, Vivek selected the **Corners + labels** prototype. The approved homepage cards use corner frames instead of continuous outer borders and inset corner decorations. Main section headings use the same label vocabulary with quieter opposing corners. Decoration remains independent of focus indicators and OCR behavior.
+Confirmed on 3 October 2026, Vivek selected the **Corners + labels** prototype. The approved homepage cards use only top-left and bottom-right corner strokes with attached labels. They use corner frames instead of continuous outer borders and inset corner decorations. Main section headings use the same label vocabulary with quieter opposing corners. Decoration remains independent of focus indicators and OCR behavior.
 
 ### SH-02. Placement map
 
 | Location | Framed content | Expression |
 | --- | --- | --- |
-| Hero profile invoice | Outer invoice panel | Four static corners and a prominent attached Profile Invoice title. Preserve the invoice identifier and internal field animation. |
+| Hero profile invoice | Outer invoice panel | Two opposing static corners and a prominent attached Profile Invoice title. Preserve the invoice identifier and internal field animation. |
 | Hero detected fields | Two selected values at a time | Existing animated field corners, labels, and illustrative scores. |
 | Hero portrait | Outer portrait frame | Preserve its stronger frame and unboxed engineer label with the existing score. |
 | Homepage section headings | Main h2 headings, including About subsections and final CTA | Two opposing corners with a descriptive attached label. |
-| Featured work and case-study collection | Each project card | Four static corners and the existing category label attached to the edge. Preserve card navigation and focus. |
-| Service offers | Each service card | Four static corners and the service offer label on the edge. |
-| Testimonials | Whole quote panel | Four static corners with testimonial and client metadata on the edge. Individual sentences remain unboxed. |
-| About | Portrait and biography panels | Four static corners with portrait and biography labels on the edge. |
+| Featured work and case-study collection | Each project card | Two opposing static corners and the existing category label attached to the edge. Preserve card navigation and focus. |
+| Service offers | Each service card | Two opposing static corners and the service offer label on the edge. |
+| Testimonials | Whole quote panel | Two opposing static corners with testimonial and client metadata on the edge. Individual sentences remain unboxed. |
+| About | Portrait and biography panels | Two opposing static corners with portrait and biography labels on the edge. |
 | Footer | Whole footer content panel | One corner frame and an attached label. Individual links remain unboxed. |
 | Case-study detail, service detail, contact | Existing framed panels and form fields | Separate review scope. The homepage decision does not establish completed implementation or verification for these routes. |
 
@@ -114,7 +114,7 @@ Paragraphs, navigation links, individual footer links, legal text, gallery thumb
 
 ### SH-03. Frame geometry
 
-The selected prototype uses 19px opposing corner strokes at 1px for section titles. Panel frames use four 23px strokes at 1.5px, purple at the top and muted white at the bottom. Strokes sit on the outer frame edge rather than inside another border. Equivalent panels share this geometry.
+The selected prototype uses 19px top-left and bottom-right corner strokes at 1px for section titles. Panel frames use 23px strokes at 1.5px only in the top-left and bottom-right corners, purple at the top-left and muted white at the bottom-right. Strokes sit on the outer frame edge rather than inside another border. Equivalent panels share this geometry.
 
 Attached labels sit after the top-left stroke, centered on the top-edge guide. They use compact monospace text and the matching surface background. The Profile Invoice title retains its larger sans-serif title size. Reserve space for labels and preserve content padding. Image cropping stays on the media container so the outer label remains visible.
 
