@@ -6,6 +6,7 @@ import {
   sanitizePlaywrightArtifacts,
   sanitizePlaywrightReport, validateStagedArtifacts,
 } from './sanitize-playwright-artifacts.js';
+import { qaPassiveSpecs } from '../tests/qa/qa.config.js';
 
 const fixturePath = path.resolve('tests/qa/fixtures/playwright-failure-report.json');
 const temporaryDirectories = [];
@@ -63,6 +64,55 @@ describe('sanitized Playwright QA artifacts', () => {
       }],
     });
     expect(serialized).not.toMatch(/QA_SECRET_SENTINEL|Injected title|raw stack|localStorage|trace\.zip/);
+  });
+
+  it.each([
+    'preview-desktop',
+    'preview-mobile',
+    'preview-webkit-desktop',
+    'preview-webkit-mobile',
+  ])('reconstructs and validates a bounded hero OCR labels failure for %s', async (projectName) => {
+    const paths = await temporaryPaths();
+    const report = JSON.parse(await readFile(fixturePath, 'utf8'));
+    const suite = report.suites[0];
+    suite.file = 'qa-hero-ocr-labels.spec.js';
+    suite.specs[0].file = 'qa-hero-ocr-labels.spec.js';
+    suite.specs[0].tests[0].projectName = projectName;
+    await writeFile(paths.rawReport, JSON.stringify(report), 'utf8');
+
+    const result = await sanitizePlaywrightArtifacts({ paths });
+    const staged = await validateStagedArtifacts({ paths });
+    const serialized = `${await readFile(paths.summary, 'utf8')}${await readFile(paths.failureResults, 'utf8')}`;
+
+    expect(staged).toEqual({ summary: result.summary, failureResults: result.failureResults });
+    expect(staged.summary.suites).toEqual([{
+      suite: 'hero-ocr-labels',
+      projects: [{
+        project: projectName,
+        attempts: { passed: 0, failed: 1, skipped: 0, timed_out: 0, interrupted: 0 },
+      }],
+    }]);
+    expect(staged.failureResults.failures).toEqual([{
+      suite: 'hero-ocr-labels',
+      sourceLine: 53,
+      testOrdinal: 1,
+      project: projectName,
+      retry: 1,
+      outcome: 'failed',
+      durationMs: 60_000,
+    }]);
+    expect(serialized)
+      .not.toMatch(/QA_SECRET_SENTINEL|Injected title|raw stack|localStorage|trace\.zip|qa-hero-ocr-labels/);
+  });
+
+  it('keeps every local preview passive QA suite registered with the sanitizer', () => {
+    const report = {
+      errors: [],
+      suites: qaPassiveSpecs({ environment: 'preview', localOnly: true })
+        .map((file) => ({ file, specs: [] })),
+    };
+
+    expect(() => sanitizePlaywrightReport(report)).not.toThrow();
   });
 
   it('fails closed for an unallowlisted normalized source path or project', () => {
