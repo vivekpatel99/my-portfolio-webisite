@@ -103,7 +103,6 @@
   line-height: 1.5;
   text-align: center;
   text-decoration: none;
-  transition: background-color 160ms ease, color 160ms ease;
 }
 
 .detection-action:hover,
@@ -133,10 +132,4 @@
 
 .detection-action--large {
   padding: 22px 36px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .detection-action {
-    transition: none;
-  }
 }
