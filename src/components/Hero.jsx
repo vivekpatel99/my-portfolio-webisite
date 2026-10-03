@@ -26,7 +26,6 @@ const OCR_FIELD_LABELS = {
   success: { label: 'Success', score: '0.96' },
   rate: { label: 'Rate', score: '0.95' },
   location: { label: 'Location', score: '0.94' },
-  tags: { label: 'Tags', score: '0.93' },
 };
 
 const FieldLabel = ({ field }) => (
@@ -321,7 +320,7 @@ const Hero = () => {
                 {/* Header */}
                 <div className="flex justify-between items-start mb-1 pb-1.5 border-b border-white/[0.08] max-md:mb-1 max-md:pb-1">
                   <div>
-                    <div className="font-mono text-[11px] font-semibold tracking-[0.14em] uppercase text-purple-200/[0.78]">Profile Invoice</div>
+                    <div className="text-[clamp(1.25rem,2.4vw,1.75rem)] font-bold tracking-tight leading-[1.2] text-white">Profile Invoice</div>
                     <div className="mt-1 font-mono text-[10px] text-gray-400 tracking-wide">OCR simulation</div>
                   </div>
                   <div className="text-right font-mono text-[10px] leading-relaxed text-gray-400">
@@ -411,19 +410,16 @@ const Hero = () => {
                   </p>
                 </div>
 
-                {/* Tags field */}
-                <div data-hero-field="tags" className="hero-ocr-field">
-                  <FieldLabel field="tags" />
-                  <span className="hero-field-value inline-flex flex-wrap gap-1.5">
-                    {['OCR', 'CV', 'n8n'].map((tag) => (
-                      <span
-                        key={tag}
-                        className="font-mono text-[11px] text-purple-200 px-2.5 py-1.5 rounded-[3px] border border-white/[0.1] bg-white/[0.03]"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </span>
+                {/* Static topic chips */}
+                <div className="inline-flex flex-wrap gap-1.5 px-[7px] py-[3px]">
+                  {['OCR', 'CV', 'n8n'].map((tag) => (
+                    <span
+                      key={tag}
+                      className="font-mono text-[11px] text-purple-200 px-2.5 py-1.5 rounded-[3px] border border-white/[0.1] bg-white/[0.03]"
+                    >
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               </article>
             </div>
@@ -482,8 +478,8 @@ const Hero = () => {
 
                 {/* Purple L-brackets (static on top) */}
                 <div className="absolute inset-1 pointer-events-none z-[3]" aria-hidden="true">
-                  <div className="absolute top-0 left-[29px] -translate-y-1/2 z-[4] inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm whitespace-nowrap max-md:text-[10px] max-md:px-2 max-md:py-1">
-                    engineer · 0.99
+                  <div className="hero-field-label absolute top-0 left-[29px] -translate-y-1/2 z-[4] [--hero-label-height:12px] bg-[#0C0D0D]">
+                    engineer<span className="hero-field-score"> · 0.99</span>
                   </div>
                   <span className="absolute top-0 left-0 w-6 h-6 border-l-[2.5px] border-t-[2.5px] border-[#8B5CF6]" style={{ filter: 'drop-shadow(0 0 4px rgba(139,92,246,0.55))' }} />
                   <span className="absolute top-0 right-0 w-6 h-6 border-r-[2.5px] border-t-[2.5px] border-[#8B5CF6]" style={{ filter: 'drop-shadow(0 0 4px rgba(139,92,246,0.55))' }} />

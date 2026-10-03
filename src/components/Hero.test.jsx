@@ -128,7 +128,7 @@ describe('Hero invoice proof fold (#176)', () => {
   it('hides decorative portrait tracking chips from assistive technology', () => {
     renderHero();
 
-    ['engineer · 0.99', 'ID 001 · TRACKED', 'REC'].forEach((label) => {
+    ['engineer', 'ID 001 · TRACKED', 'REC'].forEach((label) => {
       expect(screen.getByText(label, { exact: true }).closest('[aria-hidden="true"]')).toBeTruthy();
     });
   });
@@ -155,7 +155,6 @@ describe('Hero illustrative OCR labels (#297)', () => {
     success: ['Success', '0.96'],
     rate: ['Rate', '0.95'],
     location: ['Location', '0.94'],
-    tags: ['Tags', '0.93'],
   };
 
   it('attaches the fixed label and decorative score to each field', () => {
@@ -171,7 +170,9 @@ describe('Hero illustrative OCR labels (#297)', () => {
     });
     expect(screen.getByText('OCR simulation', { exact: true })).toBeTruthy();
     expect(container.querySelectorAll('.invoice-field-corners')).toHaveLength(2);
-    expect(container.querySelector('[data-hero-field="tags"]').classList.contains('invoice-field-corners')).toBe(false);
+    expect(container.querySelector('[data-hero-field="tags"]')).toBeNull();
+    expect(screen.queryByText('Tags', { exact: true })).toBeNull();
+    ['OCR', 'CV', 'n8n'].forEach((tag) => expect(screen.getByText(tag, { exact: true })).toBeTruthy());
   });
 
   it('keeps all scores fixed across pointer interaction and reduced motion', () => {
@@ -183,9 +184,9 @@ describe('Hero illustrative OCR labels (#297)', () => {
       removeEventListener: (_event, listener) => listeners.delete(listener),
     }));
     const { container } = renderHero();
-    const getLabels = () => Array.from(container.querySelectorAll('.hero-field-label'), (label) => label.textContent);
+    const getLabels = () => Array.from(container.querySelectorAll('article .hero-field-label'), (label) => label.textContent);
     const before = getLabels();
-    expect(before).toHaveLength(7);
+    expect(before).toHaveLength(6);
     fireEvent.mouseMove(container.querySelector('section'), { clientX: 100, clientY: 100 });
     act(() => {
       reducedMotion = true;
@@ -281,12 +282,12 @@ describe('Hero rotating annotations', () => {
   it('starts with two annotations while every factual value and all label rows remain mounted', () => {
     const { container } = renderHero();
     expect(ids(container)).toEqual(expected(0));
-    expect(container.querySelectorAll('[data-hero-field]')).toHaveLength(7);
-    expect(container.querySelectorAll('.hero-field-label')).toHaveLength(7);
+    expect(container.querySelectorAll('[data-hero-field]')).toHaveLength(6);
+    expect(container.querySelectorAll('article .hero-field-label')).toHaveLength(6);
     const values = ['Vivek Patel', 'Computer Vision & AI Engineer', 'Top Rated Plus', '100% Job Success', '€45/hour', 'Linz, Austria'];
     values.forEach((value) => expect(screen.getByText(value, { exact: true }).closest('.hero-field-value').style.opacity).toBe(''));
     HERO_INVOICE_FIELDS.forEach((id) => expect(opacity(container, id)).toBe(HERO_DETECTED_FIELD_WINDOWS[0].includes(id) ? '1' : '0'));
-    expect(container.querySelector('[data-hero-field="tags"]').classList.contains('hero-rotating-annotation')).toBe(false);
+    expect(container.querySelector('[data-hero-field="tags"]')).toBeNull();
     expect(container.querySelector('[data-hero-field="rate"]').classList.contains('hero-rotating-annotation')).toBe(true);
     expect(vi.getTimerCount()).toBe(1);
   });
@@ -320,7 +321,7 @@ describe('Hero rotating annotations', () => {
 
   it('cycles through all three row pairs and preserves fixed scores, mounted labels and values', () => {
     const { container } = renderHero();
-    const labels = [...container.querySelectorAll('.hero-field-label')];
+    const labels = [...container.querySelectorAll('article .hero-field-label')];
     const values = [...container.querySelectorAll('.hero-field-value')];
     const scores = labels.map((label) => label.textContent);
     for (let step = 1; step <= 3; step += 1) {
@@ -328,7 +329,7 @@ describe('Hero rotating annotations', () => {
       advance(100);
       advance(100);
       expect(ids(container)).toEqual(expected(step % 3));
-      expect([...container.querySelectorAll('.hero-field-label')]).toEqual(labels);
+      expect([...container.querySelectorAll('article .hero-field-label')]).toEqual(labels);
       expect([...container.querySelectorAll('.hero-field-value')]).toEqual(values);
       expect(labels.map((label) => label.textContent)).toEqual(scores);
       expect(container.querySelectorAll('.invoice-field-corners')).toHaveLength(2);

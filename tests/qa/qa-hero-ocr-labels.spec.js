@@ -7,7 +7,6 @@ const expectedLabels = [
   'Success · 0.96',
   'Rate · 0.95',
   'Location · 0.94',
-  'Tags · 0.93',
 ];
 
 const selections = [
@@ -42,6 +41,11 @@ for (const { width, height } of viewports) {
       await page.clock.pauseAt(new Date('2026-10-03T08:00:01Z'));
       const invoice = page.getByRole('article', { name: 'Profile invoice field parse' });
       await expect(invoice.getByText('OCR simulation', { exact: true })).toBeVisible();
+      await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+      await expect(invoice.getByText('Tags · 0.93', { exact: true })).toHaveCount(0);
+      for (const tag of ['OCR', 'CV', 'n8n']) await expect(invoice.getByText(tag, { exact: true })).toBeVisible();
+      const titleSize = await invoice.getByText('Profile Invoice', { exact: true }).evaluate((title) => Number.parseFloat(getComputedStyle(title).fontSize));
+      expect(titleSize).toBeGreaterThanOrEqual(width >= 1024 ? 28 : 20);
       const hero = page.locator('section[data-hero-highlight-index]');
       await expect(hero).toHaveAttribute('data-hero-highlight-index', '0');
       await page.getByRole('button', { name: 'Pause highlights', exact: true }).click();
@@ -72,7 +76,7 @@ for (const { width, height } of viewports) {
         };
       }));
 
-      expect(measurements).toHaveLength(7);
+      expect(measurements).toHaveLength(6);
       expect(measurements.filter((field) => field.highlighted).map((field) => field.id).sort()).toEqual([...selected].sort());
       for (const field of measurements) {
         expect(field.leftClearance, `${field.id} left stroke clearance`).toBeCloseTo(17, 1);
@@ -80,13 +84,10 @@ for (const { width, height } of viewports) {
         expect(field.valueGap, `${field.id} value stays below label`).toBeGreaterThanOrEqual(1.9);
         expect(field.valueLeft, `${field.id} value inside left frame`).toBeGreaterThanOrEqual(6.9);
         expect(field.valueRight, `${field.id} value inside right frame`).toBeGreaterThanOrEqual(6.9);
-        if (field.id !== 'tags') {
-          expect(field.columnLeft, `${field.id} stays in its column`).toBeGreaterThanOrEqual(-0.1);
-          expect(field.columnRight, `${field.id} stays in its column`).toBeGreaterThanOrEqual(-0.1);
-        }
+        expect(field.columnLeft, `${field.id} stays in its column`).toBeGreaterThanOrEqual(-0.1);
+        expect(field.columnRight, `${field.id} stays in its column`).toBeGreaterThanOrEqual(-0.1);
         if (field.highlighted) expect(field.labelCenter).toBeCloseTo(field.cornerTop, 1);
-        expect(field.labelOpacity, `${field.id} annotation visibility`).toBe(selected.includes(field.id) || field.id === 'tags' ? 1 : 0);
-        if (field.id === 'tags') expect(field.highlighted).toBe(false);
+        expect(field.labelOpacity, `${field.id} annotation visibility`).toBe(selected.includes(field.id) ? 1 : 0);
       }
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 
@@ -103,6 +104,8 @@ for (const { width, height } of viewports) {
       expect(labelsAfter).toEqual(labelsBefore);
 
       const portraitTag = page.getByText('engineer · 0.99', { exact: true });
+      const appearance = await portraitTag.evaluate((tag) => ({ border: getComputedStyle(tag).borderTopWidth, radius: getComputedStyle(tag).borderRadius, label: tag.classList.contains('hero-field-label') }));
+      expect(appearance).toEqual({ border: '0px', radius: '0px', label: true });
       const tag = await portraitTag.boundingBox();
       const frame = await portraitTag.locator('..').boundingBox();
       expect(tag.x - frame.x).toBeCloseTo(29, 1);
@@ -156,13 +159,13 @@ test.describe('animated OCR experiment', () => {
       await expect.poll(async () => (await annotationState(page)).filter((field) => field.selected).map((field) => field.labelOpacity), { intervals: [20] }).toEqual([1, 1]);
       const state = await annotationState(page);
       expect(state.filter((field) => field.selected).map((field) => field.id).sort()).toEqual([...selections[index]].sort());
-      expect(state.filter((field) => field.id !== 'tags' && field.labelOpacity > 0)).toHaveLength(2);
+      expect(state.filter((field) => field.labelOpacity > 0)).toHaveLength(2);
       for (const field of state) {
         expect(field.valueOpacity).toBe(1);
-        if (field.id !== 'tags') expect(field.cornerOpacity).toBeCloseTo(field.labelOpacity, 2);
+        expect(field.cornerOpacity).toBeCloseTo(field.labelOpacity, 2);
       }
       expect(await fieldBounds(page)).toEqual(initialBounds);
-      await expect(page.locator('.hero-field-label')).toHaveText(expectedLabels);
+      await expect(page.locator('article .hero-field-label')).toHaveText(expectedLabels);
     }
     const sampled = await page.evaluate(() => {
       window.__heroPairProbe.active = false;
@@ -201,7 +204,7 @@ test('annotation controls freeze, resume, and honor reduced motion and offscreen
   await expect(hero).toHaveAttribute('data-hero-highlights', 'paused');
   await page.clock.runFor(10000);
   await expect(hero).toHaveAttribute('data-hero-highlight-index', '0');
-  await expect(page.locator('.hero-field-label')).toHaveText(expectedLabels);
+  await expect(page.locator('article .hero-field-label')).toHaveText(expectedLabels);
 
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.getByRole('contentinfo').scrollIntoViewIfNeeded();
