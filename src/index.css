@@ -132,48 +132,6 @@
     transition: none;
   }
 
-  .hero-highlight-control {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 96px;
-    min-height: 44px;
-    padding: 0;
-    color: #c4b5fd;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 10px;
-    white-space: nowrap;
-  }
-
-  .hero-highlight-control > span {
-    display: block;
-    padding: 6px 5px;
-    border: 1px solid rgba(139, 92, 246, 0.35);
-    border-radius: 3px;
-    background: #0c0d0d;
-  }
-
-  .hero-highlight-control:hover:not(:disabled) > span {
-    border-color: #a78bfa;
-    background: #141318;
-  }
-
-  .hero-highlight-control:active:not(:disabled) > span {
-    background: #221a35;
-  }
-
-  .hero-highlight-control:focus-visible {
-    outline: 2px solid #c4b5fd;
-    outline-offset: 2px;
-    border-radius: 3px;
-  }
-
-  .hero-highlight-control:disabled {
-    color: #9ca3af;
-    cursor: default;
-  }
-
   .hero-ocr-field.hero-rotating-annotation::before {
     top: calc(var(--hero-label-height) / 2);
   }

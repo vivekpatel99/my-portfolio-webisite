@@ -37,8 +37,8 @@ for (const { width, height } of viewports) {
     test(`OCR labels stay attached at ${width}x${height} with annotation state ${index}`, async ({ page }) => {
       await page.setViewportSize({ width, height });
       await page.clock.install({ time: new Date('2026-10-03T08:00:00Z') });
-      await page.goto('/');
       await page.clock.pauseAt(new Date('2026-10-03T08:00:01Z'));
+      await page.goto('/');
       const invoice = page.getByRole('article', { name: 'Profile invoice field parse' });
       await expect(invoice.getByText('doc · extract · 0.97', { exact: true })).toHaveCount(0);
       await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
@@ -48,13 +48,15 @@ for (const { width, height } of viewports) {
       expect(titleSize).toBeGreaterThanOrEqual(width >= 1024 ? 28 : 20);
       const hero = page.locator('section[data-hero-highlight-index]');
       await expect(hero).toHaveAttribute('data-hero-highlight-index', '0');
-      await page.getByRole('button', { name: 'Pause highlights', exact: true }).click();
-      await page.getByRole('button', { name: 'Resume highlights', exact: true }).click();
-      for (let step = 0; step < index; step += 1) await advancePair(page, hero, step === 0 ? 2000 : 1800);
+      const advances = index || selections.length;
+      for (let step = 0; step < advances; step += 1) await advancePair(page, hero, step === 0 ? 2000 : 1800);
       await expect(hero).toHaveAttribute('data-hero-highlight-index', String(index));
-      await page.getByRole('button', { name: 'Pause highlights', exact: true }).click();
-      await expect(hero).toHaveAttribute('data-hero-highlights', 'paused');
+      await expect(hero).toHaveAttribute('data-hero-highlight-phase', 'steady');
       await expect(invoice.locator('.hero-field-label')).toHaveText(expectedLabels);
+      for (const field of selections.flat()) {
+        await expect(invoice.locator(`[data-hero-field="${field}"] .hero-field-label`))
+          .toHaveCSS('opacity', selected.includes(field) ? '1' : '0');
+      }
 
       const measurements = await invoice.locator('[data-hero-field]').evaluateAll((fields) => fields.map((field) => {
         const bounds = field.getBoundingClientRect();
@@ -177,27 +179,14 @@ test.describe('animated OCR experiment', () => {
   });
 });
 
-test('annotation controls freeze, resume, and honor reduced motion and offscreen suspension', async ({ page }) => {
+test('annotations honor reduced motion and offscreen suspension', async ({ page }) => {
   await page.clock.install({ time: new Date('2026-10-03T08:00:00Z') });
-  await page.goto('/');
   await page.clock.pauseAt(new Date('2026-10-03T08:00:01Z'));
+  await page.goto('/');
   const hero = page.locator('section[data-hero-highlight-index]');
   await expect(hero).toHaveAttribute('data-hero-highlight-index', '0');
-  await page.getByRole('button', { name: 'Pause highlights', exact: true }).click();
-  await page.getByRole('button', { name: 'Resume highlights', exact: true }).click();
   await advancePair(page, hero);
   await expect(hero).toHaveAttribute('data-hero-highlight-index', '1');
-  const pause = page.getByRole('button', { name: 'Pause highlights', exact: true });
-  await pause.focus();
-  await page.keyboard.press('Space');
-  await expect(page.getByRole('button', { name: 'Resume highlights', exact: true })).toBeFocused();
-  await page.clock.runFor(6000);
-  await expect(hero).toHaveAttribute('data-hero-highlight-index', '1');
-  await page.keyboard.press('Enter');
-  await page.clock.runFor(1999);
-  await expect(hero).toHaveAttribute('data-hero-highlight-index', '1');
-  await advancePair(page, hero, 1);
-  await expect(hero).toHaveAttribute('data-hero-highlight-index', '2');
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(hero).toHaveAttribute('data-hero-highlight-index', '0');

@@ -90,9 +90,8 @@ const Hero = () => {
   const isInViewport = useIsInViewport(heroRef);
   const parallaxEnabled = isInViewport && hasFinePointer && !reduceMotion;
   const isDocumentVisible = useDocumentVisible();
-  const [highlightsPaused, setHighlightsPaused] = useState(false);
   const [highlight, setHighlight] = useState({ index: 0, phase: 'initial' });
-  const highlightsRunning = !highlightsPaused && !reduceMotion && isInViewport && isDocumentVisible;
+  const highlightsRunning = !reduceMotion && isInViewport && isDocumentVisible;
   const highlightIndex = reduceMotion ? 0 : highlight.index;
   const highlightPhase = highlightsRunning ? highlight.phase : 'initial';
   const detectedFields = HERO_DETECTED_FIELD_WINDOWS[highlightIndex];
@@ -274,20 +273,11 @@ const Hero = () => {
       <div className="container mx-auto px-6 md:px-12 relative z-10 py-0 max-md:px-4 max-md:py-0">
         <div className="max-w-[1320px] mx-auto flex flex-col gap-0 max-md:gap-0">
           {/* Status badge */}
-          <div className="relative flex items-center justify-between gap-4 flex-wrap mb-5 pr-[104px]">
+          <div className="relative flex items-center justify-between gap-4 flex-wrap mb-5">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/[0.12] bg-white/[0.03]">
               <span className="w-[7px] h-[7px] rounded-full bg-[#8B5CF6] shadow-[0_0_8px_rgba(139,92,246,0.65)]" />
               <span className="text-[11px] font-mono tracking-wider uppercase text-gray-400">Inference online</span>
             </div>
-            <button
-              type="button"
-              className="hero-highlight-control"
-              disabled={reduceMotion}
-              aria-label={highlightsPaused ? 'Resume highlights' : 'Pause highlights'}
-              onClick={() => setHighlightsPaused((paused) => !paused)}
-            >
-              <span>{highlightsPaused ? 'Resume' : 'Pause'}</span>
-            </button>
           </div>
 
           {/* Two columns: invoice | photo */}

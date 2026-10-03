@@ -26,7 +26,7 @@ Confidence scores are display constants. Rotation changes the selected annotatio
 
 ## Motion and controls
 
-A compact native Pause/Resume button has full accessible action names, a 44px hit area, and visible keyboard focus. Pause settles the selected pair and clears its timer. Resume starts a full two-second interval. Reduced motion uses the static Name/Role pair with no annotation transition or timer.
+The hero Pause/Resume button is removed at Vivek's request. The three-pair annotation cycle runs automatically while the hero is visible. Reduced motion uses the static Name/Role pair with no annotation transition or timer.
 
 The selection also stops when the document is hidden, the hero is offscreen, and the component unmounts. Returning starts a full interval without catch-up. One cleanup-owned timeout schedules the dwell and fade phases. No live region or field focus stops are added.
 
@@ -37,15 +37,15 @@ Vivek requested desktop/laptop verification only until the animation direction i
 - All three pair states pass label clearance, value containment, fixed-score, and portrait-anchor checks.
 - A real six-second cycle reaches Credential/Success, Rate/Location, and Name/Role in order. Field and action rectangles remain unchanged.
 - More than 100 animation frames are sampled across the handoffs. At most two annotations are visible on every sampled frame; label and corner opacity agree on every frame.
-- Pause/Resume works through Space and Enter with focus retained. Reduced motion and offscreen suspension freeze the selection, and resuming waits a full interval.
+- Reduced motion and offscreen suspension freeze the selection, and returning onscreen starts a full interval.
 - Existing desktop hero motion checks pass. One coarse-pointer test is intentionally skipped on the desktop fine-pointer configuration.
-- Direct Codex-browser interaction confirmed the two selected field wrappers and Pause/Resume state. The same desktop preview is available for feedback.
+- Direct Codex-browser interaction confirmed the two selected field wrappers. The same desktop preview is available for feedback.
 
-The earlier desktop batch passed 10 cases with one expected skip. For this cleanup, all five targeted annotation cases pass at 1440 × 900, including the three pair states, per-frame handoff sampling, keyboard Pause/Resume, reduced motion, and offscreen suspension. This pass also checks the enlarged title, single h1, static chips, absence of Tags metadata and the document detection badge, and border-free portrait label. After the document-badge removal, the combined desktop annotation, motion, and laptop-fold batch passes 10 cases with one expected coarse-pointer skip. Separate desktop invoice-spacing and proof-fold accessibility checks also pass.
+The earlier desktop batch passed 10 cases with one expected skip. For this cleanup, all five targeted annotation cases pass at 1440 × 900, including the three pair states, per-frame handoff sampling, reduced motion, and offscreen suspension. This pass also checks the enlarged title, single h1, static chips, absence of Tags metadata and the document detection badge, and border-free portrait label. After the document-badge removal, the combined desktop annotation, motion, and laptop-fold batch passes 10 cases with one expected coarse-pointer skip. Separate desktop invoice-spacing and proof-fold accessibility checks also pass.
 
 ## Automated verification and review
 
-The full unit suite passes all 828 tests in 68 files, including timer cleanup during both fade phases, hidden/offscreen state, live reduced motion, and unmount. The production build passes image derivative checks, bundling, sitemap generation, and static output checks for 36 public links and 21 routes. Scoped ESLint and `git diff --check` pass.
+The full unit suite passes all 826 tests in 68 files, including timer cleanup during both fade phases, hidden/offscreen state, live reduced motion, and unmount. The production build passes image derivative checks, bundling, sitemap generation, and static output checks for 36 public links and 21 routes. Scoped ESLint and `git diff --check` pass.
 
 Fresh independent Standards and Spec reviews cover the title and annotation cleanup, followed by a further precommit review of the document-badge removal. The Spec review prompted the final title hierarchy adjustment, followed by a build and desktop-check confirmation. The title and annotation cleanup's scoped Impeccable detector reported no findings. The document-badge followup deletes one decorative element and adds no UI styling. No animation logic changes are included. The document-badge comment review found zero added comments. The Prove It Works principle led to checking the actual desktop preview; the Laziness Protocol kept this followup to removing the badge and updating its dependent assertions.
 
@@ -54,7 +54,7 @@ The Model the Domain principle led to an explicit row-pair table and local phase
 To repeat only the final desktop annotation checks after starting a loopback production preview:
 
 ```sh
-QA_LOCAL_ONLY=1 QA_PREVIEW_URL=http://127.0.0.1:4310 npx playwright test -c tests/qa/qa.config.js --project preview-desktop --grep 'OCR labels stay attached at 1440x900|three-pair cycle|annotation controls'
+QA_LOCAL_ONLY=1 QA_PREVIEW_URL=http://127.0.0.1:4310 npx playwright test -c tests/qa/qa.config.js --project preview-desktop --grep 'OCR labels stay attached at 1440x900|three-pair cycle|annotations honor'
 ```
 
 ## Recording-only credential shimmer
@@ -73,11 +73,11 @@ Keep both issues open with `Refs #297` and `Refs #292` while visual agreement an
 
 ## Visual evidence
 
-The desktop screenshot captures the current cleanup in the Rate/Location state. The lossless clip captures the full three-pair cycle before the two OCR header captions were removed. The screenshot reflects their removal.
+The desktop screenshot captures the current cleanup after the hero Pause button was removed. The lossless clip captures the full three-pair cycle before the two OCR header captions and Pause button were removed. The screenshot reflects those removals.
 
 ![Current desktop two-box annotation experiment](hero-ocr-labels-297/after-desktop.jpg)
 
-[Desktop animation clip before header-caption removal, without compression shimmer](hero-ocr-labels-297/desktop-animation.webm)
+[Desktop animation clip before header and Pause-button removal, without compression shimmer](hero-ocr-labels-297/desktop-animation.webm)
 
 ### Original desktop baseline
 
@@ -106,3 +106,5 @@ The final capitalization and location-color followup changes only two Tailwind c
 The recording-only followup starts from `a0232cfaa45c5c319c6c977fe66c551e20d24e8d` and replaces only the evidence clip and this report. Its baseline and ownership records are retained in `/private/tmp/hero-still-300-wA60`. Shared feedback previews and all pre-existing untracked files are preserved. Capture and encoding processes are temporary; their disposable source frames and scripts are removed after the replacement recording is verified and pushed.
 
 The header-caption followup removes `OCR simulation` and `OCR surface`, and drops their obsolete positive assertions. It refreshes the desktop screenshot and the existing feedback preview. The production build, all 45 Hero unit tests, and eight desktop/laptop annotation, spacing, accessibility, and fold checks pass. Direct browser inspection confirms both captions are absent. Its starting commit is `d9e540a9ff1f79907fa5959b8e5fbf77e5ae68db`; baseline and ownership records are retained in `/private/tmp/hero-header-300-ABaKwR`.
+
+The hero Pause-button followup removes the manual control, its state, reserved space, and orphan styling. Automatic annotation rotation, reduced motion, document visibility, offscreen suspension, and unmount cleanup remain. The two obsolete manual-control unit cases are removed while automatic suspension checks are retained. All 826 unit tests, the production build, scoped ESLint, and eight desktop/laptop checks pass. Layout tests wait for exact CSS opacity endpoints before measuring the fields. Direct browser inspection confirms the hero control is absent; the screenshot is refreshed. Fresh Standards and Spec reviews have no remaining actionable findings. The Laziness Protocol kept this change to the control and its unused code. Model the Domain preserved the existing local annotation phase state. Prove It Works led to verifying the actual preview and the automatic safeguards. Its starting commit is `1e9bacb3a4207604a2351356947195c57d4f67fa`; baseline and ownership records are retained in `/private/tmp/hero-pause-300-qZrlnw`.

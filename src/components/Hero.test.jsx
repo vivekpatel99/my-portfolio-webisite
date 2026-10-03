@@ -335,31 +335,6 @@ describe('Hero rotating annotations', () => {
     }
   });
 
-  it.each(['leaving', 'entering'])('pause settles the current window during %s and resume waits a full interval', (targetPhase) => {
-    const { container } = renderHero();
-    const control = screen.getByRole('button', { name: 'Pause highlights' });
-    expect(control.textContent).toBe('Pause');
-    control.focus();
-    advance(2000);
-    if (targetPhase === 'entering') advance(100);
-    const currentIndex = targetPhase === 'leaving' ? 0 : 1;
-    fireEvent.click(control);
-    expect(screen.getByRole('button', { name: 'Resume highlights' })).toBe(document.activeElement);
-    expect(control.textContent).toBe('Resume');
-    expect(ids(container)).toEqual(expected(currentIndex));
-    expected(currentIndex).forEach((id) => expect(opacity(container, id)).toBe('1'));
-    expect(phase(container)).toBe('initial');
-    expect(container.querySelector('section').dataset.heroHighlights).toBe('paused');
-    expect(vi.getTimerCount()).toBe(0);
-    advance(10000);
-    expect(ids(container)).toEqual(expected(currentIndex));
-    fireEvent.click(control);
-    advance(1999);
-    expect(phase(container)).toBe('initial');
-    advance(1);
-    expect(phase(container)).toBe('leaving');
-  });
-
   it.each(['leaving', 'entering'])('hidden tabs settle %s and resume without catch-up', (targetPhase) => {
     const { container } = renderHero();
     advance(2000);
@@ -377,7 +352,7 @@ describe('Hero rotating annotations', () => {
     expect(phase(container)).toBe('leaving');
   });
 
-  it.each(['leaving', 'entering'])('offscreen settles %s, preserves manual pause across return, then resumes from a full dwell', (targetPhase) => {
+  it.each(['leaving', 'entering'])('offscreen settles %s, then resumes from a full dwell', (targetPhase) => {
     const { container } = renderHero();
     advance(2000);
     if (targetPhase === 'entering') advance(100);
@@ -386,10 +361,8 @@ describe('Hero rotating annotations', () => {
     expect(ids(container)).toEqual(expected(currentIndex));
     expected(currentIndex).forEach((id) => expect(opacity(container, id)).toBe('1'));
     expect(vi.getTimerCount()).toBe(0);
-    fireEvent.click(screen.getByRole('button', { name: 'Pause highlights' }));
     changeViewport(true);
-    expect(vi.getTimerCount()).toBe(0);
-    fireEvent.click(screen.getByRole('button', { name: 'Resume highlights' }));
+    expect(vi.getTimerCount()).toBe(1);
     advance(1999);
     expect(ids(container)).toEqual(expected(currentIndex));
     expect(phase(container)).toBe('initial');
@@ -402,7 +375,6 @@ describe('Hero rotating annotations', () => {
     const { container } = renderHero();
     expect(ids(container)).toEqual(expected(0));
     expect(vi.getTimerCount()).toBe(0);
-    expect(screen.getByRole('button', { name: 'Pause highlights' }).disabled).toBe(true);
     advance(10000);
     expect(ids(container)).toEqual(expected(0));
   });
