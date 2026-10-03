@@ -1,0 +1,114 @@
+# Hero OCR annotation experiment
+
+Issues [#297](https://github.com/vivekpatel99/my-portfolio-webisite/issues/297) and [#292](https://github.com/vivekpatel99/my-portfolio-webisite/issues/292), checked on 3 October 2026 against a local production build. The original baseline is `develop` at `70298941554c2e4c3dd5c8f20736914ca59ee5dd`.
+
+## Current experiment
+
+Vivek requested two bounding boxes at a time, moving down the invoice card and returning to the top. The three row pairs are:
+
+1. Name and Role.
+2. Credential and Success.
+3. Rate and Location.
+
+Pair changes follow a two-second cadence. Both outgoing annotations fade out over 100ms; then both incoming annotations fade in over 100ms. Boxes, labels, and fixed confidence scores share opacity. All actual values, the Role h1, and actions remain visible and stationary. OCR, CV, and n8n remain visible as static secondary chips, without an extraction label or score.
+
+This experiment supersedes the earlier three-highlight cycle, the Rate exclusion, and the requirement that inactive labels remain visible. It records the latest decision against the guide's OC-02 and MO-01 rules. The guide itself remains in the separate documentation PR [#299](https://github.com/vivekpatel99/my-portfolio-webisite/pull/299). This is an experiment for visual review, with permanent frames available as a later alternative.
+
+## Label and portrait attachment
+
+The six rotating invoice labels retain their fixed illustrative confidence scores. `Tags · 0.93` is removed because the topic chips are not detected fields. The `OCR simulation` and `OCR surface` captions are removed at Vivek's request. The outer `DOC · EXTRACT · 0.97` badge is removed at Vivek's request. Each field uses one intrinsic grid for its label and value. A label begins 17 CSS pixels from the frame's left edge, leaving a 5px gap after its 12px corner stroke. Its 12px line box is centered on the 6px top-edge guide. Hidden annotations keep their reserved row and geometry.
+
+The portrait tag begins 29px from the strongest outer frame's left edge, leaving a 5px gap after its 24px stroke. Its vertical center matches that frame guide within half a CSS pixel. The engineer annotation now uses the same plain grey label and quieter score treatment as the invoice fields, with no outlined badge, rounded box, padding, or blur. Lower badges, portrait source, factual values, h1, invoice outer padding, and action destinations remain intact.
+
+`PROFILE INVOICE` is now a bold white uppercase sans title, 28px on the reviewed desktop viewport, above the role's 26.4px text. Linz, Austria is white like the other factual field values. The title remains a div; `Computer Vision & AI Engineer` remains the single semantic page h1.
+
+Confidence scores are display constants. Rotation changes the selected annotations, never their numbers. There is no OCR service, tracking event, or new network request.
+
+## Motion and controls
+
+The hero Pause/Resume button is removed at Vivek's request. The three-pair annotation cycle runs automatically while the hero is visible. Reduced motion uses the static Name/Role pair with no annotation transition or timer.
+
+The selection also stops when the document is hidden, the hero is offscreen, and the component unmounts. Returning starts a full interval without catch-up. One cleanup-owned timeout schedules the dwell and fade phases. No live region or field focus stops are added.
+
+## Desktop verification
+
+Vivek requested desktop/laptop verification only until the animation direction is agreed. Automated annotation checks use an actual 1440 × 900 CSS viewport, with an additional laptop fold check at 1280 × 720. The live Codex browser reports 1234 × 1331 CSS pixels and remains open with the animation running. Its screenshot records that desktop feedback view.
+
+- All three pair states pass label clearance, value containment, fixed-score, and portrait-anchor checks.
+- A real six-second cycle reaches Credential/Success, Rate/Location, and Name/Role in order. Field and action rectangles remain unchanged.
+- More than 100 animation frames are sampled across the handoffs. At most two annotations are visible on every sampled frame; label and corner opacity agree on every frame.
+- Reduced motion and offscreen suspension freeze the selection, and returning onscreen starts a full interval.
+- Existing desktop hero motion checks pass. One coarse-pointer test is intentionally skipped on the desktop fine-pointer configuration.
+- Direct Codex-browser interaction confirmed the two selected field wrappers. The same desktop preview is available for feedback.
+
+The earlier desktop batch passed 10 cases with one expected skip. For this cleanup, all five targeted annotation cases pass at 1440 × 900, including the three pair states, per-frame handoff sampling, reduced motion, and offscreen suspension. This pass also checks the enlarged title, single h1, static chips, absence of Tags metadata and the document detection badge, and border-free portrait label. After the document-badge removal, the combined desktop annotation, motion, and laptop-fold batch passes 10 cases with one expected coarse-pointer skip. Separate desktop invoice-spacing and proof-fold accessibility checks also pass.
+
+## Automated verification and review
+
+The full unit suite passes all 826 tests in 68 files, including timer cleanup during both fade phases, hidden/offscreen state, live reduced motion, and unmount. The production build passes image derivative checks, bundling, sitemap generation, and static output checks for 36 public links and 21 routes. Scoped ESLint and `git diff --check` pass.
+
+Fresh independent Standards and Spec reviews cover the title and annotation cleanup, followed by a further precommit review of the document-badge removal. The Spec review prompted the final title hierarchy adjustment, followed by a build and desktop-check confirmation. The title and annotation cleanup's scoped Impeccable detector reported no findings. The document-badge followup deletes one decorative element and adds no UI styling. No animation logic changes are included. The document-badge comment review found zero added comments. The Prove It Works principle led to checking the actual desktop preview; the Laziness Protocol kept this followup to removing the badge and updating its dependent assertions.
+
+The Model the Domain principle led to an explicit row-pair table and local phase state. The Prove It Works principle led to real desktop frame sampling and direct control interaction.
+
+To repeat only the final desktop annotation checks after starting a loopback production preview:
+
+```sh
+QA_LOCAL_ONLY=1 QA_PREVIEW_URL=http://127.0.0.1:4310 npx playwright test -c tests/qa/qa.config.js --project preview-desktop --grep 'OCR labels stay attached at 1440x900|three-pair cycle|annotations honor'
+```
+
+## Recording-only credential shimmer
+
+Vivek confirmed that the vibration appeared only in the animation recording. The earlier clip used VP8 with YUV 4:2:0 at approximately 818 kbit/s. Decoding 35 frames around the Credential/Success fade yields nine different pixel hashes for the fixed Top Rated Plus text crop and six for the fixed Job Success crop. Their largest RGB channel changes relative to the first sampled frame are 5 and 14, respectively. Measurements use the committed clip at `a0232cfaa45c5c319c6c977fe66c551e20d24e8d`, from 3.4 to 4.8 seconds, with credential `crop=100:16:114:369` and success `crop=132:16:478:369`. These changes occur in recorded text that should remain still.
+
+The live preview does not reproduce layout movement: 1,673 samples over a complete cycle have zero changes in credential and success value, icon, text, and caption positions or widths. Isolated Chromium and WebKit lossless PNG comparisons at fractional DPR 1.1 also show identical Top Rated Plus pixels during active and held mid-fades. These checks specifically investigate this recording report; they do not establish full cross-browser acceptance of the desktop experiment.
+
+The replacement uses 98 fresh 1440 × 900 PNG captures at DPR 1 over a natural seven-second cycle. Capture intervals are approximately 75 ms, so the evidence clip samples at about 13 frames per second. All three settled pairs and seven fractional-opacity frames are represented. Both credential values and captions have exactly one pixel hash across all 98 source frames and all 99 decoded video frames, including the repeated final frame. The 7.4-second, 1,954,759-byte clip uses VP9 Profile 1 with `-lossless 1 -pix_fmt yuv444p`; encoding uses the measured durations rounded to its 40 ms time base. YUV 4:4:4 avoids chroma subsampling. RGB/YUV conversion adds a constant 1–2-level color difference between source and decoded pixels, with zero temporal variation. Chromium loads the clip at 1440 × 900 and advances playback normally. Fresh Standards and Spec reviews validate the replacement and its scoped evidence. Hero layout and animation code are unchanged.
+
+## Deferred acceptance
+
+Desktop visual agreement is pending. Mobile, tablet, narrow-width, native zoom, and other browser-engine verification of this final two-pair experiment are deliberately deferred at Vivek's request. The existing responsive test matrix is prepared but has not been rerun for this experiment. Earlier intermediate runs do not establish a pass for the final behavior.
+
+Keep both issues open with `Refs #297` and `Refs #292` while visual agreement and deferred verification remain pending. The experiment differs from their original highlight count and inactive-label policy. No merge or production deployment is included.
+
+## Visual evidence
+
+The desktop screenshot captures the current cleanup after the hero Pause button was removed. The lossless clip captures the full three-pair cycle before the two OCR header captions and Pause button were removed. The screenshot reflects those removals.
+
+![Current desktop two-box annotation experiment](hero-ocr-labels-297/after-desktop.jpg)
+
+[Desktop animation clip before header and Pause-button removal, without compression shimmer](hero-ocr-labels-297/desktop-animation.webm)
+
+### Original desktop baseline
+
+![Desktop before attached OCR labels](hero-ocr-labels-297/before-desktop.jpg)
+
+### Earlier label-attachment evidence
+
+The following mobile and tablet captures record the earlier label-attachment implementation, before the two-box experiment. They are retained for comparison and do not verify its current responsive behavior.
+
+![Earlier mobile baseline](hero-ocr-labels-297/before-mobile.jpg)
+
+![Earlier 390px label attachment](hero-ocr-labels-297/after-mobile.jpg)
+
+![Earlier tablet label attachment](hero-ocr-labels-297/after-tablet.jpg)
+
+![Earlier 320px label attachment](hero-ocr-labels-297/after-narrow.jpg)
+
+## Cleanup delivery scope
+
+The cleanup continues draft PR #300 on `codex/297-hero-ocr-labels`, from `195cd720a378adb3a85b5c3a35f5ccaa02a38124`. The baseline and recovery material in `/private/tmp/hero-297-Q7c4` and its parent-owned preview process are preserved. A separate feedback preview is retained at `http://127.0.0.1:4310/`, using `/private/tmp/hero-cleanup-300-rbrV/after-dist`. Its task directory keeps the captured dirty-state baseline and ownership record while feedback remains pending. Disposable verification logs and runner configuration are removed after delivery. The ignored local `dist/` directory was rebuilt; no tracked generated output is added. Pre-existing untracked files remain untouched.
+
+The document-badge followup starts from `247478d34f77138c61766f41b33c881a1ecbae95`. Its preserved baseline and ownership record are in `/private/tmp/hero-doc-badge-300-BBuD`. It refreshes the existing port 4310 preview output without starting or stopping any preview process.
+
+The final capitalization and location-color followup changes only two Tailwind classes. Desktop inspection confirms uppercase title presentation, location `rgb(255, 255, 255)`, and one h1. Six existing desktop annotation and laptop-fold cases pass again, alongside 828 unit tests and the production build. Fresh Standards and Spec reviews find no actionable issues. The starting commit is `a56854272edb393f6e14c52655d5f78e71aa2b77`; baseline and ownership records are retained in `/private/tmp/hero-title-color-300-kK4A`.
+
+The recording-only followup starts from `a0232cfaa45c5c319c6c977fe66c551e20d24e8d` and replaces only the evidence clip and this report. Its baseline and ownership records are retained in `/private/tmp/hero-still-300-wA60`. Shared feedback previews and all pre-existing untracked files are preserved. Capture and encoding processes are temporary; their disposable source frames and scripts are removed after the replacement recording is verified and pushed.
+
+The header-caption followup removes `OCR simulation` and `OCR surface`, and drops their obsolete positive assertions. It refreshes the desktop screenshot and the existing feedback preview. The production build, all 45 Hero unit tests, and eight desktop/laptop annotation, spacing, accessibility, and fold checks pass. Direct browser inspection confirms both captions are absent. Its starting commit is `d9e540a9ff1f79907fa5959b8e5fbf77e5ae68db`; baseline and ownership records are retained in `/private/tmp/hero-header-300-ABaKwR`.
+
+The hero Pause-button followup removes the manual control, its state, reserved space, and orphan styling. Automatic annotation rotation, reduced motion, document visibility, offscreen suspension, and unmount cleanup remain. The two obsolete manual-control unit cases are removed while automatic suspension checks are retained. All 826 unit tests, the production build, scoped ESLint, and eight desktop/laptop checks pass. Layout tests wait for exact CSS opacity endpoints before measuring the fields. Direct browser inspection confirms the hero control is absent; the screenshot is refreshed. Fresh Standards and Spec reviews have no remaining actionable findings. The Laziness Protocol kept this change to the control and its unused code. Model the Domain preserved the existing local annotation phase state. Prove It Works led to verifying the actual preview and the automatic safeguards. Its starting commit is `1e9bacb3a4207604a2351356947195c57d4f67fa`; baseline and ownership records are retained in `/private/tmp/hero-pause-300-qZrlnw`.
+
+## CI artifact registration followup
+
+The passive browser tests passed on commit `7962c20c5e301339de318e5961c7ec09e7249091`, but both shards failed afterward while reconstructing sanitized artifacts. The artifact sanitizer had not registered `qa-hero-ocr-labels.spec.js`, which the preview QA configuration already included. Registering that exact filename fixes the mismatch while preserving strict source/project checks, bounded fields, and rejection of raw browser data. Regression coverage exercises artifact reconstruction and staged validation for all four preview projects, rejects raw browser data, and checks that every configured local preview passive QA suite is registered. The full unit suite passes 831 tests in 68 files. Scoped ESLint and `git diff --check` pass. A fresh local Playwright report with three passed hero OCR cases also passes artifact reconstruction and staged validation. The failed run is [CI run 37110685160](https://github.com/vivekpatel99/my-portfolio-webisite/actions/runs/37110685160). Baseline and ownership records are retained in `/private/tmp/hero-ci-300-fpuNzv`; the feedback preview and pre-existing local files remain untouched.
