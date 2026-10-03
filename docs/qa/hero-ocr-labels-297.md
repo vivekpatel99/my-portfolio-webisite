@@ -20,7 +20,7 @@ The six rotating invoice labels retain their fixed illustrative confidence score
 
 The portrait tag begins 29px from the strongest outer frame's left edge, leaving a 5px gap after its 24px stroke. Its vertical center matches that frame guide within half a CSS pixel. The engineer annotation now uses the same plain grey label and quieter score treatment as the invoice fields, with no outlined badge, rounded box, padding, or blur. Lower badges, portrait source, factual values, h1, invoice outer padding, and action destinations remain intact.
 
-`Profile Invoice` is now a bold white sans title, 28px on the reviewed desktop viewport, above the role's 26.4px text. It remains a div; `Computer Vision & AI Engineer` remains the single semantic page h1.
+`PROFILE INVOICE` is now a bold white uppercase sans title, 28px on the reviewed desktop viewport, above the role's 26.4px text. Linz, Austria is white like the other factual field values. The title remains a div; `Computer Vision & AI Engineer` remains the single semantic page h1.
 
 Confidence scores are display constants. Rotation changes the selected annotations, never their numbers. There is no OCR service, tracking event, or new network request.
 
@@ -32,7 +32,7 @@ The selection also stops when the document is hidden, the hero is offscreen, and
 
 ## Desktop verification
 
-Vivek requested desktop/laptop verification only until the animation direction is agreed. Automated annotation checks use an actual 1440 × 900 CSS viewport, with an additional laptop fold check at 1280 × 720. The live Codex browser reports 1309 × 818 CSS pixels and remains open with the animation running. Its screenshot records that desktop feedback view.
+Vivek requested desktop/laptop verification only until the animation direction is agreed. Automated annotation checks use an actual 1440 × 900 CSS viewport, with an additional laptop fold check at 1280 × 720. The live Codex browser reports 1349 × 1331 CSS pixels and remains open with the animation running. Its screenshot records that desktop feedback view.
 
 - All three pair states pass label clearance, value containment, fixed-score, and portrait-anchor checks.
 - A real six-second cycle reaches Credential/Success, Rate/Location, and Name/Role in order. Field and action rectangles remain unchanged.
@@ -92,3 +92,5 @@ The following mobile and tablet captures record the earlier label-attachment imp
 The cleanup continues draft PR #300 on `codex/297-hero-ocr-labels`, from `195cd720a378adb3a85b5c3a35f5ccaa02a38124`. The baseline and recovery material in `/private/tmp/hero-297-Q7c4` and its parent-owned preview process are preserved. A separate feedback preview is retained at `http://127.0.0.1:4310/`, using `/private/tmp/hero-cleanup-300-rbrV/after-dist`. Its task directory keeps the captured dirty-state baseline and ownership record while feedback remains pending. Disposable verification logs and runner configuration are removed after delivery. The ignored local `dist/` directory was rebuilt; no tracked generated output is added. Pre-existing untracked files remain untouched.
 
 The document-badge followup starts from `247478d34f77138c61766f41b33c881a1ecbae95`. Its preserved baseline and ownership record are in `/private/tmp/hero-doc-badge-300-BBuD`. It refreshes the existing port 4310 preview output without starting or stopping any preview process.
+
+The final capitalization and location-color followup changes only two Tailwind classes. Desktop inspection confirms uppercase title presentation, location `rgb(255, 255, 255)`, and one h1. Six existing desktop annotation and laptop-fold cases pass again, alongside 828 unit tests and the production build. Fresh Standards and Spec reviews find no actionable issues. The starting commit is `a56854272edb393f6e14c52655d5f78e71aa2b77`; baseline and ownership records are retained in `/private/tmp/hero-title-color-300-kK4A`.

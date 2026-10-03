@@ -313,7 +313,7 @@ const Hero = () => {
                 {/* Header */}
                 <div className="flex justify-between items-start mb-1 pb-1.5 border-b border-white/[0.08] max-md:mb-1 max-md:pb-1">
                   <div>
-                    <div className="text-[clamp(1.25rem,2.4vw,1.75rem)] font-bold tracking-tight leading-[1.2] text-white">Profile Invoice</div>
+                    <div className="text-[clamp(1.25rem,2.4vw,1.75rem)] font-bold tracking-tight leading-[1.2] uppercase text-white">Profile Invoice</div>
                     <div className="mt-1 font-mono text-[10px] text-gray-400 tracking-wide">OCR simulation</div>
                   </div>
                   <div className="text-right font-mono text-[10px] leading-relaxed text-gray-400">
@@ -390,7 +390,7 @@ const Hero = () => {
                     <div {...fieldBoxProps('location', '')}>
                       <FieldLabel field="location" />
                       <span className="hero-field-value">
-                        <span className="font-medium text-[0.92rem] text-gray-300 leading-[1.3]">Linz, Austria</span>
+                        <span className="font-medium text-[0.92rem] text-white leading-[1.3]">Linz, Austria</span>
                       </span>
                     </div>
                   </div>
