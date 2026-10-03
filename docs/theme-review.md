@@ -47,7 +47,7 @@ Each ticket contains the following evidence:
 
 - Exact URL, component, commit, viewport, and interaction state.
 - Screenshot or short clip with enough surrounding context to understand the mismatch.
-- Theme rule ID and the rule's exact DESIGN.md status: confirmed, existing reference, or proposed default. Do not record an existing reference as confirmed or as proposed.
+- Theme rule ID, the exact clause cited, and that clause's own status: confirmed, existing reference, or proposed default. Do not assign one status to a whole rule when its clauses differ. Do not record an existing reference as confirmed or as proposed. Do not invent a status for a clause that does not state one.
 - Observed appearance or behavior and the expected change.
 - Scope, affected callers, related issues, and behavior that must be preserved.
 - Observable acceptance criteria and desktop, mobile, zoom, keyboard, and motion checks that apply.

@@ -12,6 +12,8 @@ Rule status has three meanings:
 - **Existing reference** records an inspected implementation to preserve or reuse.
 - **Proposed default** supplies a concrete starting point for visual review. It is not approval of an unseen implementation.
 
+A finding cites one clause and that clause's status. Do not collapse a rule to a single status when its clauses differ.
+
 Explicit later feedback from Vivek takes precedence. Update this guide with a changed decision instead of leaving conflicting instructions in multiple issues. Task issues define implementation scope. This guide does not authorize a sitewide implementation, merge, or deployment.
 
 Hero rules that conflict with the 3 October experiment in [Hero OCR annotation experiment](docs/qa/hero-ocr-labels-297.md) follow that experiment. Its pair cycle and requested removals are confirmed. Its inspected timing and label geometry are existing references. Pending desktop visual agreement does not restore the earlier Rate exclusion, retained Tags label, OCR captions, document badge, Pause control, or three-highlight cycle.
@@ -50,16 +52,14 @@ Check contrast in the rendered state before promoting a color combination. A dec
 
 The font roles below are existing references. The layout and legibility prescriptions are proposed defaults except where a confirmed issue decision is named.
 
-Existing components use the Tailwind sans stack for reading and the Tailwind monospace stack for technical metadata. Preserve that relationship. A font replacement needs a separate decision.
-
-- Headings and field values use the sans stack with clear size and weight hierarchy.
-- Descriptions, article text, testimonials, and legal text remain readable prose. Do not turn them into uppercase technical readouts.
-- Small field labels, simulation metadata, and compact controls may use monospace.
-- Confirmed button intent is one readable family. The proposed default is uppercase monospace with modest tracking, following the angular header and contact controls. Final size, weight, and tracking require a representative button review under #296.
-- Preserve one semantic h1 per page. In the hero, Role retains its h1 even when decorative labels move.
-- Do not shrink labels to force a frame to fit. Expand the wrapper, wrap the value, or stack the layout.
-
-Confirmed copy cleanup removes the redundant `PORTFOLIO · CASE STUDIES` eyebrow above the existing Featured Case Studies heading under #295. Do not remove every eyebrow automatically. Retain one only when it adds information absent from the heading.
+- Existing reference: components use the Tailwind sans stack for reading and the Tailwind monospace stack for technical metadata. Preserve that relationship. A font replacement needs a separate decision.
+- Proposed default: headings and field values use the sans stack with clear size and weight hierarchy.
+- Proposed default: descriptions, article text, testimonials, and legal text remain readable prose. Do not turn them into uppercase technical readouts.
+- Existing reference: small field labels, simulation metadata, and compact controls may use monospace.
+- Confirmed: button intent is one readable family. Proposed default: uppercase monospace with modest tracking, following the angular header and contact controls. Final size, weight, and tracking require a representative button review under #296.
+- Existing reference: preserve one semantic h1 per page. Confirmed: in the hero, Role retains its h1 even when decorative labels move.
+- Proposed default: do not shrink labels to force a frame to fit. Expand the wrapper, wrap the value, or stack the layout.
+- Confirmed: copy cleanup removes the redundant `PORTFOLIO · CASE STUDIES` eyebrow above the existing Featured Case Studies heading under #295. Proposed default: do not remove every eyebrow automatically. Retain one only when it adds information absent from the heading.
 
 ## Layout
 
@@ -81,13 +81,14 @@ The breakpoint system follows the existing Tailwind configuration and component 
 
 The current dark fills and hero ambient treatment are existing references. The following limits on new effects are proposed defaults consistent with #294 and #296.
 
-Dark fills, thin edges, and corner accents separate panels. The hero may retain its existing restrained ambient treatment. Secondary cards remain quieter than the hero.
-
-Button hierarchy comes from fill, outline, and spacing. Additional gradients, glow, scanning effects, or technical badges are not a substitute for hierarchy. Hover decoration stays within the component and does not move surrounding content.
+- Existing reference: dark fills, thin edges, and corner accents separate panels. The hero may retain its existing restrained ambient treatment.
+- Proposed default: secondary cards remain quieter than the hero. Button hierarchy comes from fill, outline, and spacing. Additional gradients, glow, scanning effects, or technical badges are not a substitute for hierarchy. Hover decoration stays within the component and does not move surrounding content.
 
 ## Shapes
 
 ### SH-01. Three distinct uses of corners
+
+Proposed default: the three treatments below are the review vocabulary, not proof that every page already uses them. Confirmed location choices are in SH-02.
 
 | Use | Meaning | Treatment |
 | --- | --- | --- |
@@ -95,7 +96,7 @@ Button hierarchy comes from fill, outline, and spacing. Additional gradients, gl
 | Interactive form boundary | Identifies an editable control and its focus state | Four corners, grey at rest and purple on focus. Follow the contact-field reference. |
 | Simulated extraction frame | Illustrates recognized fields in the hero or a future OCR demonstration | Four field corners with an attached label. Scores are illustrative display constants. Do not add a separate OCR caption to mark them. |
 
-These treatments share a visual vocabulary but do not share identical behavior. Decorative brackets do not replace a focus indicator. A filled form field does not become an OCR result.
+Proposed default: These treatments share a visual vocabulary but do not share identical behavior. Decorative brackets do not replace a focus indicator. A filled form field does not become an OCR result.
 
 ### SH-02. Placement map
 
@@ -128,22 +129,24 @@ Corner decoration does not intercept clicks, create tab stops, announce motion, 
 
 ### BT-01. Button family
 
-Confirmed intent from #296 is that buttons look like one family with small differences in emphasis. Geometry, label treatment, border weight, arrow shape, and states remain consistent across pages.
+Confirmed intent from #296 is that buttons look like one family with small differences in emphasis. Proposed default: Geometry, label treatment, border weight, arrow shape, and states remain consistent across pages.
 
 | Variant | Purpose | Proposed default |
 | --- | --- | --- |
 | Primary | Estimate navigation and contact submission | Angular purple fill, readable white label. A trailing arrow accompanies navigation where useful. |
 | Secondary | Browse case studies and other prominent alternatives | Same geometry and label treatment, dark fill, visible outline. |
 | Text action | Scope details, back links, footer navigation | Readable link styling and visible focus without a filled button. |
-| Utility | Gallery, menu, close, zoom, consent, retry | Compact compatible styling with conventional icons and accessible names. The hero Pause control is removed and is not part of this family. |
+| Utility | Gallery, menu, close, zoom, consent, retry | Compact compatible styling with conventional icons and accessible names. |
 
-The proposed geometry is square corners for prominent actions. Header controls can be smaller than hero actions. The hero pair has matching heights when side by side. Size differences must remain recognizable variants of the same family.
+The variant table is a proposed default. Confirmed: the hero Pause control is removed and is not part of this family.
 
-All interactive variants have visible keyboard focus and clear hover, pressed, disabled, loading, and selected states where relevant. Normal standalone action targets are at least 44 by 44 CSS pixels under #296. Text links within prose keep their normal reading layout.
+Proposed default: The proposed geometry is square corners for prominent actions. Header controls can be smaller than hero actions. The hero pair has matching heights when side by side. Size differences must remain recognizable variants of the same family.
 
-Keep anchors for navigation and buttons for actions. Preserve destinations, new-tab behavior, modal behavior, and submitting protection. A loading label must not shift the button or permit another submission. Review consent and gallery callers before changing a generic button default.
+Proposed default: all interactive variants have visible keyboard focus and clear hover, pressed, disabled, loading, and selected states where relevant. Confirmed under #296: normal standalone action targets are at least 44 by 44 CSS pixels. Existing reference: text links within prose keep their normal reading layout.
 
-Use restrained corners on prominent CTAs when they improve continuity. Utility controls and text links do not each need a decorative frame. Review the repeated `REQUEST · ESTIMATE` label and extra glyph in the final CTA under #296.
+Existing reference: Keep anchors for navigation and buttons for actions. Preserve destinations, new-tab behavior, modal behavior, and submitting protection. A loading label must not shift the button or permit another submission. Review consent and gallery callers before changing a generic button default.
+
+Proposed default: Use restrained corners on prominent CTAs when they improve continuity. Utility controls and text links do not each need a decorative frame. Review the repeated `REQUEST · ESTIMATE` label and extra glyph in the final CTA under #296.
 
 ### OC-01. Simulated OCR placement
 
@@ -208,22 +211,24 @@ Optional image generation for the About portrait preserves likeness and the auth
 
 ### FM-01. Forms and feedback
 
-The [contact-field reference](docs/design-system.md) governs grey resting corners, purple focus, fill, label position, required indicators, and forced-colors behavior. Preserve the control's actual accessible label. Do not put simulated scores in contact fields.
+Existing reference: the [contact-field reference](docs/design-system.md) governs grey resting corners, purple focus, fill, label position, required indicators, and forced-colors behavior. Preserve the control's actual accessible label.
 
-Keep empty, filled, focused, invalid, disabled, submitting, success, and retry states understandable. Visible errors need text and a recovery action, not just a color change. Theme work preserves the contact payload, transport, consent, and success behavior.
+Confirmed by OC-01: do not put simulated scores in contact fields.
+
+Existing reference: keep empty, filled, focused, invalid, disabled, submitting, success, and retry states understandable. Visible errors need text and a recovery action, not just a color change. Theme work preserves the contact payload, transport, consent, and success behavior.
 
 ### NV-01. Navigation, overlays, and reading pages
 
-The header, mobile menu, footer, consent dialog, gallery lightbox, and retry controls share the button and focus rules. Keep their navigation and keyboard behavior intact. Branding does not justify obstructing links or controls.
+Existing reference: the header, mobile menu, footer, consent dialog, gallery lightbox, and retry controls keep their current navigation and keyboard behavior. Branding does not justify obstructing links or controls. Button and focus styling follow BT-01, including that rule's own clause statuses.
 
-Articles and legal pages use the same colors, type relationships, and spacing conventions with quieter decoration. Reading text stays unboxed. Not-found and route-error states retain a clear recovery action.
+Proposed default: articles and legal pages use the same colors, type relationships, and spacing conventions with quieter decoration. Reading text stays unboxed. Not-found and route-error states retain a clear recovery action.
 
 ## Do's and Don'ts
 
 - Do use the SH-02 placement map before adding brackets.
 - Do use the same button family across header, hero, service, project, and contact actions.
 - Do keep simulated scores confined to the hero profile fields and a future OCR demonstration that stays separate from factual content, without a separate OCR caption.
-- Do reference a rule ID when reporting a theme mismatch.
+- Do reference a rule ID and the cited clause's own status when reporting a theme mismatch.
 - Do preserve confirmed facts, real evidence, routes, and form behavior during visual work.
 - Don't invent credentials, project metrics, testimonials, client names, or conversion improvements.
 - Don't add duplicate borders behind corner-only form boundaries.
