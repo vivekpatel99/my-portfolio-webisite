@@ -116,7 +116,7 @@ Confirmed on 3 October 2026, all twelve approved completed case studies share on
 
 Confirmed on 3 October 2026, testimonial controls show slide dots without a Pause/Play button. Selecting a dot stops automatic rotation for the mounted carousel; all dots remain usable for reading other quotes. Mouse hover and keyboard focus temporarily hold rotation, and reduced motion disables autoplay.
 
-Paragraphs, navigation links, individual footer links, legal text, gallery thumbnails, and captions receive no extra decorative boxes. Do not add a frame around every item inside a framed panel. Action styling remains under BT-01.
+Paragraphs, ordinary navigation links, individual footer links, legal text, gallery thumbnails, and captions receive no extra decorative boxes. The selected header navigation link is the scoped exception under NV-01. Do not add a frame around every item inside a framed panel. Action styling remains under BT-01.
 
 ### SH-03. Frame geometry
 
@@ -222,6 +222,8 @@ Keep empty, filled, focused, invalid, disabled, submitting, success, and retry s
 ### NV-01. Navigation, overlays, and reading pages
 
 The header, mobile menu, footer, consent dialog, gallery lightbox, and retry controls share the button and focus rules. Keep their navigation and keyboard behavior intact. Branding does not justify obstructing links or controls.
+
+Confirmed on 3 October 2026, the selected header link uses opposing top-left and bottom-right purple corners in place of its underline. Apply the same selected treatment in the bar and drawer, with 12px strokes at 1px width and a horizontal 8px inset beyond the link edges so labels and navigation gaps stay in place. Selected corners remain `#A78BFA` at rest; inactive links remain plain. Every header navigation link has a target at least 44px wide and high and a separate 2px keyboard focus outline. Preserve destinations, modified-click handling, smooth scrolling, menu closure, and focus restoration. Use `aria-current="page"` for the active Case Studies route and `aria-current="location"` for the active homepage hash. Do not add navigation labels or filled surfaces.
 
 Articles and legal pages use the same colors, type relationships, and spacing conventions with quieter decoration. Reading text stays unboxed. Not-found and route-error states retain a clear recovery action.
 

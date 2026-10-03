@@ -197,12 +197,10 @@ const Header = () => {
                 key={link.name}
                 href={link.href}
                 onClick={handleSmoothScroll}
-                className={`relative text-[0.92rem] py-[10px] pb-3 ${isActiveLink(link.href) ? 'text-white' : 'text-[#9ca3af]'} hover:text-white transition-colors`}
+                aria-current={isActiveLink(link.href) ? (link.href.startsWith('/#') ? 'location' : 'page') : undefined}
+                className={`detection-nav-link text-[0.92rem] py-[10px] pb-3 ${isActiveLink(link.href) ? 'detection-panel detection-panel--nav-selected text-white' : 'text-[#9ca3af]'} hover:text-white transition-colors`}
               >
                 {link.name}
-                {isActiveLink(link.href) && (
-                  <span className="absolute left-0 right-0 bottom-1 h-0.5 bg-[#8B5CF6] shadow-[0_0_10px_rgba(139,92,246,0.35)]"></span>
-                )}
               </a>
             ))}
           </nav>
@@ -261,7 +259,8 @@ const Header = () => {
                 key={link.name}
                 href={link.href}
                 onClick={handleSmoothScroll}
-                className={`text-[1.55rem] font-[650] tracking-[-0.02em] ${isActiveLink(link.href) ? 'text-white shadow-[inset_0_-2px_0_#8B5CF6] w-fit pb-1' : 'text-[#9ca3af]'}`}
+                aria-current={isActiveLink(link.href) ? (link.href.startsWith('/#') ? 'location' : 'page') : undefined}
+                className={`detection-nav-link text-[1.55rem] font-[650] tracking-[-0.02em] ${isActiveLink(link.href) ? 'detection-panel detection-panel--nav-selected text-white' : 'text-[#9ca3af]'} hover:text-white transition-colors`}
               >
                 {link.name}
               </a>
