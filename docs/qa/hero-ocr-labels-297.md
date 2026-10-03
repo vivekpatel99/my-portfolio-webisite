@@ -57,6 +57,14 @@ To repeat only the final desktop annotation checks after starting a loopback pro
 QA_LOCAL_ONLY=1 QA_PREVIEW_URL=http://127.0.0.1:4310 npx playwright test -c tests/qa/qa.config.js --project preview-desktop --grep 'OCR labels stay attached at 1440x900|three-pair cycle|annotation controls'
 ```
 
+## Recording-only credential shimmer
+
+Vivek confirmed that the vibration appeared only in the animation recording. The earlier clip used VP8 with YUV 4:2:0 at approximately 818 kbit/s. Decoding 35 frames around the Credential/Success fade yields nine different pixel hashes for the fixed Top Rated Plus text crop and six for the fixed Job Success crop. Their largest RGB channel changes relative to the first sampled frame are 5 and 14, respectively. Measurements use the committed clip at `a0232cfaa45c5c319c6c977fe66c551e20d24e8d`, from 3.4 to 4.8 seconds, with credential `crop=100:16:114:369` and success `crop=132:16:478:369`. These changes occur in recorded text that should remain still.
+
+The live preview does not reproduce layout movement: 1,673 samples over a complete cycle have zero changes in credential and success value, icon, text, and caption positions or widths. Isolated Chromium and WebKit lossless PNG comparisons at fractional DPR 1.1 also show identical Top Rated Plus pixels during active and held mid-fades. These checks specifically investigate this recording report; they do not establish full cross-browser acceptance of the desktop experiment.
+
+The replacement uses 98 fresh 1440 × 900 PNG captures at DPR 1 over a natural seven-second cycle. Capture intervals are approximately 75 ms, so the evidence clip samples at about 13 frames per second. All three settled pairs and seven fractional-opacity frames are represented. Both credential values and captions have exactly one pixel hash across all 98 source frames and all 99 decoded video frames, including the repeated final frame. The 7.4-second, 1,954,759-byte clip uses VP9 Profile 1 with `-lossless 1 -pix_fmt yuv444p`; encoding uses the measured durations rounded to its 40 ms time base. YUV 4:4:4 avoids chroma subsampling. RGB/YUV conversion adds a constant 1–2-level color difference between source and decoded pixels, with zero temporal variation. Chromium loads the clip at 1440 × 900 and advances playback normally. Fresh Standards and Spec reviews validate the replacement and its scoped evidence. Hero layout and animation code are unchanged.
+
 ## Deferred acceptance
 
 Desktop visual agreement is pending. Mobile, tablet, narrow-width, native zoom, and other browser-engine verification of this final two-pair experiment are deliberately deferred at Vivek's request. The existing responsive test matrix is prepared but has not been rerun for this experiment. Earlier intermediate runs do not establish a pass for the final behavior.
@@ -65,11 +73,11 @@ Keep both issues open with `Refs #297` and `Refs #292` while visual agreement an
 
 ## Visual evidence
 
-The desktop screenshot captures the current cleanup in the Name/Role state. The earlier clip shows the unchanged top-to-bottom cycle before the title, engineer-label, Tags, and document-badge cleanup; it does not show those final visual changes.
+The desktop screenshot captures the current cleanup in the Name/Role state. The replacement clip captures the current design through the full three-pair cycle, including the uppercase title, white location value, and removed document badge.
 
 ![Current desktop two-box annotation experiment](hero-ocr-labels-297/after-desktop.jpg)
 
-[Earlier desktop animation clip, before visual cleanup](hero-ocr-labels-297/desktop-animation.webm)
+[Current desktop animation clip, without compression shimmer](hero-ocr-labels-297/desktop-animation.webm)
 
 ### Original desktop baseline
 
@@ -94,3 +102,5 @@ The cleanup continues draft PR #300 on `codex/297-hero-ocr-labels`, from `195cd7
 The document-badge followup starts from `247478d34f77138c61766f41b33c881a1ecbae95`. Its preserved baseline and ownership record are in `/private/tmp/hero-doc-badge-300-BBuD`. It refreshes the existing port 4310 preview output without starting or stopping any preview process.
 
 The final capitalization and location-color followup changes only two Tailwind classes. Desktop inspection confirms uppercase title presentation, location `rgb(255, 255, 255)`, and one h1. Six existing desktop annotation and laptop-fold cases pass again, alongside 828 unit tests and the production build. Fresh Standards and Spec reviews find no actionable issues. The starting commit is `a56854272edb393f6e14c52655d5f78e71aa2b77`; baseline and ownership records are retained in `/private/tmp/hero-title-color-300-kK4A`.
+
+The recording-only followup starts from `a0232cfaa45c5c319c6c977fe66c551e20d24e8d` and replaces only the evidence clip and this report. Its baseline and ownership records are retained in `/private/tmp/hero-still-300-wA60`. Shared feedback previews and all pre-existing untracked files are preserved. Capture and encoding processes are temporary; their disposable source frames and scripts are removed after the replacement recording is verified and pushed.
