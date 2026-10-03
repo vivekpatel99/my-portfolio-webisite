@@ -132,22 +132,24 @@ Corner decoration does not intercept clicks, create tab stops, announce motion, 
 
 Confirmed intent from #296 is that buttons look like one family with small differences in emphasis. Geometry, label treatment, border weight, arrow shape, and states remain consistent across pages.
 
-Confirmed on 3 October 2026, the hero's Request a Project Estimate and View Case Studies links, the header's Request Estimate link in the bar and drawer, and the final Request a Project Estimate link use the shared corner family. These actions have square surfaces with subtle purple at the top fading to black, no continuous border, and opposing corners that follow SH-03. All named actions share the existing final CTA background: `#0C0D0D` beneath a purple-to-transparent gradient covering the top 55%, with purple opacity 0.06 at rest and 0.1 on hover or keyboard focus. Primary estimate links use weight 650; the hero secondary uses weight 600. Each has one decorative trailing ArrowRight icon and a separate keyboard focus outline at least 2px wide. Preserve the existing text, accessible names, destinations, and navigation behavior.
+Confirmed on 3 October 2026, the hero's Request a Project Estimate and View Case Studies links, the header's Request Estimate link in the bar and drawer, the final Request a Project Estimate link, and the case-study collection's Back to home and Load more controls use the shared corner family. These actions have square surfaces with subtle purple at the top fading to black, no continuous border, and opposing corners that follow SH-03. All named actions share the existing final CTA background: `#0C0D0D` beneath a purple-to-transparent gradient covering the top 55%, with purple opacity 0.06 at rest and 0.1 on hover or keyboard focus. Primary estimate links use weight 650; secondary actions use weight 600. Estimate links and the hero View Case Studies link have one decorative trailing ArrowRight icon. Back to home retains its leading ArrowLeft; Load more stays text-only. Each control has a separate keyboard focus outline at least 2px wide. Preserve the existing text, accessible names, destinations, and navigation behavior.
 
 | Variant | Purpose | Treatment |
 | --- | --- | --- |
 | Primary | Named estimate navigation links | Purple top fading to black, readable white text at weight 650, opposing corners, and one trailing arrow. |
-| Secondary | Hero View Case Studies link | Matching background, height, and geometry, text at weight 600, and one trailing arrow. |
-| Text action | Scope details, back links, footer navigation | Readable link styling and visible focus without a filled button. |
+| Secondary | Hero View Case Studies and collection controls | Matching background and corner geometry, text at weight 600. Icons and target heights follow the named controls below. |
+| Text action | Scope details, inline back links, footer navigation | Readable link styling and visible focus without a filled button. |
 | Utility | Gallery, menu, close, zoom, pause, consent, retry | Compact compatible styling with conventional icons and accessible names. |
 
 The hero pair has matching heights when side by side. Header estimate links use the compact variant with a minimum height of 44px; the final estimate link keeps its larger text and target width. The final CTA retains its existing `REQUEST · ESTIMATE` edge label, hidden from assistive technology, and removes the redundant leading boxed arrow. Other named actions receive no extra metadata. The final View case studies link stays plain.
+
+The collection's Back to home anchor uses the compact 44px variant. Load more uses the standard 56px variant and preserves the existing incremental loading and history state. Its static HTML remains natively disabled. Once exhausted, the control stays focusable with `aria-disabled` and guarded clicks. Both disabled forms keep grey corners and the resting background on hover or focus, with reduced opacity and a disabled cursor. The exhausted control retains its keyboard focus outline.
 
 All interactive variants have visible keyboard focus and clear hover, pressed, disabled, loading, and selected states where relevant. Normal standalone action targets are at least 44 by 44 CSS pixels under #296. Text links within prose keep their normal reading layout.
 
 Keep anchors for navigation and buttons for actions. Preserve destinations, new-tab behavior, modal behavior, and submitting protection. A loading label must not shift the button or permit another submission. Review consent and gallery callers before changing a generic button default.
 
-This confirmed family is scoped to the named navigation links. Form submission, gallery, consent, menu controls, and other buttons retain their existing defaults. Utility controls and text links do not each need a decorative frame.
+This confirmed family is scoped to the named navigation links and the collection's Load more control. Form submission, gallery, consent, menu controls, and other buttons retain their existing defaults. Utility controls and text links do not each need a decorative frame.
 
 ### OC-01. Simulated OCR placement
 

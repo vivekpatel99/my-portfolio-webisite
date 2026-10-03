@@ -12,7 +12,7 @@ const CaseStudiesContent = ({ stories }) => React.createElement(
     { className: 'max-w-[1180px] mx-auto' },
     React.createElement('a', {
       href: '/',
-      className: 'group mb-8 inline-flex min-h-11 items-center gap-2 border border-[rgba(139,92,246,0.4)] px-5 py-2 text-sm font-medium text-white transition-colors hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] focus-visible:ring-offset-4 focus-visible:ring-offset-[#0C0D0D]',
+      className: 'detection-panel detection-action detection-action--compact mb-8 inline-flex',
     }, React.createElement(ArrowLeft, { size: 16, 'aria-hidden': true }), 'Back to home'),
     React.createElement(
       'div',

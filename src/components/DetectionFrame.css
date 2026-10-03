@@ -105,9 +105,17 @@
   text-decoration: none;
 }
 
-.detection-action:hover,
-.detection-action:focus-visible {
+.detection-action:not(:disabled):not([aria-disabled="true"]):hover,
+.detection-action:not(:disabled):not([aria-disabled="true"]):focus-visible {
   background-image: linear-gradient(to bottom, rgba(139, 92, 246, 0.1), transparent);
+}
+
+.detection-action:disabled,
+.detection-action[aria-disabled="true"] {
+  --detection-top: #6b7280;
+  --detection-bottom: #6b7280;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .detection-action--primary {

@@ -158,7 +158,7 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies, children = null 
       'button',
       {
         type: 'button',
-        className: 'mt-10 inline-flex min-h-11 items-center rounded-full border border-accent-purple px-5 text-sm font-semibold text-white transition-colors hover:bg-accent-purple disabled:cursor-default disabled:opacity-70 aria-disabled:cursor-default aria-disabled:opacity-70',
+        className: 'detection-panel detection-action mt-10 inline-flex',
         onClick: loadMore,
         // Without JavaScript the button cannot work, so the static markup ships it disabled.
         // Once exhausted it stays focusable via aria-disabled: natively disabling a focused
