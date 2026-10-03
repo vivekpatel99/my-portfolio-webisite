@@ -128,12 +128,12 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies, children = null 
   };
   const status = React.createElement(
     'p',
-    { role: 'status', 'aria-live': 'polite', className: 'mb-6 text-sm text-gray-400' },
+    { role: 'status', 'aria-live': 'polite', className: 'mb-10 text-sm text-gray-400' },
     `Showing ${visibleStories.length} of ${stories.length} case studies`,
   );
   const grid = React.createElement(
     'div',
-    { id: gridId, className: 'grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3' },
+    { id: gridId, className: 'grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3' },
     visibleStories.map((story, index) => React.createElement(CaseStudyCard, {
       key: story.slug,
       project: story,

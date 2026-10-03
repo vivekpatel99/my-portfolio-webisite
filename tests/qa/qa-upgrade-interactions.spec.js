@@ -282,8 +282,8 @@ test('CTA shows its starting rate and estimate link', async ({ page }) => {
   await expect(cta).toContainText('€45/hour');
   await expect(cta).toContainText('RATE');
   
-  // Detection meta
-  await expect(cta).toContainText('CTA · DETECTED');
+  await expect(cta.getByRole('heading', { name: /Ready to start your project/i })
+    .getByText('Project inquiry', { exact: true })).toBeVisible();
   
   // Action field button
   await expect(cta).toContainText('REQUEST · ESTIMATE');

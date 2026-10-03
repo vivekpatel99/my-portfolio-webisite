@@ -1185,12 +1185,71 @@ const expectFilledPrimaryStates = async (page, button, label) => {
   await expectRenderedContrast(button, `${label} on focus`);
 };
 
-test('filled primary CTAs keep white text readable at rest, hover, and focus', async ({ page }) => {
+const expectPaintedCornerAction = async (page, button, cornerColor, label) => {
+  const png = await button.screenshot({ animations: 'disabled' });
+  const pixels = await page.evaluate(async ({ base64, cornerColor }) => {
+    const image = new Image();
+    image.src = `data:image/png;base64,${base64}`;
+    await image.decode();
+    const canvas = document.createElement('canvas');
+    canvas.width = image.width;
+    canvas.height = image.height;
+    const context = canvas.getContext('2d');
+    context.drawImage(image, 0, 0);
+    const pixel = (x, y) => [...context.getImageData(x, y, 1, 1).data].slice(0, 3);
+    const expected = cornerColor.split(',').map(Number);
+    const nearestCorner = (right, bottom) => {
+      let distance = Infinity;
+      for (let x = Math.floor(image.width * 0.02); x < image.width * 0.05; x += 1) {
+        for (let y = 0; y < 3; y += 1) {
+          const color = pixel(right ? image.width - x - 1 : x, bottom ? image.height - y - 1 : y);
+          distance = Math.min(distance, Math.max(...color.map((channel, index) => Math.abs(channel - expected[index]))));
+        }
+      }
+      return distance;
+    };
+    return {
+      topLeft: nearestCorner(false, false),
+      bottomRight: nearestCorner(true, true),
+      top: pixel(Math.floor(image.width / 2), 4),
+      bottom: pixel(Math.floor(image.width / 2), image.height - 5),
+    };
+  }, { base64: png.toString('base64'), cornerColor });
+  expect(pixels.topLeft, `${label} painted top-left corner`).toBeLessThanOrEqual(3);
+  expect(pixels.bottomRight, `${label} painted bottom-right corner`).toBeLessThanOrEqual(3);
+  expect(pixels.top[2] - pixels.top[0], `${label} purple tint at top`).toBeGreaterThan(2);
+  expect(pixels.bottom, `${label} dark surface at bottom`).toEqual([12, 13, 13]);
+};
+
+const expectCornerPrimaryStates = async (page, button, label) => {
+  await expect(button).toBeVisible();
+  await button.scrollIntoViewIfNeeded();
+  await page.mouse.move(0, 0);
+  await expect.poll(() => ownBackground(button), { message: `${label} surface` }).toBe('12,13,13');
+  await expectRenderedForeground(button, `${label} text`, '255,255,255');
+  await expectRenderedContrast(button, `${label} at rest`);
+  await expectPaintedCornerAction(page, button, '107,114,128', `${label} at rest`);
+
+  await button.hover();
+  await expectRenderedForeground(button, `${label} hover text`, '255,255,255');
+  await expectRenderedContrast(button, `${label} on hover`);
+  await expectPaintedCornerAction(page, button, '167,139,250', `${label} on hover`);
+
+  await page.mouse.move(0, 0);
+  await button.focus();
+  await expect(button).toBeFocused();
+  await expectRenderedForeground(button, `${label} focus text`, '255,255,255');
+  await expectRenderedContrast(button, `${label} on focus`);
+  await expect(button).toHaveCSS('outline-style', 'solid');
+  await expectPaintedCornerAction(page, button, '167,139,250', `${label} on focus`);
+};
+
+test('primary CTAs keep readable text and their corner or filled treatment at rest, hover, and focus', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false }));
   });
   await page.goto('/');
-  await expectFilledPrimaryStates(
+  await expectCornerPrimaryStates(
     page,
     page.locator('#main-content').getByRole('link', { name: 'Request a Project Estimate' }).first(),
     'Hero primary CTA',

@@ -124,6 +124,8 @@ The selected prototype uses 19px top-left and bottom-right corner strokes at 1px
 
 Attached labels sit after the top-left stroke, centered on the top-edge guide. They use compact monospace text. Confirmed on 3 October 2026, shared corner labels have transparent backgrounds, including section labels, card labels, the Profile Invoice title, footer label, and the final estimate label. Case-study card labels sit entirely above the image edge with a 3px gap so light thumbnails do not cross their text. The Profile Invoice title retains its larger sans-serif title size. Reserve space for labels and preserve content padding. Image cropping stays on the media container so the outer label remains visible.
 
+Case-study grids reserve 48px between rows for wrapped labels. The collection leaves 40px after its result count. The hero leaves at least 8px between the inference badge and the enlarged Profile Invoice title.
+
 Existing hero value corners use 12px strokes at 1px thickness. Existing form corners use 16px at 1px at rest, then 18px at 2px on focus. The outer hero portrait remains stronger. These roles keep their existing behavior.
 
 Corner decoration does not intercept clicks, create tab stops, announce motion, cover content, or change layout bounds.

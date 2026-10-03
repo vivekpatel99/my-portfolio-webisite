@@ -15,7 +15,7 @@ const Portfolio = () => {
           Selected work in data extraction, OCR, and computer vision. Each case study shows the problem, the build, and the outcome.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[22px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-[22px] gap-y-12">
           {featuredCaseStudies.map((project) => (
             <CaseStudyCard
               key={project.id}
