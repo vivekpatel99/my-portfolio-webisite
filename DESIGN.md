@@ -14,7 +14,9 @@ Rule status has three meanings:
 
 Explicit later feedback from Vivek takes precedence. Update this guide with a changed decision instead of leaving conflicting instructions in multiple issues. Task issues define implementation scope. This guide does not authorize a sitewide implementation, merge, or deployment.
 
-Confirmed direction includes a professional portfolio without generic AI copy, consistent buttons, and selective use of the corner motif. Confidence scores belong only in the hero profile and clearly marked OCR demonstrations. Preserve client targeting and factual content during theme work.
+Hero rules that conflict with the 3 October experiment in [Hero OCR annotation experiment](docs/qa/hero-ocr-labels-297.md) follow that experiment. Its pair cycle and requested removals are confirmed. Its inspected timing and label geometry are existing references. Pending desktop visual agreement does not restore the earlier Rate exclusion, retained Tags label, OCR captions, document badge, Pause control, or three-highlight cycle.
+
+Confirmed direction includes a professional portfolio without generic AI copy, consistent buttons, and selective use of the corner motif. Confidence scores belong only on the hero profile fields. Do not add a separate caption to mark them. Preserve client targeting and factual content during theme work.
 
 The detailed form reference remains in [Form field style](docs/design-system.md). The procedure for the later review is [Review every page against the theme](docs/theme-review.md).
 
@@ -91,7 +93,7 @@ Button hierarchy comes from fill, outline, and spacing. Additional gradients, gl
 | --- | --- | --- |
 | Decorative panel frame | Groups a portrait, work item, scope, quote, or next action | Quiet opposing corners. No confidence score or live-analysis claim. |
 | Interactive form boundary | Identifies an editable control and its focus state | Four corners, grey at rest and purple on focus. Follow the contact-field reference. |
-| Simulated extraction frame | Illustrates recognized fields in the hero or a marked OCR demonstration | Four field corners with an attached label. Scores are visibly identified as illustrative when simulated. |
+| Simulated extraction frame | Illustrates recognized fields in the hero or a future OCR demonstration | Four field corners with an attached label. Scores are illustrative display constants. Do not add a separate OCR caption to mark them. |
 
 These treatments share a visual vocabulary but do not share identical behavior. Decorative brackets do not replace a focus indicator. A filled form field does not become an OCR result.
 
@@ -101,7 +103,7 @@ The following map was confirmed during the joint review and is tracked in #294. 
 
 | Location | Framed content | Expression |
 | --- | --- | --- |
-| Hero profile | Three selected field values | Strongest field expression. Rotation belongs to #292. |
+| Hero profile | Two selected field values at a time | Strongest field expression. The pair cycle follows the 3 October experiment, not the earlier three-highlight rotation. |
 | Hero portrait | Outer portrait frame | Strong portrait expression. Label alignment belongs to #297. |
 | Featured work and case-study collection | Each project card | Shared opposing corners with equivalent hover and focus feedback. |
 | Case-study detail | Outer gallery or standalone cover | One subtle static frame clear of controls and image content. |
@@ -133,7 +135,7 @@ Confirmed intent from #296 is that buttons look like one family with small diffe
 | Primary | Estimate navigation and contact submission | Angular purple fill, readable white label. A trailing arrow accompanies navigation where useful. |
 | Secondary | Browse case studies and other prominent alternatives | Same geometry and label treatment, dark fill, visible outline. |
 | Text action | Scope details, back links, footer navigation | Readable link styling and visible focus without a filled button. |
-| Utility | Gallery, menu, close, zoom, pause, consent, retry | Compact compatible styling with conventional icons and accessible names. |
+| Utility | Gallery, menu, close, zoom, consent, retry | Compact compatible styling with conventional icons and accessible names. The hero Pause control is removed and is not part of this family. |
 
 The proposed geometry is square corners for prominent actions. Header controls can be smaller than hero actions. The hero pair has matching heights when side by side. Size differences must remain recognizable variants of the same family.
 
@@ -145,9 +147,9 @@ Use restrained corners on prominent CTAs when they improve continuity. Utility c
 
 ### OC-01. Simulated OCR placement
 
-Confirmed on 2 October 2026, confidence numbers appear only in the hero profile and clearly marked OCR demonstrations. Ordinary service cards, testimonials, biography panels, estimate actions, contact inputs, and legal pages receive no invented confidence scores.
+Confirmed on 2 October 2026, confidence numbers appear only on the hero profile fields and in a future OCR demonstration that stays separate from factual content. Ordinary service cards, testimonials, biography panels, estimate actions, contact inputs, and legal pages receive no invented confidence scores.
 
-The hero header replaces `field parse` with `OCR simulation`. The qualifier stays visible without hover. It describes the display, not Vivek's professional record.
+The 2 October header qualifier is superseded. The 3 October experiment removes the `OCR simulation` and `OCR surface` captions at Vivek's request. That removal is confirmed. Do not restore either caption, the earlier `field parse` label, or a visible header qualifier. The field scores themselves remain illustrative display constants and do not describe Vivek's professional record.
 
 Existing project evidence may contain real model outputs. Preserve their source meaning and provenance. Do not rewrite genuine results to match the decorative constants below. Any future live OCR demonstration must distinguish actual measured output from an illustrative display.
 
@@ -155,17 +157,17 @@ Existing project evidence may contain real model outputs. Preserve their source 
 
 Confirmed intent from #297 places the small field label on the frame's top-edge guide, after the top-left horizontal stroke. The value stays below the label inside the reserved field area.
 
-The proposed initial gap is 4 to 6 CSS pixels after the stroke. Center the label line box vertically on the top-edge guide. Give the label a matching background where needed so edges or image detail do not cross its text. Avoid a heavy badge around plain field labels.
+Center the label line box vertically on the top-edge guide. Give the label a matching background where needed so edges or image detail do not cross its text. Avoid a heavy badge around plain field labels.
 
-Reserve the same guide and label position when corners fade out. Unselected fields keep their label stationary. Rate and Tags retain a label and score but receive no rotating value frame. Their label follows the same alignment grid without adding visible corners.
+The 2 October inactive-label policy is superseded. Unselected annotations fade with their corners and do not keep a stationary visible label. Rate is a rotating field, not a static label and score outside the frame cycle. `Tags` is removed because the topic chips are not detected fields; do not retain a Tags label or score. Those corrections are confirmed by the 3 October experiment. The experiment's measured attachment is an existing reference, not a competing proposed default: each invoice label begins 17 CSS pixels from the frame's left edge, a 5px gap after the 12px stroke, and its 12px line box is centered on the 6px top-edge guide. Hidden annotations keep their reserved row and geometry.
 
 The wrapper accommodates the full label and both top-corner clearances. Long values wrap without moving the label into another field. Preserve readable text at narrow widths.
 
-Anchor `engineer · 0.99` to the strongest outer portrait frame, after its top-left horizontal stroke. Center the tag on that frame's top-edge guide. Preserve the existing tag appearance and lower ID and REC badges. Keep the top tag clear of the face and top-right corner.
+Anchor `engineer · 0.99` to the strongest outer portrait frame, after its top-left horizontal stroke. Center the tag on that frame's top-edge guide. The experiment's existing reference places that tag 29px from the frame's left edge, a 5px gap after the 24px stroke, with the same plain grey label and quieter score as the invoice fields and no outlined badge. The outer `DOC · EXTRACT · 0.97` badge is removed; that removal is confirmed. Preserve the lower ID and REC badges. Keep the top tag clear of the face and top-right corner.
 
 ### OC-03. Hero confidence display
 
-Distinct scores after each label are confirmed. The following exact constants are proposed display values from #297, awaiting visual review.
+Distinct scores after each rotating invoice label remain confirmed. The six constants below are an existing reference from the 3 October experiment. They are not proposed defaults that may omit Rate or restore Tags. Desktop visual agreement is still pending and does not change this set.
 
 | Field | Display |
 | --- | --- |
@@ -175,25 +177,22 @@ Distinct scores after each label are confirmed. The following exact constants ar
 | Success | `SUCCESS · 0.96` |
 | Rate | `RATE · 0.95` |
 | Location | `LOCATION · 0.94` |
-| Tags | `TAGS · 0.93` |
 
-Use two decimals, one separator, and a quieter score treatment. Values stay fixed on refresh, pause, rotation, and reduced motion. No random number changes, live OCR requests, or score timer are part of this display.
+Use two decimals, one separator, and a quieter score treatment. Values stay fixed on refresh, rotation, and reduced motion. There is no Pause control. No random number changes, live OCR requests, or score timer are part of this display.
 
-The portrait's existing 0.99 and document badge's 0.97 are separate illustration details. Decorative confidence does not modify job success, pricing, credentials, location, or project results. Keep the real label accessible, exclude decorative score updates from announcements, and preserve the semantic heading.
+The portrait's existing 0.99 score remains a separate illustration detail. The document badge and its 0.97 score are removed; do not preserve that badge. Decorative confidence does not modify job success, pricing, credentials, location, or project results. Keep the real label accessible, exclude decorative score updates from announcements, and preserve the semantic heading.
 
 ### MO-01. Motion
 
-The two-second hero highlight change is confirmed by #292. Its proposed sequence uses five stable states:
+The two-second hero annotation cadence is confirmed by #292. The 3 October experiment supersedes that issue's five-state, three-highlight sequence, the Rate exclusion, and Pause. The current confirmed cycle shows exactly two annotations:
 
-1. Name, Role, Credential.
-2. Role, Credential, Success.
-3. Credential, Success, Location.
-4. Success, Location, Name.
-5. Location, Name, Role.
+1. Name and Role.
+2. Credential and Success.
+3. Rate and Location.
 
-Each stable state has exactly three highlights. Fade the outgoing corners before the incoming corners within about 200ms total. A short transition with two visible highlights is allowed. Text, labels, scores, and buttons remain stationary. Rate and Tags are excluded.
+The cycle then returns to Name and Role. Both outgoing annotations fade out over 100ms; then both incoming annotations fade in over 100ms. Those durations are an existing reference from the hero experiment, not a proposed return to the five-state sequence. Boxes, labels, and fixed scores share opacity. A frame shows at most two annotations. Values, the Role h1, and actions remain stationary. Rate is included. Tags are absent.
 
-Pause freezes the selection. Reduced motion shows a static Name, Role, Credential selection. Hidden, offscreen, and unmounted states stop rotation. Resume begins a full interval without catch-up ticks. Controls remain keyboard operable and visibly focused.
+Pause is removed; that removal is confirmed. The cycle runs automatically while the hero is visible. Reduced motion shows the static Name and Role pair with no annotation transition or timer. Hidden, offscreen, and unmounted states stop rotation. Returning starts a full interval without catch-up. Do not add a control whose only purpose is to freeze this cycle.
 
 Other corner frames stay static. A brief 150 to 200ms hover or focus transition is the proposed default for clickable cards. No sitewide scanning loop, pointer-following brackets, or repeated idle pulse is added by the theme guide.
 
@@ -223,7 +222,7 @@ Articles and legal pages use the same colors, type relationships, and spacing co
 
 - Do use the SH-02 placement map before adding brackets.
 - Do use the same button family across header, hero, service, project, and contact actions.
-- Do keep simulation visibly qualified and confined to the approved locations.
+- Do keep simulated scores confined to the hero profile fields, without a separate OCR caption.
 - Do reference a rule ID when reporting a theme mismatch.
 - Do preserve confirmed facts, real evidence, routes, and form behavior during visual work.
 - Don't invent credentials, project metrics, testimonials, client names, or conversion improvements.
