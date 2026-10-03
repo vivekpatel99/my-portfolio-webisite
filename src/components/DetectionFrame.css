@@ -1,7 +1,7 @@
 .detection-panel,
 .detection-heading {
   --detection-top: rgba(139, 92, 246, 0.85);
-  --detection-bottom: rgba(255, 255, 255, 0.45);
+  --detection-bottom: rgba(139, 92, 246, 0.85);
   --detection-label-background: #0c0d0d;
   position: relative;
 }
@@ -63,10 +63,14 @@
   white-space: nowrap;
 }
 
+.detection-panel--interactive {
+  --detection-bottom: #6b7280;
+}
+
 .detection-panel--interactive:hover,
 .detection-panel--interactive:focus-within {
   --detection-top: #a78bfa;
-  --detection-bottom: rgba(255, 255, 255, 0.7);
+  --detection-bottom: #a78bfa;
 }
 
 .detection-panel--hero {

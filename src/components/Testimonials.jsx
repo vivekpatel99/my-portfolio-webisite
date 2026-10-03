@@ -106,7 +106,7 @@ const Testimonials = () => {
                         aria-label={`${activeIndex + 1} of ${testimonials.length}`}
                         aria-live={isRotating ? 'off' : 'polite'}
                         tabIndex={0}
-                        className="field detection-panel detection-panel--interactive relative min-h-[337px] grid grid-cols-1 md:grid-cols-[148px_1fr] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a78bfa] transition-colors"
+                        className="field detection-panel relative min-h-[337px] grid grid-cols-1 md:grid-cols-[148px_1fr] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a78bfa] transition-colors"
                     >
                         <DetectionLabel>
                             TESTIMONIAL · <b className="font-medium">{testimonial.clientName}</b>

@@ -114,7 +114,7 @@ Paragraphs, navigation links, individual footer links, legal text, gallery thumb
 
 ### SH-03. Frame geometry
 
-The selected prototype uses 19px top-left and bottom-right corner strokes at 1px for section titles. Panel frames use 23px strokes at 1.5px only in the top-left and bottom-right corners, purple at the top-left and muted white at the bottom-right. Strokes sit on the outer frame edge rather than inside another border. Equivalent panels share this geometry.
+The selected prototype uses 19px top-left and bottom-right corner strokes at 1px for section titles. Panel frames use 23px strokes at 1.5px only in the top-left and bottom-right corners, purple at both corners on static panels and titles. Clickable case-study cards use a grey bottom-right corner at rest and purple at both corners on hover or keyboard focus. Strokes sit on the outer frame edge rather than inside another border. Equivalent panels share this geometry.
 
 Attached labels sit after the top-left stroke, centered on the top-edge guide. They use compact monospace text and the matching surface background. The Profile Invoice title retains its larger sans-serif title size. Reserve space for labels and preserve content padding. Image cropping stays on the media container so the outer label remains visible.
 
