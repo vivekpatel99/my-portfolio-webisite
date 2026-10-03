@@ -44,7 +44,7 @@ const CaseStudyCard = ({
 
   return React.createElement(
     'article',
-    { className: 'card detection-panel detection-panel--interactive relative flex flex-col bg-[#0C0D0D] focus-within:outline focus-within:outline-2 focus-within:outline-[rgba(139,92,246,0.55)] focus-within:outline-offset-2 transition-colors' },
+    { className: 'card detection-panel relative flex flex-col bg-[#0C0D0D] focus-within:outline focus-within:outline-2 focus-within:outline-[rgba(139,92,246,0.55)] focus-within:outline-offset-2 transition-colors' },
     React.createElement(DetectionLabel, { className: 'cat' },
       project.category ? `${project.category.toUpperCase()} · CASE STUDY` : 'CASE STUDY',
     ),

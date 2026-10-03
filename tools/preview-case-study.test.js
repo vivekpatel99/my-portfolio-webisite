@@ -38,7 +38,7 @@ describe('case-study preview renderer', () => {
       const origin = `http://127.0.0.1:${server.address().port}`;
       const html = await (await fetch(origin)).text();
       expect(html).toContain('href="/preview.css"');
-      expect(html).toContain('card detection-panel detection-panel--interactive');
+      expect(html).toContain('card detection-panel relative');
       expect(html).toContain('detection-label cat');
       const response = await fetch(`${origin}/preview.css`);
       expect(response.status).toBe(200);

@@ -1,7 +1,7 @@
 .detection-panel,
 .detection-heading {
-  --detection-top: rgba(139, 92, 246, 0.85);
-  --detection-bottom: rgba(139, 92, 246, 0.85);
+  --detection-top: #6b7280;
+  --detection-bottom: #6b7280;
   --detection-label-background: #0c0d0d;
   position: relative;
 }
@@ -63,12 +63,10 @@
   white-space: nowrap;
 }
 
-.detection-panel--interactive {
-  --detection-bottom: #6b7280;
-}
-
-.detection-panel--interactive:hover,
-.detection-panel--interactive:focus-within {
+.detection-panel:hover,
+.detection-panel:focus-within,
+.detection-heading:hover,
+.detection-heading:focus-within {
   --detection-top: #a78bfa;
   --detection-bottom: #a78bfa;
 }

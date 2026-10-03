@@ -188,7 +188,6 @@ describe('CaseStudyCard', () => {
 
       const article = container.querySelector('article');
       expect(article.className).toContain('focus-within:outline-2');
-      expect(article.className).toContain('detection-panel--interactive');
       expect(article.className).not.toContain('border-[rgba(139,92,246,0.4)]');
       expect(article.className).not.toContain('rounded-lg');
     });
