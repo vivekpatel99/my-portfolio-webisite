@@ -16,6 +16,7 @@ import { assertLocalPreviewDirectory } from './preview-path.js';
 const previewHost = '127.0.0.1';
 const defaultOutputDirectory = path.resolve('.case-study-preview');
 const articleCss = readFileSync(new URL('../src/components/CaseStudyArticle.css', import.meta.url), 'utf8');
+const detectionCss = readFileSync(new URL('../src/components/DetectionFrame.css', import.meta.url), 'utf8');
 
 export const previewIsAllowed = (environment = process.env) => !environment.CI && environment.NODE_ENV !== 'production';
 
@@ -50,7 +51,7 @@ export const libraryPreviewPage = (stories) => `<!doctype html>
 export async function createCaseStudyPreviewServer({ stories, assets = {}, candidateDirectory, port = 4173 } = {}) {
   if (!previewIsAllowed()) throw new Error('Case-study preview is refused in CI or production');
   if (!Array.isArray(stories) || stories.length === 0) throw new Error('Case-study preview requires at least one prepared story');
-  const previewCss = (await postcss([tailwindcss(path.resolve('tailwind.config.js'))]).process('@tailwind base; @tailwind components; @tailwind utilities;', { from: undefined })).css;
+  const previewCss = (await postcss([tailwindcss(path.resolve('tailwind.config.js'))]).process(`@tailwind base; @tailwind components; @tailwind utilities;\n${detectionCss}`, { from: undefined })).css;
   const bySlug = new Map(stories.map((story) => [story.slug, story]));
   const referenced = new Set();
   const collect = (nodes) => (nodes ?? []).forEach((node) => { if (node.type === 'image') referenced.add(node.src); if (node.children) collect(node.children); if (node.items) node.items.forEach((item) => collect(item.children)); });

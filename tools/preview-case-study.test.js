@@ -1,10 +1,11 @@
 // @vitest-environment node
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import postcss from 'postcss';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import CaseStudyArticle from '../src/components/CaseStudyArticle.js';
 import { parseMarkdownCaseStudy } from '../publication/markdown-case-study.js';
-import { previewIsAllowed } from './preview-case-study.js';
+import { createCaseStudyPreviewServer, previewIsAllowed } from './preview-case-study.js';
 import { assertLocalPreviewDirectory } from './preview-path.js';
 
 const story = parseMarkdownCaseStudy({
@@ -24,6 +25,38 @@ The \`outcome\` is qualitative.
 });
 
 describe('case-study preview renderer', () => {
+  afterEach(() => vi.unstubAllEnvs());
+
+  it('serves the shared card styles in the local candidate library without the application entry point', async () => {
+    vi.stubEnv('CI', '');
+    vi.stubEnv('NODE_ENV', 'development');
+    const server = await createCaseStudyPreviewServer({
+      stories: [story, { ...story, id: 'second-preview', slug: 'second-preview', title: 'Second preview' }],
+      port: 0,
+    });
+    try {
+      const origin = `http://127.0.0.1:${server.address().port}`;
+      const html = await (await fetch(origin)).text();
+      expect(html).toContain('href="/preview.css"');
+      expect(html).toContain('card detection-panel detection-panel--interactive');
+      expect(html).toContain('detection-label cat');
+      const response = await fetch(`${origin}/preview.css`);
+      expect(response.status).toBe(200);
+      expect(response.headers.get('content-type')).toBe('text/css');
+      const css = postcss.parse(await response.text());
+      const declarations = (selector) => {
+        const result = {};
+        css.walkRules(selector, (rule) => rule.walkDecls((declaration) => { result[declaration.prop] = declaration.value; }));
+        return result;
+      };
+      expect(declarations('.detection-panel::before').background).toContain('linear-gradient');
+      expect(declarations('.detection-label')).toMatchObject({ position: 'absolute', top: '0', 'pointer-events': 'none' });
+      expect(declarations('.overflow-hidden').overflow).toBe('hidden');
+    } finally {
+      await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+    }
+  });
+
   it('renders the shared article with optional fields omitted cleanly', () => {
     const html = renderToStaticMarkup(React.createElement(CaseStudyArticle, { story }));
     expect(html).toContain('<article class="case-study-article">');
