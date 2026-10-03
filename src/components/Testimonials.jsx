@@ -38,12 +38,6 @@ const Testimonials = () => {
         return () => query.removeListener?.(syncPreference);
     }, []);
 
-    // Removing the focused playback control on a preference change emits no blur,
-    // so re-derive focus-within from the actual active element after each switch.
-    useEffect(() => {
-        setHasFocusWithin(carouselRef.current?.contains(document.activeElement) ?? false);
-    }, [prefersReducedMotion]);
-
     useEffect(() => {
         if (!isRotating) return undefined;
 
@@ -54,7 +48,6 @@ const Testimonials = () => {
         return () => clearInterval(timer);
     }, [isRotating]);
 
-    // Choosing a slide is an explicit request to read it, so it stops rotation until Play.
     const goToSlide = (index) => {
         setActiveIndex(index);
         setIsUserPaused(true);
@@ -171,24 +164,10 @@ const Testimonials = () => {
                                 </button>
                             ))}
                         </div>
-                        {prefersReducedMotion ? (
+                        {prefersReducedMotion && (
                             <span className="autoplay-status inline-flex items-center min-h-[44px] px-3 font-mono text-[10px] uppercase tracking-[0.15em] text-[#9ca3af]">
                                 Autoplay off · Reduced motion
                             </span>
-                        ) : (
-                            <button
-                                type="button"
-                                className="pause-toggle inline-flex items-center justify-center gap-2 min-w-[44px] min-h-[44px] px-3 border border-[rgba(255,255,255,0.13)] bg-transparent font-mono text-[10px] uppercase tracking-[0.15em] text-[#9ca3af] hover:text-[#c4b5fd] hover:border-[rgba(139,92,246,0.55)] focus-visible:text-[#c4b5fd] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a78bfa] transition-colors"
-                                aria-label={isUserPaused ? 'Play testimonials' : 'Pause testimonials'}
-                                onClick={() => setIsUserPaused((paused) => !paused)}
-                            >
-                                {isUserPaused ? (
-                                    <span aria-hidden="true" className="block w-0 h-0 border-y-[4px] border-y-transparent border-l-[7px] border-l-current"></span>
-                                ) : (
-                                    <span aria-hidden="true" className="block w-[7px] h-2 border-x-2 border-current"></span>
-                                )}
-                                {isUserPaused ? 'Play' : 'Pause'}
-                            </button>
                         )}
                     </div>
                 </div>

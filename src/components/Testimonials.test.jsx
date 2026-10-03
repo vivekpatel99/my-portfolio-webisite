@@ -43,7 +43,6 @@ const expectShowing = (index) => expect(quoteText()).toContain(testimonials[inde
 const advance = (ms) => act(() => { vi.advanceTimersByTime(ms); });
 const slideButtons = () => screen.getAllByRole('button', { name: /^Slide \d+$/ });
 const PLAYBACK_NAME = /(pause|play) testimonials/i;
-const pauseToggle = () => screen.getByRole('button', { name: PLAYBACK_NAME });
 const queryPauseToggle = () => screen.queryByRole('button', { name: PLAYBACK_NAME });
 const slideRegion = () => screen.getByRole('group', { name: /of \d+/ });
 const interactionBoundary = () => screen.getByRole('region', { name: 'Client testimonials' });
@@ -188,28 +187,11 @@ describe('Testimonials carousel controls (#225)', () => {
     expectShowing(1);
   });
 
-  it('pause button stops rotation for 20s even after hover and focus leave, and play resumes', () => {
+  it('offers slide selection without a playback button', () => {
     installMotionPreference(false);
     render(<Testimonials />);
-    const boundary = interactionBoundary();
-    const toggle = pauseToggle();
-    expect(toggle.textContent).toMatch(/pause/i);
-
-    hoverWithMouse(boundary);
-    fireEvent.focus(toggle);
-    fireEvent.click(toggle);
-    expect(pauseToggle().textContent).toMatch(/play/i);
-
-    fireEvent.blur(toggle, { relatedTarget: null });
-    unhoverWithMouse(boundary);
-    advance(20_000);
-    expectShowing(0);
-
-    fireEvent.click(pauseToggle());
-    expect(pauseToggle().textContent).toMatch(/pause/i);
-    fireEvent.blur(pauseToggle(), { relatedTarget: null });
-    advance(INTERVAL_MS);
-    expectShowing(1);
+    expect(queryPauseToggle()).toBeNull();
+    expect(slideButtons()).toHaveLength(testimonials.length);
   });
 
   it('keeps a chosen slide for 20s after focus and hover leave the controls', () => {
@@ -227,7 +209,6 @@ describe('Testimonials carousel controls (#225)', () => {
     unhoverWithMouse(boundary);
     advance(20_000);
     expectShowing(1);
-    expect(pauseToggle().textContent).toMatch(/play/i);
   });
 
   it('focusing the quote stops rotation and leaving it resumes', () => {
@@ -249,7 +230,7 @@ describe('Testimonials carousel controls (#225)', () => {
     installMotionPreference(false);
     render(<Testimonials />);
     const boundary = interactionBoundary();
-    for (const control of [...slideButtons(), pauseToggle()]) {
+    for (const control of slideButtons()) {
       expect(boundary.contains(control)).toBe(true);
     }
     expect(boundary.contains(slideRegion())).toBe(true);
@@ -263,11 +244,11 @@ describe('Testimonials carousel controls (#225)', () => {
     installMotionPreference(false);
     render(<Testimonials />);
     const quote = slideRegion();
-    const toggle = pauseToggle();
+    const control = slideButtons()[0];
 
     fireEvent.focus(quote);
-    fireEvent.blur(quote, { relatedTarget: toggle });
-    fireEvent.focus(toggle);
+    fireEvent.blur(quote, { relatedTarget: control });
+    fireEvent.focus(control);
     advance(20_000);
     expectShowing(0);
   });
@@ -306,19 +287,19 @@ describe('Testimonials carousel controls (#225)', () => {
     expectShowing(1);
   });
 
-  it('resumes after touch Pause then Play and blur despite a compatibility mouseenter', () => {
+  it('keeps touch-selected slides readable and allows another selection', () => {
     installMotionPreference(false);
     render(<Testimonials />);
     const boundary = interactionBoundary();
+    const target = slideButtons()[1];
 
-    tapWithTouch(boundary, pauseToggle(), { emitCompatMouseEnter: true });
-    expect(pauseToggle().textContent).toMatch(/play/i);
-    tapWithTouch(boundary, pauseToggle(), { emitCompatMouseEnter: false });
-    expect(pauseToggle().textContent).toMatch(/pause/i);
-
-    fireEvent.blur(pauseToggle(), { relatedTarget: null });
-    advance(INTERVAL_MS);
+    tapWithTouch(boundary, target, { emitCompatMouseEnter: true });
+    fireEvent.blur(target, { relatedTarget: null });
+    advance(20_000);
     expectShowing(1);
+
+    tapWithTouch(boundary, slideButtons()[2], { emitCompatMouseEnter: false });
+    expectShowing(2);
   });
 
   it('real mouse hover alone stops rotation and mouse leave resumes it', () => {
@@ -363,34 +344,21 @@ describe('Testimonials carousel controls (#225)', () => {
 
     act(() => preference.setReduced(false));
     expect(screen.queryByText('Autoplay off · Reduced motion')).toBeNull();
-    expect(pauseToggle().textContent).toMatch(/pause/i);
+    expect(queryPauseToggle()).toBeNull();
     advance(INTERVAL_MS);
     expectShowing(1);
   });
 
-  it('keeps a user pause across a reduced-motion round trip', () => {
+  it('keeps a manually selected slide across a reduced-motion round trip', () => {
     const preference = installMotionPreference(false);
     render(<Testimonials />);
-    fireEvent.click(pauseToggle());
-    fireEvent.blur(pauseToggle(), { relatedTarget: null });
+    fireEvent.click(slideButtons()[2]);
+    fireEvent.blur(slideButtons()[2], { relatedTarget: null });
 
     act(() => preference.setReduced(true));
     act(() => preference.setReduced(false));
-    expect(pauseToggle().textContent).toMatch(/play/i);
     advance(20_000);
-    expectShowing(0);
-  });
-
-  it('resumes after a preference change removes the focused playback control', () => {
-    const preference = installMotionPreference(false);
-    render(<Testimonials />);
-    act(() => pauseToggle().focus());
-
-    act(() => preference.setReduced(true));
-    act(() => preference.setReduced(false));
-    expect(document.activeElement).toBe(document.body);
-    advance(INTERVAL_MS);
-    expectShowing(1);
+    expectShowing(2);
   });
 
   it('keeps genuine quote focus holding rotation across a preference round trip', () => {
