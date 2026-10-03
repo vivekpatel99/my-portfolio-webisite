@@ -16,7 +16,7 @@ Explicit later feedback from Vivek takes precedence. Update this guide with a ch
 
 Hero rules that conflict with the 3 October experiment in [Hero OCR annotation experiment](docs/qa/hero-ocr-labels-297.md) follow that experiment. Its pair cycle and requested removals are confirmed. Its inspected timing and label geometry are existing references. Pending desktop visual agreement does not restore the earlier Rate exclusion, retained Tags label, OCR captions, document badge, Pause control, or three-highlight cycle.
 
-Confirmed direction includes a professional portfolio without generic AI copy, consistent buttons, and selective use of the corner motif. Confidence scores belong only on the hero profile fields. Do not add a separate caption to mark them. Preserve client targeting and factual content during theme work.
+Confirmed direction includes a professional portfolio without generic AI copy, consistent buttons, and selective use of the corner motif. Confidence scores belong only on the hero profile fields and in a future OCR demonstration that stays separate from factual content, matching OC-01. Do not add a separate caption to mark them. Preserve client targeting and factual content during theme work.
 
 The detailed form reference remains in [Form field style](docs/design-system.md). The procedure for the later review is [Review every page against the theme](docs/theme-review.md).
 
@@ -222,7 +222,7 @@ Articles and legal pages use the same colors, type relationships, and spacing co
 
 - Do use the SH-02 placement map before adding brackets.
 - Do use the same button family across header, hero, service, project, and contact actions.
-- Do keep simulated scores confined to the hero profile fields, without a separate OCR caption.
+- Do keep simulated scores confined to the hero profile fields and a future OCR demonstration that stays separate from factual content, without a separate OCR caption.
 - Do reference a rule ID when reporting a theme mismatch.
 - Do preserve confirmed facts, real evidence, routes, and form behavior during visual work.
 - Don't invent credentials, project metrics, testimonials, client names, or conversion improvements.
