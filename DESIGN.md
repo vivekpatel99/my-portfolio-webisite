@@ -110,6 +110,8 @@ Confirmed on 3 October 2026, Vivek selected the **Corners + labels** prototype. 
 | Footer | Whole footer content panel | One corner frame and an attached label. Individual links remain unboxed. |
 | Case-study detail, service detail, contact | Existing framed panels and form fields | Separate review scope. The homepage decision does not establish completed implementation or verification for these routes. |
 
+The case-study collection page uses its Selected Case Studies heading without a separate Collection badge.
+
 Confirmed on 3 October 2026, testimonial controls show slide dots without a Pause/Play button. Selecting a dot stops automatic rotation for the mounted carousel; all dots remain usable for reading other quotes. Mouse hover and keyboard focus temporarily hold rotation, and reduced motion disables autoplay.
 
 Paragraphs, navigation links, individual footer links, legal text, gallery thumbnails, and captions receive no extra decorative boxes. Do not add a frame around every item inside a framed panel. Action styling remains under BT-01.

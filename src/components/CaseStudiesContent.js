@@ -17,7 +17,6 @@ const CaseStudiesContent = ({ stories }) => React.createElement(
     React.createElement(
       'div',
       { className: 'mb-12 max-w-3xl' },
-      React.createElement('p', { className: 'mb-4 inline-block font-mono text-[10px] tracking-[0.16em] uppercase text-[#9ca3af] px-4 py-1.5 border border-[rgba(139,92,246,0.35)]' }, 'COLLECTION'),
       React.createElement(
         'h1',
         { id: 'case-studies-heading', className: 'text-[clamp(1.75rem,3.2vw,2.35rem)] font-bold uppercase leading-tight tracking-[-0.02em] text-white' },
