@@ -18,7 +18,7 @@ const CaseStudiesContent = ({ stories }) => React.createElement(
       { className: 'mb-12 max-w-3xl' },
       React.createElement(
         'h1',
-        { id: 'case-studies-heading', className: 'text-[clamp(1.75rem,3.2vw,2.35rem)] font-bold uppercase leading-tight tracking-[-0.02em] text-white' },
+        { id: 'case-studies-heading', className: 'detection-heading text-[clamp(1.75rem,3.2vw,2.35rem)] font-bold uppercase leading-tight tracking-[-0.02em] text-white' },
         'SELECTED ',
         React.createElement('span', { className: 'text-[#8B5CF6]' }, 'CASE STUDIES'),
       ),

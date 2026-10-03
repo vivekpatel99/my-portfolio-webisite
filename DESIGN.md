@@ -110,7 +110,7 @@ Confirmed on 3 October 2026, Vivek selected the **Corners + labels** prototype. 
 | Footer | Whole footer content panel | One corner frame and an attached label. Individual links remain unboxed. |
 | Case-study detail, service detail, contact | Existing framed panels and form fields | Separate review scope. The homepage decision does not establish completed implementation or verification for these routes. |
 
-The case-study collection page uses its Selected Case Studies heading without a separate Collection badge.
+The case-study collection page uses top-left and bottom-right corners around its semantic h1, Selected Case Studies, with the shared heading geometry and rest/hover colors from SH-03. Preserve its white and purple text. It has no separate Collection badge or added edge label.
 
 Confirmed on 3 October 2026, all twelve approved completed case studies share one collection, sorted together by completion date. The first six remain the initial batch and Load more reveals the next six. AI Project Planning Assistant and Python CI Workflow Automation appear once in that same grid; there is no separate Other Work section. Preserve the three handpicked homepage features, publication eligibility, and collection return position and loaded count. Existing ten-card browsing snapshots remain valid and can load the final two cards.
 
