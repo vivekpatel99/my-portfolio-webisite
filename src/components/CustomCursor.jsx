@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { m, useMotionValue, useSpring } from 'framer-motion';
 
 const cursorSpring = { stiffness: 500, damping: 28 };
@@ -64,7 +64,8 @@ const CustomCursor = () => {
     };
   }, []);
 
-  useEffect(() => {
+  // Listen before paint so the first movement after the dot mounts cannot be lost.
+  useLayoutEffect(() => {
     if (!enabled) return undefined;
 
     const handleMouseMove = ({ clientX, clientY }) => {

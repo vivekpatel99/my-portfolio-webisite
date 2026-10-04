@@ -39,6 +39,25 @@ const expectDotAt = (cursor, x, y) => {
 beforeEach(() => root.classList.remove('custom-cursor-enabled'));
 afterEach(() => { cleanup(); window.matchMedia = nativeMatchMedia; });
 
+it('handles the first move as soon as the cursor node is committed', () => {
+  installMatchMedia({ fine: true, reduced: false });
+  let moved = false;
+  const { container } = render(
+    <Profiler id="cursor-startup" onRender={() => {
+      if (!moved && document.querySelector('[data-custom-cursor]')) {
+        moved = true;
+        move(140, 90);
+      }
+    }}>
+      <CustomCursor />
+    </Profiler>,
+  );
+
+  expect(moved).toBe(true);
+  expect(dot(container).style.visibility).toBe('visible');
+  expect(root.classList.contains('custom-cursor-enabled')).toBe(true);
+});
+
 it('keeps the native cursor until the first move and moves without React commits', async () => {
   installMatchMedia({ fine: true, reduced: false });
   const commits = vi.fn();

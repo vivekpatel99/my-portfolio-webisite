@@ -157,6 +157,30 @@ Scoped lint, parser checks, and diff checks pass. Independent standards
 and specification reviews found no weakened coverage. Remote CI must pass on
 the repaired head before the authorized merge into develop.
 
+## Cursor startup repair
+
+The repaired passive-QA run and its single retry both failed WebKit's first
+cursor movement assertion. The unchanged cursor suite passed locally three
+times with one worker in CI's Playwright 1.60 Noble image (21 passed, three
+coarse-pointer skips), so that browser failure did not reproduce locally.
+
+A deterministic component regression did reproduce a startup gap: a movement
+dispatched during the cursor node's commit left the dot hidden because the
+passive effect had not attached its listener. Attaching that listener in a
+layout effect closes the gap before paint. The new regression fails with the
+old implementation and passes with the repair; all five cursor unit tests
+pass. Native fallback, first-movement positioning, preference resets, and
+cleanup retain their existing checks. Browser expectations are unchanged.
+Independent standards and specification reviews found no objections.
+
+The final repair passes all 68 unit files and 850 tests on Node 24, scoped
+lint, diff checks, and the production build (21 static routes, 36 public
+links). The unchanged cursor browser suite ran twice with CI's two-worker
+setup across desktop/mobile Chromium and WebKit: 39 passed, 24 pointer-mode
+cases intentionally skipped, and one WebKit lightbox positioning check timed
+out. That case passed its isolated rerun. The originally failing startup
+assertion passed both repeats. Required remote CI remains the merge gate.
+
 ## Review and limits
 
 Independent specification and repository-standards reviews found no remaining
