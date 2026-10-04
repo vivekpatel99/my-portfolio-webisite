@@ -1,5 +1,7 @@
 # Form field style
 
+This is the detailed form reference for the [portfolio theme guide](../DESIGN.md). Follow that guide for sitewide corners, buttons, simulation scores, and motion. The form rules below remain the existing implementation reference.
+
 Use the contact form's corner-only field treatment as the reference for future form fields. The implementation lives in [`src/pages/Contact.css`](../src/pages/Contact.css); reuse its values and behavior when introducing the style elsewhere. This document does not mean existing pages have been migrated.
 
 ![Grey resting corners on a filled name field and purple corners on the focused email field](design-assets/contact-fields-grey-purple.png)
