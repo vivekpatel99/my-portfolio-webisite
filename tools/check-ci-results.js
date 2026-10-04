@@ -1,6 +1,6 @@
 const requiredJobs = [
   'unit-tests', 'production-build', 'passive-qa',
-  'contact-qa', 'motion-qa', 'telemetry-qa',
+  'contact-qa', 'motion-qa', 'telemetry-qa', 'apache-service-qa',
 ];
 
 try {
