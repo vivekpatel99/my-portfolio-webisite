@@ -17,7 +17,7 @@ describe('parallel CI and sanitized QA artifacts', () => {
   it('requires every independent suite even when a dependency fails or is skipped', () => {
     const gate = workflow.jobs['test-and-build'];
     expect([...gate.needs].sort()).toEqual([
-      'contact-qa', 'motion-qa', 'passive-qa', 'production-build', 'telemetry-qa', 'unit-tests',
+      'apache-service-qa', 'contact-qa', 'motion-qa', 'passive-qa', 'production-build', 'telemetry-qa', 'unit-tests',
     ]);
     expect(gate.if).toBe('${{ always() }}');
     const check = namedStep('test-and-build', 'Require every CI job to succeed');
@@ -50,6 +50,16 @@ describe('parallel CI and sanitized QA artifacts', () => {
     expect(namedStep('passive-qa', 'Restore production bundle').run).toContain('tar -xzf');
     expect(namedStep('passive-qa', 'Run passive Playwright QA against preview').run)
       .toContain('npm run qa:playwright:ci -- --shard=${{ matrix.shard }}/2');
+  });
+
+  it('checks Apache routing against the same complete production bundle and gates delivery', () => {
+    const apache = workflow.jobs['apache-service-qa'];
+    expect(apache.needs).toBe('production-build');
+    const download = stepsFor('apache-service-qa').find((step) => step.uses === 'actions/download-artifact@v4');
+    expect(download.with.name).toBe('production-dist');
+    expect(namedStep('apache-service-qa', 'Restore production bundle').run).toContain('tar -xzf');
+    expect(namedStep('apache-service-qa', 'Check service routes under Apache HTTPS').run).toBe('npm run qa:apache-services');
+    expect(workflow.jobs['test-and-build'].needs).toContain('apache-service-qa');
   });
 
   it('runs isolated telemetry after browser setup with local-only safe artifacts', () => {

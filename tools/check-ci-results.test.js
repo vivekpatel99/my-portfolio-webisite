@@ -11,6 +11,7 @@ const successfulJobs = {
   'contact-qa': { result: 'success' },
   'motion-qa': { result: 'success' },
   'telemetry-qa': { result: 'success' },
+  'apache-service-qa': { result: 'success' },
 };
 const runGate = (results) => spawnSync(process.execPath, [script], {
   env: { ...process.env, CI_JOB_RESULTS: results },
