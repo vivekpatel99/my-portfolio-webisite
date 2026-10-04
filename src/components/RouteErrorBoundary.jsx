@@ -45,7 +45,7 @@ const RouteErrorFallback = ({ onRetry }) => {
           <Button
             type="button"
             onClick={onRetry}
-            className="bg-accent-purple text-white hover:bg-accent-purple/90 rounded-full"
+            className="detection-utility bg-accent-purple text-white hover:bg-accent-purple/90"
           >
             <RotateCw className="mr-2 h-5 w-5" aria-hidden="true" />
             Retry
@@ -53,7 +53,7 @@ const RouteErrorFallback = ({ onRetry }) => {
           <Button
             asChild
             variant="outline"
-            className="rounded-full border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
+            className="detection-utility border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
           >
             <Link to="/">
               <ArrowLeft className="mr-2 h-5 w-5" aria-hidden="true" />

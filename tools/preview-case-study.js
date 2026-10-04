@@ -27,6 +27,7 @@ const page = (story) => `<!doctype html>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
     <title>${escapeHtml(story.title)} · Local preview</title>
+    <link rel="stylesheet" href="/preview.css">
     <style>${articleCss}</style>
     <style>body{margin:0;background:#0c0d0d;color:#eeedf0;font-family:ui-sans-serif,system-ui,sans-serif}.preview-header,.preview-footer{padding:22px 6%;border-bottom:1px solid #29292d}.preview-header strong{font-size:16px;font-weight:500}.preview-header span{float:right;color:#a5a1ad;font-size:12px}.preview-footer{border-top:1px solid #29292d;border-bottom:0;color:#88848e;font-size:12px}@media(max-width:450px){.preview-header span{display:none}}</style>
   </head>

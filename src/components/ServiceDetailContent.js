@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { HOURLY_FROM_LABEL, serviceOffers, serviceTimelineLabel } from '../data/serviceOffers.js';
 
 // Plain .js (no JSX) so tools/generate-static-route-html.js can prerender the
@@ -56,7 +56,7 @@ const ServiceDetailContent = ({ service }) => {
       { className: 'relative mx-auto max-w-[1180px] px-6 md:px-12' },
       React.createElement(
         Link,
-        { to: SERVICES_SECTION_HREF, className: 'mb-12 inline-flex min-h-11 items-center gap-2 font-mono text-xs uppercase tracking-[0.13em] text-[#a8aab5] transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8B5CF6] md:mb-16' },
+        { to: SERVICES_SECTION_HREF, className: 'detection-text-action mb-12 gap-2 text-sm md:mb-16' },
         React.createElement(ArrowLeft, { size: 16, 'aria-hidden': true }),
         'Back to Services',
       ),
@@ -101,11 +101,11 @@ const ServiceDetailContent = ({ service }) => {
             { className: 'flex flex-col gap-3' },
             React.createElement(Link, {
               to: '/contact',
-              className: 'inline-flex min-h-12 items-center justify-center bg-accent-purple px-4 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#6D28D9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white',
-            }, 'Request a Project Estimate'),
+              className: 'detection-panel detection-action detection-action--primary inline-flex',
+            }, 'Request a Project Estimate', React.createElement(ArrowRight, { size: 16, className: 'shrink-0', 'aria-hidden': true })),
             React.createElement(Link, {
               to: SERVICES_SECTION_HREF,
-              className: 'inline-flex min-h-12 items-center justify-center border border-white/25 px-4 py-3 text-center text-sm font-semibold text-white transition-colors hover:border-[#8B5CF6] hover:text-[#c4a9ff] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8B5CF6]',
+              className: 'detection-panel detection-action inline-flex',
             }, 'View All Services'),
           ),
         ),

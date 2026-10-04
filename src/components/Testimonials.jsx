@@ -152,14 +152,14 @@ const Testimonials = () => {
                                 <button
                                     key={index}
                                     type="button"
-                                    className="dot inline-flex items-center justify-center w-8 h-8 sm:w-11 sm:h-11 p-0 border-0 bg-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#a78bfa]"
+                                    className="dot detection-utility inline-flex items-center justify-center w-11 h-11 p-0 border-0 bg-transparent"
                                     aria-label={`Slide ${index + 1}`}
                                     aria-current={index === activeIndex ? 'true' : undefined}
                                     onClick={() => goToSlide(index)}
                                 >
                                     <span
                                         aria-hidden="true"
-                                        className={`block ${index === activeIndex ? 'w-2 h-2 bg-[#8B5CF6] shadow-[0_0_14px_rgba(139,92,246,0.45)]' : 'w-[5px] h-[5px] bg-[#55545c]'} rotate-45 transition-[width,height,background-color,box-shadow] motion-reduce:transition-none`}
+                                        className={`block ${index === activeIndex ? 'w-2 h-2 bg-[#8B5CF6] shadow-[0_0_14px_rgba(139,92,246,0.45)]' : 'w-[5px] h-[5px] bg-[#6b7280]'} rotate-45 transition-[width,height,background-color,box-shadow] motion-reduce:transition-none`}
                                     ></span>
                                 </button>
                             ))}

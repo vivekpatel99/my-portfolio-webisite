@@ -206,7 +206,7 @@ const Contact = () => {
           </ul>
 
           {/* Layout: aside + form */}
-          <div className="layout grid md:grid-cols-[0.82fr_1.18fr] gap-7 items-start">
+          <div className="layout grid grid-cols-1 md:grid-cols-[0.82fr_1.18fr] gap-7 items-start">
             {/* Aside */}
             <div className="aside border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] p-6 px-[22px]">
               <h2 className="text-[1.15rem] font-bold uppercase tracking-[-0.01em] mb-[18px]">
@@ -235,7 +235,7 @@ const Contact = () => {
               onSubmit={handleSubmit}
               noValidate
               {...SENSITIVE_TELEMETRY_REGION_PROPS}
-              className="form-panel relative border border-[rgba(139,92,246,0.42)] bg-gradient-to-b from-[rgba(139,92,246,0.035)] to-transparent bg-[length:100%_22%] bg-no-repeat p-7 px-[26px] pb-[26px]"
+              className="form-panel relative min-w-0 border border-[rgba(139,92,246,0.42)] bg-gradient-to-b from-[rgba(139,92,246,0.035)] to-transparent bg-[length:100%_22%] bg-no-repeat p-7 px-[26px] pb-[26px]"
             >
               {/* Corner brackets */}
               <span className="bracket-tl absolute top-[5px] left-[5px] w-[18px] h-[18px] border-t-[1.5px] border-l-[1.5px] border-[#8B5CF6] pointer-events-none z-[5]"></span>
@@ -367,16 +367,11 @@ const Contact = () => {
                   ref={submitButtonRef}
                   type="submit"
                   disabled={isSubmitting}
-                  className="relative inline-flex items-center justify-center gap-3 border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.12)] px-10 py-4 font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.18)] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  className="detection-panel detection-action detection-action--primary detection-action--submit"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Sending…
-                    </>
-                  ) : (
-                    'Send project request'
-                  )}
+                  <span className={`action-submit-label${isSubmitting ? ' action-submit-reserve' : ''}`} aria-hidden={isSubmitting || undefined}>Send project request</span>
+                  {isSubmitting ? <Loader2 className="action-submit-spinner h-4 w-4 animate-spin" aria-hidden="true" /> : null}
+                  {isSubmitting ? <span className="action-submit-label">Sending…</span> : null}
                 </button>
               </div>
             </form>
