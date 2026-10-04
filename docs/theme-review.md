@@ -4,7 +4,7 @@ Read [the portfolio theme guide](../DESIGN.md) before the review. Review the gui
 
 ## Prepare the review
 
-1. Record the checked branch, commit, build type, and actual browser viewport dimensions.
+1. Record the checked branch, commit, build type, browser engine and version, and actual browser viewport dimensions.
 2. Check whether an equivalent issue or PR already exists before creating another ticket.
 3. Enumerate current public routes from `src/App.jsx`, public case-study slugs from `src/data/caseStudies.js`, and service IDs from `src/data/serviceOffers.js`.
 4. Record every resulting URL individually. Include every published case study and service detail, even when they share a component.
@@ -37,6 +37,8 @@ Use a route-by-state coverage table. A row is complete only after its applicable
 ## Inspect appearance and behavior
 
 Capture the desktop 1440 by 900 layout, the review's 980 by 1324 layout, mobile 390 by 844, and narrow 320 by 740. Record actual dimensions if the browser uses a different viewport. Check native 200% browser zoom and reduced motion. Include forced-colors mode for the contact form as specified in its coverage row.
+
+Run the applicable visual and keyboard states in both Chromium and WebKit before marking coverage complete. Include desktop and mobile focus, cursor, and route-recovery states, plus contact color-scheme and typography coverage, following the repository QA matrices. Record unsupported platform states explicitly; verify contact forced-colors outlines in an engine that supports forced-colors mode.
 
 For each applicable component, inspect resting appearance, mouse hover, keyboard focus, touch appearance, long text, and supported disabled or loading states. Inspect modal entry, focus containment, Escape, and focus return when those behaviors apply.
 
