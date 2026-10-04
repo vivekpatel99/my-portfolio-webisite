@@ -24,24 +24,17 @@ describe('caseStudies data structure', () => {
     expect(featuredCaseStudies).toEqual(selectFeaturedCaseStudies(eligibleCaseStudies));
   });
 
-  it('keeps configured other-work stories published but out of the main collection', () => {
-    const configured = ['ai-project-planning-assistant', 'python-ci-workflow-automation'];
-    expect([...otherWorkCaseStudySlugs].sort()).toEqual([...configured].sort());
-    expect(eligibleCaseStudyCount).toBe(eligibleCaseStudies.length);
-    expect(featuredCaseStudies.filter((story) => configured.includes(story.slug))).toEqual([]);
-
-    const publishedConfigured = configured.filter((slug) => getCaseStudyBySlug(slug));
-    if (publishedConfigured.length === configured.length) {
-      expect(collectionCaseStudies).toHaveLength(10);
-      expect(otherWorkCaseStudies).toHaveLength(2);
-      expect(eligibleCaseStudies).toHaveLength(12);
-      expect(otherWorkCaseStudies.map((story) => story.slug).sort()).toEqual([...configured].sort());
-    }
-
-    publishedConfigured.forEach((slug) => {
-      expect(getCaseStudyBySlug(slug).slug).toBe(slug);
+  it('keeps every completed published story in the collection while preserving the selected homepage features', () => {
+    const migratedSlugs = ['ai-project-planning-assistant', 'python-ci-workflow-automation'];
+    expect(otherWorkCaseStudySlugs).toEqual([]);
+    expect(otherWorkCaseStudies).toEqual([]);
+    expect(collectionCaseStudies).toHaveLength(eligibleCaseStudies.length);
+    expect(featuredCaseStudies).toEqual(selectFeaturedCaseStudies(eligibleCaseStudies));
+    expect(featuredCaseStudies.filter((story) => migratedSlugs.includes(story.slug))).toEqual([]);
+    const publishedMigrated = migratedSlugs.filter((slug) => getCaseStudyBySlug(slug));
+    publishedMigrated.forEach((slug) => {
       expect(caseStudySlugs).toContain(slug);
-      expect(collectionCaseStudies.map((story) => story.slug)).not.toContain(slug);
+      expect(collectionCaseStudies.filter((story) => story.slug === slug)).toHaveLength(1);
     });
   });
 

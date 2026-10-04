@@ -57,15 +57,18 @@ describe('CTA Action Field', () => {
     expect(screen.getByRole('link', { name: /request a project estimate/i })).toBeTruthy();
   });
 
-  it('includes CTA · DETECTED eyebrow meta', () => {
+  it('attaches Project inquiry to the heading without a duplicate eyebrow', () => {
     const { container } = render(
       <MemoryRouter>
         <CTA />
       </MemoryRouter>,
     );
 
-    expect(container.textContent).toContain('CTA ·');
-    expect(container.textContent).toContain('DETECTED');
+    const heading = screen.getByRole('heading', { name: /ready to start your project/i });
+    expect(heading.querySelector('.detection-label').textContent).toBe('Project inquiry');
+    expect(heading.querySelector('.detection-label').getAttribute('aria-hidden')).toBe('true');
+    expect(container.querySelector('.eyebrow')).toBeNull();
+    expect(container.textContent).not.toContain('CTA · DETECTED');
   });
 
   it('has secondary View case studies link', () => {

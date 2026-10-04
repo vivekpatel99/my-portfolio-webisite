@@ -128,12 +128,12 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies, children = null 
   };
   const status = React.createElement(
     'p',
-    { role: 'status', 'aria-live': 'polite', className: 'mb-6 text-sm text-gray-400' },
+    { role: 'status', 'aria-live': 'polite', className: 'mb-10 text-sm text-gray-400' },
     `Showing ${visibleStories.length} of ${stories.length} case studies`,
   );
   const grid = React.createElement(
     'div',
-    { id: gridId, className: 'grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3' },
+    { id: gridId, className: 'grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3' },
     visibleStories.map((story, index) => React.createElement(CaseStudyCard, {
       key: story.slug,
       project: story,
@@ -158,7 +158,7 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies, children = null 
       'button',
       {
         type: 'button',
-        className: 'mt-10 inline-flex min-h-11 items-center rounded-full border border-accent-purple px-5 text-sm font-semibold text-white transition-colors hover:bg-accent-purple disabled:cursor-default disabled:opacity-70 aria-disabled:cursor-default aria-disabled:opacity-70',
+        className: 'detection-panel detection-action mt-10 inline-flex',
         onClick: loadMore,
         // Without JavaScript the button cannot work, so the static markup ships it disabled.
         // Once exhausted it stays focusable via aria-disabled: natively disabling a focused

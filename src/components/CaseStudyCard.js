@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { caseStudyDisplaySrc } from '../lib/caseStudyThumbnails.js';
+import { DetectionLabel } from './DetectionFrame.js';
 
 const MONTH_NAMES = [
   'Jan',
@@ -43,9 +44,10 @@ const CaseStudyCard = ({
 
   return React.createElement(
     'article',
-    { className: 'card relative flex flex-col bg-[#0C0D0D] border border-[rgba(139,92,246,0.4)] overflow-hidden hover:border-[#8B5CF6] focus-within:outline focus-within:outline-2 focus-within:outline-[rgba(139,92,246,0.55)] focus-within:outline-offset-2 transition-colors' },
-    React.createElement('span', { className: 'bracket-tl absolute top-[6px] left-[6px] w-[18px] h-[18px] border-t-[1.5px] border-l-[1.5px] border-[rgba(139,92,246,0.85)] pointer-events-none z-[5]' }),
-    React.createElement('span', { className: 'bracket-br absolute bottom-[6px] right-[6px] w-[18px] h-[18px] border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.45)] pointer-events-none z-[5]' }),
+    { className: 'card detection-panel relative flex flex-col bg-[#0C0D0D] focus-within:outline focus-within:outline-2 focus-within:outline-[rgba(139,92,246,0.55)] focus-within:outline-offset-2 transition-colors' },
+    React.createElement(DetectionLabel, { className: 'cat' },
+      project.category ? `${project.category.toUpperCase()} · CASE STUDY` : 'CASE STUDY',
+    ),
     React.createElement(
       Link,
       {
@@ -68,11 +70,6 @@ const CaseStudyCard = ({
         React.createElement(
           'div',
           { className: 'media-meta absolute left-4 right-14 bottom-4 z-[2]' },
-          project.category ? React.createElement('div', { className: 'cat inline-block font-mono text-[10px] tracking-[0.12em] uppercase text-white pb-[6px] mb-[10px] border-b border-[rgba(139,92,246,0.45)]' },
-            project.category.toUpperCase(),
-            ' · ',
-            React.createElement('em', { className: 'not-italic text-white' }, 'CASE STUDY')
-          ) : null,
           React.createElement(headingTag, { className: 'text-[1.05rem] font-[650] tracking-[-0.015em] leading-[1.3] text-white' }, project.cardTitle || project.title),
         ),
         React.createElement('span', { className: 'glyph-hit absolute right-3 bottom-3 z-[3] w-11 h-11 grid place-items-center text-[#d8caff] border border-[rgba(139,92,246,0.35)] bg-[rgba(12,13,13,0.55)]', 'aria-hidden': true }, React.createElement(ArrowGlyph)),

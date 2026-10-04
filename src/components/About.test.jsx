@@ -23,10 +23,11 @@ describe('About', () => {
     expect(screen.queryByText(/2\.5s/)).toBeNull();
   });
 
-  it('renders craft markers without the empty photo instruction', () => {
+  it('labels the portrait and biography without duplicate detection instructions', () => {
     render(<About />);
-    expect(screen.getByText(/ABOUT ·/i)).toBeTruthy();
-    expect(screen.getByText(/DETECTED/i)).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'WHO I AM' })).toBeTruthy();
+    expect(screen.getByText('Portrait', { exact: true }).parentElement.contains(screen.getByRole('img', { name: 'Portrait of Vivek Patel' }))).toBe(true);
+    expect(screen.queryByText(/ABOUT ·|DETECTED/i)).toBeNull();
     expect(screen.queryByText(/PHOTO · FIELD/i)).toBeNull();
     expect(screen.getByText(/BIO ·/i)).toBeTruthy();
   });
