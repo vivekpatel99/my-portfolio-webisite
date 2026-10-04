@@ -12,6 +12,15 @@ Convex agent skills for common tasks can be installed by running
 
 <!-- convex-ai-end -->
 
+## UI design decisions
+
+- Read `DESIGN.md` before proposing, reviewing, or changing UI. Use its rule IDs
+  in theme findings and respect confirmed decisions, existing references, and
+  proposed defaults. Do not treat an existing reference as confirmed or as
+  proposed.
+- Read `docs/design-system.md` for form fields. Use `docs/theme-review.md` for
+  whole-site review coverage. Update the guide when the user changes a decision.
+
 ## Git workflow
 
 - `main` is the production branch. Never commit or push directly to it.
