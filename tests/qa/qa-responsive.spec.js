@@ -273,6 +273,11 @@ for (const vp of heroFoldViewports) {
 // Width 720 is a half-width layout check (useful reflow), not native browser zoom.
 // AC6 (#191 200% zoom) is covered by the Chromium browser-zoom test below (chrome.tabs.setZoom).
 const assertHeroInvoiceGaps = async (page, { requireMobileHeaderGap = false } = {}) => {
+  const consentBanner = page.getByRole('dialog', { name: /we value your privacy/i });
+  if (await page.evaluate(() => !localStorage.getItem('cookie_consent_preferences'))) {
+    await expect(consentBanner).toBeVisible();
+    await waitForConsentBannerEntrance(consentBanner);
+  }
   const hero = page.locator('#main-content section').first();
   const invoice = hero.getByRole('article', { name: 'Profile invoice field parse' });
   const box = async (locator) => {
@@ -370,6 +375,7 @@ test('hero invoice gaps hold under Chromium 200% browser zoom', async ({ browser
 
     const before = await page.evaluate(() => ({
       innerWidth: window.innerWidth,
+      innerHeight: window.innerHeight,
       scale: window.visualViewport?.scale ?? 1,
     }));
 
@@ -391,8 +397,10 @@ test('hero invoice gaps hold under Chromium 200% browser zoom', async ({ browser
 
     const after = await page.evaluate(() => ({
       innerWidth: window.innerWidth,
+      innerHeight: window.innerHeight,
       scale: window.visualViewport?.scale ?? 1,
     }));
+    testInfo.annotations.push({ type: 'native-zoom-viewport', description: JSON.stringify({ before, after }) });
     // Prove browser zoom (layout viewport shrinks), not pinch/visual zoom.
     expect(after.scale).toBeCloseTo(1, 1);
     expect(after.innerWidth).toBeGreaterThanOrEqual(Math.floor(before.innerWidth / 2) - 2);
@@ -401,6 +409,78 @@ test('hero invoice gaps hold under Chromium 200% browser zoom', async ({ browser
     await assertHeroInvoiceGaps(page, {
       requireMobileHeaderGap: after.innerWidth < 768,
     });
+
+    // #297 labels are not on production yet. This file also runs in prod-* projects.
+    if (!testInfo.project.name.startsWith('prod-')) {
+      const invoice = page.getByRole('article', { name: 'Profile invoice field parse' });
+      const labels = invoice.locator('.hero-field-label');
+      const expectedLabels = ['Name · 0.99', 'Role · 0.97', 'Credential · 0.98', 'Success · 0.96', 'Rate · 0.95', 'Location · 0.94'];
+      const readGeometry = () => invoice.locator('[data-hero-field]').evaluateAll((fields) => fields.map((field) => {
+        const frame = field.getBoundingClientRect();
+        const label = field.querySelector('.hero-field-label').getBoundingClientRect();
+        const value = field.querySelector('.hero-field-value').getBoundingClientRect();
+        const column = field.parentElement.getBoundingClientRect();
+        return {
+          id: field.dataset.heroField,
+          x: frame.x, y: frame.y, width: frame.width, height: frame.height,
+          labelLeft: label.left - frame.left,
+          labelRight: frame.right - label.right,
+          labelCenter: label.top + label.height / 2 - frame.top,
+          cornerTop: Number.parseFloat(getComputedStyle(field, '::before').top),
+          valueGap: value.top - label.bottom,
+          valueLeft: value.left - frame.left,
+          valueRight: frame.right - value.right,
+          columnLeft: frame.left - column.left,
+          columnRight: column.right - frame.right,
+        };
+      }));
+      const initialGeometry = await readGeometry();
+      for (const field of initialGeometry) {
+        expect(field.labelLeft, `${field.id}: 5px gap after 12px stroke at native zoom`).toBeCloseTo(17, 1);
+        expect(field.labelRight, `${field.id}: right corner clearance`).toBeGreaterThanOrEqual(16.9);
+        expect(field.labelCenter).toBeCloseTo(field.cornerTop, 1);
+        expect(field.valueGap).toBeGreaterThanOrEqual(1.9);
+        expect(field.valueLeft).toBeGreaterThanOrEqual(6.9);
+        expect(field.valueRight).toBeGreaterThanOrEqual(6.9);
+        expect(field.columnLeft).toBeGreaterThanOrEqual(-0.1);
+        expect(field.columnRight).toBeGreaterThanOrEqual(-0.1);
+      }
+      await expect(labels).toHaveText(expectedLabels);
+      const portrait = page.getByText('engineer · 0.99', { exact: true });
+      const tag = await portrait.boundingBox();
+      const frame = await portrait.locator('..').boundingBox();
+      expect(tag.x - frame.x).toBeCloseTo(29, 1);
+      expect(Math.abs(tag.y + tag.height / 2 - frame.y)).toBeLessThanOrEqual(0.5);
+      expect(frame.x + frame.width - tag.x - tag.width).toBeGreaterThanOrEqual(29);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+
+      await page.clock.install({ time: new Date('2026-10-04T08:00:00Z') });
+      await page.clock.pauseAt(new Date('2026-10-04T08:00:01Z'));
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      const hero = page.locator('section[data-hero-highlight-index]');
+      // The cycle waits until the outgoing fade is rendered, so a fixed
+      // clock jump never reaches the next pair. Follow that sequence.
+      const advancePair = async (delay) => {
+        await page.clock.runFor(delay);
+        await expect(hero).toHaveAttribute('data-hero-highlight-phase', 'leaving');
+        await expect.poll(() => hero.locator('.invoice-field-corners > .hero-field-label').evaluateAll((labels) =>
+          labels.map((label) => Number(getComputedStyle(label).opacity))), { intervals: [20] }).toEqual([0, 0]);
+        await page.clock.runFor(100);
+        await expect(hero).toHaveAttribute('data-hero-highlight-phase', 'entering');
+        await page.clock.runFor(100);
+        await expect(hero).toHaveAttribute('data-hero-highlight-phase', 'steady');
+      };
+      for (const [index, pair] of [['name', 'role'], ['credential', 'success'], ['rate', 'location']].entries()) {
+        if (index) await advancePair(index === 1 ? 2000 : 1800);
+        await expect(hero).toHaveAttribute('data-hero-highlight-index', String(index));
+        await expect.poll(() => invoice.locator('.hero-field-label').evaluateAll((elements) => elements
+          .filter((element) => Number(getComputedStyle(element).opacity) === 1)
+          .map((element) => element.parentElement.dataset.heroField))).toEqual(pair);
+        await expect(labels).toHaveText(expectedLabels);
+        expect(await readGeometry()).toEqual(initialGeometry);
+      }
+    }
+
   } finally {
     await context?.close();
     await fs.promises.rm(userDataDir, { recursive: true, force: true });
