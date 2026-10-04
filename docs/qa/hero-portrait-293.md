@@ -47,12 +47,24 @@ of the existing 5px About headroom.
 - All 15 label-geometry cases pass across the existing responsive matrix.
   Reduced-motion/offscreen suspension and four applicable hero motion checks
   also pass; the desktop coarse-pointer case is skipped as expected.
-- The combined 33-case browser run had one failure in the existing real-time
-  annotation handoff sampler: it saw four annotations briefly rather than two.
-  The other 31 cases passed and one was skipped. No annotation timing or opacity
-  implementation is changed by this PR. The isolated rerun passes the complete
-  cycle, including per-frame handoff sampling, in 7.5 seconds. This does not
-  erase the earlier failure or establish that the timing flake is resolved.
+- The initial combined browser run exposed a delayed-render annotation handoff:
+  a fixed 100ms timer could advance before the outgoing CSS fade was painted,
+  briefly showing four annotations. The repaired handoff waits for the rendered
+  outgoing opacity to finish before selecting the next pair. Regression tests
+  cover delayed fades and cancellation on hidden tabs, offscreen suspension,
+  reduced motion, and unmount. The existing pair order and cadence remain.
+- Crop assertions run only against preview projects until deployment. Production
+  density checks still run against the existing public portrait. CTA geometry
+  measures the visible clipping frame, with consent already settled and reduced
+  motion enabled so measurements cannot straddle entrance animations.
+- After the CI repairs, all 51 Hero and detected-field unit tests pass. All
+  30 repeated browser cases pass: the full real-time cycle and four CTA layouts
+  in both desktop and mobile projects, repeated three times. The sampler keeps
+  its minimum 100-frame requirement, maximum two annotations, synchronized
+  label/corner opacity, and stationary values.
+- The full unit run passes 846 of 847 tests; the unrelated publication fixture
+  build exceeds its existing 180-second timeout while browser checks are also
+  running. This is recorded rather than claimed as a full-suite pass.
 - JavaScript syntax lint and `git diff --check` pass. The scoped Impeccable
   detector reports no findings. No repository-wide lint or cross-engine browser
   acceptance is claimed.
@@ -80,15 +92,16 @@ The after captures show the final 3px crop. All are unedited browser screenshots
 
 ![About remains unchanged](hero-portrait-293/about-unchanged.png)
 
-Keep #293 open with `Refs #293` pending Vivek's visual approval. PR delivery does
-not authorize merge or production deployment.
+Vivek authorized merging the reviewed closer portrait into `develop` after
+checks pass. This completes #293 on integration; production release remains
+a separate approved release step.
 
 ## Delivery and cleanup
 
 The starting checkout was clean on `t3code/implement-issue-297` at `4eb581f`.
 The task branch `t3code/293-closer-hero-portrait` starts from current `develop`.
 The previous PR #303 remains available independently. Task-owned paths are
-Hero.jsx, its unit test, the responsive QA suite, DESIGN.md, this report, and
+Hero.jsx, its unit test, the responsive and OCR QA suites, DESIGN.md, this report, and
 its screenshot directory.
 
 The existing managed checkout and port 4318 preview remain in use for visual

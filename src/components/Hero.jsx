@@ -119,15 +119,29 @@ const Hero = () => {
     }
 
     const delay = highlight.phase === 'initial' ? 2000 : highlight.phase === 'steady' ? 1800 : 100;
-    const timer = setTimeout(() => {
+    let fadeFrame = null;
+    const advance = () => {
+      if (highlight.phase === 'leaving') {
+        const labels = heroRef.current?.querySelectorAll('.hero-rotating-annotation > .hero-field-label') ?? [];
+        // A delayed paint can start the CSS fade after its timer starts.
+        // Keep the incoming pair hidden until the outgoing fade is rendered.
+        if ([...labels].some((label) => Number.parseFloat(getComputedStyle(label).opacity) > 0.001)) {
+          fadeFrame = requestAnimationFrame(advance);
+          return;
+        }
+      }
       setHighlight((current) => {
         if (current.phase === 'leaving') {
           return { index: (current.index + 1) % HERO_DETECTED_FIELD_WINDOWS.length, phase: 'entering' };
         }
         return { index: current.index, phase: current.phase === 'entering' ? 'steady' : 'leaving' };
       });
-    }, delay);
-    return () => clearTimeout(timer);
+    };
+    const timer = setTimeout(advance, delay);
+    return () => {
+      clearTimeout(timer);
+      if (fadeFrame !== null) cancelAnimationFrame(fadeFrame);
+    };
   }, [highlight, highlightsRunning, reduceMotion]);
 
   useEffect(() => {

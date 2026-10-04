@@ -197,6 +197,8 @@ const heroFoldViewports = [
 for (const vp of heroFoldViewports) {
   test(`hero CTAs start in the first screen at ${vp.width}x${vp.height}`, async ({ page }) => {
     await page.setViewportSize({ width: vp.width, height: vp.height });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.addInitScript(() => localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false })));
     await page.goto('/');
     const hero = page.locator('#main-content section').first();
     const invoiceElement = hero.getByRole('article', { name: 'Profile invoice field parse' });
@@ -205,7 +207,7 @@ for (const vp of heroFoldViewports) {
     const caseStudies = await hero.getByRole('link', { name: 'View Case Studies', exact: true }).boundingBox();
     const portrait = hero.getByAltText('Tracked engineer portrait');
     await expect(portrait).toBeVisible();
-    const portraitBox = await portrait.boundingBox();
+    const portraitBox = await portrait.locator('..').boundingBox();
 
     expect(estimate.y).toBeLessThan(vp.height);
     if (vp.width === 320) {
@@ -506,7 +508,7 @@ for (const vp of portraitDensityCases) {
   test.describe(`portrait candidates at ${vp.width}x${vp.height}@${vp.dpr}`, () => {
     test.use({ viewport: { width: vp.width, height: vp.height }, deviceScaleFactor: vp.dpr });
 
-    test('hero and About portraits load sufficient pixels up to the native hero source limit', async ({ page }) => {
+    test('hero and About portraits load sufficient pixels up to the native hero source limit', async ({ page }, testInfo) => {
       await page.addInitScript(() => localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false })));
       await page.goto('/');
       for (const alt of ['Tracked engineer portrait', 'Portrait of Vivek Patel']) {
@@ -520,7 +522,7 @@ for (const vp of portraitDensityCases) {
           ? Math.min(density.neededWidth, 1008)
           : density.neededWidth;
         expect(density.fileWidth, `${alt} → ${density.currentSrc}`).toBeGreaterThanOrEqual(Math.floor(neededWidth));
-        if (alt === 'Tracked engineer portrait') {
+        if (alt === 'Tracked engineer portrait' && testInfo.project.name.startsWith('preview-')) {
           const crop = await image.evaluate((img) => {
             const frame = img.parentElement;
             const imageBox = img.getBoundingClientRect();

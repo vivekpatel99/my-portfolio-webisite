@@ -237,12 +237,19 @@ describe('Hero rotating annotations', () => {
   let visibility;
   let mediaListeners;
   let viewportCallback;
+  let readOriginalStyle;
 
   beforeEach(() => {
     vi.useFakeTimers();
     reducedMotion = false;
     visibility = 'visible';
     mediaListeners = new Set();
+    readOriginalStyle = window.getComputedStyle.bind(window);
+    // jsdom does not render CSS transitions. Timer tests model completed fades;
+    // the delayed-fade cases below override this measured opacity explicitly.
+    vi.spyOn(window, 'getComputedStyle').mockImplementation((element) => element.classList.contains('hero-field-label')
+      ? { opacity: '0' }
+      : readOriginalStyle(element));
     vi.spyOn(document, 'visibilityState', 'get').mockImplementation(() => visibility);
     window.matchMedia = vi.fn((query) => ({
       get matches() { return query === '(prefers-reduced-motion: reduce)' && reducedMotion; },
@@ -333,6 +340,40 @@ describe('Hero rotating annotations', () => {
       expect(labels.map((label) => label.textContent)).toEqual(scores);
       expect(container.querySelectorAll('.invoice-field-corners')).toHaveLength(2);
     }
+  });
+
+  it('keeps the next pair hidden until a delayed outgoing fade actually finishes', () => {
+    const { container } = renderHero();
+    let labelOpacity = '0.25';
+    vi.spyOn(window, 'getComputedStyle').mockImplementation((element) => element.classList.contains('hero-field-label')
+      ? { opacity: labelOpacity }
+      : readOriginalStyle(element));
+    advance(2000);
+    advance(100);
+    expect(phase(container)).toBe('leaving');
+    expect(ids(container)).toEqual(expected(0));
+    advance(32);
+    expect(ids(container)).toEqual(expected(0));
+    labelOpacity = '0';
+    advance(32);
+    expect(phase(container)).toBe('entering');
+    expect(ids(container)).toEqual(expected(1));
+  });
+
+  it.each(['hidden', 'offscreen', 'reduced motion', 'unmount'])('cancels a pending fade frame on %s', (reason) => {
+    const { container, unmount } = renderHero();
+    vi.spyOn(window, 'getComputedStyle').mockImplementation((element) => element.classList.contains('hero-field-label')
+      ? { opacity: '0.25' }
+      : readOriginalStyle(element));
+    advance(2000);
+    advance(100);
+    expect(phase(container)).toBe('leaving');
+    expect(vi.getTimerCount()).toBe(1);
+    if (reason === 'hidden') changeVisibility('hidden');
+    if (reason === 'offscreen') changeViewport(false);
+    if (reason === 'reduced motion') changeReducedMotion(true);
+    if (reason === 'unmount') unmount();
+    expect(vi.getTimerCount()).toBe(0);
   });
 
   it.each(['leaving', 'entering'])('hidden tabs settle %s and resume without catch-up', (targetPhase) => {
