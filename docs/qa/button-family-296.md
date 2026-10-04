@@ -138,6 +138,25 @@ Contact, Portfolio, CI-result aggregation, and QA-artifact workflow files,
 and its production build passes again. The upstream changes do not alter
 the action crops recorded here.
 
+## CI assertion repair
+
+The first remote run passed unit tests, build, contact, motion, telemetry, and
+Apache route QA. Passive QA exposed expectations for the previous purple
+service fill and previous footer/collection focus colors. Those assertions now
+follow the approved family while retaining rendered contrast and painted
+corner/focus checks. The obsolete solid-fill helper was removed.
+
+The carousel overlap check compared separate frames during entrance motion.
+Capturing all bounds in one synchronous browser evaluation preserves overlap
+detection; targets now must be 44px at every width. The collaborative browser
+at 390 × 844 measured ten 44px targets in two rows with no overlaps. Application
+source did not change in this repair.
+
+Affected production browser checks: 10 passed across desktop/mobile Chromium.
+Scoped lint, parser checks, and diff checks pass. Independent standards
+and specification reviews found no weakened coverage. Remote CI must pass on
+the repaired head before the authorized merge into develop.
+
 ## Review and limits
 
 Independent specification and repository-standards reviews found no remaining
