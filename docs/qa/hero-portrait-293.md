@@ -74,6 +74,14 @@ Shared-preview measurements at the requested CSS widths confirm the 3px hair
 guide, with approximately 0.004px rounding on the 216px frame. Screenshot raster
 dimensions vary with the shared browser's display scaling.
 
+## Integration conflict verification
+
+After `develop` merged #299 at `bcff90a`, the only conflict was in DESIGN.md's
+IM-01 portrait rule. The resolution retains #299's clause status wording and
+the confirmed 3px hero headroom without changing the separate About rule.
+The integrated production build passes and all 847 unit tests in 68 files pass
+in one run (155.46 seconds). No component code conflicted.
+
 ## Visual evidence
 
 The before captures were recorded for #297 at the same `develop` UI baseline.
