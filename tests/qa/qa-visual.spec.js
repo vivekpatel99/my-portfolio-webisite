@@ -445,7 +445,7 @@ test('portfolio section shows Detection Card craft signals on homepage', async (
 
   const heading = portfolio.getByRole('heading', { name: /Featured.*Case Studies/i });
   await expect(heading).toBeVisible();
-  await expect(heading.getByText('Selected work', { exact: true })).toBeVisible();
+  await expect(heading).toHaveText('FEATURED CASE STUDIES');
 
   const cards = portfolio.locator('article').all();
   expect((await cards).length).toBeGreaterThan(0);
