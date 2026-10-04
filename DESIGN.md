@@ -221,6 +221,8 @@ Confirmed About headroom is exactly 5 CSS pixels between the topmost hair and th
 
 Proposed default: do not silently apply that 5px requirement to the hero. Proposed default: its separate crop issue remains the authority. Proposed default: keep crop assets independent so one portrait change does not alter the other.
 
+Confirmed on 4 October 2026: the hero uses a closer head-and-shoulders crop with exactly 3 CSS pixels above the topmost hair, measured within the photograph. Confirmed: preserve the full hairline and chin, the existing frame dimensions, and the separate About crop.
+
 Proposed default: optional image generation for the About portrait preserves likeness and the authentic original. Proposed default: a generated edit requires Vivek's visual review. Proposed default: project screenshots and videos remain legible evidence with controls and captions clear of corners.
 
 ### FM-01. Forms and feedback

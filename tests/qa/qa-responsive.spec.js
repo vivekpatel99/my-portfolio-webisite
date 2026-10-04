@@ -197,6 +197,8 @@ const heroFoldViewports = [
 for (const vp of heroFoldViewports) {
   test(`hero CTAs start in the first screen at ${vp.width}x${vp.height}`, async ({ page }) => {
     await page.setViewportSize({ width: vp.width, height: vp.height });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.addInitScript(() => localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false })));
     await page.goto('/');
     const hero = page.locator('#main-content section').first();
     const invoiceElement = hero.getByRole('article', { name: 'Profile invoice field parse' });
@@ -205,7 +207,7 @@ for (const vp of heroFoldViewports) {
     const caseStudies = await hero.getByRole('link', { name: 'View Case Studies', exact: true }).boundingBox();
     const portrait = hero.getByAltText('Tracked engineer portrait');
     await expect(portrait).toBeVisible();
-    const portraitBox = await portrait.boundingBox();
+    const portraitBox = await portrait.locator('..').boundingBox();
 
     expect(estimate.y).toBeLessThan(vp.height);
     if (vp.width === 320) {
@@ -473,13 +475,17 @@ test('hero invoice gaps hold under Chromium 200% browser zoom', async ({ browser
   }
 });
 
-// #252: the portrait `sizes` values are hard-coded to the measured frames. If a frame
-// widens without a `sizes` update, the browser keeps picking a candidate that is too small.
+// Image sizes account for the hero's static enlargement within its clipping frame.
 const portraitDensityCases = [
   { width: 390, height: 844, dpr: 3 },
   { width: 412, height: 823, dpr: 1.75 },
   { width: 768, height: 1024, dpr: 2 },
-  { width: 1440, height: 900, dpr: 2 },
+  ...[
+    { width: 1440, height: 900 },
+    { width: 980, height: 1324 },
+    { width: 390, height: 844 },
+    { width: 320, height: 740 },
+  ].flatMap((viewport) => [1, 2].map((dpr) => ({ ...viewport, dpr }))),
 ];
 
 // #298: the About crop has 64 source pixels above the first hair at y=182
@@ -570,14 +576,47 @@ for (const vp of portraitDensityCases) {
   test.describe(`portrait candidates at ${vp.width}x${vp.height}@${vp.dpr}`, () => {
     test.use({ viewport: { width: vp.width, height: vp.height }, deviceScaleFactor: vp.dpr });
 
-    test('hero and About portraits load a file at least as wide as their device pixels', async ({ page }) => {
+    test('hero and About portraits load sufficient pixels up to the native hero source limit', async ({ page }, testInfo) => {
+      await page.addInitScript(() => localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false })));
       await page.goto('/');
       for (const alt of ['Tracked engineer portrait', 'Portrait of Vivek Patel']) {
         const image = page.getByAltText(alt);
         await image.scrollIntoViewIfNeeded();
         await expect.poll(() => image.evaluate((img) => img.complete && img.naturalWidth > 0)).toBe(true);
         const density = await loadedPortraitDensity(image);
-        expect(density.fileWidth, `${alt} → ${density.currentSrc}`).toBeGreaterThanOrEqual(Math.floor(density.neededWidth));
+        // The 1.8x hero crop can exceed the authentic 1008px source at DPR 3.
+        // Require the original there; upscaling a derivative adds no detail.
+        const neededWidth = alt === 'Tracked engineer portrait'
+          ? Math.min(density.neededWidth, 1008)
+          : density.neededWidth;
+        expect(density.fileWidth, `${alt} → ${density.currentSrc}`).toBeGreaterThanOrEqual(Math.floor(neededWidth));
+        if (alt === 'Tracked engineer portrait' && testInfo.project.name.startsWith('preview-')) {
+          const crop = await image.evaluate((img) => {
+            const frame = img.parentElement;
+            const imageBox = img.getBoundingClientRect();
+            const frameBox = frame.getBoundingClientRect();
+            // Reviewed landmarks in the authentic 1008x1367 photograph.
+            const scale = imageBox.width / 1008;
+            frame.scrollTop = 100;
+            return {
+              hairGap: imageBox.top + 182 * scale - frameBox.top,
+              chinClearance: frameBox.bottom - (imageBox.top + 580 * scale),
+              faceLeft: imageBox.left + 350 * scale - frameBox.left,
+              faceRight: frameBox.right - (imageBox.left + 650 * scale),
+              aspectRatio: frameBox.width / frameBox.height,
+              scrollTop: frame.scrollTop,
+            };
+          });
+          expect(crop.hairGap).toBeCloseTo(3, 1);
+          expect(crop.chinClearance).toBeGreaterThan(0);
+          expect(crop.faceLeft).toBeGreaterThan(0);
+          expect(crop.faceRight).toBeGreaterThan(0);
+          expect(crop.aspectRatio).toBeCloseTo(362 / 424, 3);
+          expect(crop.scrollTop, 'bringing the photo into view cannot scroll its crop').toBe(0);
+          const before = await image.boundingBox();
+          await page.emulateMedia({ reducedMotion: 'reduce' });
+          expect(await image.boundingBox(), 'the crop stays static under reduced motion').toEqual(before);
+        }
       }
     });
   });
