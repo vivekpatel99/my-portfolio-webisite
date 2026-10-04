@@ -18,6 +18,7 @@ Do not expose private or draft case studies to complete route coverage. Use the 
 | --- | --- | --- |
 | `/` | Hero, featured work, services, testimonials, About, final CTA. Check each hash arrival and scroll transition. | All applicable rules. |
 | `/case-studies/` | Every public card in the single completion-date collection. The first six are the initial batch and Load more reveals the rest. There is no separate Other Work section. Check empty results, return position, and loaded count. | All applicable rules. |
+| `/case-studies/` without JavaScript | Load the prerendered production page in a browser with JavaScript disabled before navigation. Check the first six cards, the natively disabled Load more button, and the `noscript` navigation labeled More case studies with links to every remaining public story. Inspect link destinations, keyboard access, contrast, and wrapped text at the review viewports and zoom. | All applicable rules, including BT-01. |
 | `/project/:projectId/` | Every public case study. Check cover, media variants, gallery, lightbox, captions, article hierarchy, back links, and estimate action when present. | All applicable rules. |
 | `/services/:serviceId` | Every service ID. Check summary, scope, exclusions, rate, and estimate action. | All applicable rules. |
 | `/contact/` | Empty, filled, focused, invalid, disabled, submitting, success, and retry states. Validate draft restoration where supported. | All applicable rules. |
