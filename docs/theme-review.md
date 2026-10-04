@@ -17,7 +17,7 @@ Do not expose private or draft case studies to complete route coverage. Use the 
 | Route or area | Required coverage | Theme rules |
 | --- | --- | --- |
 | `/` | Hero, featured work, services, testimonials, About, final CTA. Check each hash arrival and scroll transition. | All applicable rules. |
-| `/case-studies/` | Every public card, category or filter states when present, empty results, and return position. | All applicable rules. |
+| `/case-studies/` | Every public card in the single completion-date collection. The first six are the initial batch and Load more reveals the rest. There is no separate Other Work section. Check empty results, return position, and loaded count. | All applicable rules. |
 | `/project/:projectId/` | Every public case study. Check cover, media variants, gallery, lightbox, captions, article hierarchy, back links, and estimate action when present. | All applicable rules. |
 | `/services/:serviceId` | Every service ID. Check summary, scope, exclusions, rate, and estimate action. | All applicable rules. |
 | `/contact/` | Empty, filled, focused, invalid, disabled, submitting, success, and retry states. Validate draft restoration where supported. | All applicable rules. |

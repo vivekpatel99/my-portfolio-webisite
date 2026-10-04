@@ -35,6 +35,53 @@ describe('Header', () => {
     });
   });
 
+  it.each([
+    ['/case-studies/', 'Case Studies', 'page'],
+    ['/#services', 'Services', 'location'],
+    ['/#about', 'About', 'location'],
+    ['/#testimonials', 'Testimonials', 'location'],
+    ['/', null, null],
+    ['/contact/#about', null, null],
+  ])('exposes the current destination in the bar and drawer at %s', async (path, selectedName, current) => {
+    const user = userEvent.setup();
+    render(<MemoryRouter initialEntries={[path]}><Header /></MemoryRouter>);
+    const barLinks = within(screen.getByRole('navigation')).getAllByRole('link');
+    expect(barLinks).toHaveLength(4);
+    barLinks.forEach((link) => {
+      expect(link.getAttribute('aria-current')).toBe(link.textContent === selectedName ? current : null);
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Toggle navigation menu' }));
+    const drawerLinks = within(within(screen.getByRole('dialog')).getByRole('navigation')).getAllByRole('link');
+    expect(drawerLinks).toHaveLength(4);
+    drawerLinks.forEach((link) => {
+      expect(link.getAttribute('aria-current')).toBe(link.textContent === selectedName ? current : null);
+    });
+  });
+
+  it('updates hash selection after navigation and closes the drawer on the next selected destination', async () => {
+    const user = userEvent.setup();
+    const LocationProbe = () => {
+      const location = useLocation();
+      return <output data-testid="location">{`${location.pathname}${location.hash}`}</output>;
+    };
+    render(<MemoryRouter initialEntries={['/case-studies/']}><Header /><LocationProbe /></MemoryRouter>);
+    const bar = within(screen.getByRole('navigation'));
+    await user.click(bar.getByRole('link', { name: 'About' }));
+    expect(screen.getByTestId('location').textContent).toBe('/#about');
+    expect(bar.getByRole('link', { name: 'About' }).getAttribute('aria-current')).toBe('location');
+    expect(bar.getByRole('link', { name: 'Case Studies' }).hasAttribute('aria-current')).toBe(false);
+
+    await user.click(screen.getByRole('button', { name: 'Toggle navigation menu' }));
+    const drawer = within(screen.getByRole('dialog'));
+    await user.click(drawer.getByRole('link', { name: 'Services' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(screen.getByTestId('location').textContent).toBe('/#services');
+    expect(bar.getByRole('link', { name: 'Services' }).getAttribute('aria-current')).toBe('location');
+    expect(bar.getByRole('link', { name: 'About' }).hasAttribute('aria-current')).toBe(false);
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Toggle navigation menu' }));
+  });
+
   it('closes the mobile menu at the desktop breakpoint and restores focus to a visible control', async () => {
     const user = userEvent.setup();
     const desktopListeners = new Set();
@@ -201,9 +248,11 @@ describe('Header', () => {
 
     const link = within(screen.getByRole('navigation')).getByRole('link', { name: 'Case Studies' });
     expect(link.getAttribute('href')).toBe('/case-studies/');
+    expect(link.hasAttribute('aria-current')).toBe(false);
     await user.click(link);
 
     await waitFor(() => expect(screen.getByTestId('location').textContent).toBe('/case-studies/'));
+    expect(link.getAttribute('aria-current')).toBe('page');
   });
 
   it.each([

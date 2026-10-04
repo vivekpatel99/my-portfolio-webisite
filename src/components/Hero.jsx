@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { HERO_DETECTED_FIELD_WINDOWS, HERO_INVOICE_FIELDS } from '@/lib/heroDetectedFields';
 import { profileImages } from '@/config/links';
+import { DetectionLabel } from './DetectionFrame';
 
 const BACKGROUND_BOXES = [
   { type: 'bracket', top: '9%', left: '4%', w: 64, h: 44, c: 15, dur: 15, delay: 0, dx: 16, dy: -14, op: 0.78, depth: 0.55 },
@@ -273,7 +274,7 @@ const Hero = () => {
       <div className="container mx-auto px-6 md:px-12 relative z-10 py-0 max-md:px-4 max-md:py-0">
         <div className="max-w-[1320px] mx-auto flex flex-col gap-0 max-md:gap-0">
           {/* Status badge */}
-          <div className="relative flex items-center justify-between gap-4 flex-wrap mb-5">
+          <div className="relative flex items-center justify-between gap-4 flex-wrap mb-5 md:mb-7">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/[0.12] bg-white/[0.03]">
               <span className="w-[7px] h-[7px] rounded-full bg-[#8B5CF6] shadow-[0_0_8px_rgba(139,92,246,0.65)]" />
               <span className="text-[11px] font-mono tracking-wider uppercase text-gray-400">Inference online</span>
@@ -285,26 +286,17 @@ const Hero = () => {
             {/* Left: Profile Invoice */}
             <div className="flex flex-col gap-0.5 min-w-0 w-full max-lg:gap-0 lg:col-start-1 lg:row-start-1">
               <article 
-                className="relative w-full max-w-[760px] border border-[#8B5CF6]/[0.28] rounded-lg px-5 pt-4 pb-1.5 max-md:px-2.5 max-md:pb-2"
+                className="detection-panel detection-panel--hero relative w-full max-w-[760px] px-5 pt-4 pb-1.5 max-md:px-2.5 max-md:pb-2"
                 style={{
                   background: 'linear-gradient(165deg, #141318 0%, #0f1012 55%, #0e0e10 100%)',
-                  boxShadow: '0 0 0 1px rgba(255,255,255,0.03) inset, 0 24px 64px rgba(0,0,0,0.45), 0 0 48px rgba(139,92,246,0.1)'
+                  boxShadow: '0 24px 64px rgba(0,0,0,0.45), 0 0 48px rgba(139,92,246,0.1)'
                 }}
                 aria-label="Profile invoice field parse"
               >
-                {/* Corner brackets */}
-                <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-                  <i className="absolute top-[7px] left-[7px] w-3 h-3 border-l-[1.5px] border-t-[1.5px] border-[rgba(192,132,252,0.65)]" />
-                  <i className="absolute top-[7px] right-[7px] w-3 h-3 border-r-[1.5px] border-t-[1.5px] border-[rgba(192,132,252,0.65)]" />
-                  <i className="absolute bottom-[7px] left-[7px] w-3 h-3 border-l-[1.5px] border-b-[1.5px] border-[rgba(192,132,252,0.65)]" />
-                  <i className="absolute bottom-[7px] right-[7px] w-3 h-3 border-r-[1.5px] border-b-[1.5px] border-[rgba(192,132,252,0.65)]" />
-                </div>
+                <DetectionLabel>Profile Invoice</DetectionLabel>
 
                 {/* Header */}
-                <div className="flex justify-between items-start mb-1 pb-1.5 border-b border-white/[0.08] max-md:mb-1 max-md:pb-1">
-                  <div>
-                    <div className="text-[clamp(1.25rem,2.4vw,1.75rem)] font-bold tracking-tight leading-[1.2] uppercase text-white">Profile Invoice</div>
-                  </div>
+                <div className="flex justify-end items-start mb-1 pb-1.5 border-b border-white/[0.08] max-md:mb-1 max-md:pb-1">
                   <div className="text-right font-mono text-[10px] leading-relaxed text-gray-400">
                     <strong className="block text-gray-400 font-medium tracking-wider">INV-VP-0045</strong>
                   </div>
@@ -406,21 +398,20 @@ const Hero = () => {
             </div>
 
             <div className="relative z-[1] flex flex-wrap gap-3 mt-1 lg:mt-4 lg:col-start-1 lg:row-start-2 max-md:flex-col max-md:mt-4">
-              <Button
-                asChild
-                className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-center font-semibold px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[220px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-0"
+              <Link
+                to="/contact/"
+                className="detection-panel detection-action detection-action--primary inline-flex min-w-[220px] max-md:w-full"
               >
-                <Link to="/contact/">Request a Project Estimate</Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                className="border border-white/[0.14] hover:bg-[#8B5CF6]/8 hover:border-purple-400/35 text-white px-6 py-3.5 h-auto text-base rounded-[10px] min-w-[150px] min-h-[44px] max-md:w-full max-md:px-4 max-md:py-0"
+                Request a Project Estimate
+                <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+              </Link>
+              <a
+                href="#portfolio"
+                className="detection-panel detection-action inline-flex min-w-[150px] max-md:w-full"
               >
-                <a href="#portfolio">
-                  View Case Studies
-                </a>
-              </Button>
+                View Case Studies
+                <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+              </a>
             </div>
 
             {/* Right: Photo detection card */}

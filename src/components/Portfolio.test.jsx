@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import { collectionCaseStudies, eligibleCaseStudies, featuredCaseStudies, getCaseStudyBySlug } from '@/data/caseStudies';
@@ -40,25 +40,18 @@ describe('Portfolio', () => {
   });
 
   describe('Detection Card design (Option A)', () => {
-    it('displays section eyebrow as PORTFOLIO · CASE STUDIES meta line', () => {
+    it('attaches Selected work to the section heading without a duplicate eyebrow', () => {
       const { container } = render(
         <MemoryRouter>
           <Portfolio />
         </MemoryRouter>,
       );
 
-      const eyebrow = container.querySelector('.eyebrow');
-      expect(eyebrow).toBeTruthy();
-      expect(eyebrow.textContent).toContain('PORTFOLIO ·');
-      expect(eyebrow.textContent).toContain('CASE STUDIES');
-      expect(eyebrow.className).toContain('font-mono');
-      expect(eyebrow.className).toContain('tracking-[0.16em]');
-      expect(eyebrow.className).toContain('uppercase');
-      expect(eyebrow.className).toContain('border-b');
-      expect(eyebrow.className).not.toContain('rounded-full');
-      const purpleEm = eyebrow.querySelector('em.not-italic.text-\\[\\#a78bfa\\]');
-      expect(purpleEm).toBeTruthy();
-      expect(purpleEm.textContent).toBe('CASE STUDIES');
+      const heading = within(container).getByRole('heading', { level: 2, name: 'FEATURED CASE STUDIES' });
+      const label = heading.querySelector('.detection-label');
+      expect(label.textContent).toBe('Selected work');
+      expect(label.getAttribute('aria-hidden')).toBe('true');
+      expect(container.querySelector('.eyebrow')).toBeNull();
     });
   });
 });

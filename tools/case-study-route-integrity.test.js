@@ -62,6 +62,7 @@ function fixture() {
     'src/components/CaseStudyArticle.js',
     'src/components/CaseStudyGallery.js',
     'src/components/CaseStudyCard.js',
+    'src/components/DetectionFrame.js',
     'src/components/CaseStudyCollection.js',
     'src/components/CaseStudiesContent.js',
     'src/components/ServiceDetailContent.js',

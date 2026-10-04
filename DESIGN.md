@@ -4,7 +4,7 @@
 
 The portfolio uses the visual language of document extraction and computer vision. Dark panels, purple corner brackets, readable content, and restrained technical labels establish the identity. Proposed default: the work and the estimate action remain the most important information.
 
-This guide records the joint review decisions from 2 October 2026. It is the reference for future UI decisions and the whole-site theme review. It does not claim that the website already follows every rule.
+This guide records the joint review decisions from 2 and 3 October 2026. It is the reference for future UI decisions and the whole-site theme review. It does not claim that the website already follows every rule.
 
 Rule status has three meanings:
 
@@ -81,7 +81,7 @@ Proposed default: the breakpoint system follows the existing Tailwind configurat
 
 The current dark fills and hero ambient treatment are existing references. The following limits on new effects are proposed defaults consistent with #294 and #296.
 
-- Existing reference: dark fills, thin edges, and corner accents separate panels. Existing reference: the hero may retain its existing restrained ambient treatment.
+- Existing reference: dark fills and labeled corner frames separate the approved homepage panels. Existing reference: continuous outer panel borders are removed from those panels. Existing reference: the hero may retain its existing restrained ambient treatment.
 - Proposed default: secondary cards remain quieter than the hero. Proposed default: button hierarchy comes from fill, outline, and spacing. Proposed default: additional gradients, glow, scanning effects, or technical badges are not a substitute for hierarchy. Proposed default: hover decoration stays within the component and does not move surrounding content.
 
 ## Shapes
@@ -92,36 +92,48 @@ Proposed default: the three treatments below are the review vocabulary, not proo
 
 | Use | Meaning | Treatment |
 | --- | --- | --- |
-| Decorative panel frame | Groups a portrait, work item, scope, quote, or next action | Quiet opposing corners. No confidence score or live-analysis claim. |
+| Decorative panel or title frame | Groups a portrait, work item, scope, quote, or section title | Static corner strokes with an attached label. No confidence score or live-analysis claim. |
 | Interactive form boundary | Identifies an editable control and its focus state | Four corners, grey at rest and purple on focus. Follow the contact-field reference. |
 | Simulated extraction frame | Illustrates recognized fields in the hero or a future OCR demonstration | Four field corners with an attached label. Scores are illustrative display constants. Do not add a separate OCR caption to mark them. |
+
+Confirmed on 3 October 2026: Vivek selected the Corners + labels prototype. Confirmed: the approved homepage cards use only top-left and bottom-right corner strokes with attached labels. Confirmed: they use corner frames instead of continuous outer borders and inset corner decorations. Confirmed: main section headings use the same label vocabulary with quieter opposing corners. Proposed default: decoration remains independent of focus indicators and OCR behavior.
 
 Proposed default: These treatments share a visual vocabulary but do not share identical behavior. Proposed default: decorative brackets do not replace a focus indicator. Proposed default: a filled form field does not become an OCR result.
 
 ### SH-02. Placement map
 
-The following map was confirmed during the joint review and is tracked in #294. Confirmed: strengthen existing frames before adding another boundary.
+The following map records the 3 October Corners + labels decision tracked in #294. Confirmed: strengthen existing frames before adding another boundary.
 
 | Location | Framed content | Expression |
 | --- | --- | --- |
-| Hero profile | Two selected field values at a time | Strongest field expression. The pair cycle follows the 3 October experiment, not the earlier three-highlight rotation. |
-| Hero portrait | Outer portrait frame | Strong portrait expression. Label alignment belongs to #297. |
-| Featured work and case-study collection | Each project card | Shared opposing corners with equivalent hover and focus feedback. |
-| Case-study detail | Outer gallery or standalone cover | One subtle static frame clear of controls and image content. |
-| Service offers | Each service card | Quiet existing accents. |
-| Service detail | Scope and estimate panels | Same visual roles as service cards. |
-| Testimonials | Whole quote panel | Quiet existing accents. Individual sentences remain unboxed. |
-| About | Portrait and biography panels | Quiet existing accents. |
-| Final homepage CTA | Primary estimate action | Clear action hierarchy with restrained framing. |
-| Contact | Form panel and editable fields | Panel decoration plus the existing interactive field treatment. |
+| Hero profile invoice | Outer invoice panel | Confirmed: two opposing static corners and a prominent attached Profile Invoice title. Existing reference: preserve the invoice identifier and internal field animation. |
+| Hero detected fields | Two selected values at a time | Existing reference: animated field corners, labels, and illustrative scores. The pair cycle follows the 3 October experiment, not the earlier three-highlight rotation. |
+| Hero portrait | Outer portrait frame | Existing reference: preserve its stronger frame and unboxed engineer label with the existing score. Label alignment belongs to #297. |
+| Homepage section headings | Main h2 headings, including About subsections and final CTA | Confirmed: two opposing corners with a descriptive attached label. |
+| Featured work and case-study collection | Each project card | Confirmed: two opposing static corners and the existing category label attached to the edge. Existing reference: preserve card navigation and focus. |
+| Service offers | Each service card | Confirmed: two opposing static corners and the service offer label on the edge. |
+| Testimonials | Whole quote panel | Confirmed: two opposing static corners with testimonial and client metadata on the edge. Individual sentences remain unboxed. |
+| About | Portrait and biography panels | Confirmed: two opposing static corners with portrait and biography labels on the edge. |
+| Footer | Whole footer content panel | Confirmed: one corner frame and an attached label. Individual links remain unboxed. |
+| Case-study detail, service detail, contact | Existing framed panels and form fields | Existing reference: separate review scope. The homepage decision does not establish completed implementation or verification for these routes. |
 
-Proposed default: headings, paragraphs, navigation links, footer links, legal text, gallery thumbnails, and captions receive no extra decorative boxes. Proposed default: do not add a frame around every item in a framed panel.
+Confirmed: the case-study collection page uses top-left and bottom-right corners around its semantic h1, Selected Case Studies, with the shared heading geometry and rest/hover colors from SH-03. Existing reference: preserve its white and purple text. Confirmed: it has no separate Collection badge or added edge label.
+
+Confirmed on 3 October 2026: all twelve approved completed case studies share one collection, sorted together by completion date. Confirmed: the first six remain the initial batch and Load more reveals the next six. Confirmed: AI Project Planning Assistant and Python CI Workflow Automation appear once in that same grid; there is no separate Other Work section. Existing reference: preserve the three handpicked homepage features, publication eligibility, and collection return position and loaded count. Existing reference: existing ten-card browsing snapshots remain valid and can load the final two cards.
+
+Confirmed on 3 October 2026: testimonial controls show slide dots without a Pause/Play button. Confirmed: selecting a dot stops automatic rotation for the mounted carousel; all dots remain usable for reading other quotes. Existing reference: mouse hover and keyboard focus temporarily hold rotation, and reduced motion disables autoplay.
+
+Proposed default: paragraphs, ordinary navigation links, individual footer links, legal text, gallery thumbnails, and captions receive no extra decorative boxes. Confirmed: the selected header navigation link is the scoped exception under NV-01. Proposed default: do not add a frame around every item inside a framed panel. Action styling remains under BT-01.
 
 ### SH-03. Frame geometry
 
-Proposed default: existing hero value corners use 12px strokes at 1px thickness. Proposed default: existing form corners use 16px at 1px at rest, then 18px at 2px on focus. Proposed default: preserve these distinct role references until a specific visual change is reviewed.
+Confirmed: the selected prototype uses 19px top-left and bottom-right corner strokes at 1px for section titles. Confirmed: panel frames use 23px strokes at 1.5px only in the top-left and bottom-right corners. Confirmed on 3 October 2026: both decorative corners on all shared panels and section titles are grey `#6B7280` at rest and purple `#A78BFA` on hover or keyboard focus within. Existing reference: strokes sit on the outer frame edge rather than inside another border. Confirmed: equivalent panels share this geometry.
 
-Proposed default: secondary panels use a purple leading corner and a muted white opposing corner. Proposed default: match weight, length, and inset between equivalent panels. Proposed default: their final shared dimensions remain a proposed implementation choice for #294. Proposed default: the outer portrait can remain stronger.
+Confirmed: attached labels sit after the top-left stroke, centered on the top-edge guide. Existing reference: they use compact monospace text. Confirmed on 3 October 2026: shared corner labels have transparent backgrounds, including section labels, card labels, the Profile Invoice title, footer label, and the final estimate label. Existing reference: case-study card labels sit entirely above the image edge with a 3px gap so light thumbnails do not cross their text. Existing reference: the Profile Invoice title retains its larger sans-serif title size. Proposed default: reserve space for labels and preserve content padding. Existing reference: image cropping stays on the media container so the outer label remains visible.
+
+Existing reference: case-study grids reserve 48px between rows for wrapped labels. Existing reference: the collection leaves 40px after its result count. Existing reference: the hero leaves at least 8px between the inference badge and the enlarged Profile Invoice title.
+
+Existing reference: hero value corners use 12px strokes at 1px thickness. Existing reference: form corners use 16px at 1px at rest, then 18px at 2px on focus. Existing reference: the outer hero portrait remains stronger. Existing reference: these roles keep their existing behavior.
 
 Proposed default: corner decoration does not intercept clicks, create tab stops, announce motion, cover content, or change layout bounds.
 
@@ -129,24 +141,26 @@ Proposed default: corner decoration does not intercept clicks, create tab stops,
 
 ### BT-01. Button family
 
-Confirmed intent from #296 is that buttons look like one family with small differences in emphasis. Proposed default: Geometry, label treatment, border weight, arrow shape, and states remain consistent across pages.
+Confirmed intent from #296 is that buttons look like one family with small differences in emphasis. Proposed default: geometry, label treatment, border weight, arrow shape, and states remain consistent across pages outside the confirmed family below.
 
-| Variant | Purpose | Proposed default |
+Confirmed on 3 October 2026: the hero's Request a Project Estimate and View Case Studies links, the header's Request Estimate link in the bar and drawer, the final Request a Project Estimate link, and the case-study collection's Back to home and Load more controls use the shared corner family. Confirmed: these actions have square surfaces with subtle purple at the top fading to black, no continuous border, and opposing corners that follow SH-03. Existing reference: all named actions share the existing final CTA background, `#0C0D0D` beneath a purple-to-transparent gradient covering the top 55%, with purple opacity 0.06 at rest and 0.1 on hover or keyboard focus. Confirmed: primary estimate links use weight 650; secondary actions use weight 600. Confirmed: estimate links and the hero View Case Studies link have one decorative trailing ArrowRight icon. Existing reference: Back to home retains its leading ArrowLeft; Load more stays text-only. Confirmed: each control has a separate keyboard focus outline at least 2px wide. Existing reference: preserve the existing text, accessible names, destinations, and navigation behavior.
+
+| Variant | Purpose | Treatment |
 | --- | --- | --- |
-| Primary | Estimate navigation and contact submission | Angular purple fill, readable white label. A trailing arrow accompanies navigation where useful. |
-| Secondary | Browse case studies and other prominent alternatives | Same geometry and label treatment, dark fill, visible outline. |
-| Text action | Scope details, back links, footer navigation | Readable link styling and visible focus without a filled button. |
-| Utility | Gallery, menu, close, zoom, consent, retry | Compact compatible styling with conventional icons and accessible names. |
+| Primary | Named estimate navigation links | Confirmed: purple top fading to black, readable white text at weight 650, opposing corners, and one trailing arrow. |
+| Secondary | Hero View Case Studies and collection controls | Confirmed: matching background and corner geometry, text at weight 600. Existing reference: icons and target heights follow the named controls below. |
+| Text action | Scope details, inline back links, footer navigation | Proposed default: readable link styling and visible focus without a filled button. |
+| Utility | Gallery, menu, close, zoom, consent, retry | Proposed default: compact compatible styling with conventional icons and accessible names. The hero Pause control is not part of this family. |
 
-The variant table is a proposed default. Confirmed: the hero Pause control is removed and is not part of this family.
+Confirmed: the hero Pause control is removed and is not part of this family. Confirmed: the hero pair has matching heights when side by side. Existing reference: header estimate links use the compact variant with a minimum height of 44px; the final estimate link keeps its larger text and target width. Confirmed: the final CTA retains its existing `REQUEST · ESTIMATE` edge label, hidden from assistive technology, and removes the redundant leading boxed arrow. Confirmed: other named actions receive no extra metadata. Existing reference: the final View case studies link stays plain.
 
-Proposed default: The proposed geometry is square corners for prominent actions. Proposed default: header controls can be smaller than hero actions. Proposed default: the hero pair has matching heights when side by side. Proposed default: size differences must remain recognizable variants of the same family.
+Existing reference: the collection's Back to home anchor uses the compact 44px variant. Existing reference: Load more uses the standard 56px variant and preserves the existing incremental loading and history state. Existing reference: its static HTML remains natively disabled. Existing reference: once exhausted, the control stays focusable with `aria-disabled` and guarded clicks. Existing reference: both disabled forms keep grey corners and the resting background on hover or focus, with reduced opacity and a disabled cursor. Existing reference: the exhausted control retains its keyboard focus outline.
 
 Proposed default: all interactive variants have visible keyboard focus and clear hover, pressed, disabled, loading, and selected states where relevant. Confirmed under #296: normal standalone action targets are at least 44 by 44 CSS pixels. Existing reference: text links within prose keep their normal reading layout.
 
-Existing reference: Keep anchors for navigation and buttons for actions. Existing reference: preserve destinations, new-tab behavior, modal behavior, and submitting protection. Existing reference: a loading label must not shift the button or permit another submission. Existing reference: review consent and gallery callers before changing a generic button default.
+Existing reference: keep anchors for navigation and buttons for actions. Existing reference: preserve destinations, new-tab behavior, modal behavior, and submitting protection. Existing reference: a loading label must not shift the button or permit another submission. Existing reference: review consent and gallery callers before changing a generic button default.
 
-Proposed default: Use restrained corners on prominent CTAs when they improve continuity. Proposed default: utility controls and text links do not each need a decorative frame. Proposed default: review the repeated `REQUEST · ESTIMATE` label and extra glyph in the final CTA under #296. Proposed default: that review is still open and is not a confirmation.
+Confirmed: this family is scoped to the named navigation links and the collection's Load more control. Existing reference: form submission, gallery, consent, menu controls, and other buttons retain their existing defaults. Proposed default: utility controls and text links do not each need a decorative frame.
 
 ### OC-01. Simulated OCR placement
 
@@ -160,7 +174,7 @@ Existing project evidence may contain real model outputs. Existing reference: pr
 
 Confirmed intent from #297 places the small field label on the frame's top-edge guide, after the top-left horizontal stroke. Confirmed: the value stays below the label inside the reserved field area.
 
-Proposed default: center the label line box vertically on the top-edge guide. Proposed default: give the label a matching background where needed so edges or image detail do not cross its text. Proposed default: avoid a heavy badge around plain field labels.
+Proposed default: center the label line box vertically on the top-edge guide. Confirmed: shared corner labels named in SH-03 have transparent backgrounds. Proposed default: a hero field label may use a matching background only where image detail would cross its text. Proposed default: avoid a heavy badge around plain field labels.
 
 Confirmed: the 2 October inactive-label policy is superseded. Confirmed: unselected annotations fade with their corners and do not keep a stationary visible label. Confirmed: Rate is a rotating field, not a static label and score outside the frame cycle. Confirmed: `Tags` is removed because the topic chips are not detected fields; do not retain a Tags label or score. Those corrections are confirmed by the 3 October experiment. The experiment's measured attachment is an existing reference, not a competing proposed default: each invoice label begins 17 CSS pixels from the frame's left edge, a 5px gap after the 12px stroke, and its 12px line box is centered on the 6px top-edge guide. Existing reference: hidden annotations keep their reserved row and geometry.
 
@@ -221,12 +235,14 @@ Existing reference: keep empty, filled, focused, invalid, disabled, submitting, 
 
 Existing reference: the header, mobile menu, footer, consent dialog, gallery lightbox, and retry controls keep their current navigation and keyboard behavior. Existing reference: branding does not justify obstructing links or controls. Existing reference: button and focus styling follow BT-01, including that rule's own clause statuses.
 
+Confirmed on 3 October 2026: the selected header link uses opposing top-left and bottom-right purple corners in place of its underline. Confirmed: apply the same selected treatment in the bar and drawer, with 12px strokes at 1px width and a horizontal 8px inset beyond the link edges so labels and navigation gaps stay in place. Confirmed: selected corners remain `#A78BFA` at rest; inactive links remain plain. Confirmed: every header navigation link has a target at least 44px wide and high and a separate 2px keyboard focus outline. Existing reference: preserve destinations, modified-click handling, smooth scrolling, menu closure, and focus restoration. Confirmed: use `aria-current="page"` for the active Case Studies route and `aria-current="location"` for the active homepage hash. Confirmed: do not add navigation labels or filled surfaces.
+
 Proposed default: articles and legal pages use the same colors, type relationships, and spacing conventions with quieter decoration. Proposed default: reading text stays unboxed. Proposed default: not-found and route-error states retain a clear recovery action.
 
 ## Do's and Don'ts
 
 - Confirmed: do use the SH-02 placement map before adding brackets.
-- Confirmed: do use the same button family across header, hero, service, project, and contact actions.
+- Confirmed: do use the shared corner family for the navigation links and collection controls named in BT-01. Existing reference: form submission and other unnamed controls keep their current treatment.
 - Confirmed: do keep simulated scores confined to the hero profile fields and a future OCR demonstration that stays separate from factual content, without a separate OCR caption.
 - Proposed default: do reference a rule ID and the cited clause's own status when reporting a theme mismatch.
 - Do preserve confirmed facts, real evidence, routes, and form behavior during visual work.
