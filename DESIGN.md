@@ -245,7 +245,7 @@ Proposed default: articles and legal pages use the same colors, type relationshi
 - Confirmed: do use the shared corner family for the navigation links and collection controls named in BT-01. Existing reference: form submission and other unnamed controls keep their current treatment.
 - Confirmed: do keep simulated scores confined to the hero profile fields and a future OCR demonstration that stays separate from factual content, without a separate OCR caption.
 - Proposed default: do reference a rule ID and the cited clause's own status when reporting a theme mismatch.
-- Do preserve confirmed facts, real evidence, routes, and form behavior during visual work.
+- Existing reference: preserve confirmed facts, real evidence, routes, and form behavior during visual work.
 - Proposed default: don't invent credentials, project metrics, testimonials, client names, or conversion improvements.
 - Proposed default: don't add duplicate borders behind corner-only form boundaries.
 - Proposed default: don't use corner color as the only focus, selected, or error signal.
