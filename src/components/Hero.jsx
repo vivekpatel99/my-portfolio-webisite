@@ -461,20 +461,24 @@ const Hero = () => {
 
                 <div className="relative z-[2]">
                   <div
-                    className="relative w-full rounded-[28px] overflow-hidden bg-[#8B5CF6]"
+                    className="relative w-full rounded-[28px] overflow-clip bg-[#8B5CF6]"
                     style={{
                       aspectRatio: '362 / 424',
+                      containerType: 'inline-size',
                       boxShadow: '0 28px 64px rgba(0,0,0,0.5), 0 0 56px rgba(139,92,246,0.18)'
                     }}
                   >
                     <img
                       src={profileImages.portrait}
                       srcSet={profileImages.portraitSrcSet}
-                      sizes="(min-width: 768px) 236px, 216px"
+                      sizes="(min-width: 768px) 425px, 389px"
                       width="1008"
                       height="1367"
                       alt="Tracked engineer portrait"
-                      className="block w-full h-full object-cover object-[center_top]"
+                      className="absolute block max-w-none h-auto left-1/2 -translate-x-1/2"
+                      // The original's first hair pixel is at y=182 of 1008px width.
+                      // At 1.8x width it sits 32.5% of the frame width below image top.
+                      style={{ width: '180%', top: 'calc(3px - 32.5cqw)' }}
                     />
 
                     {!reduceMotion && (
