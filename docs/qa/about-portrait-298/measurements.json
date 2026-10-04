@@ -1,0 +1,198 @@
+{
+  "before": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "currentSrc": "images/vivek-black-and-white-480w-3a7a7a1ab19c.webp",
+      "complete": true,
+      "naturalWidth": 461,
+      "naturalHeight": 625,
+      "image": {
+        "width": 464.546875,
+        "height": 348.40625
+      },
+      "photo": {
+        "width": 464.546875,
+        "height": 348.40625
+      },
+      "panel": {
+        "width": 512.546875,
+        "height": 396.40625,
+        "spaceBelowPhoto": 26
+      },
+      "objectPosition": "50% 0%"
+    },
+    {
+      "viewport": {
+        "width": 980,
+        "height": 1324
+      },
+      "currentSrc": "images/vivek-black-and-white-480w-3a7a7a1ab19c.webp",
+      "complete": true,
+      "naturalWidth": 352,
+      "naturalHeight": 478,
+      "image": {
+        "width": 354.78125,
+        "height": 266.078125
+      },
+      "photo": {
+        "width": 354.78125,
+        "height": 266.078125
+      },
+      "panel": {
+        "width": 402.78125,
+        "height": 321.234375,
+        "spaceBelowPhoto": 33.15625
+      },
+      "objectPosition": "50% 0%"
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "currentSrc": "images/vivek-black-and-white-480w-3a7a7a1ab19c.webp",
+      "complete": true,
+      "naturalWidth": 282,
+      "naturalHeight": 382,
+      "image": {
+        "width": 286,
+        "height": 214.5
+      },
+      "photo": {
+        "width": 286,
+        "height": 214.5
+      },
+      "panel": {
+        "width": 334,
+        "height": 262.5,
+        "spaceBelowPhoto": 26
+      },
+      "objectPosition": "50% 0%"
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 844
+      },
+      "currentSrc": "images/vivek-black-and-white-480w-3a7a7a1ab19c.webp",
+      "complete": true,
+      "naturalWidth": 212,
+      "naturalHeight": 287,
+      "image": {
+        "width": 216,
+        "height": 162
+      },
+      "photo": {
+        "width": 216,
+        "height": 162
+      },
+      "panel": {
+        "width": 264,
+        "height": 210,
+        "spaceBelowPhoto": 26
+      },
+      "objectPosition": "50% 0%"
+    }
+  ],
+  "after": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "currentSrc": "images/vivek-about-800w-77ce8032d2e7.webp",
+      "complete": true,
+      "naturalWidth": 465,
+      "naturalHeight": 385,
+      "image": {
+        "width": 464.546875,
+        "height": 348.40625
+      },
+      "photo": {
+        "width": 464.546875,
+        "height": 348.40625
+      },
+      "panel": {
+        "width": 512.546875,
+        "height": 396.40625,
+        "spaceBelowPhoto": 26
+      },
+      "objectPosition": "50% calc(100% + 5px)"
+    },
+    {
+      "viewport": {
+        "width": 980,
+        "height": 1324
+      },
+      "currentSrc": "images/vivek-about-400w-e9c1fa10c8ee.webp",
+      "complete": true,
+      "naturalWidth": 354,
+      "naturalHeight": 294,
+      "image": {
+        "width": 354.78125,
+        "height": 266.078125
+      },
+      "photo": {
+        "width": 354.78125,
+        "height": 266.078125
+      },
+      "panel": {
+        "width": 402.78125,
+        "height": 321.234375,
+        "spaceBelowPhoto": 33.15625
+      },
+      "objectPosition": "50% calc(100% + 5px)"
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "currentSrc": "images/vivek-about-400w-e9c1fa10c8ee.webp",
+      "complete": true,
+      "naturalWidth": 286,
+      "naturalHeight": 237,
+      "image": {
+        "width": 286,
+        "height": 214.5
+      },
+      "photo": {
+        "width": 286,
+        "height": 214.5
+      },
+      "panel": {
+        "width": 334,
+        "height": 262.5,
+        "spaceBelowPhoto": 26
+      },
+      "objectPosition": "50% calc(100% + 5px)"
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 844
+      },
+      "currentSrc": "images/vivek-about-400w-e9c1fa10c8ee.webp",
+      "complete": true,
+      "naturalWidth": 216,
+      "naturalHeight": 179,
+      "image": {
+        "width": 216,
+        "height": 162
+      },
+      "photo": {
+        "width": 216,
+        "height": 162
+      },
+      "panel": {
+        "width": 264,
+        "height": 210,
+        "spaceBelowPhoto": 26
+      },
+      "objectPosition": "50% calc(100% + 5px)"
+    }
+  ]
+}

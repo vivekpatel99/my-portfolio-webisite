@@ -23,6 +23,7 @@ describe('derivative cache busting (#252)', () => {
   // /assets/* is cached immutable, so a regenerated file must never reuse a name.
   it.each([
     ['portrait', profileImages.portraitSrcSet, profileImages.portrait],
+    ['About portrait', profileImages.aboutPortraitSrcSet, profileImages.portrait],
     ['logo', logos.logoSrcSet, logos.favicon],
   ])('names every %s derivative with the first 12 hex chars of its own SHA-256', (_, srcSet, source) => {
     const urls = derivativeUrls(srcSet, source);
@@ -74,5 +75,21 @@ describe('header logo derivatives (#252)', () => {
     expect(assetsLinks.logo).toBe(logos.favicon);
     const indexHtml = readFileSync(resolve(__dirname, '../../index.html'), 'utf8');
     expect(indexHtml).toContain('href="/assets/logos/mylogo.png" media="(prefers-color-scheme: dark)"');
+  });
+});
+
+// #298 retains the authentic source and uses a distinct crop with proportional
+// headroom, including integer heights for every responsive candidate.
+describe('About portrait derivatives (#298)', () => {
+  it('ships independent 400w, 800w, and 1200w crops with matching intrinsic proportions', () => {
+    const entries = candidates(profileImages.aboutPortraitSrcSet);
+    expect(entries.map(([, descriptor]) => descriptor)).toEqual(['400w', '800w', '1200w']);
+    expect(profileImages.aboutPortrait).toBe(entries[1][0]);
+    entries.forEach(([url, descriptor]) => {
+      expect(url).not.toBe(profileImages.portrait);
+      const width = Number.parseInt(descriptor, 10);
+      expect(imageSize(readFileSync(publicFile(url)))).toMatchObject({ width, height: width * 664 / 800, type: 'webp' });
+      expect(statSync(publicFile(url)).size).toBeLessThanOrEqual(80 * 1024);
+    });
   });
 });
