@@ -21,7 +21,7 @@ Do not expose private or draft case studies to complete route coverage. Use the 
 | `/case-studies/` without JavaScript | Load the prerendered production page in a browser with JavaScript disabled before navigation. Check the first six cards, the natively disabled Load more button, and the `noscript` navigation labeled More case studies with links to every remaining public story. Inspect link destinations, keyboard access, contrast, and wrapped text at the review viewports and zoom. | All applicable rules, including BT-01. |
 | `/project/:projectId/` | Every public case study. Check cover, media variants, gallery, lightbox, captions, article hierarchy, back links, and estimate action when present. | All applicable rules. |
 | `/services/:serviceId` | Every service ID. Check summary, scope, exclusions, rate, and estimate action. | All applicable rules. |
-| `/contact/` | Empty, filled, focused, invalid, disabled, submitting, success, and retry states. Validate draft restoration where supported. | All applicable rules. |
+| `/contact/` | Empty, filled, focused, invalid, disabled, submitting, success, and retry states. Validate draft restoration where supported. Enable forced-colors mode and inspect empty and filled fields at rest and with keyboard focus. Verify the 1px CanvasText resting outline and 2px Highlight focused outline remain visible. | All applicable rules, including FM-01. |
 | `/legal/` | Whole page, heading hierarchy, links, and shared shell. | All applicable rules. |
 | `/data-policy/` | Whole page, heading hierarchy, links, and consent entry points. | All applicable rules. |
 | Unknown URL, invalid project, invalid service | Not-found appearance and recovery links. | All applicable rules. |
@@ -34,7 +34,7 @@ Use a route-by-state coverage table. A row is complete only after its applicable
 
 ## Inspect appearance and behavior
 
-Capture the desktop 1440 by 900 layout, the review's 980 by 1324 layout, mobile 390 by 844, and narrow 320 by 740. Record actual dimensions if the browser uses a different viewport. Check native 200% browser zoom and reduced motion.
+Capture the desktop 1440 by 900 layout, the review's 980 by 1324 layout, mobile 390 by 844, and narrow 320 by 740. Record actual dimensions if the browser uses a different viewport. Check native 200% browser zoom and reduced motion. Include forced-colors mode for the contact form as specified in its coverage row.
 
 For each applicable component, inspect resting appearance, mouse hover, keyboard focus, touch appearance, long text, and supported disabled or loading states. Inspect modal entry, focus containment, Escape, and focus return when those behaviors apply.
 
