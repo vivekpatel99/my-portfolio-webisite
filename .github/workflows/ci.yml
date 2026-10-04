@@ -118,6 +118,25 @@ jobs:
           if-no-files-found: error
           retention-days: 1
           compression-level: 0
+  apache-service-qa:
+    needs: production-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: production-dist
+          path: ${{ runner.temp }}/production-dist
+      - name: Restore production bundle
+        run: tar -xzf "$RUNNER_TEMP/production-dist/production-dist.tar.gz"
+      - name: Check service routes under Apache HTTPS
+        run: npm run qa:apache-services
   passive-qa:
     needs: production-build
     strategy:
@@ -304,6 +323,7 @@ jobs:
     needs:
       - unit-tests
       - production-build
+      - apache-service-qa
       - passive-qa
       - contact-qa
       - motion-qa

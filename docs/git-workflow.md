@@ -89,10 +89,18 @@ pipeline; open a pull request to request remote verification. New commits cancel
 older runs for the same pull request or branch.
 
 Unit tests, the production build, contact lifecycle QA, reduced-motion QA, and
-fake telemetry QA run independently. Two passive browser QA shards consume the
-same validated production build. Its archive preserves hidden deployment files
-such as `.htaccess`. Each shard publishes its own reconstructed, sanitized JSON
+fake telemetry QA run independently. Apache service-route QA and two passive
+browser QA shards consume the same validated production build. Its archive
+preserves hidden deployment files such as `.htaccess`. Each shard publishes its
+own reconstructed, sanitized JSON
 artifact for seven days; raw browser captures are disabled.
+
+Apache service-route QA serves that archive over local HTTPS using the unchanged
+deployment `.htaccess`. It checks service redirects, static content and metadata,
+sitemap entries, and real HTTP 404s for unknown service IDs. Run it locally after
+building with `npm run qa:apache-services` (a local Docker daemon and OpenSSL
+required). This guards hosting behavior that Vite preview cannot establish; production deployment
+verification remains separate.
 
 The required `test-and-build` check aggregates every CI job. It runs even when
 dependencies fail and rejects failures, cancellations, skipped jobs, and missing
