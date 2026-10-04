@@ -458,8 +458,20 @@ test('hero invoice gaps hold under Chromium 200% browser zoom', async ({ browser
       await page.clock.pauseAt(new Date('2026-10-04T08:00:01Z'));
       await page.emulateMedia({ reducedMotion: 'no-preference' });
       const hero = page.locator('section[data-hero-highlight-index]');
+      // The cycle waits until the outgoing fade is rendered, so a fixed
+      // clock jump never reaches the next pair. Follow that sequence.
+      const advancePair = async (delay) => {
+        await page.clock.runFor(delay);
+        await expect(hero).toHaveAttribute('data-hero-highlight-phase', 'leaving');
+        await expect.poll(() => hero.locator('.invoice-field-corners > .hero-field-label').evaluateAll((labels) =>
+          labels.map((label) => Number(getComputedStyle(label).opacity))), { intervals: [20] }).toEqual([0, 0]);
+        await page.clock.runFor(100);
+        await expect(hero).toHaveAttribute('data-hero-highlight-phase', 'entering');
+        await page.clock.runFor(100);
+        await expect(hero).toHaveAttribute('data-hero-highlight-phase', 'steady');
+      };
       for (const [index, pair] of [['name', 'role'], ['credential', 'success'], ['rate', 'location']].entries()) {
-        if (index) await page.clock.runFor(index === 1 ? 2200 : 2000);
+        if (index) await advancePair(index === 1 ? 2000 : 1800);
         await expect(hero).toHaveAttribute('data-hero-highlight-index', String(index));
         await expect.poll(() => invoice.locator('.hero-field-label').evaluateAll((elements) => elements
           .filter((element) => Number(getComputedStyle(element).opacity) === 1)
