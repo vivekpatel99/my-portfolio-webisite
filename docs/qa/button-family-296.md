@@ -130,7 +130,13 @@ passes the scoped ESLint no-unused-vars/parser check (the repository defines no
 lint script). `git diff --check` passes. No TypeScript source changed; the
 production build validates the frontend transformation. All 68 unit files
 and 847 tests pass on Node 24 with one worker. Earlier parallel-load runs hit
-publication fixture timeouts; the isolated full run passed.
+publication fixture timeouts; the isolated full run passed. That full run was
+on the issue implementation before integrating upstream `develop` at
+`806ff5191d72b1e32dd8a8002ede067826d19806`. The integration preserved the email
+card change and CI updates. The combined branch passes 85 affected tests in
+Contact, Portfolio, CI-result aggregation, and QA-artifact workflow files,
+and its production build passes again. The upstream changes do not alter
+the action crops recorded here.
 
 ## Review and limits
 
