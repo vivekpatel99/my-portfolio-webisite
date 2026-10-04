@@ -18,6 +18,8 @@ const selections = [
 async function advancePair(page, hero, delay = 2000) {
   await page.clock.runFor(delay);
   await expect(hero).toHaveAttribute('data-hero-highlight-phase', 'leaving');
+  await expect.poll(() => hero.locator('.invoice-field-corners > .hero-field-label').evaluateAll((labels) =>
+    labels.map((label) => Number(getComputedStyle(label).opacity))), { intervals: [20] }).toEqual([0, 0]);
   await page.clock.runFor(100);
   await expect(hero).toHaveAttribute('data-hero-highlight-phase', 'entering');
   await page.clock.runFor(100);
@@ -169,6 +171,8 @@ test.describe('animated OCR experiment', () => {
       expect(await fieldBounds(page)).toEqual(initialBounds);
       await expect(page.locator('article .hero-field-label')).toHaveText(expectedLabels);
     }
+    await expect.poll(() => page.evaluate(() => window.__heroPairProbe.frames), { timeout: 5000 })
+      .toBeGreaterThan(100);
     const sampled = await page.evaluate(() => {
       window.__heroPairProbe.active = false;
       return window.__heroPairProbe;

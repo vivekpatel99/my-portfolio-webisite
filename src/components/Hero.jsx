@@ -119,15 +119,29 @@ const Hero = () => {
     }
 
     const delay = highlight.phase === 'initial' ? 2000 : highlight.phase === 'steady' ? 1800 : 100;
-    const timer = setTimeout(() => {
+    let fadeFrame = null;
+    const advance = () => {
+      if (highlight.phase === 'leaving') {
+        const labels = heroRef.current?.querySelectorAll('.hero-rotating-annotation > .hero-field-label') ?? [];
+        // A delayed paint can start the CSS fade after its timer starts.
+        // Keep the incoming pair hidden until the outgoing fade is rendered.
+        if ([...labels].some((label) => Number.parseFloat(getComputedStyle(label).opacity) > 0.001)) {
+          fadeFrame = requestAnimationFrame(advance);
+          return;
+        }
+      }
       setHighlight((current) => {
         if (current.phase === 'leaving') {
           return { index: (current.index + 1) % HERO_DETECTED_FIELD_WINDOWS.length, phase: 'entering' };
         }
         return { index: current.index, phase: current.phase === 'entering' ? 'steady' : 'leaving' };
       });
-    }, delay);
-    return () => clearTimeout(timer);
+    };
+    const timer = setTimeout(advance, delay);
+    return () => {
+      clearTimeout(timer);
+      if (fadeFrame !== null) cancelAnimationFrame(fadeFrame);
+    };
   }, [highlight, highlightsRunning, reduceMotion]);
 
   useEffect(() => {
@@ -461,20 +475,24 @@ const Hero = () => {
 
                 <div className="relative z-[2]">
                   <div
-                    className="relative w-full rounded-[28px] overflow-hidden bg-[#8B5CF6]"
+                    className="relative w-full rounded-[28px] overflow-clip bg-[#8B5CF6]"
                     style={{
                       aspectRatio: '362 / 424',
+                      containerType: 'inline-size',
                       boxShadow: '0 28px 64px rgba(0,0,0,0.5), 0 0 56px rgba(139,92,246,0.18)'
                     }}
                   >
                     <img
                       src={profileImages.portrait}
                       srcSet={profileImages.portraitSrcSet}
-                      sizes="(min-width: 768px) 236px, 216px"
+                      sizes="(min-width: 768px) 425px, 389px"
                       width="1008"
                       height="1367"
                       alt="Tracked engineer portrait"
-                      className="block w-full h-full object-cover object-[center_top]"
+                      className="absolute block max-w-none h-auto left-1/2 -translate-x-1/2"
+                      // The original's first hair pixel is at y=182 of 1008px width.
+                      // At 1.8x width it sits 32.5% of the frame width below image top.
+                      style={{ width: '180%', top: 'calc(3px - 32.5cqw)' }}
                     />
 
                     {!reduceMotion && (
