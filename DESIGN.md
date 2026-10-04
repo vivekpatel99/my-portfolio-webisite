@@ -117,6 +117,8 @@ The following map records the 3 October Corners + labels decision tracked in #29
 | Footer | Whole footer content panel | Confirmed: one corner frame and an attached label. Individual links remain unboxed. |
 | Case-study detail, service detail, contact | Existing framed panels and form fields | Existing reference: separate review scope. The homepage decision does not establish completed implementation or verification for these routes. |
 
+Confirmed on 4 October 2026: the contact page's Prefer email? card uses the shared top-left and bottom-right panel corners from SH-03 in place of its continuous border. Confirmed: preserve the existing prompt, email link, and fill without adding an edge label or confidence score.
+
 Confirmed: the case-study collection page uses top-left and bottom-right corners around its semantic h1, Selected Case Studies, with the shared heading geometry and rest/hover colors from SH-03. Existing reference: preserve its white and purple text. Confirmed: it has no separate Collection badge or added edge label.
 
 Confirmed on 3 October 2026: all twelve approved completed case studies share one collection, sorted together by completion date. Confirmed: the first six remain the initial batch and Load more reveals the next six. Confirmed: AI Project Planning Assistant and Python CI Workflow Automation appear once in that same grid; there is no separate Other Work section. Existing reference: preserve the three handpicked homepage features, publication eligibility, and collection return position and loaded count. Existing reference: existing ten-card browsing snapshots remain valid and can load the final two cards.

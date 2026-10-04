@@ -40,7 +40,7 @@ describe('Portfolio', () => {
   });
 
   describe('Detection Card design (Option A)', () => {
-    it('names the featured section with a semantic heading', () => {
+    it('keeps Featured Case Studies as the semantic section heading with purple emphasis', () => {
       const { container } = render(
         <MemoryRouter>
           <Portfolio />
@@ -49,6 +49,7 @@ describe('Portfolio', () => {
 
       const heading = within(container).getByRole('heading', { level: 2, name: 'FEATURED CASE STUDIES' });
       expect(heading.closest('section').id).toBe('portfolio');
+      expect(within(heading).getByText('CASE STUDIES').className).toContain('text-[#8B5CF6]');
     });
   });
 });
