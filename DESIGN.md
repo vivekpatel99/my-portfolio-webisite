@@ -59,7 +59,7 @@ The font roles below are existing references. The layout and legibility prescrip
 - Confirmed: button intent is one readable family. Proposed default: uppercase monospace with modest tracking, following the angular header and contact controls. Proposed default: final size, weight, and tracking require a representative button review under #296.
 - Existing reference: preserve one semantic h1 per page. Confirmed: in the hero, Role retains its h1 even when decorative labels move.
 - Proposed default: do not shrink labels to force a frame to fit. Proposed default: expand the wrapper, wrap the value, or stack the layout.
-- Confirmed: copy cleanup removes the redundant `PORTFOLIO · CASE STUDIES` eyebrow above the existing Featured Case Studies heading under #295. Proposed default: do not remove every eyebrow automatically. Proposed default: retain one only when it adds information absent from the heading.
+- Confirmed: copy cleanup removes the redundant `PORTFOLIO · CASE STUDIES` eyebrow above the existing Featured Case Studies heading under #295. This scoped removal also excludes a replacement `Selected work` edge label: the main h2 leads the section, retaining its opposing corners and purple emphasis. Proposed default: do not remove every eyebrow automatically. Proposed default: retain one only when it adds information absent from the heading.
 
 ## Layout
 
@@ -109,7 +109,7 @@ The following map records the 3 October Corners + labels decision tracked in #29
 | Hero profile invoice | Outer invoice panel | Confirmed: two opposing static corners and a prominent attached Profile Invoice title. Existing reference: preserve the invoice identifier and internal field animation. |
 | Hero detected fields | Two selected values at a time | Existing reference: animated field corners, labels, and illustrative scores. The pair cycle follows the 3 October experiment, not the earlier three-highlight rotation. |
 | Hero portrait | Outer portrait frame | Existing reference: preserve its stronger frame and unboxed engineer label with the existing score. Label alignment belongs to #297. |
-| Homepage section headings | Main h2 headings, including About subsections and final CTA | Confirmed: two opposing corners with a descriptive attached label. |
+| Homepage section headings | Main h2 headings, including About subsections and final CTA | Confirmed: two opposing corners with a descriptive attached label. Featured Case Studies is the scoped TY-01 exception under #295: corners without an extra label. |
 | Featured work and case-study collection | Each project card | Confirmed: two opposing static corners and the existing category label attached to the edge. Existing reference: preserve card navigation and focus. |
 | Service offers | Each service card | Confirmed: two opposing static corners and the service offer label on the edge. |
 | Testimonials | Whole quote panel | Confirmed: two opposing static corners with testimonial and client metadata on the edge. Individual sentences remain unboxed. |
