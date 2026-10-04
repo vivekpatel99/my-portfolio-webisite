@@ -17,14 +17,14 @@ const About = () => {
             <DetectionLabel>Portrait</DetectionLabel>
             <div className="photo-area aspect-[4/3] bg-[#161718] overflow-hidden">
               <img
-                src={profileImages.portrait}
-                srcSet={profileImages.portraitSrcSet}
-                sizes="(min-width: 1216px) 461px, (min-width: 768px) calc(46.5vw - 103px), calc(100vw - 108px)"
-                width="1008"
-                height="1367"
+                src={profileImages.aboutPortrait}
+                srcSet={profileImages.aboutPortraitSrcSet}
+                sizes="(min-width: 1216px) 465px, (min-width: 768px) calc((100vw - 114px) / 2.15 - 48px), calc(100vw - 104px)"
+                width="800"
+                height="664"
                 alt="Portrait of Vivek Patel"
                 loading="lazy"
-                className="block w-full h-full object-cover object-[center_top]"
+                className="block w-full h-full object-cover object-[center_calc(100%+5px)]"
               />
             </div>
           </article>

@@ -414,6 +414,75 @@ const portraitDensityCases = [
   { width: 1440, height: 900, dpr: 2 },
 ];
 
+// #298: the About crop has 64 source pixels above the first hair at y=182
+// in the authentic photograph. Its 800x664 geometry is exactly 64px taller
+// than 4:3, so bottom + 5px positioning puts that landmark at 5 CSS pixels.
+for (const viewport of [
+  { width: 1440, height: 900 },
+  { width: 980, height: 1324 },
+  { width: 390, height: 844 },
+  { width: 320, height: 844 },
+]) {
+  for (const arrival of ['cold scroll', 'direct anchor']) {
+    test(`About portrait has fixed hair headroom and loads on ${arrival} at ${viewport.width}px (#298)`, async ({ page }, testInfo) => {
+      test.skip(testInfo.project.name.startsWith('prod-'), 'The About crop must be released before asserting it on production.');
+      await page.setViewportSize(viewport);
+      let releaseImages;
+      const imagesReleased = new Promise((resolve) => { releaseImages = resolve; });
+      await page.route('**/vivek-about-*.webp', async (route) => {
+        await imagesReleased;
+        await route.continue();
+      });
+      await page.goto(arrival === 'direct anchor' ? '/#about' : '/', { waitUntil: 'domcontentloaded' });
+      const image = page.getByAltText('Portrait of Vivek Patel');
+      if (arrival === 'direct anchor') await expect(image).toBeInViewport();
+      else await image.scrollIntoViewIfNeeded();
+      const before = await image.boundingBox();
+      releaseImages();
+      await image.evaluate((img) => img.decode());
+      await expect(image).toBeInViewport();
+      const after = await image.boundingBox();
+      expect(after.width).toBe(before.width);
+      expect(after.height).toBe(before.height);
+
+      const composition = await image.evaluate((img) => {
+        const box = img.getBoundingClientRect();
+        const photo = img.closest('.photo-area').getBoundingClientRect();
+        const scale = Math.max(box.width / 800, box.height / 664);
+        return {
+          complete: img.complete && img.naturalWidth > 0,
+          currentSrc: img.currentSrc,
+          objectFit: getComputedStyle(img).objectFit,
+          objectPosition: getComputedStyle(img).objectPosition,
+          ratio: photo.width / photo.height,
+          hairGap: box.height - 664 * scale + 5 + 64 * scale,
+          sources: img.srcset.split(',').map((entry) => entry.trim().split(/\s+/)[0]),
+        };
+      });
+      expect(composition.complete).toBe(true);
+      expect(composition.currentSrc).toContain('/vivek-about-');
+      expect(composition.objectFit).toBe('cover');
+      expect(composition.objectPosition).toBe('50% calc(100% + 5px)');
+      expect(composition.ratio).toBeCloseTo(4 / 3, 2);
+      // Chromium quantizes the 4:3 frame to 1/64 CSS px (980px is 0.0078px short).
+      expect(Math.abs(composition.hairGap - 5)).toBeLessThanOrEqual(1 / 64);
+
+      // A missing candidate must fail even when a different srcset choice loads.
+      for (const url of composition.sources) {
+        const response = await page.request.get(url);
+        expect(response.status(), url).toBe(200);
+        expect(response.headers()['content-type'], url).toContain('image/webp');
+        expect(await page.evaluate(async (src) => {
+          const candidate = new Image();
+          candidate.src = src;
+          await candidate.decode();
+          return candidate.complete && candidate.naturalWidth > 0;
+        }, url)).toBe(true);
+      }
+    });
+  }
+}
+
 const loadedPortraitDensity = (image) => image.evaluate(async (img) => {
   // A plain Image without srcset reports the chosen file's real pixel width.
   const file = new Image();
