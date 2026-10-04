@@ -125,3 +125,17 @@ The shared source, hero component, and hero responsive candidates are unchanged.
 
 Remote CI and owner review remain PR delivery steps; these local checks do not
 authorize merging or a production release.
+
+## Full-CI timing correction
+
+The initial remote passive QA run exposed an intermittent `EncodingError` in
+the new cold-scroll test. Immediately calling `decode()` after releasing image
+responses raced lazy loading and responsive source selection. The existing
+image-density tests already wait for completion before decoding.
+
+The failure was reproduced against the exact production artifact from CI run
+`37191527053`: 31 repeated desktop/mobile cases passed and one failed at the
+early `decode()` call. After adding the same completion wait, all 32 repeated
+cases passed. Decoding, HTTP status, dimensions, and candidate assertions remain
+in place; broken or missing images still fail the test. No product or asset
+change was required. Remote CI must pass again on the corrected PR head.

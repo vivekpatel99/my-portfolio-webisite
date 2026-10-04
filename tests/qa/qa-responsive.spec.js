@@ -439,6 +439,9 @@ for (const viewport of [
       else await image.scrollIntoViewIfNeeded();
       const before = await image.boundingBox();
       releaseImages();
+      // Lazy loading/srcset selection can still be pending after scrolling.
+      // Wait for the chosen image before decode(), which rejects if it changes.
+      await expect.poll(() => image.evaluate((img) => img.complete && img.naturalWidth > 0)).toBe(true);
       await image.evaluate((img) => img.decode());
       await expect(image).toBeInViewport();
       const after = await image.boundingBox();
