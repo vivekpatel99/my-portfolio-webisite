@@ -40,7 +40,7 @@ describe('Portfolio', () => {
   });
 
   describe('Detection Card design (Option A)', () => {
-    it('attaches Selected work to the section heading without a duplicate eyebrow', () => {
+    it('keeps Featured Case Studies as the semantic section heading with purple emphasis', () => {
       const { container } = render(
         <MemoryRouter>
           <Portfolio />
@@ -48,10 +48,8 @@ describe('Portfolio', () => {
       );
 
       const heading = within(container).getByRole('heading', { level: 2, name: 'FEATURED CASE STUDIES' });
-      const label = heading.querySelector('.detection-label');
-      expect(label.textContent).toBe('Selected work');
-      expect(label.getAttribute('aria-hidden')).toBe('true');
-      expect(container.querySelector('.eyebrow')).toBeNull();
+      expect(heading.closest('section').id).toBe('portfolio');
+      expect(within(heading).getByText('CASE STUDIES').className).toContain('text-[#8B5CF6]');
     });
   });
 });
