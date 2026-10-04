@@ -31,7 +31,7 @@ The following values are existing references, not a new palette. They come from 
 | Role | Existing reference | Use |
 | --- | --- | --- |
 | Page background | `#0C0D0D` | Main portfolio, reading pages, contact, and overlay background. |
-| Primary action | `#7C3AED` | Existing reference only for filled actions that already use it (hero estimate). Current hero hover uses `#6D28D9`. Proposed default: applying that fill to the contact submit button. Existing reference: the current contact submit treatment is translucent `rgba(139,92,246,0.12)` with a `#8B5CF6` hover border. |
+| Primary action | `#7C3AED` | Existing reference for the service-detail Request a Project Estimate CTA in `src/components/ServiceDetailContent.js`, with `#6D28D9` on hover. The hero estimate link follows the dark gradient and opposing corners in BT-01. Proposed default: applying that fill to the contact submit button. Existing reference: the current contact submit treatment is translucent `rgba(139,92,246,0.12)` with a `#8B5CF6` hover border. |
 | Leading corner | `#8B5CF6` | Hero field brackets and leading accents on secondary panels. |
 | Readable purple | `#A78BFA` | Accent text and focused form corners. |
 | Focused form label | `#C4B5FD` | Labels attached to the focused form field. |
