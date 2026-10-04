@@ -29,6 +29,10 @@ export const profileImages = {
   portrait: '/assets/images/vivek-black-and-white.webp',
   // Display-size derivatives of portrait (1008×1367), same crop (#252).
   portraitSrcSet: '/assets/images/vivek-black-and-white-480w-3a7a7a1ab19c.webp 480w, /assets/images/vivek-black-and-white-720w-aa13477551ed.webp 720w, /assets/images/vivek-black-and-white.webp 1008w',
+  // About-only crop: (104, 118, 800, 664), hair starts at y=64. The 64px
+  // excess over 4:3 lets bottom + 5px positioning retain fixed CSS headroom.
+  aboutPortrait: '/assets/images/vivek-about-800w-77ce8032d2e7.webp',
+  aboutPortraitSrcSet: '/assets/images/vivek-about-400w-e9c1fa10c8ee.webp 400w, /assets/images/vivek-about-800w-77ce8032d2e7.webp 800w, /assets/images/vivek-about-1200w-d5b1ad36e4d4.webp 1200w',
   teamCollaboration: `${BASE_URLS.hostingerCdn}/michael-t-rxri-ho62y4-unsplash-2-tvxRc.jpg`,
 };
 
