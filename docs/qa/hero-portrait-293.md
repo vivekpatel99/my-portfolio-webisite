@@ -64,7 +64,8 @@ of the existing 5px About headroom.
   label/corner opacity, and stationary values.
 - The full unit run passes 846 of 847 tests; the unrelated publication fixture
   build exceeds its existing 180-second timeout while browser checks are also
-  running. This is recorded rather than claimed as a full-suite pass.
+  running. An isolated rerun passes all 18 publication tests in 144.57 seconds.
+  This is recorded rather than claimed as a single full-suite pass.
 - JavaScript syntax lint and `git diff --check` pass. The scoped Impeccable
   detector reports no findings. No repository-wide lint or cross-engine browser
   acceptance is claimed.
