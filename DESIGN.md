@@ -115,9 +115,11 @@ The following map records the 3 October Corners + labels decision tracked in #29
 | Testimonials | Whole quote panel | Confirmed: two opposing static corners with testimonial and client metadata on the edge. Individual sentences remain unboxed. |
 | About | Portrait and biography panels | Confirmed: two opposing static corners with portrait and biography labels on the edge. |
 | Footer | Whole footer content panel | Confirmed: one corner frame and an attached label. Individual links remain unboxed. |
-| Case-study detail, service detail, contact | Existing framed panels and form fields | Existing reference: separate review scope. The homepage decision does not establish completed implementation or verification for these routes. |
+| Service detail | Engagement details and combined scope panels | Confirmed on 5 October 2026: shared opposing outer-edge corners with transparent `ENGAGEMENT DETAILS` and `PROJECT SCOPE` edge labels. Preserve scope separators, text, rates, and actions. |
+| Contact | Main request form and What happens next panel | Confirmed on 5 October 2026: shared opposing outer-edge corners with transparent `PROJECT · REQUEST` and `PROCESS · NEXT STEPS` edge labels. Remove the redundant interior `CONTACT · DETECTED` metadata. Preserve the actual heading and content, input boundaries, and form behavior. |
+| Case-study detail | Existing framed panels | Existing reference: separate review scope. The homepage decision does not establish completed implementation or verification for these routes. |
 
-Confirmed on 4 October 2026: the contact page's Prefer email? card uses the shared top-left and bottom-right panel corners from SH-03 in place of its continuous border. Confirmed: preserve the existing prompt, email link, and fill without adding an edge label or confidence score.
+Confirmed on 4 October 2026: the contact page's Prefer email? card uses the shared top-left and bottom-right panel corners from SH-03 in place of its continuous border. Confirmed on 5 October 2026: add a transparent `EMAIL` label centered on the card's top-edge guide. This supersedes the earlier no-label exception. Confirmed: preserve the existing prompt, email link, fill, and opposing corners without a confidence score.
 
 Confirmed: the case-study collection page uses top-left and bottom-right corners around its semantic h1, Selected Case Studies, with the shared heading geometry and rest/hover colors from SH-03. Existing reference: preserve its white and purple text. Confirmed on 5 October 2026: it has the transparent `PREVIOUS WORK` edge label from the shared heading family. This supersedes the earlier no-edge-label exception; there is no separate Collection badge.
 
