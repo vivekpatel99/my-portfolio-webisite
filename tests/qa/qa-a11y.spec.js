@@ -1276,6 +1276,28 @@ test('primary CTAs keep readable text and shared corners at rest, hover, and foc
   );
 });
 
+test('centered case-study labels preserve contrast across thumbnails and widths', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.addInitScript(() => {
+    localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false }));
+  });
+  for (const width of [320, 768, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const route of ['/', '/case-studies/']) {
+      await page.goto(route);
+      const isCollection = route === '/case-studies/';
+      if (isCollection) await page.getByRole('button', { name: 'Load more', exact: true }).click();
+      const labels = page.locator(isCollection ? 'main article.card > .cat' : '#portfolio article.card > .cat');
+      await expect(labels).toHaveCount(isCollection ? 12 : 3);
+      for (const label of await labels.all()) {
+        await label.scrollIntoViewIfNeeded();
+        await expect(label).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+        await expectRenderedContrast(label, `${route} card label at ${width}px`);
+      }
+    }
+  }
+});
+
 test('visible text under 14px meets 4.5:1 on its rendered background', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.addInitScript(() => {

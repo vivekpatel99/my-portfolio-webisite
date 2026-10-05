@@ -58,3 +58,5 @@ The user additionally confirmed that `Profile Invoice` should match the grey det
 
 ![Grey Profile Invoice, desktop](decorative-boundaries-2026-10-05/invoice-grey-desktop.jpg)
 ![Grey Profile Invoice, mobile](decorative-boundaries-2026-10-05/invoice-grey-mobile.jpg)
+
+Final integration retains the concurrent card-label changes from develop `1d766db` and PR head `c52fbd9`. Combined verification passed 850 unit tests, production build/static generation, and 88 targeted contrast, card-label, responsive invoice, and native-zoom checks across desktop/mobile, with an independent integration review.
