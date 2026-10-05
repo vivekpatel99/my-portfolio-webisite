@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { m } from 'framer-motion';
 import './Contact.css';
+import { DetectionLabel } from '@/components/DetectionFrame';
 import { toast } from '@/components/ui/use-toast';
 import { Github, Linkedin, Mail, Loader2, CheckCircle2 } from 'lucide-react';
 import { useMutation } from 'convex/react';
@@ -208,7 +209,8 @@ const Contact = () => {
           {/* Layout: aside + form */}
           <div className="layout grid grid-cols-1 md:grid-cols-[0.82fr_1.18fr] gap-7 items-start">
             {/* Aside */}
-            <div className="aside border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] p-6 px-[22px]">
+            <div className="aside detection-panel bg-[rgba(255,255,255,0.03)] p-6 px-[22px]">
+              <DetectionLabel aria-hidden="true">PROCESS · NEXT STEPS</DetectionLabel>
               <h2 className="text-[1.15rem] font-bold uppercase tracking-[-0.01em] mb-[18px]">
                 WHAT HAPPENS NEXT
               </h2>
@@ -235,15 +237,9 @@ const Contact = () => {
               onSubmit={handleSubmit}
               noValidate
               {...SENSITIVE_TELEMETRY_REGION_PROPS}
-              className="form-panel relative min-w-0 border border-[rgba(139,92,246,0.42)] bg-gradient-to-b from-[rgba(139,92,246,0.035)] to-transparent bg-[length:100%_22%] bg-no-repeat p-7 px-[26px] pb-[26px]"
+              className="form-panel detection-panel min-w-0 bg-gradient-to-b from-[rgba(139,92,246,0.035)] to-transparent bg-[length:100%_22%] bg-no-repeat p-7 px-[26px] pb-[26px]"
             >
-              {/* Corner brackets */}
-              <span className="bracket-tl absolute top-[5px] left-[5px] w-[18px] h-[18px] border-t-[1.5px] border-l-[1.5px] border-[#8B5CF6] pointer-events-none z-[5]"></span>
-              <span className="bracket-br absolute bottom-[5px] right-[5px] w-[18px] h-[18px] border-b-[1.5px] border-r-[1.5px] border-[rgba(255,255,255,0.55)] pointer-events-none z-[5]"></span>
-
-              <div className="meta font-mono text-[10px] tracking-[0.14em] uppercase text-[#9ca3af] mb-5">
-                CONTACT · <em className="not-italic text-[#a78bfa]">DETECTED</em>
-              </div>
+              <DetectionLabel aria-hidden="true">PROJECT · REQUEST</DetectionLabel>
 
               <div className="contact-detection-field mb-5">
                 <div className="contact-detection-frame" data-filled={Boolean(formState.name)}>

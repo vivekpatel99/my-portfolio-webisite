@@ -1,4 +1,5 @@
 import React from 'react';
+import { DetectionLabel } from './DetectionFrame.js';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { HOURLY_FROM_LABEL, serviceOffers, serviceTimelineLabel } from '../data/serviceOffers.js';
@@ -6,19 +7,6 @@ import { HOURLY_FROM_LABEL, serviceOffers, serviceTimelineLabel } from '../data/
 // Plain .js (no JSX) so tools/generate-static-route-html.js can prerender the
 // same service content in Node that the SPA renders in the browser.
 export const SERVICES_SECTION_HREF = '/#services';
-
-const frameCorners = () => React.createElement(
-  React.Fragment,
-  null,
-  React.createElement('span', {
-    'aria-hidden': true,
-    className: 'pointer-events-none absolute left-[5px] top-[5px] h-4 w-4 border-l-[1.5px] border-t-[1.5px] border-[#8B5CF6]',
-  }),
-  React.createElement('span', {
-    'aria-hidden': true,
-    className: 'pointer-events-none absolute bottom-[5px] right-[5px] h-4 w-4 border-b-[1.5px] border-r-[1.5px] border-white/50',
-  }),
-);
 
 const scopeList = (heading, items, index) => React.createElement(
   'section',
@@ -77,9 +65,8 @@ const ServiceDetailContent = ({ service }) => {
         ),
         React.createElement(
           'aside',
-          { 'aria-label': 'Engagement details', className: 'relative border border-[rgba(139,92,246,0.45)] bg-[#121116]/80 p-6 sm:p-8' },
-          frameCorners(),
-          React.createElement('p', { className: 'mb-7 font-mono text-[11px] uppercase tracking-[0.16em] text-[#a78bfa]' }, 'ENGAGEMENT DETAILS'),
+          { 'aria-label': 'Engagement details', className: 'detection-panel bg-[#121116]/80 p-6 sm:p-8' },
+          React.createElement(DetectionLabel, { 'aria-hidden': true }, 'ENGAGEMENT DETAILS'),
           React.createElement(
             'dl',
             { className: 'mb-8 border-y border-white/10' },
@@ -112,8 +99,8 @@ const ServiceDetailContent = ({ service }) => {
       ),
       React.createElement(
         'div',
-        { className: 'relative mt-16 border border-[rgba(139,92,246,0.45)] bg-[#101014]/70 md:mt-20' },
-        frameCorners(),
+        { className: 'detection-panel mt-16 bg-[#101014]/70 md:mt-20' },
+        React.createElement(DetectionLabel, { 'aria-hidden': true }, 'PROJECT SCOPE'),
         React.createElement('div', { className: 'grid divide-y divide-white/10 md:grid-cols-2 md:divide-x md:divide-y-0' },
           scopeList('In scope', service.inScope, '01'),
           scopeList('Out of scope', service.outOfScope, '02'),

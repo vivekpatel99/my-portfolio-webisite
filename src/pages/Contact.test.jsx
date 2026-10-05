@@ -534,7 +534,9 @@ describe("Contact form", () => {
 
   it('names the submit button and hides the route instruction', () => {
     render(<Contact />);
-    expect(screen.getByText(/CONTACT ·/i)).toBeTruthy();
+    expect(screen.queryByText(/CONTACT ·/i)).toBeNull();
+    expect(screen.getByText('PROJECT · REQUEST').getAttribute('aria-hidden')).toBe('true');
+    expect(screen.getByText('PROCESS · NEXT STEPS').getAttribute('aria-hidden')).toBe('true');
     expect(screen.getByRole('button', { name: /send project request/i })).toBeTruthy();
     expect(screen.queryByText(/SUBMIT · FIELD/i)).toBeNull();
     expect(screen.queryByText(/FORM REMAINS PRIMARY/i)).toBeNull();
