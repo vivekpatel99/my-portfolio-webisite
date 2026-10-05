@@ -40,3 +40,5 @@ All 56 contact unit tests and the isolated production/static build passed. Chrom
 ## CI assertion repair
 
 Hosted passive QA found two stale assertions for the removed CONTACT · DETECTED metadata. They now verify the direct PROJECT · REQUEST panel label, its aria-hidden attribute and transparent background, and the unchanged submit accessible name after mobile navigation. Both configured Chromium projects passed all four targeted cases against the isolated integration build. Product behavior is unchanged. The branch incorporates the then-current develop through a clean merge commit without rewriting history.
+
+The subsequent action-label integration adds a separate PROJECT · REQUEST label to the submit button. A pre-existing panel assertion became ambiguous when both labels were present. The assertion now scopes to the form's direct edge label; the existing submit assertion independently preserves its accessible name and hidden decoration. No product code changed during this repair.
