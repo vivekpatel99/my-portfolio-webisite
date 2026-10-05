@@ -36,3 +36,7 @@ Vivek subsequently requested an attached label for the Prefer email card. The ca
 All 56 contact unit tests and the isolated production/static build passed. Chromium and WebKit checked rest, hover, keyboard focus, transparent edge-label geometry, the unchanged mailto destination, and no overflow at 1440, 390, and 320 pixels. No live email or contact submission occurred.
 
 [Desktop email card](panel-boundaries-2026-10-05/email-card-1440.png) and [mobile email card](panel-boundaries-2026-10-05/email-card-390.png). Earlier full-page screenshots above predate this follow-up.
+
+## CI assertion repair
+
+Hosted passive QA found two stale assertions for the removed CONTACT · DETECTED metadata. They now verify the direct PROJECT · REQUEST panel label, its aria-hidden attribute and transparent background, and the unchanged submit accessible name after mobile navigation. Both configured Chromium projects passed all four targeted cases against the isolated integration build. Product behavior is unchanged. The branch incorporates the then-current develop through a clean merge commit without rewriting history.
