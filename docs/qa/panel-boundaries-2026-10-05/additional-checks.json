@@ -1,0 +1,13 @@
+{
+  "noJavaScriptServices": 3,
+  "forcedColors": "1px resting / 2px focused",
+  "nativeZoom": {
+    "before": 1440,
+    "after": {
+      "width": 720,
+      "height": 406,
+      "scale": 1
+    }
+  },
+  "routes": 4
+}

@@ -41,3 +41,7 @@ Separate read-only standards and specification reviews found no actionable issue
 The babysitting follow-up incorporates develop `e6a2101de1325f4b4a86c662b6188b1fb7f6e607` after PRs #311 and #312 merged. The guide conflict preserves both the approved portrait direction and the new Previous work heading label. Action labels and the rest of those integrated changes remain intact. The original screenshots above document the initial scoped patch; final integration is checked by the follow-up build, tests, and hosted CI.
 
 Follow-up verification passed all 850 unit tests, the production build and static route generation, and 147 Chromium desktop/mobile browser checks (five device-specific skips), including the integrated action labels. An independent read-only review found no actionable regressions against the updated develop base.
+
+A second integration follow-up incorporates develop `e464ef46e0bf6a54d70df8a064ebd3b8a0c77aae` after PR #313 merged during CI. The guide retains its approved service/contact panels alongside this PR’s gallery decision. No application-source conflict occurred.
+
+The second integration passed 850 unit tests, production build/static generation, and 83 visual/upgrade-flow Chromium checks across desktop/mobile (one device-specific skip), plus independent review.
