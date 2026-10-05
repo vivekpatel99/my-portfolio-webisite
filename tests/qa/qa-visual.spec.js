@@ -445,7 +445,11 @@ test('portfolio section shows Detection Card craft signals on homepage', async (
 
   const heading = portfolio.getByRole('heading', { name: /Featured.*Case Studies/i });
   await expect(heading).toBeVisible();
-  await expect(heading).toHaveText('FEATURED CASE STUDIES');
+  await expect(heading).toHaveAccessibleName('FEATURED CASE STUDIES');
+  const label = heading.locator('.detection-label');
+  await expect(label).toHaveText('Previous work');
+  await expect(label).toHaveAttribute('aria-hidden', 'true');
+  await expect(label).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
 
   const cards = portfolio.locator('article').all();
   expect((await cards).length).toBeGreaterThan(0);
