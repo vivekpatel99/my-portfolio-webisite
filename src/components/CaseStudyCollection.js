@@ -6,6 +6,7 @@ import {
   isCollectionArticleOrigin,
   saveBrowsingState,
 } from '../lib/caseStudyBrowsing.js';
+import { DetectionLabel } from './DetectionFrame.js';
 import CaseStudyCard from './CaseStudyCard.js';
 
 const PAGE_SIZE = 6;
@@ -158,7 +159,7 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies, children = null 
       'button',
       {
         type: 'button',
-        className: 'detection-panel detection-action mt-10 inline-flex',
+        className: 'detection-panel detection-action detection-action--labeled mt-10 inline-flex',
         onClick: loadMore,
         // Without JavaScript the button cannot work, so the static markup ships it disabled.
         // Once exhausted it stays focusable via aria-disabled: natively disabling a focused
@@ -167,6 +168,7 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies, children = null 
         'aria-disabled': !hasMore || isStaticRender,
         'aria-controls': gridId,
       },
+      React.createElement(DetectionLabel, { 'aria-hidden': true }, hasMore ? 'MORE WORK' : 'ALL WORK SHOWN'),
       hasMore ? 'Load more' : 'All case studies shown',
     )
     : null;

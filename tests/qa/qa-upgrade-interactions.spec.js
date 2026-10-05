@@ -467,7 +467,9 @@ const coreCards = (page) => page
 
 const loadAllCoresByKeyboard = async (page) => {
   const loadMore = loadMoreControl(page);
-  await expect(loadMore).toHaveText('Load more');
+  await expect(loadMore).toHaveAccessibleName('Load more');
+  await expect(loadMore.locator('.detection-label')).toHaveText('MORE WORK');
+  await expect(loadMore.locator('.detection-label')).toHaveAttribute('aria-hidden', 'true');
   await loadMore.focus();
   for (let shown = initialCoreCount; shown < collectionCaseStudies.length;) {
     await page.keyboard.press('Enter');
@@ -475,7 +477,8 @@ const loadAllCoresByKeyboard = async (page) => {
     await expect(coreCards(page)).toHaveCount(shown);
     await expect(loadMore).toBeFocused();
   }
-  await expect(loadMore).toHaveText('All case studies shown');
+  await expect(loadMore).toHaveAccessibleName('All case studies shown');
+  await expect(loadMore.locator('.detection-label')).toHaveText('ALL WORK SHOWN');
 };
 
 const openCollection = async (page) => {

@@ -107,6 +107,12 @@
   overflow-wrap: anywhere;
 }
 
+.detection-action--labeled > .detection-label {
+  max-width: calc(100% - 35px);
+  padding-inline: 0;
+  white-space: nowrap;
+}
+
 .detection-action:not(:disabled):not([aria-disabled="true"]):hover,
 .detection-action:not(:disabled):not([aria-disabled="true"]):focus-visible {
   background-image: linear-gradient(to bottom, rgba(139, 92, 246, 0.1), transparent);

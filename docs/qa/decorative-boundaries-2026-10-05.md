@@ -35,3 +35,9 @@ Separate read-only standards and specification reviews found no actionable issue
 | Gallery | [Desktop](decorative-boundaries-2026-10-05/gallery-desktop.jpg) | [Mobile](decorative-boundaries-2026-10-05/gallery-mobile.jpg) |
 | Lightbox | [Desktop](decorative-boundaries-2026-10-05/lightbox-desktop.jpg) | [Mobile](decorative-boundaries-2026-10-05/lightbox-mobile.jpg) |
 | Temporary video fixture | [Desktop](decorative-boundaries-2026-10-05/video-desktop.jpg) | [Mobile](decorative-boundaries-2026-10-05/video-mobile.jpg) |
+
+## Integration follow-up
+
+The babysitting follow-up incorporates develop `e6a2101de1325f4b4a86c662b6188b1fb7f6e607` after PRs #311 and #312 merged. The guide conflict preserves both the approved portrait direction and the new Previous work heading label. Action labels and the rest of those integrated changes remain intact. The original screenshots above document the initial scoped patch; final integration is checked by the follow-up build, tests, and hosted CI.
+
+Follow-up verification passed all 850 unit tests, the production build and static route generation, and 147 Chromium desktop/mobile browser checks (five device-specific skips), including the integrated action labels. An independent read-only review found no actionable regressions against the updated develop base.

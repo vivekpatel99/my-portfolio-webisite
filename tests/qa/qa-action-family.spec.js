@@ -50,6 +50,27 @@ async function inspectActions(page) {
     expect(measured.casing).toBe('none');
     expect(measured.family).not.toMatch(/monospace/);
     expect(measured.weight).toBe(await action.evaluate((e) => e.classList.contains('detection-action--primary') ? '650' : '600'));
+    const label = action.locator(':scope > .detection-label');
+    await expect(label).toHaveCount(1);
+    await expect(label).toHaveAttribute('aria-hidden', 'true');
+    const edge = await label.evaluate((element) => {
+      const box = element.getBoundingClientRect();
+      const parent = element.parentElement.getBoundingClientRect();
+      const text = document.createRange();
+      text.selectNodeContents(element);
+      const rect = text.getBoundingClientRect();
+      return {
+        center: box.top + box.height / 2, top: parent.top,
+        left: rect.left - parent.left, right: parent.right - rect.right,
+        background: getComputedStyle(element).backgroundColor,
+        oneLine: text.getClientRects().length === 1,
+      };
+    });
+    expect(edge.center).toBeCloseTo(edge.top, 1);
+    expect(edge.left).toBeGreaterThanOrEqual(28);
+    expect(edge.right).toBeGreaterThanOrEqual(5);
+    expect(edge.background).toBe('rgba(0, 0, 0, 0)');
+    expect(edge.oneLine).toBe(true);
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 }
@@ -101,6 +122,8 @@ test('hover, keyboard focus, pressed and exhausted states remain distinct', asyn
   await more.click();
   await expect(page.getByRole('status')).toContainText('Showing 12 of 12');
   await expect(more).toHaveAttribute('aria-disabled', 'true');
+  await expect(more).toHaveAccessibleName('All case studies shown');
+  await expect(more.locator('.detection-label')).toHaveText('ALL WORK SHOWN');
   const disabled = await more.evaluate((e) => ({ background: getComputedStyle(e).backgroundImage, corner: getComputedStyle(e, '::before').backgroundImage }));
   await more.hover();
   await page.keyboard.press('Tab');
@@ -131,6 +154,7 @@ test('text actions and utilities retain accessible targets, focus, selection and
     await expect(drawer).toBeVisible();
     const estimate = drawer.getByRole('link', { name: 'Request a Project Estimate' });
     await expect(estimate).toHaveAttribute('href', '/contact/');
+    await expect(estimate.locator('.detection-label')).toHaveText('REQUEST · ESTIMATE');
     await page.keyboard.press('Tab');
     await estimate.focus();
     expect(await estimate.evaluate((e) => parseFloat(getComputedStyle(e).outlineWidth))).toBeGreaterThanOrEqual(2);
