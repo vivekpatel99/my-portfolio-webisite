@@ -1,4 +1,5 @@
 import React from 'react';
+import { DetectionLabel } from './DetectionFrame.js';
 import { ArrowLeft } from 'lucide-react';
 import { collectionCaseStudies } from '../data/caseStudies.js';
 import CaseStudyCollection from './CaseStudyCollection.js';
@@ -11,14 +12,15 @@ const CaseStudiesContent = ({ stories }) => React.createElement(
     { className: 'max-w-[1180px] mx-auto' },
     React.createElement('a', {
       href: '/',
-      className: 'detection-panel detection-action detection-action--compact mb-8 inline-flex',
-    }, React.createElement(ArrowLeft, { size: 16, 'aria-hidden': true }), 'Back to home'),
+      className: 'detection-panel detection-action detection-action--labeled detection-action--compact mb-8 inline-flex',
+    }, React.createElement(DetectionLabel, { 'aria-hidden': true }, 'HOME'), React.createElement(ArrowLeft, { size: 16, 'aria-hidden': true }), 'Back to home'),
     React.createElement(
       'div',
       { className: 'mb-12 max-w-3xl' },
       React.createElement(
         'h1',
         { id: 'case-studies-heading', className: 'detection-heading text-[clamp(1.75rem,3.2vw,2.35rem)] font-bold uppercase leading-tight tracking-[-0.02em] text-white' },
+        React.createElement(DetectionLabel, { 'aria-hidden': true }, 'PREVIOUS WORK'),
         'SELECTED ',
         React.createElement('span', { className: 'text-[#8B5CF6]' }, 'CASE STUDIES'),
       ),

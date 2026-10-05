@@ -364,8 +364,9 @@ const Contact = () => {
                   ref={submitButtonRef}
                   type="submit"
                   disabled={isSubmitting}
-                  className="detection-panel detection-action detection-action--primary detection-action--submit"
+                  className="detection-panel detection-action detection-action--labeled detection-action--primary detection-action--submit"
                 >
+                  <DetectionLabel aria-hidden="true">PROJECT · REQUEST</DetectionLabel>
                   <span className={`action-submit-label${isSubmitting ? ' action-submit-reserve' : ''}`} aria-hidden={isSubmitting || undefined}>Send project request</span>
                   {isSubmitting ? <Loader2 className="action-submit-spinner h-4 w-4 animate-spin" aria-hidden="true" /> : null}
                   {isSubmitting ? <span className="action-submit-label">Sending…</span> : null}
