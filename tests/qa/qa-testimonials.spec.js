@@ -4,7 +4,7 @@ import { testimonials as testimonialData } from '../../src/data/testimonials.js'
 // Longer than one 6s rotation interval, so an unexpected advance is observable.
 const OVER_ONE_INTERVAL_MS = 7_000;
 const PERSISTENT_PAUSE_MS = 20_500;
-const MIN_TARGET_PX = 24;
+const MIN_TARGET_PX = 44;
 const slideCount = testimonialData.length;
 const counterFor = (index) => `${String(index + 1).padStart(2, '0')} / ${String(slideCount).padStart(2, '0')}`;
 
@@ -148,30 +148,27 @@ test('overlapping hover and focus reasons each keep rotation stopped', async ({ 
   await expect(counter).not.toHaveText(heldByFocus, { timeout: OVER_ONE_INTERVAL_MS + 2_000 });
 });
 
-test('controls are non-overlapping targets of at least 24x24 with decorative diamonds', async ({ page }) => {
+test('controls are non-overlapping targets of at least 44x44 with decorative diamonds', async ({ page }) => {
   const { slides } = await openCarousel(page);
   const viewportWidth = page.viewportSize().width;
 
-  const boxes = [];
-  for (const target of await slides.all()) {
-    const box = await target.boundingBox();
+  // Capture one layout frame: entrance motion can move wrapped rows between
+  // separate boundingBox calls and make disjoint targets appear to overlap.
+  const boxes = await slides.evaluateAll((buttons) => buttons.map((button) => {
+    const { x, y, width, height } = button.getBoundingClientRect();
+    return { x, y, width, height };
+  }));
+  for (const box of boxes) {
     expect(box.width).toBeGreaterThanOrEqual(MIN_TARGET_PX);
     expect(box.height).toBeGreaterThanOrEqual(MIN_TARGET_PX);
     expect(box.x).toBeGreaterThanOrEqual(0);
     expect(box.x + box.width).toBeLessThanOrEqual(viewportWidth);
-    boxes.push(box);
   }
   for (let a = 0; a < boxes.length; a += 1) {
     for (let b = a + 1; b < boxes.length; b += 1) {
       const overlapX = Math.min(boxes[a].x + boxes[a].width, boxes[b].x + boxes[b].width) - Math.max(boxes[a].x, boxes[b].x);
       const overlapY = Math.min(boxes[a].y + boxes[a].height, boxes[b].y + boxes[b].height) - Math.max(boxes[a].y, boxes[b].y);
       expect(overlapX > 0.5 && overlapY > 0.5, `targets ${a} and ${b} overlap`).toBe(false);
-    }
-  }
-  if (viewportWidth >= 640) {
-    for (const box of boxes) {
-      expect(box.width).toBeGreaterThanOrEqual(44);
-      expect(box.height).toBeGreaterThanOrEqual(44);
     }
   }
 

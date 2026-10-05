@@ -68,7 +68,7 @@ const Services = () => {
 
                 <Link
                   to={serviceRouteForId(service.id)}
-                  className="self-start text-[0.9rem] text-[#a78bfa] border-b border-[rgba(167,139,250,0.4)] pb-0.5 hover:text-white hover:border-[#8B5CF6] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5CF6] transition-colors"
+                  className="detection-text-action self-start text-[0.9rem]"
                 >
                   Scope details<span className="sr-only"> for {service.title.toLowerCase()}</span> →
                 </Link>

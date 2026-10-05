@@ -1,4 +1,5 @@
 import React from 'react';
+import { ArrowRight } from 'lucide-react';
 import CaseStudyGallery, { collectGalleryImages } from './CaseStudyGallery.js';
 
 // Images belong to the top gallery; prune their now-empty text containers.
@@ -54,8 +55,8 @@ const renderBlocks = (nodes, keyPrefix) => nodes.map((node, index) => {
 export const CaseStudyArticle = ({ story, backHref = '/#portfolio' }) => React.createElement(
   'article', { className: 'case-study-article' },
   React.createElement('nav', { className: 'case-study-navigation', 'aria-label': 'Case study navigation' },
-    React.createElement('a', { className: 'case-study-back', href: backHref }, '← View case studies'),
-    React.createElement('a', { className: 'case-study-home', href: '/' }, 'Back to home'),
+    React.createElement('a', { className: 'case-study-back detection-text-action', href: backHref }, '← View case studies'),
+    React.createElement('a', { className: 'case-study-home detection-text-action', href: '/' }, 'Back to home'),
   ),
   story.category ? React.createElement('p', { className: 'case-study-category' }, story.category) : null,
   React.createElement('h1', null, story.title),
@@ -68,7 +69,10 @@ export const CaseStudyArticle = ({ story, backHref = '/#portfolio' }) => React.c
   ))),
   React.createElement('div', { className: 'case-study-cta' },
     React.createElement('p', null, 'Working on something similar?'),
-    React.createElement('a', { href: '/contact/' }, 'Discuss a similar project →'),
+    React.createElement('a', {
+      className: 'detection-panel detection-action detection-action--primary inline-flex',
+      href: '/contact/',
+    }, 'Discuss a similar project', React.createElement(ArrowRight, { size: 16, className: 'shrink-0', 'aria-hidden': true })),
   ),
 );
 

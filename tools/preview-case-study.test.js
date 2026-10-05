@@ -52,6 +52,9 @@ describe('case-study preview renderer', () => {
       expect(declarations('.detection-panel::before').background).toContain('linear-gradient');
       expect(declarations('.detection-label')).toMatchObject({ position: 'absolute', top: '0', 'pointer-events': 'none' });
       expect(declarations('.overflow-hidden').overflow).toBe('hidden');
+      const article = await (await fetch(`${origin}/project/${story.slug}/`)).text();
+      expect(article).toContain('href="/preview.css"');
+      expect(declarations('.detection-action')['min-height']).toBe('56px');
     } finally {
       await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
     }

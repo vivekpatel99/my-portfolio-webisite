@@ -26,7 +26,7 @@ const Portfolio = () => {
         <div className="footer-link mt-9 text-center">
           <Link
             to="/case-studies/"
-            className="text-[0.9rem] text-[#a78bfa] border-b border-[rgba(167,139,250,0.4)] pb-0.5 hover:text-white hover:border-[#8B5CF6] transition-colors"
+            className="detection-text-action text-[0.9rem]"
           >
             View all case studies ({collectionCaseStudies.length})
           </Link>

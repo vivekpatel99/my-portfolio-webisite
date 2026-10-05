@@ -308,9 +308,18 @@ test('holds one pending keyboard submit, blocks duplicates, shows safe failure g
   const submit = form.locator('button[type="submit"]');
   const receipt = form.getByRole('status', { name: 'Request received' });
 
+  const idleSize = await submit.boundingBox();
   await page.getByLabel('Full Name *').press('Enter');
   await expect(submit).toBeDisabled();
   await expect(submit).toContainText(/sending/i);
+  await expect(submit).toHaveAccessibleName('Sending…');
+  const sendingSize = await submit.boundingBox();
+  expect(sendingSize.width).toBeCloseTo(idleSize.width, 1);
+  expect(sendingSize.height).toBeCloseTo(idleSize.height, 1);
+  if (test.info().project.use.reducedMotion === 'reduce') {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await expect(submit.locator('svg')).toHaveCSS('animation-name', 'none');
+  }
 
   // requestSubmit exercises the duplicate guard even though the browser has
   // already disabled the visible button for the pending request.

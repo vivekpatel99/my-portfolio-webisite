@@ -1107,7 +1107,7 @@ test('normal-size purple text and links meet contrast in rendered states', async
   await page.mouse.move(0, 0);
   await portfolioLink.focus();
   await expect(portfolioLink).toBeFocused();
-  await expectRenderedForeground(portfolioLink, 'Portfolio collection link focus state', '167,139,250');
+  await expectRenderedForeground(portfolioLink, 'Portfolio collection link focus state', '255,255,255');
   await expectRenderedContrast(portfolioLink, 'Portfolio collection link on focus');
 });
 
@@ -1129,61 +1129,17 @@ test('policy, contact, footer, and not-found accent states meet contrast', async
   await page.goto('/');
   const footerLink = page.locator('footer').getByRole('link', { name: 'Home', exact: true });
   await footerLink.hover();
-  await expectRenderedForeground(footerLink, 'Footer navigation link should finish its hover transition', '167,139,250');
+  await expectRenderedForeground(footerLink, 'Footer navigation link should finish its hover transition', '255,255,255');
   await expectRenderedContrast(footerLink, 'Footer navigation link on hover');
 
   await page.goto('/missing-page/');
   await expectRenderedContrast(page.getByText('404', { exact: true }), 'Not-found status');
 });
 
-const PRIMARY_FILL = '124,58,237';
-const PRIMARY_HOVER_FILL = '109,40,217';
-
 const ownBackground = (locator) => locator.evaluate((element) => {
   const match = getComputedStyle(element).backgroundColor.match(/rgba?\(([^)]+)\)/);
   return match ? match[1].split(/[ ,/]+/).filter(Boolean).slice(0, 3).join(',') : '';
 });
-
-const paintedDominantColor = async (page, locator) => {
-  await page.mouse.move(0, 0);
-  const png = await locator.screenshot({ animations: 'disabled' });
-  return page.evaluate(async (base64) => {
-    const image = new Image();
-    image.src = `data:image/png;base64,${base64}`;
-    await image.decode();
-    const canvas = document.createElement('canvas');
-    canvas.width = image.width;
-    canvas.height = image.height;
-    const context = canvas.getContext('2d');
-    context.drawImage(image, 0, 0);
-    const { data } = context.getImageData(0, 0, canvas.width, canvas.height);
-    const counts = new Map();
-    for (let i = 0; i < data.length; i += 4) {
-      const key = `${data[i]},${data[i + 1]},${data[i + 2]}`;
-      counts.set(key, (counts.get(key) ?? 0) + 1);
-    }
-    return [...counts].sort((a, b) => b[1] - a[1])[0][0];
-  }, png.toString('base64'));
-};
-
-const expectFilledPrimaryStates = async (page, button, label) => {
-  await expect(button).toBeVisible();
-  await expect.poll(() => ownBackground(button), { message: `${label} rest fill` }).toBe(PRIMARY_FILL);
-  await expectRenderedForeground(button, `${label} rest text`, '255,255,255');
-  await expectRenderedContrast(button, `${label} at rest`);
-  expect(await paintedDominantColor(page, button), `${label} painted fill`).toBe(PRIMARY_FILL);
-
-  await button.hover();
-  await expect.poll(() => ownBackground(button), { message: `${label} hover fill` }).toBe(PRIMARY_HOVER_FILL);
-  await expectRenderedForeground(button, `${label} hover text`, '255,255,255');
-  await expectRenderedContrast(button, `${label} on hover`);
-
-  await page.mouse.move(0, 0);
-  await button.focus();
-  await expect(button).toBeFocused();
-  await expect.poll(() => ownBackground(button), { message: `${label} focus fill` }).toBe(PRIMARY_FILL);
-  await expectRenderedContrast(button, `${label} on focus`);
-};
 
 const expectPaintedCornerAction = async (page, button, cornerColor, label) => {
   const box = await button.boundingBox();
@@ -1248,7 +1204,7 @@ const expectCornerPrimaryStates = async (page, button, label) => {
   await expectPaintedCornerAction(page, button, '167,139,250', `${label} on focus`);
 };
 
-test('primary CTAs keep readable text and their corner or filled treatment at rest, hover, and focus', async ({ page }) => {
+test('primary CTAs keep readable text and shared corners at rest, hover, and focus', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false }));
   });
@@ -1260,7 +1216,7 @@ test('primary CTAs keep readable text and their corner or filled treatment at re
   );
 
   await page.goto(`/services/${serviceOffers[0].id}/`);
-  await expectFilledPrimaryStates(
+  await expectCornerPrimaryStates(
     page,
     page.locator('#main-content').getByRole('link', { name: 'Request a Project Estimate' }),
     'Service detail CTA',
@@ -1298,7 +1254,7 @@ test('visible text under 14px meets 4.5:1 on its rendered background', async ({ 
   const footerPolicy = page.locator('#site-footer').getByRole('link', { name: 'Privacy Policy', exact: true });
   await expectRenderedContrast(footerPolicy, 'Footer policy link at rest');
   await footerPolicy.hover();
-  await expectRenderedForeground(footerPolicy, 'Footer policy link should finish its hover transition', '209,213,219');
+  await expectRenderedForeground(footerPolicy, 'Footer policy link should finish its hover transition', '255,255,255');
   await expectRenderedContrast(footerPolicy, 'Footer policy link on hover');
 });
 

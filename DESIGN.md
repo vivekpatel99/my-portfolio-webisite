@@ -31,7 +31,7 @@ The following values are existing references, not a new palette. They come from 
 | Role | Existing reference | Use |
 | --- | --- | --- |
 | Page background | `#0C0D0D` | Main portfolio, reading pages, contact, and overlay background. |
-| Primary action | `#7C3AED` | Existing reference for the service-detail Request a Project Estimate CTA in `src/components/ServiceDetailContent.js`, with `#6D28D9` on hover. The hero estimate link follows the dark gradient and opposing corners in BT-01. Proposed default: applying that fill to the contact submit button. Existing reference: the current contact submit treatment is translucent `rgba(139,92,246,0.12)` with a `#8B5CF6` hover border. |
+| Primary action | Purple over `#0C0D0D` | Confirmed under BT-01: prominent estimate, inquiry, and contact-submit actions share the subtle purple top fading to black and opposing corners. Existing reference: `#7C3AED` remains the consent Accept fill; it does not define a separate prominent-action family. |
 | Leading corner | `#8B5CF6` | Hero field brackets and leading accents on secondary panels. |
 | Readable purple | `#A78BFA` | Accent text and focused form corners. |
 | Focused form label | `#C4B5FD` | Labels attached to the focused form field. |
@@ -56,7 +56,7 @@ The font roles below are existing references. The layout and legibility prescrip
 - Proposed default: headings and field values use the sans stack with clear size and weight hierarchy.
 - Proposed default: descriptions, article text, testimonials, and legal text remain readable prose. Proposed default: do not turn them into uppercase technical readouts.
 - Existing reference: small field labels, simulation metadata, and compact controls may use monospace.
-- Confirmed: button intent is one readable family. Proposed default: uppercase monospace with modest tracking, following the angular header and contact controls. Proposed default: final size, weight, and tracking require a representative button review under #296.
+- Confirmed: button intent is one readable family. Confirmed on 4 October 2026 under #296: prominent actions use the same sans-serif family and their existing label casing, with size differences for compact and large contexts. This supersedes the proposed uppercase monospace treatment. Confirmed: primary labels use weight 650 and secondary labels use 600. Existing reference: technical edge metadata keeps its monospace treatment.
 - Existing reference: preserve one semantic h1 per page. Confirmed: in the hero, Role retains its h1 even when decorative labels move.
 - Proposed default: do not shrink labels to force a frame to fit. Proposed default: expand the wrapper, wrap the value, or stack the layout.
 - Confirmed: copy cleanup removes the redundant `PORTFOLIO · CASE STUDIES` eyebrow above the existing Featured Case Studies heading under #295. This scoped removal also excludes a replacement `Selected work` edge label: the main h2 leads the section, retaining its opposing corners and purple emphasis. Proposed default: do not remove every eyebrow automatically. Proposed default: retain one only when it adds information absent from the heading.
@@ -149,8 +149,8 @@ Confirmed on 3 October 2026: the hero's Request a Project Estimate and View Case
 
 | Variant | Purpose | Treatment |
 | --- | --- | --- |
-| Primary | Named estimate navigation links | Confirmed: purple top fading to black, readable white text at weight 650, opposing corners, and one trailing arrow. |
-| Secondary | Hero View Case Studies and collection controls | Confirmed: matching background and corner geometry, text at weight 600. Existing reference: icons and target heights follow the named controls below. |
+| Primary | Estimate and case-study inquiry navigation, contact submit | Confirmed: purple top fading to black, readable white text at weight 650, opposing corners, and one trailing arrow for navigation. Existing reference: submission shows a spinner only while pending. |
+| Secondary | Hero View Case Studies, View All Services, and collection controls | Confirmed: matching background and corner geometry, text at weight 600. Existing reference: icons and target heights follow the named controls below. |
 | Text action | Scope details, inline back links, footer navigation | Proposed default: readable link styling and visible focus without a filled button. |
 | Utility | Gallery, menu, close, zoom, consent, retry | Proposed default: compact compatible styling with conventional icons and accessible names. The hero Pause control is not part of this family. |
 
@@ -162,7 +162,9 @@ Proposed default: all interactive variants have visible keyboard focus and clear
 
 Existing reference: keep anchors for navigation and buttons for actions. Existing reference: preserve destinations, new-tab behavior, modal behavior, and submitting protection. Existing reference: a loading label must not shift the button or permit another submission. Existing reference: review consent and gallery callers before changing a generic button default.
 
-Confirmed: this family is scoped to the named navigation links and the collection's Load more control. Existing reference: form submission, gallery, consent, menu controls, and other buttons retain their existing defaults. Proposed default: utility controls and text links do not each need a decorative frame.
+Confirmed on 4 October 2026: Vivek approved extending this family to service-detail estimate and View All Services actions, the case-study Discuss a similar project action, and contact submission. Confirmed: standardize prominent-action label typography, preserve the approved background and corner geometry, and keep the final CTA's REQUEST · ESTIMATE label. This extends the earlier named-control scope rather than changing panel or form-field styling. Visual review of the delivered family remains required before merge.
+
+Confirmed on 4 October 2026: text actions stay lightweight, and utility actions retain conventional icons without decorative corners. Confirmed: review their hover and keyboard focus, accessible targets, and distinct states while preserving behavior. Existing reference: generic Button defaults remain unchanged; compact menu, consent, and retry callers use scoped utility styling. Gallery controls retain conventional shapes and their selected and disabled states.
 
 ### OC-01. Simulated OCR placement
 
@@ -246,7 +248,7 @@ Proposed default: articles and legal pages use the same colors, type relationshi
 ## Do's and Don'ts
 
 - Confirmed: do use the SH-02 placement map before adding brackets.
-- Confirmed: do use the shared corner family for the navigation links and collection controls named in BT-01. Existing reference: form submission and other unnamed controls keep their current treatment.
+- Confirmed: do use the shared corner family for the prominent navigation links, collection controls, and contact submission named in BT-01. Confirmed: text and utility actions stay lightweight and retain their conventional function.
 - Confirmed: do keep simulated scores confined to the hero profile fields and a future OCR demonstration that stays separate from factual content, without a separate OCR caption.
 - Proposed default: do reference a rule ID and the cited clause's own status when reporting a theme mismatch.
 - Existing reference: preserve confirmed facts, real evidence, routes, and form behavior during visual work.

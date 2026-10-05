@@ -22,12 +22,12 @@ const CTA = () => {
           <Link
             to="/contact/"
             aria-label="Request a Project Estimate"
-            className="action-field detection-panel detection-action detection-action--primary detection-action--large inline-flex min-w-[min(420px,92vw)]"
+            className="action-field detection-panel detection-action detection-action--primary detection-action--large inline-flex w-full sm:w-[420px]"
           >
             <DetectionLabel className="field-meta" aria-hidden="true">
               REQUEST · ESTIMATE
             </DetectionLabel>
-            <span className="action-label text-[1.05rem] font-bold tracking-[0.02em] uppercase text-white">
+            <span className="action-label">
               Request a Project Estimate
             </span>
             <ArrowRight className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
@@ -35,7 +35,7 @@ const CTA = () => {
 
           <Link
             to="/case-studies/"
-            className="secondary font-mono text-[11px] tracking-[0.12em] uppercase text-[#9ca3af] border-b border-[rgba(107,114,128,0.45)] pb-[3px] hover:text-[#a78bfa] hover:border-[rgba(167,139,250,0.55)] transition-colors"
+            className="secondary detection-text-action text-sm"
           >
             View case studies
           </Link>

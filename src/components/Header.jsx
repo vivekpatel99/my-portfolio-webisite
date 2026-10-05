@@ -187,7 +187,7 @@ const Header = () => {
           className="max-w-[1120px] mx-auto px-7 flex items-center gap-[22px]"
           style={{ height: 'calc(var(--site-header-height) - 1px)' }}
         >
-          <Link to="/" onClick={handleHomeClick} className="flex items-center flex-shrink-0" aria-label="Vivek Patel home">
+          <Link to="/" onClick={handleHomeClick} className="detection-utility flex items-center flex-shrink-0" aria-label="Vivek Patel home">
             <img src={logos.logo} srcSet={logos.logoSrcSet} alt="" width="30" height="30" className="w-[30px] h-[30px] object-contain" />
           </Link>
 
@@ -217,7 +217,7 @@ const Header = () => {
           <button
             ref={toggleButtonRef}
             onClick={handleToggle}
-            className="md:hidden w-11 h-11 flex items-center justify-center ml-auto"
+            className="detection-utility md:hidden w-11 h-11 flex items-center justify-center ml-auto"
             aria-label="Toggle navigation menu"
             aria-expanded={isOpen}
             aria-controls="mobile-menu"
@@ -239,13 +239,13 @@ const Header = () => {
           style={{ overscrollBehavior: 'contain', touchAction: 'pan-y' }}
         >
           <div className="h-[68px] flex items-center justify-between border-b border-[rgba(139,92,246,0.38)]">
-            <Link to="/" onClick={handleHomeClick} className="flex items-center" aria-label="Vivek Patel home">
+            <Link to="/" onClick={handleHomeClick} className="detection-utility flex items-center" aria-label="Vivek Patel home">
               <img src={logos.logo} srcSet={logos.logoSrcSet} alt="" width="30" height="30" className="w-[30px] h-[30px] object-contain" />
             </Link>
             <button
               ref={closeButtonRef}
               onClick={() => setIsOpen(false)}
-              className="w-11 h-11 relative"
+              className="detection-utility w-11 h-11 relative"
               aria-label="Close navigation menu"
             >
               <span className="absolute left-3 top-[21px] w-5 h-[1.5px] bg-white rotate-45"></span>
