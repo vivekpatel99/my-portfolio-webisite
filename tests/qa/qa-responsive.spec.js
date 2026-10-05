@@ -155,36 +155,40 @@ test('skip link is focusable at 200% zoom', async ({ page }) => {
 const boxesOverlap = (a, b) =>
   !(a.x + a.width <= b.x || b.x + b.width <= a.x || a.y + a.height <= b.y || b.y + b.height <= a.y);
 
-for (const width of [320, 1280]) {
-  test(`case-study labels clear thumbnails and neighboring cards at ${width}px`, async ({ page }) => {
-    await page.setViewportSize({ width, height: 900 });
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto('/case-studies/');
-    await page.getByRole('button', { name: 'Load more', exact: true }).click();
-    const cards = page.locator('main article');
-    await expect(cards).toHaveCount(12);
-    const statusBox = await page.getByRole('status').boundingBox();
-    const cardBoxes = await Promise.all((await cards.all()).map((card) => card.boundingBox()));
-    for (const [index, card] of (await cards.all()).entries()) {
-      const label = card.locator('.detection-label');
-      const labelBox = await label.boundingBox();
-      const mediaBox = await card.getByRole('link').first().boundingBox();
-      expect(labelBox.x).toBeGreaterThanOrEqual(0);
-      expect(labelBox.x + labelBox.width).toBeLessThanOrEqual(width);
-      expect(mediaBox.y - (labelBox.y + labelBox.height)).toBeGreaterThanOrEqual(3);
-      await expect(label).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-      expect(boxesOverlap(labelBox, statusBox)).toBe(false);
-      for (const [otherIndex, cardBox] of cardBoxes.entries()) {
-        if (otherIndex !== index) expect(boxesOverlap(labelBox, cardBox)).toBe(false);
+for (const width of [320, 768, 1280]) {
+  for (const route of ['/', '/case-studies/']) {
+    test(`case-study labels align with the top edge on ${route} at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.goto(route);
+      const isCollection = route === '/case-studies/';
+      if (isCollection) await page.getByRole('button', { name: 'Load more', exact: true }).click();
+      const cards = page.locator(isCollection ? 'main article.card' : '#portfolio article.card');
+      await expect(cards).toHaveCount(isCollection ? 12 : 3);
+      const statusBox = isCollection ? await page.getByRole('status').boundingBox() : null;
+      const cardBoxes = await Promise.all((await cards.all()).map((card) => card.boundingBox()));
+      for (const [index, card] of (await cards.all()).entries()) {
+        const label = card.locator('.detection-label');
+        const labelBox = await label.boundingBox();
+        const mediaBox = await card.getByRole('link').first().boundingBox();
+        expect(labelBox.x).toBeGreaterThanOrEqual(0);
+        expect(labelBox.x + labelBox.width).toBeLessThanOrEqual(width);
+        expect(Math.abs(labelBox.y + labelBox.height / 2 - cardBoxes[index].y)).toBeLessThanOrEqual(0.5);
+        expect(mediaBox.y).toBe(cardBoxes[index].y);
+        await expect(label).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+        if (statusBox) expect(boxesOverlap(labelBox, statusBox)).toBe(false);
+        for (const [otherIndex, cardBox] of cardBoxes.entries()) {
+          if (otherIndex !== index) expect(boxesOverlap(labelBox, cardBox)).toBe(false);
+        }
       }
-    }
-    if (width === 320) {
-      const wrapped = cards.filter({ hasText: 'Maintainable n8n Pipelines' }).locator('.detection-label');
-      const box = await wrapped.boundingBox();
-      const lineHeight = await wrapped.evaluate((element) => parseFloat(getComputedStyle(element).lineHeight));
-      expect(box.height).toBeGreaterThan(lineHeight);
-    }
-  });
+      if (width === 320 && isCollection) {
+        const wrapped = cards.filter({ hasText: 'Maintainable n8n Pipelines' }).locator('.detection-label');
+        const box = await wrapped.boundingBox();
+        const lineHeight = await wrapped.evaluate((element) => parseFloat(getComputedStyle(element).lineHeight));
+        expect(box.height).toBeGreaterThan(lineHeight);
+      }
+    });
+  }
 }
 
 const heroFoldViewports = [
