@@ -69,7 +69,9 @@ const measureRenderedContrast = (target) => {
     return layers[index % layers.length]?.trim() ?? fallback;
   };
   const cssGradientColorAtPoint = (value, node, style, index, point) => {
-    if (!/^linear-gradient\(/i.test(value)) return null;
+    value = value.trim();
+    if (!/^(?:linear|radial)-gradient\(/i.test(value)) return null;
+    const radial = /^radial-gradient\(/i.test(value);
     const inner = value.slice(value.indexOf('(') + 1, value.lastIndexOf(')'));
     const parts = splitLayers(inner);
     const firstColorIndex = parts.findIndex((part) => cssColors(part).length > 0);
@@ -77,14 +79,14 @@ const measureRenderedContrast = (target) => {
     const direction = parts.slice(0, firstColorIndex).join(' ').trim();
     let angle = Math.PI;
     const degrees = direction.match(/^(-?\d+(?:\.\d+)?)deg$/i);
-    if (degrees) angle = Number(degrees[1]) * Math.PI / 180;
-    else if (direction.startsWith('to ')) {
+    if (!radial && degrees) angle = Number(degrees[1]) * Math.PI / 180;
+    else if (!radial && direction.startsWith('to ')) {
       const sides = direction.slice(3).split(/\s+/);
       const x = sides.includes('right') ? 1 : sides.includes('left') ? -1 : 0;
       const y = sides.includes('bottom') ? 1 : sides.includes('top') ? -1 : 0;
       angle = Math.atan2(x, -y);
       if (angle < 0) angle += Math.PI * 2;
-    } else if (direction) return null;
+    } else if (!radial && direction) return null;
 
     const rect = node.getBoundingClientRect();
     const size = layerValue(style, 'backgroundSize', index, 'auto').split(/\s+/);
@@ -104,13 +106,45 @@ const measureRenderedContrast = (target) => {
     };
     const left = rect.left + offset(position[0], rect.width - width);
     const top = rect.top + offset(position[1] ?? '50%', rect.height - height);
-    const dx = Math.sin(angle);
-    const dy = -Math.cos(angle);
-    const length = Math.abs(dx) * width + Math.abs(dy) * height;
-    const startX = left + width / 2 - dx * length / 2;
-    const startY = top + height / 2 - dy * length / 2;
-    const progress = Math.max(0, Math.min(1,
-      ((point.x - startX) * dx + (point.y - startY) * dy) / length));
+    let length;
+    let progress;
+    if (radial) {
+      const [shape = 'ellipse', center = '50% 50%'] = direction.split(/\s+at\s+/);
+      const tokens = shape.trim().split(/\s+/).filter(Boolean);
+      const circle = tokens[0] === 'circle';
+      if (['ellipse', 'circle'].includes(tokens[0])) tokens.shift();
+      const coordinates = center.trim().split(/\s+/);
+      if (coordinates.length > 2
+        || !/^(?:left|right|center|-?\d*\.?\d+(?:%|px))$/.test(coordinates[0])
+        || (coordinates[1] && !/^(?:top|bottom|center|-?\d*\.?\d+(?:%|px))$/.test(coordinates[1]))) return null;
+      const centerX = offset(coordinates[0], width);
+      const centerY = offset(coordinates[1] ?? '50%', height);
+      const farX = Math.max(centerX, width - centerX);
+      const farY = Math.max(centerY, height - centerY);
+      let radiusX;
+      let radiusY;
+      if (tokens.length === 0 || tokens.join(' ') === 'farthest-corner') {
+        radiusX = circle ? Math.hypot(farX, farY) : farX * Math.SQRT2;
+        radiusY = circle ? radiusX : farY * Math.SQRT2;
+      } else if (tokens.length === (circle ? 1 : 2)
+        && tokens.every((token) => /^\d*\.?\d+(?:%|px)$/.test(token))) {
+        radiusX = dimension(tokens[0], width);
+        radiusY = circle ? radiusX : dimension(tokens[1], height);
+      } else return null;
+      if (radiusX <= 0 || radiusY <= 0) return null;
+      length = radiusX;
+      progress = Math.min(1, Math.hypot(
+        (point.x - left - centerX) / radiusX,
+        (point.y - top - centerY) / radiusY));
+    } else {
+      const dx = Math.sin(angle);
+      const dy = -Math.cos(angle);
+      length = Math.abs(dx) * width + Math.abs(dy) * height;
+      const startX = left + width / 2 - dx * length / 2;
+      const startY = top + height / 2 - dy * length / 2;
+      progress = Math.max(0, Math.min(1,
+        ((point.x - startX) * dx + (point.y - startY) * dy) / length));
+    }
     const stops = parts.slice(firstColorIndex).map((part) => {
       const match = part.match(/rgba?\([^)]*\)|#[\da-f]{3,8}\b|\btransparent\b/i);
       if (!match) return null;
@@ -677,6 +711,19 @@ const expectRenderedForeground = async (locator, label, expected) => {
     { message: label },
   ).toBe(expected);
 };
+
+test('contrast measurement samples radial lights only where they paint behind text', async ({ page }) => {
+  const layers = Array.from({ length: 6 }, () => 'radial-gradient(ellipse 20% 30% at 10% 50%, rgba(0,0,0,0.8) 0%, transparent 70%)').join(',');
+  await page.setContent(`<div style="position:relative;width:300px;height:80px;background-color:white;background-image:${layers}"><span id="radial-label" style="position:absolute;left:220px;top:30px;color:black;font-size:12px">Outer label</span></div>`);
+  const result = await renderedContrast(page.locator('#radial-label'));
+  expect(result.ratio).toBeGreaterThan(20);
+});
+
+test('contrast measurement samples the center of a default radial ellipse', async ({ page }) => {
+  await page.setContent('<div style="position:relative;width:300px;height:80px;background:radial-gradient(ellipse,black 0%,black 50%,white 70%)"><span id="radial-label" style="position:absolute;left:140px;top:30px;color:white;font-size:12px">I</span></div>');
+  const result = await renderedContrast(page.locator('#radial-label'));
+  expect(result.ratio).toBeGreaterThan(20);
+});
 
 test('contrast measurement includes gradient background stops', async ({ page }) => {
   await page.setContent('<div style="background: linear-gradient(165deg, #141318 0%, #0e0e10 100%); padding: 16px"><span id="gradient-label" style="color: #747b87; font-size: 12px">Gradient label</span></div>');

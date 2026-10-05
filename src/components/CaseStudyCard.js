@@ -72,7 +72,7 @@ const CaseStudyCard = ({
           { className: 'media-meta absolute left-4 right-14 bottom-4 z-[2]' },
           React.createElement(headingTag, { className: 'text-[1.05rem] font-[650] tracking-[-0.015em] leading-[1.3] text-white' }, project.cardTitle || project.title),
         ),
-        React.createElement('span', { className: 'glyph-hit absolute right-3 bottom-3 z-[3] w-11 h-11 grid place-items-center text-[#d8caff] border border-[rgba(139,92,246,0.35)] bg-[rgba(12,13,13,0.55)]', 'aria-hidden': true }, React.createElement(ArrowGlyph)),
+        React.createElement('span', { className: 'glyph-hit absolute right-3 bottom-3 z-[3] w-11 h-11 grid place-items-center text-[#d8caff]', 'aria-hidden': true }, React.createElement(ArrowGlyph)),
       ),
     ),
     React.createElement(

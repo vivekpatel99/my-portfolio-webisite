@@ -492,3 +492,57 @@ test('portfolio card click navigates to case study detail', async ({ page }) => 
   await expect(page.getByRole('heading', { name: /What I built/i })).toBeVisible();
   await expect(page.getByRole('heading', { name: /The outcome/i })).toBeVisible();
 });
+
+test('wide gallery lightbox keeps its outer frame and label inside narrow viewports', async ({ page }) => {
+  await reducedMotion(page);
+  for (const width of [320, 390]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/project/n8n-openai-data-extraction/');
+    const opener = page.getByRole('button', { name: /Enlarge image:/ });
+    await opener.click();
+    const dialog = page.getByRole('dialog', { name: 'Enlarged case study images' });
+    const bounds = await dialog.boundingBox();
+    expect(bounds.x).toBeGreaterThanOrEqual(8);
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual(width - 8);
+    const geometry = await dialog.evaluate((element) => {
+      const label = element.querySelector('.detection-label');
+      const frame = element.getBoundingClientRect();
+      const text = label.getBoundingClientRect();
+      return {
+        center: (text.top + text.bottom) / 2 - frame.top,
+        contained: text.left >= frame.left && text.right <= frame.right,
+        background: getComputedStyle(label).backgroundColor,
+      };
+    });
+    expect(geometry).toEqual({ center: 0, contained: true, background: 'rgba(0, 0, 0, 0)' });
+    await page.keyboard.press('Escape');
+    await expect(dialog).toHaveCount(0);
+    await expect(opener).toBeFocused();
+  }
+});
+
+
+test('single-image evidence preserves its link within the shared transparent frame', async ({ page }) => {
+  await reducedMotion(page);
+  for (const slug of ['ai-project-planning-assistant', 'depth-based-distance-estimation', 'healthcare-document-intelligence']) {
+    await page.goto(`/project/${slug}/`);
+    const stage = page.locator('.case-study-cover-stage');
+    await expect(stage).toHaveClass(/detection-panel/);
+    await expect(stage.locator('.detection-label')).toHaveText('PROJECT EVIDENCE');
+    const image = stage.locator('img');
+    await expect(image).toBeVisible();
+    await expect(stage.locator('a')).toHaveAttribute('href', /.+/);
+    const geometry = await stage.evaluate((element) => {
+      const label = element.querySelector('.detection-label');
+      const bounds = element.getBoundingClientRect();
+      const text = label.getBoundingClientRect();
+      return {
+        center: (text.top + text.bottom) / 2 - bounds.top,
+        background: getComputedStyle(label).backgroundColor,
+        imageBorder: getComputedStyle(element.querySelector('img')).borderTopWidth,
+        contained: bounds.left >= 0 && bounds.right <= innerWidth,
+      };
+    });
+    expect(geometry).toEqual({ center: 0, background: 'rgba(0, 0, 0, 0)', imageBorder: '0px', contained: true });
+  }
+});
