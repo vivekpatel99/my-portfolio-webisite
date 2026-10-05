@@ -225,6 +225,7 @@ const Contact = () => {
                 ))}
               </div>
               <div className="email-note detection-panel mt-[22px] bg-[rgba(139,92,246,0.08)] p-[14px]">
+                <DetectionLabel aria-hidden="true">EMAIL</DetectionLabel>
                 <p className="q text-[0.8rem] text-[#9ca3af] mb-[6px]">Prefer email?</p>
                 <a href={socialLinks.emailHref} className="text-[0.9rem] font-semibold text-white hover:text-[#a78bfa] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#c4b5fd] focus-visible:outline-offset-4 [overflow-wrap:anywhere]">
                   {socialLinks.contactEmail}

@@ -119,7 +119,7 @@ The following map records the 3 October Corners + labels decision tracked in #29
 | Contact | Main request form and What happens next panel | Confirmed on 5 October 2026: shared opposing outer-edge corners with transparent `PROJECT · REQUEST` and `PROCESS · NEXT STEPS` edge labels. Remove the redundant interior `CONTACT · DETECTED` metadata. Preserve the actual heading and content, input boundaries, and form behavior. |
 | Case-study detail | Existing framed panels | Existing reference: separate review scope. The homepage decision does not establish completed implementation or verification for these routes. |
 
-Confirmed on 4 October 2026: the contact page's Prefer email? card uses the shared top-left and bottom-right panel corners from SH-03 in place of its continuous border. Confirmed: preserve the existing prompt, email link, and fill without adding an edge label or confidence score.
+Confirmed on 4 October 2026: the contact page's Prefer email? card uses the shared top-left and bottom-right panel corners from SH-03 in place of its continuous border. Confirmed on 5 October 2026: add a transparent `EMAIL` label centered on the card's top-edge guide. This supersedes the earlier no-label exception. Confirmed: preserve the existing prompt, email link, fill, and opposing corners without a confidence score.
 
 Confirmed: the case-study collection page uses top-left and bottom-right corners around its semantic h1, Selected Case Studies, with the shared heading geometry and rest/hover colors from SH-03. Existing reference: preserve its white and purple text. Confirmed: it has no separate Collection badge or added edge label.
 
