@@ -61,10 +61,6 @@
   white-space: nowrap;
 }
 
-.card > .detection-label {
-  transform: translateY(calc(-100% - 3px));
-}
-
 .detection-panel:hover,
 .detection-panel:focus-within,
 .detection-heading:hover,
