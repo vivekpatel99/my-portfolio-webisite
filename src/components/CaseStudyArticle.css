@@ -64,7 +64,7 @@
 
 .case-gallery { margin: 0 0 38px; }
 /* 4:3 is the floor. Wide screenshots set a wider inline ratio from CaseStudyGallery. */
-.case-gallery-stage { position: relative; height: auto; aspect-ratio: 4 / 3; border: 1px solid #303034; border-radius: 4px; background: #111214; touch-action: pan-y; }
+.case-gallery-stage { position: relative; height: auto; aspect-ratio: 4 / 3; background: #111214; touch-action: pan-y; }
 .case-gallery button, .case-gallery-dialog button { color: #eeedf0; background: #18191c; border: 1px solid #626168; border-radius: 50%; cursor: pointer; min-width: 44px; min-height: 44px; font: inherit; }
 .case-gallery button:focus-visible, .case-gallery-dialog button:focus-visible, .case-gallery-viewport:focus-visible { outline: 3px solid #c8abea; outline-offset: 3px; }
 .case-gallery button:not(:disabled):hover, .case-gallery-dialog button:not(:disabled):hover,
@@ -84,8 +84,8 @@
 /* The overlay is portalled to <body>, outside the `.case-study-article` border-box rule. */
 .case-gallery-overlay,
 .case-gallery-overlay * { box-sizing: border-box; }
-.case-gallery-overlay { position: fixed; inset: 0; z-index: 10000; background: #000e; overflow-y: auto; overscroll-behavior: contain; padding: 24px; display: grid; align-content: start; place-items: start center; }
-.case-gallery-dialog { width: min(1100px, 100%); color: #eeedf0; background: #111214; padding: 16px; border: 1px solid #303034; border-radius: 8px; }
+.case-gallery-overlay { position: fixed; inset: 0; z-index: 10000; background: #000e; overflow-y: auto; overscroll-behavior: contain; padding: 24px; display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; place-items: start center; }
+.case-gallery-dialog { min-width: 0; width: min(1100px, 100%); color: #eeedf0; background: #111214; padding: 16px; }
 .case-gallery-dialog .case-gallery-close { display: block; margin: 0 0 12px auto; font-size: 28px; }
 .case-gallery-dialog .case-gallery-stage { height: min(60dvh, 700px); aspect-ratio: auto; }
 .case-gallery-viewport { width: 100%; height: 100%; overflow: auto; }

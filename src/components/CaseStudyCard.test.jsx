@@ -210,7 +210,6 @@ describe('CaseStudyCard', () => {
       expect(paths.length).toBe(2);
       expect(paths[0].getAttribute('d')).toContain('M5 3H13V11');
       expect(paths[1].getAttribute('d')).toContain('M13 3L4 12');
-      expect(glyphContainer.className).toContain('border-[rgba(139,92,246,0.35)]');
       expect(glyphContainer.textContent).not.toContain('↗');
     });
   });

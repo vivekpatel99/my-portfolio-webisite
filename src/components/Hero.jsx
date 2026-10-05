@@ -5,15 +5,15 @@ import { HERO_DETECTED_FIELD_WINDOWS, HERO_INVOICE_FIELDS } from '@/lib/heroDete
 import { profileImages } from '@/config/links';
 import { DetectionLabel } from './DetectionFrame';
 
-const BACKGROUND_BOXES = [
-  { type: 'bracket', top: '9%', left: '4%', w: 64, h: 44, c: 15, dur: 15, delay: 0, dx: 16, dy: -14, op: 0.78, depth: 0.55 },
-  { type: 'bracket', top: '18%', right: '8%', w: 48, h: 36, c: 12, dur: 17, delay: -3, dx: -15, dy: 12, op: 0.7, depth: 0.9, white: true },
-  { type: 'rect', top: '28%', left: '38%', w: 88, h: 52, dur: 19, delay: -6, dx: 12, dy: -16, op: 0.58, depth: 0.35, pulse: true },
-  { type: 'bracket', top: '42%', left: '12%', w: 42, h: 32, c: 11, dur: 13, delay: -2, dx: 14, dy: 15, op: 0.72, depth: 1.15 },
-  { type: 'rect', bottom: '22%', left: '22%', w: 60, h: 40, dur: 16, delay: -8, dx: -13, dy: 11, op: 0.55, depth: 0.7, white: true },
-  { type: 'bracket', bottom: '16%', right: '18%', w: 52, h: 38, c: 13, dur: 14, delay: -4, dx: 15, dy: -12, op: 0.68, depth: 0.85, white: true },
-  { type: 'bracket', top: '58%', right: '36%', w: 36, h: 28, c: 10, dur: 11, delay: -1, dx: -12, dy: 14, op: 0.66, depth: 1.3, pulse: true },
-  { type: 'rect', top: '12%', left: '58%', w: 44, h: 30, dur: 18, delay: -10, dx: 11, dy: 13, op: 0.5, depth: 0.45 }
+const BACKGROUND_LIGHTS = [
+  { top: '9%', left: '4%', w: 64, h: 44, dur: 15, delay: 0, dx: 16, dy: -14, op: 0.78, depth: 0.55 },
+  { top: '18%', right: '8%', w: 48, h: 36, dur: 17, delay: -3, dx: -15, dy: 12, op: 0.7, depth: 0.9, white: true },
+  { top: '28%', left: '38%', w: 88, h: 52, dur: 19, delay: -6, dx: 12, dy: -16, op: 0.58, depth: 0.35, pulse: true },
+  { top: '42%', left: '12%', w: 42, h: 32, dur: 13, delay: -2, dx: 14, dy: 15, op: 0.72, depth: 1.15 },
+  { bottom: '22%', left: '22%', w: 60, h: 40, dur: 16, delay: -8, dx: -13, dy: 11, op: 0.55, depth: 0.7, white: true },
+  { bottom: '16%', right: '18%', w: 52, h: 38, dur: 14, delay: -4, dx: 15, dy: -12, op: 0.68, depth: 0.85, white: true },
+  { top: '58%', right: '36%', w: 36, h: 28, dur: 11, delay: -1, dx: -12, dy: 14, op: 0.66, depth: 1.3, pulse: true },
+  { top: '12%', left: '58%', w: 44, h: 30, dur: 18, delay: -10, dx: 11, dy: 13, op: 0.5, depth: 0.45 }
 ];
 
 const PARALLAX_MAX_SHIFT_PX = 20;
@@ -85,7 +85,7 @@ const useDocumentVisible = () => {
 
 const Hero = () => {
   const heroRef = useRef(null);
-  const bgBoxesRef = useRef([]);
+  const bgLightsRef = useRef([]);
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   const hasFinePointer = useMediaQuery('(pointer: fine)');
   const isInViewport = useIsInViewport(heroRef);
@@ -148,8 +148,8 @@ const Hero = () => {
     const hero = heroRef.current;
     if (!parallaxEnabled || !hero) return undefined;
 
-    const boxes = bgBoxesRef.current
-      .map((element, i) => ({ element, depth: BACKGROUND_BOXES[i].depth }))
+    const boxes = bgLightsRef.current
+      .map((element, i) => ({ element, depth: BACKGROUND_LIGHTS[i].depth }))
       .filter(({ element }) => element);
     if (!boxes.length) return undefined;
 
@@ -233,14 +233,14 @@ const Hero = () => {
         }}
       />
 
-      {/* Background detection bboxes with parallax */}
+      {/* Ambient light with parallax */}
       <div className="absolute inset-0 pointer-events-none z-[1] overflow-hidden" aria-hidden="true">
-        {BACKGROUND_BOXES.map((box, i) => (
+        {BACKGROUND_LIGHTS.map((box, i) => (
           <div
             key={i}
-            ref={(el) => { bgBoxesRef.current[i] = el; }}
+            ref={(el) => { bgLightsRef.current[i] = el; }}
             data-depth={box.depth}
-            className={`absolute ${box.type === 'bracket' ? 'w-14 h-10' : 'w-18 h-12'}`}
+            className="absolute"
             style={{
               top: box.top,
               left: box.left,
@@ -263,23 +263,10 @@ const Hero = () => {
                 '--op': box.op
               }}
             >
-              {box.type === 'bracket' ? (
-                <div className="relative w-full h-full">
-                  <span 
-                    className={`absolute top-0 left-0 border-t border-l ${box.white ? 'border-white/[0.32]' : 'border-[#8B5CF6]/[0.52]'}`}
-                    style={{ width: box.c || 14, height: box.c || 14, borderWidth: '1.5px 0 0 1.5px' }}
-                  />
-                  <span 
-                    className={`absolute bottom-0 right-0 border-b border-r ${box.white ? 'border-white/[0.32]' : 'border-[#8B5CF6]/[0.52]'}`}
-                    style={{ width: box.c || 14, height: box.c || 14, borderWidth: '0 1.5px 1.5px 0' }}
-                  />
-                </div>
-              ) : (
-                <div 
-                  className={`w-full h-full ${box.white ? 'border-white/[0.24]' : 'border-[#8B5CF6]/[0.38]'} border rounded-[1px]`}
-                  style={{ opacity: box.op }}
-                />
-              )}
+              <div
+                className="w-full h-full"
+                style={{ background: `radial-gradient(ellipse, ${box.white ? 'rgba(255,255,255,0.045)' : 'rgba(139,92,246,0.08)'} 0%, transparent 70%)` }}
+              />
             </div>
           </div>
         ))}
@@ -431,45 +418,34 @@ const Hero = () => {
             {/* Right: Photo detection card */}
             <div className="flex justify-center items-center lg:col-start-2 lg:row-start-1 max-lg:mx-auto max-lg:w-full max-lg:max-w-[300px] max-md:max-w-[256px] max-md:mt-2">
               <div className="relative w-full max-w-[300px] p-8 overflow-visible max-md:p-5 max-md:max-w-[256px]">
-                {/* Ghost trail frames behind */}
+                {/* Soft portrait ambience */}
                 <div className="absolute inset-8 pointer-events-none z-[1] overflow-visible max-md:inset-5" aria-hidden="true">
                   {[
-                    { class: 'g1', inset: '-12px', opacity: reduceMotion ? 0.22 : 0.4, delay: '0s', name: 'ghost-trail-a' },
-                    { class: 'g2', inset: '-20px -8px -8px -20px', opacity: reduceMotion ? 0.16 : 0.32, delay: '-1s', name: 'ghost-trail-b' },
-                    { class: 'g3', inset: '8px', opacity: reduceMotion ? 0 : 0.28, delay: '-2s', name: 'ghost-trail-c', radius: '24px' },
-                    { class: 'g4', inset: '-28px -14px -14px -28px', opacity: reduceMotion ? 0 : 0.22, delay: '-3s', name: 'ghost-trail-d', radius: '34px' }
+                    { inset: '-12px', opacity: reduceMotion ? 0.22 : 0.4, delay: '0s', name: 'ghost-trail-a' },
+                    { inset: '-20px -8px -8px -20px', opacity: reduceMotion ? 0.16 : 0.32, delay: '-1s', name: 'ghost-trail-b' },
+                    { inset: '8px', opacity: reduceMotion ? 0 : 0.28, delay: '-2s', name: 'ghost-trail-c' },
+                    { inset: '-28px -14px -14px -28px', opacity: reduceMotion ? 0 : 0.22, delay: '-3s', name: 'ghost-trail-d' }
                   ].map((ghost, i) => (
                     <div
                       key={i}
-                      className={`absolute rounded-[28px] border-[1.5px] ${
-                        ghost.class === 'g3' ? 'border-white/[0.28]' : ghost.class === 'g2' ? 'border-purple-400/[0.4]' : 'border-[#8B5CF6]/[0.55]'
-                      }`}
+                      className="absolute"
                       style={{
                         inset: ghost.inset,
-                        borderRadius: ghost.radius || '28px',
                         opacity: ghost.opacity,
-                        boxShadow: '0 0 0 1px rgba(255,255,255,0.06) inset, 0 0 18px rgba(139,92,246,0.12)',
+                        background: 'radial-gradient(ellipse, rgba(139,92,246,0.12) 0%, transparent 70%)',
                         animation: reduceMotion ? 'none' : `${ghost.name} 4s ease-in-out infinite ${ghost.delay}`,
                         willChange: reduceMotion ? 'auto' : 'transform, opacity'
                       }}
-                    >
-                      {/* Corner brackets on ghosts */}
-                      <span className={`absolute -top-[1px] -left-[1px] w-[18px] h-[18px] border-l-2 border-t-2 ${ghost.class === 'g3' || ghost.class === 'g4' ? 'border-white/[0.35] opacity-70' : 'border-[#8B5CF6]/[0.55] opacity-70'}`} />
-                      <span className={`absolute -top-[1px] -right-[1px] w-[18px] h-[18px] border-r-2 border-t-2 ${ghost.class === 'g3' ? 'border-white/[0.35] opacity-70' : 'border-[#8B5CF6]/[0.55] opacity-70'}`} />
-                      <span className={`absolute -bottom-[1px] -left-[1px] w-[18px] h-[18px] border-l-2 border-b-2 ${ghost.class === 'g3' ? 'border-white/[0.35] opacity-70' : 'border-[#8B5CF6]/[0.55] opacity-70'}`} />
-                      <span className={`absolute -bottom-[1px] -right-[1px] w-[18px] h-[18px] border-r-2 border-b-2 ${ghost.class === 'g3' || ghost.class === 'g4' ? 'border-white/[0.35] opacity-70' : 'border-[#8B5CF6]/[0.55] opacity-70'}`} />
-                    </div>
+                    />
                   ))}
                 </div>
 
                 {/* Purple L-brackets (static on top) */}
                 <div className="absolute inset-1 pointer-events-none z-[3]" aria-hidden="true">
-                  <div className="hero-field-label absolute top-0 left-[29px] -translate-y-1/2 z-[4] [--hero-label-height:12px] bg-[#0C0D0D]">
+                  <div className="hero-field-label absolute top-0 left-[29px] -translate-y-1/2 z-[4] [--hero-label-height:12px]">
                     engineer<span className="hero-field-score"> · 0.99</span>
                   </div>
                   <span className="absolute top-0 left-0 w-6 h-6 border-l-[2.5px] border-t-[2.5px] border-[#8B5CF6]" style={{ filter: 'drop-shadow(0 0 4px rgba(139,92,246,0.55))' }} />
-                  <span className="absolute top-0 right-0 w-6 h-6 border-r-[2.5px] border-t-[2.5px] border-[#8B5CF6]" style={{ filter: 'drop-shadow(0 0 4px rgba(139,92,246,0.55))' }} />
-                  <span className="absolute bottom-0 left-0 w-6 h-6 border-l-[2.5px] border-b-[2.5px] border-[#8B5CF6]" style={{ filter: 'drop-shadow(0 0 4px rgba(139,92,246,0.55))' }} />
                   <span className="absolute bottom-0 right-0 w-6 h-6 border-r-[2.5px] border-b-[2.5px] border-[#8B5CF6]" style={{ filter: 'drop-shadow(0 0 4px rgba(139,92,246,0.55))' }} />
                 </div>
 

@@ -81,7 +81,7 @@ Proposed default: the breakpoint system follows the existing Tailwind configurat
 
 The current dark fills and hero ambient treatment are existing references. The following limits on new effects are proposed defaults consistent with #294 and #296.
 
-- Existing reference: dark fills and labeled corner frames separate the approved homepage panels. Existing reference: continuous outer panel borders are removed from those panels. Existing reference: the hero may retain its existing restrained ambient treatment.
+- Existing reference: dark fills and labeled corner frames separate the approved homepage panels. Existing reference: continuous outer panel borders are removed from those panels. Confirmed on 5 October 2026: retain restrained hero lighting and its reduced-motion lifecycle, but remove empty floating box decorations and redundant portrait ghost boundaries. Borderless ambient light may retain the existing motion; do not invent detection labels for empty space.
 - Proposed default: secondary cards remain quieter than the hero. Proposed default: button hierarchy comes from fill, outline, and spacing. Proposed default: additional gradients, glow, scanning effects, or technical badges are not a substitute for hierarchy. Proposed default: hover decoration stays within the component and does not move surrounding content.
 
 ## Shapes
@@ -108,13 +108,14 @@ The following map records the 3 October Corners + labels decision tracked in #29
 | --- | --- | --- |
 | Hero profile invoice | Outer invoice panel | Confirmed: two opposing static corners and a prominent attached Profile Invoice title. Existing reference: preserve the invoice identifier and internal field animation. |
 | Hero detected fields | Two selected values at a time | Existing reference: animated field corners, labels, and illustrative scores. The pair cycle follows the 3 October experiment, not the earlier three-highlight rotation. |
-| Hero portrait | Outer portrait frame | Existing reference: preserve its stronger frame and unboxed engineer label with the existing score. Label alignment belongs to #297. |
+| Hero portrait | Outer portrait frame | Confirmed on 5 October 2026: keep only top-left and bottom-right strokes on the stronger outer portrait frame. The existing engineer label and 0.99 score sit centered on its top edge with a transparent background. Preserve frame dimensions, crop, and lower ID/REC badges. |
 | Homepage section headings | Main h2 headings, including About subsections and final CTA | Confirmed: two opposing corners with a descriptive attached label. Featured Case Studies is the scoped TY-01 exception under #295: corners without an extra label. |
 | Featured work and case-study collection | Each project card | Confirmed: two opposing static corners and the existing category label attached to the edge. Existing reference: preserve card navigation and focus. |
 | Service offers | Each service card | Confirmed: two opposing static corners and the service offer label on the edge. |
 | Testimonials | Whole quote panel | Confirmed: two opposing static corners with testimonial and client metadata on the edge. Individual sentences remain unboxed. |
 | About | Portrait and biography panels | Confirmed: two opposing static corners with portrait and biography labels on the edge. |
 | Footer | Whole footer content panel | Confirmed: one corner frame and an attached label. Individual links remain unboxed. |
+| Case-study gallery | Inline evidence stage and outer lightbox | Confirmed on 5 October 2026: use the shared opposing outer corners with a transparent `PROJECT EVIDENCE` label centered on the top edge. No nested decorative stage frame inside the lightbox. Preserve media bounds, captions, and functional controls, thumbnails, selected/disabled states, and keyboard focus outlines. |
 | Case-study detail, service detail, contact | Existing framed panels and form fields | Existing reference: separate review scope. The homepage decision does not establish completed implementation or verification for these routes. |
 
 Confirmed on 4 October 2026: the contact page's Prefer email? card uses the shared top-left and bottom-right panel corners from SH-03 in place of its continuous border. Confirmed: preserve the existing prompt, email link, and fill without adding an edge label or confidence score.
@@ -125,7 +126,7 @@ Confirmed on 3 October 2026: all twelve approved completed case studies share on
 
 Confirmed on 3 October 2026: testimonial controls show slide dots without a Pause/Play button. Confirmed: selecting a dot stops automatic rotation for the mounted carousel; all dots remain usable for reading other quotes. Existing reference: mouse hover and keyboard focus temporarily hold rotation, and reduced motion disables autoplay.
 
-Proposed default: paragraphs, ordinary navigation links, individual footer links, legal text, gallery thumbnails, and captions receive no extra decorative boxes. Confirmed: the selected header navigation link is the scoped exception under NV-01. Proposed default: do not add a frame around every item inside a framed panel. Action styling remains under BT-01.
+Proposed default: paragraphs, ordinary navigation links, individual footer links, legal text, gallery thumbnails, and captions receive no extra decorative boxes. Confirmed: the selected header navigation link is the scoped exception under NV-01. Proposed default: do not add a frame around every item inside a framed panel. Confirmed on 5 October 2026: keep the case-study card arrow visible without its redundant bordered tile inside the card link. Preserve navigation and keyboard focus. Action styling remains under BT-01.
 
 ### SH-03. Frame geometry
 
