@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { DetectionLabel } from './DetectionFrame';
 import { ArrowRight } from 'lucide-react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { logos } from '@/config/links';
@@ -208,8 +209,9 @@ const Header = () => {
           <Link
             ref={desktopEstimateRef}
             to="/contact/"
-            className="detection-panel detection-action detection-action--primary detection-action--compact hidden md:inline-flex"
+            className="detection-panel detection-action detection-action--labeled detection-action--primary detection-action--compact hidden md:inline-flex"
           >
+            <DetectionLabel aria-hidden="true">REQUEST · ESTIMATE</DetectionLabel>
             Request Estimate
             <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           </Link>
@@ -271,8 +273,9 @@ const Header = () => {
             to="/contact/"
             onClick={handleEstimateClick}
             aria-label="Request a Project Estimate"
-            className="detection-panel detection-action detection-action--primary detection-action--compact inline-flex w-full"
+            className="detection-panel detection-action detection-action--labeled detection-action--primary detection-action--compact inline-flex w-full"
           >
+            <DetectionLabel aria-hidden="true">REQUEST · ESTIMATE</DetectionLabel>
             Request Estimate
             <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           </Link>

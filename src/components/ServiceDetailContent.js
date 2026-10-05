@@ -1,4 +1,5 @@
 import React from 'react';
+import { DetectionLabel } from './DetectionFrame.js';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { HOURLY_FROM_LABEL, serviceOffers, serviceTimelineLabel } from '../data/serviceOffers.js';
@@ -101,12 +102,12 @@ const ServiceDetailContent = ({ service }) => {
             { className: 'flex flex-col gap-3' },
             React.createElement(Link, {
               to: '/contact',
-              className: 'detection-panel detection-action detection-action--primary inline-flex',
-            }, 'Request a Project Estimate', React.createElement(ArrowRight, { size: 16, className: 'shrink-0', 'aria-hidden': true })),
+              className: 'detection-panel detection-action detection-action--labeled detection-action--primary inline-flex',
+            }, React.createElement(DetectionLabel, { 'aria-hidden': true }, 'PROJECT ESTIMATE'), 'Request a Project Estimate', React.createElement(ArrowRight, { size: 16, className: 'shrink-0', 'aria-hidden': true })),
             React.createElement(Link, {
               to: SERVICES_SECTION_HREF,
-              className: 'detection-panel detection-action inline-flex',
-            }, 'View All Services'),
+              className: 'detection-panel detection-action detection-action--labeled inline-flex',
+            }, React.createElement(DetectionLabel, { 'aria-hidden': true }, 'SERVICE OFFERS'), 'View All Services'),
           ),
         ),
       ),
