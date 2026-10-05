@@ -296,8 +296,12 @@ test('Contact form labels the form and submit action', async ({ page }) => {
   const form = page.locator('form[data-sensitive-telemetry]');
   await expect(form).toBeVisible();
   
-  // Form detection meta
-  await expect(form.getByText('CONTACT · DETECTED', { exact: true })).toBeVisible();
+  // The decorative panel label remains separate from the submit action name.
+  const panelLabel = form.locator(':scope > .detection-label');
+  await expect(panelLabel).toHaveText('PROJECT · REQUEST');
+  await expect(panelLabel).toHaveAttribute('aria-hidden', 'true');
+  await expect(panelLabel).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(form.getByText('CONTACT · DETECTED', { exact: true })).toHaveCount(0);
   
   // Proof strip with metrics
   const proof = page.locator('.proof');
@@ -389,8 +393,11 @@ test('e2e: Mobile nav → Menu → Request Estimate → Contact', async ({ page 
   await expect(page).toHaveURL(/\/contact\/?$/);
   await expect(page.getByRole('heading', { name: /Request a Project Estimate/i })).toBeVisible();
   
-  // Verify contact form detection meta
-  await expect(page.locator('form')).toContainText('CONTACT · DETECTED');
+  // Verify the contact panel's attached decorative label after navigation.
+  const panelLabel = page.locator('form > .detection-label');
+  await expect(panelLabel).toHaveText('PROJECT · REQUEST');
+  await expect(panelLabel).toHaveAttribute('aria-hidden', 'true');
+  await expect(page.getByRole('button', { name: 'Send project request' })).toBeVisible();
 });
 
 test('e2e: Testimonials carousel advance and structure', async ({ page }) => {
@@ -467,7 +474,9 @@ const coreCards = (page) => page
 
 const loadAllCoresByKeyboard = async (page) => {
   const loadMore = loadMoreControl(page);
-  await expect(loadMore).toHaveText('Load more');
+  await expect(loadMore).toHaveAccessibleName('Load more');
+  await expect(loadMore.locator('.detection-label')).toHaveText('MORE WORK');
+  await expect(loadMore.locator('.detection-label')).toHaveAttribute('aria-hidden', 'true');
   await loadMore.focus();
   for (let shown = initialCoreCount; shown < collectionCaseStudies.length;) {
     await page.keyboard.press('Enter');
@@ -475,7 +484,8 @@ const loadAllCoresByKeyboard = async (page) => {
     await expect(coreCards(page)).toHaveCount(shown);
     await expect(loadMore).toBeFocused();
   }
-  await expect(loadMore).toHaveText('All case studies shown');
+  await expect(loadMore).toHaveAccessibleName('All case studies shown');
+  await expect(loadMore.locator('.detection-label')).toHaveText('ALL WORK SHOWN');
 };
 
 const openCollection = async (page) => {

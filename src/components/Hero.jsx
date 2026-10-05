@@ -414,15 +414,17 @@ const Hero = () => {
             <div className="relative z-[1] flex flex-wrap gap-3 mt-1 lg:mt-4 lg:col-start-1 lg:row-start-2 max-md:flex-col max-md:mt-4">
               <Link
                 to="/contact/"
-                className="detection-panel detection-action detection-action--primary inline-flex min-w-[220px] max-md:w-full"
+                className="detection-panel detection-action detection-action--labeled detection-action--primary inline-flex min-w-[220px] max-md:w-full"
               >
+                <DetectionLabel aria-hidden="true">REQUEST · ESTIMATE</DetectionLabel>
                 Request a Project Estimate
                 <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
               </Link>
               <a
                 href="#portfolio"
-                className="detection-panel detection-action inline-flex min-w-[150px] max-md:w-full"
+                className="detection-panel detection-action detection-action--labeled inline-flex min-w-[150px] max-md:w-full"
               >
+                <DetectionLabel aria-hidden="true">PREVIOUS WORK</DetectionLabel>
                 View Case Studies
                 <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
               </a>

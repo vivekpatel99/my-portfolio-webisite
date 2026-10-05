@@ -534,7 +534,11 @@ describe("Contact form", () => {
 
   it('names the submit button and hides the route instruction', () => {
     render(<Contact />);
-    expect(screen.getByText(/CONTACT ·/i)).toBeTruthy();
+    expect(screen.queryByText(/CONTACT ·/i)).toBeNull();
+    const panelLabel = document.querySelector('form > .detection-label');
+    expect(panelLabel.textContent).toBe('PROJECT · REQUEST');
+    expect(panelLabel.getAttribute('aria-hidden')).toBe('true');
+    expect(screen.getByText('PROCESS · NEXT STEPS').getAttribute('aria-hidden')).toBe('true');
     expect(screen.getByRole('button', { name: /send project request/i })).toBeTruthy();
     expect(screen.queryByText(/SUBMIT · FIELD/i)).toBeNull();
     expect(screen.queryByText(/FORM REMAINS PRIMARY/i)).toBeNull();
@@ -544,7 +548,8 @@ describe("Contact form", () => {
     render(<Contact />);
     const button = screen.getByRole('button', { name: 'Send project request' });
     expect(button.hasAttribute('aria-label')).toBe(false);
-    expect(button.textContent.trim()).toBe('Send project request');
+    expect(button.querySelector('.action-submit-label').textContent.trim()).toBe('Send project request');
+    expect(button.querySelector('.detection-label').getAttribute('aria-hidden')).toBe('true');
   });
 
   it('#188: each field has a readable label without decorative field text', () => {
