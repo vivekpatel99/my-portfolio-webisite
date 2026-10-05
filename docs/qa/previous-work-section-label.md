@@ -4,6 +4,10 @@ Requested on 5 October 2026: attach `Previous work` beside the Featured Case Stu
 
 The homepage uses the existing `DetectionHeading` component. Its decorative label has a transparent background, no confidence score, and `aria-hidden="true"`. The semantic h2 remains `FEATURED CASE STUDIES`, with its original typography, content, and frame dimensions. No other heading or card changes in this PR.
 
+## CI follow-up
+
+The original passive QA assertion compared raw h2 text and rejected the added decorative label. The repaired test verifies the unchanged accessible heading name, then checks the exact `Previous work` label, its `aria-hidden` attribute, and transparent background. Both configured Chromium projects for this visual test passed against the isolated production build.
+
 ## Verification
 
 - All 850 unit tests passed across 68 files, including the existing semantic Portfolio heading checks.
