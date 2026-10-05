@@ -520,3 +520,29 @@ test('wide gallery lightbox keeps its outer frame and label inside narrow viewpo
     await expect(opener).toBeFocused();
   }
 });
+
+
+test('single-image evidence preserves its link within the shared transparent frame', async ({ page }) => {
+  await reducedMotion(page);
+  for (const slug of ['ai-project-planning-assistant', 'depth-based-distance-estimation', 'healthcare-document-intelligence']) {
+    await page.goto(`/project/${slug}/`);
+    const stage = page.locator('.case-study-cover-stage');
+    await expect(stage).toHaveClass(/detection-panel/);
+    await expect(stage.locator('.detection-label')).toHaveText('PROJECT EVIDENCE');
+    const image = stage.locator('img');
+    await expect(image).toBeVisible();
+    await expect(stage.locator('a')).toHaveAttribute('href', /.+/);
+    const geometry = await stage.evaluate((element) => {
+      const label = element.querySelector('.detection-label');
+      const bounds = element.getBoundingClientRect();
+      const text = label.getBoundingClientRect();
+      return {
+        center: (text.top + text.bottom) / 2 - bounds.top,
+        background: getComputedStyle(label).backgroundColor,
+        imageBorder: getComputedStyle(element.querySelector('img')).borderTopWidth,
+        contained: bounds.left >= 0 && bounds.right <= innerWidth,
+      };
+    });
+    expect(geometry).toEqual({ center: 0, background: 'rgba(0, 0, 0, 0)', imageBorder: '0px', contained: true });
+  }
+});

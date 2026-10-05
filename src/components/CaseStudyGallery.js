@@ -125,7 +125,9 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
     loading,
   });
   const cover = (image, loading = 'eager') => h('figure', { className: 'case-study-cover', key: image.src },
-    isVideo(image) ? media(image, false) : h('a', { href: image.src }, h('img', { src: caseStudyDisplaySrc(image), alt: image.alt, width: image.width, height: image.height, loading })),
+    h('div', { className: 'case-study-cover-stage detection-panel' },
+      h(DetectionLabel, { 'aria-hidden': true }, 'PROJECT EVIDENCE'),
+      isVideo(image) ? media(image, false) : h('a', { href: image.src }, h('img', { src: caseStudyDisplaySrc(image), alt: image.alt, width: image.width, height: image.height, loading }))),
     image.caption ? h('figcaption', null, image.caption) : null);
   if (images.length === 1) return cover(selected);
   const button = (label, action, content, props = {}) => h('button', { type: 'button', 'aria-label': label, onClick: action, ...props }, content);
