@@ -309,8 +309,15 @@ const assertHeroInvoiceGaps = async (page, { requireMobileHeaderGap = false } = 
   for (const badge of ['engineer · 0.99', 'ID 001 · TRACKED', 'REC']) {
     await expect(hero.getByText(badge, { exact: true })).toBeVisible();
   }
-  // Violet portrait L-brackets (the static frame corners) stay in the DOM.
-  await expect(hero.locator('div.absolute.inset-1.pointer-events-none > span')).toHaveCount(4);
+  // The approved portrait frame keeps only opposing top-left/bottom-right brackets.
+  const corners = hero.locator('div.absolute.inset-1.pointer-events-none > span');
+  await expect(corners).toHaveCount(2);
+  const edges = await corners.evaluateAll((elements) => elements.map((element) => {
+    const style = getComputedStyle(element);
+    return ['top', 'right', 'bottom', 'left'].filter((edge) =>
+      Number.parseFloat(style.getPropertyValue(`border-${edge}-width`)) > 0);
+  }));
+  expect(edges).toEqual([['top', 'left'], ['right', 'bottom']]);
 };
 
 for (const width of [320, 390, 720, 768, 1024, 1440]) {
@@ -458,6 +465,7 @@ test('hero invoice gaps hold under Chromium 200% browser zoom', async ({ browser
       await page.clock.pauseAt(new Date('2026-10-04T08:00:01Z'));
       await page.emulateMedia({ reducedMotion: 'no-preference' });
       const hero = page.locator('section[data-hero-highlight-index]');
+      await expect(hero).toHaveAttribute('data-hero-highlights', 'running');
       // The cycle waits until the outgoing fade is rendered, so a fixed
       // clock jump never reaches the next pair. Follow that sequence.
       const advancePair = async (delay) => {

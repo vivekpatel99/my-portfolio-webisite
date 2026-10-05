@@ -49,3 +49,12 @@ The second integration passed 850 unit tests, production build/static generation
 ## Single-image review repair
 
 Automated review identified that single-image publications returned through the cover branch before receiving the shared gallery treatment. The cover now places the same opposing corners and transparent `PROJECT EVIDENCE` label around the media, removes its continuous image border/radius, and retains the original link, dimensions, caption, and native video controls. Browser regression covers `ai-project-planning-assistant`, `depth-based-distance-estimation`, and `healthcare-document-intelligence` on desktop/mobile. Verification passed 850 unit tests, production build/static generation, and 85 visual/upgrade-flow checks (one device-specific skip), plus independent review.
+
+## CI and title follow-up
+
+The full CI run identified a stale responsive expectation for four portrait corners and a contrast-scanner timeout. Responsive checks now verify only the approved opposing corner edges without relying on device-pixel rounding. The contrast helper samples supported radial lights at the rendered text coordinates instead of multiplying fallback color candidates across overlapping layers; unsupported radial position forms keep the conservative fallback. Two focused radial fixtures and the existing measurement regressions pass. The native-zoom test waits for the hero to resume before advancing its fake clock. All 74 targeted contrast/invoice/zoom checks passed; native zoom also passed twice on each project.
+
+The user additionally confirmed that `Profile Invoice` should match the grey detection labels. Its color is now `#9CA3AF`, matching `.hero-field-label`; typography, weight, top-edge position, and transparent background remain unchanged. Desktop/mobile computed-style checks and visual inspection passed:
+
+![Grey Profile Invoice, desktop](decorative-boundaries-2026-10-05/invoice-grey-desktop.jpg)
+![Grey Profile Invoice, mobile](decorative-boundaries-2026-10-05/invoice-grey-mobile.jpg)
