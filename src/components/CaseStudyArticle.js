@@ -1,4 +1,5 @@
 import React from 'react';
+import { DetectionLabel } from './DetectionFrame.js';
 import { ArrowRight } from 'lucide-react';
 import CaseStudyGallery, { collectGalleryImages } from './CaseStudyGallery.js';
 
@@ -70,9 +71,9 @@ export const CaseStudyArticle = ({ story, backHref = '/#portfolio' }) => React.c
   React.createElement('div', { className: 'case-study-cta' },
     React.createElement('p', null, 'Working on something similar?'),
     React.createElement('a', {
-      className: 'detection-panel detection-action detection-action--primary inline-flex',
+      className: 'detection-panel detection-action detection-action--labeled detection-action--primary inline-flex',
       href: '/contact/',
-    }, 'Discuss a similar project', React.createElement(ArrowRight, { size: 16, className: 'shrink-0', 'aria-hidden': true })),
+    }, React.createElement(DetectionLabel, { 'aria-hidden': true }, 'PROJECT INQUIRY'), 'Discuss a similar project', React.createElement(ArrowRight, { size: 16, className: 'shrink-0', 'aria-hidden': true })),
   ),
 );
 

@@ -544,7 +544,8 @@ describe("Contact form", () => {
     render(<Contact />);
     const button = screen.getByRole('button', { name: 'Send project request' });
     expect(button.hasAttribute('aria-label')).toBe(false);
-    expect(button.textContent.trim()).toBe('Send project request');
+    expect(button.querySelector('.action-submit-label').textContent.trim()).toBe('Send project request');
+    expect(button.querySelector('.detection-label').getAttribute('aria-hidden')).toBe('true');
   });
 
   it('#188: each field has a readable label without decorative field text', () => {

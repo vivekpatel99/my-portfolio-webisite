@@ -49,7 +49,9 @@ describe('CaseStudiesContent collection return', () => {
       await user.click(loadMore);
     }
     expect(collectionLinks()).toHaveLength(collectionCaseStudies.length);
-    expect(loadMore.textContent).toBe('All case studies shown');
+    expect(screen.getByRole('button', { name: 'All case studies shown', exact: true })).toBe(loadMore);
+    expect(loadMore.querySelector('.detection-label').textContent).toBe('ALL WORK SHOWN');
+    expect(loadMore.querySelector('.detection-label').getAttribute('aria-hidden')).toBe('true');
   };
   const returnToCollection = (page) => {
     page.unmount();
