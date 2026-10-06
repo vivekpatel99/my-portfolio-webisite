@@ -33,10 +33,10 @@ const FreelancerMapIcon = () => (
 );
 
 const platformLinks = [
-  { name: 'Upwork', icon: UpworkIcon, url: socialLinks.upwork }, // Using centralized link
-  { name: 'Freelancer.com', icon: FreelancerIcon, url: socialLinks.freelancer }, // Using centralized link
-  { name: 'FreelancerMap', icon: FreelancerMapIcon, url: socialLinks.freelancerMap }, // Using centralized link
-  { name: 'Email', icon: Mail, url: socialLinks.emailHref } // Using centralized link
+  { name: 'Upwork', edgeLabel: 'FREELANCE PLATFORM', icon: UpworkIcon, url: socialLinks.upwork },
+  { name: 'Freelancer.com', edgeLabel: 'FREELANCE PLATFORM', icon: FreelancerIcon, url: socialLinks.freelancer },
+  { name: 'FreelancerMap', edgeLabel: 'FREELANCE PLATFORM', icon: FreelancerMapIcon, url: socialLinks.freelancerMap },
+  { name: 'Email', edgeLabel: 'DIRECT CONTACT', icon: Mail, url: socialLinks.emailHref }
 ];
 
 const nextSteps = [
@@ -390,8 +390,10 @@ const Contact = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`Connect with Vivek Patel on ${link.name}`}
-                    className="flex items-center gap-3 px-6 py-3 bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] text-white font-semibold transition-all hover:bg-[rgba(255,255,255,0.1)] hover:border-[rgba(139,92,246,0.5)]"
+                    className="detection-panel detection-action detection-action--labeled inline-flex"
+                    style={{ minWidth: '170px' }}
                   >
+                    <DetectionLabel aria-hidden="true">{link.edgeLabel}</DetectionLabel>
                     <Icon aria-hidden="true" />
                     {link.name}
                   </a>
