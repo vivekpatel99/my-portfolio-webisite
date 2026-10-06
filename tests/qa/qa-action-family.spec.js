@@ -154,7 +154,7 @@ test('text actions and utilities retain accessible targets, focus, selection and
     await expect(drawer).toBeVisible();
     const estimate = drawer.getByRole('link', { name: 'Request a Project Estimate' });
     await expect(estimate).toHaveAttribute('href', '/contact/');
-    await expect(estimate.locator('.detection-label')).toHaveText('REQUEST · ESTIMATE');
+    await expect(estimate.locator('.detection-label')).toHaveText('Inquiry');
     await page.keyboard.press('Tab');
     await estimate.focus();
     expect(await estimate.evaluate((e) => parseFloat(getComputedStyle(e).outlineWidth))).toBeGreaterThanOrEqual(2);
