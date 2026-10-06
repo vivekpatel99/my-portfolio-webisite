@@ -51,6 +51,10 @@ async function inspectActions(page) {
     expect(measured.family).not.toMatch(/monospace/);
     expect(measured.weight).toBe(await action.evaluate((e) => e.classList.contains('detection-action--primary') ? '650' : '600'));
     const label = action.locator(':scope > .detection-label');
+    if (await action.evaluate((element) => Boolean(element.closest('.case-study-navigation')))) {
+      await expect(label).toHaveCount(0);
+      continue;
+    }
     await expect(label).toHaveCount(1);
     await expect(label).toHaveAttribute('aria-hidden', 'true');
     const edge = await label.evaluate((element) => {
