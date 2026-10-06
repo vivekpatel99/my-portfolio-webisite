@@ -167,6 +167,8 @@ Existing reference: keep anchors for navigation and buttons for actions. Existin
 
 Confirmed on 4 October 2026: Vivek approved extending this family to service-detail estimate and View All Services actions, the case-study Discuss a similar project action, and contact submission. Confirmed: standardize prominent-action label typography, preserve the approved background and corner geometry, and keep the final CTA's REQUEST · ESTIMATE label. This extends the earlier named-control scope rather than changing panel or form-field styling. Visual review of the delivered family remains required before merge.
 
+Confirmed on 6 October 2026: the standalone `← View case studies` and `Back to home` anchors above each case-study article use the shared compact secondary corner-button treatment. They keep their existing labels, destinations, anchor semantics, and collection resume/history behavior. No decorative edge labels are added to these two navigation controls. This extends the named secondary family; prose links, inline back links, and footer navigation remain lightweight text actions.
+
 Confirmed on 4 October 2026: text actions stay lightweight, and utility actions retain conventional icons without decorative corners. Confirmed: review their hover and keyboard focus, accessible targets, and distinct states while preserving behavior. Existing reference: generic Button defaults remain unchanged; compact menu, consent, and retry callers use scoped utility styling. Gallery controls retain conventional shapes and their selected and disabled states.
 
 ### OC-01. Simulated OCR placement
