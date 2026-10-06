@@ -313,15 +313,16 @@ const assertHeroInvoiceGaps = async (page, { requireMobileHeaderGap = false } = 
   for (const badge of ['engineer · 0.99', 'ID 001 · TRACKED', 'REC']) {
     await expect(hero.getByText(badge, { exact: true })).toBeVisible();
   }
-  // The approved portrait frame keeps only opposing top-left/bottom-right brackets.
   const corners = hero.locator('div.absolute.inset-1.pointer-events-none > span');
-  await expect(corners).toHaveCount(2);
+  await expect(corners).toHaveCount(4);
   const edges = await corners.evaluateAll((elements) => elements.map((element) => {
     const style = getComputedStyle(element);
     return ['top', 'right', 'bottom', 'left'].filter((edge) =>
       Number.parseFloat(style.getPropertyValue(`border-${edge}-width`)) > 0);
   }));
-  expect(edges).toEqual([['top', 'left'], ['right', 'bottom']]);
+  expect(edges).toEqual([
+    ['top', 'left'], ['top', 'right'], ['bottom', 'left'], ['right', 'bottom'],
+  ]);
 };
 
 for (const width of [320, 390, 720, 768, 1024, 1440]) {
