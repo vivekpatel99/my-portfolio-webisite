@@ -133,7 +133,14 @@
 }
 
 .detection-action--primary {
+  background-image: linear-gradient(to bottom, rgba(139, 92, 246, 0.28), transparent);
+  background-size: 100% 70%;
   font-weight: 650;
+}
+
+.detection-action--primary:not(:disabled):not([aria-disabled="true"]):hover,
+.detection-action--primary:not(:disabled):not([aria-disabled="true"]):focus-visible {
+  background-image: linear-gradient(to bottom, rgba(139, 92, 246, 0.32), transparent);
 }
 
 .detection-action:not(:disabled):not([aria-disabled="true"]):active {
