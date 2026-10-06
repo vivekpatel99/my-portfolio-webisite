@@ -211,7 +211,7 @@ const Header = () => {
             to="/contact/"
             className="detection-panel detection-action detection-action--labeled detection-action--primary detection-action--compact hidden md:inline-flex"
           >
-            <DetectionLabel aria-hidden="true">REQUEST · ESTIMATE</DetectionLabel>
+            <DetectionLabel aria-hidden="true">Inquiry</DetectionLabel>
             Request Estimate
             <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           </Link>
@@ -275,7 +275,7 @@ const Header = () => {
             aria-label="Request a Project Estimate"
             className="detection-panel detection-action detection-action--labeled detection-action--primary detection-action--compact inline-flex w-full"
           >
-            <DetectionLabel aria-hidden="true">REQUEST · ESTIMATE</DetectionLabel>
+            <DetectionLabel aria-hidden="true">Inquiry</DetectionLabel>
             Request Estimate
             <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           </Link>

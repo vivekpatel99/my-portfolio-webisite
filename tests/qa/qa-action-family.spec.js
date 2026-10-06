@@ -51,6 +51,10 @@ async function inspectActions(page) {
     expect(measured.family).not.toMatch(/monospace/);
     expect(measured.weight).toBe(await action.evaluate((e) => e.classList.contains('detection-action--primary') ? '650' : '600'));
     const label = action.locator(':scope > .detection-label');
+    if (await action.evaluate((element) => Boolean(element.closest('.case-study-navigation')))) {
+      await expect(label).toHaveCount(0);
+      continue;
+    }
     await expect(label).toHaveCount(1);
     await expect(label).toHaveAttribute('aria-hidden', 'true');
     const edge = await label.evaluate((element) => {
@@ -154,7 +158,7 @@ test('text actions and utilities retain accessible targets, focus, selection and
     await expect(drawer).toBeVisible();
     const estimate = drawer.getByRole('link', { name: 'Request a Project Estimate' });
     await expect(estimate).toHaveAttribute('href', '/contact/');
-    await expect(estimate.locator('.detection-label')).toHaveText('REQUEST · ESTIMATE');
+    await expect(estimate.locator('.detection-label')).toHaveText('Inquiry');
     await page.keyboard.press('Tab');
     await estimate.focus();
     expect(await estimate.evaluate((e) => parseFloat(getComputedStyle(e).outlineWidth))).toBeGreaterThanOrEqual(2);

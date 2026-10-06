@@ -286,7 +286,8 @@ test('CTA shows its starting rate and estimate link', async ({ page }) => {
     .getByText('Project inquiry', { exact: true })).toBeVisible();
   
   // Action field button
-  await expect(cta).toContainText('REQUEST · ESTIMATE');
+  await expect(cta.getByRole('link', { name: /request a project estimate/i })
+    .locator('.detection-label')).toHaveText('Inquiry');
   
   await expect(cta.getByRole('link', { name: /request a project estimate/i })).toBeVisible();
 });

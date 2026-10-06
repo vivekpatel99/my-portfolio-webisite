@@ -403,7 +403,7 @@ const Hero = () => {
                 to="/contact/"
                 className="detection-panel detection-action detection-action--labeled detection-action--primary inline-flex min-w-[220px] max-md:w-full"
               >
-                <DetectionLabel aria-hidden="true">REQUEST · ESTIMATE</DetectionLabel>
+                <DetectionLabel aria-hidden="true">Inquiry</DetectionLabel>
                 Request a Project Estimate
                 <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
               </Link>
