@@ -32,7 +32,7 @@ describe('CTA Action Field', () => {
     expect(screen.getByText(/RATE/i)).toBeTruthy();
   });
 
-  it('has detection action field with REQUEST · ESTIMATE meta', () => {
+  it('has detection action field with Inquiry meta', () => {
     const { container } = render(
       <MemoryRouter>
         <CTA />
@@ -43,7 +43,7 @@ describe('CTA Action Field', () => {
     expect(actionField).toBeTruthy();
 
     // Meta label for detection field (appears in field-meta span)
-    expect(container.querySelector('.field-meta')?.textContent).toContain('REQUEST · ESTIMATE');
+    expect(container.querySelector('.field-meta')?.textContent).toContain('Inquiry');
   });
 
   it('does not show a route instruction under the actions', () => {

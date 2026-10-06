@@ -89,7 +89,7 @@ const ServiceDetailContent = ({ service }) => {
             React.createElement(Link, {
               to: '/contact',
               className: 'detection-panel detection-action detection-action--labeled detection-action--primary inline-flex',
-            }, React.createElement(DetectionLabel, { 'aria-hidden': true }, 'PROJECT ESTIMATE'), 'Request a Project Estimate', React.createElement(ArrowRight, { size: 16, className: 'shrink-0', 'aria-hidden': true })),
+            }, React.createElement(DetectionLabel, { 'aria-hidden': true }, 'Inquiry'), 'Request a Project Estimate', React.createElement(ArrowRight, { size: 16, className: 'shrink-0', 'aria-hidden': true })),
             React.createElement(Link, {
               to: SERVICES_SECTION_HREF,
               className: 'detection-panel detection-action detection-action--labeled inline-flex',

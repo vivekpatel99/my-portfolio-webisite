@@ -25,7 +25,7 @@ const CTA = () => {
             className="action-field detection-panel detection-action detection-action--primary detection-action--large inline-flex w-full sm:w-[420px]"
           >
             <DetectionLabel className="field-meta" aria-hidden="true">
-              REQUEST · ESTIMATE
+              Inquiry
             </DetectionLabel>
             <span className="action-label">
               Request a Project Estimate
