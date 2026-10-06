@@ -152,6 +152,8 @@ Confirmed on 3 October 2026: the hero's Request a Project Estimate and View Case
 
 Confirmed on 6 October 2026: primary estimate, case-study inquiry, and contact-submit actions use the approved right-hand gradient mock, `#8B5CF6` at opacity 0.28 fading to transparent over the top 70% of the `#0C0D0D` surface. This supersedes the earlier shared resting gradient for primary actions. Confirmed: preserve the two opposing corners, labels, text, typography, arrows, and behavior. Secondary actions retain the quieter opacity 0.06 gradient over the top 55%. Existing reference: enabled primary hover and keyboard focus use opacity 0.32 over the same 70%; secondary hover and keyboard focus retain opacity 0.1. Disabled and pending submission controls retain their variant's resting gradient with the existing reduced opacity and grey corners; their hover and focus do not brighten the fill.
 
+Confirmed on 6 October 2026: the contact page's Upwork, Freelancer.com, FreelancerMap, and Email links use shared secondary corner buttons at the standard 56px height. Preserve their icons, text, destinations, and new-tab behavior. Confirmed on 6 October 2026: the freelance links receive a transparent `FREELANCE PLATFORM` detection edge label without a score, hidden from assistive technology. Existing reference: Email uses `DIRECT CONTACT` with the same decorative treatment.
+
 | Variant | Purpose | Treatment |
 | --- | --- | --- |
 | Primary | Estimate and case-study inquiry navigation, contact submit | Confirmed: purple top fading to black, readable white text at weight 650, opposing corners, and one trailing arrow for navigation. Existing reference: submission shows a spinner only while pending. |
