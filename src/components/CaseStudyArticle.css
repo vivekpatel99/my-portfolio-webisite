@@ -15,6 +15,7 @@
 .case-study-article a:not(.detection-action):not(.detection-text-action) { color: #c8abea; text-decoration: none; }
 .case-study-navigation { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-bottom: 32px; }
 .case-study-navigation a { font-size: 14px; }
+.case-study-navigation .case-study-home { margin-inline-start: auto; }
 .case-study-article a:not(.detection-action):not(.detection-text-action):hover,
 .case-study-article a:not(.detection-action):not(.detection-text-action):focus-visible { color: #eee5ff; text-decoration: underline; }
 .case-study-category { margin: 0 0 12px; color: #bca2db; font-size: 12px; letter-spacing: .4px; }
