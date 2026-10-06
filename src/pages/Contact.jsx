@@ -390,7 +390,7 @@ const Contact = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`Connect with Vivek Patel on ${link.name}`}
-                    className="flex items-center gap-3 px-6 py-3 bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] text-white font-semibold transition-all hover:bg-[rgba(255,255,255,0.1)] hover:border-[rgba(139,92,246,0.5)]"
+                    className="detection-panel detection-action inline-flex"
                   >
                     <Icon aria-hidden="true" />
                     {link.name}
