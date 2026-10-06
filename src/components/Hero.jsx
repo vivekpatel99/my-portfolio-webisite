@@ -448,6 +448,8 @@ const Hero = () => {
                     engineer<span className="hero-field-score"> · 0.99</span>
                   </div>
                   <span className="absolute top-0 left-0 w-6 h-6 border-l-[2.5px] border-t-[2.5px] border-[#8B5CF6]" style={{ filter: 'drop-shadow(0 0 4px rgba(139,92,246,0.55))' }} />
+                  <span className="absolute top-0 right-0 w-6 h-6 border-r-[2.5px] border-t-[2.5px] border-[#8B5CF6]" style={{ filter: 'drop-shadow(0 0 4px rgba(139,92,246,0.55))' }} />
+                  <span className="absolute bottom-0 left-0 w-6 h-6 border-l-[2.5px] border-b-[2.5px] border-[#8B5CF6]" style={{ filter: 'drop-shadow(0 0 4px rgba(139,92,246,0.55))' }} />
                   <span className="absolute bottom-0 right-0 w-6 h-6 border-r-[2.5px] border-b-[2.5px] border-[#8B5CF6]" style={{ filter: 'drop-shadow(0 0 4px rgba(139,92,246,0.55))' }} />
                 </div>
 
