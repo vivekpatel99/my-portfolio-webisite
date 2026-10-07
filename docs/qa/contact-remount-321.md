@@ -4,14 +4,14 @@ Issue [#321](https://github.com/vivekpatel99/my-portfolio-webisite/issues/321), 
 
 The Contact route now observes the completed submission result in the same document-memory store as its draft. A successful request shows and focuses one "Request received" receipt after returning, including when success completed while Contact was absent. A failed request preserves the draft and supplies persistent error text described by the focused retry button. Editing a field clears the previous result. Submission completion preserves newer draft objects.
 
-The route focus handoff preserves an already focused Contact outcome. This covers success resolving between Contact remount and the router's queued frame. Form fields and result data never enter localStorage or sessionStorage. The transport, payload, and backend are unchanged.
+Each completed outcome claims presentation once per browser document. Later Contact visits retain the receipt with `aria-live="off"` and use normal route focus. Feedback toast ownership also survives route remount: a successful retry dismisses the prior failure toast. The route focus handoff preserves an already focused Contact outcome only when Contact is the destination. This covers success resolving between Contact remount and the router's queued frame. Form fields and result data never enter localStorage or sessionStorage. The transport, payload, and backend are unchanged.
 
 ## Inspected baseline and scope
 
 - Clean task-owned managed worktree `/Users/viv/.codex/worktrees/4714/horizons-website`, initially detached at `8a80ffb834ed9f28edf7eb497f8caa12bc8c4da7`.
 - Fetched `origin/develop` matched that SHA. Task branch `codex/issue-321`, PR base `develop`.
 - Native GitHub blockers were empty. The live issue remained open.
-- Frozen code candidate `54b239584a87d790570fc5c5e18e03fdc828d87d`. This is an unreferenced review commit. The delivered branch adds this report to the same code tree.
+- Final integrated code candidate `77d4d0537c9ce7211389ba67916016a8a535b675`, based on develop `189084336c77da6108c2abbf642f1c82b75ca265`. Later delivery changes only this report and review evidence.
 - Scope is the contact draft store, Contact, one route-focus guard, unit regressions, and the lifecycle QA spec/config. WebKit at 390px now uses the iPhone 13 mobile profile instead of resized desktop Safari.
 
 ## Regression evidence
@@ -28,9 +28,9 @@ All lead fields, transport responses, and errors were synthetic. Browser HTTP/We
 
 | Check | Result |
 | --- | --- |
-| `npm test -- --maxWorkers=2` | 851 tests passed across 68 files |
+| `npm test -- --maxWorkers=2` | 867 tests passed across 69 files |
 | `VITE_CONVEX_URL=https://qa-contact-lifecycle.convex.cloud npm run build` | Passed; 21 static routes generated |
-| Full contact lifecycle matrix | 104 checks passed across Chromium and WebKit, 1280px desktop and 390px mobile, normal/reduced motion; WebKit mobile uses iPhone 13 emulation |
+| Full contact lifecycle matrix | 128 checks passed across Chromium and WebKit, 1280px desktop and 390px mobile, normal/reduced motion; WebKit mobile uses iPhone 13 emulation |
 | `QA_MOTION_PORT=6402 npm run qa:motion -- --grep 'contact validation, pending'` | 8 production-build feedback checks passed across Chromium/WebKit desktop/mobile, normal/reduced motion |
 | ESLint on all changed JS/JSX/config files | Passed explicit correctness rules for unreachable code, duplicate cases, `typeof`, and unsafe finally |
 | `tsc --noEmit --project convex/tsconfig.json` | Passed |
@@ -58,6 +58,10 @@ An isolated read-only reviewer found the queued route-focus race and the desktop
 
 Requested configuration was Kiro CLI's `portfolio_frontend_review` read-only profile, `claude-opus-5.5`, effort `high`, tools `read,grep,glob`. The exact candidate diff, acceptance criteria, baseline/candidate SHA, and synthetic evidence were prepared outside the repository. Shared/global settings and the repository wrapper were not changed.
 
-Automatic approval review rejected two launch requests before CLI execution. It classified the source diff and test evidence as private data exported to Kiro and required authorization directly in this chat. The second request included the originating chat's user authorization retrieved with `read_thread`; the reviewer rejected that evidence as untrusted tool output. A direct approval question is pending. No Kiro review ran, no model was attested, and no Kiro findings/output exist. This required review gate remains incomplete.
+A source review ran after the user requested PR babysitting. Kiro attested `claude-opus-5.5` and read/grep/glob tools, but could not attest effort and did not load skills or inspect an exact pinned diff. Its output is retained in [kiro-source-review.txt](assets/issue-321/kiro-source-review.txt). This is a source review, not a complete final critique.
 
-The PR uses `Refs #321` while this gate and actual spoken-announcement verification remain open. Keep the worktree and the unique external evidence directory available for that review and remote CI. After those dependencies end, verify recoverability and archive the managed worktree. Creating the PR does not authorize merge or production release.
+Two medium findings reproduced in both unit and browser tests: an old failure toast survived a remounted retry, and repeated visits presented the saved outcome again. Both were fixed with shared toast ownership and an atomic presentation claim. A low-priority destination guard finding was fixed and covered positively and negatively in router tests. The newer-draft suppression observation was retained intentionally: pending fields are disabled, and stale completions must preserve newer unsent draft objects without presenting an unrelated receipt.
+
+Native standards review then replaced a rendered ref-derived flag with component state. Final native standards/spec review and independent production browser verification found no further actionable defects. The final exact-diff Kiro recovery was rejected by automatic approval review because the external destination and payload needed direct approval. Approval is pending; no final Kiro verdict is claimed.
+
+The PR uses `Refs #321` while actual spoken-announcement verification remains open. Merge targets develop only; no production release is authorized. The task-owned managed worktree will be archived after verified merge, and disposable local evidence removed after required evidence is committed.
