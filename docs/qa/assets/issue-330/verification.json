@@ -1052,7 +1052,6 @@
     "engine": "chromium",
     "version": "148.0.7778.96",
     "platform": "darwin",
-    "osRelease": "27.0.0",
     "headless": false,
     "reducedMotion": "no-preference",
     "input": "native macOS via CUA",
@@ -1067,14 +1066,14 @@
         "height": 900
       }
     },
-    "mutations": []
+    "mutations": [],
+    "darwinRelease": "27.0.0"
   },
   "headedInjectedKeyboard": [
     {
       "engine": "chromium",
       "version": "148.0.7778.96",
       "platform": "darwin",
-      "osRelease": "27.0.0",
       "headless": false,
       "reducedMotion": "no-preference",
       "keys": [
@@ -1098,13 +1097,13 @@
         }
       },
       "mutations": [],
-      "passed": false
+      "passed": false,
+      "darwinRelease": "27.0.0"
     },
     {
       "engine": "webkit",
       "version": "26.4",
       "platform": "darwin",
-      "osRelease": "27.0.0",
       "headless": false,
       "reducedMotion": "no-preference",
       "keys": [
@@ -1128,7 +1127,8 @@
         }
       },
       "mutations": [],
-      "passed": false
+      "passed": false,
+      "darwinRelease": "27.0.0"
     }
   ],
   "negativeProbes": {

@@ -8,13 +8,13 @@ The baseline failed all eight contact cases at the nonempty budget assertion. `A
 
 The fixture now uses `selectOption('< €5k')` to establish a committed value through input and change events. It asserts that the exact value persists, React sets `data-filled="true"`, and focus stays on the select. Real keyboard traversal still checks email, budget, description, and the submit button. `selectOption` does not simulate opening, navigating, or committing an operating system's native menu.
 
-Each captured state verifies control bounds, no horizontal overflow, transparent control backgrounds, unchanged x position, width and height within 0.5 CSS px, expected resting or focused frame colors, eight corner gradients, placeholder or filled text colors, native select `color-scheme: normal`, and motion-specific focus transition duration. Alpha comparisons allow at most one 8-bit step because both engines serialize the authored resting alpha 0.025 as 0.024. RGB remains exact. Native submit-event and Convex mutation counters remain zero.
+Each captured state verifies control bounds, no horizontal overflow, transparent control backgrounds, unchanged x position, width and height within 0.5 CSS px, expected resting or focused frame colors, eight corner gradients, placeholder or filled text colors, native select `color-scheme: normal`, and motion-specific focus transition duration. Alpha comparisons allow at most one 8-bit step because both engines serialize the authored resting alpha 0.025 as 0.024. RGB remains exact. Native submit-event and HTTP POST mutation-request counters remain zero. The HTTP counter does not count WebSocket mutations. The local-only guard blocks external HTTP and WebSocket transport, and the native submit-event counter detects unintended submission in this flow.
 
 These assertions preserve the existing form reference under DESIGN.md FM-01. The native control's local normal scheme remains intentional. No product styling or behavior changed.
 
 ## Results
 
-Host macOS 27.0.1, build 26A434. Playwright 1.60.0 uses Chromium 148.0.7778.96 and WebKit 26.4. The matrix uses headless desktop engines with resized viewports; it does not establish physical mobile-device or historical Safari behavior.
+Host macOS 27.0.1, build 26A434, with Darwin kernel release 27.0.0. The evidence field `darwinRelease` comes from Node.js `os.release()`; it is separate from the macOS product version reported by `sw_vers`. Playwright 1.60.0 uses Chromium 148.0.7778.96 and WebKit 26.4. The matrix uses headless desktop engines with resized viewports; it does not establish physical mobile-device or historical Safari behavior.
 
 | Engine | Viewport | Motion | Contact result |
 | --- | --- | --- | --- |
@@ -47,7 +47,7 @@ Use the same local production preview with external navigation and WebSockets bl
 
 This check passed using native macOS input through Codex computer control in headed Chromium 148.0.7778.96 at 1440 × 900 with normal motion. The observed sequence was Email focus, Tab, Space, ArrowDown, Return, Tab, with accessibility observations between menu navigation and commitment. The committed value was `< €5k`, the collapsed label was `< €5,000`, `data-filled` was true, focus reached `description`, and there were zero submit events and zero POSTs. [Committed choice and textarea focus](assets/issue-330/native-keyboard.png) show the final state.
 
-A separate headed Playwright `keyboard.press` diagnostic on Chromium 148 and WebKit 26.4 did not commit a value with Space, ArrowDown, Enter, and traversal. Both returned an empty value. Those unsuccessful diagnostics are recorded, not counted as passes. Current automated WebKit proves the stable committed-value fixture; native-input WebKit and physical Safari or iOS commitment remain unverified. Repeat this manual check on any additional platform whose native key behavior is claimed.
+A separate headed Playwright `keyboard.press` diagnostic on Chromium 148 and WebKit 26.4 did not commit a value with Space, ArrowDown, Enter, and traversal. Both initially confirmed budget focus, then returned an empty value and ended with email focused. Those unsuccessful diagnostics are recorded, not counted as passes. Current automated WebKit proves the stable committed-value fixture; native-input WebKit and physical Safari or iOS commitment remain unverified. Repeat this manual check on any additional platform whose native key behavior is claimed.
 
 ## Repeat the stable matrix
 
@@ -74,8 +74,12 @@ An isolated reviewer found no actionable standards or architecture defects. The 
 
 A separate isolated reviewer found no acceptance gaps. The reviewer checked the exact committed value and React state, focus progression, strengthened visual and geometry assertions, zero submissions, eight project results, native input record, and deliberate negative probes.
 
-### Kiro review pending
+### Kiro review completed
 
-The requested Kiro configuration is the tracked `portfolio_frontend_review` read-only profile with `claude-opus-5.5` and high effort. Automatic approval review rejected the launch twice because it did not accept authorization to transmit repository paths, issue details, commit identifiers, and synthetic QA evidence to the external Kiro service. Kiro did not run; no served model or Kiro findings are claimed. The implementation is delivered as a draft PR pending that requested review and remote CI. This limitation is a delivery gate, even though the issue's browser acceptance passed.
+After explicit user approval, Kiro completed a review limited to the published candidate diff and committed synthetic QA evidence at `8e552f175bcf31dc9a2844580fc794e15fd78caa`. The tracked `portfolio_frontend_review` profile is configured for `claude-opus-5.5`. Runtime metadata attests high effort and engine v2; it does not report a concrete served model. No private session logs were sent in the successful call, and Kiro made no tool calls or browser checks.
 
-No merge or production release is authorized by these checks.
+Kiro found no blocking acceptance issues and one low-priority evidence ambiguity. The reported `osRelease` value was Darwin's kernel version, not the macOS product version. Both measurements were verified locally, and the evidence key is now `darwinRelease` with unchanged numeric data.
+
+The suggestion that injected keys never reached Budget is contradicted by `initialFocus: true` in both diagnostic records; the report now also identifies their final email focus. The HTTP-only scope of the existing mutation-request counter is a valid limitation, so the report now names that scope and the separate submit-event and external WebSocket guards. No transport or application change was needed. Native-input WebKit and physical Safari or iOS remain unverified and are not required or claimed by this portable-fixture ticket.
+
+[Actual Kiro response and finding dispositions](assets/issue-330/kiro-review.md) preserve the review. The tested fixture is unchanged by these documentation corrections. Remote CI remains a separate merge gate. No merge or production release is authorized by these checks.
