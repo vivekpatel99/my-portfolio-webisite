@@ -7,8 +7,8 @@ import { usePageMotion } from '@/lib/pageMotion';
 
 const DataPolicy = () => {
   const pageMotion = usePageMotion();
-  const handleManageCookies = (e) => {
-    e.preventDefault();
+  const handleManageCookies = (event) => {
+    event.currentTarget.focus({ preventScroll: true });
     window.dispatchEvent(new CustomEvent('manage-cookies'));
   };
 
@@ -49,8 +49,8 @@ const DataPolicy = () => {
         </div>
 
         <div className="mt-12 text-center">
-            <Button asChild size="lg" className="bg-accent-purple text-white hover:bg-accent-purple/90 group rounded-full text-lg py-6 px-8">
-                <a href="#" onClick={handleManageCookies}>Manage Your Cookie Consent</a>
+            <Button type="button" onClick={handleManageCookies} size="lg" className="bg-accent-purple text-white hover:bg-accent-purple/90 group rounded-full text-lg py-6 px-8">
+                Manage Your Cookie Consent
             </Button>
         </div>
       </div>
