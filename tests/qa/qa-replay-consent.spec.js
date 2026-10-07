@@ -1,5 +1,30 @@
 import { expect, test } from '@playwright/test';
 
+test('withdrawn global errors cannot become client reports after reaccept', async ({ page }) => {
+  await setup(page, 'buffer');
+  await accept(page);
+  await page.getByRole('button', { name: 'Withdraw', exact: true }).click();
+  await stopped(page);
+  await page.evaluate(async () => {
+    window.dispatchEvent(new ErrorEvent('error', {
+      message: 'WITHDRAWN_OUTCOME_ERROR',
+      error: new Error('WITHDRAWN_OUTCOME_ERROR'),
+    }));
+    await window.qa.client.flush();
+  });
+  await accept(page);
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'hidden' });
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  expect(await page.evaluate(() => window.qa.envelopes.filter(([, items]) => (
+    items.some(([header]) => header.type === 'client_report')
+  )))).toEqual([]);
+  expect(await page.evaluate(() => window.qa.client._outcomes)).toEqual({});
+  await page.evaluate(() => window.qa.telemetry.captureException(new Error('CURRENT_OUTCOME_ERROR')));
+  await expect.poll(() => page.evaluate(() => JSON.stringify(window.qa.envelopes))).toContain('CURRENT_OUTCOME_ERROR');
+});
+
 async function setup(page, mode) {
   await page.route('**/*', (route) => {
     const url = new URL(route.request().url());

@@ -108,3 +108,11 @@ The consent integration now stamps core error/message events in `preprocessEvent
 SDK 7 also calls preprocessing for Replay events, which use a separate export path. Standards review caught the overly broad first predicate; final preprocessing uses SDK 7's core error/message classification (`!event.type`), leaving Replay events untouched. Positive recording exports assert that the internal consent tag is absent. The queued-error regression also verifies that a new error sends and promotes Replay after reaccept.
 
 Final validation passes fifty real-SDK browser checks (twenty-five per engine), 914 unit tests across 71 files, the synthetic-DSN build, and owned-file ESLint. Fresh independent source/browser review covers the final change; [queued-error-validation.txt](assets/issue-320/queued-error-validation.txt) retains actual failure and final check summaries. Remote CI remains required for this repair.
+
+## Retained client reports
+
+A final [review](https://github.com/vivekpatel99/my-portfolio-webisite/pull/342#discussion_r4208954313) identified SDK outcome counts retained when global errors are dropped during withdrawal. After reaccept, the browser visibility handler can send those counts in a client-report envelope. The real SDK reproduced this leak in both Chromium and WebKit.
+
+Initialization now disables `sendClientReports`. SDK 7 therefore neither accumulates outcomes nor installs the visibility-triggered report listener. The regression dispatches a withdrawn global error, reaccepts, simulates a hidden page, and checks for no client report or retained outcomes; a fresh error must still send. Independent Standards review found no actionable issue in this repair. Actual validation excerpts are retained in [client-report-validation.txt](assets/issue-320/client-report-validation.txt).
+
+Final client-report repair validation: all fifty-two real-SDK browser checks (twenty-six per engine), 914 unit tests, synthetic-DSN production build, and owned-file ESLint pass. Remote CI remains required for the new commit.

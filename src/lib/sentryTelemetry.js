@@ -198,6 +198,7 @@ export function initializeSentryTelemetry() {
       replaysSessionSampleRate: 0.05,
       replaysOnErrorSampleRate: 1.0,
       sendDefaultPii: false,
+      sendClientReports: false,
     });
 
     client = Sentry.getCurrentHub().getClient();
