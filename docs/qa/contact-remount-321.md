@@ -69,3 +69,7 @@ The PR uses `Refs #321` while actual spoken-announcement verification remains op
 ## Follow-up review: clearing a failed draft
 
 A GitHub review found that editing cleared persistent error text while leaving the prior failure toast visible. Four store regressions reproduced the defect for each editable field. `setFormState` now dismisses and clears the feedback handle when clearing an existing completed outcome. Validation feedback still dismisses on the next valid send. Eight browser checks across Chromium/WebKit desktop/mobile and both motion settings verify that a failure completed away from Contact disappears within one second of starting a new draft. Native standards and spec reviews found no additional defects.
+
+## Follow-up CI: modified-click asset teardown
+
+After integrating service-loading changes, Contact QA failed in the case-study modified-click test with `route.fulfill: Fetch response has been disposed`. The same failure reproduced in three of 24 local browser repeats, then twice in six mobile Chromium diagnostic repeats. Diagnostics showed pending static image/logo requests while the page was open; the navigation guard correctly preserved that error. Temporary instrumentation was removed. The modified-click test now waits for static network activity to settle before exercising links and completing its journey. Its assertions and the navigation guard remain unchanged. All 24 repeat checks across eight browser/motion profiles passed; native spec review found no additional defect.

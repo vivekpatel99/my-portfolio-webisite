@@ -180,7 +180,7 @@ test('preserves a dirty draft through featured and collection article navigation
 
 test('case study navigation leaves modified clicks unprevented', async ({ page }) => {
   for (const route of ['/project/ai-invoice-processing-automation/', '/case-studies/']) {
-    await page.goto(route);
+    await page.goto(route, { waitUntil: 'networkidle' });
     const links = route.startsWith('/project/')
       ? page.locator('.case-study-navigation a, .case-study-cta a')
       : page.locator('main').getByRole('link', { name: /Back to home/ });
