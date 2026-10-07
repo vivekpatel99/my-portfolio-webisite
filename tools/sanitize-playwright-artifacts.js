@@ -19,6 +19,7 @@ const suites = Object.freeze({
   'qa-contact.spec.js': { label: 'contact-validation' },
   'qa-cursor.spec.js': { label: 'cursor-availability' },
   'qa-edge.spec.js': { label: 'edge-behavior' },
+  'qa-evidence-labels.spec.js': { label: 'evidence-labels' },
   'qa-focus.spec.js': { label: 'focus-regressions' },
   'qa-fragments.spec.js': { label: 'fragment-navigation' },
   'qa-hero-motion.spec.js': { label: 'hero-motion' },
