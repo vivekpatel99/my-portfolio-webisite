@@ -1,6 +1,6 @@
 # Contact drafts through case-study navigation
 
-Issue #322, checked on 7 October 2026. The clean task worktree started from fetched `develop` at `8a80ffb834ed9f28edf7eb497f8caa12bc8c4da7`. The branch is `codex/issue-322`. The reviewed source/test candidate is `e164cf74b2db071f39c279410ba48b5c62705683`.
+Issue #322, checked on 7 October 2026. The clean task worktree started from fetched `develop` at `8a80ffb834ed9f28edf7eb497f8caa12bc8c4da7`. The branch is `codex/issue-322`. Initial Standards/Spec reviews inspected source/test candidate `e164cf74b2db071f39c279410ba48b5c62705683`. Before landing, the branch integrated `develop` at `045cff49c761f02b2f982333517801a8c421976c` without rewriting published history. Kiro and an independent runtime verifier reviewed integrated candidate `458328e4ef7af6c53ee9490081f79a5b26d0f11a`.
 
 ## Behavior and regression evidence
 
@@ -16,7 +16,8 @@ Model the Domain guided the choice of renderer from the existing router context.
 | --- | --- |
 | Baseline unit suite with loopback permission | 850 passed |
 | Targeted navigation, collection, scroll, draft and standalone preview tests | 66 passed |
-| Final complete unit suite | 858 passed across 69 files |
+| Initial complete unit suite | 858 passed across 69 files |
+| Complete unit suite after integration | 870 passed across 70 files |
 | Final complete contact lifecycle matrix | 116 passed; four documented WebKit middle-click skips |
 | Production build | Passed; 21 generated routes and 36 validated public links |
 | ESLint on the four changed source/test files | Passed using the installed `react-app` configuration in an external task config |
@@ -47,13 +48,17 @@ An earlier full lifecycle run passed its assertions but hit one Chromium mobile 
 
 Independent read-only Standards and Spec reviews inspected pinned base-to-candidate diffs, including the final browser tests. Both found no actionable source defects. The Standards review also found no added explanatory comments or unnecessary abstractions.
 
-Kiro was requested with the tracked `portfolio_frontend_review` profile, configured for `claude-opus-5.5`, high effort, v2 and read-only `read,grep,glob` tools. Automatic approval review rejected the invocation before Kiro ran because it could send source and diff data to an unverified external destination. A second authorization check found the originating human request, but automatic approval review rejected that retrieved evidence too. No Kiro verdict or served-model attestation exists. Direct approval in this chat is pending.
+Kiro ran with the tracked `portfolio_frontend_review` profile, configured for `claude-opus-5.5`, high effort, v2 and read-only `read,grep,glob` tools. Earlier approval attempts were rejected before Kiro ran. After the exact diff was published and GitHub confirmed PUBLIC repository visibility, automatic approval review allowed the public-source review. Kiro returned PASS+NOTES with no blocking source defects. Its session context names the requested model, but no served-model attestation was provided. The [actual Kiro output](contact-draft-navigation-322/kiro-review.txt) is retained.
+
+Kiro's two test findings were addressed by matching the exact home URL, polling home scroll after a homepage element is visible, and asserting browser Back scroll restoration as well as loaded-card count. The computed destination prop was an acceptable maintainability note; no extra wrapper or static caller changes were added. A future internal prose link could reload the document, but Kiro found no current internal prose destinations. That latent possibility does not justify expanding this fix.
+
+An independent verifier who did not author the implementation returned PASS+NOTES after fresh Chromium/WebKit desktop and mobile draft journeys, modified event checks and native Ctrl/Cmd popup checks. The first run had ten passing cases and two Chromium teardown timeouts after their assertions passed. A fresh bounded recovery of those exact cases passed both in 2.2 seconds. The [independent verdict](contact-draft-navigation-322/independent-verification.md) records inherited baseline evidence and fresh runtime evidence separately. The landing head is verified separately before merge; the initial verdict is not substituted for a changed head.
 
 macOS headless WebKit navigates the original tab when middle-clicking a plain native anchor. An isolated native-anchor control reproduced that behavior; Ctrl/Cmd-click opened a new tab normally. Only WebKit's four native middle-click popup cases are skipped, with the reason in the durable tests. Unprevented middle-click event checks pass in both engines. Actual Safari middle-click remains a manual follow-up. Current WebKit and desktop viewport checks do not establish historical Safari or physical-device behavior.
 
 The plain-anchor control recorded `button: "middle", opened: false, sourceURL: "http://127.0.0.1:5403/contact/"` and `modifiers: ["ControlOrMeta"], opened: true, sourceURL: "http://127.0.0.1:5403/"`.
 
-The PR uses `Refs #322` while Kiro review and actual Safari middle-click verification remain pending. No merge or deployment is authorized.
+The PR keeps `Refs #322` because actual Safari middle-click verification remains pending. The user explicitly authorized babysitting and merging this PR into `develop`, then cleaning up its worktree. No production deployment is authorized.
 
 ## Browser evidence
 

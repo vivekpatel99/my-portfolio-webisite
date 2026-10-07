@@ -150,13 +150,17 @@ test('preserves a dirty draft through featured and collection article navigation
   await expect(cards).toHaveCount(12);
   await expect.poll(async () => Math.abs((await page.evaluate(() => window.scrollY)) - departureY)).toBeLessThanOrEqual(100);
 
+  await cards.last().evaluate((element) => element.scrollIntoView({ block: 'center', behavior: 'instant' }));
+  const backDepartureY = await page.evaluate(() => window.scrollY);
   await cards.last().click();
   await page.goBack();
   await expect(cards).toHaveCount(12);
+  await expect.poll(async () => Math.abs((await page.evaluate(() => window.scrollY)) - backDepartureY)).toBeLessThanOrEqual(100);
   await cards.first().click();
   await page.getByRole('navigation', { name: 'Case study navigation' }).getByRole('link', { name: 'Back to home', exact: true }).click();
-  await expect(page).toHaveURL(/\/$/);
-  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  await expect(page).toHaveURL(new URL('/', page.url()).href);
+  await expect(page.locator('#portfolio')).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
   await page.getByRole('link', { name: /View all case studies/ }).click();
   await page.locator('main').getByRole('link', { name: /Back to home/ }).click();
   await page.getByRole('link', { name: 'Request a Project Estimate', exact: true }).first().click();

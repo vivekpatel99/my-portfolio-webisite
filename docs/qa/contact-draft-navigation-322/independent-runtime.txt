@@ -1,0 +1,88 @@
+(node:79978) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m[WebServer] [22m(node:79982) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 12 tests using 1 worker
+
+[2m[WebServer] [22mBrowserslist: browsers data (caniuse-lite) is 22 months old. Please run:
+[2m[WebServer] [22m  npx update-browserslist-db@latest
+[2m[WebServer] [22m  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+(node:79987) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:79987) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:79987) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium-1280-reduce] › tests/qa/qa-contact-lifecycle.spec.js:121:1 › preserves a dirty draft through featured and collection article navigation (970ms)
+  ✘   2 [chromium-1280-reduce] › tests/qa/qa-contact-lifecycle.spec.js:174:1 › case study navigation leaves modified clicks unprevented (1.0m)
+(node:82050) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82050) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:82050) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   3 [chromium-1280-reduce] › tests/qa/qa-contact-lifecycle.spec.js:199:3 › case study navigation keeps native modified tab-opening behavior (687ms)
+(node:82068) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82068) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:82068) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   4 [chromium-390-reduce] › tests/qa/qa-contact-lifecycle.spec.js:121:1 › preserves a dirty draft through featured and collection article navigation (771ms)
+  ✘   5 [chromium-390-reduce] › tests/qa/qa-contact-lifecycle.spec.js:174:1 › case study navigation leaves modified clicks unprevented (1.0m)
+(node:82815) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82815) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:82815) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   6 [chromium-390-reduce] › tests/qa/qa-contact-lifecycle.spec.js:199:3 › case study navigation keeps native modified tab-opening behavior (742ms)
+(node:82843) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82843) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:82843) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   7 [webkit-1280-reduce] › tests/qa/qa-contact-lifecycle.spec.js:121:1 › preserves a dirty draft through featured and collection article navigation (1.4s)
+  ✓   8 [webkit-1280-reduce] › tests/qa/qa-contact-lifecycle.spec.js:174:1 › case study navigation leaves modified clicks unprevented (653ms)
+  ✓   9 [webkit-1280-reduce] › tests/qa/qa-contact-lifecycle.spec.js:199:3 › case study navigation keeps native modified tab-opening behavior (1.6s)
+(node:82936) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:82936) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:82936) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  10 [webkit-390-reduce] › tests/qa/qa-contact-lifecycle.spec.js:121:1 › preserves a dirty draft through featured and collection article navigation (1.4s)
+  ✓  11 [webkit-390-reduce] › tests/qa/qa-contact-lifecycle.spec.js:174:1 › case study navigation leaves modified clicks unprevented (582ms)
+  ✓  12 [webkit-390-reduce] › tests/qa/qa-contact-lifecycle.spec.js:199:3 › case study navigation keeps native modified tab-opening behavior (1.5s)
+
+
+  1) [chromium-1280-reduce] › tests/qa/qa-contact-lifecycle.spec.js:174:1 › case study navigation leaves modified clicks unprevented
+
+    [31mTest timeout of 60000ms exceeded while running "afterEach" hook.[39m
+
+      52 | });
+      53 |
+    > 54 | test.afterEach(async ({ context }) => {
+         |      ^
+      55 |   // Finish intercepted home-page asset fetches before the page fixture closes.
+      56 |   // Local-only guards remain active throughout each test's interactions.
+      57 |   await context.unrouteAll({ behavior: 'wait' });
+        at /Users/viv/.codex/worktrees/e582/horizons-website/tests/qa/qa-contact-lifecycle.spec.js:54:6
+
+    Error Context: ../../../../../../tmp/horizons-322-babysit.NqYjDU/independent/test-results/qa-contact-lifecycle-case--7fa2a-modified-clicks-unprevented-chromium-1280-reduce/error-context.md
+
+  2) [chromium-390-reduce] › tests/qa/qa-contact-lifecycle.spec.js:174:1 › case study navigation leaves modified clicks unprevented
+
+    [31mTest timeout of 60000ms exceeded while running "afterEach" hook.[39m
+
+      52 | });
+      53 |
+    > 54 | test.afterEach(async ({ context }) => {
+         |      ^
+      55 |   // Finish intercepted home-page asset fetches before the page fixture closes.
+      56 |   // Local-only guards remain active throughout each test's interactions.
+      57 |   await context.unrouteAll({ behavior: 'wait' });
+        at /Users/viv/.codex/worktrees/e582/horizons-website/tests/qa/qa-contact-lifecycle.spec.js:54:6
+
+    Error Context: ../../../../../../tmp/horizons-322-babysit.NqYjDU/independent/test-results/qa-contact-lifecycle-case--7fa2a-modified-clicks-unprevented-chromium-390-reduce/error-context.md
+
+  2 failed
+    [chromium-1280-reduce] › tests/qa/qa-contact-lifecycle.spec.js:174:1 › case study navigation leaves modified clicks unprevented
+    [chromium-390-reduce] › tests/qa/qa-contact-lifecycle.spec.js:174:1 › case study navigation leaves modified clicks unprevented
+  10 passed (2.2m)
