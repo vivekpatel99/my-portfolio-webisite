@@ -50,7 +50,7 @@ export function qaPassiveSpecs({ environment, localOnly }) {
     'qa-responsive.spec.js',
     'qa-routes.spec.js',
     // Covers unreleased carousel behavior, so it must not run against the public deployment.
-    ...(environment === 'preview' ? ['qa-testimonials.spec.js', 'qa-hero-ocr-labels.spec.js'] : []),
+    ...(environment === 'preview' ? ['qa-testimonials.spec.js', 'qa-hero-ocr-labels.spec.js', 'qa-evidence-labels.spec.js'] : []),
     'qa-upgrade-interactions.spec.js',
     'qa-visual.spec.js',
   ];
