@@ -11,7 +11,7 @@ Each completed outcome claims presentation once per browser document. Later Cont
 - Clean task-owned managed worktree `/Users/viv/.codex/worktrees/4714/horizons-website`, initially detached at `8a80ffb834ed9f28edf7eb497f8caa12bc8c4da7`.
 - Fetched `origin/develop` matched that SHA. Task branch `codex/issue-321`, PR base `develop`.
 - Native GitHub blockers were empty. The live issue remained open.
-- Final integrated code candidate `a77ea4858ef1fb9817cfee9b94fdb54a811ad408`, based on develop `189084336c77da6108c2abbf642f1c82b75ca265`. Later delivery changes only this report and review evidence.
+- Final integrated code candidate `e2694897bf8352d4f903db6a9cc2173a15d484c1`, based on develop `edeedf4a84ef03ed289324b19640db17a9d11665`. Later delivery changes only this report and review evidence.
 - Scope is the contact draft store, Contact, one route-focus guard, unit regressions, and the lifecycle QA spec/config. WebKit at 390px now uses the iPhone 13 mobile profile instead of resized desktop Safari.
 
 ## Regression evidence
@@ -28,9 +28,9 @@ All lead fields, transport responses, and errors were synthetic. Browser HTTP/We
 
 | Check | Result |
 | --- | --- |
-| `npm test -- --maxWorkers=2` | 867 tests passed across 69 files |
+| `npm test -- --maxWorkers=2` | 912 tests passed across 71 files |
 | `VITE_CONVEX_URL=https://qa-contact-lifecycle.convex.cloud npm run build` | Passed; 21 static routes generated |
-| Full contact lifecycle matrix | 128 checks passed across Chromium and WebKit, 1280px desktop and 390px mobile, normal/reduced motion; WebKit mobile uses iPhone 13 emulation |
+| Full contact lifecycle matrix | 204 checks passed, four explicit WebKit native middle-click skips, across Chromium and WebKit, 1280px desktop and 390px mobile, normal/reduced motion; WebKit mobile uses iPhone 13 emulation |
 | `QA_MOTION_PORT=6402 npm run qa:motion -- --grep 'contact validation, pending'` | 8 production-build feedback checks passed across Chromium/WebKit desktop/mobile, normal/reduced motion |
 | ESLint on all changed JS/JSX/config files | Passed explicit correctness rules for unreachable code, duplicate cases, `typeof`, and unsafe finally |
 | `tsc --noEmit --project convex/tsconfig.json` | Passed |
@@ -73,3 +73,7 @@ A GitHub review found that editing cleared persistent error text while leaving t
 ## Follow-up CI: modified-click asset teardown
 
 After integrating service-loading changes, Contact QA failed in the case-study modified-click test with `route.fulfill: Fetch response has been disposed`. The same failure reproduced in three of 24 local browser repeats, then twice in six mobile Chromium diagnostic repeats. Diagnostics showed pending static image/logo requests while the page was open; the navigation guard correctly preserved that error. Temporary instrumentation was removed. The modified-click test now waits for static network activity to settle before exercising links and completing its journey. Its assertions and the navigation guard remain unchanged. All 24 repeat checks across eight browser/motion profiles passed; native spec review found no additional defect.
+
+## Integration with actionable validation
+
+Develop PR #335 introduced shared field validation and specific length-limit feedback. Its validation-toast hunk conflicted with shared feedback ownership. The resolution keeps the validator, first-field focus, actionable descriptions and normalized payload while storing the toast handle in the existing document-memory owner. Native spec review found both intents preserved. On code head `e2694897bf8352d4f903db6a9cc2173a15d484c1`, all 912 unit tests, production build and Convex typecheck passed. The full lifecycle matrix passed 204 checks with four existing, explicitly disclosed WebKit native middle-click skips. Independent verification passed 104 scoped tests and eight production-build feedback checks.
