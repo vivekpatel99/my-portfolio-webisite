@@ -11,7 +11,7 @@ Each completed outcome claims presentation once per browser document. Later Cont
 - Clean task-owned managed worktree `/Users/viv/.codex/worktrees/4714/horizons-website`, initially detached at `8a80ffb834ed9f28edf7eb497f8caa12bc8c4da7`.
 - Fetched `origin/develop` matched that SHA. Task branch `codex/issue-321`, PR base `develop`.
 - Native GitHub blockers were empty. The live issue remained open.
-- Final integrated code candidate `77d4d0537c9ce7211389ba67916016a8a535b675`, based on develop `189084336c77da6108c2abbf642f1c82b75ca265`. Later delivery changes only this report and review evidence.
+- Final integrated code candidate `a77ea4858ef1fb9817cfee9b94fdb54a811ad408`, based on develop `189084336c77da6108c2abbf642f1c82b75ca265`. Later delivery changes only this report and review evidence.
 - Scope is the contact draft store, Contact, one route-focus guard, unit regressions, and the lifecycle QA spec/config. WebKit at 390px now uses the iPhone 13 mobile profile instead of resized desktop Safari.
 
 ## Regression evidence
@@ -62,6 +62,6 @@ A source review ran after the user requested PR babysitting. Kiro attested `clau
 
 Two medium findings reproduced in both unit and browser tests: an old failure toast survived a remounted retry, and repeated visits presented the saved outcome again. Both were fixed with shared toast ownership and an atomic presentation claim. A low-priority destination guard finding was fixed and covered positively and negatively in router tests. The newer-draft suppression observation was retained intentionally: pending fields are disabled, and stale completions must preserve newer unsent draft objects without presenting an unrelated receipt.
 
-Native standards review then replaced a rendered ref-derived flag with component state. Final native standards/spec review and independent production browser verification found no further actionable defects. The final exact-diff Kiro recovery was rejected by automatic approval review because the external destination and payload needed direct approval. Approval is pending; no final Kiro verdict is claimed.
+Native standards review then replaced a rendered ref-derived flag with component state. The state refinement initially lost focus for success completed away from Contact. Its browser regression failed, then passed after separating presentation claiming from a dependent focus effect that runs after state commits. Final native standards/spec review and independent production browser verification found no further actionable defects. The final exact-diff Kiro recovery was rejected by automatic approval review because the external destination and payload needed direct approval. Approval is pending; no final Kiro verdict is claimed.
 
 The PR uses `Refs #321` while actual spoken-announcement verification remains open. Merge targets develop only; no production release is authorized. The task-owned managed worktree will be archived after verified merge, and disposable local evidence removed after required evidence is committed.
