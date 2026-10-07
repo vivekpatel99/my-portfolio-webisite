@@ -1,0 +1,59 @@
+[tool] Reading candidate.diff:1, SKILL.md:1-80, SKILL.md:1-60
+[tool] status: Completed
+[tool] Reading ScrollToTop.jsx:1, ScrollToTop.test.jsx:1, Header.jsx:1, main.jsx:1
+[tool] Reading qa-fragments.spec.js:1, qa.config.js:1, qa-artifact-config.test.js:81-120, sanitize-playwright-artifacts.js:1-50
+[tool] status: Completed
+[tool] status: Completed
+[tool] Searching for 'decodeURI|location\.hash|scroll-padding|scroll-margin|scr...' in src
+[tool] Finding src/{components/Footer.jsx,lib/focusTarget.js,pages/Home.... in horizons-website
+[tool] status: Completed
+[tool] status: Completed
+[tool] Reading Footer.jsx:1, focusTarget.js:1, index.css:41-65, Layout.jsx:1-80
+[tool] status: Completed
+[tool] Searching for 'Something went wrong|COOKIE_CONSENT_KEY =|data-route-erro...' in src
+[tool] Searching for 'addInitScript|export const test|scrollIntoView' in qa
+[tool] status: Completed
+[tool] status: Completed
+[tool] Reading ErrorBoundary.jsx:1, RouteErrorBoundary.jsx:1-45
+[tool] status: Completed
+I found no high-confidence bugs or regressions in `fc6b202` for issue #323. I found one low-severity weak test assertion. Real-browser evidence is still missing until the Chromium and WebKit production runs finish.
+
+**Profile and model:** You requested claude-opus-5.5, high effort, with the `portfolio_frontend_review` profile. Nothing at runtime confirms which model or revision ran this review. The only model name I have comes from the prompt, so I'm not treating it as confirmed.
+
+**What I loaded:**
+- `AGENTS.md`, which was already in context.
+- The vercel-react-best-practices skill (`SKILL.md`, the rule index only).
+- The web-design-guidelines skill (`SKILL.md`). It tells me to download its rules from a remote URL, which this read-only profile doesn't allow, so I didn't apply them.
+- I didn't load impeccable or `DESIGN.md`. The diff changes no visual design, and the coordinator owns the design assessment.
+
+I read the diff and the current versions of `ScrollToTop.jsx`, `ScrollToTop.test.jsx`, `qa-fragments.spec.js`, `qa.config.js`, `qa-artifact-config.test.js`, `sanitize-playwright-artifacts.js`, `main.jsx`, `Header.jsx`, `Footer.jsx`, `focusTarget.js`, `ErrorBoundary.jsx`, `RouteErrorBoundary.jsx`, `index.css:51-54`, `Layout.jsx:1-80` and `consent.js:1`.
+
+## Finding
+
+**[LOW] Error-text check can never fail: `tests/qa/qa-fragments.spec.js:26`**
+```js
+await expect(page.getByText('Something went wrong.', { exact: true })).toHaveCount(0);
+```
+- **Evidence:** The root error screen in `src/components/ErrorBoundary.jsx:17-22` is `<p>Something went wrong.{' '}<a>Back to home</a></p>`. With `exact: true`, Playwright compares the element's whole text, which here is "Something went wrong. Back to home". It never matches, so this line passes whether or not the app crashed.
+- **Impact:** Low. A root crash replaces the whole app, so the header, `#main-content` and `#site-footer` checks on lines 23-25 still fail against the baseline. The spec still catches the bug. Separately, React production builds report errors caught by an error boundary through `console.error`, not as page errors. So `errors` probably doesn't catch the baseline crash either; the visibility checks are what do.
+- **Fix:** Use `page.getByText(/^Something went wrong\./)` or check for `getByRole('link', { name: 'Back to home' })` with count 0.
+- **Verify:** Temporarily put the old `decodeURIComponent` line back. Confirm the cold-load `#%` test fails on lines 23-25, and that the corrected line 26 also fails.
+
+## Acceptance check (from source)
+
+- **Cold load, SPA link and native hash with `#%E0%A4%A` or `#%`:** Met. `ScrollToTop.jsx:34-40` catches the `URIError` and returns before any interval, scroll or focus. `ScrollToTop` sits inside the root `ErrorBoundary` (`main.jsx:11-16`), so before this change these URLs blanked the whole page. The spec's shell checks therefore separate baseline from candidate.
+- **Malformed hash does nothing:** Met. The unit tests check that no `setInterval`, `scrollTo` or `scrollIntoView` runs, no timers remain, and focus stays put. The browser spec records `scrollIntoView`/`focus` calls on `services`, `about`, `portfolio` and `main-content`, and checks that the scroll position doesn't change.
+- **Pending retries cancelled:** Met. When the next hash is malformed, the effect cleanup clears the earlier interval, and a unit test covers it.
+- **Valid encoded fragments:** Met. `%73ervices` is covered in unit and browser tests for cold load, SPA and native hash. `caf%C3%A9` is covered in the unit tests only. Focus is the part that proves the decode works, because native fragment scrolling would land on the section anyway.
+- **Header link path:** Met. Your synthetic `href` change reaches the `navigate` call at `Header.jsx:155`, because `location.hash` doesn't equal the new hash. React keeps the changed attribute because the `href` prop never changes.
+- **Position check:** Matches `index.css:53`, `scroll-padding-top: max(8rem, var(--consent-banner-bottom))`. The consent key set at spec line 8 matches `COOKIE_CONSENT_KEY`, so the banner stays hidden. No section uses `scroll-margin`.
+- **Ordinary links:** Footer Services, About and Portfolio links exist (`Footer.jsx:20-22`) and point at real ids.
+- **Test configuration:** The spec runs only in local-only Chromium and WebKit projects. It's excluded from prod and default projects (asserted in `qa-artifact-config.test.js`) and has a sanitizer label.
+- **Convex and real data:** Neither is touched.
+
+## Still unproven
+
+- **Real-browser runs:** The Chromium and WebKit production runs aren't finished. I can't confirm that WebKit keeps `#%E0%A4%A` unchanged in `location.hash`, or that `scrollIntoView` lands within 2px of the scroll-padding-adjusted target.
+- **"Mobile" projects test the desktop layout:** `test.use({ viewport: 1280x720 })` on spec line 4 overrides the iPhone 14 viewport in `preview-mobile` and `preview-webkit-mobile`. Those projects therefore exercise the desktop nav, not the mobile drawer. That doesn't break the acceptance criteria, because the drawer uses the same fixed `href` values.
+- **Back button to a malformed hash from another route (hypothesis):** For example, Back from `/contact` to `/#%`. The page wouldn't scroll to the top or move focus to main, and focus would likely land on `body`. That matches how an existing valid but missing id like `/#nonexistent` already behaves, so it isn't a regression. To check it, cold load `/#%`, follow a footer link to Contact, press Back, then look at `document.activeElement` and `scrollY`.
+- **Unguarded decode in the header (not reachable):** `Header.jsx:151` still calls `decodeURIComponent(id)` without a guard. It only runs when the current hash equals the link's hash, and production header links are fixed constants. I'm not reporting it as a finding.
