@@ -13,9 +13,12 @@ let initialized = false;
 let requested = false;
 let Sentry;
 let loading;
+let replay;
+let client;
+let closing;
 
 export function initializeSentryTelemetry() {
-  if (initialized || process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== 'production') {
     return;
   }
 
@@ -25,31 +28,99 @@ export function initializeSentryTelemetry() {
   }
 
   requested = true;
+  if (initialized) return;
   if (loading) return loading;
 
   loading = Promise.all([
     import('@sentry/react'),
     import('@/lib/convexClient'),
-  ]).then(([sdk, { convexDeploymentOrigin }]) => {
+  ]).then(async ([sdk, { convexDeploymentOrigin }]) => {
     Sentry = sdk;
+    await closing;
     if (!requested || initialized) return;
+
+    if (client) {
+      client.getOptions().enabled = true;
+      initialized = true;
+      replay.startForConsent();
+      return;
+    }
 
     const tracePropagationTargets = ['localhost'];
     if (convexDeploymentOrigin) {
       tracePropagationTargets.push(convexDeploymentOrigin);
     }
 
+    // SDK 7 schedules _initialize on a timer. Consent owns startup instead.
+    class ConsentReplay extends Sentry.Replay {
+      constructor(options) {
+        super(options);
+        this.pendingTransitions = new Set();
+      }
+
+      setupOnce() {
+        super.setupOnce();
+        // SDK 7 resumes buffer recording after an awaited send, even after stop().
+        const recorder = this._replay;
+        const initializeSampling = recorder.initializeSampling.bind(recorder);
+        recorder.initializeSampling = (...args) => {
+          if (initialized && requested) initializeSampling(...args);
+        };
+        const startRecording = recorder.startRecording.bind(recorder);
+        recorder.startRecording = () => {
+          if (initialized && requested && recorder.isEnabled()) startRecording();
+        };
+        const sendBuffered = recorder.sendBufferedReplayOrFlush.bind(recorder);
+        recorder.sendBufferedReplayOrFlush = (options) => {
+          if (!initialized || !requested) return Promise.resolve();
+          const pending = sendBuffered(options);
+          this.pendingTransitions.add(pending);
+          const finished = () => this.pendingTransitions.delete(pending);
+          void pending.then(finished, finished);
+          return pending;
+        };
+      }
+
+      _initialize() {}
+
+      startForConsent() {
+        super._initialize();
+      }
+
+      stop() {
+        // Terminating SDK 7's worker leaves in-flight compression promises unresolved.
+        const recorder = this._replay;
+        const buffer = recorder.eventBuffer;
+        recorder.eventBuffer = null;
+        return Promise.allSettled([recorder.stop({ forceFlush: true }), ...this.pendingTransitions])
+          .then(() => { buffer?.destroy(); });
+      }
+    }
+    replay = new ConsentReplay({
+      maskAllText: true,
+      maskAllInputs: true,
+      blockAllMedia: true,
+      block: [SENSITIVE_TELEMETRY_SELECTOR],
+      ignore: [SENSITIVE_TELEMETRY_SELECTOR],
+    });
+
     Sentry.init({
       dsn: SENTRY_DSN,
+      transport: (options) => {
+        const transport = Sentry.makeFetchTransport(options);
+        // Preserve SDK transport annotations used for error-response validation.
+        const send = Object.assign((envelope) => initialized
+          ? transport.send(envelope)
+          : Promise.resolve({ statusCode: 200 }), transport.send);
+        return {
+          ...transport,
+          // Replay sends directly, even when the core client is disabled.
+          send,
+        };
+      },
       integrations: [
         Sentry.browserTracingIntegration(),
-        Sentry.replayIntegration({
-          maskAllText: true,
-          maskAllInputs: true,
-          blockAllMedia: true,
-          block: [SENSITIVE_TELEMETRY_SELECTOR],
-          ignore: [SENSITIVE_TELEMETRY_SELECTOR],
-        }),
+        replay,
       ],
       beforeBreadcrumb: (breadcrumb, hint) => (
         shouldDropSensitiveUiBreadcrumb(breadcrumb, hint) ? null : breadcrumb
@@ -64,7 +135,13 @@ export function initializeSentryTelemetry() {
       sendDefaultPii: false,
     });
 
-    initialized = true;
+    client = Sentry.getCurrentHub().getClient();
+    if (requested) {
+      initialized = true;
+      replay.startForConsent();
+    } else {
+      closeSentryTelemetry();
+    }
   }).catch((error) => {
     console.warn('Sentry telemetry could not be initialized', error);
   }).finally(() => {
@@ -75,13 +152,18 @@ export function initializeSentryTelemetry() {
 
 export function closeSentryTelemetry() {
   requested = false;
-  if (!initialized) {
-    return;
-  }
-
-  const client = Sentry.getCurrentHub().getClient();
-  void client?.close?.(2000);
   initialized = false;
+  if (!client || closing) return closing;
+
+  client.getOptions().enabled = false;
+  // stop() force-flushes session Replay in SDK 7. The transport gate is already closed.
+  closing = Promise.allSettled([replay.stop(), client.close(2000)])
+    .then((results) => {
+      const failure = results.find((result) => result.status === 'rejected');
+      if (failure) console.warn('Sentry telemetry could not be stopped', failure.reason);
+    })
+    .finally(() => { closing = undefined; });
+  return closing;
 }
 
 export function captureException(error, context) {

@@ -13,6 +13,10 @@ let sdk;
 let close;
 let load;
 let scope;
+let replayStop;
+let replayStart;
+let clientOptions;
+let send;
 
 beforeEach(() => {
   vi.resetModules();
@@ -20,12 +24,24 @@ beforeEach(() => {
   vi.stubEnv('VITE_SENTRY_DSN', 'test-dsn');
   const gate = new Promise((resolve) => { release = resolve; });
   close = vi.fn();
+  replayStop = vi.fn(() => Promise.resolve());
+  replayStart = vi.fn();
+  clientOptions = { enabled: true };
+  send = vi.fn(() => Promise.resolve({ statusCode: 200 }));
   scope = { setTag: vi.fn() };
   sdk = {
     init: vi.fn(),
     browserTracingIntegration: vi.fn(() => 'tracing'),
-    replayIntegration: vi.fn(() => 'replay'),
-    getCurrentHub: () => ({ getClient: () => ({ close }) }),
+    Replay: class {
+      constructor(options) {
+        sdk.replayOptions = options;
+        this._replay = { eventBuffer: null, stop: () => replayStop() };
+      }
+      _initialize() { replayStart(); }
+      stop() { return replayStop(); }
+    },
+    makeFetchTransport: () => ({ send, flush: () => Promise.resolve(true) }),
+    getCurrentHub: () => ({ getClient: () => ({ close, getOptions: () => clientOptions }) }),
     withScope: vi.fn((callback) => callback(scope)),
     captureException: vi.fn(),
   };
@@ -67,7 +83,7 @@ describe('deferred Sentry SDK', () => {
       replaysOnErrorSampleRate: 1,
       tracePropagationTargets: ['localhost', 'https://test.convex.cloud'],
     }));
-    expect(sdk.replayIntegration).toHaveBeenCalledWith({
+    expect(sdk.replayOptions).toEqual({
       maskAllText: true,
       maskAllInputs: true,
       blockAllMedia: true,
@@ -78,6 +94,8 @@ describe('deferred Sentry SDK', () => {
     telemetry.captureException(error);
     expect(sdk.captureException).toHaveBeenCalledWith(error, undefined);
     telemetry.closeSentryTelemetry();
+    expect(replayStop).toHaveBeenCalledTimes(1);
+    expect(clientOptions.enabled).toBe(false);
     expect(close).toHaveBeenCalledWith(2000);
     telemetry.captureException(error);
     expect(sdk.captureException).toHaveBeenCalledTimes(1);
@@ -134,5 +152,33 @@ describe('deferred Sentry SDK', () => {
     const telemetry = await import('./sentryTelemetry');
     await expect(telemetry.initializeSentryTelemetry()).resolves.toBeUndefined();
     expect(console.warn).toHaveBeenCalledWith('Sentry telemetry could not be initialized', expect.any(Error));
+  });
+
+  it('keeps transport closed through pending teardown and reuses the integration on reaccept', async () => {
+    const telemetry = await import('./sentryTelemetry');
+    const pending = telemetry.initializeSentryTelemetry();
+    release();
+    await pending;
+    const options = sdk.init.mock.calls[0][0];
+    const transport = options.transport({});
+    const envelope = ['synthetic'];
+    await transport.send(envelope);
+    expect(send).toHaveBeenCalledTimes(1);
+
+    let finishStop;
+    replayStop.mockImplementationOnce(() => new Promise((resolve) => { finishStop = resolve; }));
+    const stopping = telemetry.closeSentryTelemetry();
+    const accepting = telemetry.initializeSentryTelemetry();
+    await transport.send(envelope);
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(replayStart).toHaveBeenCalledTimes(1);
+    finishStop();
+    await stopping;
+    await accepting;
+    expect(clientOptions.enabled).toBe(true);
+    expect(sdk.init).toHaveBeenCalledTimes(1);
+    expect(replayStart).toHaveBeenCalledTimes(2);
+    await transport.send(envelope);
+    expect(send).toHaveBeenCalledTimes(2);
   });
 });

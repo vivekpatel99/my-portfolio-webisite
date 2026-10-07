@@ -1,0 +1,40 @@
+Final Kiro read-only review of staged tree 31dc4d9df2cf43713af7efd7756017f2f434014c. Subsequent changes strengthen fixture coverage and correct report wording; application implementation is unchanged.
+
+No blocking findings on candidate tree `31dc4d9`, based on reading the source and logs only. I ran nothing and didn't open the installed SDK, because no remaining defect needed it.
+
+**Earlier findings, checked against the current source**
+
+- **F1 is resolved.**
+  - `sendBufferedReplayOrFlush` now does nothing unless `initialized && requested`, and the code tracks every promotion that's still in flight.
+  - `startRecording` and `initializeSampling` have the same guard, so an old promotion or an expired-session refresh can't restart rrweb.
+  - `stop()` takes its snapshot of in-flight promotions after `initialized=false` is set. That's safe because nothing new can be added after that point.
+  - Reaccept waits for `closing`. Retries while consent is off hit the closed gate and get a fake 200, so they end within one retry interval. That matches the 5.2 s and 5.4 s "failed send" runs.
+  - Old recording can't go out after reaccept, which covers the export problem in F1.
+- **F2 is resolved.** `Object.assign(fn, transport.send)` copies the SDK's annotation onto the new send function. The 429 test separates the two cases: without the annotation, the replay would have been promoted.
+- **H1 is resolved.** The code detaches `eventBuffer` before `recorder.stop({forceFlush:true})`. A flush that's already running keeps its own reference to the old buffer, and the buffer is destroyed only after everything settles. The real-worker test passes in both engines (`compression-green-v2.log`, 2/2).
+- **H2 is now a documented functional trade-off, not a privacy problem.** If a real fetch hangs, reaccept could wait indefinitely on the SDK's flush lock. This is unverified.
+
+**Remaining gaps (not blocking)**
+
+1. **Lint isn't evidenced.** `lint-delivery.log` came back empty, so nothing I read supports the doc's "ESLint … pass" claim.
+2. **Storage checks are outside my scope.** I didn't read `storage.log`, so I can't confirm the "existing consent storage behaviour" part of the last criterion.
+3. **The expired-session test proves less than it seems** (`spec.js:173`). It only checks the end state. Nothing confirms that the async `_refreshSession` path actually ran. To fix that, check that `session.id` changed, or that the guarded `initializeSampling` was called and suppressed.
+4. **Two production paths are untested:**
+   - `stickySession` (the fixture forces `false`), so clearing sessionStorage on withdrawal isn't exercised.
+   - Session mode with compression on; only buffer mode with the worker is covered.
+5. **Small wording issue in the doc:** "twenty-two checks … in each engine" should read 11 per engine, 22 in total.
+6. **The "20 targeted tests" claim isn't in my logs.** The unit log shows only the full run: 851 tests in 68 files, all passing.
+
+**Possible runtime issue, not checked (not blocking)**
+
+- After `stop()`, a later timed flush may still fire. If the user reaccepts within the flush delay, it would flush the new session, which has consent. I think this is harmless, but I haven't confirmed it.
+
+**What I loaded, and limits**
+
+- **Read:** `delivery.diff`, `issue.md`, `src/lib/sentryTelemetry.js`, `tests/qa/qa-replay-consent.spec.js`, and the four logs.
+- **Skills:** I loaded none (impeccable, web-design-guidelines, vercel-react-best-practices). The review was narrowed to the consent lifecycle, which has no UI or React performance surface.
+- AGENTS.md came only from the injected context.
+- I made no writes, ran no commands and delegated nothing.
+- **Model:** My runtime context names the model as claude-opus-5.5. I can't independently confirm the effort level, the routing, or the profile settings.
+
+ISSUE_320_FINAL_REVIEW_COMPLETE_20261007
