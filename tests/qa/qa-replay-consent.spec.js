@@ -358,3 +358,70 @@ for (const mode of ['session', 'buffer']) {
     await stopped(page);
   });
 }
+
+test('navigation tracing cannot cross a withdrawn consent interval', async ({ page }) => {
+  await setup(page, 'session');
+  await page.evaluate(() => { window.qa.tracing = true; });
+  await accept(page);
+  await page.evaluate(async () => {
+    window.qa.sdk.getActiveTransaction().finish();
+    await window.qa.client.flush();
+  });
+  await expect.poll(() => page.evaluate(() => window.qa.envelopes.some(([, items]) => items.some(([header, event]) => header.type === 'transaction' && event.contexts.trace.op === 'pageload')))).toBe(true);
+  await page.evaluate(() => {
+    window.qa.allowedTrace = window.qa.sdk.startTransaction({ name: 'CONSENTED_TRACE' });
+    window.qa.allowedTrace.finish();
+  });
+  await expect.poll(() => page.evaluate(() => JSON.stringify(window.qa.envelopes))).toContain('CONSENTED_TRACE');
+  await page.evaluate(() => {
+    history.pushState({}, '', '/before-withdrawal');
+    window.qa.previousTrace = window.qa.sdk.getActiveTransaction();
+  });
+  expect(await page.evaluate(() => window.qa.previousTrace.isRecording())).toBe(true);
+  await page.getByRole('button', { name: 'Withdraw', exact: true }).click();
+  await stopped(page);
+  await page.evaluate(() => {
+    history.pushState({}, '', '/WITHOUT_CONSENT');
+    window.qa.withdrawnTrace = window.qa.sdk.getActiveTransaction();
+  });
+  await accept(page);
+  await page.evaluate(async () => {
+    window.qa.previousTrace.finish();
+    window.qa.withdrawnTrace.finish();
+    await window.qa.client.flush();
+  });
+  const sent = await page.evaluate(() => window.qa.envelopes.flatMap(([, items]) => items.filter(([header]) => header.type === 'transaction').map(([, event]) => event.transaction)));
+  expect(sent).not.toContain('WITHOUT_CONSENT');
+  expect(sent).not.toContain('/before-withdrawal');
+  expect(await page.evaluate(() => window.qa.withdrawnTrace.isRecording())).toBe(false);
+  await page.evaluate(async () => {
+    history.pushState({}, '', '/AFTER_REACCEPT');
+    window.qa.sdk.getActiveTransaction().finish();
+    await window.qa.client.flush();
+  });
+  await expect.poll(() => page.evaluate(() => JSON.stringify(window.qa.envelopes))).toContain('AFTER_REACCEPT');
+});
+
+test('a queued transaction is discarded after withdrawal and reaccept', async ({ page }) => {
+  await setup(page, 'session');
+  await page.evaluate(() => { window.qa.tracing = true; });
+  await accept(page);
+  await page.evaluate(() => {
+    window.qa.client.addEventProcessor((event) => event.transaction === 'QUEUED_TRACE'
+      ? new Promise((resolve) => { window.qa.releaseTrace = () => resolve(event); })
+      : event);
+    window.qa.sdk.startTransaction({ name: 'QUEUED_TRACE' }).finish();
+  });
+  await page.waitForFunction(() => window.qa.releaseTrace);
+  await page.getByRole('button', { name: 'Withdraw', exact: true }).click();
+  await stopped(page);
+  await accept(page);
+  await page.evaluate(async () => {
+    window.qa.releaseTrace();
+    await window.qa.client.flush();
+    window.qa.sdk.startTransaction({ name: 'FRESH_TRACE' }).finish();
+    await window.qa.client.flush();
+  });
+  await expect.poll(() => page.evaluate(() => JSON.stringify(window.qa.envelopes))).toContain('FRESH_TRACE');
+  expect(await page.evaluate(() => JSON.stringify(window.qa.envelopes))).not.toContain('QUEUED_TRACE');
+});

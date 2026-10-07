@@ -42,12 +42,13 @@ export function makeFetchTransport() {
 
 export function init(options) {
   window.qa.sdkVersion = real.SDK_VERSION;
+  window.qa.sdk = real;
   window.qa.initCount = (window.qa.initCount ?? 0) + 1;
   real.init({
     ...options,
     replaysSessionSampleRate: window.qa.mode === 'session' ? 1 : 0,
     replaysOnErrorSampleRate: 1,
-    tracesSampleRate: 0,
+    tracesSampleRate: window.qa.tracing ? 1 : 0,
     transport: options.transport ?? makeFetchTransport,
   });
   window.qa.client = real.getCurrentHub().getClient();

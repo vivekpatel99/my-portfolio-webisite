@@ -16,6 +16,10 @@ let loading;
 let replay;
 let client;
 let closing;
+let traceSampleRate;
+let consentEpoch = 0;
+const consentEpochTag = 'telemetry.consent_epoch';
+const activeTransactions = new Set();
 
 export function initializeSentryTelemetry() {
   if (process.env.NODE_ENV !== 'production') {
@@ -40,6 +44,7 @@ export function initializeSentryTelemetry() {
     if (!requested || initialized) return;
 
     if (client) {
+      client.getOptions().tracesSampleRate = traceSampleRate;
       client.getOptions().enabled = true;
       initialized = true;
       replay.startForConsent();
@@ -135,15 +140,32 @@ export function initializeSentryTelemetry() {
         };
       },
       integrations: [
+        {
+          name: 'ConsentTracing',
+          setupOnce() {},
+          setup(tracingClient) {
+            tracingClient.on('startTransaction', (transaction) => {
+              transaction.setTag(consentEpochTag, requested ? consentEpoch : -1);
+              if (!requested) transaction.sampled = false;
+              else activeTransactions.add(transaction);
+            });
+            tracingClient.on('finishTransaction', (transaction) => activeTransactions.delete(transaction));
+          },
+        },
         Sentry.browserTracingIntegration(),
         replay,
       ],
       beforeBreadcrumb: (breadcrumb, hint) => (
-        shouldDropSensitiveUiBreadcrumb(breadcrumb, hint) ? null : breadcrumb
+        !initialized || !requested || shouldDropSensitiveUiBreadcrumb(breadcrumb, hint) ? null : breadcrumb
       ),
       beforeSend: (event) => (
         shouldDropSensitiveTelemetry(event) ? null : event
       ),
+      beforeSendTransaction: (event) => {
+        if (!initialized || !requested || event.tags?.[consentEpochTag] !== consentEpoch) return null;
+        const { [consentEpochTag]: _epoch, ...tags } = event.tags;
+        return { ...event, tags };
+      },
       tracesSampleRate: 0.2,
       tracePropagationTargets,
       replaysSessionSampleRate: 0.05,
@@ -152,6 +174,7 @@ export function initializeSentryTelemetry() {
     });
 
     client = Sentry.getCurrentHub().getClient();
+    traceSampleRate = client.getOptions().tracesSampleRate;
     const getDsn = client.getDsn.bind(client);
     // Replay may finish after its session is cleared; no DSN skips request preparation.
     client.getDsn = () => initialized ? getDsn() : undefined;
@@ -172,9 +195,17 @@ export function initializeSentryTelemetry() {
 export function closeSentryTelemetry() {
   requested = false;
   initialized = false;
+  consentEpoch += 1;
   if (!client || closing) return closing;
 
   client.getOptions().enabled = false;
+  // SDK 7's tracing guard checks property presence, not the core enabled flag.
+  delete client.getOptions().tracesSampleRate;
+  for (const transaction of activeTransactions) {
+    transaction.sampled = false;
+    transaction.finish();
+  }
+  activeTransactions.clear();
   // stop() force-flushes session Replay in SDK 7. The transport gate is already closed.
   closing = Promise.allSettled([replay.stop(), client.close(2000)])
     .then((results) => {

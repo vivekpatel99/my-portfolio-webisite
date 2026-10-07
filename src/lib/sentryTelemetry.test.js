@@ -26,7 +26,7 @@ beforeEach(() => {
   close = vi.fn();
   replayStop = vi.fn(() => Promise.resolve());
   replayStart = vi.fn();
-  clientOptions = { enabled: true };
+  clientOptions = { enabled: true, tracesSampleRate: 0.2 };
   send = vi.fn(() => Promise.resolve({ statusCode: 200 }));
   scope = { setTag: vi.fn() };
   const client = { close, getOptions: () => clientOptions, getDsn: () => 'synthetic-dsn' };
@@ -185,4 +185,38 @@ describe('deferred Sentry SDK', () => {
     await transport.send(envelope);
     expect(send).toHaveBeenCalledTimes(2);
   });
+});
+
+it('rejects tracing from an earlier consent period and stops active transactions', async () => {
+  const telemetry = await import('./sentryTelemetry');
+  const pending = telemetry.initializeSentryTelemetry();
+  release();
+  await pending;
+  const options = sdk.init.mock.calls[0][0];
+  const hooks = {};
+  options.integrations[0].setup({ on: (name, callback) => { hooks[name] = callback; } });
+  const transaction = () => {
+    const trace = { sampled: true, tags: {} };
+    trace.setTag = (key, value) => { trace.tags[key] = value; };
+    trace.finish = vi.fn(() => hooks.finishTransaction(trace));
+    hooks.startTransaction(trace);
+    return trace;
+  };
+  const old = transaction();
+  const queued = { tags: { ...old.tags }, transaction: 'old' };
+  expect(options.beforeSendTransaction(queued)).toEqual({ tags: {}, transaction: 'old' });
+  await telemetry.closeSentryTelemetry();
+  expect(old.sampled).toBe(false);
+  expect(old.finish).toHaveBeenCalledOnce();
+  expect(clientOptions).not.toHaveProperty('tracesSampleRate');
+  expect(options.beforeBreadcrumb({ category: 'navigation' }, {})).toBeNull();
+  const withdrawn = transaction();
+  expect(withdrawn.sampled).toBe(false);
+  await telemetry.initializeSentryTelemetry();
+  expect(clientOptions.tracesSampleRate).toBe(0.2);
+  expect(options.beforeSendTransaction(queued)).toBeNull();
+  expect(options.beforeSendTransaction({ tags: withdrawn.tags })).toBeNull();
+  const fresh = transaction();
+  expect(options.beforeSendTransaction({ tags: fresh.tags, transaction: 'fresh' }))
+    .toEqual({ tags: {}, transaction: 'fresh' });
 });
