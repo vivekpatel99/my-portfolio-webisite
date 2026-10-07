@@ -94,10 +94,11 @@ describe('sanitized CI Playwright configuration', () => {
     expect([...defaultProjects['prod-desktop']].sort()).toEqual(shared);
     expect([...defaultProjects['preview-desktop']].sort()).toEqual([...shared, TESTIMONIALS_SPEC, HERO_OCR_SPEC].sort());
     expect([...localProjects['preview-mobile']].sort())
-      .toEqual([...shared, 'qa-focus.spec.js', HERO_MOTION_SPEC, ROUTE_RECOVERY_SPEC, TESTIMONIALS_SPEC, HERO_OCR_SPEC].sort());
+      .toEqual([...shared, 'qa-focus.spec.js', HERO_MOTION_SPEC, ROUTE_RECOVERY_SPEC, 'qa-service-loading.spec.js', TESTIMONIALS_SPEC, HERO_OCR_SPEC].sort());
     for (const specs of Object.values(defaultProjects)) {
       expect(specs).not.toContain(HERO_MOTION_SPEC);
       expect(specs).not.toContain(ROUTE_RECOVERY_SPEC);
+      expect(specs).not.toContain('qa-service-loading.spec.js');
     }
     for (const specs of [...Object.values(defaultProjects), ...Object.values(localProjects)]) {
       expect(specs).not.toContain('qa-contact-live.spec.js');
