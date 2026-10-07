@@ -72,6 +72,22 @@ describe('tab-memory contact draft', () => {
     expect(write).not.toHaveBeenCalled();
   });
 
+  it.each(Object.keys(emptyFields))('dismisses prior failure feedback when editing %s starts a new draft', (field) => {
+    const draft = renderHook(() => useContactDraft());
+    act(() => draft.result.current.setFormState(filledFields));
+    let submission;
+    act(() => { submission = draft.result.current.beginSubmission(); });
+    const handle = { dismiss: vi.fn() };
+    draft.result.current.setFeedbackToast(handle);
+    act(() => draft.result.current.finishSubmission(submission, false, 'Synthetic failure'));
+    act(() => draft.result.current.setFormState((fields) => ({ ...fields, [field]: 'New draft' })));
+    expect(draft.result.current.outcome).toBeNull();
+    expect(handle.dismiss).toHaveBeenCalledTimes(1);
+    act(() => { submission = draft.result.current.beginSubmission(); });
+    expect(handle.dismiss).toHaveBeenCalledTimes(1);
+    act(() => draft.result.current.finishSubmission(submission, true));
+  });
+
   it('does not let a stale completion clear a later draft or release a later pending send', () => {
     const draft = renderHook(() => useContactDraft());
     act(() => draft.result.current.setFormState(filledFields));
@@ -80,6 +96,7 @@ describe('tab-memory contact draft', () => {
     act(() => draft.result.current.setFormState({ ...filledFields, description: 'New draft' }));
     act(() => draft.result.current.finishSubmission(firstSubmission, true));
     expect(draft.result.current.formState.description).toBe('New draft');
+    expect(draft.result.current.outcome).toBeNull();
     expect(unloadIsPrevented()).toBe(true);
 
     let nextSubmission;
@@ -88,6 +105,10 @@ describe('tab-memory contact draft', () => {
     expect(draft.result.current.isSubmitting).toBe(true);
     act(() => draft.result.current.finishSubmission(nextSubmission, true));
     expect(draft.result.current.formState).toEqual(emptyFields);
+    expect(draft.result.current.outcome.status).toBe('success');
+    act(() => draft.result.current.setFormState({ ...emptyFields, name: 'Next draft' }));
+    expect(draft.result.current.outcome).toBeNull();
+    act(() => draft.result.current.setFormState(emptyFields));
     expect(unloadIsPrevented()).toBe(false);
   });
 });

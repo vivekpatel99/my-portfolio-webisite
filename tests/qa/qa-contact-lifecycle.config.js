@@ -29,7 +29,9 @@ export default defineConfig({
       ['no-preference', 'reduce'].map((reducedMotion) => ({
         name: `${browserName}-${width}-${reducedMotion}`,
         use: {
-          ...devices[browserName === 'webkit' ? 'Desktop Safari' : 'Desktop Chrome'],
+          ...devices[browserName === 'webkit'
+            ? (width === 390 ? 'iPhone 13' : 'Desktop Safari')
+            : 'Desktop Chrome'],
           browserName,
           viewport: { width, height: 800 },
           reducedMotion,

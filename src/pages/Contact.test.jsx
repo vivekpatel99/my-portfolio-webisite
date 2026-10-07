@@ -9,6 +9,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { toast } from "@/components/ui/use-toast";
 import { captureException } from "@/lib/sentryTelemetry";
 import Contact from "./Contact";
+import ScrollToTop from '@/components/ScrollToTop';
+import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { useContactDraft } from '@/lib/useContactDraft';
 import { CONTACT_LEAD_VALIDATION_ERROR } from "../../convex/lib/leadValidation";
 
@@ -159,16 +161,97 @@ describe("Contact form", () => {
       expect(mockSubmitLead).toHaveBeenCalledTimes(1);
       await act(async () => resolveSubmission({ success: true }));
     }
+    const receipt = await screen.findByRole('status', { name: 'Request received' });
+    expect(screen.getAllByRole('status', { name: 'Request received' })).toHaveLength(1);
+    await waitFor(() => expect(document.activeElement).toBe(receipt));
     expect(screen.getByLabelText('Full Name *').value).toBe('');
     expect(screen.getByLabelText('Project Description *').value).toBe('');
     expect(screen.getByRole('button', { name: /send project request/i }).disabled).toBe(false);
     expect(unloadIsPrevented()).toBe(false);
 
     fireEvent.change(screen.getByLabelText('Full Name *'), { target: { value: 'New draft' } });
+    expect(screen.queryByRole('status', { name: 'Request received' })).toBeNull();
     cleanup();
     render(<Contact />);
     expect(screen.getByLabelText('Full Name *').value).toBe('New draft');
     expect(unloadIsPrevented()).toBe(true);
+  });
+
+  it('#321: retry after a pending failure remount dismisses the old failure toast', async () => {
+    let rejectSubmission;
+    const failedToast = { dismiss: vi.fn() };
+    toast.mockReturnValueOnce(failedToast);
+    mockSubmitLead.mockImplementationOnce(() => new Promise((_resolve, reject) => { rejectSubmission = reject; }));
+    const first = render(<Contact />);
+    fillValidLead(first.container);
+    fireEvent.submit(first.container.querySelector('form'));
+    first.unmount();
+    await act(async () => rejectSubmission({ data: EMAIL_RATE_LIMIT_ERROR }));
+    const returned = render(<Contact />);
+    fireEvent.submit(returned.container.querySelector('form'));
+    await screen.findByRole('status', { name: 'Request received' });
+    expect(failedToast.dismiss).toHaveBeenCalledTimes(1);
+    expect(mockSubmitLead).toHaveBeenCalledTimes(2);
+  });
+
+  it('#321: later visits keep the receipt without focusing or announcing the same outcome again', async () => {
+    const first = render(<Contact />);
+    fillValidLead(first.container);
+    fireEvent.submit(first.container.querySelector('form'));
+    const receipt = await screen.findByRole('status', { name: 'Request received' });
+    await waitFor(() => expect(document.activeElement).toBe(receipt));
+    expect(receipt.getAttribute('aria-live')).toBe('polite');
+    first.unmount();
+    render(<Contact />);
+    const retained = screen.getByRole('status', { name: 'Request received' });
+    expect(document.activeElement).not.toBe(retained);
+    expect(retained.getAttribute('aria-live')).toBe('off');
+    expect(retained.hasAttribute('data-contact-outcome-focus')).toBe(false);
+  });
+
+  it('#321: a success between remount and the route focus frame keeps receipt focus', async () => {
+    const frames = new Map();
+    let nextFrame = 0;
+    const requestFrame = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+      frames.set(++nextFrame, callback);
+      return nextFrame;
+    });
+    const cancelFrame = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation((id) => frames.delete(id));
+    let navigate;
+    const Navigation = () => { navigate = useNavigate(); return null; };
+    let resolveSubmission;
+    mockSubmitLead.mockImplementationOnce(() => new Promise((resolve) => { resolveSubmission = resolve; }));
+    try {
+      const view = render(
+        <MemoryRouter initialEntries={['/contact']}>
+          <ScrollToTop />
+          <Navigation />
+          <main id="main-content">
+            <Routes>
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/" element={<p>Home</p>} />
+            </Routes>
+          </main>
+        </MemoryRouter>,
+      );
+      fillValidLead(view.container);
+      fireEvent.submit(view.container.querySelector('form'));
+      act(() => navigate('/'));
+      act(() => navigate(-1));
+      await act(async () => resolveSubmission({ success: true }));
+      const receipt = screen.getByRole('status', { name: 'Request received' });
+      act(() => {
+        const callbacks = [...frames.values()];
+        frames.clear();
+        callbacks.forEach((callback) => callback(performance.now()));
+      });
+      expect(document.activeElement).toBe(receipt);
+      expect(mockSubmitLead).toHaveBeenCalledTimes(1);
+      view.unmount();
+    } finally {
+      requestFrame.mockRestore();
+      cancelFrame.mockRestore();
+    }
   });
 
   it('#265: pending failure after navigation leaves the restored fields available for retry', async () => {
@@ -182,7 +265,9 @@ describe("Contact form", () => {
     await act(async () => rejectSubmission({ data: EMAIL_RATE_LIMIT_ERROR }));
 
     expect(screen.getByLabelText('Full Name *').value).toBe('Jane Doe');
-    expect(screen.getByRole('button', { name: /send project request/i }).disabled).toBe(false);
+    const retry = screen.getByRole('button', { name: /send project request/i });
+    expect(retry.disabled).toBe(false);
+    await waitFor(() => expect(document.activeElement).toBe(retry));
     expect(unloadIsPrevented()).toBe(true);
     fireEvent.submit(screen.getByRole('button', { name: /send project request/i }).closest('form'));
     await screen.findByRole('status', { name: 'Request received' });
@@ -735,7 +820,7 @@ describe('#230: contact outcome focus and receipt', () => {
 
     const retry = submitButton();
     expect(retry.disabled).toBe(false);
-    expect(document.activeElement).toBe(retry);
+    await waitFor(() => expect(document.activeElement).toBe(retry));
     expect(container.querySelector('input[name="name"]').value).toBe('Jane Doe');
     expect(container.querySelector('input[name="email"]').value).toBe('jane@example.com');
     expect(container.querySelector('#budget').value).toBe('€5k-€10k');
@@ -822,7 +907,7 @@ describe('#230: contact outcome focus and receipt', () => {
       expect.objectContaining({ title: 'Uh oh! Missing fields.', variant: 'destructive' }),
     );
     expect(mockSubmitLead).toHaveBeenCalledTimes(1);
-    expect(failureHandle.dismiss).not.toHaveBeenCalled();
+    expect(failureHandle.dismiss).toHaveBeenCalledTimes(1);
     expect(validationHandle.dismiss).not.toHaveBeenCalled();
 
     const retry = deferred();
@@ -831,7 +916,7 @@ describe('#230: contact outcome focus and receipt', () => {
     await user.click(submitButton());
     expect(mockSubmitLead).toHaveBeenCalledTimes(2);
     expect(validationHandle.dismiss).toHaveBeenCalledTimes(1);
-    expect(failureHandle.dismiss).not.toHaveBeenCalled();
+    expect(failureHandle.dismiss).toHaveBeenCalledTimes(1);
 
     await act(async () => {
       retry.resolve({ success: true });
@@ -844,7 +929,7 @@ describe('#230: contact outcome focus and receipt', () => {
     await user.click(submitButton());
     await waitFor(() => expect(mockSubmitLead).toHaveBeenCalledTimes(3));
     expect(validationHandle.dismiss).toHaveBeenCalledTimes(1);
-    expect(failureHandle.dismiss).not.toHaveBeenCalled();
+    expect(failureHandle.dismiss).toHaveBeenCalledTimes(1);
   });
 
   it('dismisses a validation toast when a valid send follows an invalid submit', async () => {
@@ -868,7 +953,7 @@ describe('#230: contact outcome focus and receipt', () => {
     expect(toast).toHaveBeenCalledTimes(1);
   });
 
-  it('keeps the receipt while composing and through invalid submits, then clears it on the next actual send', async () => {
+  it('clears the previous receipt when a new draft begins and through invalid submits', async () => {
     const user = userEvent.setup();
     const { container } = render(<Contact />);
     await fillByKeyboard(user, container);
@@ -876,11 +961,11 @@ describe('#230: contact outcome focus and receipt', () => {
     await waitFor(() => expect(receipt()).not.toBeNull());
 
     await user.type(container.querySelector('input[name="name"]'), 'Second Lead');
-    expect(receipt()).not.toBeNull();
+    expect(receipt()).toBeNull();
 
     await user.click(submitButton());
     expect(document.activeElement).toBe(container.querySelector('input[name="email"]'));
-    expect(receipt()).not.toBeNull();
+    expect(receipt()).toBeNull();
     expect(mockSubmitLead).toHaveBeenCalledTimes(1);
 
     const second = deferred();
@@ -969,7 +1054,7 @@ describe("Contact form submission failures (#231)", () => {
     ));
     const submit = screen.getByRole("button", { name: "Send project request" });
     await waitFor(() => expect(submit.disabled).toBe(false));
-    expect(document.activeElement).toBe(submit);
+    await waitFor(() => expect(document.activeElement).toBe(submit));
     expect(container.querySelector('input[name="name"]').value).toBe("Jane Doe");
     expect(container.querySelector('input[name="email"]').value).toBe("jane@example.com");
     expect(container.querySelector("#budget").value).toBe("€5k-€10k");
@@ -978,7 +1063,7 @@ describe("Contact form submission failures (#231)", () => {
 
     fireEvent.submit(form);
     const receipt = await screen.findByRole("status", { name: "Request received" });
-    expect(document.activeElement).toBe(receipt);
+    await waitFor(() => expect(document.activeElement).toBe(receipt));
     expect(toast).toHaveBeenCalledTimes(1);
     expect(mockSubmitLead).toHaveBeenCalledTimes(2);
     expect(mockSubmitLead.mock.calls[1][0]).toEqual({
@@ -1006,7 +1091,7 @@ describe("Contact form submission failures (#231)", () => {
       expect.objectContaining({ description: SAFE_SUBMIT_FAILURE }),
     ));
     expect(mockSubmitLead).toHaveBeenCalledTimes(1);
-    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Send project request" }));
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByRole("button", { name: "Send project request" })));
     expectNoDiagnostics();
   });
 });

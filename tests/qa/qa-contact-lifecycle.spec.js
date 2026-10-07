@@ -101,7 +101,12 @@ async function returnToContactByBack(page) {
   await page.goBack();
   // ScrollToTop focuses main on the next frame. Wait for that focus handoff
   // before the test focuses a form field or opens the mobile menu again.
-  await expect(page.locator('#main-content')).toBeFocused();
+  const receipt = page.getByRole('status', { name: 'Request received' });
+  const error = page.locator('#contact-submit-error');
+  await expect(page.getByLabel('Full Name *')).toBeVisible();
+  if (await page.locator('[aria-labelledby="contact-receipt-title"][data-contact-outcome-focus]').count()) await expect(receipt).toBeFocused();
+  else if (await error.count() && await page.locator('form button[data-contact-outcome-focus]').count()) await expect(page.locator('form button[type="submit"]')).toBeFocused();
+  else await expect(page.locator('#main-content')).toBeFocused();
   await expect(page.getByLabel('Full Name *')).toBeVisible();
 }
 
@@ -254,7 +259,7 @@ test('preserves a dirty draft through featured and collection article navigation
 
 test('case study navigation leaves modified clicks unprevented', async ({ page }) => {
   for (const route of ['/project/ai-invoice-processing-automation/', '/case-studies/']) {
-    await page.goto(route);
+    await page.goto(route, { waitUntil: 'networkidle' });
     const links = route.startsWith('/project/')
       ? page.locator('.case-study-navigation a, .case-study-cta a')
       : page.locator('main').getByRole('link', { name: /Back to home/ });
@@ -421,13 +426,36 @@ for (const outcome of ['success', 'failure']) {
     await form.evaluate((element) => element.requestSubmit());
     expect(transport.state.mutations).toHaveLength(1);
 
+    await page.evaluate(() => {
+      const form = document.querySelector('form[data-sensitive-telemetry]');
+      window.__qaReceipt = { insertions: 0, focuses: 0 };
+      new MutationObserver((changes) => {
+        for (const change of changes) {
+          for (const node of change.addedNodes) {
+            if (node.nodeType === 1 && node.matches('[aria-labelledby="contact-receipt-title"]')) {
+              window.__qaReceipt.insertions += 1;
+            }
+          }
+        }
+      }).observe(form, { childList: true, subtree: true });
+      form.addEventListener('focusin', (event) => {
+        if (event.target.matches('[aria-labelledby="contact-receipt-title"]')) window.__qaReceipt.focuses += 1;
+      });
+    });
     transport.releasePending(outcome);
     await expect(form.locator('button[type="submit"]')).toBeEnabled();
     if (outcome === 'success') {
+      const receipt = form.getByRole('status', { name: 'Request received' });
+      await expect(receipt).toHaveCount(1);
+      await expect(receipt).toBeFocused();
+      await expect(receipt).toHaveAttribute('aria-live', 'polite');
+      expect(await page.evaluate(() => window.__qaReceipt)).toEqual({ insertions: 1, focuses: 1 });
       await expectEmptyContactForm(page);
       expect(await unloadIsPrevented(page)).toBe(false);
     } else {
       await expectPreservedValues(page);
+      await expect(form.locator('button[type="submit"]')).toBeFocused();
+      await expect(failureToastLocator(page)).toContainText(SAFE_FAILURE_MESSAGE);
       expect(await unloadIsPrevented(page)).toBe(true);
     }
     await navigateToServicesByKeyboard(page);
@@ -439,10 +467,97 @@ for (const outcome of ['success', 'failure']) {
   });
 }
 
+for (const outcome of ['success', 'failure']) {
+  test(`a ${outcome} completed away from Contact is available on return and clears on a new draft`, async ({ page, contactTransport: transport }) => {
+    await page.goto('/contact/');
+    await fillContactForm(page);
+    const initialStorage = await readBrowserStorage(page);
+    await page.getByLabel('Full Name *').press('Enter');
+    await expect.poll(() => transport.state.mutations.length).toBe(1);
+    await navigateToServicesByKeyboard(page);
+    transport.releasePending(outcome);
+    if (outcome === 'failure') await expect(failureToastLocator(page)).toBeVisible();
+    else await expect.poll(() => unloadIsPrevented(page)).toBe(false);
+    await page.goBack();
+    const form = page.locator('form[data-sensitive-telemetry]');
+    const receipt = form.getByRole('status', { name: 'Request received' });
+    const retry = form.locator('button[type="submit"]');
+    if (outcome === 'success') {
+      await expect(receipt).toHaveCount(1);
+      await expect(receipt).toBeFocused();
+      await expect(receipt).toHaveAttribute('aria-live', 'polite');
+      await expectEmptyContactForm(page);
+    } else {
+      await expectPreservedValues(page);
+      await expect(retry).toBeFocused();
+      await expect(form.locator('#contact-submit-error')).toContainText(SAFE_FAILURE_MESSAGE);
+    }
+    await page.getByLabel('Full Name *').fill('Synthetic new draft');
+    await expect(receipt).toHaveCount(0);
+    await expect(form.locator('#contact-submit-error')).toHaveCount(0);
+    if (outcome === 'failure') await expect(failureToastLocator(page)).toHaveCount(0, { timeout: 1000 });
+    await navigateToServicesByKeyboard(page);
+    await returnToContactByBack(page);
+    await expect(page.getByLabel('Full Name *')).toHaveValue('Synthetic new draft');
+    await expect(receipt).toHaveCount(0);
+    expect(transport.state.mutations).toHaveLength(1);
+    expect(await readBrowserStorage(page)).toEqual(initialStorage);
+  });
+}
+
+for (const timing of ['before return', 'after return']) {
+  test(`a failure ${timing} dismisses its toast on a successful remounted retry`, async ({ page, contactTransport: transport }) => {
+    await page.goto('/contact/');
+    await fillContactForm(page);
+    await page.getByLabel('Full Name *').press('Enter');
+    await expect.poll(() => transport.state.mutations.length).toBe(1);
+    await navigateToServicesByKeyboard(page);
+    if (timing === 'before return') {
+      transport.releasePending('failure');
+      await expect(failureToastLocator(page)).toBeVisible();
+    }
+    await returnToContactByBack(page);
+    if (timing === 'after return') transport.releasePending('failure');
+    await expect(failureToastLocator(page)).toBeVisible();
+    await expectPreservedValues(page);
+    const retry = page.locator('form button[type="submit"]');
+    await expect(retry).toBeFocused();
+    await retry.press('Enter');
+    await expect.poll(() => transport.state.mutations.length).toBe(2);
+    await expect(page.getByRole('status', { name: 'Request received' })).toBeFocused();
+    await expect(failureToastLocator(page)).toHaveCount(0, { timeout: 1_000 });
+  });
+}
+
+test('later Contact visits retain a completed receipt without repeating outcome focus or announcement', async ({ page, contactTransport: transport }) => {
+  await page.goto('/contact/');
+  await fillContactForm(page);
+  await page.getByLabel('Full Name *').press('Enter');
+  await expect.poll(() => transport.state.mutations.length).toBe(1);
+  transport.releasePending('success');
+  const receipt = page.getByRole('status', { name: 'Request received' });
+  await expect(receipt).toBeFocused();
+  await expect(receipt).toHaveAttribute('aria-live', 'polite');
+  await navigateToServicesByKeyboard(page);
+  await page.goBack();
+  await expect(page.locator('#main-content')).toBeFocused();
+  await expect(receipt).toHaveAttribute('aria-live', 'off');
+  await navigateToServicesByKeyboard(page);
+  let navigation = page.locator('header');
+  if (page.viewportSize().width < 768) {
+    await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
+    navigation = page.getByRole('dialog', { name: 'Navigation menu', exact: true });
+  }
+  await navigation.getByRole('link', { name: page.viewportSize().width < 768 ? 'Request a Project Estimate' : 'Request Estimate', exact: true }).click();
+  await expect(page.locator('#main-content')).toBeFocused();
+  await expect(receipt).toHaveAttribute('aria-live', 'off');
+  expect(transport.state.mutations).toHaveLength(1);
+});
+
 function failureToastLocator(page) {
   // Radix also copies the description to an off-screen live announcer.
   // The visible toast contains a distinct title element; the announcer does not.
-  return page.getByRole('status').filter({
+  return page.getByRole('region', { name: 'Notifications (F8)' }).getByRole('status').filter({
     has: page.getByText('Submission Failed', { exact: true }),
   });
 }
