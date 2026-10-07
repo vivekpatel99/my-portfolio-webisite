@@ -4,6 +4,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RouteErrorBoundary from '@/components/RouteErrorBoundary';
+import RouteLoading from '@/components/RouteLoading';
 import { Toaster } from '@/components/ui/toaster';
 import CustomCursor from '@/components/CustomCursor';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
@@ -119,7 +120,7 @@ const Layout = () => {
         />
         <main id="main-content" className="flex-grow">
           <RouteErrorBoundary resetKey={location.key}>
-            <Suspense fallback={<div className="min-h-screen" role="status" aria-label="Loading page" />}>
+            <Suspense fallback={<RouteLoading />}>
               <Outlet />
             </Suspense>
           </RouteErrorBoundary>
