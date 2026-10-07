@@ -1,0 +1,497 @@
+{
+  "before-chromium-1440-no-preference": {
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "scrollWidth": 1440,
+    "anchors": [
+      {
+        "name": "LinkedIn profile",
+        "x": 684,
+        "y": 658.728515625,
+        "width": 24,
+        "height": 24,
+        "right": 708,
+        "bottom": 682.728515625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      },
+      {
+        "name": "GitHub profile",
+        "x": 732,
+        "y": 658.728515625,
+        "width": 24,
+        "height": 24,
+        "right": 756,
+        "bottom": 682.728515625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      }
+    ]
+  },
+  "before-chromium-320-no-preference": {
+    "viewport": {
+      "width": 320,
+      "height": 740
+    },
+    "scrollWidth": 320,
+    "anchors": [
+      {
+        "name": "LinkedIn profile",
+        "x": 124,
+        "y": 422.275390625,
+        "width": 24,
+        "height": 24,
+        "right": 148,
+        "bottom": 446.275390625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      },
+      {
+        "name": "GitHub profile",
+        "x": 172,
+        "y": 422.275390625,
+        "width": 24,
+        "height": 24,
+        "right": 196,
+        "bottom": 446.275390625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      }
+    ]
+  },
+  "before-chromium-390-no-preference": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "scrollWidth": 390,
+    "anchors": [
+      {
+        "name": "LinkedIn profile",
+        "x": 159,
+        "y": 473.916015625,
+        "width": 24,
+        "height": 24,
+        "right": 183,
+        "bottom": 497.916015625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      },
+      {
+        "name": "GitHub profile",
+        "x": 207,
+        "y": 473.916015625,
+        "width": 24,
+        "height": 24,
+        "right": 231,
+        "bottom": 497.916015625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      }
+    ]
+  },
+  "after-chromium-1440-no-preference": {
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "scrollWidth": 1440,
+    "anchors": [
+      {
+        "name": "LinkedIn profile",
+        "x": 664,
+        "y": 638.728515625,
+        "width": 44,
+        "height": 44,
+        "right": 708,
+        "bottom": 682.728515625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      },
+      {
+        "name": "GitHub profile",
+        "x": 732,
+        "y": 638.728515625,
+        "width": 44,
+        "height": 44,
+        "right": 776,
+        "bottom": 682.728515625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      }
+    ]
+  },
+  "after-chromium-1440-reduce": {
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "scrollWidth": 1440,
+    "anchors": [
+      {
+        "name": "LinkedIn profile",
+        "x": 664,
+        "y": 638.728515625,
+        "width": 44,
+        "height": 44,
+        "right": 708,
+        "bottom": 682.728515625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      },
+      {
+        "name": "GitHub profile",
+        "x": 732,
+        "y": 638.728515625,
+        "width": 44,
+        "height": 44,
+        "right": 776,
+        "bottom": 682.728515625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      }
+    ]
+  },
+  "after-chromium-320-no-preference": {
+    "viewport": {
+      "width": 320,
+      "height": 740
+    },
+    "scrollWidth": 320,
+    "anchors": [
+      {
+        "name": "LinkedIn profile",
+        "x": 104,
+        "y": 412.275390625,
+        "width": 44,
+        "height": 44,
+        "right": 148,
+        "bottom": 456.275390625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      },
+      {
+        "name": "GitHub profile",
+        "x": 172,
+        "y": 412.275390625,
+        "width": 44,
+        "height": 44,
+        "right": 216,
+        "bottom": 456.275390625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      }
+    ]
+  },
+  "after-chromium-320-reduce": {
+    "viewport": {
+      "width": 320,
+      "height": 740
+    },
+    "scrollWidth": 320,
+    "anchors": [
+      {
+        "name": "LinkedIn profile",
+        "x": 104,
+        "y": 412.275390625,
+        "width": 44,
+        "height": 44,
+        "right": 148,
+        "bottom": 456.275390625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      },
+      {
+        "name": "GitHub profile",
+        "x": 172,
+        "y": 412.275390625,
+        "width": 44,
+        "height": 44,
+        "right": 216,
+        "bottom": 456.275390625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      }
+    ]
+  },
+  "after-chromium-390-no-preference": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "scrollWidth": 390,
+    "anchors": [
+      {
+        "name": "LinkedIn profile",
+        "x": 139,
+        "y": 463.916015625,
+        "width": 44,
+        "height": 44,
+        "right": 183,
+        "bottom": 507.916015625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      },
+      {
+        "name": "GitHub profile",
+        "x": 207,
+        "y": 463.916015625,
+        "width": 44,
+        "height": 44,
+        "right": 251,
+        "bottom": 507.916015625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      }
+    ]
+  },
+  "after-chromium-390-reduce": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "scrollWidth": 390,
+    "anchors": [
+      {
+        "name": "LinkedIn profile",
+        "x": 139,
+        "y": 463.916015625,
+        "width": 44,
+        "height": 44,
+        "right": 183,
+        "bottom": 507.916015625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      },
+      {
+        "name": "GitHub profile",
+        "x": 207,
+        "y": 463.916015625,
+        "width": 44,
+        "height": 44,
+        "right": 251,
+        "bottom": 507.916015625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      }
+    ]
+  },
+  "after-webkit-1440-no-preference": {
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "scrollWidth": 1440,
+    "anchors": [
+      {
+        "name": "LinkedIn profile",
+        "x": 664,
+        "y": 638.650390625,
+        "width": 44,
+        "height": 44,
+        "right": 708,
+        "bottom": 682.650390625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      },
+      {
+        "name": "GitHub profile",
+        "x": 732,
+        "y": 638.650390625,
+        "width": 44,
+        "height": 44,
+        "right": 776,
+        "bottom": 682.650390625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      }
+    ]
+  },
+  "after-webkit-1440-reduce": {
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "scrollWidth": 1440,
+    "anchors": [
+      {
+        "name": "LinkedIn profile",
+        "x": 664,
+        "y": 638.650390625,
+        "width": 44,
+        "height": 44,
+        "right": 708,
+        "bottom": 682.650390625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      },
+      {
+        "name": "GitHub profile",
+        "x": 732,
+        "y": 638.650390625,
+        "width": 44,
+        "height": 44,
+        "right": 776,
+        "bottom": 682.650390625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      }
+    ]
+  },
+  "after-webkit-320-no-preference": {
+    "viewport": {
+      "width": 320,
+      "height": 740
+    },
+    "scrollWidth": 320,
+    "anchors": [
+      {
+        "name": "LinkedIn profile",
+        "x": 104,
+        "y": 411.166015625,
+        "width": 44,
+        "height": 44,
+        "right": 148,
+        "bottom": 455.166015625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      },
+      {
+        "name": "GitHub profile",
+        "x": 172,
+        "y": 411.166015625,
+        "width": 44,
+        "height": 44,
+        "right": 216,
+        "bottom": 455.166015625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      }
+    ]
+  },
+  "after-webkit-320-reduce": {
+    "viewport": {
+      "width": 320,
+      "height": 740
+    },
+    "scrollWidth": 320,
+    "anchors": [
+      {
+        "name": "LinkedIn profile",
+        "x": 104,
+        "y": 411.166015625,
+        "width": 44,
+        "height": 44,
+        "right": 148,
+        "bottom": 455.166015625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      },
+      {
+        "name": "GitHub profile",
+        "x": 172,
+        "y": 411.166015625,
+        "width": 44,
+        "height": 44,
+        "right": 216,
+        "bottom": 455.166015625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      }
+    ]
+  },
+  "after-webkit-390-no-preference": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "scrollWidth": 390,
+    "anchors": [
+      {
+        "name": "LinkedIn profile",
+        "x": 139,
+        "y": 463.806640625,
+        "width": 44,
+        "height": 44,
+        "right": 183,
+        "bottom": 507.806640625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      },
+      {
+        "name": "GitHub profile",
+        "x": 207,
+        "y": 463.806640625,
+        "width": 44,
+        "height": 44,
+        "right": 251,
+        "bottom": 507.806640625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      }
+    ]
+  },
+  "after-webkit-390-reduce": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "scrollWidth": 390,
+    "anchors": [
+      {
+        "name": "LinkedIn profile",
+        "x": 139,
+        "y": 463.806640625,
+        "width": 44,
+        "height": 44,
+        "right": 183,
+        "bottom": 507.806640625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      },
+      {
+        "name": "GitHub profile",
+        "x": 207,
+        "y": 463.806640625,
+        "width": 44,
+        "height": 44,
+        "right": 251,
+        "bottom": 507.806640625,
+        "iconWidth": 24,
+        "iconHeight": 24,
+        "cornersHitAnchor": true
+      }
+    ]
+  }
+}
