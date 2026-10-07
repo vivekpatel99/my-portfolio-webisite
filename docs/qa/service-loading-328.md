@@ -47,6 +47,12 @@ These are controlled pending-content and recovery checks. No real network loadin
 
 ## Independent review
 
+### PR follow-up verification
+
+PR review identified focus loss when a keyboard user focused the pending Back to Services link and the chunk then resolved. A production-preview regression reproduced an inactive final link. The fallback now transfers focus to the equivalent completed-page link only when the removed pending link had focus, the URL is unchanged, and no other element has gained focus. It does not move focus from the header. The updated local matrix passed 100 cases across service loading, recovery, and metadata. The integrated full suite passed 873 unit tests in 70 files; the production build and scoped React lint also passed. The cold-service cases assert the transfer in Chromium and WebKit; a separate release case asserts that header focus stays put.
+
+Integration updates preserve the service-loading, evidence-label, and fragment suites in the QA configuration and sanitizer. The whole-site theme checklist now describes the visible pending context. GitHub's Apache job passed on the preceding integration candidates; the local Docker limitation above still applies.
+
 Read-only Standards and Spec reviews of frozen candidate `70b170e2ddb135736e713e46bf8a1eccd851215e` against the inspected baseline found no actionable defects. The comment review found no new comments or suppressions to remove. The candidate is a local snapshot object used to pin review, not the delivered branch HEAD.
 
 Kiro completed one read-only review through the tracked `portfolio_frontend_review` profile, configured for `claude-opus-5.5`, with `--effort high` and V2. Its stream confirmed high effort. It exposed no served-model attestation. The [actual review response](service-loading-328/kiro-review.md) is preserved.

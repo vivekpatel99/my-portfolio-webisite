@@ -1,11 +1,21 @@
-import React from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import { Link, matchPath, useLocation } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { getServiceOfferById, serviceRouteForId } from '@/data/serviceOffers';
 import { Seo, routeSeo } from '@/lib/seo';
 
 const RouteLoading = () => {
-  const { pathname } = useLocation();
+  const { pathname, search, hash } = useLocation();
+  const backRef = useRef(null);
+  useLayoutEffect(() => () => {
+    const pendingLink = backRef.current;
+    if (!pendingLink || document.activeElement !== pendingLink) return;
+    window.requestAnimationFrame(() => {
+      if (pendingLink.isConnected || document.activeElement !== document.body) return;
+      if (`${window.location.pathname}${window.location.search}${window.location.hash}` !== `${pathname}${search}${hash}`) return;
+      document.querySelector('#main-content a[href="/#services"]')?.focus({ preventScroll: true });
+    });
+  }, [pathname, search, hash]);
   const match = matchPath('/services/:serviceId', pathname);
   const service = match ? getServiceOfferById(match.params.serviceId) : null;
   const seoPath = service ? serviceRouteForId(service.id) : pathname.replace(/\/+$/, '') || '/';
@@ -21,7 +31,7 @@ const RouteLoading = () => {
       <Seo {...seo} />
       <div className="mx-auto max-w-[1180px] px-6 md:px-12">
         {service ? (
-          <Link to="/#services" className="detection-text-action mb-12 gap-2 text-sm md:mb-16">
+          <Link ref={backRef} to="/#services" className="detection-text-action mb-12 gap-2 text-sm md:mb-16">
             <ArrowLeft size={16} aria-hidden="true" />
             Back to Services
           </Link>

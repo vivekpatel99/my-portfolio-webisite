@@ -79,7 +79,11 @@ for (const service of serviceOffers) {
           await expect(menu).toHaveCount(0);
         }
       }
+      const back = page.locator('#main-content').getByRole('link', { name: 'Back to Services', exact: true });
+      await back.focus();
       held.release();
+      await expect(pendingStatus(page)).toHaveCount(0);
+      await expect(back).toBeFocused();
       for (const width of widths) {
         await page.setViewportSize({ width, height: width === 1440 ? 900 : 844 });
         await expectServiceContext(page, service, false);
@@ -90,6 +94,23 @@ for (const service of serviceOffers) {
     }
   });
 }
+
+test('release preserves focus outside the pending service link', async ({ page }) => {
+  const service = serviceOffers[0];
+  const held = await holdServiceChunk(page);
+  try {
+    await page.goto(serviceRouteForId(service.id), { waitUntil: 'domcontentloaded' });
+    await held.request;
+    await expectServiceContext(page, service, true);
+    const home = page.locator('header').getByRole('link', { name: 'Vivek Patel home' });
+    await home.focus();
+    held.release();
+    await expectServiceContext(page, service, false);
+    await expect(home).toBeFocused();
+  } finally {
+    held.release();
+  }
+});
 
 test('navigation while held uses the current service and stays correct after release', async ({ page }) => {
   const held = await holdServiceChunk(page);
