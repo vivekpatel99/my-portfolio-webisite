@@ -124,6 +124,17 @@ for (const navigation of ['cold load', 'SPA link', 'native hash']) {
 for (const [name, id] of [['Services', 'services'], ['About', 'about'], ['Portfolio', 'portfolio']]) {
   test(`ordinary footer ${name} link preserves anchor position and focus`, async ({ page }) => {
     await page.goto('/');
+    await page.evaluate(() => document.fonts.ready);
+    await expect.poll(() => page.locator(`#${id}`).evaluate(async (target) => {
+      const animator = target.closest('[data-section-animator]');
+      const documentTop = () => target.getBoundingClientRect().top + window.scrollY;
+      const before = documentTop();
+      await new Promise(requestAnimationFrame);
+      const after = documentTop();
+      await new Promise(requestAnimationFrame);
+      return (!animator || getComputedStyle(animator).transform === 'none')
+        && before === after && after === documentTop();
+    })).toBe(true);
     const link = page.locator('#site-footer').getByRole('link', { name, exact: true });
     await link.focus();
     await page.keyboard.press('Enter');
