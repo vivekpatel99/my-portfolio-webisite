@@ -61,19 +61,22 @@ const SUBMIT_FAILURE_FALLBACK =
   "We couldn't send your request. Please try again, or use the email address on this page.";
 
 const Contact = () => {
-  const { formState, setFormState, isSubmitting, outcome, beginSubmission, finishSubmission } = useContactDraft();
+  const { formState, setFormState, isSubmitting, outcome, hasUnpresentedOutcome, claimOutcomePresentation, setFeedbackToast, beginSubmission, finishSubmission } = useContactDraft();
   const [fieldErrors, setFieldErrors] = useState({});
   const submittingRef = useRef(false);
   const submitButtonRef = useRef(null);
   const receiptRef = useRef(null);
-  const feedbackToastRef = useRef(null);
+  const [announcingOutcome, setAnnouncingOutcome] = useState(null);
+  const presentsOutcome = Boolean(outcome && (hasUnpresentedOutcome || announcingOutcome === outcome));
   const submitLead = useMutation(api.leads.submitLead);
   const pageMotion = usePageMotion();
 
   useEffect(() => {
+    if (!claimOutcomePresentation(outcome)) return;
+    setAnnouncingOutcome(outcome);
     if (outcome?.status === 'error') submitButtonRef.current?.focus();
     if (outcome?.status === 'success') receiptRef.current?.focus();
-  }, [outcome]);
+  }, [outcome, claimOutcomePresentation]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -123,13 +126,13 @@ const Contact = () => {
     const firstInvalidField = Object.keys(nextErrors)[0];
     if (firstInvalidField) {
       telemetrySource.elements.namedItem(firstInvalidField)?.focus();
-      feedbackToastRef.current = toast({
+      setFeedbackToast(toast({
         title: nextErrors.email && trimmedFormState.email ? "Invalid email address." : "Uh oh! Missing fields.",
         description: nextErrors.email && trimmedFormState.email
           ? "Please check your email format before sending."
           : "Please fill out all required fields before sending.",
         variant: "destructive",
-      });
+      }));
       return;
     }
 
@@ -137,8 +140,6 @@ const Contact = () => {
     const submittedFields = beginSubmission();
     if (!submittedFields) return;
     submittingRef.current = true;
-    feedbackToastRef.current?.dismiss();
-    feedbackToastRef.current = null;
 
     try {
       await submitLead({
@@ -158,11 +159,11 @@ const Contact = () => {
       const description = ACTIONABLE_SUBMIT_ERRORS.has(convexMessage)
         ? convexMessage
         : SUBMIT_FAILURE_FALLBACK;
-      feedbackToastRef.current = toast({
+      setFeedbackToast(toast({
         title: "Submission Failed",
         description,
         variant: "destructive",
-      });
+      }));
       submittingRef.current = false;
       finishSubmission(submittedFields, false, description);
       return;
@@ -341,9 +342,9 @@ const Contact = () => {
               {outcome?.status === 'success' ? (
                 <div
                   ref={receiptRef}
-                  data-contact-outcome-focus
+                  data-contact-outcome-focus={presentsOutcome ? '' : undefined}
                   role="status"
-                  aria-live="polite"
+                  aria-live={presentsOutcome ? 'polite' : 'off'}
                   aria-labelledby="contact-receipt-title"
                   aria-describedby="contact-receipt-body"
                   tabIndex={-1}
@@ -367,7 +368,7 @@ const Contact = () => {
               <div className="text-center mt-6">
                 <button
                   ref={submitButtonRef}
-                  data-contact-outcome-focus={outcome?.status === 'error' ? '' : undefined}
+                  data-contact-outcome-focus={outcome?.status === 'error' && presentsOutcome ? '' : undefined}
                   type="submit"
                   aria-describedby={outcome?.status === 'error' ? 'contact-submit-error' : undefined}
                   disabled={isSubmitting}

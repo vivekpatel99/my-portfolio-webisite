@@ -96,8 +96,8 @@ async function returnToContactByBack(page) {
   const receipt = page.getByRole('status', { name: 'Request received' });
   const error = page.locator('#contact-submit-error');
   await expect(page.getByLabel('Full Name *')).toBeVisible();
-  if (await receipt.count()) await expect(receipt).toBeFocused();
-  else if (await error.count()) await expect(page.locator('form button[type="submit"]')).toBeFocused();
+  if (await page.locator('[aria-labelledby="contact-receipt-title"][data-contact-outcome-focus]').count()) await expect(receipt).toBeFocused();
+  else if (await error.count() && await page.locator('form button[data-contact-outcome-focus]').count()) await expect(page.locator('form button[type="submit"]')).toBeFocused();
   else await expect(page.locator('#main-content')).toBeFocused();
   await expect(page.getByLabel('Full Name *')).toBeVisible();
 }
@@ -323,6 +323,55 @@ for (const outcome of ['success', 'failure']) {
     expect(await readBrowserStorage(page)).toEqual(initialStorage);
   });
 }
+
+for (const timing of ['before return', 'after return']) {
+  test(`a failure ${timing} dismisses its toast on a successful remounted retry`, async ({ page, contactTransport: transport }) => {
+    await page.goto('/contact/');
+    await fillContactForm(page);
+    await page.getByLabel('Full Name *').press('Enter');
+    await expect.poll(() => transport.state.mutations.length).toBe(1);
+    await navigateToServicesByKeyboard(page);
+    if (timing === 'before return') {
+      transport.releasePending('failure');
+      await expect(failureToastLocator(page)).toBeVisible();
+    }
+    await returnToContactByBack(page);
+    if (timing === 'after return') transport.releasePending('failure');
+    await expect(failureToastLocator(page)).toBeVisible();
+    await expectPreservedValues(page);
+    const retry = page.locator('form button[type="submit"]');
+    await expect(retry).toBeFocused();
+    await retry.press('Enter');
+    await expect.poll(() => transport.state.mutations.length).toBe(2);
+    await expect(page.getByRole('status', { name: 'Request received' })).toBeFocused();
+    await expect(failureToastLocator(page)).toHaveCount(0, { timeout: 1_000 });
+  });
+}
+
+test('later Contact visits retain a completed receipt without repeating outcome focus or announcement', async ({ page, contactTransport: transport }) => {
+  await page.goto('/contact/');
+  await fillContactForm(page);
+  await page.getByLabel('Full Name *').press('Enter');
+  await expect.poll(() => transport.state.mutations.length).toBe(1);
+  transport.releasePending('success');
+  const receipt = page.getByRole('status', { name: 'Request received' });
+  await expect(receipt).toBeFocused();
+  await expect(receipt).toHaveAttribute('aria-live', 'polite');
+  await navigateToServicesByKeyboard(page);
+  await page.goBack();
+  await expect(page.locator('#main-content')).toBeFocused();
+  await expect(receipt).toHaveAttribute('aria-live', 'off');
+  await navigateToServicesByKeyboard(page);
+  let navigation = page.locator('header');
+  if (page.viewportSize().width < 768) {
+    await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
+    navigation = page.getByRole('dialog', { name: 'Navigation menu', exact: true });
+  }
+  await navigation.getByRole('link', { name: page.viewportSize().width < 768 ? 'Request a Project Estimate' : 'Request Estimate', exact: true }).click();
+  await expect(page.locator('#main-content')).toBeFocused();
+  await expect(receipt).toHaveAttribute('aria-live', 'off');
+  expect(transport.state.mutations).toHaveLength(1);
+});
 
 function failureToastLocator(page) {
   // Radix also copies the description to an off-screen live announcer.

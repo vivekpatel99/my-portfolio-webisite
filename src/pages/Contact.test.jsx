@@ -177,6 +177,38 @@ describe("Contact form", () => {
     expect(unloadIsPrevented()).toBe(true);
   });
 
+  it('#321: retry after a pending failure remount dismisses the old failure toast', async () => {
+    let rejectSubmission;
+    const failedToast = { dismiss: vi.fn() };
+    toast.mockReturnValueOnce(failedToast);
+    mockSubmitLead.mockImplementationOnce(() => new Promise((_resolve, reject) => { rejectSubmission = reject; }));
+    const first = render(<Contact />);
+    fillValidLead(first.container);
+    fireEvent.submit(first.container.querySelector('form'));
+    first.unmount();
+    await act(async () => rejectSubmission({ data: EMAIL_RATE_LIMIT_ERROR }));
+    const returned = render(<Contact />);
+    fireEvent.submit(returned.container.querySelector('form'));
+    await screen.findByRole('status', { name: 'Request received' });
+    expect(failedToast.dismiss).toHaveBeenCalledTimes(1);
+    expect(mockSubmitLead).toHaveBeenCalledTimes(2);
+  });
+
+  it('#321: later visits keep the receipt without focusing or announcing the same outcome again', async () => {
+    const first = render(<Contact />);
+    fillValidLead(first.container);
+    fireEvent.submit(first.container.querySelector('form'));
+    const receipt = await screen.findByRole('status', { name: 'Request received' });
+    expect(document.activeElement).toBe(receipt);
+    expect(receipt.getAttribute('aria-live')).toBe('polite');
+    first.unmount();
+    render(<Contact />);
+    const retained = screen.getByRole('status', { name: 'Request received' });
+    expect(document.activeElement).not.toBe(retained);
+    expect(retained.getAttribute('aria-live')).toBe('off');
+    expect(retained.hasAttribute('data-contact-outcome-focus')).toBe(false);
+  });
+
   it('#321: a success between remount and the route focus frame keeps receipt focus', async () => {
     const frames = new Map();
     let nextFrame = 0;
