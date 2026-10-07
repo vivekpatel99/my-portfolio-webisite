@@ -46,7 +46,7 @@ export function qaPassiveSpecs({ environment, localOnly }) {
     'qa-consent.spec.js',
     'qa-cursor.spec.js',
     'qa-edge.spec.js',
-    ...(localOnly ? ['qa-focus.spec.js', 'qa-hero-motion.spec.js', 'qa-route-recovery.spec.js'] : []),
+    ...(localOnly ? ['qa-focus.spec.js', 'qa-fragments.spec.js', 'qa-hero-motion.spec.js', 'qa-route-recovery.spec.js'] : []),
     'qa-responsive.spec.js',
     'qa-routes.spec.js',
     // Covers unreleased carousel behavior, so it must not run against the public deployment.
@@ -93,12 +93,12 @@ const liveProjects = includeLiveContactSubmit && !localOnly
 const webkitRegressionProjects = localOnly ? [
   {
     name: 'preview-webkit-desktop',
-    testMatch: ['qa-focus.spec.js', 'qa-cursor.spec.js', 'qa-route-recovery.spec.js'],
+    testMatch: ['qa-focus.spec.js', 'qa-fragments.spec.js', 'qa-cursor.spec.js', 'qa-route-recovery.spec.js'],
     use: { ...devices['Desktop Safari'], baseURL: previewURL, ...qaNetworkOptions({ localOnly }) },
   },
   {
     name: 'preview-webkit-mobile',
-    testMatch: ['qa-focus.spec.js', 'qa-cursor.spec.js', 'qa-route-recovery.spec.js'],
+    testMatch: ['qa-focus.spec.js', 'qa-fragments.spec.js', 'qa-cursor.spec.js', 'qa-route-recovery.spec.js'],
     use: { ...devices['iPhone 14'], baseURL: previewURL, ...qaNetworkOptions({ localOnly }) },
   },
 ] : [];
