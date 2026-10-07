@@ -116,3 +116,11 @@ A final [review](https://github.com/vivekpatel99/my-portfolio-webisite/pull/342#
 Initialization now disables `sendClientReports`. SDK 7 therefore neither accumulates outcomes nor installs the visibility-triggered report listener. The regression dispatches a withdrawn global error, reaccepts, simulates a hidden page, and checks for no client report or retained outcomes; a fresh error must still send. Independent Standards review found no actionable issue in this repair. Actual validation excerpts are retained in [client-report-validation.txt](assets/issue-320/client-report-validation.txt).
 
 Final client-report repair validation: all fifty-two real-SDK browser checks (twenty-six per engine), 914 unit tests, synthetic-DSN production build, and owned-file ESLint pass. Remote CI remains required for the new commit.
+
+## Automatic session tracking
+
+The subsequent [review](https://github.com/vivekpatel99/my-portfolio-webisite/pull/342#discussion_r4209055240) identified SDK 7's persistent automatic-session history listener. Navigation during withdrawal can create a scoped session despite disabled transport; a later consented error can export that session. A real-SDK regression reproduced session export in Chromium and WebKit.
+
+Initialization now disables `autoSessionTracking`, preventing the listener and initial automatic session altogether. Replay's own sessions remain enabled under the consent lifecycle. The regression navigates while withdrawn, reaccepts, verifies a fresh error sends, and checks that no automatic session exists or is exported. [automatic-session-validation.txt](assets/issue-320/automatic-session-validation.txt) retains actual failure and final validation excerpts.
+
+Final automatic-session repair validation: all fifty-four real-SDK browser checks (twenty-seven per engine), 914 unit tests, synthetic-DSN build, and owned-file ESLint pass. Independent Standards review is clean. Exact-head remote CI remains required.

@@ -1,0 +1,93 @@
+Automatic-session repair: real SDK 7.120.4, synthetic in-memory transport only.
+
+Red before autoSessionTracking:false:
+
+(node:66422) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:66422) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:66422) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › tests/qa/qa-replay-consent.spec.js:3:1 › navigation while withdrawn cannot create an automatic session exported after reaccept (182ms)
+(node:66427) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:66427) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:66427) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 [webkit] › tests/qa/qa-replay-consent.spec.js:3:1 › navigation while withdrawn cannot create an automatic session exported after reaccept (535ms)
+
+
+  1) [chromium] › tests/qa/qa-replay-consent.spec.js:3:1 › navigation while withdrawn cannot create an automatic session exported after reaccept 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: false
+    Received: true
+
+      16 |     items.some(([header]) => header.type === 'session' || header.type === 'sessions')
+      17 |   )))).toEqual([]);
+    > 18 |   expect(await page.evaluate(() => Boolean(window.qa.sdk.getCurrentHub().getScope().getSession()))).toBe(false);
+         |                                                                                                     ^
+      19 | });
+      20 |
+      21 | test('withdrawn global errors cannot become client reports after reaccept', async ({ page }) => {
+        at /Users/viv/.codex/worktrees/22db/horizons-website/tests/qa/qa-replay-consent.spec.js:18:101
+
+    Error Context: ../../../../../../var/folders/ps/3qyy3_ms4fb64jwckmxppgtr0000gn/T/replay-consent-xyUQCV/results/qa-replay-consent-navigati-8888d-ion-exported-after-reaccept-chromium/error-context.md
+
+  2) [webkit] › tests/qa/qa-replay-consent.spec.js:3:1 › navigation while withdrawn cannot create an automatic session exported after reaccept 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: false
+    Received: true
+
+      16 |     items.some(([header]) => header.type === 'session' || header.type === 'sessions')
+      17 |   )))).toEqual([]);
+    > 18 |   expect(await page.evaluate(() => Boolean(window.qa.sdk.getCurrentHub().getScope().getSession()))).toBe(false);
+         |                                                                                                     ^
+      19 | });
+      20 |
+      21 | test('withdrawn global errors cannot become client reports after reaccept', async ({ page }) => {
+        at /Users/viv/.codex/worktrees/22db/horizons-website/tests/qa/qa-replay-consent.spec.js:18:101
+
+    Error Context: ../../../../../../var/folders/ps/3qyy3_ms4fb64jwckmxppgtr0000gn/T/replay-consent-xyUQCV/results/qa-replay-consent-navigati-8888d-ion-exported-after-reaccept-webkit/error-context.md
+
+  2 failed
+    [chromium] › tests/qa/qa-replay-consent.spec.js:3:1 › navigation while withdrawn cannot create an automatic session exported after reaccept 
+
+sessions-green.log
+
+  ✓  49 [webkit] › tests/qa/qa-replay-consent.spec.js:376:3 › buffer: a performance-event failure inside flush cannot deadlock native stop (380ms)
+  ✓  50 [webkit] › tests/qa/qa-replay-consent.spec.js:406:1 › navigation tracing cannot cross a withdrawn consent interval (379ms)
+  ✓  51 [webkit] › tests/qa/qa-replay-consent.spec.js:449:1 › a queued transaction is discarded after withdrawal and reaccept (16.3s)
+  ✓  52 [webkit] › tests/qa/qa-replay-consent.spec.js:473:1 › a late error response cannot promote a later consent period (8.0s)
+  ✓  53 [webkit] › tests/qa/qa-replay-consent.spec.js:499:1 › a scheduled error promotion cannot affect a later consent period (5.9s)
+  ✓  54 [webkit] › tests/qa/qa-replay-consent.spec.js:532:1 › a queued error is discarded after withdrawal and reaccept (21.8s)
+
+  54 passed (2.3m)
+
+sessions-unit.log
+
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+
+ Test Files  71 passed (71)
+      Tests  914 passed (914)
+   Start at  18:05:46
+   Duration  21.53s (transform 2.53s, setup 0ms, import 11.40s, tests 41.71s, environment 15.97s)
+
+
+sessions-build.log
+
+dist/assets/ContactRoute-Do1cR0hf.js                                                                                                                 19.07 kB │ gzip:   6.68 kB
+dist/assets/convexClient-GQWSMckc.js                                                                                                                 69.16 kB │ gzip:  19.23 kB
+dist/assets/index-DwQWu99j.js                                                                                                                       331.00 kB │ gzip: 104.46 kB
+dist/assets/index-CVxO6cDz.js                                                                                                                       451.71 kB │ gzip: 142.28 kB
+✓ built in 2.27s
+✅ sitemap.xml generated successfully!
+Checked 36 public links against static output.
+Generated static HTML for 21 routes, including 404.html.
+
+Owned-file ESLint: exit 0, no errors/warnings.
+
+Independent Standards review: clean; no actionable findings.

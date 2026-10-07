@@ -1,5 +1,23 @@
 import { expect, test } from '@playwright/test';
 
+test('navigation while withdrawn cannot create an automatic session exported after reaccept', async ({ page }) => {
+  await setup(page, 'buffer');
+  await accept(page);
+  await page.getByRole('button', { name: 'Withdraw', exact: true }).click();
+  await stopped(page);
+  await page.evaluate(() => history.pushState({}, '', '/withdrawn-session'));
+  await accept(page);
+  await page.evaluate(async () => {
+    window.qa.telemetry.captureException(new Error('CURRENT_SESSION_ERROR'));
+    await window.qa.client.flush();
+  });
+  await expect.poll(() => page.evaluate(() => JSON.stringify(window.qa.envelopes))).toContain('CURRENT_SESSION_ERROR');
+  expect(await page.evaluate(() => window.qa.envelopes.filter(([, items]) => (
+    items.some(([header]) => header.type === 'session' || header.type === 'sessions')
+  )))).toEqual([]);
+  expect(await page.evaluate(() => Boolean(window.qa.sdk.getCurrentHub().getScope().getSession()))).toBe(false);
+});
+
 test('withdrawn global errors cannot become client reports after reaccept', async ({ page }) => {
   await setup(page, 'buffer');
   await accept(page);
