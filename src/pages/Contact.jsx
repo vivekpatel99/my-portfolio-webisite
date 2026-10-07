@@ -74,9 +74,13 @@ const Contact = () => {
   useEffect(() => {
     if (!claimOutcomePresentation(outcome)) return;
     setAnnouncingOutcome(outcome);
-    if (outcome?.status === 'error') submitButtonRef.current?.focus();
-    if (outcome?.status === 'success') receiptRef.current?.focus();
   }, [outcome, claimOutcomePresentation]);
+
+  useEffect(() => {
+    if (!outcome || announcingOutcome !== outcome) return;
+    if (outcome.status === 'error') submitButtonRef.current?.focus();
+    if (outcome.status === 'success') receiptRef.current?.focus();
+  }, [outcome, announcingOutcome]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
