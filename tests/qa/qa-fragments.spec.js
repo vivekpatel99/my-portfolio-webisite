@@ -125,6 +125,7 @@ for (const [name, id] of [['Services', 'services'], ['About', 'about'], ['Portfo
   test(`ordinary footer ${name} link preserves anchor position and focus`, async ({ page }) => {
     await page.goto('/');
     await page.evaluate(() => document.fonts.ready);
+    await page.locator(`#${id}`).scrollIntoViewIfNeeded();
     await expect.poll(() => page.locator(`#${id}`).evaluate(async (target) => {
       const animator = target.closest('[data-section-animator]');
       const documentTop = () => target.getBoundingClientRect().top + window.scrollY;
