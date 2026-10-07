@@ -264,6 +264,20 @@ describe("Contact form", () => {
     expect(mockSubmitLead).not.toHaveBeenCalled();
   });
 
+  it.each([
+    ['', 'bad@', 'Uh oh! Missing fields.', 'Name is required.'],
+    ['n'.repeat(201), '', 'Check your project details.', 'Full name must be 200 characters or fewer.'],
+  ])('#325: matches the toast title and description to the first invalid field', (name, email, title, description) => {
+    const { container } = render(<Contact />);
+    fillValidLead(container);
+    fireEvent.change(screen.getByLabelText('Full Name *'), { target: { value: name } });
+    fireEvent.change(screen.getByLabelText('Email Address *'), { target: { value: email } });
+    fireEvent.submit(container.querySelector('form'));
+    expect(toast).toHaveBeenLastCalledWith({ title, description, variant: 'destructive' });
+    expect(document.activeElement).toBe(screen.getByLabelText('Full Name *'));
+    expect(mockSubmitLead).not.toHaveBeenCalled();
+  });
+
   it("FE-004: valid submit calls mutation", async () => {
     const { container } = render(<Contact />);
     const nameEl = container.querySelector('input[name="name"]');
@@ -285,6 +299,84 @@ describe("Contact form", () => {
         description: "Need help with a CV pipeline.",
       });
     });
+  });
+
+  it.each([
+    ['name', 'n'.repeat(201), 'Full name must be 200 characters or fewer.'],
+    ['email', `${'a'.repeat(250)}@b.cd`, 'Email address must be 254 characters or fewer.'],
+    ['description', 'd'.repeat(5001), 'Project description must be 5000 characters or fewer.'],
+  ])('#325: blocks programmatic oversized %s and retains the focused draft', (field, value, message) => {
+    const { container } = render(<Contact />);
+    fillValidLead(container);
+    const control = container.querySelector('form').elements.namedItem(field);
+    fireEvent.change(control, { target: { value: `  ${value}  ` } });
+    const retainedValue = control.value;
+    fireEvent.submit(container.querySelector('form'));
+
+    expect(mockSubmitLead).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(control);
+    expect(control.value).toBe(retainedValue);
+    expect(control.getAttribute('aria-invalid')).toBe('true');
+    expect(document.getElementById(control.getAttribute('aria-describedby')).textContent).toBe(message);
+    expect(toast).toHaveBeenLastCalledWith(expect.objectContaining({ description: message }));
+  });
+
+  it('#325: submits normalized values at every boundary from a programmatic draft', async () => {
+    const { container } = render(<Contact />);
+    const draft = renderHook(() => useContactDraft());
+    act(() => draft.result.current.setFormState({
+      name: ` ${'n'.repeat(200)} `,
+      email: ` ${'A'.repeat(249)}@B.CD `,
+      budget: ' €5k-€10k ',
+      description: ` ${'d'.repeat(4997)}\r\n\td `,
+    }));
+    fireEvent.submit(container.querySelector('form'));
+    await waitFor(() => expect(mockSubmitLead).toHaveBeenCalledWith({
+      name: 'n'.repeat(200),
+      email: `${'a'.repeat(249)}@b.cd`,
+      budget: '€5k-€10k',
+      description: `${'d'.repeat(4997)}\n\td`,
+    }));
+    draft.unmount();
+  });
+
+  it.each([
+    ['name', `${' '.repeat(400)}Jane`, 'Full name must be 200 characters or fewer. Remove extra surrounding whitespace.'],
+    ['email', `${' '.repeat(508)}jane@example.com`, 'Email address must be 254 characters or fewer. Remove extra surrounding whitespace.'],
+    ['description', `${' '.repeat(10000)}Details`, 'Project description must be 5000 characters or fewer. Remove extra surrounding whitespace.'],
+    ['name', 'Jane\u0000Doe', 'Remove line breaks and hidden control characters from your full name.'],
+    ['email', 'jane\t@example.com', 'Enter a valid email address.'],
+    ['description', 'Details\u202Ehidden', 'Remove hidden control characters from your project description.'],
+    ['budget', 'unlisted', 'Choose one of the listed budget ranges, or leave it blank.'],
+  ])('#325: validates programmatic %s against backend rules without a mutation', (field, value, message) => {
+    const { container } = render(<Contact />);
+    const draft = renderHook(() => useContactDraft());
+    act(() => draft.result.current.setFormState({ name: 'Jane', email: 'jane@example.com', budget: '', description: 'Details', [field]: value }));
+    fireEvent.submit(container.querySelector('form'));
+    expect(mockSubmitLead).not.toHaveBeenCalled();
+    const control = container.querySelector('form').elements.namedItem(field);
+    expect(document.activeElement).toBe(control);
+    expect(document.getElementById(control.getAttribute('aria-describedby')).textContent).toBe(message);
+    expect(draft.result.current.formState[field]).toBe(value);
+    draft.unmount();
+  });
+
+  it('#325: lets a programmatically invalid budget recover to blank without losing other fields', async () => {
+    const { container } = render(<Contact />);
+    const draft = renderHook(() => useContactDraft());
+    act(() => draft.result.current.setFormState({ name: 'Jane', email: 'jane@example.com', budget: 'unlisted', description: 'Details' }));
+    const budget = screen.getByLabelText('Budget Range');
+    expect(budget.value).toBe('unlisted');
+    fireEvent.submit(container.querySelector('form'));
+    expect(document.activeElement).toBe(budget);
+    expect(mockSubmitLead).not.toHaveBeenCalled();
+    fireEvent.change(budget, { target: { value: '' } });
+    expect(draft.result.current.formState.budget).toBe('');
+    expect(budget.getAttribute('aria-invalid')).toBe('false');
+    expect(screen.queryByText('Choose one of the listed budget ranges, or leave it blank.')).toBeNull();
+    fireEvent.submit(container.querySelector('form'));
+    await waitFor(() => expect(mockSubmitLead).toHaveBeenCalledWith({ name: 'Jane', email: 'jane@example.com', budget: undefined, description: 'Details' }));
+    draft.unmount();
   });
 
   it("FE-005: mutation failure shows the backend rate-limit message in toast", async () => {
@@ -319,7 +411,7 @@ describe("Contact form", () => {
     const { container } = render(<Contact />);
     fireEvent.change(container.querySelector('input[name="name"]'), { target: { value: "Private Name" } });
     fireEvent.change(container.querySelector('input[name="email"]'), { target: { value: "private@example.com" } });
-    fireEvent.change(container.querySelector('textarea[name="description"]'), { target: { value: "Private oversized text ".repeat(250) } });
+    fireEvent.change(container.querySelector('textarea[name="description"]'), { target: { value: "Private valid text." } });
     fireEvent.submit(container.querySelector("form"));
     await waitFor(() => expect(toast).toHaveBeenCalledWith({
       title: "Submission Failed",
