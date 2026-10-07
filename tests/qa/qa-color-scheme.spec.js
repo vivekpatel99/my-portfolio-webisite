@@ -114,8 +114,11 @@ test('contact native controls preserve layout, visual states, and keyboard acces
       expect(frameBackground.slice(1, 4).map(Number)).toEqual(control.focused ? [167, 139, 250] : [255, 255, 255]);
       // Native CSS serialization can quantize the authored alpha to 8 bits.
       expect(Math.abs(Number(frameBackground[4] ?? 1) - (control.focused ? 0.07 : 0.025))).toBeLessThanOrEqual(1 / 255);
-      expect(control.frameImage.match(/linear-gradient\(/g)).toHaveLength(8);
-      expect(control.frameImage).toContain(cornerRgb);
+      const cornerGradients = control.frameImage.match(/linear-gradient\((?:[^()]|\([^()]*\))*\)/g);
+      expect(cornerGradients).toHaveLength(8);
+      for (const gradient of cornerGradients) {
+        expect(gradient, `${state} ${control.id} corner gradient`).toBe(`linear-gradient(${cornerRgb}, ${cornerRgb})`);
+      }
       expect(control.transitionDuration).toBe(reducedMotion ? '0s' : '0.15s');
       if (control.id === 'budget') {
         expect(control.value).toBe(budgetValue);

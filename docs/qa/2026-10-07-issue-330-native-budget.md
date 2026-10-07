@@ -64,7 +64,9 @@ QA_COLOR_SCHEME_BASE_URL=http://127.0.0.1:4411 \
 
 ## Independent review
 
-The immutable precommit review snapshot is `91d2f36b1a17d0d1a91f9ea877ac4fe01d7efecf`, compared with the inspected baseline. The final documentation adds this review disposition without changing the tested fixture or evidence.
+The original precommit review used local snapshot `91d2f36b1a17d0d1a91f9ea877ac4fe01d7efecf` against baseline `8a80ffb834ed9f28edf7eb497f8caa12bc8c4da7`. That temporary commit is not reachable from delivered history. Its exact binary diff is preserved as [the reviewed candidate](assets/issue-330/reviewed-candidate.diff.gz), verified byte for byte against the archived review input. The uncompressed SHA-256 is `673b40a13cba17f38633221cbc95f5e57d5976b795cb1ec7dd521847d848d84d`.
+
+From a fresh checkout, decompress the asset with `gzip -dc docs/qa/assets/issue-330/reviewed-candidate.diff.gz > /tmp/issue-330-reviewed.diff` and check it with `shasum -a 256 /tmp/issue-330-reviewed.diff`. To reconstruct the reviewed files, apply that diff with `git apply` in a clean checkout of the baseline. The snapshot predates the review dispositions and subsequent PR review fixes below.
 
 ### Standards
 
@@ -83,3 +85,9 @@ Kiro found no blocking acceptance issues and one low-priority evidence ambiguity
 The suggestion that injected keys never reached Budget is contradicted by `initialFocus: true` in both diagnostic records; the report now also identifies their final email focus. The HTTP-only scope of the existing mutation-request counter is a valid limitation, so the report now names that scope and the separate submit-event and external WebSocket guards. No transport or application change was needed. Native-input WebKit and physical Safari or iOS remain unverified and are not required or claimed by this portable-fixture ticket.
 
 [Actual Kiro response and finding dispositions](assets/issue-330/kiro-review.md) preserve the review. The tested fixture is unchanged by these documentation corrections. Remote CI remains a separate merge gate. No merge or production release is authorized by these checks.
+
+## PR review follow-up
+
+On PR head `a79975623b6aad7ba39e65b34762d737e73e2de1`, an external synthetic probe replaced one corner gradient with red while leaving the other seven correct. The prior assertion passed; the strengthened assertion rejected the incorrect gradient. Every gradient now requires both color stops to equal the expected resting or focused color.
+
+The production build and the full Chromium/WebKit color matrix passed again: 17 passes, seven unchanged duplicate static-file skips, zero failures, and no retries. All eight contact cases passed. Scoped ESLint, syntax, artifact verification, and diff whitespace checks passed. The two independent review lanes found no actionable issues. The exact original review input above was checked against its archived copy and round-tripped through gzip without changes.
