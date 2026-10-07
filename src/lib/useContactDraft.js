@@ -36,6 +36,10 @@ const getSnapshot = () => snapshot;
 
 function setFormState(update) {
   const formState = typeof update === 'function' ? update(snapshot.formState) : update;
+  if (snapshot.outcome) {
+    feedbackToast?.dismiss();
+    feedbackToast = null;
+  }
   publish({ ...snapshot, formState, outcome: null, presentedOutcome: null });
 }
 

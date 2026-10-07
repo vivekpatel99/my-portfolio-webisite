@@ -315,6 +315,7 @@ for (const outcome of ['success', 'failure']) {
     await page.getByLabel('Full Name *').fill('Synthetic new draft');
     await expect(receipt).toHaveCount(0);
     await expect(form.locator('#contact-submit-error')).toHaveCount(0);
+    if (outcome === 'failure') await expect(failureToastLocator(page)).toHaveCount(0, { timeout: 1000 });
     await navigateToServicesByKeyboard(page);
     await returnToContactByBack(page);
     await expect(page.getByLabel('Full Name *')).toHaveValue('Synthetic new draft');

@@ -815,7 +815,7 @@ describe('#230: contact outcome focus and receipt', () => {
       expect.objectContaining({ title: 'Uh oh! Missing fields.', variant: 'destructive' }),
     );
     expect(mockSubmitLead).toHaveBeenCalledTimes(1);
-    expect(failureHandle.dismiss).not.toHaveBeenCalled();
+    expect(failureHandle.dismiss).toHaveBeenCalledTimes(1);
     expect(validationHandle.dismiss).not.toHaveBeenCalled();
 
     const retry = deferred();
@@ -824,7 +824,7 @@ describe('#230: contact outcome focus and receipt', () => {
     await user.click(submitButton());
     expect(mockSubmitLead).toHaveBeenCalledTimes(2);
     expect(validationHandle.dismiss).toHaveBeenCalledTimes(1);
-    expect(failureHandle.dismiss).not.toHaveBeenCalled();
+    expect(failureHandle.dismiss).toHaveBeenCalledTimes(1);
 
     await act(async () => {
       retry.resolve({ success: true });
@@ -837,7 +837,7 @@ describe('#230: contact outcome focus and receipt', () => {
     await user.click(submitButton());
     await waitFor(() => expect(mockSubmitLead).toHaveBeenCalledTimes(3));
     expect(validationHandle.dismiss).toHaveBeenCalledTimes(1);
-    expect(failureHandle.dismiss).not.toHaveBeenCalled();
+    expect(failureHandle.dismiss).toHaveBeenCalledTimes(1);
   });
 
   it('dismisses a validation toast when a valid send follows an invalid submit', async () => {
