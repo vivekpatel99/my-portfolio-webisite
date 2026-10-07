@@ -119,11 +119,12 @@ describe('deferred Sentry SDK', () => {
     expect(options.beforeBreadcrumb({ category: 'ui.click' }, { event: { target } })).toBeNull();
     expect(options.beforeBreadcrumb({ category: 'ui.click' }, { event: { target: {} } })).toEqual({ category: 'ui.click' });
     expect(options.beforeBreadcrumb({ category: 'fetch' }, { event: { target } })).toEqual({ category: 'fetch' });
-    expect(options.beforeSend({
+    const prepare = (event) => { options.integrations[0].preprocessEvent(event); return event; };
+    expect(options.beforeSend(prepare({
       message: 'synthetic form error',
       tags: { [SENSITIVE_TELEMETRY_TAG]: SENSITIVE_TELEMETRY_TAG_VALUE },
-    })).toBeNull();
-    expect(options.beforeSend({ message: 'synthetic background error', tags: {} }))
+    }))).toBeNull();
+    expect(options.beforeSend(prepare({ message: 'synthetic background error', tags: {} })))
       .toEqual({ message: 'synthetic background error', tags: {} });
 
     const sensitiveError = new Error('synthetic contact error');
@@ -209,6 +210,9 @@ it('rejects tracing from an earlier consent period and stops active transactions
     return trace;
   };
   const old = transaction();
+  const oldError = { message: 'queued error' };
+  options.integrations[0].preprocessEvent(oldError);
+  expect(options.beforeSend(oldError)).toEqual({ message: 'queued error', tags: {} });
   const queued = { tags: { ...old.tags }, transaction: 'old' };
   expect(options.beforeSendTransaction(queued)).toEqual({ tags: {}, transaction: 'old' });
   await telemetry.closeSentryTelemetry();
@@ -221,6 +225,10 @@ it('rejects tracing from an earlier consent period and stops active transactions
   await telemetry.initializeSentryTelemetry();
   expect(clientOptions.tracesSampleRate).toBe(0.2);
   expect(options.beforeSendTransaction(queued)).toBeNull();
+  expect(options.beforeSend(oldError)).toBeNull();
+  const freshError = { message: 'fresh error' };
+  options.integrations[0].preprocessEvent(freshError);
+  expect(options.beforeSend(freshError)).toEqual({ message: 'fresh error', tags: {} });
   expect(options.beforeSendTransaction({ tags: withdrawn.tags })).toBeNull();
   const fresh = transaction();
   expect(options.beforeSendTransaction({ tags: fresh.tags, transaction: 'fresh' }))

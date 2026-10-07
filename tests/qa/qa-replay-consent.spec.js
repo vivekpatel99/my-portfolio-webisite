@@ -84,6 +84,7 @@ for (const mode of ['session', 'buffer']) {
       expect(envelopes).toContain(replayId);
       expect(envelopes).toContain('ALLOWED_BACKGROUND_ERROR');
       expect(envelopes).not.toContain('BLOCKED_CONTACT_ERROR');
+      expect(envelopes).not.toContain('telemetry.consent_epoch');
       await page.getByRole('button', { name: 'Withdraw', exact: true }).click();
       await stopped(page);
     }
@@ -482,5 +483,30 @@ test('a scheduled error promotion cannot affect a later consent period', async (
   expect(await page.evaluate(() => window.qa.replay._replay.recordingMode)).toBe('buffer');
   expect(await page.evaluate(() => window.qa.envelopes.filter(([, items]) => items.some(([header]) => header.type === 'replay_event')).length)).toBe(0);
   await page.evaluate(() => window.qa.telemetry.captureException(new Error('FRESH_TIMER_ERROR')));
+  await expect.poll(() => page.evaluate(() => window.qa.replay._replay.recordingMode)).toBe('session');
+});
+
+test('a queued error is discarded after withdrawal and reaccept', async ({ page }) => {
+  await setup(page, 'buffer');
+  await accept(page);
+  await page.evaluate(() => {
+    window.qa.client.addEventProcessor((event) => event.exception?.values?.[0]?.value === 'QUEUED_OLD_ERROR'
+      ? new Promise((resolve) => { window.qa.releaseQueuedError = () => resolve(event); })
+      : event);
+    window.qa.telemetry.captureException(new Error('QUEUED_OLD_ERROR'));
+  });
+  await page.waitForFunction(() => window.qa.releaseQueuedError);
+  await page.getByRole('button', { name: 'Withdraw', exact: true }).click();
+  await stopped(page);
+  await accept(page);
+  await page.evaluate(async () => {
+    window.qa.releaseQueuedError();
+    await window.qa.client.flush();
+  });
+  await page.waitForTimeout(5500);
+  expect(await page.evaluate(() => JSON.stringify(window.qa.envelopes))).not.toContain('QUEUED_OLD_ERROR');
+  expect(await page.evaluate(() => window.qa.replay._replay.recordingMode)).toBe('buffer');
+  await page.evaluate(() => window.qa.telemetry.captureException(new Error('CURRENT_ERROR')));
+  await expect.poll(() => page.evaluate(() => JSON.stringify(window.qa.envelopes))).toContain('CURRENT_ERROR');
   await expect.poll(() => page.evaluate(() => window.qa.replay._replay.recordingMode)).toBe('session');
 });

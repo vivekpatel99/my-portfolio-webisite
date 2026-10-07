@@ -22,6 +22,12 @@ const consentEpochTag = 'telemetry.consent_epoch';
 const activeTransactions = new Set();
 const promotionTimers = new Set();
 
+function filterConsentEvent(event) {
+  if (!initialized || !requested || event.tags?.[consentEpochTag] !== consentEpoch) return null;
+  const { [consentEpochTag]: _epoch, ...tags } = event.tags;
+  return { ...event, tags };
+}
+
 export function initializeSentryTelemetry() {
   if (process.env.NODE_ENV !== 'production') {
     return;
@@ -161,15 +167,20 @@ export function initializeSentryTelemetry() {
       },
       integrations: [
         {
-          name: 'ConsentTracing',
+          name: 'ConsentTelemetry',
+          preprocessEvent(event) {
+            if (!event.type) {
+              event.tags = { ...event.tags, [consentEpochTag]: requested ? consentEpoch : -1 };
+            }
+          },
           setupOnce() {},
-          setup(tracingClient) {
-            tracingClient.on('startTransaction', (transaction) => {
+          setup(telemetryClient) {
+            telemetryClient.on('startTransaction', (transaction) => {
               transaction.setTag(consentEpochTag, requested ? consentEpoch : -1);
               if (!requested) transaction.sampled = false;
               else activeTransactions.add(transaction);
             });
-            tracingClient.on('finishTransaction', (transaction) => activeTransactions.delete(transaction));
+            telemetryClient.on('finishTransaction', (transaction) => activeTransactions.delete(transaction));
           },
         },
         Sentry.browserTracingIntegration(),
@@ -179,13 +190,9 @@ export function initializeSentryTelemetry() {
         !initialized || !requested || shouldDropSensitiveUiBreadcrumb(breadcrumb, hint) ? null : breadcrumb
       ),
       beforeSend: (event) => (
-        shouldDropSensitiveTelemetry(event) ? null : event
+        shouldDropSensitiveTelemetry(event) ? null : filterConsentEvent(event)
       ),
-      beforeSendTransaction: (event) => {
-        if (!initialized || !requested || event.tags?.[consentEpochTag] !== consentEpoch) return null;
-        const { [consentEpochTag]: _epoch, ...tags } = event.tags;
-        return { ...event, tags };
-      },
+      beforeSendTransaction: filterConsentEvent,
       tracesSampleRate: 0.2,
       tracePropagationTargets,
       replaysSessionSampleRate: 0.05,
