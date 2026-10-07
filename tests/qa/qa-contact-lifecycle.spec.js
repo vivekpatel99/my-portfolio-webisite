@@ -52,9 +52,7 @@ const test = base.extend({
 });
 
 test.afterEach(async ({ context }) => {
-  // Finish intercepted home-page asset fetches before the page fixture closes.
-  // Local-only guards remain active throughout each test's interactions.
-  await context.unrouteAll({ behavior: 'wait' });
+  await context.close();
 });
 
 async function fillContactForm(page) {
@@ -116,6 +114,109 @@ async function expectEmptyContactForm(page) {
   for (const label of ['Full Name *', 'Email Address *', 'Budget Range', 'Project Description *']) {
     await expect(page.getByLabel(label)).toHaveValue('');
   }
+}
+
+test('preserves a dirty draft through featured and collection article navigation', async ({ page, contactTransport: transport }) => {
+  await page.goto('/contact/');
+  await fillContactForm(page);
+  let unloadWarnings = 0;
+  let documentRequests = 0;
+  page.on('dialog', async (dialog) => {
+    if (dialog.type() === 'beforeunload') unloadWarnings += 1;
+    await dialog.accept();
+  });
+  page.on('request', (request) => {
+    if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documentRequests += 1;
+  });
+
+  await page.getByRole('link', { name: 'Vivek Patel home', exact: true }).click();
+  await page.locator('#portfolio').getByRole('link', { name: /Read case study:/ }).first().click();
+  await page.getByRole('link', { name: 'Discuss a similar project', exact: true }).click();
+  await expectPreservedValues(page);
+
+  await page.getByRole('link', { name: 'Vivek Patel home', exact: true }).click();
+  await page.getByRole('link', { name: /View all case studies/ }).click();
+  await page.getByRole('button', { name: 'Load more', exact: true }).click();
+  const cards = page.locator('[id^="case-study-grid-"]').getByRole('link', { name: /Read case study:/ });
+  await expect(cards).toHaveCount(12);
+  const card = cards.last();
+  await card.evaluate((element) => element.scrollIntoView({ block: 'center', behavior: 'instant' }));
+  const departureY = await page.evaluate(() => window.scrollY);
+  await card.click();
+  await page.getByRole('link', { name: /View case studies/ }).click();
+  await expect(page).toHaveURL(/\/case-studies\/$/);
+  await expect(cards).toHaveCount(12);
+  await expect.poll(async () => Math.abs((await page.evaluate(() => window.scrollY)) - departureY)).toBeLessThanOrEqual(100);
+
+  await cards.last().evaluate((element) => element.scrollIntoView({ block: 'center', behavior: 'instant' }));
+  const backDepartureY = await page.evaluate(() => window.scrollY);
+  await cards.last().click();
+  await page.goBack();
+  await expect(cards).toHaveCount(12);
+  await expect.poll(async () => Math.abs((await page.evaluate(() => window.scrollY)) - backDepartureY)).toBeLessThanOrEqual(100);
+  await cards.first().click();
+  await page.getByRole('navigation', { name: 'Case study navigation' }).getByRole('link', { name: 'Back to home', exact: true }).click();
+  await expect(page).toHaveURL(new URL('/', page.url()).href);
+  await expect(page.locator('#portfolio')).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+  await page.getByRole('link', { name: /View all case studies/ }).click();
+  await page.locator('main').getByRole('link', { name: /Back to home/ }).click();
+  await page.getByRole('link', { name: 'Request a Project Estimate', exact: true }).first().click();
+  await expectPreservedValues(page);
+  expect(unloadWarnings).toBe(0);
+  expect(documentRequests).toBe(0);
+  expect(await unloadIsPrevented(page)).toBe(true);
+  const serialized = await page.evaluate(() => JSON.stringify({ local: Object.entries(localStorage), session: Object.entries(sessionStorage), state: window.history.state }));
+  for (const value of ['Synthetic QA Contact', 'qa-contact@example.invalid', SELECTED_BUDGET, 'Synthetic transport lifecycle test.']) {
+    expect(serialized).not.toContain(value);
+  }
+  expect(transport.state.mutations).toHaveLength(0);
+});
+
+test('case study navigation leaves modified clicks unprevented', async ({ page }) => {
+  for (const route of ['/project/ai-invoice-processing-automation/', '/case-studies/']) {
+    await page.goto(route);
+    const links = route.startsWith('/project/')
+      ? page.locator('.case-study-navigation a, .case-study-cta a')
+      : page.locator('main').getByRole('link', { name: /Back to home/ });
+    for (const link of await links.all()) {
+      for (const options of [{ ctrlKey: true }, { metaKey: true }, { shiftKey: true }, { altKey: true }, { button: 1 }]) {
+        const prevented = await link.evaluate((element, clickOptions) => {
+          const event = new MouseEvent('click', { bubbles: true, cancelable: true, ...clickOptions });
+          let routerPrevented;
+          document.addEventListener('click', (observed) => {
+            routerPrevented = observed.defaultPrevented;
+            observed.preventDefault();
+          }, { once: true });
+          element.dispatchEvent(event);
+          return routerPrevented;
+        }, options);
+        expect(prevented).toBe(false);
+      }
+    }
+  }
+});
+
+for (const activation of ['modified', 'middle']) {
+  test(`case study navigation keeps native ${activation} tab-opening behavior`, async ({ page, context, browserName }) => {
+    test.skip(browserName === 'webkit' && activation === 'middle', 'macOS headless WebKit navigates a plain anchor in the source tab on middle-click. Native middle-click needs Safari verification; unprevented click events are checked separately.');
+    for (const route of ['/project/ai-invoice-processing-automation/', '/case-studies/']) {
+      await page.goto(route);
+      const links = route.startsWith('/project/')
+        ? page.locator('.case-study-navigation a, .case-study-cta a')
+        : page.locator('main').getByRole('link', { name: /Back to home/ });
+      for (const link of await links.all()) {
+        const href = await link.getAttribute('href');
+        const options = activation === 'middle' ? { button: 'middle' } : { modifiers: ['ControlOrMeta'] };
+        const opened = context.waitForEvent('page');
+        await link.click(options);
+        const popup = await opened;
+        await expect(popup).toHaveURL(new URL(href, page.url()).href);
+        await expect(page).toHaveURL(new RegExp(`${route}$`));
+        await popup.close();
+      }
+    }
+  });
 }
 
 test('restores all tab-memory draft fields after keyboard navigation and Back without storage writes', async ({ page, context, contactTransport: transport }) => {

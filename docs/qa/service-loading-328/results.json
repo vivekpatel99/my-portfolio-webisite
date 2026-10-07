@@ -1,0 +1,65 @@
+{
+  "summary": {
+    "schemaVersion": 1,
+    "runStatus": "passed",
+    "runnerErrorCount": 0,
+    "totalAttempts": {
+      "passed": 56,
+      "failed": 0,
+      "skipped": 0,
+      "timed_out": 0,
+      "interrupted": 0
+    },
+    "suites": [
+      {
+        "suite": "service-loading",
+        "projects": [
+          {
+            "project": "preview-desktop",
+            "attempts": {
+              "passed": 14,
+              "failed": 0,
+              "skipped": 0,
+              "timed_out": 0,
+              "interrupted": 0
+            }
+          },
+          {
+            "project": "preview-mobile",
+            "attempts": {
+              "passed": 14,
+              "failed": 0,
+              "skipped": 0,
+              "timed_out": 0,
+              "interrupted": 0
+            }
+          },
+          {
+            "project": "preview-webkit-desktop",
+            "attempts": {
+              "passed": 14,
+              "failed": 0,
+              "skipped": 0,
+              "timed_out": 0,
+              "interrupted": 0
+            }
+          },
+          {
+            "project": "preview-webkit-mobile",
+            "attempts": {
+              "passed": 14,
+              "failed": 0,
+              "skipped": 0,
+              "timed_out": 0,
+              "interrupted": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "failureResults": {
+    "schemaVersion": 1,
+    "failures": []
+  }
+}
