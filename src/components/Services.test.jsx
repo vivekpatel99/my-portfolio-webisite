@@ -119,3 +119,31 @@ describe('Services offers', () => {
     });
   });
 });
+
+describe('Service summary boundaries', () => {
+  it.each([
+    ['', ''],
+    ['One sentence.', 'One sentence.'],
+    ['No final punctuation', 'No final punctuation'],
+    ['First sentence. Second sentence. Third sentence.', 'First sentence.'],
+    ['First sentence.\nSecond sentence.', 'First sentence.'],
+    ['First sentence.\r\n\tSecond sentence.', 'First sentence.'],
+    ['A sentence\nacross lines. Next sentence.', 'A sentence\nacross lines.'],
+    ['One sentence.   ', 'One sentence.'],
+    ['Version 1.2 works. More details.', 'Version 1.2 works.'],
+    ['No space.Next clause.', 'No space.Next clause.'],
+    ['Question? Answer! Final sentence.', 'Question? Answer! Final sentence.'],
+  ])('preserves the first sentence of %j', (summary, expected) => {
+    const service = serviceOffers[0];
+    const original = service.summary;
+    try {
+      service.summary = summary;
+      renderServices();
+      const article = cardFor(service);
+      expect(article.querySelector('p').textContent).toBe(expected);
+    } finally {
+      service.summary = original;
+    }
+  });
+
+});
