@@ -1,0 +1,106 @@
+[tool] Reading public-candidate.diff:1
+[tool] status: Completed
+[tool] Reading CaseStudyArticle.js:1, CaseStudiesContent.js:1, CaseStudyCard.js:1, CaseStudyCollection.js:1
+[tool] Searching for 'navigation|NAV-|BT-01' in DESIGN.md
+[tool] status: Completed
+[tool] status: Completed
+[tool] Reading DESIGN.md:141-200, caseStudyBrowsing.js:1, Project.jsx:1, ScrollToTop.jsx:1
+[tool] status: Completed
+[tool] Searching for 'CaseStudiesContent|CaseStudyArticle\b|StaticRouter|render...' in horizons-website
+[tool] status: Completed
+[tool] Reading generate-static-route-html.js:131-190, preview-case-study.js:1-45, CaseStudies.jsx:1
+[tool] status: Completed
+[tool] Searching for 'ScrollToTop|AnimatePresence|preventScroll|<Route |path=' in src
+[tool] status: Completed
+[tool] Reading App.jsx:1, main.jsx:1, focusTarget.js:1
+[tool] Finding **/useContactDraft* in src
+[tool] status: Completed
+[tool] status: Completed
+[tool] Reading useContactDraft.js:1
+[tool] status: Completed
+[tool] status: Failed
+[tool] Searching for 'href(=|:\s*)\{?["'`]/[^/]' in src
+[tool] status: Completed
+[tool] Searching for 'href["']?\s*:\s*["']/(contact|case-studies|project|#)|\]\(/' in src
+[tool] Searching for '<a\b|<Link\b|navigate\(' in components
+[tool] status: Completed
+[tool] status: Completed
+[tool] Reading Hero.jsx:396-425
+[tool] status: Completed
+[tool] Searching for '\]\(/[a-z#]|"href":\s*"/[a-z#]' in horizons-website
+[tool] status: Completed
+[tool] Reading SKILL.md:1, SKILL.md:1-80
+[tool] status: Completed
+[tool] Searching for 'QA_CONTACT_LIFECYCLE_(PORT|ARTIFACT_DIR)' in horizons-website
+[tool] status: Completed
+[tool] Searching for '^(async )?function (fillContactForm|expectPreservedValues...' in qa-contact-lifecycle.spec.js
+[tool] status: Completed
+# PR #338 / issue #322 review: PASS+NOTES
+
+I found no product defects in candidate `458328e4`. The fix delivers what #322 asks for. The notes below cover test strength, a stale QA doc, and the Safari platform gap. All of this comes from reading the code: I ran nothing, so the runtime behaviour is inferred from source.
+
+**Model attestation:** The tools give me no proof of which model served this. My session context names `claude-opus-5.5`, but that is the requested model, not an attestation.
+
+**What I loaded:**
+- `AGENTS.md` (from context).
+- `DESIGN.md` BT-01 section, lines 140–199, including the 6 Oct article-navigation contract.
+- The `vercel-react-best-practices` skill file, first 80 lines; I didn't open the individual rule files.
+- The `web-design-guidelines` skill file. It requires fetching rules from a remote URL, which I didn't do: I have no web tool and network access was out of scope. So none of its rules were applied.
+- I didn't load `impeccable`, because the patch changes no visual styling: classes, labels and icons are identical.
+- I ignored the copied KinSame/kalgo steering.
+
+**What I read:** the patch, plus `CaseStudyArticle.js`, `CaseStudiesContent.js`, `CaseStudyCard.js`, `CaseStudyCollection.js`, `caseStudyBrowsing.js`, `useContactDraft.js`, `Project.jsx`, `CaseStudies.jsx`, `ScrollToTop.jsx`, `focusTarget.js`, `main.jsx`, `App.jsx`, `generate-static-route-html.js` lines 130–189, `preview-case-study.js` lines 1–45, and greps of the Header/Footer/Hero/CTA/Portfolio links.
+
+I couldn't confirm the worktree's HEAD without git. The worktree copies of `CaseStudyArticle.js` and `CaseStudiesContent.js` match the patch hunks exactly.
+
+## Acceptance, checked against source
+
+- **Draft survives ordinary clicks: met.**
+  - `CaseStudyArticle.js:57-60,64-65,79-81` uses React Router `Link` when inside a router.
+  - `CaseStudiesContent.js:14-15` switches to `Link`.
+  - The draft lives only in module memory (`useContactDraft.js:7`), so it survives any navigation that doesn't load a new page.
+  - The homepage entry points were already router links: Header `Link`/`navigate`, Footer, CTA, Hero estimate, Portfolio, and the cards (`CaseStudyCard.js:57`). Hero "View Case Studies" is a same-page `#portfolio` link.
+- **Collection resume count and scroll: met.**
+  - The back link now pushes `/case-studies/?resume=1` in-app instead of loading a new page.
+  - On a fresh push, `history.state` has no `caseStudyCollection`, so `readBrowsingState` falls back to the sessionStorage snapshot that `saveBeforeArticle` wrote (`CaseStudyCollection.js:96-101`). That's the same data source as before.
+  - Effect ordering is safe. `ScrollToTop` is rendered before `<App/>` (`main.jsx:13-14`), so its scroll-to-top on push (`ScrollToTop.jsx:30`) runs before the collection's restore (`CaseStudyCollection.js:85`).
+  - The follow-up replace navigation doesn't scroll again, because that branch only scrolls on push. Focus uses `preventScroll` (`focusTarget.js:10`).
+  - There's no Framer Motion `AnimatePresence` in `App.jsx`. The README is out of date on that, which doesn't affect this PR.
+- **Ctrl/Cmd/Shift/Alt/middle-click: met.** React Router `Link` ignores modified and non-primary clicks, and the unit and browser tests assert those clicks aren't intercepted.
+- **No-JavaScript pages: met.**
+  - The article generator renders without a router (`generate-static-route-html.js:174`), so the article falls back to plain `<a href>`. `backHref` is still `/case-studies/`.
+  - The collection is already wrapped in `StaticRouter` (line 159); it needed that already because `CaseStudyCollection` reads router hooks.
+  - The preview renderer (`preview-case-study.js:36`) stays router-less, so it also gets plain anchors.
+  - The app mounts with `createRoot`, not hydration, so there's no hydration-mismatch risk.
+  - Gallery and media are untouched.
+- **Reload protection: unchanged.** The `beforeunload` registration (`useContactDraft.js:17-23`) isn't touched, and in-app navigation never fires `beforeunload`.
+- **No PII serialized: met.** No `Link` passes `state`. `history.state` only gains `{loadedCount, scrollY}`, and the browser test checks local storage, session storage and history state for the synthetic values.
+- **DESIGN.md BT-01 (6 Oct): met.** Labels, destinations, anchor semantics (`Link` renders `<a href>`) and resume behaviour are all preserved.
+- **React rules:** `useInRouterContext` is called unconditionally, so hook order is fixed. The component choice can't change across renders. Nothing new is added to the bundle.
+
+## Notes (no blockers)
+
+1. **LOW, weak assertion: `tests/qa/qa-contact-lifecycle.spec.js:158-159`.**
+   - `toHaveURL(/\/$/)` also matches `/project/<slug>/` and `/case-studies/`.
+   - The article is already at scroll 0 when "Back to home" is clicked, so `scrollY === 0` would pass even before navigation finishes.
+   - The next "View all case studies" click does indirectly prove you reached home.
+   - Acceptance: match the exact origin root, e.g. `new RegExp(`^${origin}/$`)`, and poll `scrollY` after a homepage-only element is visible.
+2. **LOW, test gap: `tests/qa/qa-contact-lifecycle.spec.js:153-155`.** After browser Back, only the card count is checked, not scroll. This is pre-existing behaviour (cards were already router links), so it's not a regression.
+3. **NIT, `CaseStudyArticle.js:59`.** The computed `[destination]` prop is a little opaque. An alternative is `Link` everywhere with the static and preview callers wrapped in `StaticRouter`, but that touches more files. The current approach is acceptable.
+4. **Latent gap, not a defect: `CaseStudyArticle.js:35`.** Links inside article text still render as plain `<a>`, so a future internal link in a case study would reload the page and lose the draft. My grep of tracked sources found no internal content links today. Worth recording if prose links are ever added.
+5. **Doc staleness: `docs/qa/contact-draft-navigation-322.md`.**
+   - It pins the reviewed candidate as `e164cf74…`, but the integrated head is `458328e4…`.
+   - Its Kiro paragraph says "No Kiro verdict … exists".
+   - Update both once this review and the refreshed CI and runtime checks land.
+
+## Platform gaps (not product defects)
+
+- **Safari middle-click:** never tested; still open. Headless WebKit on macOS opens a plain link in the same tab on middle-click (shown by your plain-anchor control). So the 4 skips are a test-environment limitation, not a defect in this PR.
+- **Runtime evidence at `458328e4`:** I can't confirm the 858 unit tests, 116 lifecycle cases, or the build from source alone. The refreshed CI and independent runtime check you mentioned are the gate.
+
+## Required follow-ups
+
+- Wait for CI and the independent runtime check to pass at `458328e4`.
+- Check actual Safari middle-click manually, and keep `Refs #322` until that's done.
+- Update the QA doc's pinned candidate and review status.
+- Optionally tighten the assertions at spec lines 158–159.

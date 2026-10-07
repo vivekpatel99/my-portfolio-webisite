@@ -11,6 +11,7 @@ const TESTIMONIALS_SPEC = 'qa-testimonials.spec.js';
 const HERO_OCR_SPEC = 'qa-hero-ocr-labels.spec.js';
 const HERO_MOTION_SPEC = 'qa-hero-motion.spec.js';
 const ROUTE_RECOVERY_SPEC = 'qa-route-recovery.spec.js';
+const FRAGMENTS_SPEC = 'qa-fragments.spec.js';
 const EVIDENCE_LABELS_SPEC = 'qa-evidence-labels.spec.js';
 const targetURLs = { previewURL: 'http://127.0.0.1:3000', prodURL: 'https://www.example.test' };
 const specsByProject = (options) => Object.fromEntries(
@@ -97,10 +98,11 @@ describe('sanitized CI Playwright configuration', () => {
     expect([...defaultProjects['prod-desktop']].sort()).toEqual(shared);
     expect([...defaultProjects['preview-desktop']].sort()).toEqual([...shared, TESTIMONIALS_SPEC, HERO_OCR_SPEC, EVIDENCE_LABELS_SPEC].sort());
     expect([...localProjects['preview-mobile']].sort())
-      .toEqual([...shared, 'qa-focus.spec.js', HERO_MOTION_SPEC, ROUTE_RECOVERY_SPEC, TESTIMONIALS_SPEC, HERO_OCR_SPEC, EVIDENCE_LABELS_SPEC].sort());
+      .toEqual([...shared, 'qa-focus.spec.js', FRAGMENTS_SPEC, HERO_MOTION_SPEC, ROUTE_RECOVERY_SPEC, TESTIMONIALS_SPEC, HERO_OCR_SPEC, EVIDENCE_LABELS_SPEC].sort());
     for (const specs of Object.values(defaultProjects)) {
       expect(specs).not.toContain(HERO_MOTION_SPEC);
       expect(specs).not.toContain(ROUTE_RECOVERY_SPEC);
+      expect(specs).not.toContain(FRAGMENTS_SPEC);
     }
     for (const specs of [...Object.values(defaultProjects), ...Object.values(localProjects)]) {
       expect(specs).not.toContain('qa-contact-live.spec.js');
