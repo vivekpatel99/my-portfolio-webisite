@@ -229,3 +229,132 @@ for (const mode of ['session', 'buffer']) {
     await stopped(page);
   });
 }
+
+for (const mode of ['session', 'buffer']) {
+  for (const pendingWork of ['send', 'compression']) {
+    test(`${mode}: withdraw waits for a mutation-limit stop with pending ${pendingWork}`, async ({ page }) => {
+      await setup(page, mode);
+      await page.evaluate((work) => { window.qa.compression = work === 'compression'; }, pendingWork);
+      await accept(page);
+      if (pendingWork === 'compression') {
+        await page.waitForFunction(() => window.qa.replay._replay.eventBuffer.type === 'worker');
+      }
+      const activeListeners = await page.evaluate(() => window.qa.listenerCount());
+      await page.evaluate((work) => {
+        const recorder = window.qa.replay._replay;
+        const stop = recorder.stop.bind(recorder);
+        recorder.stop = (options) => {
+          const pending = stop(options);
+          if (options.reason === 'mutationLimit') {
+            window.qa.internalStopReason = options.reason;
+            window.qa.internalStop = pending;
+          }
+          return pending;
+        };
+        window.qa.holdSends = work === 'send';
+        window.qa.holdWorkerFinish = work === 'compression';
+        window.qa.pendingFlush = window.qa.replay.flush();
+      }, pendingWork);
+      await page.waitForFunction((work) => work === 'send'
+        ? window.qa.sendsPending.length > 0 : window.qa.releaseWorker, pendingWork);
+      await page.evaluate(() => {
+        window.qa.replay._replay.getOptions().mutationLimit = 1;
+        for (let index = 0; index < 20; index += 1) {
+          document.body.appendChild(document.createElement('span'));
+        }
+      });
+      await page.waitForFunction(() => window.qa.internalStopReason === 'mutationLimit');
+      expect(await page.evaluate(() => window.qa.internalStopReason)).toBe('mutationLimit');
+      expect(await page.evaluate(() => window.qa.replay._replay.isEnabled())).toBe(false);
+      const sent = await page.evaluate(() => window.qa.envelopes.length);
+      await page.getByRole('button', { name: 'Withdraw', exact: true }).click();
+      await page.getByRole('button', { name: 'Accept', exact: true }).click();
+      await page.waitForTimeout(250);
+      expect(await page.evaluate(() => Boolean(window.qa.replay.getReplayId()))).toBe(false);
+      await page.evaluate(async (work) => {
+        window.qa.replay._replay.getOptions().mutationLimit = 10000;
+        if (work === 'send') {
+          window.qa.holdSends = false;
+          window.qa.sendsPending.splice(0).forEach((finish) => finish());
+        } else {
+          window.qa.holdWorkerFinish = false;
+          window.qa.releaseWorker();
+        }
+        await window.qa.internalStop;
+      }, pendingWork);
+      await page.waitForFunction(() => window.qa.replay.getReplayId(), null, { timeout: 2000 });
+      await page.waitForTimeout(250);
+      expect(await page.evaluate(() => Boolean(window.qa.replay._replay._stopRecording))).toBe(true);
+      expect(await page.evaluate(() => window.qa.listenerCount())).toBe(activeListeners);
+      expect(await page.evaluate(() => window.qa.envelopes.length)).toBe(sent);
+      await page.getByRole('button', { name: 'Withdraw', exact: true }).click();
+      await stopped(page);
+    });
+  }
+}
+
+for (const mode of ['session', 'buffer']) {
+  test(`${mode}: expired refresh retains pending compression until reaccept is safe`, async ({ page }) => {
+    await setup(page, mode);
+    await page.evaluate(() => { window.qa.compression = true; });
+    await accept(page);
+    await page.waitForFunction(() => window.qa.replay._replay.eventBuffer.type === 'worker');
+    await page.evaluate(() => {
+      window.qa.holdWorkerFinish = true;
+      window.qa.pendingFlush = window.qa.replay.flush();
+    });
+    await page.waitForFunction(() => window.qa.releaseWorker);
+    await page.evaluate(() => {
+      const recorder = window.qa.replay._replay;
+      const stop = recorder.stop.bind(recorder);
+      recorder.stop = (options) => {
+        window.qa.refreshStopReason = options.reason;
+        return stop(options);
+      };
+      recorder.session.started = Date.now() - recorder.getOptions().maxReplayDuration - 1;
+      window.dispatchEvent(new Event('focus'));
+    });
+    expect(await page.evaluate(() => window.qa.refreshStopReason)).toBe('refresh session');
+    await page.getByRole('button', { name: 'Withdraw', exact: true }).click();
+    await page.getByRole('button', { name: 'Accept', exact: true }).click();
+    await page.waitForTimeout(250);
+    expect(await page.evaluate(() => Boolean(window.qa.replay.getReplayId()))).toBe(false);
+    await page.evaluate(() => { window.qa.holdWorkerFinish = false; window.qa.releaseWorker(); });
+    await page.waitForFunction(() => window.qa.replay.getReplayId(), null, { timeout: 2000 });
+    expect(await page.evaluate(() => Boolean(window.qa.replay._replay._stopRecording))).toBe(true);
+    expect(await page.evaluate(() => window.qa.envelopes.length)).toBe(0);
+    await page.getByRole('button', { name: 'Withdraw', exact: true }).click();
+    await stopped(page);
+  });
+}
+
+for (const mode of ['session', 'buffer']) {
+  test(`${mode}: a performance-event failure inside flush cannot deadlock native stop`, async ({ page }) => {
+    await setup(page, mode);
+    await accept(page);
+    await page.evaluate(() => {
+      const recorder = window.qa.replay._replay;
+      const stop = recorder.stop.bind(recorder);
+      recorder.stop = (options) => {
+        window.qa.failureStopReason = options.reason;
+        return stop(options);
+      };
+      const buffer = recorder.eventBuffer;
+      const add = buffer.addEvent.bind(buffer);
+      buffer.addEvent = (event) => event.data?.tag === 'performanceSpan'
+        ? Promise.reject(new Error('SYNTHETIC_PERFORMANCE_FAILURE')) : add(event);
+      recorder.replayPerformanceEntries.push({
+        type: 'navigation.push', name: 'synthetic', start: Date.now() / 1000, end: Date.now() / 1000, data: {},
+      });
+      window.qa.flushSettled = false;
+      window.qa.pendingFlush = window.qa.replay.flush().finally(() => { window.qa.flushSettled = true; });
+    });
+    await page.waitForFunction(() => window.qa.failureStopReason === 'addEvent');
+    await page.waitForFunction(() => window.qa.flushSettled, null, { timeout: 2000 });
+    await page.getByRole('button', { name: 'Withdraw', exact: true }).click();
+    await accept(page);
+    expect(await page.evaluate(() => Boolean(window.qa.replay._replay._stopRecording))).toBe(true);
+    await page.getByRole('button', { name: 'Withdraw', exact: true }).click();
+    await stopped(page);
+  });
+}

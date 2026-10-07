@@ -29,6 +29,7 @@ beforeEach(() => {
   clientOptions = { enabled: true };
   send = vi.fn(() => Promise.resolve({ statusCode: 200 }));
   scope = { setTag: vi.fn() };
+  const client = { close, getOptions: () => clientOptions, getDsn: () => 'synthetic-dsn' };
   sdk = {
     init: vi.fn(),
     browserTracingIntegration: vi.fn(() => 'tracing'),
@@ -41,7 +42,7 @@ beforeEach(() => {
       stop() { return replayStop(); }
     },
     makeFetchTransport: () => ({ send, flush: () => Promise.resolve(true) }),
-    getCurrentHub: () => ({ getClient: () => ({ close, getOptions: () => clientOptions }) }),
+    getCurrentHub: () => ({ getClient: () => client }),
     withScope: vi.fn((callback) => callback(scope)),
     captureException: vi.fn(),
   };
@@ -161,6 +162,7 @@ describe('deferred Sentry SDK', () => {
     await pending;
     const options = sdk.init.mock.calls[0][0];
     const transport = options.transport({});
+    expect(sdk.getCurrentHub().getClient().getDsn()).toBe('synthetic-dsn');
     const envelope = ['synthetic'];
     await transport.send(envelope);
     expect(send).toHaveBeenCalledTimes(1);
@@ -168,6 +170,7 @@ describe('deferred Sentry SDK', () => {
     let finishStop;
     replayStop.mockImplementationOnce(() => new Promise((resolve) => { finishStop = resolve; }));
     const stopping = telemetry.closeSentryTelemetry();
+    expect(sdk.getCurrentHub().getClient().getDsn()).toBeUndefined();
     const accepting = telemetry.initializeSentryTelemetry();
     await transport.send(envelope);
     expect(send).toHaveBeenCalledTimes(1);
@@ -176,6 +179,7 @@ describe('deferred Sentry SDK', () => {
     await stopping;
     await accepting;
     expect(clientOptions.enabled).toBe(true);
+    expect(sdk.getCurrentHub().getClient().getDsn()).toBe('synthetic-dsn');
     expect(sdk.init).toHaveBeenCalledTimes(1);
     expect(replayStart).toHaveBeenCalledTimes(2);
     await transport.send(envelope);

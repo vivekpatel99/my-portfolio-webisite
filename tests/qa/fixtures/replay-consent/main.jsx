@@ -23,6 +23,13 @@ EventTarget.prototype.removeEventListener = function (type, listener, options) {
   return remove.call(this, type, listener, options);
 };
 window.qa.listenerCount = () => listeners.length;
+const terminate = Worker.prototype.terminate;
+Worker.prototype.terminate = function () {
+  for (let index = listeners.length - 1; index >= 0; index -= 1) {
+    if (listeners[index].target === this) listeners.splice(index, 1);
+  }
+  return terminate.call(this);
+};
 const post = Worker.prototype.postMessage;
 Worker.prototype.postMessage = function (message, ...args) {
   if (window.qa.holdWorkerFinish && message.method === 'finish') {

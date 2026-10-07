@@ -62,6 +62,25 @@ export function initializeSentryTelemetry() {
         super.setupOnce();
         // SDK 7 resumes buffer recording after an awaited send, even after stop().
         const recorder = this._replay;
+        const track = (pending) => {
+          this.pendingTransitions.add(pending);
+          const finished = () => this.pendingTransitions.delete(pending);
+          void pending.then(finished, finished);
+          return pending;
+        };
+        const stop = recorder.stop.bind(recorder);
+        recorder.stop = (options) => {
+          const buffer = recorder.eventBuffer;
+          const pendingFlush = recorder._flushLock;
+          // SDK event insertion can await stop from inside the flush itself.
+          if (buffer && pendingFlush) {
+            recorder.eventBuffer = null;
+            const stopping = stop({ ...options, forceFlush: false });
+            track(Promise.allSettled([stopping, pendingFlush]).then(() => buffer.destroy()));
+            return track(stopping);
+          }
+          return track(stop(options));
+        };
         const initializeSampling = recorder.initializeSampling.bind(recorder);
         recorder.initializeSampling = (...args) => {
           if (initialized && requested) initializeSampling(...args);
@@ -73,11 +92,7 @@ export function initializeSentryTelemetry() {
         const sendBuffered = recorder.sendBufferedReplayOrFlush.bind(recorder);
         recorder.sendBufferedReplayOrFlush = (options) => {
           if (!initialized || !requested) return Promise.resolve();
-          const pending = sendBuffered(options);
-          this.pendingTransitions.add(pending);
-          const finished = () => this.pendingTransitions.delete(pending);
-          void pending.then(finished, finished);
-          return pending;
+          return track(sendBuffered(options));
         };
       }
 
@@ -91,8 +106,9 @@ export function initializeSentryTelemetry() {
         // Terminating SDK 7's worker leaves in-flight compression promises unresolved.
         const recorder = this._replay;
         const buffer = recorder.eventBuffer;
+        const pendingFlush = recorder._flushLock;
         recorder.eventBuffer = null;
-        return Promise.allSettled([recorder.stop({ forceFlush: true }), ...this.pendingTransitions])
+        return Promise.allSettled([recorder.stop({ forceFlush: true }), pendingFlush, ...this.pendingTransitions])
           .then(() => { buffer?.destroy(); });
       }
     }
@@ -136,6 +152,9 @@ export function initializeSentryTelemetry() {
     });
 
     client = Sentry.getCurrentHub().getClient();
+    const getDsn = client.getDsn.bind(client);
+    // Replay may finish after its session is cleared; no DSN skips request preparation.
+    client.getDsn = () => initialized ? getDsn() : undefined;
     if (requested) {
       initialized = true;
       replay.startForConsent();
