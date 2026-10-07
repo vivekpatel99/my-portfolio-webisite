@@ -451,3 +451,49 @@ test.describe('keyboard focus regressions', () => {
     });
   }
 });
+
+test.describe('cookie-policy consent opener', () => {
+  for (const width of [390, 1440]) {
+    for (const [activation, dismissal] of [['mouse', 'close'], ['Enter', 'Reject'], ['Space', 'Save Preferences']]) {
+      test(`cookie-policy opener at ${width}px uses ${activation} and restores focus after ${dismissal}`, async ({ page }) => {
+        const COOKIE_KEY = 'cookie_consent_preferences';
+        const preferences = { necessary: true, analytics: false };
+        await page.setViewportSize({ width, height: 900 });
+        await page.addInitScript(({ key, preferences }) => {
+          localStorage.setItem(key, JSON.stringify(preferences));
+        }, { key: COOKIE_KEY, preferences });
+        await page.goto('/data-policy/');
+        const opener = page.getByRole('button', { name: 'Manage Your Cookie Consent', exact: true });
+        await expect(opener).toHaveAttribute('type', 'button');
+        const initialURL = page.url();
+
+        if (activation === 'mouse') {
+          await opener.click();
+        } else {
+          await opener.focus();
+          await page.keyboard.press(activation);
+        }
+
+        const manager = page.getByRole('dialog', { name: 'We value your privacy', exact: true });
+        await expect(manager).toBeVisible();
+        await expect(manager).toBeFocused();
+        expect(page.url()).toBe(initialURL);
+        expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), COOKIE_KEY)).toEqual(preferences);
+
+        if (dismissal === 'Save Preferences') {
+          await manager.getByRole('button', { name: 'Options', exact: true }).click();
+          await expect(manager.getByRole('checkbox', { name: 'Analytics', exact: true })).not.toBeChecked();
+        }
+        await manager.getByRole('button', {
+          name: dismissal === 'close' ? /close cookie consent/i : dismissal,
+          exact: dismissal !== 'close',
+        }).click();
+        await expect(manager).toBeHidden();
+        await expect(opener).toBeFocused();
+        expect(page.url()).toBe(initialURL);
+        expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), COOKIE_KEY)).toEqual(preferences);
+      });
+    }
+
+  }
+});
