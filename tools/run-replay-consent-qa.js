@@ -3,6 +3,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { stripVTControlCharacters } from 'node:util';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const port = process.env.QA_REPLAY_PORT ?? '5401';
@@ -43,7 +44,7 @@ try {
     const read = (chunk) => {
       output += chunk.toString();
       process.stdout.write(chunk);
-      if (output.includes(baseURL)) { clearTimeout(timeout); resolve(); }
+      if (stripVTControlCharacters(output).includes(baseURL)) { clearTimeout(timeout); resolve(); }
     };
     server.stdout.on('data', read);
     server.stderr.on('data', read);
