@@ -19,9 +19,18 @@ const SUBMIT_FAILURE_MESSAGES = [
   EMAIL_RATE_LIMIT_ERROR,
 ];
 const SELECTED_BUDGET = '€5k-€10k';
+const closingContexts = new WeakSet();
 
 async function installLocalGuardsAndTransport(context, transport) {
-  await context.route('**/*', guardLocalNavigation);
+  await context.route('**/*', async (route) => {
+    try {
+      await guardLocalNavigation(route);
+    } catch (error) {
+      if (closingContexts.has(context) && error instanceof Error
+        && error.message === 'route.fulfill: Fetch response has been disposed') return;
+      throw error;
+    }
+  });
   await context.routeWebSocket('**/*', (webSocket) => {
     const url = new URL(webSocket.url());
     if (url.protocol === 'wss:' && url.hostname === CONVEX_MOCK_HOST) {
@@ -52,6 +61,7 @@ const test = base.extend({
 });
 
 test.afterEach(async ({ context }) => {
+  closingContexts.add(context);
   await context.close();
 });
 
@@ -119,6 +129,75 @@ async function expectEmptyContactForm(page) {
   for (const label of ['Full Name *', 'Email Address *', 'Budget Range', 'Project Description *']) {
     await expect(page.getByLabel(label)).toHaveValue('');
   }
+}
+
+const LENGTH_BOUNDARIES = [
+  { field: 'name', label: 'Full Name *', value: 'n'.repeat(200), limit: 200, message: 'Full name' },
+  { field: 'email', label: 'Email Address *', value: `${'a'.repeat(249)}@b.cd`, limit: 254, message: 'Email address' },
+  { field: 'description', label: 'Project Description *', value: 'd'.repeat(5000), limit: 5000, message: 'Project description' },
+];
+
+for (const { field, label, value, limit, message } of LENGTH_BOUNDARIES) {
+  test(`#325: rejects oversized ${field} locally, then sends its normalized boundary`, async ({ page, contactTransport: transport }) => {
+    await page.goto('/contact/');
+    await fillContactForm(page);
+    const control = page.getByLabel(label);
+    const draft = `  ${value}x  `;
+    await control.fill(draft);
+    const retainedValue = await control.inputValue();
+    const form = page.locator('form[data-sensitive-telemetry]');
+    await form.evaluate((element) => element.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })));
+    await expect(page.locator(`#${field}-error`)).toHaveText(`${message} must be ${limit} characters or fewer.`);
+    await expect(control).toBeFocused();
+    await expect(control).toHaveAttribute('aria-invalid', 'true');
+    await expect(control).toHaveAttribute('aria-describedby', `${field}-error`);
+    await expect(control).toHaveValue(retainedValue);
+    expect(transport.state.mutations).toHaveLength(0);
+    await expectNoDiagnostics(page);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+
+    await control.fill(`  ${value}  `);
+    await expect(control).toHaveAttribute('aria-invalid', 'false');
+    await expect(page.locator(`#${field}-error`)).toHaveCount(0);
+    await form.evaluate((element) => element.requestSubmit());
+    await expect.poll(() => transport.state.mutations.length).toBe(1);
+    expect(transport.state.mutations[0].args[0][field]).toBe(value);
+    transport.releasePending('success');
+    await expectEmptyContactForm(page);
+  });
+}
+
+test('#325: focuses the first invalid field and retains every overlong draft', async ({ page, contactTransport: transport }) => {
+  await page.goto('/contact/');
+  for (const { label, value } of LENGTH_BOUNDARIES) await page.getByLabel(label).fill(`${value}x`);
+  await page.locator('form[data-sensitive-telemetry]').evaluate((element) => element.requestSubmit());
+  await expect(page.getByLabel('Full Name *')).toBeFocused();
+  for (const { field, label, value } of LENGTH_BOUNDARIES) {
+    await expect(page.getByLabel(label)).toHaveValue(`${value}x`);
+    await expect(page.getByLabel(label)).toHaveAttribute('aria-describedby', `${field}-error`);
+  }
+  expect(transport.state.mutations).toHaveLength(0);
+});
+
+for (const { scenario, name, email, title, description } of [
+  { scenario: 'missing name and malformed email', name: '', email: 'bad@', title: 'Uh oh! Missing fields.', description: 'Name is required.' },
+  { scenario: 'overlong name and missing email', name: 'n'.repeat(201), email: '', title: 'Check your project details.', description: 'Full name must be 200 characters or fewer.' },
+]) {
+  test(`#325: keeps toast and focus consistent for ${scenario}`, async ({ page, contactTransport: transport }) => {
+    await page.goto('/contact/');
+    await fillContactForm(page);
+    await page.getByLabel('Full Name *').fill(name);
+    await page.getByLabel('Email Address *').fill(email);
+    await page.getByRole('button', { name: 'Send project request', exact: true }).click();
+    const toast = page.getByRole('status').filter({ has: page.getByText(title, { exact: true }) });
+    await expect(toast).toBeVisible();
+    await expect(toast.getByText(description, { exact: true })).toBeVisible();
+    await expect(page.getByLabel('Full Name *')).toBeFocused();
+    await expect(page.getByLabel('Full Name *')).toHaveAttribute('aria-describedby', 'name-error');
+    await expect(page.getByLabel('Full Name *')).toHaveValue(name);
+    await expect(page.getByLabel('Email Address *')).toHaveValue(email);
+    expect(transport.state.mutations).toHaveLength(0);
+  });
 }
 
 test('preserves a dirty draft through featured and collection article navigation', async ({ page, contactTransport: transport }) => {

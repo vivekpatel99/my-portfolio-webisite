@@ -142,7 +142,7 @@ test('missing-fields toast has an opaque surface and a named close control', asy
   });
   expect(surfaceAlpha).toBe(1);
 
-  const description = toast.getByText('Please fill out all required fields before sending.');
+  const description = toast.getByText('Name is required.', { exact: true });
   const { toastLayer, foreignLayersAbove, contrast } = await description.evaluate((element) => {
     const item = element.closest('li');
     const box = element.getBoundingClientRect();

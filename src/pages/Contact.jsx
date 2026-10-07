@@ -13,7 +13,7 @@ import { useContactDraft } from '@/lib/useContactDraft';
 import { captureException } from '@/lib/sentryTelemetry';
 import { BUDGET_LABELS, BUDGET_OPTIONS } from '@/lib/budgetOptions';
 import { SENSITIVE_TELEMETRY_REGION_PROPS } from '@/lib/sensitiveTelemetry';
-import { CONTACT_LEAD_VALIDATION_ERROR } from '../../convex/lib/leadValidation';
+import { CONTACT_LEAD_VALIDATION_ERROR, validateContactFields } from '../../convex/lib/leadValidation';
 
 // Custom logo components for platform links
 const UpworkIcon = () => (
@@ -51,7 +51,6 @@ const descriptionPrompts = [
   'Do you already have code, samples, screenshots, or a deadline?',
 ];
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const ACTIONABLE_SUBMIT_ERRORS = new Set([
   CONTACT_LEAD_VALIDATION_ERROR,
   'The site is receiving too many requests. Please wait a few minutes and try again.',
@@ -94,6 +93,10 @@ const Contact = () => {
 
   const handleSelectChange = (value) => {
     setFormState(prevState => ({ ...prevState, budget: value }));
+    setFieldErrors((prev) => {
+      const { budget: _removed, ...rest } = prev;
+      return rest;
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -105,40 +108,25 @@ const Contact = () => {
     }
 
     const telemetrySource = e.currentTarget;
-    const trimmedFormState = {
-      ...formState,
-      name: formState.name.trim(),
-      email: formState.email.trim().toLowerCase(),
-      description: formState.description.trim(),
-    };
-
-    const nextErrors = {};
-    if (!trimmedFormState.name) {
-      nextErrors.name = 'Name is required.';
-    }
-    if (!trimmedFormState.email) {
-      nextErrors.email = 'Email is required.';
-    } else if (!EMAIL_PATTERN.test(trimmedFormState.email)) {
-      nextErrors.email = 'Enter a valid email address.';
-    }
-    if (!trimmedFormState.description) {
-      nextErrors.description = 'Project description is required.';
-    }
-
-    setFieldErrors(nextErrors);
-
-    const firstInvalidField = Object.keys(nextErrors)[0];
-    if (firstInvalidField) {
+    const validation = validateContactFields(formState);
+    if (!validation.ok) {
+      const nextErrors = validation.errors;
+      setFieldErrors(nextErrors);
+      const firstInvalidField = Object.keys(nextErrors)[0];
+      const firstError = nextErrors[firstInvalidField];
       telemetrySource.elements.namedItem(firstInvalidField)?.focus();
       setFeedbackToast(toast({
-        title: nextErrors.email && trimmedFormState.email ? "Invalid email address." : "Uh oh! Missing fields.",
-        description: nextErrors.email && trimmedFormState.email
-          ? "Please check your email format before sending."
-          : "Please fill out all required fields before sending.",
+        title: firstInvalidField === 'email' && firstError === 'Enter a valid email address.'
+          ? "Invalid email address."
+          : firstError.endsWith('is required.')
+            ? "Uh oh! Missing fields."
+            : "Check your project details.",
+        description: firstError,
         variant: "destructive",
       }));
       return;
     }
+    setFieldErrors({});
 
     if (submittingRef.current) return;
     const submittedFields = beginSubmission();
@@ -146,12 +134,7 @@ const Contact = () => {
     submittingRef.current = true;
 
     try {
-      await submitLead({
-        name: trimmedFormState.name,
-        email: trimmedFormState.email,
-        budget: formState.budget || undefined,
-        description: trimmedFormState.description,
-      });
+      await submitLead(validation.value);
     } catch (error) {
       const convexMessage =
         typeof error?.data === 'string'
@@ -301,13 +284,19 @@ const Contact = () => {
                   onChange={(event) => handleSelectChange(event.target.value)}
                   disabled={isSubmitting}
                   className="contact-detection-control contact-detection-select"
+                  aria-invalid={Boolean(fieldErrors.budget)}
+                  aria-describedby={fieldErrors.budget ? 'budget-error' : undefined}
                 >
+                  {formState.budget && !BUDGET_OPTIONS.includes(formState.budget) ? (
+                    <option value={formState.budget} disabled>Choose a listed range or leave blank</option>
+                  ) : null}
                   <option value="">Select your budget range</option>
                   {BUDGET_OPTIONS.map((value) => (
                     <option key={value} value={value}>{BUDGET_LABELS[value]}</option>
                   ))}
                   </select>
                 </div>
+                {fieldErrors.budget ? <p id="budget-error" role="alert" className="mt-2 text-sm text-red-400">{fieldErrors.budget}</p> : null}
               </div>
 
               <div className="contact-detection-field mb-4">
