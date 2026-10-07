@@ -56,6 +56,10 @@ test('built root, static routes, and 404 retain exactly one theme tag', async ({
 
 test('contact native controls preserve layout, visual states, and keyboard access', async ({ page, browserName }, testInfo) => {
   const mutationRequests = [];
+  await page.addInitScript(() => {
+    window.__qaNativeSubmitCount = 0;
+    document.addEventListener('submit', () => { window.__qaNativeSubmitCount += 1; }, true);
+  });
   page.on('request', request => {
     if (request.method() === 'POST' && /\/api\/mutation/.test(request.url())) mutationRequests.push(request.url());
   });
@@ -68,7 +72,7 @@ test('contact native controls preserve layout, visual states, and keyboard acces
   await page.mouse.move(0, 0);
   const observations = [];
 
-  async function capture(state) {
+  async function capture(state, { focusId = null, budgetValue = '' } = {}) {
     // Wait for the authored focus transition rather than freezing it mid-frame.
     await page.waitForTimeout(200);
     const reducedMotion = await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -88,9 +92,11 @@ test('contact native controls preserve layout, visual states, and keyboard acces
         border: style.border,
         font: style.font,
         resize: style.resize,
+        colorScheme: style.colorScheme,
+        frameFilled: frame.getAttribute('data-filled'),
         frameBackground: frameStyle.backgroundColor,
         frameImage: frameStyle.backgroundImage,
-        cornerColor: frameStyle.getPropertyValue('--corner-color'),
+        cornerColor: frameStyle.getPropertyValue('--corner-color').trim(),
         transitionDuration: frameStyle.transitionDuration,
       };
     }));
@@ -100,6 +106,31 @@ test('contact native controls preserve layout, visual states, and keyboard acces
       expect(control.rect.x).toBeGreaterThanOrEqual(0);
       expect(control.rect.x + control.rect.width).toBeLessThanOrEqual(page.viewportSize().width);
       expect(control.background).toBe('rgba(0, 0, 0, 0)');
+      expect(control.focused).toBe(control.id === focusId);
+      const cornerRgb = control.focused ? 'rgb(167, 139, 250)' : 'rgb(107, 114, 128)';
+      expect(control.cornerColor).toBe(control.focused ? '#a78bfa' : '#6b7280');
+      const frameBackground = control.frameBackground.match(/^rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)$/);
+      expect(frameBackground, `${state} ${control.id} frame background`).not.toBeNull();
+      expect(frameBackground.slice(1, 4).map(Number)).toEqual(control.focused ? [167, 139, 250] : [255, 255, 255]);
+      // Native CSS serialization can quantize the authored alpha to 8 bits.
+      expect(Math.abs(Number(frameBackground[4] ?? 1) - (control.focused ? 0.07 : 0.025))).toBeLessThanOrEqual(1 / 255);
+      expect(control.frameImage.match(/linear-gradient\(/g)).toHaveLength(8);
+      expect(control.frameImage).toContain(cornerRgb);
+      expect(control.transitionDuration).toBe(reducedMotion ? '0s' : '0.15s');
+      if (control.id === 'budget') {
+        expect(control.value).toBe(budgetValue);
+        expect(control.frameFilled).toBe(budgetValue ? 'true' : 'false');
+        expect(control.colorScheme).toBe('normal');
+        expect(control.color).toBe(budgetValue ? 'rgb(255, 255, 255)' : 'rgb(156, 163, 175)');
+      } else {
+        expect(control.color).toBe('rgb(255, 255, 255)');
+      }
+      if (observations.length) {
+        const initialRect = observations[0].controls.find(initial => initial.id === control.id).rect;
+        for (const dimension of ['x', 'width', 'height']) {
+          expect(Math.abs(control.rect[dimension] - initialRect[dimension]), `${state} ${control.id} ${dimension}`).toBeLessThanOrEqual(0.5);
+        }
+      }
     }
     observations.push({ state, reducedMotion, controls, overflow });
     for (const id of ['budget', 'description']) {
@@ -112,17 +143,24 @@ test('contact native controls preserve layout, visual states, and keyboard acces
   await page.getByLabel('Email Address *').focus();
   await page.keyboard.press(tab);
   await expect(budget).toBeFocused();
-  await capture('select-focused');
-  await page.keyboard.press('ArrowDown');
+  await capture('select-focused', { focusId: 'budget' });
+  // Commit a value through the control's input/change events; native menu keys
+  // are checked separately because their commit behavior varies by platform.
+  await budget.selectOption('< €5k');
+  await expect(budget).toHaveValue('< €5k');
+  await expect(budget).toBeFocused();
+  await expect(budget.locator('..')).toHaveAttribute('data-filled', 'true');
   await page.keyboard.press(tab);
   await expect(description).toBeFocused();
-  await expect(budget).not.toHaveValue('');
-  await capture('textarea-focused');
+  await expect(budget).toHaveValue('< €5k');
+  await capture('textarea-focused', { focusId: 'description', budgetValue: '< €5k' });
   await page.keyboard.type('Synthetic QA project description.');
   await expect(description).toHaveValue('Synthetic QA project description.');
   await page.keyboard.press(tab);
   await expect(page.getByRole('button', { name: /Send project request/i })).toBeFocused();
-  await capture('populated');
+  await expect(budget).toHaveValue('< €5k');
+  await capture('populated', { budgetValue: '< €5k' });
+  expect(await page.evaluate(() => window.__qaNativeSubmitCount)).toBe(0);
   expect(mutationRequests).toEqual([]);
   fs.writeFileSync(path.join(outputDir, `${testInfo.project.name}-contact.json`), JSON.stringify(observations, null, 2));
 });

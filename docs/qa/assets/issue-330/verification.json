@@ -1,0 +1,1138 @@
+{
+  "baseline": "8a80ffb834ed9f28edf7eb497f8caa12bc8c4da7",
+  "date": "2026-10-07",
+  "host": {
+    "os": "macOS",
+    "version": "27.0.1",
+    "build": "26A434"
+  },
+  "playwright": "1.60.0",
+  "engines": {
+    "chromium": "148.0.7778.96",
+    "webkit": "26.4"
+  },
+  "baselineContact": {
+    "failed": 8,
+    "reason": "Budget remained empty after ArrowDown then Tab"
+  },
+  "finalSuite": {
+    "passed": 17,
+    "skipped": 7,
+    "failed": 0,
+    "retries": 0,
+    "skipReason": "Shared static HTML checked once, unchanged existing skips"
+  },
+  "projects": [
+    {
+      "project": "chromium-1440-no-preference",
+      "passed": true,
+      "selectedValue": "< \u20ac5k",
+      "reducedMotion": false,
+      "maxGeometryDeltaCssPx": {
+        "budget": {
+          "x": 0.0,
+          "width": 0.0,
+          "height": 6.103515625e-05
+        },
+        "description": {
+          "x": 0.0,
+          "width": 0.0,
+          "height": 0.0
+        }
+      },
+      "states": [
+        {
+          "state": "default",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(156, 163, 175)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "select-focused",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "",
+              "focused": true,
+              "frameFilled": "false",
+              "color": "rgb(156, 163, 175)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(167, 139, 250, 0.07)",
+              "cornerColor": "#a78bfa",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "textarea-focused",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "< \u20ac5k",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": true,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(167, 139, 250, 0.07)",
+              "cornerColor": "#a78bfa",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "populated",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "< \u20ac5k",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "value": "Synthetic QA project description.",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project": "chromium-1440-reduce",
+      "passed": true,
+      "selectedValue": "< \u20ac5k",
+      "reducedMotion": true,
+      "maxGeometryDeltaCssPx": {
+        "budget": {
+          "x": 0.0,
+          "width": 0.0,
+          "height": 0
+        },
+        "description": {
+          "x": 0.0,
+          "width": 0.0,
+          "height": 0.0
+        }
+      },
+      "states": [
+        {
+          "state": "default",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(156, 163, 175)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "select-focused",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "",
+              "focused": true,
+              "frameFilled": "false",
+              "color": "rgb(156, 163, 175)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(167, 139, 250, 0.07)",
+              "cornerColor": "#a78bfa",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "textarea-focused",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "< \u20ac5k",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": true,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(167, 139, 250, 0.07)",
+              "cornerColor": "#a78bfa",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "populated",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "< \u20ac5k",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "value": "Synthetic QA project description.",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project": "chromium-390-no-preference",
+      "passed": true,
+      "selectedValue": "< \u20ac5k",
+      "reducedMotion": false,
+      "maxGeometryDeltaCssPx": {
+        "budget": {
+          "x": 0,
+          "width": 0,
+          "height": 6.103515625e-05
+        },
+        "description": {
+          "x": 0,
+          "width": 0,
+          "height": 0.0
+        }
+      },
+      "states": [
+        {
+          "state": "default",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(156, 163, 175)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "select-focused",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "",
+              "focused": true,
+              "frameFilled": "false",
+              "color": "rgb(156, 163, 175)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(167, 139, 250, 0.07)",
+              "cornerColor": "#a78bfa",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "textarea-focused",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "< \u20ac5k",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": true,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(167, 139, 250, 0.07)",
+              "cornerColor": "#a78bfa",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "populated",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "< \u20ac5k",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "value": "Synthetic QA project description.",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project": "chromium-390-reduce",
+      "passed": true,
+      "selectedValue": "< \u20ac5k",
+      "reducedMotion": true,
+      "maxGeometryDeltaCssPx": {
+        "budget": {
+          "x": 0,
+          "width": 0,
+          "height": 0
+        },
+        "description": {
+          "x": 0,
+          "width": 0,
+          "height": 0.0
+        }
+      },
+      "states": [
+        {
+          "state": "default",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(156, 163, 175)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "select-focused",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "",
+              "focused": true,
+              "frameFilled": "false",
+              "color": "rgb(156, 163, 175)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(167, 139, 250, 0.07)",
+              "cornerColor": "#a78bfa",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "textarea-focused",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "< \u20ac5k",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": true,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(167, 139, 250, 0.07)",
+              "cornerColor": "#a78bfa",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "populated",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "< \u20ac5k",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "value": "Synthetic QA project description.",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project": "webkit-1440-no-preference",
+      "passed": true,
+      "selectedValue": "< \u20ac5k",
+      "reducedMotion": false,
+      "maxGeometryDeltaCssPx": {
+        "budget": {
+          "x": 0.0,
+          "width": 0.0,
+          "height": 0
+        },
+        "description": {
+          "x": 0.0,
+          "width": 0.0,
+          "height": 0.0
+        }
+      },
+      "states": [
+        {
+          "state": "default",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(156, 163, 175)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "select-focused",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "",
+              "focused": true,
+              "frameFilled": "false",
+              "color": "rgb(156, 163, 175)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(167, 139, 250, 0.07)",
+              "cornerColor": "#a78bfa",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "textarea-focused",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "< \u20ac5k",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": true,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(167, 139, 250, 0.07)",
+              "cornerColor": "#a78bfa",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "populated",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "< \u20ac5k",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "value": "Synthetic QA project description.",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project": "webkit-1440-reduce",
+      "passed": true,
+      "selectedValue": "< \u20ac5k",
+      "reducedMotion": true,
+      "maxGeometryDeltaCssPx": {
+        "budget": {
+          "x": 0.0,
+          "width": 0.0,
+          "height": 0
+        },
+        "description": {
+          "x": 0.0,
+          "width": 0.0,
+          "height": 0.0
+        }
+      },
+      "states": [
+        {
+          "state": "default",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(156, 163, 175)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "select-focused",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "",
+              "focused": true,
+              "frameFilled": "false",
+              "color": "rgb(156, 163, 175)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(167, 139, 250, 0.07)",
+              "cornerColor": "#a78bfa",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "textarea-focused",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "< \u20ac5k",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": true,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(167, 139, 250, 0.07)",
+              "cornerColor": "#a78bfa",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "populated",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "< \u20ac5k",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "value": "Synthetic QA project description.",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project": "webkit-390-no-preference",
+      "passed": true,
+      "selectedValue": "< \u20ac5k",
+      "reducedMotion": false,
+      "maxGeometryDeltaCssPx": {
+        "budget": {
+          "x": 0,
+          "width": 0,
+          "height": 0
+        },
+        "description": {
+          "x": 0,
+          "width": 0,
+          "height": 0.0
+        }
+      },
+      "states": [
+        {
+          "state": "default",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(156, 163, 175)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "select-focused",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "",
+              "focused": true,
+              "frameFilled": "false",
+              "color": "rgb(156, 163, 175)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(167, 139, 250, 0.07)",
+              "cornerColor": "#a78bfa",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "textarea-focused",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "< \u20ac5k",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": true,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(167, 139, 250, 0.07)",
+              "cornerColor": "#a78bfa",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        },
+        {
+          "state": "populated",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "< \u20ac5k",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            },
+            {
+              "id": "description",
+              "value": "Synthetic QA project description.",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0.15s"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project": "webkit-390-reduce",
+      "passed": true,
+      "selectedValue": "< \u20ac5k",
+      "reducedMotion": true,
+      "maxGeometryDeltaCssPx": {
+        "budget": {
+          "x": 0,
+          "width": 0,
+          "height": 0
+        },
+        "description": {
+          "x": 0,
+          "width": 0,
+          "height": 0.0
+        }
+      },
+      "states": [
+        {
+          "state": "default",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(156, 163, 175)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "select-focused",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "",
+              "focused": true,
+              "frameFilled": "false",
+              "color": "rgb(156, 163, 175)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(167, 139, 250, 0.07)",
+              "cornerColor": "#a78bfa",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": false,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "textarea-focused",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "< \u20ac5k",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "value": "",
+              "focused": true,
+              "frameFilled": "false",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(167, 139, 250, 0.07)",
+              "cornerColor": "#a78bfa",
+              "transitionDuration": "0s"
+            }
+          ]
+        },
+        {
+          "state": "populated",
+          "controls": [
+            {
+              "id": "budget",
+              "value": "< \u20ac5k",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "normal",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            },
+            {
+              "id": "description",
+              "value": "Synthetic QA project description.",
+              "focused": false,
+              "frameFilled": "true",
+              "color": "rgb(255, 255, 255)",
+              "colorScheme": "dark",
+              "frameBackground": "rgba(255, 255, 255, 0.024)",
+              "cornerColor": "#6b7280",
+              "transitionDuration": "0s"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "nativeKeyboard": {
+    "engine": "chromium",
+    "version": "148.0.7778.96",
+    "platform": "darwin",
+    "osRelease": "27.0.0",
+    "headless": false,
+    "reducedMotion": "no-preference",
+    "input": "native macOS via CUA",
+    "observed": {
+      "value": "< \u20ac5k",
+      "filled": "true",
+      "focus": "description",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
+      "submitCount": 0,
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    "mutations": []
+  },
+  "headedInjectedKeyboard": [
+    {
+      "engine": "chromium",
+      "version": "148.0.7778.96",
+      "platform": "darwin",
+      "osRelease": "27.0.0",
+      "headless": false,
+      "reducedMotion": "no-preference",
+      "keys": [
+        "Tab",
+        "Space",
+        "ArrowDown",
+        "Enter",
+        "Tab"
+      ],
+      "before": "",
+      "initialFocus": true,
+      "committed": "",
+      "observed": {
+        "value": "",
+        "filled": "false",
+        "focus": "email",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        }
+      },
+      "mutations": [],
+      "passed": false
+    },
+    {
+      "engine": "webkit",
+      "version": "26.4",
+      "platform": "darwin",
+      "osRelease": "27.0.0",
+      "headless": false,
+      "reducedMotion": "no-preference",
+      "keys": [
+        "Alt+Tab",
+        "Space",
+        "ArrowDown",
+        "Enter",
+        "Alt+Tab"
+      ],
+      "before": "",
+      "initialFocus": true,
+      "committed": "",
+      "observed": {
+        "value": "",
+        "filled": "false",
+        "focus": "email",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        }
+      },
+      "mutations": [],
+      "passed": false
+    }
+  ],
+  "negativeProbes": {
+    "domValueWithoutReactChange": "failed as expected at data-filled true assertion",
+    "blockedSyntheticSubmit": "failed as expected, count 1 instead of 0"
+  }
+}
