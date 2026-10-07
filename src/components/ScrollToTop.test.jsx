@@ -101,6 +101,28 @@ describe('ScrollToTop', () => {
     expect(document.activeElement).toBe(main);
   });
 
+  it('keeps an already focused Contact result through its queued route handoff', () => {
+    vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    renderAt('/');
+    act(() => navigate('/contact'));
+    const result = document.querySelector('main button');
+    result.setAttribute('data-contact-outcome-focus', '');
+    result.focus();
+    runFrame();
+    expect(document.activeElement).toBe(result);
+  });
+
+  it('does not preserve an old Contact result when navigating to another destination', () => {
+    vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    renderAt('/contact');
+    const result = document.querySelector('main button');
+    result.setAttribute('data-contact-outcome-focus', '');
+    result.focus();
+    act(() => navigate('/case-studies/'));
+    runFrame();
+    expect(document.activeElement).toBe(document.getElementById('main-content'));
+  });
+
   it('starts a new case studies visit at the top and focuses main content', () => {
     const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
     renderAt('/');

@@ -21,6 +21,9 @@ const ScrollToTop = () => {
       // WebKit needs a frame after drawer inert cleanup before main can receive focus.
       const frameId = window.requestAnimationFrame(() => {
         const main = document.getElementById('main-content');
+        if ((pathname === '/contact' || pathname === '/contact/')
+          && main?.contains(document.activeElement)
+          && document.activeElement?.hasAttribute('data-contact-outcome-focus')) return;
         if (!main?.querySelector('[data-route-error]')) focusNavigationTarget(main);
       });
       return () => window.cancelAnimationFrame(frameId);
