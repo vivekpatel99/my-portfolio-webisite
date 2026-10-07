@@ -10,6 +10,7 @@
     "qa:playwright:passive": "playwright test -c tests/qa/qa.config.js",
     "qa:playwright:ci": "playwright test -c tests/qa/qa.config.js --project=preview-desktop --project=preview-mobile --project=preview-webkit-desktop --project=preview-webkit-mobile",
     "qa:telemetry-boundary": "node tools/run-telemetry-boundary-qa.js",
+    "qa:replay-consent": "node tools/run-replay-consent-qa.js",
     "qa:contact-lifecycle": "playwright test -c tests/qa/qa-contact-lifecycle.config.js",
     "qa:motion": "playwright test -c tests/qa/qa-motion.config.js",
     "qa:playwright:live-contact": "QA_LIVE_CONTACT_SUBMIT=1 playwright test -c tests/qa/qa.config.js --project=prod-live-contact-submit",
