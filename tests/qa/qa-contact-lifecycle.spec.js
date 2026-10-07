@@ -19,9 +19,18 @@ const SUBMIT_FAILURE_MESSAGES = [
   EMAIL_RATE_LIMIT_ERROR,
 ];
 const SELECTED_BUDGET = '€5k-€10k';
+const closingContexts = new WeakSet();
 
 async function installLocalGuardsAndTransport(context, transport) {
-  await context.route('**/*', guardLocalNavigation);
+  await context.route('**/*', async (route) => {
+    try {
+      await guardLocalNavigation(route);
+    } catch (error) {
+      if (closingContexts.has(context) && error instanceof Error
+        && error.message === 'route.fulfill: Fetch response has been disposed') return;
+      throw error;
+    }
+  });
   await context.routeWebSocket('**/*', (webSocket) => {
     const url = new URL(webSocket.url());
     if (url.protocol === 'wss:' && url.hostname === CONVEX_MOCK_HOST) {
@@ -52,6 +61,7 @@ const test = base.extend({
 });
 
 test.afterEach(async ({ context }) => {
+  closingContexts.add(context);
   await context.close();
 });
 
