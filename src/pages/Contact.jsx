@@ -411,8 +411,8 @@ const Contact = () => {
           </div>
 
           <div className="flex justify-center space-x-6 mt-12">
-            <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile" className="text-gray-400 hover:text-[#8B5CF6] transition-colors"><Linkedin size={24} /></a>
-            <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub profile" className="text-gray-400 hover:text-[#8B5CF6] transition-colors"><Github size={24} /></a>
+            <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile" className="inline-flex items-center justify-center p-2.5 text-gray-400 hover:text-[#8B5CF6] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A78BFA]"><Linkedin size={24} /></a>
+            <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub profile" className="inline-flex items-center justify-center p-2.5 text-gray-400 hover:text-[#8B5CF6] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A78BFA]"><Github size={24} /></a>
           </div>
         </div>
       </section>
