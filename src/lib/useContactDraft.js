@@ -4,7 +4,7 @@ const emptyFields = () => ({ name: '', email: '', budget: '', description: '' })
 
 // This SPA module lives only in the current browser document. Draft fields are
 // never serialized to browser storage and disappear on reload or tab close.
-let snapshot = { formState: emptyFields(), submission: null };
+let snapshot = { formState: emptyFields(), submission: null, outcome: null };
 const subscribers = new Set();
 let unloadProtected = false;
 
@@ -35,23 +35,26 @@ const getSnapshot = () => snapshot;
 
 function setFormState(update) {
   const formState = typeof update === 'function' ? update(snapshot.formState) : update;
-  publish({ ...snapshot, formState });
+  publish({ ...snapshot, formState, outcome: null });
 }
 
 function beginSubmission() {
   if (snapshot.submission) return null;
   const submittedFields = snapshot.formState;
-  publish({ ...snapshot, submission: submittedFields });
+  publish({ ...snapshot, submission: submittedFields, outcome: null });
   return submittedFields;
 }
 
-function finishSubmission(submittedFields, succeeded) {
+function finishSubmission(submittedFields, succeeded, errorMessage) {
   if (snapshot.submission !== submittedFields) return;
   publish({
     formState: succeeded && snapshot.formState === submittedFields
       ? emptyFields()
       : snapshot.formState,
     submission: null,
+    outcome: snapshot.formState === submittedFields
+      ? { status: succeeded ? 'success' : 'error', errorMessage }
+      : null,
   });
 }
 
@@ -59,6 +62,7 @@ export function useContactDraft() {
   const state = useSyncExternalStore(subscribe, getSnapshot);
   return {
     formState: state.formState,
+    outcome: state.outcome,
     isSubmitting: state.submission !== null,
     setFormState,
     beginSubmission,

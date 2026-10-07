@@ -61,9 +61,8 @@ const SUBMIT_FAILURE_FALLBACK =
   "We couldn't send your request. Please try again, or use the email address on this page.";
 
 const Contact = () => {
-  const { formState, setFormState, isSubmitting, beginSubmission, finishSubmission } = useContactDraft();
+  const { formState, setFormState, isSubmitting, outcome, beginSubmission, finishSubmission } = useContactDraft();
   const [fieldErrors, setFieldErrors] = useState({});
-  const [outcome, setOutcome] = useState('idle');
   const submittingRef = useRef(false);
   const submitButtonRef = useRef(null);
   const receiptRef = useRef(null);
@@ -72,8 +71,8 @@ const Contact = () => {
   const pageMotion = usePageMotion();
 
   useEffect(() => {
-    if (outcome === 'error') submitButtonRef.current?.focus();
-    if (outcome === 'success') receiptRef.current?.focus();
+    if (outcome?.status === 'error') submitButtonRef.current?.focus();
+    if (outcome?.status === 'success') receiptRef.current?.focus();
   }, [outcome]);
 
   const handleInputChange = (e) => {
@@ -138,7 +137,6 @@ const Contact = () => {
     const submittedFields = beginSubmission();
     if (!submittedFields) return;
     submittingRef.current = true;
-    setOutcome('idle');
     feedbackToastRef.current?.dismiss();
     feedbackToastRef.current = null;
 
@@ -166,14 +164,12 @@ const Contact = () => {
         variant: "destructive",
       });
       submittingRef.current = false;
-      finishSubmission(submittedFields, false);
-      setOutcome('error');
+      finishSubmission(submittedFields, false, description);
       return;
     }
 
     submittingRef.current = false;
     finishSubmission(submittedFields, true);
-    setOutcome('success');
     setFieldErrors({});
   };
 
@@ -342,10 +338,12 @@ const Contact = () => {
                 </div>
               </div>
 
-              {outcome === 'success' ? (
+              {outcome?.status === 'success' ? (
                 <div
                   ref={receiptRef}
+                  data-contact-outcome-focus
                   role="status"
+                  aria-live="polite"
                   aria-labelledby="contact-receipt-title"
                   aria-describedby="contact-receipt-body"
                   tabIndex={-1}
@@ -359,10 +357,19 @@ const Contact = () => {
                 </div>
               ) : null}
 
+              {outcome?.status === 'error' ? (
+                <div id="contact-submit-error" className="mt-6 border border-red-400/40 p-4 text-sm text-red-400">
+                  <p className="font-semibold">Submission Failed</p>
+                  <p className="mt-1">{outcome.errorMessage}</p>
+                </div>
+              ) : null}
+
               <div className="text-center mt-6">
                 <button
                   ref={submitButtonRef}
+                  data-contact-outcome-focus={outcome?.status === 'error' ? '' : undefined}
                   type="submit"
+                  aria-describedby={outcome?.status === 'error' ? 'contact-submit-error' : undefined}
                   disabled={isSubmitting}
                   className="detection-panel detection-action detection-action--labeled detection-action--primary detection-action--submit"
                 >

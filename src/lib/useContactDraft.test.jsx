@@ -80,6 +80,7 @@ describe('tab-memory contact draft', () => {
     act(() => draft.result.current.setFormState({ ...filledFields, description: 'New draft' }));
     act(() => draft.result.current.finishSubmission(firstSubmission, true));
     expect(draft.result.current.formState.description).toBe('New draft');
+    expect(draft.result.current.outcome).toBeNull();
     expect(unloadIsPrevented()).toBe(true);
 
     let nextSubmission;
@@ -88,6 +89,10 @@ describe('tab-memory contact draft', () => {
     expect(draft.result.current.isSubmitting).toBe(true);
     act(() => draft.result.current.finishSubmission(nextSubmission, true));
     expect(draft.result.current.formState).toEqual(emptyFields);
+    expect(draft.result.current.outcome.status).toBe('success');
+    act(() => draft.result.current.setFormState({ ...emptyFields, name: 'Next draft' }));
+    expect(draft.result.current.outcome).toBeNull();
+    act(() => draft.result.current.setFormState(emptyFields));
     expect(unloadIsPrevented()).toBe(false);
   });
 });
