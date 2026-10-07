@@ -11,6 +11,7 @@ function isBrowserCancelledRoute(error) {
   return (
     message === 'route.fulfill: Route is already handled!'
     || message === 'route.fetch: Target page, context or browser has been closed'
+    || message === 'apiResponse.dispose: Target page, context or browser has been closed'
   );
 }
 
@@ -48,9 +49,16 @@ export async function guardLocalNavigation(route) {
   } catch (error) {
     // A page can cancel an already-fetched loopback subresource during client navigation.
     // The route was handled by Chromium's cancellation, so only this exact race is non-actionable.
-    if (!isBrowserCancelledRoute(error)) throw error;
+    const disposedDuringClosure = error instanceof Error
+      && error.message === 'route.fulfill: Fetch response has been disposed'
+      && request.frame().page().isClosed();
+    if (!isBrowserCancelledRoute(error) && !disposedDuringClosure) throw error;
   } finally {
-    await response.dispose();
+    try {
+      await response.dispose();
+    } catch (error) {
+      if (!isBrowserCancelledRoute(error)) throw error;
+    }
   }
 }
 
