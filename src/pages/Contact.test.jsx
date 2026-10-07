@@ -199,7 +199,7 @@ describe("Contact form", () => {
     fillValidLead(first.container);
     fireEvent.submit(first.container.querySelector('form'));
     const receipt = await screen.findByRole('status', { name: 'Request received' });
-    expect(document.activeElement).toBe(receipt);
+    await waitFor(() => expect(document.activeElement).toBe(receipt));
     expect(receipt.getAttribute('aria-live')).toBe('polite');
     first.unmount();
     render(<Contact />);
