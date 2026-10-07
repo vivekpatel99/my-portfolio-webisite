@@ -8,7 +8,7 @@ import {
   serviceTimelineLabel,
 } from '@/data/serviceOffers';
 
-const firstSentence = (text) => text.split(/(?<=\.)\s+/)[0];
+const firstSentence = (text) => text.match(/^[\s\S]*?\.(?=\s)/)?.[0] ?? text;
 
 const GeometricGlyph = () => (
   <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" className="w-[14px] h-[14px]" aria-hidden="true">
