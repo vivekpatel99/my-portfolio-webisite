@@ -71,12 +71,12 @@ function hasValidLength(value: string, minimum: number, maximum: number) {
   return value.length >= minimum && value.length <= maximum;
 }
 
-export function normalizeBudget(budget: string | undefined) {
+function getBudgetError(budget: string | undefined) {
   if (
     budget !== undefined &&
     (budget.length > MAX_RAW_BUDGET_LENGTH || hasDisallowedControls(budget))
   ) {
-    rejectLeadInput();
+    return "Choose one of the listed budget ranges, or leave it blank.";
   }
 
   const trimmed = budget?.trim();
@@ -87,44 +87,74 @@ export function normalizeBudget(budget: string | undefined) {
     !hasValidLength(trimmed, MIN_BUDGET_LENGTH, MAX_BUDGET_LENGTH) ||
     !BUDGET_OPTIONS.includes(trimmed as (typeof BUDGET_OPTIONS)[number])
   ) {
+    return "Choose one of the listed budget ranges, or leave it blank.";
+  }
+}
+
+export function normalizeBudget(budget: string | undefined) {
+  if (getBudgetError(budget)) {
     rejectLeadInput();
   }
-  return trimmed;
+  return budget?.trim() || undefined;
+}
+
+export type ContactLeadFieldErrors = Partial<Record<keyof ContactLeadInput, string>>;
+type ContactLeadValidationResult =
+  | { ok: true; value: ContactLeadInput }
+  | { ok: false; errors: ContactLeadFieldErrors };
+
+export function validateContactFields(input: ContactLeadInput): ContactLeadValidationResult {
+  const name = input.name.length <= MAX_RAW_NAME_LENGTH ? input.name.trim() : "";
+  const email = input.email.length <= MAX_RAW_EMAIL_LENGTH ? input.email.trim().toLowerCase() : "";
+  const normalizedDescription = input.description.length <= MAX_RAW_DESCRIPTION_LENGTH
+    ? input.description.replace(/\r\n?/g, "\n")
+    : "";
+  const description = normalizedDescription.trim();
+  const errors: ContactLeadFieldErrors = {};
+
+  if (input.name.length > MAX_RAW_NAME_LENGTH) {
+    errors.name = `Full name must be ${MAX_NAME_LENGTH} characters or fewer. Remove extra surrounding whitespace.`;
+  } else if (name.length < MIN_NAME_LENGTH) {
+    errors.name = "Name is required.";
+  } else if (name.length > MAX_NAME_LENGTH) {
+    errors.name = `Full name must be ${MAX_NAME_LENGTH} characters or fewer.`;
+  } else if (hasDisallowedControls(input.name)) {
+    errors.name = "Remove line breaks and hidden control characters from your full name.";
+  }
+
+  if (input.email.length > MAX_RAW_EMAIL_LENGTH) {
+    errors.email = `Email address must be ${MAX_EMAIL_LENGTH} characters or fewer. Remove extra surrounding whitespace.`;
+  } else if (!email) {
+    errors.email = "Email is required.";
+  } else if (email.length > MAX_EMAIL_LENGTH) {
+    errors.email = `Email address must be ${MAX_EMAIL_LENGTH} characters or fewer.`;
+  } else if (hasDisallowedControls(input.email) || email.length < MIN_EMAIL_LENGTH || !EMAIL_REGEX.test(email)) {
+    errors.email = "Enter a valid email address.";
+  }
+
+  const budgetError = getBudgetError(input.budget);
+  if (budgetError) errors.budget = budgetError;
+
+  if (input.description.length > MAX_RAW_DESCRIPTION_LENGTH) {
+    errors.description = `Project description must be ${MAX_DESCRIPTION_LENGTH} characters or fewer. Remove extra surrounding whitespace.`;
+  } else if (description.length < MIN_DESCRIPTION_LENGTH) {
+    errors.description = "Project description is required.";
+  } else if (description.length > MAX_DESCRIPTION_LENGTH) {
+    errors.description = `Project description must be ${MAX_DESCRIPTION_LENGTH} characters or fewer.`;
+  } else if (hasDisallowedControls(normalizedDescription, true)) {
+    errors.description = "Remove hidden control characters from your project description.";
+  }
+
+  return Object.keys(errors).length
+    ? { ok: false, errors }
+    : { ok: true, value: { name, email, description, budget: input.budget?.trim() || undefined } };
 }
 
 export function validateLeadInput(input: unknown) {
   if (!isContactLeadInput(input)) {
     rejectLeadInput();
   }
-
-  if (
-    input.name.length > MAX_RAW_NAME_LENGTH ||
-    input.email.length > MAX_RAW_EMAIL_LENGTH ||
-    input.description.length > MAX_RAW_DESCRIPTION_LENGTH ||
-    hasDisallowedControls(input.name) ||
-    hasDisallowedControls(input.email)
-  ) {
-    rejectLeadInput();
-  }
-
-  const normalizedDescription = input.description.replace(/\r\n?/g, "\n");
-  if (hasDisallowedControls(normalizedDescription, true)) {
-    rejectLeadInput();
-  }
-
-  const name = input.name.trim();
-  const email = input.email.trim().toLowerCase();
-  const description = normalizedDescription.trim();
-  const budget = normalizeBudget(input.budget);
-
-  if (
-    !hasValidLength(name, MIN_NAME_LENGTH, MAX_NAME_LENGTH) ||
-    !hasValidLength(email, MIN_EMAIL_LENGTH, MAX_EMAIL_LENGTH) ||
-    !EMAIL_REGEX.test(email) ||
-    !hasValidLength(description, MIN_DESCRIPTION_LENGTH, MAX_DESCRIPTION_LENGTH)
-  ) {
-    rejectLeadInput();
-  }
-
-  return { name, email, description, budget };
+  const result = validateContactFields(input);
+  if (!result.ok) rejectLeadInput();
+  return result.value;
 }
