@@ -11,14 +11,16 @@ function navigation({
   navigation = true,
   fetchError,
   fulfillError,
+  disposeError,
+  pageClosed = false,
 } = {}) {
   const response = {
     status: () => location ? 302 : 200,
     headers: () => location ? { location } : {},
-    dispose: vi.fn(),
+    dispose: disposeError ? vi.fn().mockRejectedValue(disposeError) : vi.fn(),
   };
   const route = {
-    request: () => ({ url: () => url, method: () => method, isNavigationRequest: () => navigation }),
+    request: () => ({ url: () => url, method: () => method, isNavigationRequest: () => navigation, frame: () => ({ page: () => ({ isClosed: () => pageClosed }) }) }),
     fetch: fetchError ? vi.fn().mockRejectedValue(fetchError) : vi.fn().mockResolvedValue(response),
     fulfill: fulfillError ? vi.fn().mockRejectedValue(fulfillError) : vi.fn(),
     abort: vi.fn(),
@@ -107,6 +109,26 @@ describe('local-only browser navigation', () => {
     const { route, response } = navigation({ fulfillError: new Error('network write failed') });
     await expect(guardLocalNavigation(route)).rejects.toThrow('network write failed');
     expect(response.dispose).toHaveBeenCalled();
+  });
+
+  it('allows response disposal after browser context closure', async () => {
+    const { route } = navigation({ disposeError: new Error('apiResponse.dispose: Target page, context or browser has been closed') });
+    await expect(guardLocalNavigation(route)).resolves.toBeUndefined();
+  });
+
+  it('preserves unexpected response disposal errors', async () => {
+    const { route } = navigation({ disposeError: new Error('response cleanup failed') });
+    await expect(guardLocalNavigation(route)).rejects.toThrow('response cleanup failed');
+  });
+
+  it('allows fulfillment cancellation when context closure disposed its response', async () => {
+    const { route } = navigation({ pageClosed: true, fulfillError: new Error('route.fulfill: Fetch response has been disposed') });
+    await expect(guardLocalNavigation(route)).resolves.toBeUndefined();
+  });
+
+  it('rejects disposed fulfillment responses while the page is open', async () => {
+    const { route } = navigation({ fulfillError: new Error('route.fulfill: Fetch response has been disposed') });
+    await expect(guardLocalNavigation(route)).rejects.toThrow('route.fulfill: Fetch response has been disposed');
   });
 
   it('preserves unexpected fetch errors', async () => {

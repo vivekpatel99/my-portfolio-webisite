@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { DetectionLabel } from './DetectionFrame.js';
 import { ArrowLeft } from 'lucide-react';
 import { collectionCaseStudies } from '../data/caseStudies.js';
@@ -10,8 +11,8 @@ const CaseStudiesContent = ({ stories }) => React.createElement(
   React.createElement(
     'div',
     { className: 'max-w-[1180px] mx-auto' },
-    React.createElement('a', {
-      href: '/',
+    React.createElement(Link, {
+      to: '/',
       className: 'detection-panel detection-action detection-action--labeled detection-action--compact mb-8 inline-flex',
     }, React.createElement(DetectionLabel, { 'aria-hidden': true }, 'HOME'), React.createElement(ArrowLeft, { size: 16, 'aria-hidden': true }), 'Back to home'),
     React.createElement(
