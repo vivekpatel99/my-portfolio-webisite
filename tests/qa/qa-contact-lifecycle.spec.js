@@ -164,12 +164,58 @@ test('preserves a dirty draft through featured and collection article navigation
   expect(unloadWarnings).toBe(0);
   expect(documentRequests).toBe(0);
   expect(await unloadIsPrevented(page)).toBe(true);
-  const serialized = await page.evaluate(() => JSON.stringify({ local: Object.entries(localStorage), session: Object.entries(sessionStorage), state: history.state }));
+  const serialized = await page.evaluate(() => JSON.stringify({ local: Object.entries(localStorage), session: Object.entries(sessionStorage), state: window.history.state }));
   for (const value of ['Synthetic QA Contact', 'qa-contact@example.invalid', SELECTED_BUDGET, 'Synthetic transport lifecycle test.']) {
     expect(serialized).not.toContain(value);
   }
-  expect(transport.records).toHaveLength(0);
+  expect(transport.state.mutations).toHaveLength(0);
 });
+
+test('case study navigation leaves modified clicks unprevented', async ({ page }) => {
+  for (const route of ['/project/ai-invoice-processing-automation/', '/case-studies/']) {
+    await page.goto(route);
+    const links = route.startsWith('/project/')
+      ? page.locator('.case-study-navigation a, .case-study-cta a')
+      : page.locator('main').getByRole('link', { name: /Back to home/ });
+    for (const link of await links.all()) {
+      for (const options of [{ ctrlKey: true }, { metaKey: true }, { shiftKey: true }, { altKey: true }, { button: 1 }]) {
+        const prevented = await link.evaluate((element, clickOptions) => {
+          const event = new MouseEvent('click', { bubbles: true, cancelable: true, ...clickOptions });
+          let routerPrevented;
+          document.addEventListener('click', (observed) => {
+            routerPrevented = observed.defaultPrevented;
+            observed.preventDefault();
+          }, { once: true });
+          element.dispatchEvent(event);
+          return routerPrevented;
+        }, options);
+        expect(prevented).toBe(false);
+      }
+    }
+  }
+});
+
+for (const activation of ['modified', 'middle']) {
+  test(`case study navigation keeps native ${activation} tab-opening behavior`, async ({ page, context, browserName }) => {
+    test.skip(browserName === 'webkit' && activation === 'middle', 'macOS headless WebKit navigates a plain anchor in the source tab on middle-click. Native middle-click needs Safari verification; unprevented click events are checked separately.');
+    for (const route of ['/project/ai-invoice-processing-automation/', '/case-studies/']) {
+      await page.goto(route);
+      const links = route.startsWith('/project/')
+        ? page.locator('.case-study-navigation a, .case-study-cta a')
+        : page.locator('main').getByRole('link', { name: /Back to home/ });
+      for (const link of await links.all()) {
+        const href = await link.getAttribute('href');
+        const options = activation === 'middle' ? { button: 'middle' } : { modifiers: ['ControlOrMeta'] };
+        const opened = context.waitForEvent('page');
+        await link.click(options);
+        const popup = await opened;
+        await expect(popup).toHaveURL(new URL(href, page.url()).href);
+        await expect(page).toHaveURL(new RegExp(`${route}$`));
+        await popup.close();
+      }
+    }
+  });
+}
 
 test('restores all tab-memory draft fields after keyboard navigation and Back without storage writes', async ({ page, context, contactTransport: transport }) => {
   await page.goto('/contact/');
