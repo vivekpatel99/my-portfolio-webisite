@@ -264,6 +264,20 @@ describe("Contact form", () => {
     expect(mockSubmitLead).not.toHaveBeenCalled();
   });
 
+  it.each([
+    ['', 'bad@', 'Uh oh! Missing fields.', 'Name is required.'],
+    ['n'.repeat(201), '', 'Check your project details.', 'Full name must be 200 characters or fewer.'],
+  ])('#325: matches the toast title and description to the first invalid field', (name, email, title, description) => {
+    const { container } = render(<Contact />);
+    fillValidLead(container);
+    fireEvent.change(screen.getByLabelText('Full Name *'), { target: { value: name } });
+    fireEvent.change(screen.getByLabelText('Email Address *'), { target: { value: email } });
+    fireEvent.submit(container.querySelector('form'));
+    expect(toast).toHaveBeenLastCalledWith({ title, description, variant: 'destructive' });
+    expect(document.activeElement).toBe(screen.getByLabelText('Full Name *'));
+    expect(mockSubmitLead).not.toHaveBeenCalled();
+  });
+
   it("FE-004: valid submit calls mutation", async () => {
     const { container } = render(<Contact />);
     const nameEl = container.querySelector('input[name="name"]');

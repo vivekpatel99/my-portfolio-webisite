@@ -166,6 +166,27 @@ test('#325: focuses the first invalid field and retains every overlong draft', a
   expect(transport.state.mutations).toHaveLength(0);
 });
 
+for (const { scenario, name, email, title, description } of [
+  { scenario: 'missing name and malformed email', name: '', email: 'bad@', title: 'Uh oh! Missing fields.', description: 'Name is required.' },
+  { scenario: 'overlong name and missing email', name: 'n'.repeat(201), email: '', title: 'Check your project details.', description: 'Full name must be 200 characters or fewer.' },
+]) {
+  test(`#325: keeps toast and focus consistent for ${scenario}`, async ({ page, contactTransport: transport }) => {
+    await page.goto('/contact/');
+    await fillContactForm(page);
+    await page.getByLabel('Full Name *').fill(name);
+    await page.getByLabel('Email Address *').fill(email);
+    await page.getByRole('button', { name: 'Send project request', exact: true }).click();
+    const toast = page.getByRole('status').filter({ has: page.getByText(title, { exact: true }) });
+    await expect(toast).toBeVisible();
+    await expect(toast.getByText(description, { exact: true })).toBeVisible();
+    await expect(page.getByLabel('Full Name *')).toBeFocused();
+    await expect(page.getByLabel('Full Name *')).toHaveAttribute('aria-describedby', 'name-error');
+    await expect(page.getByLabel('Full Name *')).toHaveValue(name);
+    await expect(page.getByLabel('Email Address *')).toHaveValue(email);
+    expect(transport.state.mutations).toHaveLength(0);
+  });
+}
+
 test('restores all tab-memory draft fields after keyboard navigation and Back without storage writes', async ({ page, context, contactTransport: transport }) => {
   await page.goto('/contact/');
   await expect(page.getByLabel('Full Name *')).toBeVisible();

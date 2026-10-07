@@ -107,14 +107,15 @@ const Contact = () => {
       const nextErrors = validation.errors;
       setFieldErrors(nextErrors);
       const firstInvalidField = Object.keys(nextErrors)[0];
+      const firstError = nextErrors[firstInvalidField];
       telemetrySource.elements.namedItem(firstInvalidField)?.focus();
       feedbackToastRef.current = toast({
-        title: nextErrors.email === 'Enter a valid email address.'
+        title: firstInvalidField === 'email' && firstError === 'Enter a valid email address.'
           ? "Invalid email address."
-          : Object.values(nextErrors).some((message) => message.endsWith('is required.'))
+          : firstError.endsWith('is required.')
             ? "Uh oh! Missing fields."
             : "Check your project details.",
-        description: nextErrors[firstInvalidField],
+        description: firstError,
         variant: "destructive",
       });
       return;
