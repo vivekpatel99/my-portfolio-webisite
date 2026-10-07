@@ -52,9 +52,7 @@ const test = base.extend({
 });
 
 test.afterEach(async ({ context }) => {
-  // Finish intercepted home-page asset fetches before the page fixture closes.
-  // Local-only guards remain active throughout each test's interactions.
-  await context.unrouteAll({ behavior: 'wait' });
+  await context.close();
 });
 
 async function fillContactForm(page) {

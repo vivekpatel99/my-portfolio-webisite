@@ -11,11 +11,12 @@ function navigation({
   navigation = true,
   fetchError,
   fulfillError,
+  disposeError,
 } = {}) {
   const response = {
     status: () => location ? 302 : 200,
     headers: () => location ? { location } : {},
-    dispose: vi.fn(),
+    dispose: disposeError ? vi.fn().mockRejectedValue(disposeError) : vi.fn(),
   };
   const route = {
     request: () => ({ url: () => url, method: () => method, isNavigationRequest: () => navigation }),
@@ -107,6 +108,16 @@ describe('local-only browser navigation', () => {
     const { route, response } = navigation({ fulfillError: new Error('network write failed') });
     await expect(guardLocalNavigation(route)).rejects.toThrow('network write failed');
     expect(response.dispose).toHaveBeenCalled();
+  });
+
+  it('allows response disposal after browser context closure', async () => {
+    const { route } = navigation({ disposeError: new Error('apiResponse.dispose: Target page, context or browser has been closed') });
+    await expect(guardLocalNavigation(route)).resolves.toBeUndefined();
+  });
+
+  it('preserves unexpected response disposal errors', async () => {
+    const { route } = navigation({ disposeError: new Error('response cleanup failed') });
+    await expect(guardLocalNavigation(route)).rejects.toThrow('response cleanup failed');
   });
 
   it('preserves unexpected fetch errors', async () => {

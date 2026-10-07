@@ -60,6 +60,10 @@ The plain-anchor control recorded `button: "middle", opened: false, sourceURL: "
 
 The PR keeps `Refs #322` because actual Safari middle-click verification remains pending. The user explicitly authorized babysitting and merging this PR into `develop`, then cleaning up its worktree. No production deployment is authorized.
 
+## CI teardown repair
+
+After integrating later `develop` changes, contact QA reproduced the intercepted-request drain timeout after modified-click assertions passed. Teardown now closes the guarded context after interactions instead of waiting indefinitely for live asset requests. The navigation guard tolerates only the exact response-disposal cancellation caused by context closure and continues rejecting other cleanup errors. A unit regression failed before that cancellation fix and passed afterward. Browser verification and the exact landing-head verdict are recorded on the PR.
+
 ## Browser evidence
 
 The screenshot uses synthetic fields after the article inquiry return. The browser draft was cleared and the temporary tab closed after capture.

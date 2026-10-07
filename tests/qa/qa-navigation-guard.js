@@ -11,6 +11,7 @@ function isBrowserCancelledRoute(error) {
   return (
     message === 'route.fulfill: Route is already handled!'
     || message === 'route.fetch: Target page, context or browser has been closed'
+    || message === 'apiResponse.dispose: Target page, context or browser has been closed'
   );
 }
 
@@ -50,7 +51,11 @@ export async function guardLocalNavigation(route) {
     // The route was handled by Chromium's cancellation, so only this exact race is non-actionable.
     if (!isBrowserCancelledRoute(error)) throw error;
   } finally {
-    await response.dispose();
+    try {
+      await response.dispose();
+    } catch (error) {
+      if (!isBrowserCancelledRoute(error)) throw error;
+    }
   }
 }
 
