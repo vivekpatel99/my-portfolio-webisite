@@ -20,6 +20,7 @@ let traceSampleRate;
 let consentEpoch = 0;
 const consentEpochTag = 'telemetry.consent_epoch';
 const activeTransactions = new Set();
+const promotionTimers = new Set();
 
 export function initializeSentryTelemetry() {
   if (process.env.NODE_ENV !== 'production') {
@@ -118,6 +119,20 @@ export function initializeSentryTelemetry() {
       }
     }
     replay = new ConsentReplay({
+      // SDK 7 schedules an untagged promotion timer; consent owns its lifetime.
+      beforeErrorSampling(event) {
+        const epoch = consentEpoch;
+        const replayId = replay.getReplayId();
+        if (!initialized || !requested || event.tags?.replayId !== replayId) return false;
+        const timer = setTimeout(() => {
+          promotionTimers.delete(timer);
+          if (initialized && requested && epoch === consentEpoch && replay.getReplayId() === replayId) {
+            void replay.flush();
+          }
+        });
+        promotionTimers.add(timer);
+        return false;
+      },
       maskAllText: true,
       maskAllInputs: true,
       blockAllMedia: true,
@@ -130,9 +145,14 @@ export function initializeSentryTelemetry() {
       transport: (options) => {
         const transport = Sentry.makeFetchTransport(options);
         // Preserve SDK transport annotations used for error-response validation.
-        const send = Object.assign((envelope) => initialized
-          ? transport.send(envelope)
-          : Promise.resolve({ statusCode: 200 }), transport.send);
+        const send = Object.assign((envelope) => {
+          if (!initialized) return Promise.resolve({ statusCode: 0 });
+          const epoch = consentEpoch;
+          // SDK 7 uses successful responses to promote Replay, even after reaccept.
+          return transport.send(envelope).then((response) => (
+            initialized && requested && epoch === consentEpoch ? response : { statusCode: 0 }
+          ));
+        }, transport.send);
         return {
           ...transport,
           // Replay sends directly, even when the core client is disabled.
@@ -196,6 +216,8 @@ export function closeSentryTelemetry() {
   requested = false;
   initialized = false;
   consentEpoch += 1;
+  for (const timer of promotionTimers) clearTimeout(timer);
+  promotionTimers.clear();
   if (!client || closing) return closing;
 
   client.getOptions().enabled = false;

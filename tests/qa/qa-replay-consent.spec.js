@@ -425,3 +425,62 @@ test('a queued transaction is discarded after withdrawal and reaccept', async ({
   await expect.poll(() => page.evaluate(() => JSON.stringify(window.qa.envelopes))).toContain('FRESH_TRACE');
   expect(await page.evaluate(() => JSON.stringify(window.qa.envelopes))).not.toContain('QUEUED_TRACE');
 });
+
+test('a late error response cannot promote a later consent period', async ({ page }) => {
+  await setup(page, 'buffer');
+  await accept(page);
+  await page.evaluate(() => {
+    window.qa.holdErrorResponse = true;
+    window.qa.telemetry.captureException(new Error('OLD_PENDING_ERROR'));
+  });
+  await page.waitForFunction(() => window.qa.releaseErrorResponse);
+  await page.getByRole('button', { name: 'Withdraw', exact: true }).click();
+  await stopped(page);
+  await page.waitForTimeout(2100);
+  await accept(page);
+  const id = await page.evaluate(() => window.qa.replay.getReplayId());
+  await page.evaluate(async () => {
+    window.qa.holdErrorResponse = false;
+    window.qa.releaseErrorResponse();
+    await window.qa.client.flush();
+  });
+  await page.waitForTimeout(5500);
+  expect(await page.evaluate(() => window.qa.replay._replay.recordingMode)).toBe('buffer');
+  expect(await page.evaluate(() => window.qa.replay.getReplayId())).toBe(id);
+  expect(await page.evaluate(() => window.qa.envelopes.filter(([, items]) => items.some(([header]) => header.type === 'replay_event')).length)).toBe(0);
+  await page.evaluate(() => window.qa.telemetry.captureException(new Error('FRESH_ERROR')));
+  await expect.poll(() => page.evaluate(() => window.qa.replay._replay.recordingMode)).toBe('session');
+});
+
+test('a scheduled error promotion cannot affect a later consent period', async ({ page }) => {
+  await setup(page, 'buffer');
+  await accept(page);
+  await page.evaluate(() => {
+    window.qa.holdErrorResponse = true;
+    window.qa.telemetry.captureException(new Error('OLD_SCHEDULED_ERROR'));
+  });
+  await page.waitForFunction(() => window.qa.releaseErrorResponse);
+  await page.evaluate(() => {
+    const schedule = window.setTimeout;
+    window.setTimeout = (callback, delay, ...args) => {
+      if (!delay) {
+        window.setTimeout = schedule;
+        window.qa.releasePromotionTimer = () => callback(...args);
+        return schedule(() => {}, 60_000);
+      }
+      return schedule(callback, delay, ...args);
+    };
+    window.qa.holdErrorResponse = false;
+    window.qa.releaseErrorResponse();
+  });
+  await page.waitForFunction(() => window.qa.releasePromotionTimer);
+  await page.getByRole('button', { name: 'Withdraw', exact: true }).click();
+  await stopped(page);
+  await accept(page);
+  await page.evaluate(() => window.qa.releasePromotionTimer());
+  await page.waitForTimeout(5500);
+  expect(await page.evaluate(() => window.qa.replay._replay.recordingMode)).toBe('buffer');
+  expect(await page.evaluate(() => window.qa.envelopes.filter(([, items]) => items.some(([header]) => header.type === 'replay_event')).length)).toBe(0);
+  await page.evaluate(() => window.qa.telemetry.captureException(new Error('FRESH_TIMER_ERROR')));
+  await expect.poll(() => page.evaluate(() => window.qa.replay._replay.recordingMode)).toBe('session');
+});

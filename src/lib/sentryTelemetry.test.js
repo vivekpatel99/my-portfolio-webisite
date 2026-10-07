@@ -85,6 +85,7 @@ describe('deferred Sentry SDK', () => {
       tracePropagationTargets: ['localhost', 'https://test.convex.cloud'],
     }));
     expect(sdk.replayOptions).toEqual({
+      beforeErrorSampling: expect.any(Function),
       maskAllText: true,
       maskAllInputs: true,
       blockAllMedia: true,
@@ -167,13 +168,16 @@ describe('deferred Sentry SDK', () => {
     await transport.send(envelope);
     expect(send).toHaveBeenCalledTimes(1);
 
+    let finishResponse;
+    send.mockImplementationOnce(() => new Promise((resolve) => { finishResponse = resolve; }));
+    const oldResponse = transport.send(envelope);
     let finishStop;
     replayStop.mockImplementationOnce(() => new Promise((resolve) => { finishStop = resolve; }));
     const stopping = telemetry.closeSentryTelemetry();
     expect(sdk.getCurrentHub().getClient().getDsn()).toBeUndefined();
     const accepting = telemetry.initializeSentryTelemetry();
-    await transport.send(envelope);
-    expect(send).toHaveBeenCalledTimes(1);
+    await expect(transport.send(envelope)).resolves.toEqual({ statusCode: 0 });
+    expect(send).toHaveBeenCalledTimes(2);
     expect(replayStart).toHaveBeenCalledTimes(1);
     finishStop();
     await stopping;
@@ -182,8 +186,10 @@ describe('deferred Sentry SDK', () => {
     expect(sdk.getCurrentHub().getClient().getDsn()).toBe('synthetic-dsn');
     expect(sdk.init).toHaveBeenCalledTimes(1);
     expect(replayStart).toHaveBeenCalledTimes(2);
-    await transport.send(envelope);
-    expect(send).toHaveBeenCalledTimes(2);
+    finishResponse({ statusCode: 200 });
+    await expect(oldResponse).resolves.toEqual({ statusCode: 0 });
+    await expect(transport.send(envelope)).resolves.toEqual({ statusCode: 200 });
+    expect(send).toHaveBeenCalledTimes(3);
   });
 });
 

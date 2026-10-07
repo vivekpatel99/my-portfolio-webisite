@@ -31,6 +31,9 @@ export function makeFetchTransport() {
       });
     }
     const isError = envelope[1].some(([header]) => header.type === 'event');
+    if (isError && window.qa.holdErrorResponse) {
+      return new Promise((resolve) => { window.qa.releaseErrorResponse = () => resolve({ statusCode: 200 }); });
+    }
     return Promise.resolve({ statusCode: isError ? window.qa.errorStatus ?? 200 : 200 });
   };
   send.__sentry__baseTransport__ = true;
