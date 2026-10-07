@@ -201,4 +201,66 @@ describe('ScrollToTop', () => {
     expect(document.activeElement).toBe(target);
     expect(target.scrollIntoView).toHaveBeenCalledTimes(2);
   });
+
+  it.each(['/#%E0%A4%A', '/#%'])('ignores malformed fragments on cold load: %s', (entry) => {
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    window.HTMLElement.prototype.scrollIntoView = vi.fn();
+    const setInterval = vi.spyOn(window, 'setInterval');
+
+    expect(() => renderAt(entry)).not.toThrow();
+    act(() => vi.advanceTimersByTime(2200));
+    runFrame();
+
+    expect(scrollTo).not.toHaveBeenCalled();
+    expect(window.HTMLElement.prototype.scrollIntoView).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(document.body);
+    expect(setInterval).not.toHaveBeenCalled();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it.each(['/#%E0%A4%A', '/#%'])('ignores malformed fragments after SPA navigation: %s', (entry) => {
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    window.HTMLElement.prototype.scrollIntoView = vi.fn();
+    const setInterval = vi.spyOn(window, 'setInterval');
+    renderAt('/');
+    scrollTo.mockClear();
+    const sourceAction = document.querySelector('button');
+    sourceAction.focus();
+
+    expect(() => act(() => navigate(entry))).not.toThrow();
+    act(() => vi.advanceTimersByTime(2200));
+    runFrame();
+
+    expect(scrollTo).not.toHaveBeenCalled();
+    expect(window.HTMLElement.prototype.scrollIntoView).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(sourceAction);
+    expect(setInterval).not.toHaveBeenCalled();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('cancels pending anchor retries when the next fragment is malformed', () => {
+    vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    window.HTMLElement.prototype.scrollIntoView = vi.fn();
+    renderAt('/#services');
+    expect(vi.getTimerCount()).toBe(1);
+
+    expect(() => act(() => navigate('/#%'))).not.toThrow();
+    act(() => vi.advanceTimersByTime(2200));
+
+    expect(vi.getTimerCount()).toBe(0);
+    expect(window.HTMLElement.prototype.scrollIntoView).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(document.body);
+  });
+
+  it.each([['%73ervices', 'services'], ['caf%C3%A9', 'café']])('decodes valid fragment #%s before scrolling and focusing', (fragment, id) => {
+    vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    window.HTMLElement.prototype.scrollIntoView = vi.fn();
+    renderAt(`/#${fragment}`);
+    const target = document.getElementById('services');
+    target.id = id;
+    act(() => vi.advanceTimersByTime(100));
+
+    expect(target.scrollIntoView).toHaveBeenCalledTimes(1);
+    expect(document.activeElement).toBe(target);
+  });
 });

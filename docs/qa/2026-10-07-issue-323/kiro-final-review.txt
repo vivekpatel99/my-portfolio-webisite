@@ -1,0 +1,48 @@
+[tool] Reading final-candidate.diff:1, kiro-review.log:1
+[tool] status: Completed
+[tool] Reading browser-verified.log:1, browser-delivery.log:1, candidate-tests.log:1, candidate-build.log:1
+[tool] status: Completed
+No new high-confidence findings for issue #323 at `744a863` against `8a80ffb`, and the earlier LOW finding is resolved. The new browser oracle holds up on source review, and the logs show 24 passing Chromium and WebKit desktop cases. Two runtime gaps remain: the mobile projects that now include the spec didn't run, and no run against the baseline shows the spec failing there.
+
+## Earlier LOW finding: resolved
+
+- **Before:** `getByText('Something went wrong.', { exact: true })` could never match the root fallback, whose full text is "Something went wrong. Back to home".
+- **Now:** `expectUsableShell` uses `getByText(/^Something went wrong\./)`. A regex is tested against the element's normalized text. The fallback `<p>` text starts with "Something went wrong.", so it matches, the count is at least 1, and `toHaveCount(0)` fails if the app crashes.
+- **No false positives in normal rendering:** all 24 runtime cases passed with this check after every navigation.
+- **Still in place:** the header, `#main-content` and `#site-footer` visibility checks and the `[data-route-error]` count. The check now has real oracles at both the root and route levels.
+
+## New position oracle (source review)
+
+The init script wraps `HTMLElement.prototype.scrollIntoView`. At call time it records `rect.top + scrollY - parseFloat(scrollPaddingTop)`, clamped to `[0, scrollHeight - innerHeight]`. `expectAnchorArrival` then takes the last `scrollIntoView` record for the target and requires the final `scrollY` to be within 2px of it, plus `toBeFocused` and `toBeInViewport`.
+
+- **Fails closed:** if `scrollIntoView` is never called, the distance is `Infinity`. If the padding can't be parsed, it is `NaN`. Neither passes `< 2`.
+- **Handles the retry:** `findLast` uses the last of the possibly repeated calls.
+- **Recorded before the entrance animation:** the geometry is taken before the SectionAnimator's 12px move. A later visual shift doesn't change the scroll position, which is what's being compared.
+- **Accepted limitation:** the oracle checks the scroll position the call produced, not where the target ends up after later layout shifts, such as images loading above it. `toBeInViewport` only partly covers this. It isn't a defect for this issue's "behaviour unchanged" scope.
+- **Malformed cases:** zero recorded `scrollIntoView`/`focus` calls on the tracked ids, no change in `scrollY`, focus stays where it was (or on `BODY` for cold load), no page errors after 2200ms, then recovery through a footer link.
+
+## Production scope
+
+The diff's only production `src` change is the `URIError` guard in `ScrollToTop.jsx:34-40`. Everything else is tests, QA configuration (`qa.config.js`) and sanitizer labels.
+
+## Runtime evidence (logs read)
+
+| Log | Result |
+|---|---|
+| `browser-verified.log` | 24 passed: `preview-desktop` and `preview-webkit-desktop`, 12 cases each |
+| `browser-delivery.log` | 24 passed, same 24 cases, about 29s |
+| `candidate-tests.log` | 68 files, 857 tests passed. The stderr is expected noise from `RouteErrorBoundary` tests. |
+| `candidate-build.log` | Full `npm run build` passed: image check, Vite, sitemap, static HTML for 21 routes |
+
+## Still unverified
+
+1. **Mobile projects didn't run.** The configuration adds the spec to `preview-mobile` (through `qaPassiveSpecs`, asserted in `qa-artifact-config.test.js`) and to `preview-webkit-mobile`. Both logs show only the two desktop projects, so CI will run about 48 cases, of which 24 have runtime evidence. Hypothesis: with `isMobile`/`hasTouch` from iPhone 14 plus the spec's 1280×720 override, the desktop header nav still renders and the 2px check holds. To accept: a passing run of `preview-mobile` and `preview-webkit-mobile` against `qa-fragments.spec.js`.
+2. **The spec hasn't been shown to fail on the baseline.** From source, the root crash would fail the shell checks. To accept: run the spec at `8a80ffb`. The malformed cases should fail on `expectUsableShell` and the valid and ordinary cases should pass.
+3. **Logs aren't tied to commits.** No log contains a commit hash, and I can't confirm `final-candidate.diff` is `8a80ffb...744a863`. I'm taking that binding on the coordinator's word.
+4. **Back button to a malformed hash from another route.** Carried over from the first review. It's a non-regression hypothesis and still not checked at runtime.
+
+## Model and skills
+
+- **Model:** you requested `portfolio_frontend_review`, claude-opus-5.5, high effort. Nothing at runtime confirms which model or effort level ran this review.
+- **Loaded this session:** only the six requested files (diff, two browser logs, test log, build log, earlier review). I loaded no skills or references. The `vercel-react-best-practices` and `web-design-guidelines` `SKILL.md` loads cited in the earlier review weren't repeated. I didn't run impeccable, a design critique or `DESIGN.md`, because the diff changes no UI.
+- **Not done:** no shell, browser or network access, no writes and no delegation. This isn't a complete design critique.

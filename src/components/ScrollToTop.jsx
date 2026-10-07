@@ -34,7 +34,13 @@ const ScrollToTop = () => {
       return focusMainAfterNavigation();
     }
     if (hash) {
-      const id = decodeURIComponent(hash.slice(1));
+      let id;
+      try {
+        id = decodeURIComponent(hash.slice(1));
+      } catch (error) {
+        if (error instanceof URIError) return undefined;
+        throw error;
+      }
       let attempts = 0;
       const intervalId = window.setInterval(() => {
         const target = document.getElementById(id);
