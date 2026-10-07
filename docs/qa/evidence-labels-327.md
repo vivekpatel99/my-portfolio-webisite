@@ -23,7 +23,7 @@ Codex in-app Browser also reproduced the bright-image overlap on the production 
 
 ## Verification
 
-`tests/qa/qa-evidence-labels.spec.js` tests all three current standalone image covers and the invoice multi-image gallery at each viewport in both engines. Local-only network guards block external transport. The suite is registered only for preview projects; safe artifact mode suppresses screenshots, and the sanitizer recognizes the suite.
+`tests/qa/qa-evidence-labels.spec.js` tests all three current standalone image covers and the invoice multi-image gallery at each viewport in both engines. Local-only network guards block external transport. The suite is registered for Chromium preview projects and both existing local-only WebKit preview projects; safe artifact mode suppresses screenshots, and the sanitizer recognizes the suite.
 
 - Baseline browser regression run had 24 standalone clearance failures and 8 gallery passes. The decisive assertion was `the whole edge label clears the media`; at Chromium 1440×900 the label bottom was 482.03125px and media top was 474.03125px.
 - After the inset, all 32 browser cases passed. Standalone cases check transparent labels, image aspect ratio, original source link, alt, caption, real display and original decoding, keyboard focus and Enter activation, and document overflow. Gallery checks cover arrow selection, enlargement, Escape, focus return, label/control clearance, and original decoding.
@@ -31,8 +31,21 @@ Codex in-app Browser also reproduced the bright-image overlap on the production 
 - The Impeccable detector reported the pre-existing blockquote side border. That unchanged style is outside #327.
 - No lint or typecheck script or project configuration is supplied in `package.json`; no such passing result is claimed. JavaScript syntax, unit tests and production compilation cover the changed source.
 
-The final unit suite passed all 850 tests in 68 files. The 46 QA configuration and sanitizer tests passed independently. The same 32 browser cases passed with `QA_ARTIFACT_SAFE_MODE=1`, which suppresses raw captures. `git diff --check` and changed JavaScript syntax checks passed. Existing test output includes intentional React error-boundary diagnostics and jsdom navigation notices. Builds report stale Browserslist data; no dependency refresh was added to this ticket.
+The full unit suite passed all 850 tests in 68 files. The 46 QA configuration and sanitizer tests passed independently. The same 32 browser cases passed with `QA_ARTIFACT_SAFE_MODE=1`, which suppresses raw captures. After Kiro review, the native configuration's four desktop/mobile Chromium/WebKit preview projects passed all 64 cases in safe artifact mode, including an explicit lightbox-close-button clearance assertion. Targeted gallery, configuration and sanitizer checks passed all 76 tests. `git diff --check` and changed JavaScript syntax checks passed. Existing test output includes intentional React error-boundary diagnostics and jsdom navigation notices. Builds report stale Browserslist data; no dependency refresh was added to this ticket.
 
-Independent Standards and Spec reviews found no actionable findings. The Spec reviewer inspected all four depth captures. The scoped comments review found no added comments or suppressions and requested no deletions. Kiro review follows the committed candidate before PR delivery.
+The original 32-case before/after runs used an external task-local config with two explicit engine projects, not the repository's desktop/mobile project names. It set `testDir` to this repository's `tests/qa`, `testMatch` to `qa-evidence-labels.spec.js`, `workers` to 2, `baseURL` to `http://127.0.0.1:5408`, `serviceWorkers` to `block`, and projects named `chromium` and `webkit` with their corresponding `browserName`. Output and list-reporter logs stayed in the external task directory. The final 64-case run imported the repository config with `QA_LOCAL_ONLY=1 QA_ARTIFACT_SAFE_MODE=1 QA_PREVIEW_URL=http://127.0.0.1:5408`, filtered each project's existing `testMatch` to this suite, and overrode only workers, output directory and reporter. Production builds were served on that loopback port.
+
+Independent Standards and Spec reviews found no actionable findings. The Spec reviewer inspected all four depth captures. The scoped comments review found no added comments or suppressions and requested no deletions.
+
+## Kiro review and dispositions
+
+[Actual Kiro output](kiro-review-327.txt) records the read-only review of candidate `1355fff9eb272bcc22ec27206aa94dc430ca692d`. The configured `portfolio_frontend_review` profile requests `claude-opus-5.5`; the invocation requests high effort and engine v2 with only read, grep and glob trusted. Kiro returned successfully but supplied no runtime model attestation. It found no source-confirmed production defects.
+
+- Accepted its native WebKit coverage finding. The original two-engine runs were real but used the external config. The final suite is now registered in both native WebKit preview projects, with a passing 64-case run.
+- Removed the stale carousel-only comment, used the existing test constant convention, and replaced the report's future Kiro statement with this actual review reference.
+- Verified all 16 PNGs are in the reviewed candidate using `git ls-tree`. The review diff intentionally omitted binary payloads; that omission did not mean the captures were uncommitted.
+- Verified depth and healthcare captions are nonempty and exercised by the regression suite. The planning cover has no caption. The 980×1324 capture shows the complete depth cover, both opposing corners and its caption. Non-depth covers also passed the image/label bounds and overflow checks in both engines.
+- Added the explicit close-button clearance assertion. Kiro's clipping observation was a verification caution, not a reproduced defect; unchanged source has no label-clipping container, and the independent Spec review confirmed the rendered captures.
+- The user's explicit separate-chat/worktree authorization supersedes the ticket's earlier current-checkout default. All changes stayed in the assigned worktree. The all-side inset matches the existing gallery's 12px inset and preserves uncropped evidence.
 
 No production deployment or live inquiry, email, lead or telemetry write was performed.

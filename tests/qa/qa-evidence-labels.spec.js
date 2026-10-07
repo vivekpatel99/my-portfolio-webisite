@@ -70,6 +70,9 @@ for (const viewport of viewports) {
     const dialog = page.getByRole('dialog');
     await expect(dialog).toBeVisible();
     await expectClearLabel(dialog, dialog.locator('.case-gallery-stage'));
+    const dialogLabel = await dialog.locator(':scope > .detection-label').boundingBox();
+    const closeButton = await dialog.getByRole('button', { name: 'Close enlarged image' }).boundingBox();
+    expect(closeButton.y).toBeGreaterThanOrEqual(dialogLabel.y + dialogLabel.height);
     await expect.poll(() => dialog.locator('.case-gallery-viewport img').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
     await page.keyboard.press('Escape');
     await expect(dialog).toHaveCount(0);
