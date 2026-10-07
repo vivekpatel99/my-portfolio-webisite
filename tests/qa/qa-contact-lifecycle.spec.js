@@ -118,6 +118,54 @@ async function expectEmptyContactForm(page) {
   }
 }
 
+const LENGTH_BOUNDARIES = [
+  { field: 'name', label: 'Full Name *', value: 'n'.repeat(200), limit: 200, message: 'Full name' },
+  { field: 'email', label: 'Email Address *', value: `${'a'.repeat(249)}@b.cd`, limit: 254, message: 'Email address' },
+  { field: 'description', label: 'Project Description *', value: 'd'.repeat(5000), limit: 5000, message: 'Project description' },
+];
+
+for (const { field, label, value, limit, message } of LENGTH_BOUNDARIES) {
+  test(`#325: rejects oversized ${field} locally, then sends its normalized boundary`, async ({ page, contactTransport: transport }) => {
+    await page.goto('/contact/');
+    await fillContactForm(page);
+    const control = page.getByLabel(label);
+    const draft = `  ${value}x  `;
+    await control.fill(draft);
+    const retainedValue = await control.inputValue();
+    const form = page.locator('form[data-sensitive-telemetry]');
+    await form.evaluate((element) => element.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })));
+    await expect(page.locator(`#${field}-error`)).toHaveText(`${message} must be ${limit} characters or fewer.`);
+    await expect(control).toBeFocused();
+    await expect(control).toHaveAttribute('aria-invalid', 'true');
+    await expect(control).toHaveAttribute('aria-describedby', `${field}-error`);
+    await expect(control).toHaveValue(retainedValue);
+    expect(transport.state.mutations).toHaveLength(0);
+    await expectNoDiagnostics(page);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+
+    await control.fill(`  ${value}  `);
+    await expect(control).toHaveAttribute('aria-invalid', 'false');
+    await expect(page.locator(`#${field}-error`)).toHaveCount(0);
+    await form.evaluate((element) => element.requestSubmit());
+    await expect.poll(() => transport.state.mutations.length).toBe(1);
+    expect(transport.state.mutations[0].args[0][field]).toBe(value);
+    transport.releasePending('success');
+    await expectEmptyContactForm(page);
+  });
+}
+
+test('#325: focuses the first invalid field and retains every overlong draft', async ({ page, contactTransport: transport }) => {
+  await page.goto('/contact/');
+  for (const { label, value } of LENGTH_BOUNDARIES) await page.getByLabel(label).fill(`${value}x`);
+  await page.locator('form[data-sensitive-telemetry]').evaluate((element) => element.requestSubmit());
+  await expect(page.getByLabel('Full Name *')).toBeFocused();
+  for (const { field, label, value } of LENGTH_BOUNDARIES) {
+    await expect(page.getByLabel(label)).toHaveValue(`${value}x`);
+    await expect(page.getByLabel(label)).toHaveAttribute('aria-describedby', `${field}-error`);
+  }
+  expect(transport.state.mutations).toHaveLength(0);
+});
+
 test('restores all tab-memory draft fields after keyboard navigation and Back without storage writes', async ({ page, context, contactTransport: transport }) => {
   await page.goto('/contact/');
   await expect(page.getByLabel('Full Name *')).toBeVisible();
