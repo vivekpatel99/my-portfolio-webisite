@@ -1,0 +1,130 @@
+[
+  {
+    "engine": "chromium",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "javaScriptEnabled": true,
+    "geometry": {
+      "viewport": 1440,
+      "scrollWidth": 1440,
+      "sectionTop": 69,
+      "headingTop": 165,
+      "firstContentTag": "DIV"
+    },
+    "errors": []
+  },
+  {
+    "engine": "chromium",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "javaScriptEnabled": false,
+    "geometry": {
+      "viewport": 1440,
+      "scrollWidth": 1440,
+      "sectionTop": 0,
+      "headingTop": 96,
+      "firstContentTag": "DIV"
+    },
+    "errors": []
+  },
+  {
+    "engine": "chromium",
+    "viewport": {
+      "width": 320,
+      "height": 740
+    },
+    "javaScriptEnabled": true,
+    "geometry": {
+      "viewport": 320,
+      "scrollWidth": 320,
+      "sectionTop": 69,
+      "headingTop": 165,
+      "firstContentTag": "DIV"
+    },
+    "errors": []
+  },
+  {
+    "engine": "chromium",
+    "viewport": {
+      "width": 320,
+      "height": 740
+    },
+    "javaScriptEnabled": false,
+    "geometry": {
+      "viewport": 320,
+      "scrollWidth": 320,
+      "sectionTop": 0,
+      "headingTop": 96,
+      "firstContentTag": "DIV"
+    },
+    "errors": []
+  },
+  {
+    "engine": "webkit",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "javaScriptEnabled": true,
+    "geometry": {
+      "viewport": 1440,
+      "scrollWidth": 1440,
+      "sectionTop": 69,
+      "headingTop": 165,
+      "firstContentTag": "DIV"
+    },
+    "errors": []
+  },
+  {
+    "engine": "webkit",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "javaScriptEnabled": false,
+    "geometry": {
+      "viewport": 1440,
+      "scrollWidth": 1440,
+      "sectionTop": 0,
+      "headingTop": 96,
+      "firstContentTag": "DIV"
+    },
+    "errors": []
+  },
+  {
+    "engine": "webkit",
+    "viewport": {
+      "width": 320,
+      "height": 740
+    },
+    "javaScriptEnabled": true,
+    "geometry": {
+      "viewport": 320,
+      "scrollWidth": 320,
+      "sectionTop": 69,
+      "headingTop": 165,
+      "firstContentTag": "DIV"
+    },
+    "errors": []
+  },
+  {
+    "engine": "webkit",
+    "viewport": {
+      "width": 320,
+      "height": 740
+    },
+    "javaScriptEnabled": false,
+    "geometry": {
+      "viewport": 320,
+      "scrollWidth": 320,
+      "sectionTop": 0,
+      "headingTop": 96,
+      "firstContentTag": "DIV"
+    },
+    "errors": []
+  }
+]
