@@ -14,6 +14,10 @@ The decorative purple diamond and its 148px desktop rail are removed. The quote 
 - A broader initial selection passed 59 checks and skipped four, with one WebKit hero-button bottom-pixel failure. That unrelated check passed when rerun in isolation on both the unchanged parent preview and candidate. No hero-button files changed.
 - `git diff --check` passed.
 
+## PR review correction
+
+The first CI run and Codex review identified one obsolete unit assertion that still required the removed rail. The failure reproduced locally (21 passing tests, one failure). The corrected test checks the counter inside the footer after the quote, its padded values before and after slide selection, and the absence of the decorative rail and complementary landmark. All 22 carousel unit tests and the full 914-test suite across 71 files then passed locally. This correction changes tests and this report; the rendered component and captured layout remain unchanged.
+
 The first build was accidentally launched in the shared checkout. Its original output was reconstructed and restored byte for byte against the starting SHA-256 inventory of all 118 files. The parent preview server on port 3000 remained running. Subsequent builds and browser artifacts used the temporary copy.
 
 ## Evidence

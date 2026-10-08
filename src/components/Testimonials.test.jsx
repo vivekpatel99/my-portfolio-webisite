@@ -77,11 +77,21 @@ describe('Testimonials Carousel', () => {
     expect(quoteArea.textContent).toContain(testimonials[0].content);
   });
 
-  it('keeps the visual rail out of the complementary landmark tree', () => {
+  it('keeps the slide counter in the footer after the quote without a decorative rail', () => {
     const { container } = render(<Testimonials />);
+    const quote = container.querySelector('blockquote');
+    const footer = container.querySelector('footer');
+    const counter = footer.querySelector('.count b');
+    const total = String(testimonials.length).padStart(2, '0');
 
-    expect(container.querySelector('.rail')?.tagName).toBe('DIV');
-    expect(container.querySelector('.rail[role="complementary"]')).toBeNull();
+    expect(footer.textContent).toContain('Field');
+    expect(counter.textContent.trim()).toBe(`01 / ${total}`);
+    expect(quote.compareDocumentPosition(footer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(container.querySelector('.rail, .glyph')).toBeNull();
+    expect(screen.queryByRole('complementary')).toBeNull();
+
+    fireEvent.click(slideButtons().at(-1));
+    expect(counter.textContent.trim()).toBe(`${total} / ${total}`);
   });
 
   it('renders correct number of testimonial dots', () => {
