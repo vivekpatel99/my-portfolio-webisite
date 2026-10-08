@@ -317,6 +317,8 @@ jobs:
           QA_LOCAL_ONLY: "1"
           QA_ARTIFACT_SAFE_MODE: "1"
         run: npm run qa:telemetry-boundary
+      - name: Verify production Replay consent lifecycle with synthetic transport
+        run: npm run qa:replay-consent
   test-and-build:
     runs-on: ubuntu-latest
     timeout-minutes: 5

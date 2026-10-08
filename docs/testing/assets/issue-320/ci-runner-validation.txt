@@ -1,0 +1,50 @@
+Issue #320 CI runner repair. Actual local command output with terminal control characters removed.
+
+
+Before repair: exit 1, server URL printed but readiness timed out.
+../../../../../../../../../../var/folders/ps/3qyy3_ms4fb64jwckmxppgtr0000gn/T/replay-consent-XbedDj/dist/assets/convexClient-Dq04BR9X.js   67.79 kB │ gzip:  19.09 kB
+../../../../../../../../../../var/folders/ps/3qyy3_ms4fb64jwckmxppgtr0000gn/T/replay-consent-XbedDj/dist/assets/index-uihkQ8gy.js         150.27 kB │ gzip:  49.00 kB
+../../../../../../../../../../var/folders/ps/3qyy3_ms4fb64jwckmxppgtr0000gn/T/replay-consent-XbedDj/dist/assets/sdk-BhvHVHKl.js           335.06 kB │ gzip: 109.12 kB
+✓ built in 586ms
+  ➜  Local:   http://127.0.0.1:5401/
+file:///Users/viv/.codex/worktrees/22db/horizons-website/tools/run-replay-consent-qa.js:42
+    const timeout = setTimeout(() => reject(new Error('Replay fixture server did not start')), 15000);
+                                            ^
+
+Error: Replay fixture server did not start
+    at Timeout.<anonymous> (file:///Users/viv/.codex/worktrees/22db/horizons-website/tools/run-replay-consent-qa.js:42:45)
+    at listOnTimeout (node:internal/timers:685:17)
+    at process.processTimers (node:internal/timers:618:7)
+
+Node.js v26.10.0
+
+After repair: exit 0, all 24 checks pass with CI=true FORCE_COLOR=1 and NO_COLOR unset.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✓   1 [chromium] › tests/qa/qa-replay-consent.spec.js:33:3 › session: withdraw discards unsent recording and reaccept starts one recorder (5.9s)
+  ✓   2 [chromium] › tests/qa/qa-replay-consent.spec.js:33:3 › buffer: withdraw discards unsent recording and reaccept starts one recorder (6.1s)
+  ✓   3 [chromium] › tests/qa/qa-replay-consent.spec.js:94:1 › withdraw during SDK download prevents later startup (363ms)
+  ✓   4 [chromium] › tests/qa/qa-replay-consent.spec.js:107:1 › withdraw during synchronous SDK setup defeats its delayed Replay timer (306ms)
+  ✓   5 [chromium] › tests/qa/qa-replay-consent.spec.js:120:3 › session: a dispatched segment may finish, but pending recording is not exported during immediate reaccept (197ms)
+  ✓   6 [chromium] › tests/qa/qa-replay-consent.spec.js:120:3 › buffer: a dispatched segment may finish, but pending recording is not exported during immediate reaccept (199ms)
+  ✓   7 [chromium] › tests/qa/qa-replay-consent.spec.js:148:3 › buffer: error-triggered successful send cannot restart a withdrawn recorder (192ms)
+  ✓   8 [chromium] › tests/qa/qa-replay-consent.spec.js:148:3 › buffer: error-triggered failed send cannot restart a withdrawn recorder (5.2s)
+  ✓   9 [chromium] › tests/qa/qa-replay-consent.spec.js:176:1 › withdraw during an expired session refresh prevents asynchronous recorder setup (114ms)
+  ✓  10 [chromium] › tests/qa/qa-replay-consent.spec.js:195:1 › a rejected error response does not promote a buffered replay (331ms)
+  ✓  11 [chromium] › tests/qa/qa-replay-consent.spec.js:211:3 › session: withdraw during real compression finish stops the recorder and permits reaccept (195ms)
+  ✓  12 [chromium] › tests/qa/qa-replay-consent.spec.js:211:3 › buffer: withdraw during real compression finish stops the recorder and permits reaccept (175ms)
+(node:4599) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✓  13 [webkit] › tests/qa/qa-replay-consent.spec.js:33:3 › session: withdraw discards unsent recording and reaccept starts one recorder (6.3s)
+  ✓  14 [webkit] › tests/qa/qa-replay-consent.spec.js:33:3 › buffer: withdraw discards unsent recording and reaccept starts one recorder (6.1s)
+  ✓  15 [webkit] › tests/qa/qa-replay-consent.spec.js:94:1 › withdraw during SDK download prevents later startup (606ms)
+  ✓  16 [webkit] › tests/qa/qa-replay-consent.spec.js:107:1 › withdraw during synchronous SDK setup defeats its delayed Replay timer (515ms)
+  ✓  17 [webkit] › tests/qa/qa-replay-consent.spec.js:120:3 › session: a dispatched segment may finish, but pending recording is not exported during immediate reaccept (444ms)
+  ✓  18 [webkit] › tests/qa/qa-replay-consent.spec.js:120:3 › buffer: a dispatched segment may finish, but pending recording is not exported during immediate reaccept (419ms)
+  ✓  19 [webkit] › tests/qa/qa-replay-consent.spec.js:148:3 › buffer: error-triggered successful send cannot restart a withdrawn recorder (413ms)
+  ✓  20 [webkit] › tests/qa/qa-replay-consent.spec.js:148:3 › buffer: error-triggered failed send cannot restart a withdrawn recorder (5.4s)
+  ✓  21 [webkit] › tests/qa/qa-replay-consent.spec.js:176:1 › withdraw during an expired session refresh prevents asynchronous recorder setup (296ms)
+  ✓  22 [webkit] › tests/qa/qa-replay-consent.spec.js:195:1 › a rejected error response does not promote a buffered replay (531ms)
+  ✓  23 [webkit] › tests/qa/qa-replay-consent.spec.js:211:3 › session: withdraw during real compression finish stops the recorder and permits reaccept (427ms)
+  ✓  24 [webkit] › tests/qa/qa-replay-consent.spec.js:211:3 › buffer: withdraw during real compression finish stops the recorder and permits reaccept (424ms)
+
+  24 passed (42.1s)
