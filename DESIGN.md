@@ -128,6 +128,8 @@ Confirmed on 3 October 2026: all twelve approved completed case studies share on
 
 Confirmed on 3 October 2026: testimonial controls show slide dots without a Pause/Play button. Confirmed: selecting a dot stops automatic rotation for the mounted carousel; all dots remain usable for reading other quotes. Existing reference: mouse hover and keyboard focus temporarily hold rotation, and reduced motion disables autoplay.
 
+Confirmed on 8 October 2026: remove the decorative purple diamond and its dedicated side rail from each testimonial panel. The quote uses the available panel width within its existing padding and reading measure. Place the existing `Field NN / NN` counter below the quote in the footer alongside the client identity and source, with wrapping on narrow screens. Preserve project titles, quotes, client details, panel corners and edge labels, functional diamond-shaped slide dots, keyboard focus, announcements, autoplay, hover/focus pause, and reduced-motion behavior.
+
 Proposed default: paragraphs, ordinary navigation links, individual footer links, legal text, gallery thumbnails, and captions receive no extra decorative boxes. Confirmed: the selected header navigation link is the scoped exception under NV-01. Proposed default: do not add a frame around every item inside a framed panel. Confirmed on 5 October 2026: keep the case-study card arrow visible without its redundant bordered tile inside the card link. Preserve navigation and keyboard focus. Action styling remains under BT-01.
 
 ### SH-03. Frame geometry
