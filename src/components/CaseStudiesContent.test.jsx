@@ -59,6 +59,13 @@ describe('CaseStudiesContent collection return', () => {
     return renderContent(['/case-studies/?resume=1']);
   };
 
+  it('starts with the collection heading without a home button or HOME label', () => {
+    renderContent();
+    expect(screen.getByRole('heading', { level: 1, name: /selected case studies/i })).toBeTruthy();
+    expect(screen.queryByRole('link', { name: 'Back to home', exact: true })).toBeNull();
+    expect(screen.queryByText('HOME', { exact: true })).toBeNull();
+  });
+
   it('paginates all twelve stories in one grid with each migrated story once', async () => {
     const user = userEvent.setup();
     renderContent();
@@ -162,6 +169,8 @@ describe('CaseStudiesContent collection return', () => {
       expect(noscript.split(`href="/project/${slug}/"`)).toHaveLength(2);
     });
     expect(markup).not.toContain('OTHER WORK');
+    expect(markup).not.toContain('Back to home');
+    expect(markup).not.toContain('>HOME<');
   });
 
   it('still saves core card departures', () => {
@@ -171,10 +180,8 @@ describe('CaseStudiesContent collection return', () => {
     expect(savedSnapshot()).toEqual({ loadedCount: initialCount, scrollY: 640 });
   });
 
-  it('does not save for non-collection controls inside the page', () => {
+  it('does not save a card departure on Load more pointerdown', () => {
     renderContent();
-    screen.getByRole('link', { name: 'Back to home' })
-      .dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true }));
     screen.getByRole('button', { name: 'Load more' })
       .dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true }));
     expect(savedSnapshot()).toBeNull();

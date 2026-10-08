@@ -244,7 +244,8 @@ test('preserves a dirty draft through featured and collection article navigation
   await expect(page.locator('#portfolio')).toBeVisible();
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
   await page.getByRole('link', { name: /View all case studies/ }).click();
-  await page.locator('main').getByRole('link', { name: /Back to home/ }).click();
+  await expect(page.locator('main').getByRole('link', { name: 'Back to home', exact: true })).toHaveCount(0);
+  await page.getByRole('link', { name: 'Vivek Patel home', exact: true }).click();
   await page.getByRole('link', { name: 'Request a Project Estimate', exact: true }).first().click();
   await expectPreservedValues(page);
   expect(unloadWarnings).toBe(0);
@@ -262,7 +263,8 @@ test('case study navigation leaves modified clicks unprevented', async ({ page }
     await page.goto(route, { waitUntil: 'networkidle' });
     const links = route.startsWith('/project/')
       ? page.locator('.case-study-navigation a, .case-study-cta a')
-      : page.locator('main').getByRole('link', { name: /Back to home/ });
+      : page.getByRole('link', { name: 'Vivek Patel home', exact: true });
+    await expect(links).toHaveCount(route.startsWith('/project/') ? 3 : 1);
     for (const link of await links.all()) {
       for (const options of [{ ctrlKey: true }, { metaKey: true }, { shiftKey: true }, { altKey: true }, { button: 1 }]) {
         const prevented = await link.evaluate((element, clickOptions) => {
@@ -288,7 +290,8 @@ for (const activation of ['modified', 'middle']) {
       await page.goto(route);
       const links = route.startsWith('/project/')
         ? page.locator('.case-study-navigation a, .case-study-cta a')
-        : page.locator('main').getByRole('link', { name: /Back to home/ });
+        : page.getByRole('link', { name: 'Vivek Patel home', exact: true });
+      await expect(links).toHaveCount(route.startsWith('/project/') ? 3 : 1);
       for (const link of await links.all()) {
         const href = await link.getAttribute('href');
         const options = activation === 'middle' ? { button: 'middle' } : { modifiers: ['ControlOrMeta'] };

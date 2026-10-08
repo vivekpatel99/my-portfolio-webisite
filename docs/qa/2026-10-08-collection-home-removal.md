@@ -27,3 +27,9 @@ Screenshots show the initial collection with the button removed. The 320px headi
 | Chromium narrow, JavaScript | [320 × 740](assets/collection-home-removal/chromium-320-js.png) |
 | WebKit desktop, no JavaScript | [1440 × 900](assets/collection-home-removal/webkit-1440-no-js.png) |
 | WebKit narrow, no JavaScript | [320 × 740](assets/collection-home-removal/webkit-320-no-js.png) |
+
+## CI follow-up
+
+The first full CI run found two unit tests and the dirty-draft browser flow still using the removed collection home button. The two unit failures reproduced locally before the test updates. Collection tests now assert that the button and HOME label are absent in client and static output. Article home-link tests remain intact. Contact QA uses the existing header home link after returning to the collection, preserving draft, document-navigation, unload, and article-return assertions. Native click tests require the expected link count so collection coverage cannot silently disappear.
+
+After the updates, all 33 tests in `CaseStudiesContent.test.jsx`, `CaseStudyArticle.test.jsx`, `CaseStudies.test.jsx`, and `caseStudyBrowsing.test.js` passed. Focused contact-lifecycle QA passed 28 cases in Chromium and WebKit at 1280px and 390px with both motion settings. Four existing WebKit native middle-click cases remain skipped because macOS headless WebKit cannot establish Safari tab-opening behavior. The modified-click and unprevented-event checks passed. QA used isolated synthetic transport on port 4193.
