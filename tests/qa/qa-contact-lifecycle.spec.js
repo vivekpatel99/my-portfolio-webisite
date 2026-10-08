@@ -6,6 +6,8 @@ import { assertLoopbackWebSocketUrl } from './qa-local-only.js';
 import { assertVisualLayout } from './visual-layout.js';
 import { createConvexTransportMock, SYNTHETIC_FAILURE } from './qa-convex-transport-mock.js';
 
+import { chooseBudget, expectBudget } from './qa-budget.js';
+
 const CONVEX_MOCK_HOST = 'qa-contact-lifecycle.convex.cloud';
 const SAFE_FAILURE_MESSAGE = "We couldn't send your request. Please try again, or use the email address on this page.";
 const DIAGNOSTIC_FRAGMENTS = ['Request ID', 'synthetic-audit', 'CONVEX', 'Server Error', 'syntheticStack', 'fixture.js', 'Called by client'];
@@ -68,14 +70,14 @@ test.afterEach(async ({ context }) => {
 async function fillContactForm(page) {
   await page.getByLabel('Full Name *').fill('Synthetic QA Contact');
   await page.getByLabel('Email Address *').fill('qa-contact@example.invalid');
-  await page.getByLabel('Budget Range').selectOption(SELECTED_BUDGET);
+  await chooseBudget(page, SELECTED_BUDGET);
   await page.getByLabel('Project Description *').fill('Synthetic transport lifecycle test.');
 }
 
 async function expectPreservedValues(page) {
   await expect(page.getByLabel('Full Name *')).toHaveValue('Synthetic QA Contact');
   await expect(page.getByLabel('Email Address *')).toHaveValue('qa-contact@example.invalid');
-  await expect(page.getByLabel('Budget Range')).toHaveValue(SELECTED_BUDGET);
+  await expectBudget(page, SELECTED_BUDGET);
   await expect(page.getByLabel('Project Description *')).toHaveValue('Synthetic transport lifecycle test.');
 }
 
@@ -126,7 +128,8 @@ async function readBrowserStorage(page) {
 }
 
 async function expectEmptyContactForm(page) {
-  for (const label of ['Full Name *', 'Email Address *', 'Budget Range', 'Project Description *']) {
+  await expectBudget(page, '');
+  for (const label of ['Full Name *', 'Email Address *', 'Project Description *']) {
     await expect(page.getByLabel(label)).toHaveValue('');
   }
 }
@@ -320,7 +323,7 @@ test('restores all tab-memory draft fields after keyboard navigation and Back wi
 
   await expect(page.getByLabel('Full Name *')).toHaveValue('Synthetic QA Contact');
   await expect(page.getByLabel('Email Address *')).toHaveValue('qa-contact@example.invalid');
-  await expect(page.getByLabel('Budget Range')).toHaveValue(SELECTED_BUDGET);
+  await expectBudget(page, SELECTED_BUDGET);
   await expect(page.getByLabel('Project Description *')).toHaveValue('Synthetic first line\nSynthetic second line');
   expect(await readBrowserStorage(page)).toEqual(initialStorage);
   await page.getByLabel('Project Description *').focus();
@@ -361,7 +364,7 @@ test('restores all tab-memory draft fields after keyboard navigation and Back wi
   for (const label of ['Full Name *', 'Email Address *', 'Project Description *']) {
     await page.getByLabel(label).fill('');
   }
-  await page.getByLabel('Budget Range').selectOption('');
+  await chooseBudget(page, '');
   expect(await unloadIsPrevented(page)).toBe(false);
   await navigateToServicesByKeyboard(page);
   await returnToContactByBack(page);
@@ -609,6 +612,8 @@ test('holds one pending keyboard submit, blocks duplicates, shows safe failure g
   const idleSize = await submit.boundingBox();
   await page.getByLabel('Full Name *').press('Enter');
   await expect(submit).toBeDisabled();
+  await expect(page.locator('#budget')).toBeDisabled();
+  await expect(page.locator('input[name="budget"]')).toBeDisabled();
   await expect(submit).toContainText(/sending/i);
   await expect(submit).toHaveAccessibleName('Sending…');
   const sendingSize = await submit.boundingBox();
@@ -674,7 +679,7 @@ test('holds one pending keyboard submit, blocks duplicates, shows safe failure g
   });
   await expect(page.getByLabel('Full Name *')).toHaveValue('');
   await expect(page.getByLabel('Email Address *')).toHaveValue('');
-  await expect(page.getByLabel('Budget Range')).toHaveValue('');
+  await expectBudget(page, '');
   await expect(page.getByLabel('Project Description *')).toHaveValue('');
 
   await page.clock.runFor(10_500);

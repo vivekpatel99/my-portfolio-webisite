@@ -1,5 +1,7 @@
 # Portable native-budget QA
 
+Historical report: the 8 October 2026 approved themed dropdown supersedes this native control. The results below describe the earlier implementation only. Current behavior and evidence are recorded in [the themed budget QA](2026-10-08-themed-budget.md).
+
 Issue [#330](https://github.com/vivekpatel99/my-portfolio-webisite/issues/330) uses the inspected `develop` baseline `8a80ffb834ed9f28edf7eb497f8caa12bc8c4da7` on 7 October 2026. The task worktree started clean. The production application and QA project configuration are unchanged.
 
 ## Stable fixture

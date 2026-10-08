@@ -1,3 +1,4 @@
+import { chooseBudget } from './qa-budget.js';
 import { expect, test } from './qa-test.js';
 import {
   caseStudies,
@@ -170,7 +171,7 @@ test('contact guidance, budget dropdown, and validation work without submitting 
     'mailto:contact@vivekapatel.com',
   );
 
-  await page.getByLabel('Budget Range').selectOption({ label: '€5,000 - €10,000' });
+  await chooseBudget(page, '€5k-€10k');
   await expect(page.getByLabel('Budget Range')).toContainText('€5,000 - €10,000');
 
   await page.getByRole('button', { name: /Send project request/i }).click();

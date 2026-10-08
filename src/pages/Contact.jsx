@@ -11,7 +11,7 @@ import { Seo, routeSeo } from '@/lib/seo';
 import { usePageMotion } from '@/lib/pageMotion';
 import { useContactDraft } from '@/lib/useContactDraft';
 import { captureException } from '@/lib/sentryTelemetry';
-import { BUDGET_LABELS, BUDGET_OPTIONS } from '@/lib/budgetOptions';
+import BudgetSelect from '@/components/BudgetSelect';
 import { SENSITIVE_TELEMETRY_REGION_PROPS } from '@/lib/sensitiveTelemetry';
 import { CONTACT_LEAD_VALIDATION_ERROR, validateContactFields } from '../../convex/lib/leadValidation';
 
@@ -114,7 +114,7 @@ const Contact = () => {
       setFieldErrors(nextErrors);
       const firstInvalidField = Object.keys(nextErrors)[0];
       const firstError = nextErrors[firstInvalidField];
-      telemetrySource.elements.namedItem(firstInvalidField)?.focus();
+      telemetrySource.querySelector(`#${firstInvalidField}`)?.focus();
       setFeedbackToast(toast({
         title: firstInvalidField === 'email' && firstError === 'Enter a valid email address.'
           ? "Invalid email address."
@@ -272,32 +272,12 @@ const Contact = () => {
                 {fieldErrors.email ? <p id="email-error" role="alert" className="mt-2 text-sm text-red-400">{fieldErrors.email}</p> : null}
               </div>
 
-              <div className="contact-detection-field mb-5">
-                <div className="contact-detection-frame" data-filled={Boolean(formState.budget)}>
-                  <label htmlFor="budget" className="contact-detection-label">
-                    Budget Range
-                  </label>
-                  <select
-                  id="budget"
-                  name="budget"
-                  value={formState.budget}
-                  onChange={(event) => handleSelectChange(event.target.value)}
-                  disabled={isSubmitting}
-                  className="contact-detection-control contact-detection-select"
-                  aria-invalid={Boolean(fieldErrors.budget)}
-                  aria-describedby={fieldErrors.budget ? 'budget-error' : undefined}
-                >
-                  {formState.budget && !BUDGET_OPTIONS.includes(formState.budget) ? (
-                    <option value={formState.budget} disabled>Choose a listed range or leave blank</option>
-                  ) : null}
-                  <option value="">Select your budget range</option>
-                  {BUDGET_OPTIONS.map((value) => (
-                    <option key={value} value={value}>{BUDGET_LABELS[value]}</option>
-                  ))}
-                  </select>
-                </div>
-                {fieldErrors.budget ? <p id="budget-error" role="alert" className="mt-2 text-sm text-red-400">{fieldErrors.budget}</p> : null}
-              </div>
+              <BudgetSelect
+                value={formState.budget}
+                onChange={handleSelectChange}
+                disabled={isSubmitting}
+                error={fieldErrors.budget}
+              />
 
               <div className="contact-detection-field mb-4">
                 <div className="contact-detection-frame contact-detection-frame-area" data-filled={Boolean(formState.description)}>
