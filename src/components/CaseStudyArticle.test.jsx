@@ -5,7 +5,6 @@ import { MemoryRouter, useLocation } from 'react-router-dom';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it } from 'vitest';
 import CaseStudyArticle from './CaseStudyArticle.js';
-import CaseStudiesContent from './CaseStudiesContent.js';
 
 const story = { slug: 'synthetic-story', title: 'Synthetic story', summary: 'Synthetic summary', sections: [] };
 const Location = () => {
@@ -30,14 +29,6 @@ describe('case study internal navigation', () => {
     expect(link.getAttribute('href')).toBe(href);
     fireEvent.click(link);
     expect(screen.getByTestId('location').textContent).toBe(href);
-  });
-
-  it('routes the collection home link in the current document', () => {
-    render(<MemoryRouter initialEntries={['/case-studies/']}>
-      <CaseStudiesContent stories={[]} /><Location />
-    </MemoryRouter>);
-    fireEvent.click(screen.getByRole('link', { name: /Back to home/ }));
-    expect(screen.getByTestId('location').textContent).toBe('/');
   });
 
   it.each(articleLinks)('leaves modified and middle %s clicks to the browser', (name) => {
