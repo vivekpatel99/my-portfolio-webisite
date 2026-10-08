@@ -1071,14 +1071,12 @@ test('mobile menu isolates the identified site footer without mutating the testi
   await expect(siteFooter).not.toHaveAttribute('aria-hidden', 'true');
 });
 
-test('testimonial Field Quote structure without soft asserts', async ({ page }) => {
+test('testimonial quote panel keeps its counter below the quote', async ({ page }) => {
   await page.goto('/');
   
   await expect(page.locator('#testimonials')).toBeAttached();
   
-  // New craft Field Quote structure
   await expect(page.locator('#testimonials .field')).toHaveCount(1);
-  await expect(page.locator('#testimonials .rail')).toHaveCount(1);
   await expect(page.locator('#testimonials .quote-area')).toHaveCount(1);
   
   // Diamond-shaped navigation dots (buttons, not tabs)
@@ -1089,7 +1087,7 @@ test('testimonial Field Quote structure without soft asserts', async ({ page }) 
   
   // Verify structural elements
   await expect(page.locator('#testimonials blockquote')).toHaveCount(1);
-  await expect(page.locator('#testimonials .count')).toHaveCount(1);
+  await expect(page.locator('#testimonials footer .count')).toHaveCount(1);
 });
 
 test('reduced motion disables custom cursor', async ({ page }) => {

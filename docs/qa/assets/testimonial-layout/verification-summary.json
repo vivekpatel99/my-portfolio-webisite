@@ -1,0 +1,47 @@
+{
+  "baseCommit": "751464d678d26335d3b9b423f39a41a227a41786",
+  "build": "passed",
+  "carousel": {
+    "passed": 56,
+    "skipped": 4,
+    "failed": 0,
+    "projects": [
+      "chromium-desktop",
+      "chromium-mobile",
+      "webkit-desktop",
+      "webkit-mobile"
+    ],
+    "specs": [
+      "qa-testimonials.spec.js",
+      "qa-a11y.spec.js",
+      "qa-upgrade-interactions.spec.js"
+    ]
+  },
+  "layout": {
+    "passed": 80,
+    "failed": 0,
+    "widths": [
+      1440,
+      390,
+      320,
+      640
+    ],
+    "browsers": [
+      "chromium",
+      "webkit"
+    ],
+    "slidesPerViewport": 10
+  },
+  "broaderSelection": {
+    "passed": 59,
+    "skipped": 4,
+    "failed": 1,
+    "failure": "WebKit hero primary CTA bottom-pixel assertion",
+    "isolatedParentRerun": "passed",
+    "isolatedCandidateRerun": "passed"
+  },
+  "parentPreview": {
+    "port": 3000,
+    "restoredFilesWithMatchingBaselineHashes": 118
+  }
+}

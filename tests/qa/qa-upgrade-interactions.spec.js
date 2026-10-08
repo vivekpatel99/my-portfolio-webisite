@@ -236,14 +236,12 @@ test('craft signal surfaces: Services cards keep offer markers and metadata', as
   await expect(firstService.getByRole('link', { name: /Scope details/i })).toBeVisible();
 });
 
-test('craft signal surfaces: Testimonials Field Quote has rail and diamond dots', async ({ page }) => {
+test('Testimonials has a footer counter and diamond navigation dots', async ({ page }) => {
   await page.goto('/#testimonials');
   const testimonials = page.locator('#testimonials');
   await expect(testimonials).toBeVisible();
   
-  // Rail with field counter
-  await expect(testimonials.locator('.rail')).toBeVisible();
-  await expect(testimonials.locator('.count')).toBeVisible();
+  await expect(testimonials.locator('footer .count')).toBeVisible();
   
   // Quote area with large quotes
   await expect(testimonials.locator('.quote-area')).toBeVisible();
@@ -425,9 +423,7 @@ test('e2e: Testimonials carousel advance and structure', async ({ page }) => {
   await expect(testimonials.locator('blockquote')).not.toHaveText(initialQuote ?? '');
   await expect(testimonials.locator('blockquote')).toBeVisible();
   
-  // Verify rail structure persists
-  await expect(testimonials.locator('.rail')).toBeVisible();
-  await expect(testimonials.locator('.count')).toBeVisible();
+  await expect(testimonials.locator('footer .count')).toBeVisible();
 });
 
 const collectionReturnLink = (page) => page

@@ -99,30 +99,14 @@ const Testimonials = () => {
                         aria-label={`${activeIndex + 1} of ${testimonials.length}`}
                         aria-live={isRotating ? 'off' : 'polite'}
                         tabIndex={0}
-                        className="field detection-panel relative min-h-[337px] grid grid-cols-1 md:grid-cols-[148px_1fr] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a78bfa] transition-colors"
+                        className="field detection-panel relative min-h-[337px] flex flex-col focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a78bfa] transition-colors"
                     >
                         <DetectionLabel>
                             TESTIMONIAL · <b className="font-medium">{testimonial.clientName}</b>
                         </DetectionLabel>
 
-                        {/* Rail */}
-                        <div className="rail py-4 md:py-8 px-5 md:px-6 flex md:flex-col flex-row justify-between items-center md:items-start">
-                            <div className="glyph w-[40px] h-[40px] md:w-[54px] md:h-[54px] relative text-[#8B5CF6]">
-                                <span className="absolute inset-[5px] md:inset-[7px] border border-current rotate-45"></span>
-                                <span className="absolute inset-[12px] md:inset-[17px] border border-[rgba(255,255,255,0.42)] rotate-45"></span>
-                                <i className="absolute w-px h-full bg-current left-1/2 -translate-x-1/2"></i>
-                                <i className="absolute h-px w-full bg-current top-1/2 -translate-y-1/2"></i>
-                            </div>
-                            <div className="count font-mono text-[9px] text-[#9ca3af] leading-[1.8]">
-                                Field<br/>
-                                <b className="text-[#a78bfa] font-medium">
-                                    {String(activeIndex + 1).padStart(2, '0')} / {String(testimonials.length).padStart(2, '0')}
-                                </b>
-                            </div>
-                        </div>
-
                         {/* Quote area */}
-                        <article className="quote-area py-[24px] md:py-[34px] px-5 md:px-12 flex flex-col">
+                        <article className="quote-area py-[24px] md:py-[34px] px-5 md:px-12 flex flex-col flex-1">
                             <div className="project font-mono mt-2 text-[#9ca3af] text-[10px]">
                                 PROJECT · <span className="text-[#c1b8da]">{testimonial.projectTitle || testimonial.project || 'Automated Data Extraction Workflow'}</span>
                             </div>
@@ -139,6 +123,12 @@ const Testimonials = () => {
                                             {testimonial.source}
                                         </span>
                                     )}
+                                </div>
+                                <div className="count shrink-0 whitespace-nowrap font-mono text-[9px] text-[#9ca3af] leading-[1.8]">
+                                    Field<br/>
+                                    <b className="text-[#a78bfa] font-medium">
+                                        {String(activeIndex + 1).padStart(2, '0')} / {String(testimonials.length).padStart(2, '0')}
+                                    </b>
                                 </div>
                             </footer>
                         </article>
