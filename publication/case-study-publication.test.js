@@ -220,6 +220,8 @@ const runPublicationBuild = async (directory) => {
 };
 const runAffectedTests = (directory) => runFixtureCommand(path.join(directory, 'node_modules/.bin/vitest'), [
   'run',
+  // The outer runner's worker limit does not apply to this child Vitest process.
+  '--maxWorkers=2',
   'src/data/caseStudies.test.js',
   'tools/case-study-route-integrity.test.js',
   'src/components/Portfolio.test.jsx',
