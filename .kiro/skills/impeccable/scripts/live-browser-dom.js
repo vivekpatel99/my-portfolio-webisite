@@ -246,9 +246,10 @@
     // Reka FocusScope) also hears the page's own focusout as focus leaves its
     // modal for our chrome, and pulls it back. Register on the document in
     // capture, ahead of the trap. The page's own focusout handlers miss that
-    // one transition too; blur still fires.
+    // one transition too; blur still fires. Stop same-document listeners as
+    // well, since stopping propagation alone does not suppress them.
     function stopFocusOutIntoChrome(e) {
-      if (own(e.relatedTarget)) e.stopPropagation();
+      if (own(e.relatedTarget)) e.stopImmediatePropagation();
     }
 
     return {
