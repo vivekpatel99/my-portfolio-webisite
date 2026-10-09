@@ -51,13 +51,13 @@ export default function BudgetSelect({ value, onChange, disabled, error }) {
           {...SENSITIVE_TELEMETRY_REGION_PROPS}
         >
           {stale ? (
-            <ListboxOption value={value} disabled className="contact-budget-option">
+            <ListboxOption value={value} disabled aria-label={STALE_LABEL} className="contact-budget-option">
               <span>{STALE_LABEL}</span>
               <span className="contact-budget-check" aria-hidden="true"><Check size={18} /></span>
             </ListboxOption>
           ) : null}
           {['', ...BUDGET_OPTIONS].map((option) => (
-            <ListboxOption key={option} value={option} className="contact-budget-option">
+            <ListboxOption key={option} value={option} aria-label={BUDGET_LABELS[option] ?? EMPTY_LABEL} className="contact-budget-option">
               {({ selected }) => (
                 <>
                   <span>{BUDGET_LABELS[option] ?? EMPTY_LABEL}</span>

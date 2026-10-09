@@ -43,6 +43,14 @@ The prior-source Enter regression failed with one native submit event and no ope
 
 Spoken VoiceOver/NVDA output, physical Safari/iOS devices, native browser zoom, and physical touchscreen scroll gestures were not exercised. WebKit forced-colors emulation and headless middle-click do not establish those platform behaviors.
 
+## CI follow-up on 9 October
+
+The initial hosted run failed one WebKit typeahead check and one mobile WebKit lifecycle selection. Both scenarios passed repeated local checks on the original source: ten keyboard repetitions and 40 lifecycle repetitions. The lifecycle failure remains unreproduced locally.
+
+The primitive derives option text from a detached clone after removing the decorative checkmark. Explicit option names now match the visible labels, so typeahead does not depend on the clone's rendered text. A focused unit regression fails on the prior source by retaining `€25k+` after typing `<`, and passes on the repaired source by committing `< €5k` without submission. No appearance, string catalog, or transport changes are involved.
+
+The repaired source passed 917 unit tests, the 30-check dropdown matrix with six expected skips, the full 204-check synthetic lifecycle with four expected skips, production build/static-route checks, and artifact sanitization verification. Follow-up source hashes and browser counts are recorded separately in the verification file; the screenshots and initial environment records above remain from the original verification.
+
 ## Screenshots
 
 The desktop image shows a checkmark on the selected row and a separate outline on the next focused row.
@@ -67,4 +75,4 @@ Its default output directory is temporary and outside the repository. Set `QA_BU
 
 Run the existing field-state suite with `QA_COLOR_SCHEME_BASE_URL` and an external `QA_COLOR_SCHEME_OUTPUT_DIR`, filtering for `contact controls`. Run the synthetic lifecycle suite with `QA_CONTACT_LIFECYCLE_PORT` and an external `QA_CONTACT_LIFECYCLE_ARTIFACT_DIR`.
 
-The [7 October native-budget report](2026-10-07-issue-330-native-budget.md) is historical evidence for the superseded control. This report covers the new dropdown. No merge or production deployment is included.
+The [7 October native-budget report](2026-10-07-issue-330-native-budget.md) is historical evidence for the superseded control. This report covers local verification of the new dropdown. Production deployment is outside this change.

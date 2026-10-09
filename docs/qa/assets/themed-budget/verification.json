@@ -175,5 +175,41 @@
     "observed": "Failed to open; native submit counter became 1 with a valid synthetic lead and blocked external transport",
     "finalSource": "Same regression passes in all 12 browser/viewport/motion projects with zero submit events"
   },
-  "externalSubmission": "Blocked HTTP and WebSocket egress for passive tests; lifecycle uses isolated synthetic Convex transport only"
+  "externalSubmission": "Blocked HTTP and WebSocket egress for passive tests; lifecycle uses isolated synthetic Convex transport only",
+  "ciFollowUp": {
+    "date": "2026-10-09",
+    "originalHead": "9219cdb7fbdac750623e1f7ab7a6f9071892e7a1",
+    "sourceSha256": {
+      "src/components/BudgetSelect.jsx": "0311cfc26474455bdad7405585a223bbe50045c5050104e84661f39af9dea867",
+      "src/pages/Contact.test.jsx": "06eb19a17964adda36c33c755dab6408e8f4224b72a502f4f95a3e3615772a62"
+    },
+    "priorSourceRepetitions": {
+      "webkitKeyboardPassed": 10,
+      "webkitLifecyclePassed": 40
+    },
+    "typeaheadRegression": {
+      "priorSource": "Failed: typing < retained euro25k+",
+      "repairedSource": "Passed: typing < commits exact < euro5k value without submission"
+    },
+    "dropdown": {
+      "startTime": "2026-10-09T05:54:26.321Z",
+      "duration": 47348.246999999996,
+      "expected": 30,
+      "skipped": 6,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "contactLifecycle": {
+      "startTime": "2026-10-09T05:54:12.264Z",
+      "duration": 157230.734,
+      "expected": 204,
+      "skipped": 4,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "limitations": [
+      "Initial hosted mobile WebKit selection failure not reproduced locally.",
+      "Initial screenshots and native accessibility inspection precede the explicit option-label repair."
+    ]
+  }
 }

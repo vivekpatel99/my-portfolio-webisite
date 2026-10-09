@@ -739,6 +739,18 @@ describe("Contact form", () => {
     expect(mockSubmitLead).not.toHaveBeenCalled();
   });
 
+  it('commits a budget typed by its visible label while the selected checkmark is present', async () => {
+    const user = userEvent.setup();
+    const { container } = render(<Contact />);
+    const budget = screen.getByLabelText('Budget Range');
+    await user.click(budget);
+    await user.keyboard('{End}{Enter}{ArrowDown}<{Enter}');
+    expect(budget.textContent).toBe('Budget Range < €5,000');
+    expect(new FormData(container.querySelector('form')).get('budget')).toBe('< €5k');
+    expect(document.activeElement).toBe(budget);
+    expect(mockSubmitLead).not.toHaveBeenCalled();
+  });
+
   it('opens a focused budget with Enter without submitting a valid lead or toggling on key repeat', async () => {
     const user = userEvent.setup();
     const { container } = render(<Contact />);
