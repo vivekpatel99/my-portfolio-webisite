@@ -70,7 +70,7 @@ test.afterEach(async ({ context }) => {
 async function fillContactForm(page) {
   await page.getByLabel('Full Name *').fill('Synthetic QA Contact');
   await page.getByLabel('Email Address *').fill('qa-contact@example.invalid');
-  await chooseBudget(page, SELECTED_BUDGET);
+  await chooseBudget(page, SELECTED_BUDGET, { keyboard: true });
   await page.getByLabel('Project Description *').fill('Synthetic transport lifecycle test.');
 }
 
@@ -364,7 +364,7 @@ test('restores all tab-memory draft fields after keyboard navigation and Back wi
   for (const label of ['Full Name *', 'Email Address *', 'Project Description *']) {
     await page.getByLabel(label).fill('');
   }
-  await chooseBudget(page, '');
+  await chooseBudget(page, '', { keyboard: true });
   expect(await unloadIsPrevented(page)).toBe(false);
   await navigateToServicesByKeyboard(page);
   await returnToContactByBack(page);
