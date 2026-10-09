@@ -1,0 +1,61 @@
+
+Running 24 tests using 1 worker
+
+  ✓   1 [chromium-390-no-preference] › tests/qa/qa-color-scheme.spec.js:29:1 › every public and missing route declares the dark scheme in rendered and served HTML (14.7s)
+  -   2 [chromium-390-no-preference] › tests/qa/qa-color-scheme.spec.js:44:1 › built root, static routes, and 404 retain exactly one theme tag
+  ✓   3 [chromium-390-no-preference] › tests/qa/qa-color-scheme.spec.js:57:1 › contact controls preserve layout, visual states, and keyboard access (4.2s)
+  ✓   4 [chromium-390-reduce] › tests/qa/qa-color-scheme.spec.js:29:1 › every public and missing route declares the dark scheme in rendered and served HTML (7.7s)
+  -   5 [chromium-390-reduce] › tests/qa/qa-color-scheme.spec.js:44:1 › built root, static routes, and 404 retain exactly one theme tag
+  ✓   6 [chromium-390-reduce] › tests/qa/qa-color-scheme.spec.js:57:1 › contact controls preserve layout, visual states, and keyboard access (3.9s)
+  ✓   7 [chromium-1440-no-preference] › tests/qa/qa-color-scheme.spec.js:29:1 › every public and missing route declares the dark scheme in rendered and served HTML (7.7s)
+  ✓   8 [chromium-1440-no-preference] › tests/qa/qa-color-scheme.spec.js:44:1 › built root, static routes, and 404 retain exactly one theme tag (226ms)
+  ✓   9 [chromium-1440-no-preference] › tests/qa/qa-color-scheme.spec.js:57:1 › contact controls preserve layout, visual states, and keyboard access (3.0s)
+  ✓  10 [chromium-1440-reduce] › tests/qa/qa-color-scheme.spec.js:29:1 › every public and missing route declares the dark scheme in rendered and served HTML (7.1s)
+  -  11 [chromium-1440-reduce] › tests/qa/qa-color-scheme.spec.js:44:1 › built root, static routes, and 404 retain exactly one theme tag
+  ✓  12 [chromium-1440-reduce] › tests/qa/qa-color-scheme.spec.js:57:1 › contact controls preserve layout, visual states, and keyboard access (3.3s)
+  ✓  13 [webkit-390-no-preference] › tests/qa/qa-color-scheme.spec.js:29:1 › every public and missing route declares the dark scheme in rendered and served HTML (8.7s)
+  -  14 [webkit-390-no-preference] › tests/qa/qa-color-scheme.spec.js:44:1 › built root, static routes, and 404 retain exactly one theme tag
+  ✓  15 [webkit-390-no-preference] › tests/qa/qa-color-scheme.spec.js:57:1 › contact controls preserve layout, visual states, and keyboard access (4.4s)
+  ✓  16 [webkit-390-reduce] › tests/qa/qa-color-scheme.spec.js:29:1 › every public and missing route declares the dark scheme in rendered and served HTML (8.8s)
+  -  17 [webkit-390-reduce] › tests/qa/qa-color-scheme.spec.js:44:1 › built root, static routes, and 404 retain exactly one theme tag
+  ✓  18 [webkit-390-reduce] › tests/qa/qa-color-scheme.spec.js:57:1 › contact controls preserve layout, visual states, and keyboard access (3.7s)
+  ✓  19 [webkit-1440-no-preference] › tests/qa/qa-color-scheme.spec.js:29:1 › every public and missing route declares the dark scheme in rendered and served HTML (12.3s)
+  -  20 [webkit-1440-no-preference] › tests/qa/qa-color-scheme.spec.js:44:1 › built root, static routes, and 404 retain exactly one theme tag
+  ✘  21 [webkit-1440-no-preference] › tests/qa/qa-color-scheme.spec.js:57:1 › contact controls preserve layout, visual states, and keyboard access (4.5s)
+  ✓  22 [webkit-1440-reduce] › tests/qa/qa-color-scheme.spec.js:29:1 › every public and missing route declares the dark scheme in rendered and served HTML (21.5s)
+  -  23 [webkit-1440-reduce] › tests/qa/qa-color-scheme.spec.js:44:1 › built root, static routes, and 404 retain exactly one theme tag
+  ✓  24 [webkit-1440-reduce] › tests/qa/qa-color-scheme.spec.js:57:1 › contact controls preserve layout, visual states, and keyboard access (3.7s)
+
+
+  1) [webkit-1440-no-preference] › tests/qa/qa-color-scheme.spec.js:57:1 › contact controls preserve layout, visual states, and keyboard access
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 3
+    + Received  + 3
+
+      Array [
+    -   255,
+    -   255,
+    -   255,
+    +   167,
+    +   139,
+    +   250,
+      ]
+
+      112 |       const frameBackground = control.frameBackground.match(/^rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)$/);
+      113 |       expect(frameBackground, `${state} ${control.id} frame background`).not.toBeNull();
+    > 114 |       expect(frameBackground.slice(1, 4).map(Number)).toEqual(control.focused ? [167, 139, 250] : [255, 255, 255]);
+          |                                                       ^
+      115 |       // Native CSS serialization can quantize the authored alpha to 8 bits.
+      116 |       expect(Math.abs(Number(frameBackground[4] ?? 1) - (control.focused ? 0.07 : 0.025))).toBeLessThanOrEqual(1 / 255);
+      117 |       const cornerGradients = control.frameImage.match(/linear-gradient\((?:[^()]|\([^()]*\))*\)/g);
+        at capture (<repository>/tests/qa/qa-color-scheme.spec.js:114:55)
+        at <repository>/tests/qa/qa-color-scheme.spec.js:160:3
+
+    Error Context: ../../../../../..<task-directory>/color-scheme/test-results/qa-color-scheme-contact-co-a2366--states-and-keyboard-access-webkit-1440-no-preference/error-context.md
+
+  1 failed
+    [webkit-1440-no-preference] › tests/qa/qa-color-scheme.spec.js:57:1 › contact controls preserve layout, visual states, and keyboard access
+  7 skipped
+  16 passed (3.4m)
