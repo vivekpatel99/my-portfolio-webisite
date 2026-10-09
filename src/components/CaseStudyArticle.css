@@ -47,7 +47,7 @@
 .case-study-sections pre code { padding: 0; background: transparent; color: inherit; font: inherit; }
 .case-study-sections blockquote { margin: 14px 0; padding-left: 16px; border-left: 2px solid #59446e; color: #bcb8c3; }
 .case-study-cta { margin-top: 38px; padding-top: 24px; border-top: 1px solid #303034; }
-.case-study-cta p { margin: 0 0 8px; color: #d3cfd8; }
+.case-study-cta p { margin: 0 0 24px; color: #d3cfd8; }
 
 @media (min-width: 451px) {
   .case-study-sections,
