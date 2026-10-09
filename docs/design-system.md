@@ -15,3 +15,17 @@ The example uses synthetic text and shows the name field filled but unfocused, w
 - **Interaction and sizing:** Use `:focus-within` so mouse and keyboard focus receive the same visible state. Keep controls at least `54px` tall, with a text area sized for longer input. At widths up to `420px`, inset the label to avoid the brackets. Preserve the existing forced-colors outline and reduced-motion behavior.
 
 Apply these rules to new form controls when appropriate, and check the empty, filled, focused, keyboard, and narrow-screen states before reusing the pattern across the site.
+
+## Budget Range dropdown
+
+Confirmed on 8 October 2026 under DESIGN.md FM-01: the budget menu uses a subtle purple highlight, white text, and a visible checkmark for the chosen option. The field retains its grey resting corners and purple corners while focused or open. Its existing placeholder, labels, optional empty choice, and exact stored budget values remain unchanged.
+
+The implementation uses Headless UI's controlled Listbox in `src/components/BudgetSelect.jsx`. The menu is portalled to avoid panel clipping, anchored to the field, and constrained to the viewport with scrolling when needed. Options use the form's sans-serif text at `0.95rem`, with 44px minimum rows. Focus adds an outline; selection adds a checkmark and `aria-selected`. The primitive manages arrow navigation, commitment, Escape, Tab, typeahead, and focus return.
+
+Enter on the closed trigger opens the menu instead of invoking the primitive's default form-submit action. Only empty or listed values can be emitted; a disabled stale choice cannot clear its validation error.
+
+While the menu is open, document scroll padding is removed so active-option scrolling stays within the menu. If the field leaves the viewport completely, the menu dismisses without changing the budget or returning focus to the offscreen field. Normal close and commitment still restore focus to an in-view field.
+
+Unknown restored budgets retain the existing disabled recovery label until the visitor chooses a listed range or clears the optional choice. The menu and its hidden form value remain in sensitive telemetry regions. Forced-colors mode uses system colors with a visible boundary, focused outline, and checkmark. The dropdown adds no motion; reduced motion still removes the field's focus transition.
+
+The earlier [native budget QA](qa/2026-10-07-issue-330-native-budget.md) records the superseded implementation. It is not verification of this dropdown.

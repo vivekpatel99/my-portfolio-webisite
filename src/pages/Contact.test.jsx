@@ -5,16 +5,27 @@ import React from "react";
 import { renderWithMotion as render } from '@/test/renderWithMotion';
 import { act, fireEvent, renderHook, screen, waitFor, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { toast } from "@/components/ui/use-toast";
 import { captureException } from "@/lib/sentryTelemetry";
 import Contact from "./Contact";
 import ScrollToTop from '@/components/ScrollToTop';
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { useContactDraft } from '@/lib/useContactDraft';
+import { BUDGET_LABELS } from "@/lib/budgetOptions";
 import { CONTACT_LEAD_VALIDATION_ERROR } from "../../convex/lib/leadValidation";
 
 const mockSubmitLead = vi.fn();
+
+// JSDOM has no layout observer; browser QA verifies anchored positioning.
+beforeAll(() => {
+  vi.stubGlobal('ResizeObserver', class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  });
+});
+afterAll(() => vi.unstubAllGlobals());
 
 beforeEach(() => {
   cleanup();
@@ -44,6 +55,11 @@ function errorWithMessage(message, data) {
   return error;
 }
 
+function chooseBudget(container, value) {
+  fireEvent.click(container.querySelector("#budget"));
+  fireEvent.click(screen.getByRole("option", { name: BUDGET_LABELS[value] ?? "Select your budget range" }));
+}
+
 function fillValidLead(container, { budget } = {}) {
   fireEvent.change(container.querySelector('input[name="name"]'), {
     target: { name: "name", value: "Jane Doe" },
@@ -52,7 +68,7 @@ function fillValidLead(container, { budget } = {}) {
     target: { name: "email", value: "jane@example.com" },
   });
   if (budget) {
-    fireEvent.change(container.querySelector("#budget"), { target: { value: budget } });
+    chooseBudget(container, budget);
   }
   fireEvent.change(container.querySelector('textarea[name="description"]'), {
     target: { name: "description", value: "Need help." },
@@ -393,7 +409,7 @@ describe("Contact form", () => {
   ])('#325: blocks programmatic oversized %s and retains the focused draft', (field, value, message) => {
     const { container } = render(<Contact />);
     fillValidLead(container);
-    const control = container.querySelector('form').elements.namedItem(field);
+    const control = container.querySelector(`#${field}`);
     fireEvent.change(control, { target: { value: `  ${value}  ` } });
     const retainedValue = control.value;
     fireEvent.submit(container.querySelector('form'));
@@ -439,7 +455,7 @@ describe("Contact form", () => {
     act(() => draft.result.current.setFormState({ name: 'Jane', email: 'jane@example.com', budget: '', description: 'Details', [field]: value }));
     fireEvent.submit(container.querySelector('form'));
     expect(mockSubmitLead).not.toHaveBeenCalled();
-    const control = container.querySelector('form').elements.namedItem(field);
+    const control = container.querySelector(`#${field}`);
     expect(document.activeElement).toBe(control);
     expect(document.getElementById(control.getAttribute('aria-describedby')).textContent).toBe(message);
     expect(draft.result.current.formState[field]).toBe(value);
@@ -447,15 +463,29 @@ describe("Contact form", () => {
   });
 
   it('#325: lets a programmatically invalid budget recover to blank without losing other fields', async () => {
+    const user = userEvent.setup();
     const { container } = render(<Contact />);
     const draft = renderHook(() => useContactDraft());
     act(() => draft.result.current.setFormState({ name: 'Jane', email: 'jane@example.com', budget: 'unlisted', description: 'Details' }));
     const budget = screen.getByLabelText('Budget Range');
     expect(budget.value).toBe('unlisted');
+    expect(budget.textContent).toBe('Budget Range Choose a listed range or leave blank');
+    expect(new FormData(container.querySelector('form')).get('budget')).toBe('unlisted');
     fireEvent.submit(container.querySelector('form'));
     expect(document.activeElement).toBe(budget);
     expect(mockSubmitLead).not.toHaveBeenCalled();
-    fireEvent.change(budget, { target: { value: '' } });
+    await user.click(budget);
+    await user.keyboard('{Enter}');
+    expect(new FormData(container.querySelector('form')).get('budget')).toBe('unlisted');
+    expect(budget.getAttribute('aria-invalid')).toBe('true');
+    expect(screen.getByText('Choose one of the listed budget ranges, or leave it blank.')).toBeTruthy();
+    expect(mockSubmitLead).not.toHaveBeenCalled();
+    await user.keyboard('{Escape}');
+    await user.click(budget);
+    const staleOption = screen.getByRole('option', { name: 'Choose a listed range or leave blank' });
+    expect(staleOption.getAttribute('aria-disabled')).toBe('true');
+    expect(staleOption.getAttribute('aria-selected')).toBe('true');
+    fireEvent.click(screen.getByRole('option', { name: 'Select your budget range' }));
     expect(draft.result.current.formState.budget).toBe('');
     expect(budget.getAttribute('aria-invalid')).toBe('false');
     expect(screen.queryByText('Choose one of the listed budget ranges, or leave it blank.')).toBeNull();
@@ -668,9 +698,77 @@ describe("Contact form", () => {
   it('leaves the optional budget unselected until the visitor picks one', () => {
     const { container } = render(<Contact />);
     const budget = container.querySelector('#budget');
-    expect(budget.tagName).toBe('SELECT');
-    expect(budget.value).toBe('');
-    expect(container.querySelector('select')?.value).toBe('');
+    expect(budget.tagName).toBe('BUTTON');
+    expect(budget.getAttribute('aria-haspopup')).toBe('listbox');
+    expect(budget.getAttribute('aria-expanded')).toBe('false');
+    expect(budget.textContent).toBe('Budget Range Select your budget range');
+    expect(new FormData(container.querySelector('form')).get('budget')).toBe('');
+  });
+
+  it('commits keyboard choices, announces selection, and dismisses without changing the draft', async () => {
+    const user = userEvent.setup();
+    const { container } = render(<Contact />);
+    const budget = screen.getByLabelText('Budget Range');
+    expect(screen.getByRole('button', { name: 'Budget Range Select your budget range' })).toBe(budget);
+    await user.click(budget);
+    expect(screen.getByRole('listbox', { name: 'Budget Range Select your budget range' })).toBeTruthy();
+    await user.keyboard('{End}{Enter}');
+    expect(screen.queryByRole('listbox')).toBeNull();
+    expect(document.activeElement).toBe(budget);
+    expect(budget.textContent).toBe('Budget Range €25,000+');
+    expect(new FormData(container.querySelector('form')).get('budget')).toBe('€25k+');
+    expect(mockSubmitLead).not.toHaveBeenCalled();
+
+    await user.keyboard('{ArrowDown}');
+    const selected = screen.getByRole('option', { name: '€25,000+' });
+    expect(selected.getAttribute('aria-selected')).toBe('true');
+    expect(selected.querySelector('.contact-budget-check svg')).toBeTruthy();
+    expect(selected.closest('[data-sensitive-telemetry]')).toBeTruthy();
+    await user.keyboard('{ArrowUp}{Enter}');
+    expect(budget.textContent).toBe('Budget Range €10,000 - €25,000');
+    expect(new FormData(container.querySelector('form')).get('budget')).toBe('€10k-€25k');
+
+    await user.keyboard('{ArrowDown}{ArrowUp}{Escape}');
+    expect(screen.queryByRole('listbox')).toBeNull();
+    expect(document.activeElement).toBe(budget);
+    expect(new FormData(container.querySelector('form')).get('budget')).toBe('€10k-€25k');
+
+    await user.keyboard('{ArrowDown}{Tab}');
+    expect(screen.queryByRole('listbox')).toBeNull();
+    expect(document.activeElement).toBe(screen.getByLabelText('Project Description *'));
+    expect(mockSubmitLead).not.toHaveBeenCalled();
+  });
+
+  it('commits a budget typed by its visible label while the selected checkmark is present', async () => {
+    const user = userEvent.setup();
+    const { container } = render(<Contact />);
+    const budget = screen.getByLabelText('Budget Range');
+    await user.click(budget);
+    await user.keyboard('{End}{Enter}{ArrowDown}<{Enter}');
+    expect(budget.textContent).toBe('Budget Range < €5,000');
+    expect(new FormData(container.querySelector('form')).get('budget')).toBe('< €5k');
+    expect(document.activeElement).toBe(budget);
+    expect(mockSubmitLead).not.toHaveBeenCalled();
+  });
+
+  it('opens a focused budget with Enter without submitting a valid lead or toggling on key repeat', async () => {
+    const user = userEvent.setup();
+    const { container } = render(<Contact />);
+    fillValidLead(container);
+    const budget = screen.getByLabelText('Budget Range');
+    budget.focus();
+    await user.keyboard('{Enter}');
+    expect(screen.getByRole('listbox', { name: 'Budget Range Select your budget range' })).toBeTruthy();
+    expect(mockSubmitLead).not.toHaveBeenCalled();
+    fireEvent.keyDown(budget, { key: 'Enter', repeat: true });
+    expect(screen.getByRole('listbox')).toBeTruthy();
+    expect(mockSubmitLead).not.toHaveBeenCalled();
+    await user.keyboard('{Escape}');
+    expect(document.activeElement).toBe(budget);
+    await user.click(budget);
+    await user.keyboard('{Escape}{Enter}');
+    expect(screen.getByRole('listbox')).toBeTruthy();
+    expect(mockSubmitLead).not.toHaveBeenCalled();
   });
 
   it('shows job success and rating without a 21+ count', () => {
@@ -691,9 +789,7 @@ describe("Contact form", () => {
     fireEvent.change(container.querySelector('input[name="email"]'), {
       target: { name: 'email', value: 'jane@example.com' },
     });
-    fireEvent.change(container.querySelector('#budget'), {
-      target: { value: '< €5k' },
-    });
+    chooseBudget(container, '< €5k');
     fireEvent.change(container.querySelector('textarea[name="description"]'), {
       target: { name: 'description', value: 'Need help.' },
     });
@@ -787,7 +883,8 @@ describe('#230: contact outcome focus and receipt', () => {
   async function fillByKeyboard(user, container) {
     await user.type(container.querySelector('input[name="name"]'), 'Jane Doe');
     await user.type(container.querySelector('input[name="email"]'), 'jane@example.com');
-    await user.selectOptions(container.querySelector('#budget'), '€5k-€10k');
+    await user.click(container.querySelector('#budget'));
+    await user.click(screen.getByRole('option', { name: '€5,000 - €10,000' }));
     await user.type(container.querySelector('textarea[name="description"]'), 'Need help.');
   }
 

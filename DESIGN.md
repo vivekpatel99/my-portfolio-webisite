@@ -248,6 +248,8 @@ Proposed default: optional image generation for the About portrait preserves lik
 
 Existing reference: the [contact-field reference](docs/design-system.md) governs grey resting corners, purple focus, fill, label position, required indicators, and forced-colors behavior. Existing reference: preserve the control's actual accessible label.
 
+Confirmed on 8 October 2026: Budget Range uses a consistently themed accessible dropdown in Chromium and WebKit. Its menu has a subtle purple highlight, white option text, and a visible checkmark beside the chosen option. Preserve grey resting and purple focused field corners, the current form typography and density, the optional empty choice, exact budget values, drafts, validation, disabled states, and submission behavior. Keyboard focus and selection remain distinguishable beyond color. This supersedes the browser/OS-native option highlight and the select's local `color-scheme: normal` exception.
+
 Confirmed by OC-01: do not put simulated scores in contact fields.
 
 Existing reference: keep empty, filled, focused, invalid, disabled, submitting, success, and retry states understandable. Existing reference: visible errors need text and a recovery action, not just a color change. Existing reference: theme work preserves the contact payload, transport, consent, and success behavior.

@@ -54,7 +54,7 @@ test('built root, static routes, and 404 retain exactly one theme tag', async ({
   fs.writeFileSync(path.join(outputDir, 'static-html.json'), JSON.stringify(observations, null, 2));
 });
 
-test('contact native controls preserve layout, visual states, and keyboard access', async ({ page, browserName }, testInfo) => {
+test('contact controls preserve layout, visual states, and keyboard access', async ({ page, browserName }, testInfo) => {
   const mutationRequests = [];
   await page.addInitScript(() => {
     window.__qaNativeSubmitCount = 0;
@@ -123,7 +123,7 @@ test('contact native controls preserve layout, visual states, and keyboard acces
       if (control.id === 'budget') {
         expect(control.value).toBe(budgetValue);
         expect(control.frameFilled).toBe(budgetValue ? 'true' : 'false');
-        expect(control.colorScheme).toBe('normal');
+        expect(control.colorScheme).toBe('dark');
         expect(control.color).toBe(budgetValue ? 'rgb(255, 255, 255)' : 'rgb(156, 163, 175)');
       } else {
         expect(control.color).toBe('rgb(255, 255, 255)');
@@ -147,21 +147,22 @@ test('contact native controls preserve layout, visual states, and keyboard acces
   await page.keyboard.press(tab);
   await expect(budget).toBeFocused();
   await capture('select-focused', { focusId: 'budget' });
-  // Commit a value through the control's input/change events; native menu keys
-  // are checked separately because their commit behavior varies by platform.
-  await budget.selectOption('< €5k');
-  await expect(budget).toHaveValue('< €5k');
+  await budget.press('Space');
+  await expect(page.getByRole('listbox')).toBeVisible();
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+  await expect(budget).toContainText('< €5,000');
   await expect(budget).toBeFocused();
   await expect(budget.locator('..')).toHaveAttribute('data-filled', 'true');
   await page.keyboard.press(tab);
   await expect(description).toBeFocused();
-  await expect(budget).toHaveValue('< €5k');
+  await expect(budget).toContainText('< €5,000');
   await capture('textarea-focused', { focusId: 'description', budgetValue: '< €5k' });
   await page.keyboard.type('Synthetic QA project description.');
   await expect(description).toHaveValue('Synthetic QA project description.');
   await page.keyboard.press(tab);
   await expect(page.getByRole('button', { name: /Send project request/i })).toBeFocused();
-  await expect(budget).toHaveValue('< €5k');
+  await expect(budget).toContainText('< €5,000');
   await capture('populated', { budgetValue: '< €5k' });
   expect(await page.evaluate(() => window.__qaNativeSubmitCount)).toBe(0);
   expect(mutationRequests).toEqual([]);

@@ -46,7 +46,7 @@ export function qaPassiveSpecs({ environment, localOnly }) {
     'qa-consent.spec.js',
     'qa-cursor.spec.js',
     'qa-edge.spec.js',
-    ...(localOnly ? ['qa-focus.spec.js', 'qa-fragments.spec.js', 'qa-hero-motion.spec.js', 'qa-route-recovery.spec.js', 'qa-service-loading.spec.js'] : []),
+    ...(localOnly ? ['qa-budget.spec.js', 'qa-focus.spec.js', 'qa-fragments.spec.js', 'qa-hero-motion.spec.js', 'qa-route-recovery.spec.js', 'qa-service-loading.spec.js'] : []),
     'qa-responsive.spec.js',
     'qa-routes.spec.js',
     ...(environment === 'preview' ? ['qa-testimonials.spec.js', 'qa-hero-ocr-labels.spec.js', 'qa-evidence-labels.spec.js'] : []),
@@ -92,12 +92,12 @@ const liveProjects = includeLiveContactSubmit && !localOnly
 const webkitRegressionProjects = localOnly ? [
   {
     name: 'preview-webkit-desktop',
-    testMatch: ['qa-focus.spec.js', 'qa-fragments.spec.js', 'qa-cursor.spec.js', 'qa-route-recovery.spec.js', 'qa-service-loading.spec.js', 'qa-evidence-labels.spec.js'],
+    testMatch: ['qa-budget.spec.js', 'qa-focus.spec.js', 'qa-fragments.spec.js', 'qa-cursor.spec.js', 'qa-route-recovery.spec.js', 'qa-service-loading.spec.js', 'qa-evidence-labels.spec.js'],
     use: { ...devices['Desktop Safari'], baseURL: previewURL, ...qaNetworkOptions({ localOnly }) },
   },
   {
     name: 'preview-webkit-mobile',
-    testMatch: ['qa-focus.spec.js', 'qa-fragments.spec.js', 'qa-cursor.spec.js', 'qa-route-recovery.spec.js', 'qa-service-loading.spec.js', 'qa-evidence-labels.spec.js'],
+    testMatch: ['qa-budget.spec.js', 'qa-focus.spec.js', 'qa-fragments.spec.js', 'qa-cursor.spec.js', 'qa-route-recovery.spec.js', 'qa-service-loading.spec.js', 'qa-evidence-labels.spec.js'],
     use: { ...devices['iPhone 14'], baseURL: previewURL, ...qaNetworkOptions({ localOnly }) },
   },
 ] : [];

@@ -34,7 +34,8 @@
   transition: background-color 150ms ease;
 }
 
-.contact-detection-frame:focus-within {
+.contact-detection-frame:focus-within,
+.contact-detection-frame[data-open] {
   --corner-color: #a78bfa;
   --corner-length: 18px;
   --corner-width: 2px;
@@ -54,7 +55,8 @@
   cursor: text;
 }
 
-.contact-detection-frame:focus-within .contact-detection-label {
+.contact-detection-frame:focus-within .contact-detection-label,
+.contact-detection-frame[data-open] .contact-detection-label {
   color: #c4b5fd;
 }
 
@@ -79,19 +81,83 @@
 }
 
 .contact-detection-select {
-  /* Preserve this control's existing native chrome within the dark page. */
-  color-scheme: normal;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   color: #9ca3af;
   cursor: pointer;
+  text-align: left;
+}
+
+.contact-detection-select:disabled {
+  cursor: default;
+}
+
+.contact-budget-chevron {
+  flex-shrink: 0;
 }
 
 .contact-detection-frame[data-filled="true"] .contact-detection-select {
   color: white;
 }
 
-.contact-detection-select option {
-  color: white;
+html:has(.contact-budget-options) {
+  scroll-padding-top: 0;
+}
+
+.contact-budget-options {
+  --anchor-gap: 6px;
+  --anchor-padding: 8px;
+  --anchor-max-height: 280px;
+  z-index: 60;
+  width: var(--button-width);
+  max-width: calc(100vw - 16px);
+  max-height: 280px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px;
+  border: 1px solid rgba(167, 139, 250, 0.35);
+  border-radius: 2px;
+  outline: none;
   background: #17171b;
+  color: white;
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.contact-budget-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.contact-budget-option[data-selected],
+.contact-budget-option[data-focus] {
+  background: rgba(139, 92, 246, 0.2);
+  color: white;
+}
+
+.contact-budget-option[data-focus] {
+  outline: 1px solid #a78bfa;
+  outline-offset: -1px;
+}
+
+.contact-budget-option[data-disabled] {
+  color: #9ca3af;
+  cursor: default;
+}
+
+.contact-budget-check {
+  display: flex;
+  flex-shrink: 0;
+  width: 18px;
 }
 
 .contact-detection-textarea {
@@ -113,8 +179,32 @@
     outline: 1px solid CanvasText;
   }
 
-  .contact-detection-frame:focus-within {
+  .contact-detection-frame:focus-within,
+  .contact-detection-frame[data-open] {
     outline: 2px solid Highlight;
+  }
+
+  .contact-budget-options {
+    border-color: CanvasText;
+    background: Canvas;
+    color: CanvasText;
+    box-shadow: none;
+  }
+
+  .contact-budget-option[data-selected],
+  .contact-budget-option[data-focus] {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
+
+  .contact-budget-option[data-focus] {
+    outline: 2px solid HighlightText;
+    outline-offset: -3px;
+  }
+
+  .contact-budget-option[data-disabled] {
+    color: GrayText;
   }
 }
 
