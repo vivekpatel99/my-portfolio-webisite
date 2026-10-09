@@ -54,7 +54,7 @@ test('built root, static routes, and 404 retain exactly one theme tag', async ({
   fs.writeFileSync(path.join(outputDir, 'static-html.json'), JSON.stringify(observations, null, 2));
 });
 
-test('contact controls preserve layout, visual states, and keyboard access', async ({ page, browserName }, testInfo) => {
+async function verifyContactControls({ page, browserName }, testInfo, { delayedTransition = false } = {}) {
   const mutationRequests = [];
   await page.addInitScript(() => {
     window.__qaNativeSubmitCount = 0;
@@ -68,38 +68,53 @@ test('contact controls preserve layout, visual states, and keyboard access', asy
   const description = page.getByLabel('Project Description *');
   await expect(budget).toBeVisible();
   await expect(description).toBeVisible();
+  if (delayedTransition) {
+    await page.addStyleTag({ content: '.contact-detection-frame { transition-delay: 400ms; }' });
+  }
+  const capturePrefix = `${testInfo.project.name}${delayedTransition ? '-delayed' : ''}`;
   await page.evaluate(() => document.fonts.ready);
   await page.mouse.move(0, 0);
   const observations = [];
 
   async function capture(state, { focusId = null, budgetValue = '' } = {}) {
-    // Wait for the authored focus transition rather than freezing it mid-frame.
-    await page.waitForTimeout(200);
     const reducedMotion = await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
     expect(reducedMotion).toBe(testInfo.project.use.contextOptions.reducedMotion === 'reduce');
-    const controls = await page.locator('#budget, #description').evaluateAll(elements => elements.map(element => {
-      const style = getComputedStyle(element);
-      const frame = element.closest('.contact-detection-frame');
-      const frameStyle = getComputedStyle(frame);
-      const rect = element.getBoundingClientRect();
-      return {
-        id: element.id,
-        rect: { x: rect.x, width: rect.width, height: rect.height },
-        value: element.value,
-        focused: element === document.activeElement,
-        color: style.color,
-        background: style.backgroundColor,
-        border: style.border,
-        font: style.font,
-        resize: style.resize,
-        colorScheme: style.colorScheme,
-        frameFilled: frame.getAttribute('data-filled'),
-        frameBackground: frameStyle.backgroundColor,
-        frameImage: frameStyle.backgroundImage,
-        cornerColor: frameStyle.getPropertyValue('--corner-color').trim(),
-        transitionDuration: frameStyle.transitionDuration,
-      };
-    }));
+    let controls;
+    await expect(async () => {
+      controls = await page.locator('#budget, #description').evaluateAll(elements => elements.map(element => {
+        const style = getComputedStyle(element);
+        const frame = element.closest('.contact-detection-frame');
+        const frameStyle = getComputedStyle(frame);
+        const rect = element.getBoundingClientRect();
+        return {
+          id: element.id,
+          rect: { x: rect.x, width: rect.width, height: rect.height },
+          value: element.value,
+          focused: element === document.activeElement,
+          color: style.color,
+          background: style.backgroundColor,
+          border: style.border,
+          font: style.font,
+          resize: style.resize,
+          colorScheme: style.colorScheme,
+          frameFilled: frame.getAttribute('data-filled'),
+          frameBackground: frameStyle.backgroundColor,
+          frameImage: frameStyle.backgroundImage,
+          cornerColor: frameStyle.getPropertyValue('--corner-color').trim(),
+          transitionDuration: frameStyle.transitionDuration,
+        };
+      }));
+      expect(controls).toHaveLength(2);
+      for (const control of controls) {
+        const focused = control.id === focusId;
+        expect(control.focused, `${state} ${control.id} focus`).toBe(focused);
+        const frameBackground = control.frameBackground.match(/^rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)$/);
+        expect(frameBackground, `${state} ${control.id} frame background`).not.toBeNull();
+        expect(frameBackground.slice(1, 4).map(Number), `${state} ${control.id} frame RGB`).toEqual(focused ? [167, 139, 250] : [255, 255, 255]);
+        // Native CSS serialization can quantize the authored alpha to 8 bits.
+        expect(Math.abs(Number(frameBackground[4] ?? 1) - (focused ? 0.07 : 0.025))).toBeLessThanOrEqual(1 / 255);
+      }
+    }).toPass({ timeout: 10_000 });
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth);
     expect(overflow).toBe(false);
     for (const control of controls) {
@@ -109,11 +124,6 @@ test('contact controls preserve layout, visual states, and keyboard access', asy
       expect(control.focused).toBe(control.id === focusId);
       const cornerRgb = control.focused ? 'rgb(167, 139, 250)' : 'rgb(107, 114, 128)';
       expect(control.cornerColor).toBe(control.focused ? '#a78bfa' : '#6b7280');
-      const frameBackground = control.frameBackground.match(/^rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)$/);
-      expect(frameBackground, `${state} ${control.id} frame background`).not.toBeNull();
-      expect(frameBackground.slice(1, 4).map(Number)).toEqual(control.focused ? [167, 139, 250] : [255, 255, 255]);
-      // Native CSS serialization can quantize the authored alpha to 8 bits.
-      expect(Math.abs(Number(frameBackground[4] ?? 1) - (control.focused ? 0.07 : 0.025))).toBeLessThanOrEqual(1 / 255);
       const cornerGradients = control.frameImage.match(/linear-gradient\((?:[^()]|\([^()]*\))*\)/g);
       expect(cornerGradients).toHaveLength(8);
       for (const gradient of cornerGradients) {
@@ -137,7 +147,7 @@ test('contact controls preserve layout, visual states, and keyboard access', asy
     }
     observations.push({ state, reducedMotion, controls, overflow });
     for (const id of ['budget', 'description']) {
-      await page.locator(`#${id}`).locator('..').screenshot({ path: path.join(outputDir, `${testInfo.project.name}-${state}-${id}.png`), animations: 'disabled', caret: 'hide' });
+      await page.locator(`#${id}`).locator('..').screenshot({ path: path.join(outputDir, `${capturePrefix}-${state}-${id}.png`), animations: 'disabled', caret: 'hide' });
     }
   }
 
@@ -166,5 +176,13 @@ test('contact controls preserve layout, visual states, and keyboard access', asy
   await capture('populated', { budgetValue: '< €5k' });
   expect(await page.evaluate(() => window.__qaNativeSubmitCount)).toBe(0);
   expect(mutationRequests).toEqual([]);
-  fs.writeFileSync(path.join(outputDir, `${testInfo.project.name}-contact.json`), JSON.stringify(observations, null, 2));
+  fs.writeFileSync(path.join(outputDir, `${capturePrefix}-contact.json`), JSON.stringify(observations, null, 2));
+}
+
+test('contact controls preserve layout, visual states, and keyboard access', async ({ page, browserName }, testInfo) => {
+  await verifyContactControls({ page, browserName }, testInfo);
+});
+
+test('contact controls wait for delayed focus transitions before capturing visual states', async ({ page, browserName }, testInfo) => {
+  await verifyContactControls({ page, browserName }, testInfo, { delayedTransition: true });
 });
