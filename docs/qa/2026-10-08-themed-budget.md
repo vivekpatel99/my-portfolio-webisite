@@ -8,7 +8,7 @@ The exact string catalog and optional empty choice remain in `src/lib/budgetOpti
 
 No accessible select component existed in the repository. The installed Radix components cover other controls. Headless UI 2.2.10 supports the actual empty string and form progression directly. The dropdown adds no custom navigation state; the library manages the option focus and keyboard interaction.
 
-Two library defaults need narrow boundary adaptations. Closed-trigger Enter must open through the primitive's click handler rather than submit the form. A disabled stale option must not emit an unknown value and clear its error. Both have regression coverage using the real primitive, including a valid synthetic lead and exact hidden FormData.
+Library defaults need narrow boundary adaptations. Closed-trigger Enter opens through the primitive's ArrowDown handler rather than submitting the form or relying on a click that the primitive ignores after mouse interaction. A disabled stale option cannot emit an unknown value and clear its error. Both have regression coverage using the real primitive, including a valid synthetic lead and exact hidden FormData.
 
 Model the Domain keeps the existing budget catalog and controlled draft string as the source of truth. Prove It Works uses rendered browser interaction, exact committed values, and submission counters rather than compilation alone.
 
@@ -50,6 +50,14 @@ The initial hosted run failed one WebKit typeahead check and one mobile WebKit l
 The primitive derives option text from a detached clone after removing the decorative checkmark. Explicit option names now match the visible labels, so typeahead does not depend on the clone's rendered text. A focused unit regression fails on the prior source by retaining `€25k+` after typing `<`, and passes on the repaired source by committing `< €5k` without submission. No appearance, string catalog, or transport changes are involved.
 
 The repaired source passed 917 unit tests, the 30-check dropdown matrix with six expected skips, the full 204-check synthetic lifecycle with four expected skips, production build/static-route checks, and artifact sanitization verification. Follow-up source hashes and browser counts are recorded separately in the verification file; the screenshots and initial environment records above remain from the original verification.
+
+Independent scrolling QA then exposed a viewport fault. Instrumented repetitions reproduced it in three of 30 desktop WebKit runs: the active option's `scrollIntoView` moved the document to satisfy its 128px header scroll padding. In one trace, the trigger moved to y=358.74 in a 300px viewport and the menu extended to y=352.5. Removing document scroll padding only while this menu is mounted passed 30 instrumented repetitions with the original geometry predicate.
+
+Fully offscreen triggers now dismiss the menu through the primitive's Escape handler, leaving the value unchanged and removing focus from the offscreen field. Enter after mouse interaction uses its ArrowDown handler; an added regression fails on the prior click-based source. The first menu render also seeds the primitive's public width variable from the trigger: mobile WebKit had exposed a temporary 10px menu before its resize measurement, changing option wrapping and scroll behavior.
+
+Linux WebKit still failed the original raw `<` key press after the label change. QA now sends Shift+Comma and checks the delivered character is `<` before asserting the focused option. Touch QA uses the fixture's touch setting; emulated WebKit reports zero `navigator.maxTouchPoints`. Geometry assertions retain their original viewport limits, add a settled Home-navigation check, and verify dismissal after a large scroll with no value change or scroll-back to the field.
+
+Final local follow-up verification passed 917 unit tests, 30 dropdown checks with six expected skips, and all 50 affected mobile WebKit lifecycle checks with two expected middle-click skips. Build and static-route generation passed. The earlier full lifecycle run remains recorded separately; hosted CI and the independent review must verify the final published PR head.
 
 ## Screenshots
 

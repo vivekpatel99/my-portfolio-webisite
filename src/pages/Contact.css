@@ -102,6 +102,10 @@
   color: white;
 }
 
+html:has(.contact-budget-options) {
+  scroll-padding-top: 0;
+}
+
 .contact-budget-options {
   --anchor-gap: 6px;
   --anchor-padding: 8px;

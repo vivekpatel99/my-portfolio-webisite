@@ -1,9 +1,16 @@
 import { expect } from '@playwright/test';
 import { BUDGET_LABELS } from '../../src/lib/budgetOptions.js';
 
-export async function chooseBudget(page, value) {
-  await page.locator('#budget').click();
-  await page.getByRole('option', { name: BUDGET_LABELS[value] || 'Select your budget range', exact: true }).click();
+export async function chooseBudget(page, value, { touch = false } = {}) {
+  const trigger = page.locator('#budget');
+  const option = page.getByRole('option', { name: BUDGET_LABELS[value] || 'Select your budget range', exact: true });
+  if (touch) {
+    await trigger.tap();
+    await option.tap();
+  } else {
+    await trigger.click();
+    await option.click();
+  }
   await expectBudget(page, value);
 }
 

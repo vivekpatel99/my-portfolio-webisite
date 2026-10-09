@@ -765,6 +765,10 @@ describe("Contact form", () => {
     expect(mockSubmitLead).not.toHaveBeenCalled();
     await user.keyboard('{Escape}');
     expect(document.activeElement).toBe(budget);
+    await user.click(budget);
+    await user.keyboard('{Escape}{Enter}');
+    expect(screen.getByRole('listbox')).toBeTruthy();
+    expect(mockSubmitLead).not.toHaveBeenCalled();
   });
 
   it('shows job success and rating without a 21+ count', () => {

@@ -22,7 +22,7 @@ test.afterEach(async ({ page }) => {
   expect(await page.evaluate(() => window.__budgetSubmitCount)).toBe(0);
 });
 
-test('budget dropdown commits exact values with keyboard, restores focus, and permits Tab progression', async ({ page, browserName }) => {
+test('budget dropdown commits exact values with keyboard, restores focus, and permits Tab progression', async ({ page, browserName, hasTouch }) => {
   const trigger = page.locator('#budget');
   const menu = page.getByRole('listbox');
   const tab = browserName === 'webkit' ? 'Alt+Tab' : 'Tab';
@@ -55,7 +55,17 @@ test('budget dropdown commits exact values with keyboard, restores focus, and pe
   await expect(first.locator('svg')).toBeVisible();
   await page.keyboard.press('End');
   await expect(menu.getByRole('option', { name: '€25,000+', exact: true })).toHaveAttribute('data-focus', '');
-  await page.keyboard.press('<');
+  await expect(menu).toBeFocused();
+  await menu.evaluate(element => {
+    const capture = (event) => {
+      if (event.key.length !== 1) return;
+      element.dataset.qaTypeaheadKey = event.key;
+      element.removeEventListener('keydown', capture);
+    };
+    element.addEventListener('keydown', capture);
+  });
+  await page.keyboard.press('Shift+Comma');
+  await expect(menu).toHaveAttribute('data-qa-typeahead-key', '<');
   await expect(first).toHaveAttribute('data-focus', '');
   await page.keyboard.press('ArrowDown');
   await page.keyboard.press('Escape');
@@ -75,15 +85,19 @@ test('budget dropdown commits exact values with keyboard, restores focus, and pe
   await expect(menu).toHaveCount(0);
   await expect(page.getByLabel('Email Address *')).toBeFocused();
 
-  for (const value of [...BUDGET_OPTIONS, '']) await chooseBudget(page, value);
+  for (const value of [...BUDGET_OPTIONS, '']) await chooseBudget(page, value, { touch: hasTouch });
+  await trigger.press('Enter');
+  await expect(menu).toBeFocused();
+  await page.keyboard.press('Escape');
   await expect(trigger).toHaveAttribute('aria-invalid', 'false');
 });
 
 test('budget menu keeps selected and focused options legible within narrow and scrolling viewports', async ({ page, hasTouch }, testInfo) => {
   const trigger = page.locator('#budget');
   const menu = page.getByRole('listbox');
-  await chooseBudget(page, '€5k-€10k');
-  await trigger.click();
+  await chooseBudget(page, '€5k-€10k', { touch: hasTouch });
+  if (hasTouch) await trigger.tap();
+  else await trigger.click();
   const selected = menu.getByRole('option', { selected: true });
   await expect(selected).toContainText('€5,000 - €10,000');
   await expect(selected.locator('svg')).toBeVisible();
@@ -119,15 +133,25 @@ test('budget menu keeps selected and focused options legible within narrow and s
 
   await page.setViewportSize({ width: viewport.width, height: 300 });
   await trigger.scrollIntoViewIfNeeded();
-  await trigger.click();
+  if (hasTouch) await trigger.tap();
+  else await trigger.click();
   await expect(menu).toBeVisible();
   const constrained = await menu.boundingBox();
   expect(constrained.y).toBeGreaterThanOrEqual(0);
   expect(constrained.y + constrained.height).toBeLessThanOrEqual(300);
   await page.keyboard.press('Home');
+  await expect(menu.getByRole('option', { name: 'Select your budget range', exact: true })).toHaveAttribute('data-focus', '');
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  await expect.poll(async () => {
+    const rect = await menu.boundingBox();
+    const button = await trigger.boundingBox();
+    return rect.y >= 0 && rect.y + rect.height <= 300
+      && button.y >= 0 && button.y + button.height <= 300;
+  }).toBe(true);
   await page.keyboard.press('Enter');
   await expectBudget(page, '');
-  await trigger.click();
+  if (hasTouch) await trigger.tap();
+  else await trigger.click();
   if (hasTouch) await page.evaluate(() => window.scrollBy(0, 150));
   else await page.mouse.wheel(0, 150);
   await expect.poll(async () => {
@@ -136,12 +160,26 @@ test('budget menu keeps selected and focused options legible within narrow and s
     return rect.y >= 0 && rect.y + rect.height <= 300;
   }).toBe(true);
   if (await menu.count()) await page.keyboard.press('Escape');
+  await trigger.scrollIntoViewIfNeeded();
+  if (hasTouch) await trigger.tap();
+  else await trigger.click();
+  await expect(menu).toBeVisible();
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  await page.evaluate(() => window.scrollBy(0, innerHeight * 4));
+  await expect(menu).toHaveCount(0);
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await expectBudget(page, '');
+  await expect.poll(async () => {
+    const rect = await trigger.boundingBox();
+    return rect.y + rect.height;
+  }).toBeLessThanOrEqual(0);
+  await expect(trigger).not.toBeFocused();
 });
 
-test('budget retains a checkmark and focus outlines in forced colors and reduced motion', async ({ page, browserName }, testInfo) => {
+test('budget retains a checkmark and focus outlines in forced colors and reduced motion', async ({ page, browserName, hasTouch }, testInfo) => {
   test.skip(browserName !== 'chromium', 'WebKit does not emulate forced colors');
   await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'reduce' });
-  await chooseBudget(page, '€5k-€10k');
+  await chooseBudget(page, '€5k-€10k', { touch: hasTouch });
   const trigger = page.locator('#budget');
   await page.getByLabel('Email Address *').focus();
   await expect(trigger.locator('..')).toHaveCSS('outline-width', '1px');

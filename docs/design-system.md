@@ -24,6 +24,8 @@ The implementation uses Headless UI's controlled Listbox in `src/components/Budg
 
 Enter on the closed trigger opens the menu instead of invoking the primitive's default form-submit action. Only empty or listed values can be emitted; a disabled stale choice cannot clear its validation error.
 
+While the menu is open, document scroll padding is removed so active-option scrolling stays within the menu. If the field leaves the viewport completely, the menu dismisses without changing the budget or returning focus to the offscreen field. Normal close and commitment still restore focus to an in-view field.
+
 Unknown restored budgets retain the existing disabled recovery label until the visitor chooses a listed range or clears the optional choice. The menu and its hidden form value remain in sensitive telemetry regions. Forced-colors mode uses system colors with a visible boundary, focused outline, and checkmark. The dropdown adds no motion; reduced motion still removes the field's focus transition.
 
 The earlier [native budget QA](qa/2026-10-07-issue-330-native-budget.md) records the superseded implementation. It is not verification of this dropdown.

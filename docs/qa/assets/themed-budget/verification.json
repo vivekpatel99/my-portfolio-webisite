@@ -211,5 +211,65 @@
       "Initial hosted mobile WebKit selection failure not reproduced locally.",
       "Initial screenshots and native accessibility inspection precede the explicit option-label repair."
     ]
+  },
+  "geometryFollowUp": {
+    "date": "2026-10-09",
+    "priorHead": "3cd00389bcb67b9900a6f480ee6384f2c652306c",
+    "sourceSha256": {
+      "src/components/BudgetSelect.jsx": "87bdfd92d832f75f010f9f8d4605eeeb04528d011788a053312fc576c635963e",
+      "src/pages/Contact.css": "a363dbdb6d330b5d62ce28886d2b34b99943bc5c34bb587c0d2f6a6406f5b8cc",
+      "src/pages/Contact.test.jsx": "d9e1b095259d1aebd7f096bae9c0681ea4ff13f40815ec73a9c286ba07a07014",
+      "tests/qa/qa-budget.js": "e2ed66c78a4930cd75cd9b09645907a91663c0b9859d2f634b292889981602ee",
+      "tests/qa/qa-budget.spec.js": "4f0cc69958b5d04c6173fdf9bdc4de2d6ee62c1a7c4a8246f806faf6a8842959"
+    },
+    "negativeGeometryProbe": {
+      "runs": 30,
+      "passed": 27,
+      "failed": 3,
+      "viewportHeight": 300,
+      "capturedTriggerTop": 358.744140625,
+      "capturedMenuBottom": 352.5,
+      "cause": "Option scrollIntoView moved the document to satisfy 128px header scroll padding"
+    },
+    "scrollPaddingRepairRepetitions": {
+      "passed": 30,
+      "failed": 0,
+      "predicate": "Original strict viewport bounds retained"
+    },
+    "mouseEnterRegression": {
+      "priorSource": "Failed to reopen after a mouse interaction",
+      "finalSource": "Passed using primitive ArrowDown handler"
+    },
+    "initialWidthProbe": {
+      "priorMenuWidth": 10,
+      "triggerWidth": 212,
+      "repair": "Seed primitive public button-width CSS variable on menu mount"
+    },
+    "unit": {
+      "passed": 917
+    },
+    "dropdown": {
+      "startTime": "2026-10-09T06:30:05.715Z",
+      "duration": 49034.062,
+      "expected": 30,
+      "skipped": 6,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "affectedMobileLifecycle": {
+      "startTime": "2026-10-09T06:30:09.036Z",
+      "duration": 46800.693,
+      "expected": 50,
+      "skipped": 2,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "typeahead": "Shift+Comma with explicit delivered-character assertion for < before checking focused option",
+    "offscreenDismissal": "Unchanged budget, collapsed trigger, no focus or scroll-back to offscreen field",
+    "limitations": [
+      "Full hosted checks and independent verdict must describe final PR head.",
+      "Screenshots and native AX inspection above precede follow-up repairs.",
+      "Physical devices and spoken screen readers remain unverified."
+    ]
   }
 }

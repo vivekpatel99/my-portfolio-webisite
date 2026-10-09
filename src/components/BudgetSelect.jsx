@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Description, Field, Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
 import { Check, ChevronDown } from 'lucide-react';
 import { BUDGET_LABELS, BUDGET_OPTIONS } from '@/lib/budgetOptions';
@@ -8,8 +8,29 @@ const EMPTY_LABEL = 'Select your budget range';
 const STALE_LABEL = 'Choose a listed range or leave blank';
 
 export default function BudgetSelect({ value, onChange, disabled, error }) {
+  const buttonRef = useRef(null);
+  const [optionsElement, setOptionsElement] = useState(null);
   const stale = Boolean(value && !BUDGET_OPTIONS.includes(value));
   const label = stale ? STALE_LABEL : BUDGET_LABELS[value] ?? EMPTY_LABEL;
+
+  const optionsRef = useCallback((element) => {
+    if (element && buttonRef.current) {
+      element.style.setProperty('--button-width', `${buttonRef.current.getBoundingClientRect().width}px`);
+    }
+    setOptionsElement(element);
+  }, []);
+
+  useEffect(() => {
+    const button = buttonRef.current;
+    if (!optionsElement || !button || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting || button.getAttribute('aria-expanded') !== 'true') return;
+      optionsElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+      if (document.activeElement === button) button.blur();
+    });
+    observer.observe(button);
+    return () => observer.disconnect();
+  }, [optionsElement]);
 
   return (
     <Field className="contact-detection-field mb-5" disabled={disabled}>
@@ -27,6 +48,7 @@ export default function BudgetSelect({ value, onChange, disabled, error }) {
       >
         <label htmlFor="budget" className="contact-detection-label">Budget Range</label>
         <ListboxButton
+          ref={buttonRef}
           id="budget"
           value={value}
           className="contact-detection-control contact-detection-select"
@@ -36,7 +58,7 @@ export default function BudgetSelect({ value, onChange, disabled, error }) {
             if (event.key !== 'Enter') return;
             // The primitive's default Enter handler submits the surrounding form.
             event.preventDefault();
-            if (!event.repeat) event.currentTarget.click();
+            if (!event.repeat) event.currentTarget.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true }));
           }}
         >
           <span className="sr-only">Budget Range </span>
@@ -44,6 +66,7 @@ export default function BudgetSelect({ value, onChange, disabled, error }) {
           <ChevronDown size={16} aria-hidden="true" className="contact-budget-chevron" />
         </ListboxButton>
         <ListboxOptions
+          ref={optionsRef}
           anchor="bottom start"
           portal
           modal={false}
