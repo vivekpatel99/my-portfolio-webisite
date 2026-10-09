@@ -65,6 +65,8 @@ The font roles below are existing references. The layout and legibility prescrip
 
 ### LY-01. Alignment and responsive spacing
 
+Confirmed on 9 October 2026: on case-study reading pages, the gap between `Working on something similar?` and the inquiry button matches the 24px spacing below the divider.
+
 The following are a proposed default, including the stacked mobile button layout from #296, and they do not record a completed responsive audit.
 
 Proposed default: align section headings, paragraphs, cards, and actions to their shared content container. Proposed default: equivalent components use equivalent internal padding and gaps. Proposed default: context may change size without changing visual identity.
