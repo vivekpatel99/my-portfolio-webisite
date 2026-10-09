@@ -107,6 +107,8 @@ dependencies fail and rejects failures, cancellations, skipped jobs, and missing
 results. Do not replace this gate with a check that merely starts the tests.
 
 CI limits unit-test file workers and passive/contact browser workers to two.
+Nested publication fixture test runners also cap file workers at two; the outer
+Vitest worker limit does not constrain a child runner.
 Passive shards balance individual tests, and contact cases use isolated contexts.
 Motion QA splits Chromium and WebKit onto separate runners with one worker each
 so real animation measurements do not compete within a runner.

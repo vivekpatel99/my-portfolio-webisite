@@ -22,6 +22,22 @@ test.afterEach(async ({ page }) => {
   expect(await page.evaluate(() => window.__budgetSubmitCount)).toBe(0);
 });
 
+test('shared budget setup uses keyboard without pointer input or form submission', async ({ page }) => {
+  await page.evaluate(() => {
+    window.__qaBudgetPointerCount = 0;
+    document.addEventListener('pointerdown', (event) => {
+      if (event.target.closest('#budget, [role="option"]')) window.__qaBudgetPointerCount += 1;
+    });
+  });
+  for (const value of [...BUDGET_OPTIONS, '']) {
+    await page.getByLabel('Email Address *').focus();
+    await chooseBudget(page, value, { keyboard: true });
+    await expect(page.getByRole('listbox')).toHaveCount(0);
+    await expect(page.locator('#budget')).toBeFocused();
+  }
+  expect(await page.evaluate(() => window.__qaBudgetPointerCount)).toBe(0);
+});
+
 test('budget dropdown commits exact values with keyboard, restores focus, and permits Tab progression', async ({ page, browserName, hasTouch }) => {
   const trigger = page.locator('#budget');
   const menu = page.getByRole('listbox');
