@@ -1,0 +1,75 @@
+
+Running 16 tests using 1 worker
+
+  ✓   1 [chromium-1440-reduce] › tests/qa/qa-action-family.spec.js:82:1 › prominent actions share geometry and typography with safe labels on every surface (4.2s)
+  ✓   2 [chromium-1440-reduce] › tests/qa/qa-action-family.spec.js:103:1 › hover, keyboard focus, pressed and exhausted states remain distinct (1.9s)
+  ✓   3 [chromium-1440-reduce] › tests/qa/qa-action-family.spec.js:141:1 › text actions and utilities retain accessible targets, focus, selection and modal behavior (3.0s)
+  -   4 [chromium-1440-reduce] › tests/qa/qa-action-family.spec.js:207:1 › prominent actions reflow at native Chromium 200% browser zoom
+  ✘   5 [chromium-390-reduce] › tests/qa/qa-action-family.spec.js:82:1 › prominent actions share geometry and typography with safe labels on every surface (1.1m)
+  ✓   6 [chromium-390-reduce] › tests/qa/qa-action-family.spec.js:103:1 › hover, keyboard focus, pressed and exhausted states remain distinct (1.5s)
+  ✓   7 [chromium-390-reduce] › tests/qa/qa-action-family.spec.js:141:1 › text actions and utilities retain accessible targets, focus, selection and modal behavior (2.3s)
+  -   8 [chromium-390-reduce] › tests/qa/qa-action-family.spec.js:207:1 › prominent actions reflow at native Chromium 200% browser zoom
+  ✓   9 [webkit-1440-reduce] › tests/qa/qa-action-family.spec.js:82:1 › prominent actions share geometry and typography with safe labels on every surface (5.2s)
+  ✓  10 [webkit-1440-reduce] › tests/qa/qa-action-family.spec.js:103:1 › hover, keyboard focus, pressed and exhausted states remain distinct (2.6s)
+  ✓  11 [webkit-1440-reduce] › tests/qa/qa-action-family.spec.js:141:1 › text actions and utilities retain accessible targets, focus, selection and modal behavior (7.0s)
+  -  12 [webkit-1440-reduce] › tests/qa/qa-action-family.spec.js:207:1 › prominent actions reflow at native Chromium 200% browser zoom
+  ✘  13 [webkit-390-reduce] › tests/qa/qa-action-family.spec.js:82:1 › prominent actions share geometry and typography with safe labels on every surface (2.7s)
+  ✓  14 [webkit-390-reduce] › tests/qa/qa-action-family.spec.js:103:1 › hover, keyboard focus, pressed and exhausted states remain distinct (4.4s)
+  ✓  15 [webkit-390-reduce] › tests/qa/qa-action-family.spec.js:141:1 › text actions and utilities retain accessible targets, focus, selection and modal behavior (4.2s)
+  -  16 [webkit-390-reduce] › tests/qa/qa-action-family.spec.js:207:1 › prominent actions reflow at native Chromium 200% browser zoom
+
+
+  1) [chromium-390-reduce] › tests/qa/qa-action-family.spec.js:82:1 › prominent actions share geometry and typography with safe labels on every surface
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+
+      24 |   await expect(page.locator('h1')).toBeVisible();
+      25 |   const actions = page.locator('.detection-action:visible');
+    > 26 |   expect(await actions.count()).toBeGreaterThan(0);
+         |                                 ^
+      27 |   for (const action of await actions.all()) {
+      28 |     await action.scrollIntoViewIfNeeded();
+      29 |     const measured = await action.evaluate((element) => {
+        at inspectActions (<repository>/tests/qa/qa-action-family.spec.js:26:33)
+        at <repository>/tests/qa/qa-action-family.spec.js:85:5
+
+    Test timeout of 60000ms exceeded while running "afterEach" hook.
+
+      17 | });
+      18 |
+    > 19 | test.afterEach(async ({ context }) => {
+         |      ^
+      20 |   await context.unrouteAll({ behavior: 'wait' });
+      21 | });
+      22 |
+        at <repository>/tests/qa/qa-action-family.spec.js:19:6
+
+    Error Context: ../../../../../..<task-directory>/actions/test-results/qa-action-family-prominent-021b1-afe-labels-on-every-surface-chromium-390-reduce/error-context.md
+
+  2) [webkit-390-reduce] › tests/qa/qa-action-family.spec.js:82:1 › prominent actions share geometry and typography with safe labels on every surface
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+
+      24 |   await expect(page.locator('h1')).toBeVisible();
+      25 |   const actions = page.locator('.detection-action:visible');
+    > 26 |   expect(await actions.count()).toBeGreaterThan(0);
+         |                                 ^
+      27 |   for (const action of await actions.all()) {
+      28 |     await action.scrollIntoViewIfNeeded();
+      29 |     const measured = await action.evaluate((element) => {
+        at inspectActions (<repository>/tests/qa/qa-action-family.spec.js:26:33)
+        at <repository>/tests/qa/qa-action-family.spec.js:85:5
+
+    Error Context: ../../../../../..<task-directory>/actions/test-results/qa-action-family-prominent-021b1-afe-labels-on-every-surface-webkit-390-reduce/error-context.md
+
+  2 failed
+    [chromium-390-reduce] › tests/qa/qa-action-family.spec.js:82:1 › prominent actions share geometry and typography with safe labels on every surface
+    [webkit-390-reduce] › tests/qa/qa-action-family.spec.js:82:1 › prominent actions share geometry and typography with safe labels on every surface
+  4 skipped
+  10 passed (2.1m)

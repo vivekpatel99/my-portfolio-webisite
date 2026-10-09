@@ -1,0 +1,374 @@
+{
+  "schemaVersion": 1,
+  "runStatus": "passed",
+  "runnerErrorCount": 0,
+  "totalAttempts": {
+    "passed": 445,
+    "failed": 0,
+    "skipped": 13,
+    "timed_out": 0,
+    "interrupted": 0
+  },
+  "suites": [
+    {
+      "suite": "budget-dropdown",
+      "projects": [
+        {
+          "project": "preview-webkit-desktop",
+          "attempts": {
+            "passed": 2,
+            "failed": 0,
+            "skipped": 1,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        },
+        {
+          "project": "preview-webkit-mobile",
+          "attempts": {
+            "passed": 2,
+            "failed": 0,
+            "skipped": 1,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        }
+      ]
+    },
+    {
+      "suite": "cursor-availability",
+      "projects": [
+        {
+          "project": "preview-webkit-desktop",
+          "attempts": {
+            "passed": 7,
+            "failed": 0,
+            "skipped": 1,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        },
+        {
+          "project": "preview-webkit-mobile",
+          "attempts": {
+            "passed": 3,
+            "failed": 0,
+            "skipped": 5,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        }
+      ]
+    },
+    {
+      "suite": "edge-behavior",
+      "projects": [
+        {
+          "project": "preview-mobile",
+          "attempts": {
+            "passed": 20,
+            "failed": 0,
+            "skipped": 2,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        }
+      ]
+    },
+    {
+      "suite": "evidence-labels",
+      "projects": [
+        {
+          "project": "preview-mobile",
+          "attempts": {
+            "passed": 16,
+            "failed": 0,
+            "skipped": 0,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        },
+        {
+          "project": "preview-webkit-desktop",
+          "attempts": {
+            "passed": 16,
+            "failed": 0,
+            "skipped": 0,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        },
+        {
+          "project": "preview-webkit-mobile",
+          "attempts": {
+            "passed": 16,
+            "failed": 0,
+            "skipped": 0,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        }
+      ]
+    },
+    {
+      "suite": "focus-regressions",
+      "projects": [
+        {
+          "project": "preview-mobile",
+          "attempts": {
+            "passed": 28,
+            "failed": 0,
+            "skipped": 0,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        },
+        {
+          "project": "preview-webkit-desktop",
+          "attempts": {
+            "passed": 28,
+            "failed": 0,
+            "skipped": 0,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        },
+        {
+          "project": "preview-webkit-mobile",
+          "attempts": {
+            "passed": 28,
+            "failed": 0,
+            "skipped": 0,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        }
+      ]
+    },
+    {
+      "suite": "fragment-navigation",
+      "projects": [
+        {
+          "project": "preview-mobile",
+          "attempts": {
+            "passed": 12,
+            "failed": 0,
+            "skipped": 0,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        },
+        {
+          "project": "preview-webkit-desktop",
+          "attempts": {
+            "passed": 12,
+            "failed": 0,
+            "skipped": 0,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        },
+        {
+          "project": "preview-webkit-mobile",
+          "attempts": {
+            "passed": 12,
+            "failed": 0,
+            "skipped": 0,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        }
+      ]
+    },
+    {
+      "suite": "hero-motion",
+      "projects": [
+        {
+          "project": "preview-mobile",
+          "attempts": {
+            "passed": 4,
+            "failed": 0,
+            "skipped": 1,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        }
+      ]
+    },
+    {
+      "suite": "hero-ocr-labels",
+      "projects": [
+        {
+          "project": "preview-mobile",
+          "attempts": {
+            "passed": 17,
+            "failed": 0,
+            "skipped": 0,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        }
+      ]
+    },
+    {
+      "suite": "local-navigation",
+      "projects": [
+        {
+          "project": "preview-mobile",
+          "attempts": {
+            "passed": 7,
+            "failed": 0,
+            "skipped": 0,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        }
+      ]
+    },
+    {
+      "suite": "responsive-layout",
+      "projects": [
+        {
+          "project": "preview-mobile",
+          "attempts": {
+            "passed": 57,
+            "failed": 0,
+            "skipped": 0,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        }
+      ]
+    },
+    {
+      "suite": "route-recovery",
+      "projects": [
+        {
+          "project": "preview-mobile",
+          "attempts": {
+            "passed": 9,
+            "failed": 0,
+            "skipped": 0,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        },
+        {
+          "project": "preview-webkit-desktop",
+          "attempts": {
+            "passed": 9,
+            "failed": 0,
+            "skipped": 0,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        },
+        {
+          "project": "preview-webkit-mobile",
+          "attempts": {
+            "passed": 9,
+            "failed": 0,
+            "skipped": 0,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        }
+      ]
+    },
+    {
+      "suite": "routing",
+      "projects": [
+        {
+          "project": "preview-mobile",
+          "attempts": {
+            "passed": 35,
+            "failed": 0,
+            "skipped": 0,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        }
+      ]
+    },
+    {
+      "suite": "service-loading",
+      "projects": [
+        {
+          "project": "preview-mobile",
+          "attempts": {
+            "passed": 15,
+            "failed": 0,
+            "skipped": 0,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        },
+        {
+          "project": "preview-webkit-desktop",
+          "attempts": {
+            "passed": 15,
+            "failed": 0,
+            "skipped": 0,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        },
+        {
+          "project": "preview-webkit-mobile",
+          "attempts": {
+            "passed": 15,
+            "failed": 0,
+            "skipped": 0,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        }
+      ]
+    },
+    {
+      "suite": "testimonials-carousel",
+      "projects": [
+        {
+          "project": "preview-mobile",
+          "attempts": {
+            "passed": 9,
+            "failed": 0,
+            "skipped": 1,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        }
+      ]
+    },
+    {
+      "suite": "upgrade-interactions",
+      "projects": [
+        {
+          "project": "preview-mobile",
+          "attempts": {
+            "passed": 27,
+            "failed": 0,
+            "skipped": 0,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        }
+      ]
+    },
+    {
+      "suite": "visual-smoke",
+      "projects": [
+        {
+          "project": "preview-mobile",
+          "attempts": {
+            "passed": 15,
+            "failed": 0,
+            "skipped": 1,
+            "timed_out": 0,
+            "interrupted": 0
+          }
+        }
+      ]
+    }
+  ]
+}
