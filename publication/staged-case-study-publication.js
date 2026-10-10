@@ -8,9 +8,9 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "d200ceeec25e76891e2bd27453fbb2d776af381e63c5bd0a4f86f9730abfb70f",
-        "approvedBy": "Viv (direct request and illustrative-caption approval)",
-        "approvedAt": "2026-10-10T07:06:45.478Z",
+        "sha256": "933e803ae49960d926fe6ac8639adcaa54d77dfcb843f65c089279c196ff15d8",
+        "approvedBy": "Viv (direct request, illustrative captions and cover correction)",
+        "approvedAt": "2026-10-10T07:25:48.058Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/blob/feat/portfolio-case-study-illustrations/docs/case-studies/portfolio-illustrations.md"
       },
       "claimRefs": {
@@ -148,11 +148,11 @@ export const stagedCaseStudyPublication = {
                 "children": [
                   {
                     "type": "image",
-                    "src": "/assets/case-studies/ai-invoice-verification-illustration.png",
-                    "alt": "Illustrative invoice verification workflow with extraction, validation, comparison and error flags.",
-                    "caption": "Conceptual invoice-verification illustration. PO/database matching, Azure OpenAI and the audit-ready wording shown here are not verified capabilities of this project. The case study describes extraction, deterministic checks, review states and spreadsheet output.",
-                    "width": 1672,
-                    "height": 941
+                    "src": "/assets/case-studies/ai-invoice-processing-automation-f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png",
+                    "alt": "Original M2 invoice orchestration workflow",
+                    "caption": "Original M2 invoice orchestration workflow",
+                    "width": 2448,
+                    "height": 684
                   }
                 ]
               }
@@ -233,11 +233,11 @@ export const stagedCaseStudyPublication = {
           }
         ],
         "image": {
-          "src": "/assets/case-studies/ai-invoice-processing-automation-f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png",
-          "alt": "Original M2 invoice orchestration workflow",
-          "caption": "Original M2 invoice orchestration workflow",
-          "width": 2448,
-          "height": 684
+          "src": "/assets/case-studies/ai-invoice-verification-illustration.png",
+          "alt": "Illustrative invoice verification workflow with extraction, validation, comparison and error flags.",
+          "caption": "Conceptual invoice-verification illustration. PO/database matching, Azure OpenAI and the audit-ready wording shown here are not verified capabilities of this project. The case study describes extraction, deterministic checks, review states and spreadsheet output.",
+          "width": 1672,
+          "height": 941
         }
       }
     },
@@ -248,9 +248,9 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "d455f80e680cac1ad68ba6a6daf4488e842b2a352f439943d837192b14cc92a6",
-        "approvedBy": "Viv (direct request and illustrative-caption approval)",
-        "approvedAt": "2026-10-10T07:06:45.478Z",
+        "sha256": "68df6068d5241845c195ecfd6867ec3e9177ca045be25d5714bc00d6604db2cd",
+        "approvedBy": "Viv (direct request, illustrative captions and cover correction)",
+        "approvedAt": "2026-10-10T07:25:48.058Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/blob/feat/portfolio-case-study-illustrations/docs/case-studies/portfolio-illustrations.md"
       },
       "claimRefs": {
@@ -360,11 +360,10 @@ export const stagedCaseStudyPublication = {
                 "children": [
                   {
                     "type": "image",
-                    "src": "/assets/case-studies/ai-project-planning-illustration.png",
-                    "alt": "Illustrated AI project planning workflow from a goal through task breakdown and dependencies to an action plan.",
-                    "caption": "Conceptual illustration of the LangGraph planning assistant. Its clarification, task research and report-generation stages produce a plan for technical review.",
-                    "width": 1672,
-                    "height": 941
+                    "src": "/assets/case-studies/ai-project-planning-assistant-483e16b2c3afb3bf6273821ce09d831d07ae5a00ffce8c2b8e24b202062e41a8.webp",
+                    "alt": "Clarification, supervisor, research and report-generation agent graph",
+                    "width": 546,
+                    "height": 958
                   }
                 ]
               }
@@ -387,10 +386,11 @@ export const stagedCaseStudyPublication = {
           }
         ],
         "image": {
-          "src": "/assets/case-studies/ai-project-planning-assistant-483e16b2c3afb3bf6273821ce09d831d07ae5a00ffce8c2b8e24b202062e41a8.webp",
-          "alt": "Clarification, supervisor, research and report-generation agent graph",
-          "width": 546,
-          "height": 958
+          "src": "/assets/case-studies/ai-project-planning-illustration.png",
+          "alt": "Illustrated AI project planning workflow from a goal through task breakdown and dependencies to an action plan.",
+          "caption": "Conceptual illustration of the LangGraph planning assistant. Its clarification, task research and report-generation stages produce a plan for technical review.",
+          "width": 1672,
+          "height": 941
         }
       }
     },
@@ -862,9 +862,9 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "277fe52f09462874650577f51600d77fbe3d9c66726db7528fb3087e794a7a4c",
-        "approvedBy": "Viv (direct request and illustrative-caption approval)",
-        "approvedAt": "2026-10-10T07:06:45.478Z",
+        "sha256": "7ea55845cf34f6ad235c09232ba3fa115e2618c8888ff59ddb630e902d66dc1b",
+        "approvedBy": "Viv (direct request, illustrative captions and cover correction)",
+        "approvedAt": "2026-10-10T07:25:48.057Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/blob/feat/portfolio-case-study-illustrations/docs/case-studies/portfolio-illustrations.md"
       },
       "claimRefs": {
@@ -1000,11 +1000,10 @@ export const stagedCaseStudyPublication = {
                 "children": [
                   {
                     "type": "image",
-                    "src": "/assets/case-studies/invoice-ocr-workflow-illustration.png",
-                    "alt": "Illustrative OCR workflow from invoice input through recognition and field parsing to structured data.",
-                    "caption": "Conceptual OCR workflow illustration. The 94% faster claim and JSON/database output shown here are not verified results for this project. The delivered tool exports client fields from invoice photos to Excel for review.",
-                    "width": 1672,
-                    "height": 941
+                    "src": "/assets/case-studies/invoice-ocr-extraction-e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4.webp",
+                    "alt": "Invoice image with bounding boxes showing extracted client information via OCR.",
+                    "width": 1654,
+                    "height": 2339
                   }
                 ]
               }
@@ -1027,10 +1026,11 @@ export const stagedCaseStudyPublication = {
           }
         ],
         "image": {
-          "src": "/assets/case-studies/invoice-ocr-extraction-e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4.webp",
-          "alt": "Invoice image with bounding boxes showing extracted client information via OCR.",
-          "width": 1654,
-          "height": 2339
+          "src": "/assets/case-studies/invoice-ocr-workflow-illustration.png",
+          "alt": "Illustrative OCR workflow from invoice input through recognition and field parsing to structured data.",
+          "caption": "Conceptual OCR workflow illustration. The 94% faster claim and JSON/database output shown here are not verified results for this project. The delivered tool exports client fields from invoice photos to Excel for review.",
+          "width": 1672,
+          "height": 941
         }
       }
     },
