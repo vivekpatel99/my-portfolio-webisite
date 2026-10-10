@@ -10,7 +10,7 @@ on:
       - develop
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 permissions:
   contents: read
 env:
@@ -23,48 +23,29 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
           cache: npm
-      - run: npm ci
+      - run: npm ci --no-audit --no-fund
       - run: npm test -- --maxWorkers=2
   production-build:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
           cache: npm
-      - run: npm ci
+      - run: npm ci --no-audit --no-fund
       - name: Validate production-like Convex URL
         shell: bash
-        run: |
-          set -euo pipefail
-
-          if [[ -z "${VITE_CONVEX_URL:-}" ]]; then
-            if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
-              echo "::warning title=Missing Convex URL::Using the temporary PR fallback https://coordinated-mandrill-587.eu-west-1.convex.cloud"
-              VITE_CONVEX_URL="https://coordinated-mandrill-587.eu-west-1.convex.cloud"
-            else
-              echo "::error title=Missing Convex URL::Set the VITE_CONVEX_URL repository variable (or secret) to the production Convex deployment URL."
-              exit 1
-            fi
-          fi
-
-          echo "VITE_CONVEX_URL=$VITE_CONVEX_URL" >> "$GITHUB_ENV"
-
-          if [[ ! "$VITE_CONVEX_URL" =~ ^https://[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)?\.convex\.cloud/?$ ]]; then
-            echo "::error title=Invalid Convex URL::VITE_CONVEX_URL must be a production-like https://*.convex.cloud URL, including regional Convex hosts."
-            exit 1
-          fi
-
-          if [[ "$VITE_CONVEX_URL" =~ ^https://(your-|example\.) || "$VITE_CONVEX_URL" =~ (placeholder|localhost|127\.0\.0\.1|\[::1\]) ]]; then
-            echo "::error title=Unsafe Convex URL::VITE_CONVEX_URL must not point at a local or placeholder backend."
-            exit 1
-          fi
+        run: bash tools/validate-convex-url.sh
       - name: Remove stale build output
         run: rm -rf dist
       - name: Build production bundle
@@ -124,11 +105,13 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
           cache: npm
-      - run: npm ci
+      - run: npm ci --no-audit --no-fund
       - uses: actions/download-artifact@v4
         with:
           name: production-dist
@@ -145,6 +128,8 @@ jobs:
         shard:
           - 1
           - 2
+          - 3
+          - 4
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.60.0-noble
     timeout-minutes: 15
@@ -153,15 +138,15 @@ jobs:
       QA_ARTIFACT_SAFE_MODE: "1"
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Trust the mounted checkout for repository checks
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
           cache: npm
-      - run: npm ci
-      - name: Install Playwright browsers
-        run: npx playwright install chromium webkit
+      - run: npm ci --no-audit --no-fund
       - uses: actions/download-artifact@v4
         with:
           name: production-dist
@@ -191,7 +176,7 @@ jobs:
 
           curl --fail --silent --show-error "$QA_PREVIEW_URL" >/dev/null
           npm run qa:seo
-          npm run qa:playwright:ci -- --shard=${{ matrix.shard }}/2
+          npm run qa:playwright:ci -- --shard=${{ matrix.shard }}/4
       - name: Reconstruct sanitized passive QA artifacts
         id: sanitize-qa-artifacts
         if: always()
@@ -207,6 +192,13 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
   contact-qa:
+    strategy:
+      fail-fast: false
+      matrix:
+        shard:
+          - 1
+          - 2
+          - 3
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.60.0-noble
     timeout-minutes: 15
@@ -215,20 +207,20 @@ jobs:
       QA_ARTIFACT_SAFE_MODE: "1"
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Trust the mounted checkout for repository checks
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
           cache: npm
-      - run: npm ci
-      - name: Install Playwright browsers
-        run: npx playwright install chromium webkit
+      - run: npm ci --no-audit --no-fund
       - name: Run mocked contact lifecycle QA
         env:
           QA_LOCAL_ONLY: "1"
           QA_ARTIFACT_SAFE_MODE: "1"
-        run: npm run qa:contact-lifecycle
+        run: npm run qa:contact-lifecycle -- --shard=${{ matrix.shard }}/3
   motion-qa:
     strategy:
       fail-fast: false
@@ -244,15 +236,15 @@ jobs:
       QA_ARTIFACT_SAFE_MODE: "1"
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Trust the mounted checkout for repository checks
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
           cache: npm
-      - run: npm ci
-      - name: Install Playwright browsers
-        run: npx playwright install chromium webkit
+      - run: npm ci --no-audit --no-fund
       - name: Run reduced-motion regression QA
         shell: bash
         run: |
@@ -277,41 +269,18 @@ jobs:
       QA_ARTIFACT_SAFE_MODE: "1"
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Trust the mounted checkout for repository checks
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
           cache: npm
-      - run: npm ci
-      - name: Install Playwright browsers
-        run: npx playwright install chromium webkit
+      - run: npm ci --no-audit --no-fund
       - name: Validate production-like Convex URL
         shell: bash
-        run: |
-          set -euo pipefail
-
-          if [[ -z "${VITE_CONVEX_URL:-}" ]]; then
-            if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
-              echo "::warning title=Missing Convex URL::Using the temporary PR fallback https://coordinated-mandrill-587.eu-west-1.convex.cloud"
-              VITE_CONVEX_URL="https://coordinated-mandrill-587.eu-west-1.convex.cloud"
-            else
-              echo "::error title=Missing Convex URL::Set the VITE_CONVEX_URL repository variable (or secret) to the production Convex deployment URL."
-              exit 1
-            fi
-          fi
-
-          echo "VITE_CONVEX_URL=$VITE_CONVEX_URL" >> "$GITHUB_ENV"
-
-          if [[ ! "$VITE_CONVEX_URL" =~ ^https://[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)?\.convex\.cloud/?$ ]]; then
-            echo "::error title=Invalid Convex URL::VITE_CONVEX_URL must be a production-like https://*.convex.cloud URL, including regional Convex hosts."
-            exit 1
-          fi
-
-          if [[ "$VITE_CONVEX_URL" =~ ^https://(your-|example\.) || "$VITE_CONVEX_URL" =~ (placeholder|localhost|127\.0\.0\.1|\[::1\]) ]]; then
-            echo "::error title=Unsafe Convex URL::VITE_CONVEX_URL must not point at a local or placeholder backend."
-            exit 1
-          fi
+        run: bash tools/validate-convex-url.sh
       - name: Run fake telemetry boundary QA
         env:
           QA_LOCAL_ONLY: "1"
@@ -333,6 +302,8 @@ jobs:
     if: ${{ always() }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: "24"

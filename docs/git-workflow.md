@@ -86,10 +86,12 @@ and [commit-associated PRs](https://docs.github.com/en/rest/commits/commits#list
 Full CI runs for pull requests into `develop` or `main` and pushes to those
 integration/release branches. Feature-branch pushes do not start a second full
 pipeline; open a pull request to request remote verification. New commits cancel
-older runs for the same pull request or branch.
+older runs for the same pull request. Pushes to `develop` and `main` are not
+cancelled, so every integration and release commit keeps a complete result.
 
 Unit tests, the production build, contact lifecycle QA, reduced-motion QA, and
-fake telemetry QA run independently. Apache service-route QA and two passive
+fake telemetry QA run independently. Contact lifecycle QA is split into three
+test-level shards. Apache service-route QA and four passive
 browser QA shards consume the same validated production build. Its archive
 preserves hidden deployment files such as `.htaccess`. Each shard publishes its
 own reconstructed, sanitized JSON
@@ -109,7 +111,10 @@ results. Do not replace this gate with a check that merely starts the tests.
 CI limits unit-test file workers and passive/contact browser workers to two.
 Nested publication fixture test runners also cap file workers at two; the outer
 Vitest worker limit does not constrain a child runner.
-Passive shards balance individual tests, and contact cases use isolated contexts.
+Passive and contact shards balance individual tests, and contact cases use
+isolated contexts. Browser jobs use the browsers bundled in the pinned
+Playwright container instead of installing them. Builds and telemetry QA share
+`tools/validate-convex-url.sh` for the baked Convex URL check.
 Motion QA splits Chromium and WebKit onto separate runners with one worker each
 so real animation measurements do not compete within a runner.
 WebKit motion checks use a browser window under Xvfb so native fades are rendered
