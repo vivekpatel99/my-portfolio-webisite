@@ -1,9 +1,10 @@
 // Browser URLs only. Integrity digests and dimensions live in the build-only
 // publication/case-study-derivatives.js registry.
 export const caseStudyThumbnailRegistry = Object.freeze({
-  "/assets/case-studies/n8n-python-ai-agents-f7bca17b02562a2d09a26eb4532bca2fa516f398e643223b0c560eae41e01bc8.png": {"src":"/assets/case-studies/n8n-python-ai-agents-f7bca17b02562a2d09a26eb4532bca2fa516f398e643223b0c560eae41e01bc8-thumb-1f0605fdb998.jpg","display":{"src":"/assets/case-studies/case-study-display-f7bca17b0256-f5d54a70c6c4.webp"}},
+  "/assets/case-studies/n8n-python-ai-agents-b3fe4c6f4f25417d5266723647a1ca1ae19e58ecb3ee23206ba08abcd19467d4.png": {"src":"/assets/case-studies/n8n-python-ai-agents-b3fe4c6f4f25417d5266723647a1ca1ae19e58ecb3ee23206ba08abcd19467d4-thumb-7beefe8a50be.jpg","display":{"src":"/assets/case-studies/case-study-display-b3fe4c6f4f25-26b598c4983d.webp"}},
   "/assets/case-studies/n8n-python-ai-agents-169b87ff589c9463d4fb925ddd66692f684532ad83f9c65b4b1d33bfcfdf42c8.png": {"src":"/assets/case-studies/n8n-python-ai-agents-169b87ff589c9463d4fb925ddd66692f684532ad83f9c65b4b1d33bfcfdf42c8-thumb-13645aecb2fb.jpg","display":{"src":"/assets/case-studies/case-study-display-169b87ff589c-fc078e305932.webp"}},
   "/assets/case-studies/n8n-python-ai-agents-614405a42d8354e82862d24a4a1707a76177f1d420187fa6f640ca039ffa4a61.png": {"src":"/assets/case-studies/n8n-python-ai-agents-614405a42d8354e82862d24a4a1707a76177f1d420187fa6f640ca039ffa4a61-thumb-6b970675409a.jpg","display":{"src":"/assets/case-studies/case-study-display-614405a42d83-3339cb428758.webp"}},
+
 
   "/assets/case-studies/invoice-ocr-excel-results.png": {"src":"/assets/case-studies/invoice-ocr-excel-results-thumb-baf8afeedb27.jpg"},
   "/assets/case-studies/invoice-ocr.webp": {"src":"/assets/case-studies/invoice-ocr-thumb-df3d151823fe.jpg","display":{"src":"/assets/case-studies/case-study-display-e6814512a975-926966cc5cb6.webp"}},

@@ -8,7 +8,7 @@ The screenshots were captured in Dell n8n 2.42.6 from inactive, sanitized import
 
 The comparison export SHA-256 is `40ed133675fef8f4cb6261ce05346164c88fd001387673a828a57727ad35636d`. The SQL-agent export SHA-256 is `b563d8b83fc087697b4bb1a80360f9be2060bf59aceac4ae60aa24f93a09eb90`.
 
-Codex reviewed the final media and exact candidate under Viv's explicit implementation instruction. This is an agent review, not a claim that Viv inspected the final bytes. Candidate SHA-256 is `db50d5ee3f24217ccf76f8129eeb0add5801df3b4dea25a5abd606fa2e9e7028`. Existing non-media article copy is preserved.
+Codex reviewed the final media and exact candidate under Viv's explicit implementation instruction. This is an agent review, not a claim that Viv inspected the final bytes. Candidate SHA-256 is `118a1f7a812d043eda19e533d43fad1e6430e818b0911da444ef4f10d8c4cf8a`. Existing non-media article copy is preserved.
 
 Validation on 10 October 2026 passed the production build and 72 tests covering publication, images, staging, gallery behavior, and display derivatives. T3 browser checks on the production preview confirmed all three gallery images, the overview first on initial load, and no horizontal overflow at a 390px viewport. No merge or deployment was performed.
 

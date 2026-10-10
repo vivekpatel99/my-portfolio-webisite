@@ -1220,11 +1220,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "d79c0f563344a5ce780bc1cc1fd0fdf13f93167039ee53ed8d1b7ddd489ffaec",
+        "sha256": "0a0470305547b928b6711bb2ca3aa24fa4eaa2a5d6ecc7951a33cfeb29816f06",
         "approvedBy": "Codex visual review under Viv issue 121 implementation instruction",
-        "approvedAt": "2026-10-10T07:42:42.860Z",
+        "approvedAt": "2026-10-10T07:46:46.633Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
-        "candidateSha256": "db50d5ee3f24217ccf76f8129eeb0add5801df3b4dea25a5abd606fa2e9e7028"
+        "candidateSha256": "118a1f7a812d043eda19e533d43fad1e6430e818b0911da444ef4f10d8c4cf8a"
       },
       "claimRefs": {
         "summary": "n8n-python-ai-agents.summary",
@@ -1376,11 +1376,11 @@ export const stagedCaseStudyPublication = {
           }
         ],
         "image": {
-          "src": "/assets/case-studies/n8n-python-ai-agents-f7bca17b02562a2d09a26eb4532bca2fa516f398e643223b0c560eae41e01bc8.png",
+          "src": "/assets/case-studies/n8n-python-ai-agents-b3fe4c6f4f25417d5266723647a1ca1ae19e58ecb3ee23206ba08abcd19467d4.png",
           "alt": "Project overview: synchronize records through create, update and delete workflows; answer database questions through an SQL agent and separate query checks",
           "caption": "Simplified project overview based on the archived n8n workflows.",
-          "width": 1290,
-          "height": 800
+          "width": 1200,
+          "height": 1200
         }
       }
     },
@@ -2591,9 +2591,9 @@ export const stagedCaseStudyPublication = {
         "kind": "explicit",
         "sha256": "499d8ae36b021db6cbe9889582e577808b1b1d0d101e3c47d380f2f0badc8bfe",
         "approvedBy": "Codex visual review under Viv issue 121 implementation instruction",
-        "approvedAt": "2026-10-10T07:42:42.860Z",
+        "approvedAt": "2026-10-10T07:46:46.633Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
-        "candidateSha256": "db50d5ee3f24217ccf76f8129eeb0add5801df3b4dea25a5abd606fa2e9e7028"
+        "candidateSha256": "118a1f7a812d043eda19e533d43fad1e6430e818b0911da444ef4f10d8c4cf8a"
       }
     },
     "n8n-python-ai-agents.outcome": {
@@ -2619,9 +2619,9 @@ export const stagedCaseStudyPublication = {
         "kind": "explicit",
         "sha256": "695f4215c24582ec03e78f8cd9bb3793364f21fc2b74be24da9d5f7f03486b2e",
         "approvedBy": "Codex visual review under Viv issue 121 implementation instruction",
-        "approvedAt": "2026-10-10T07:42:42.860Z",
+        "approvedAt": "2026-10-10T07:46:46.633Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
-        "candidateSha256": "db50d5ee3f24217ccf76f8129eeb0add5801df3b4dea25a5abd606fa2e9e7028"
+        "candidateSha256": "118a1f7a812d043eda19e533d43fad1e6430e818b0911da444ef4f10d8c4cf8a"
       }
     }
   },
@@ -2934,20 +2934,6 @@ export const stagedCaseStudyPublication = {
         "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
       }
     },
-    "/assets/case-studies/n8n-python-ai-agents-f7bca17b02562a2d09a26eb4532bca2fa516f398e643223b0c560eae41e01bc8.png": {
-      "file": "public/assets/case-studies/n8n-python-ai-agents-f7bca17b02562a2d09a26eb4532bca2fa516f398e643223b0c560eae41e01bc8.png",
-      "width": 1290,
-      "height": 800,
-      "format": "png",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "f7bca17b02562a2d09a26eb4532bca2fa516f398e643223b0c560eae41e01bc8",
-        "approvedBy": "Codex visual review under Viv issue 121 implementation instruction",
-        "approvedAt": "2026-10-10T07:42:42.860Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
-        "candidateSha256": "db50d5ee3f24217ccf76f8129eeb0add5801df3b4dea25a5abd606fa2e9e7028"
-      }
-    },
     "/assets/case-studies/n8n-python-ai-agents-169b87ff589c9463d4fb925ddd66692f684532ad83f9c65b4b1d33bfcfdf42c8.png": {
       "file": "public/assets/case-studies/n8n-python-ai-agents-169b87ff589c9463d4fb925ddd66692f684532ad83f9c65b4b1d33bfcfdf42c8.png",
       "width": 1280,
@@ -2957,9 +2943,9 @@ export const stagedCaseStudyPublication = {
         "kind": "explicit",
         "sha256": "169b87ff589c9463d4fb925ddd66692f684532ad83f9c65b4b1d33bfcfdf42c8",
         "approvedBy": "Codex visual review under Viv issue 121 implementation instruction",
-        "approvedAt": "2026-10-10T07:42:42.860Z",
+        "approvedAt": "2026-10-10T07:46:46.633Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
-        "candidateSha256": "db50d5ee3f24217ccf76f8129eeb0add5801df3b4dea25a5abd606fa2e9e7028"
+        "candidateSha256": "118a1f7a812d043eda19e533d43fad1e6430e818b0911da444ef4f10d8c4cf8a"
       }
     },
     "/assets/case-studies/n8n-python-ai-agents-614405a42d8354e82862d24a4a1707a76177f1d420187fa6f640ca039ffa4a61.png": {
@@ -2971,9 +2957,23 @@ export const stagedCaseStudyPublication = {
         "kind": "explicit",
         "sha256": "614405a42d8354e82862d24a4a1707a76177f1d420187fa6f640ca039ffa4a61",
         "approvedBy": "Codex visual review under Viv issue 121 implementation instruction",
-        "approvedAt": "2026-10-10T07:42:42.860Z",
+        "approvedAt": "2026-10-10T07:46:46.633Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
-        "candidateSha256": "db50d5ee3f24217ccf76f8129eeb0add5801df3b4dea25a5abd606fa2e9e7028"
+        "candidateSha256": "118a1f7a812d043eda19e533d43fad1e6430e818b0911da444ef4f10d8c4cf8a"
+      }
+    },
+    "/assets/case-studies/n8n-python-ai-agents-b3fe4c6f4f25417d5266723647a1ca1ae19e58ecb3ee23206ba08abcd19467d4.png": {
+      "file": "public/assets/case-studies/n8n-python-ai-agents-b3fe4c6f4f25417d5266723647a1ca1ae19e58ecb3ee23206ba08abcd19467d4.png",
+      "width": 1200,
+      "height": 1200,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "b3fe4c6f4f25417d5266723647a1ca1ae19e58ecb3ee23206ba08abcd19467d4",
+        "approvedBy": "Codex visual review under Viv issue 121 implementation instruction",
+        "approvedAt": "2026-10-10T07:46:46.633Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/121",
+        "candidateSha256": "118a1f7a812d043eda19e533d43fad1e6430e818b0911da444ef4f10d8c4cf8a"
       }
     }
   }
