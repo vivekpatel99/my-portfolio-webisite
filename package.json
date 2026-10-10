@@ -9,6 +9,8 @@
     "preview": "vite preview --host 127.0.0.1 --port 3000",
     "qa:playwright:passive": "playwright test -c tests/qa/qa.config.js",
     "qa:playwright:ci": "playwright test -c tests/qa/qa.config.js --project=preview-desktop --project=preview-mobile --project=preview-webkit-desktop --project=preview-webkit-mobile",
+    "qa:playwright:ci:chromium": "playwright test -c tests/qa/qa.config.js --project=preview-desktop --project=preview-mobile",
+    "qa:playwright:ci:webkit": "playwright test -c tests/qa/qa.config.js --project=preview-webkit-desktop --project=preview-webkit-mobile",
     "qa:telemetry-boundary": "node tools/run-telemetry-boundary-qa.js",
     "qa:replay-consent": "node tools/run-replay-consent-qa.js",
     "qa:contact-lifecycle": "playwright test -c tests/qa/qa-contact-lifecycle.config.js",
