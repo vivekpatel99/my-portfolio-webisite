@@ -2,6 +2,11 @@
 // the source and derivative digests in this registry so the delivery plugin can
 // reject stale or mismatched bytes before they reach the browser.
 const displayDerivativesBySourceHash = Object.freeze({
+  '890bce9082b77f882bfba6e8c08afd57459a547ec3624076bc79300fcd07328a': Object.freeze({"src":"/assets/case-studies/case-study-display-890bce9082b7-a0170fdbec26.webp","sha256":"a0170fdbec2694457d637e80795c41b4235d8fc2fc460254ae9523f1d9aefffb","width":1066,"height":600}),
+  '4422c54ac53200d0a5e3e529709980779fb42c5c87ba182435157745b60d9b95': Object.freeze({"src":"/assets/case-studies/case-study-display-4422c54ac532-4dfdaeb0779f.webp","sha256":"4dfdaeb0779f6c29cb5b1add60a2b9156ca05fc40c70da95f60d0d74ff036e9e","width":900,"height":600}),
+  '9cc6ca9b6368f9c1c0203c352d73a18f1fc19d0be2e5561544ce09679687a2e1': Object.freeze({"src":"/assets/case-studies/case-study-display-9cc6ca9b6368-451881ce0ca7.webp","sha256":"451881ce0ca77ebf5b4061d46280a9d2a9f07328d9d4befb6f51e77a493bcda9","width":800,"height":600}),
+  'dc043038188a069bd29249f0389a998e64cab98e0f5fc6cbe702bb9c60c87cbb': Object.freeze({"src":"/assets/case-studies/case-study-display-dc043038188a-941664d962f4.webp","sha256":"941664d962f416b72d840edb0cac214cdd61d7bf108cc3d922f5bf40458259e3","width":640,"height":360}),
+
   'b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82': Object.freeze({
     src: '/assets/case-studies/case-study-display-b11f57c86cd2-3d31a82cd9be.webp',
     sha256: '3d31a82cd9be1728715aee6dcbad56c026e00cdc32420c2073698cba9751dc13',
@@ -120,6 +125,11 @@ const displayDerivativesBySourceHash = Object.freeze({
 });
 
 const caseStudySourceRegistry = {
+  '/assets/case-studies/sports-football-workflow.png': Object.freeze({"src":"/assets/case-studies/sports-football-workflow-thumb-743e882e583e.jpg","sourceSha256":"890bce9082b77f882bfba6e8c08afd57459a547ec3624076bc79300fcd07328a","thumbnailSha256":"743e882e583e212a34824edb7cfdf7cbb1bb137620b23d9177fbd586db4996fc"}),
+  '/assets/case-studies/sports-football-f1-confidence.png': Object.freeze({"src":"/assets/case-studies/sports-football-f1-confidence-thumb-7e14006e500b.jpg","sourceSha256":"4422c54ac53200d0a5e3e529709980779fb42c5c87ba182435157745b60d9b95","thumbnailSha256":"7e14006e500b50b9093227e303f606f0696831ec545eb24c0da496e9153aa587"}),
+  '/assets/case-studies/sports-football-confusion-matrix.png': Object.freeze({"src":"/assets/case-studies/sports-football-confusion-matrix-thumb-4ec821a44d92.jpg","sourceSha256":"9cc6ca9b6368f9c1c0203c352d73a18f1fc19d0be2e5561544ce09679687a2e1","thumbnailSha256":"4ec821a44d92ef93c8aa1b3ab29dfebf0aeb1cc2ed108fcae212b1efe8b1c6ab"}),
+  '/assets/case-studies/sports-football-tracking-poster.png': Object.freeze({"src":"/assets/case-studies/sports-football-tracking-poster-thumb-fc1bf057b367.jpg","sourceSha256":"dc043038188a069bd29249f0389a998e64cab98e0f5fc6cbe702bb9c60c87cbb","thumbnailSha256":"fc1bf057b36716200ac782abc849291b71619c7853fe03081a6170c6d30a4383"}),
+
   '/assets/case-studies/invoice-ocr-excel-results.png': Object.freeze({
     src: '/assets/case-studies/invoice-ocr-excel-results-thumb-baf8afeedb27.jpg',
     sourceSha256: '30d08f427ad9dd6098464b4c1d28d180232ec3531b3e016853a3c605083fa9ad',

@@ -1,6 +1,10 @@
 // Browser URLs only. Integrity digests and dimensions live in the build-only
 // publication/case-study-derivatives.js registry.
 export const caseStudyThumbnailRegistry = Object.freeze({
+  "/assets/case-studies/sports-football-workflow.png": {"src":"/assets/case-studies/sports-football-workflow-thumb-743e882e583e.jpg","display":{"src":"/assets/case-studies/case-study-display-890bce9082b7-a0170fdbec26.webp"}},
+  "/assets/case-studies/sports-football-f1-confidence.png": {"src":"/assets/case-studies/sports-football-f1-confidence-thumb-7e14006e500b.jpg","display":{"src":"/assets/case-studies/case-study-display-4422c54ac532-4dfdaeb0779f.webp"}},
+  "/assets/case-studies/sports-football-confusion-matrix.png": {"src":"/assets/case-studies/sports-football-confusion-matrix-thumb-4ec821a44d92.jpg","display":{"src":"/assets/case-studies/case-study-display-9cc6ca9b6368-451881ce0ca7.webp"}},
+  "/assets/case-studies/sports-football-tracking-poster.png": {"src":"/assets/case-studies/sports-football-tracking-poster-thumb-fc1bf057b367.jpg","display":{"src":"/assets/case-studies/case-study-display-dc043038188a-941664d962f4.webp"}},
   "/assets/case-studies/invoice-ocr-excel-results.png": {"src":"/assets/case-studies/invoice-ocr-excel-results-thumb-baf8afeedb27.jpg"},
   "/assets/case-studies/invoice-ocr.webp": {"src":"/assets/case-studies/invoice-ocr-thumb-df3d151823fe.jpg","display":{"src":"/assets/case-studies/case-study-display-e6814512a975-926966cc5cb6.webp"}},
   "/assets/case-studies/n8n-data-extraction.png": {"src":"/assets/case-studies/n8n-data-extraction-thumb-bd1dc61ef269.jpg"},

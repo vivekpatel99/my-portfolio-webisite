@@ -1737,11 +1737,10 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "7b2f4ee8f598c564922673dc0b0d64bd19a7092e4dfc03670cbd8240323affe9",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-21T16:54:00.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/122",
-        "candidateSha256": "0116da5c175eff573cb925bdb1bf6f65c4b887c6ad34b7fa3cabb49dfb2bbde5"
+        "sha256": "1e02453ab597ddc1ade578bea5550897fff96d5bec10502fa52e47f0d1c91983",
+        "approvedBy": "Viv (direct sports analytics media request)",
+        "approvedAt": "2026-10-10T06:58:22.632Z",
+        "evidence": "https://github.com/vivekpatel99/portfolio-webisite-assets/blob/feat/sports-analytics-media/docs/case-studies/sports-analytics-media.md"
       },
       "claimRefs": {
         "summary": "sports-video-analytics-yolo.summary",
@@ -1889,6 +1888,37 @@ export const stagedCaseStudyPublication = {
                 ]
               }
             ]
+          }
+        ],
+        "image": {
+          "src": "/assets/case-studies/sports-football-workflow.png",
+          "alt": "Illustrated football player-tracking workflow from match video through YOLO detection, tracking and analytics.",
+          "width": 1672,
+          "height": 941,
+          "caption": "Football tracking workflow illustration. The case study covers batch processing of recorded footage; the real-time wording in this illustration is not a delivery claim."
+        },
+        "gallery": [
+          {
+            "src": "/assets/case-studies/sports-football-tracking.mp4",
+            "poster": "/assets/case-studies/sports-football-tracking-poster.png",
+            "alt": "Football tracking demonstration with team colors and persistent player IDs.",
+            "width": 640,
+            "height": 360,
+            "caption": "A 30-second football tracking demonstration supplied for this sports analytics case study. Colored markers and IDs show the tracking overlay."
+          },
+          {
+            "src": "/assets/case-studies/sports-football-f1-confidence.png",
+            "alt": "F1-confidence curves for ball, goalkeeper, player and referee detection.",
+            "width": 2250,
+            "height": 1500,
+            "caption": "Detector evaluation plot supplied with the football example. This chart describes that evaluation run, not an end-to-end tracking or event-tagging benchmark."
+          },
+          {
+            "src": "/assets/case-studies/sports-football-confusion-matrix.png",
+            "alt": "Confusion matrix for ball, goalkeeper, player, referee and background classes.",
+            "width": 3000,
+            "height": 2250,
+            "caption": "Detector confusion matrix supplied with the football example, including missed detections and background errors."
           }
         ]
       }
@@ -3078,6 +3108,68 @@ export const stagedCaseStudyPublication = {
         "approvedAt": "2026-09-27T11:49:17.695Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
         "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+      }
+    },
+    "/assets/case-studies/sports-football-workflow.png": {
+      "file": "public/assets/case-studies/sports-football-workflow.png",
+      "width": 1672,
+      "height": 941,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "890bce9082b77f882bfba6e8c08afd57459a547ec3624076bc79300fcd07328a",
+        "approvedBy": "Viv (direct sports analytics media request)",
+        "approvedAt": "2026-10-10T06:58:22.632Z",
+        "evidence": "https://github.com/vivekpatel99/portfolio-webisite-assets/blob/feat/sports-analytics-media/docs/case-studies/sports-analytics-media.md"
+      }
+    },
+    "/assets/case-studies/sports-football-f1-confidence.png": {
+      "file": "public/assets/case-studies/sports-football-f1-confidence.png",
+      "width": 2250,
+      "height": 1500,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "4422c54ac53200d0a5e3e529709980779fb42c5c87ba182435157745b60d9b95",
+        "approvedBy": "Viv (direct sports analytics media request)",
+        "approvedAt": "2026-10-10T06:58:22.632Z",
+        "evidence": "https://github.com/vivekpatel99/portfolio-webisite-assets/blob/feat/sports-analytics-media/docs/case-studies/sports-analytics-media.md"
+      }
+    },
+    "/assets/case-studies/sports-football-confusion-matrix.png": {
+      "file": "public/assets/case-studies/sports-football-confusion-matrix.png",
+      "width": 3000,
+      "height": 2250,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "9cc6ca9b6368f9c1c0203c352d73a18f1fc19d0be2e5561544ce09679687a2e1",
+        "approvedBy": "Viv (direct sports analytics media request)",
+        "approvedAt": "2026-10-10T06:58:22.632Z",
+        "evidence": "https://github.com/vivekpatel99/portfolio-webisite-assets/blob/feat/sports-analytics-media/docs/case-studies/sports-analytics-media.md"
+      }
+    },
+    "/assets/case-studies/sports-football-tracking-poster.png": {
+      "file": "public/assets/case-studies/sports-football-tracking-poster.png",
+      "width": 640,
+      "height": 360,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "dc043038188a069bd29249f0389a998e64cab98e0f5fc6cbe702bb9c60c87cbb",
+        "approvedBy": "Viv (direct sports analytics media request)",
+        "approvedAt": "2026-10-10T06:58:22.632Z",
+        "evidence": "https://github.com/vivekpatel99/portfolio-webisite-assets/blob/feat/sports-analytics-media/docs/case-studies/sports-analytics-media.md"
+      }
+    },
+    "/assets/case-studies/sports-football-tracking.mp4": {
+      "file": "public/assets/case-studies/sports-football-tracking.mp4",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "8cbcc66d4354a1e2e019c5724710e35d39a70e3dfdd2613f9912eca7e4f4cef3",
+        "approvedBy": "Viv (direct sports analytics media request)",
+        "approvedAt": "2026-10-10T06:58:22.632Z",
+        "evidence": "https://github.com/vivekpatel99/portfolio-webisite-assets/blob/feat/sports-analytics-media/docs/case-studies/sports-analytics-media.md"
       }
     }
   }
