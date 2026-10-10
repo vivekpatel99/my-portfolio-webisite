@@ -63,11 +63,18 @@ describe('parallel CI and sanitized QA artifacts', () => {
       .toBe('npm run qa:contact-lifecycle -- --shard=${{ matrix.shard }}/3');
   });
 
-  it('shares one complete production build with four independent passive shards', () => {
+  it('shares one complete production build with balanced passive browser shards', () => {
     const passive = workflow.jobs['passive-qa'];
     expect(passive.needs).toBe('production-build');
     expect(passive.strategy['fail-fast']).toBe(false);
-    expect(passive.strategy.matrix.shard).toEqual([1, 2, 3, 4]);
+    const legs = passive.strategy.matrix.include;
+    for (const browser of ['chromium', 'webkit']) {
+      const family = legs.filter((leg) => leg.browser === browser);
+      // Every shard of each family is present exactly once, so no tests are skipped.
+      expect(family.map((leg) => leg.shard)).toEqual(Array.from({ length: family[0].shards }, (_, i) => i + 1));
+      expect(new Set(family.map((leg) => leg.shards)).size).toBe(1);
+    }
+    expect(legs.every((leg) => ['chromium', 'webkit'].includes(leg.browser))).toBe(true);
     const download = stepsFor('passive-qa').find((step) => step.uses === 'actions/download-artifact@v4');
     const upload = stepsFor('production-build').find((step) => step.uses === 'actions/upload-artifact@v4');
     expect(download.with.name).toBe('production-dist');
@@ -76,7 +83,19 @@ describe('parallel CI and sanitized QA artifacts', () => {
       .toContain('tar -czf "$RUNNER_TEMP/production-dist.tar.gz" dist');
     expect(namedStep('passive-qa', 'Restore production bundle').run).toContain('tar -xzf');
     expect(namedStep('passive-qa', 'Run passive Playwright QA against preview').run)
-      .toContain('npm run qa:playwright:ci -- --shard=${{ matrix.shard }}/4');
+      .toContain('npm run qa:playwright:ci:${{ matrix.browser }} -- --shard=${{ matrix.shard }}/${{ matrix.shards }}');
+  });
+
+  it('splits the passive CI project set into browser families without dropping a project', async () => {
+    const { scripts } = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
+    const projects = (script) => [...script.matchAll(/--project=(\S+)/g)].map((match) => match[1]).sort();
+    expect([...projects(scripts['qa:playwright:ci:chromium']), ...projects(scripts['qa:playwright:ci:webkit'])].sort())
+      .toEqual(projects(scripts['qa:playwright:ci']));
+    for (const family of ['chromium', 'webkit']) {
+      expect(scripts[`qa:playwright:ci:${family}`]).toMatch(/^playwright test -c tests\/qa\/qa\.config\.js /);
+    }
+    expect(projects(scripts['qa:playwright:ci:webkit']).every((name) => name.startsWith('preview-webkit-'))).toBe(true);
+    expect(projects(scripts['qa:playwright:ci:chromium']).some((name) => name.includes('webkit'))).toBe(false);
   });
 
   it('checks Apache routing against the same complete production bundle and gates delivery', () => {
@@ -100,13 +119,13 @@ describe('parallel CI and sanitized QA artifacts', () => {
     }
   });
 
-  it('runs both complete motion browser groups on separate runners', () => {
+  it('runs every motion browser and viewport project on its own runner', () => {
     const motion = workflow.jobs['motion-qa'];
     expect(motion.strategy['fail-fast']).toBe(false);
     expect(motion.strategy.matrix.browser).toEqual(['chromium', 'webkit']);
+    expect(motion.strategy.matrix.viewport).toEqual(['desktop', 'mobile']);
     const run = namedStep('motion-qa', 'Run reduced-motion regression QA').run;
-    expect(run).toContain('--project=motion-${{ matrix.browser }}-desktop');
-    expect(run).toContain('--project=motion-${{ matrix.browser }}-mobile');
+    expect(run).toContain('--project=motion-${{ matrix.browser }}-${{ matrix.viewport }}');
     expect(run).toContain('xvfb-run --auto-servernum npm run qa:motion -- --headed');
   });
 
@@ -116,7 +135,7 @@ describe('parallel CI and sanitized QA artifacts', () => {
     expect(sanitize.if).toBe('always()');
     const upload = namedStep('passive-qa', 'Retain sanitized passive QA artifacts');
     expect(upload.if).toBe("always() && steps.sanitize-qa-artifacts.outcome == 'success'");
-    expect(upload.with.name).toBe('passive-qa-sanitized-${{ matrix.shard }}');
+    expect(upload.with.name).toBe('passive-qa-sanitized-${{ matrix.browser }}-${{ matrix.shard }}');
     expect(upload.with.path.trim().split('\n')).toEqual([
       'qa-artifacts/summary.json', 'qa-artifacts/failure-results.json',
     ]);

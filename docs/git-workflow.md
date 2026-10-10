@@ -92,8 +92,8 @@ dropped while pending.
 
 Unit tests, the production build, contact lifecycle QA, reduced-motion QA, and
 fake telemetry QA run independently; contact lifecycle QA is split into three
-test-level shards. Apache service-route QA and four passive browser QA shards
-consume the same validated production build, whose archive preserves hidden
+test-level shards. Apache service-route QA and six passive browser QA shards
+(four Chromium, two WebKit) consume the same validated production build, whose archive preserves hidden
 deployment files such as `.htaccess`. Each shard publishes its
 own reconstructed, sanitized JSON
 artifact for seven days; raw browser captures are disabled.
@@ -116,7 +116,7 @@ Passive and contact shards balance individual tests, and contact cases use
 isolated contexts. Browser jobs use the browsers bundled in the pinned
 Playwright container instead of installing them. Builds and telemetry QA share
 `tools/validate-convex-url.sh` for the baked Convex URL check.
-Motion QA splits Chromium and WebKit onto separate runners with one worker each
+Motion QA runs each browser and viewport project on its own runner with one worker
 so real animation measurements do not compete within a runner.
 WebKit motion checks use a browser window under Xvfb so native fades are rendered
 while wall-clock samples run; other browser suites retain their existing mode.

@@ -127,12 +127,17 @@ jobs:
     needs: production-build
     strategy:
       fail-fast: false
+      # Count-based sharding would put every WebKit test on the last leg. Shard
+      # each browser family separately, weighted by measured cost: Chromium has
+      # 4x the tests at ~0.7s each, WebKit ~1.3s each.
       matrix:
-        shard:
-          - 1
-          - 2
-          - 3
-          - 4
+        include:
+          - { browser: chromium, shard: 1, shards: 4 }
+          - { browser: chromium, shard: 2, shards: 4 }
+          - { browser: chromium, shard: 3, shards: 4 }
+          - { browser: chromium, shard: 4, shards: 4 }
+          - { browser: webkit, shard: 1, shards: 2 }
+          - { browser: webkit, shard: 2, shards: 2 }
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.60.0-noble
     timeout-minutes: 15
@@ -179,7 +184,7 @@ jobs:
 
           curl --fail --silent --show-error "$QA_PREVIEW_URL" >/dev/null
           npm run qa:seo
-          npm run qa:playwright:ci -- --shard=${{ matrix.shard }}/4
+          npm run qa:playwright:ci:${{ matrix.browser }} -- --shard=${{ matrix.shard }}/${{ matrix.shards }}
       - name: Reconstruct sanitized passive QA artifacts
         id: sanitize-qa-artifacts
         if: always()
@@ -188,7 +193,7 @@ jobs:
         if: always() && steps.sanitize-qa-artifacts.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
-          name: passive-qa-sanitized-${{ matrix.shard }}
+          name: passive-qa-sanitized-${{ matrix.browser }}-${{ matrix.shard }}
           path: |
             qa-artifacts/summary.json
             qa-artifacts/failure-results.json
@@ -231,6 +236,9 @@ jobs:
         browser:
           - chromium
           - webkit
+        viewport:
+          - desktop
+          - mobile
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.60.0-noble
     timeout-minutes: 15
@@ -257,7 +265,7 @@ jobs:
           export QA_MOTION_OUTPUT_DIR
           trap 'rm -rf "$QA_MOTION_OUTPUT_DIR"' EXIT
 
-          motion_projects=(--project=motion-${{ matrix.browser }}-desktop --project=motion-${{ matrix.browser }}-mobile)
+          motion_projects=(--project=motion-${{ matrix.browser }}-${{ matrix.viewport }})
           if [[ "${{ matrix.browser }}" == "webkit" ]]; then
             xvfb-run --auto-servernum npm run qa:motion -- --headed "${motion_projects[@]}"
           else
