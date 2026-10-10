@@ -2,6 +2,10 @@
 // the source and derivative digests in this registry so the delivery plugin can
 // reject stale or mismatched bytes before they reach the browser.
 const displayDerivativesBySourceHash = Object.freeze({
+  '4aa2f3b1bf229484593fbed8669fb684d8a579f0b3182f562d1a2304dc3aceaa': Object.freeze({"src":"/assets/case-studies/case-study-display-4aa2f3b1bf22-d52b2032c278.webp","sha256":"d52b2032c278b6c843f8bdcfc4e50695d932d4469c7cbde13bb6011f9b957af2","width":1066,"height":600}),
+  'b87ac7e2e0da834a12128e1fb97f7fe93dad80bed4f0d73decef3f35b81b6933': Object.freeze({"src":"/assets/case-studies/case-study-display-b87ac7e2e0da-2bf7c29b6d0a.webp","sha256":"2bf7c29b6d0ae9733ad8ae98e43017a438bb744df5f1c3541729b6102e757d20","width":1066,"height":600}),
+  'c3300da763e338ca89d04e53726d18cdb029b01bd52e58b56af1b1c266295309': Object.freeze({"src":"/assets/case-studies/case-study-display-c3300da763e3-9171148e77a9.webp","sha256":"9171148e77a9d3e58b52d08966eb3687193149a0df5b760b22e29f78cef957b8","width":1066,"height":600}),
+
   'b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82': Object.freeze({
     src: '/assets/case-studies/case-study-display-b11f57c86cd2-3d31a82cd9be.webp',
     sha256: '3d31a82cd9be1728715aee6dcbad56c026e00cdc32420c2073698cba9751dc13',
@@ -120,6 +124,10 @@ const displayDerivativesBySourceHash = Object.freeze({
 });
 
 const caseStudySourceRegistry = {
+  '/assets/case-studies/invoice-ocr-workflow-illustration.png': Object.freeze({"src":"/assets/case-studies/invoice-ocr-workflow-illustration-thumb-fd94ef0a57f8.jpg","sourceSha256":"4aa2f3b1bf229484593fbed8669fb684d8a579f0b3182f562d1a2304dc3aceaa","thumbnailSha256":"fd94ef0a57f85bac8a90581f741ee4ae99c381f2e4a273a26b0e12fda3b626aa"}),
+  '/assets/case-studies/ai-invoice-verification-illustration.png': Object.freeze({"src":"/assets/case-studies/ai-invoice-verification-illustration-thumb-c3ab37bb50c8.jpg","sourceSha256":"b87ac7e2e0da834a12128e1fb97f7fe93dad80bed4f0d73decef3f35b81b6933","thumbnailSha256":"c3ab37bb50c8fe5210bcd74a5d8a2c606ef296973b6416dc22f7b876af783b81"}),
+  '/assets/case-studies/ai-project-planning-illustration.png': Object.freeze({"src":"/assets/case-studies/ai-project-planning-illustration-thumb-468c21560637.jpg","sourceSha256":"c3300da763e338ca89d04e53726d18cdb029b01bd52e58b56af1b1c266295309","thumbnailSha256":"468c21560637457259b0d77b74858b40575912da09012852ee5dca5c927c44fa"}),
+
   '/assets/case-studies/invoice-ocr-excel-results.png': Object.freeze({
     src: '/assets/case-studies/invoice-ocr-excel-results-thumb-baf8afeedb27.jpg',
     sourceSha256: '30d08f427ad9dd6098464b4c1d28d180232ec3531b3e016853a3c605083fa9ad',

@@ -1,6 +1,10 @@
 // Browser URLs only. Integrity digests and dimensions live in the build-only
 // publication/case-study-derivatives.js registry.
 export const caseStudyThumbnailRegistry = Object.freeze({
+  "/assets/case-studies/invoice-ocr-workflow-illustration.png": {"src":"/assets/case-studies/invoice-ocr-workflow-illustration-thumb-fd94ef0a57f8.jpg","display":{"src":"/assets/case-studies/case-study-display-4aa2f3b1bf22-d52b2032c278.webp"}},
+  "/assets/case-studies/ai-invoice-verification-illustration.png": {"src":"/assets/case-studies/ai-invoice-verification-illustration-thumb-c3ab37bb50c8.jpg","display":{"src":"/assets/case-studies/case-study-display-b87ac7e2e0da-2bf7c29b6d0a.webp"}},
+  "/assets/case-studies/ai-project-planning-illustration.png": {"src":"/assets/case-studies/ai-project-planning-illustration-thumb-468c21560637.jpg","display":{"src":"/assets/case-studies/case-study-display-c3300da763e3-9171148e77a9.webp"}},
+
   "/assets/case-studies/invoice-ocr-excel-results.png": {"src":"/assets/case-studies/invoice-ocr-excel-results-thumb-baf8afeedb27.jpg"},
   "/assets/case-studies/invoice-ocr.webp": {"src":"/assets/case-studies/invoice-ocr-thumb-df3d151823fe.jpg","display":{"src":"/assets/case-studies/case-study-display-e6814512a975-926966cc5cb6.webp"}},
   "/assets/case-studies/n8n-data-extraction.png": {"src":"/assets/case-studies/n8n-data-extraction-thumb-bd1dc61ef269.jpg"},

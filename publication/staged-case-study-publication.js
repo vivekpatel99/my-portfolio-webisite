@@ -8,11 +8,10 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "a060bc64ed54dba7e5f1f9ab45bb8f1f59d073ce0469a385f7d61943ac0aa1d2",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "sha256": "d200ceeec25e76891e2bd27453fbb2d776af381e63c5bd0a4f86f9730abfb70f",
+        "approvedBy": "Viv (direct request and illustrative-caption approval)",
+        "approvedAt": "2026-10-10T07:06:45.478Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/blob/feat/portfolio-case-study-illustrations/docs/case-studies/portfolio-illustrations.md"
       },
       "claimRefs": {
         "summary": "ai-invoice-processing-automation.summary",
@@ -143,6 +142,19 @@ export const stagedCaseStudyPublication = {
                     "value": "The workflow separates extraction from validation and keeps uncertain records available for human handling."
                   }
                 ]
+              },
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "type": "image",
+                    "src": "/assets/case-studies/ai-invoice-verification-illustration.png",
+                    "alt": "Illustrative invoice verification workflow with extraction, validation, comparison and error flags.",
+                    "caption": "Conceptual invoice-verification illustration. PO/database matching, Azure OpenAI and the audit-ready wording shown here are not verified capabilities of this project. The case study describes extraction, deterministic checks, review states and spreadsheet output.",
+                    "width": 1672,
+                    "height": 941
+                  }
+                ]
               }
             ]
           },
@@ -236,11 +248,10 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "7fb442acb0a3bed6265c960fea18cfba4884d77cbb53d5504b2f059f7831dcf3",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "sha256": "d455f80e680cac1ad68ba6a6daf4488e842b2a352f439943d837192b14cc92a6",
+        "approvedBy": "Viv (direct request and illustrative-caption approval)",
+        "approvedAt": "2026-10-10T07:06:45.478Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/blob/feat/portfolio-case-study-illustrations/docs/case-studies/portfolio-illustrations.md"
       },
       "claimRefs": {
         "summary": "ai-project-planning-assistant.summary",
@@ -341,6 +352,19 @@ export const stagedCaseStudyPublication = {
                   {
                     "type": "text",
                     "value": "The project separates clarification, research and report generation. The architecture diagram shows that workflow rather than an n8n data-extraction system."
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "type": "image",
+                    "src": "/assets/case-studies/ai-project-planning-illustration.png",
+                    "alt": "Illustrated AI project planning workflow from a goal through task breakdown and dependencies to an action plan.",
+                    "caption": "Conceptual illustration of the LangGraph planning assistant. Its clarification, task research and report-generation stages produce a plan for technical review.",
+                    "width": 1672,
+                    "height": 941
                   }
                 ]
               }
@@ -838,11 +862,10 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "79ef286a17849a6bf3340e56e1dfcda2b4c8b106253dfbbb362845be94a3ac0c",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+        "sha256": "277fe52f09462874650577f51600d77fbe3d9c66726db7528fb3087e794a7a4c",
+        "approvedBy": "Viv (direct request and illustrative-caption approval)",
+        "approvedAt": "2026-10-10T07:06:45.478Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/blob/feat/portfolio-case-study-illustrations/docs/case-studies/portfolio-illustrations.md"
       },
       "claimRefs": {
         "summary": "invoice-ocr-extraction.summary",
@@ -969,6 +992,19 @@ export const stagedCaseStudyPublication = {
                     "alt": "Spreadsheet output with source filenames and extracted client fields",
                     "width": 1068,
                     "height": 436
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "type": "image",
+                    "src": "/assets/case-studies/invoice-ocr-workflow-illustration.png",
+                    "alt": "Illustrative OCR workflow from invoice input through recognition and field parsing to structured data.",
+                    "caption": "Conceptual OCR workflow illustration. The 94% faster claim and JSON/database output shown here are not verified results for this project. The delivered tool exports client fields from invoice photos to Excel for review.",
+                    "width": 1672,
+                    "height": 941
                   }
                 ]
               }
@@ -3078,6 +3114,45 @@ export const stagedCaseStudyPublication = {
         "approvedAt": "2026-09-27T11:49:17.695Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
         "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+      }
+    },
+    "/assets/case-studies/invoice-ocr-workflow-illustration.png": {
+      "file": "public/assets/case-studies/invoice-ocr-workflow-illustration.png",
+      "width": 1672,
+      "height": 941,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "4aa2f3b1bf229484593fbed8669fb684d8a579f0b3182f562d1a2304dc3aceaa",
+        "approvedBy": "Viv (direct request and illustrative-caption approval)",
+        "approvedAt": "2026-10-10T07:06:45.478Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/blob/feat/portfolio-case-study-illustrations/docs/case-studies/portfolio-illustrations.md"
+      }
+    },
+    "/assets/case-studies/ai-invoice-verification-illustration.png": {
+      "file": "public/assets/case-studies/ai-invoice-verification-illustration.png",
+      "width": 1672,
+      "height": 941,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "b87ac7e2e0da834a12128e1fb97f7fe93dad80bed4f0d73decef3f35b81b6933",
+        "approvedBy": "Viv (direct request and illustrative-caption approval)",
+        "approvedAt": "2026-10-10T07:06:45.478Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/blob/feat/portfolio-case-study-illustrations/docs/case-studies/portfolio-illustrations.md"
+      }
+    },
+    "/assets/case-studies/ai-project-planning-illustration.png": {
+      "file": "public/assets/case-studies/ai-project-planning-illustration.png",
+      "width": 1672,
+      "height": 941,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "c3300da763e338ca89d04e53726d18cdb029b01bd52e58b56af1b1c266295309",
+        "approvedBy": "Viv (direct request and illustrative-caption approval)",
+        "approvedAt": "2026-10-10T07:06:45.478Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/blob/feat/portfolio-case-study-illustrations/docs/case-studies/portfolio-illustrations.md"
       }
     }
   }
