@@ -1,0 +1,2186 @@
+{
+  "schemaVersion": 1,
+  "stories": [
+    {
+      "id": "ai-invoice-processing-automation",
+      "slug": "ai-invoice-processing-automation",
+      "title": "Invoice Extraction with Review Controls and Spreadsheet Handoff",
+      "summary": "A delivered invoice-processing workflow combines AI extraction, translation, validation and reviewable spreadsheet output.",
+      "projectStatus": "completed",
+      "completedAt": "2026-09",
+      "category": "Document AI",
+      "sections": [
+        {
+          "key": "problem",
+          "heading": "The problem",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Invoice headers and line items needed to move from scanned or digital documents into an existing finance workbook. Descriptions had to remain available in their original language and in English. The destination also contained calculated columns that automation must not overwrite."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "built",
+          "heading": "What I built",
+          "nodes": [
+            {
+              "type": "list",
+              "ordered": false,
+              "start": "",
+              "items": [
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Drive intake and n8n orchestration for individual invoices in PDF or image form."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "AI-assisted header and line extraction, including Greek-to-English descriptions."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Deterministic document, VAT and total checks alongside the model output."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Visible success, review, duplicate and failed states."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Correction memory based on reviewed records, with protected identity and audit fields."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Google Sheets output designed around the existing Excel and Power Query handoff."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The workflow separates extraction from validation and keeps uncertain records available for human handling."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/ai-invoice-processing-automation-f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png",
+                  "alt": "Original M2 invoice orchestration workflow",
+                  "caption": "Original M2 invoice orchestration workflow",
+                  "width": 2448,
+                  "height": 684
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "outcome",
+          "heading": "The outcome",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The delivered core connects intake, extraction, review and spreadsheet output in one process. It suits operations teams that need structured invoice data while retaining control over exceptions and calculations. Maintenance and later extensions are tracked separately. No measured accuracy, throughput or savings figure is claimed; combined multi-invoice PDF processing is outside this verified scope."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Project screenshots"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/ai-invoice-processing-automation-c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9.png",
+                  "alt": "Original M1 extraction workflow; historical screenshot annotations are not independently verified benchmarks",
+                  "width": 1862,
+                  "height": 800
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/ai-invoice-processing-automation-c4ef84c5245e7116671357858924a22b8a2dbd1f95695108125704d6021f9964.png",
+                  "alt": "Original PDF splitting subworkflow",
+                  "width": 2140,
+                  "height": 458
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/ai-invoice-processing-automation-15fcb5d1f5daf1514ad0f41393d5ac9e432b1907d17835f8b62ab122e5043289.png",
+                  "alt": "Original input-file scanning subworkflow",
+                  "width": 883,
+                  "height": 480
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/ai-invoice-processing-automation-e2386e51522d827d3ec7f44d144b173f3dbdae865dcb9db323c4c161fc6bc8fb.png",
+                  "alt": "Original invoice error notification workflow",
+                  "width": 1609,
+                  "height": 794
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "image": {
+        "src": "/assets/case-studies/ai-invoice-verification-illustration.png",
+        "alt": "Illustrative invoice verification workflow with extraction, validation, comparison and error flags.",
+        "caption": "Conceptual invoice-verification illustration. PO/database matching, Azure OpenAI and the audit-ready wording shown here are not verified capabilities of this project. The case study describes extraction, deterministic checks, review states and spreadsheet output.",
+        "width": 1672,
+        "height": 941
+      }
+    },
+    {
+      "id": "ai-project-planning-assistant",
+      "slug": "ai-project-planning-assistant",
+      "title": "From a Project Brief to a Reviewable Implementation Plan",
+      "summary": "A LangGraph planning assistant clarifies a project brief, researches subtasks and produces a structured Markdown plan.",
+      "projectStatus": "completed",
+      "completedAt": "2025-09",
+      "category": "AI Agents",
+      "sections": [
+        {
+          "key": "problem",
+          "heading": "The problem",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The project needed to turn an incomplete idea into a plan a developer could inspect and refine. Jumping directly from a short brief to a large answer could conceal missing requirements and unsupported assumptions."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "built",
+          "heading": "What I built",
+          "nodes": [
+            {
+              "type": "list",
+              "ordered": false,
+              "start": "",
+              "items": [
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "A clarification stage for missing requirements."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "A supervisor and research-agent workflow for breaking down the task."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "A report-generation stage that assembles a structured Markdown plan."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Modular agent code, configuration and example generated outputs."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The project separates clarification, research and report generation. The architecture diagram shows that workflow rather than an n8n data-extraction system."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/ai-project-planning-assistant-483e16b2c3afb3bf6273821ce09d831d07ae5a00ffce8c2b8e24b202062e41a8.webp",
+                  "alt": "Clarification, supervisor, research and report-generation agent graph",
+                  "width": 546,
+                  "height": 958
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "outcome",
+          "heading": "The outcome",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The assistant produces planning material that can be reviewed before implementation. It supports project scoping and task preparation; it does not guarantee correct estimates or replace technical review. The repository provides implementation and examples, not a measured improvement in delivery speed or planning accuracy."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "image": {
+        "src": "/assets/case-studies/ai-project-planning-illustration.png",
+        "alt": "Illustrated AI project planning workflow from a goal through task breakdown and dependencies to an action plan.",
+        "caption": "Conceptual illustration of the LangGraph planning assistant. Its clarification, task research and report-generation stages produce a plan for technical review.",
+        "width": 1672,
+        "height": 941
+      }
+    },
+    {
+      "id": "browser-search-to-spreadsheet",
+      "slug": "browser-search-to-spreadsheet",
+      "title": "Browser Search Results Back to a Reviewable Spreadsheet",
+      "summary": "A browser-automation handoff processes search inputs from a spreadsheet and records result URLs and execution status.",
+      "projectStatus": "completed",
+      "completedAt": "2026-04",
+      "category": "Browser Automation",
+      "sections": [
+        {
+          "key": "problem",
+          "heading": "The problem",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The work involved repeated travel-search inputs that had to move through a browser workflow and return useful result links. Operators needed row-level status and a repeatable run process rather than a collection of manually opened tabs."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "built",
+          "heading": "What I built",
+          "nodes": [
+            {
+              "type": "list",
+              "ordered": false,
+              "start": "",
+              "items": [
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Spreadsheet-driven search inputs and browser orchestration."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Result URL, timestamp and status fields written back to the sheet."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Configuration for execution concurrency and runtime behavior."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Setup and run instructions for the delivered environment."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Troubleshooting guidance for browser and environment failures."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The archived delivery contains both project documentation and a packaged run path."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "outcome",
+          "heading": "The outcome",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The handoff connects a spreadsheet queue to browser-driven searches and reviewable results. Browser interfaces and third-party access conditions can change, so ongoing operation requires maintenance and authorized access. No booking completion, unrestricted access guarantee or measured success rate is claimed."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "image": {
+        "src": "/assets/case-studies/browser-search-to-spreadsheet-workflow-diagram.png",
+        "alt": "Spreadsheet inputs pass through browser searches into a sheet with result URLs, timestamps and execution status.",
+        "caption": "Illustrative workflow. Spreadsheet search inputs drive configurable browser runs. Result URLs, timestamps and row status return to a reviewable sheet. Ongoing operation requires maintenance and authorized access.",
+        "width": 1620,
+        "height": 920
+      }
+    },
+    {
+      "id": "depth-based-distance-estimation",
+      "slug": "depth-based-distance-estimation",
+      "title": "Lab Demo of Depth-Based Spatial Analysis Between Detected Objects",
+      "summary": "A Python lab demo overlays object detections and uncalibrated distances on a scene.",
+      "projectStatus": "completed",
+      "completedAt": "2025-09",
+      "category": "Computer Vision",
+      "sections": [
+        {
+          "key": "problem",
+          "heading": "The problem",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The task was to estimate spatial relationships between objects in a scene. This is an uncalibrated lab demo. Object boxes alone do not describe depth, so the processing path needed both detection and a depth estimate that could support distance and navigation-zone logic."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "built",
+          "heading": "What I built",
+          "nodes": [
+            {
+              "type": "list",
+              "ordered": false,
+              "start": "",
+              "items": [
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "A Python project integrating a Depth Anything V2 depth-estimation component."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "An object-detection component and utilities for spatial calculations."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Navigation-zone logic alongside object-distance estimation."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Configuration and a reproducible environment for running the project."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The delivered source separates detector, depth estimator and navigation logic so those components can be inspected or replaced independently."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/depth-based-distance-estimation-6cff31a07362f0483bf43298af0366ffb4c8f40137291202506a8924b0d24957.png",
+                  "alt": "Lab demo showing object detections and estimated distances. Displayed values are demo output, not an accuracy benchmark.",
+                  "caption": "Lab demo showing object detections and estimated distances. Displayed values are demo output, not an accuracy benchmark.",
+                  "width": 1280,
+                  "height": 769
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "outcome",
+          "heading": "The outcome",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The handoff provides a starting point for scene-level spatial analysis. Monocular depth and estimated distances require validation against the intended camera and environment; this case study does not claim calibrated measurement accuracy or safety-critical navigation readiness. The value demonstrated is the integrated processing component, with deployment validation remaining application-specific."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "image": {
+        "src": "/assets/case-studies/depth-based-distance-estimation-workflow-diagram.png",
+        "alt": "A scene feeds object detection and depth estimates, which combine into a spatial overlay in an uncalibrated lab demo.",
+        "caption": "Illustrative workflow for an uncalibrated lab demo combining object detection, Depth Anything V2, spatial calculations and navigation-zone logic. Camera and environment validation remains application-specific.",
+        "width": 1620,
+        "height": 920
+      }
+    },
+    {
+      "id": "healthcare-document-intelligence",
+      "slug": "healthcare-document-intelligence",
+      "title": "Color-Coded Schedule PDFs to Reviewable Excel Rows",
+      "summary": "A Python extractor turns color-coded schedule PDFs into Excel rows. Not clinical EHR. Not medical records.",
+      "projectStatus": "completed",
+      "completedAt": "2026-09",
+      "category": "Document AI",
+      "sections": [
+        {
+          "key": "problem",
+          "heading": "The problem",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Scheduling information arrived in dense PDF calendars. These are staff schedule PDFs, not clinical EHR or medical records. Dates and shifts were positioned in a grid, while highlight colors carried availability and preference information. Copying text alone lost that meaning, and some staff calendars continued across multiple pages."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "built",
+          "heading": "What I built",
+          "nodes": [
+            {
+              "type": "list",
+              "ordered": false,
+              "start": "",
+              "items": [
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Native-PDF text and drawing extraction with dynamic calendar-grid detection."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Classification of schedule pages so legend pages are not treated as rosters."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Extraction of dates, shift labels and color-coded preference values."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Continuation-page handling and duplicate-row removal."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Excel export with a readable legend for the request codes."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Tests around grid detection, color mapping and header parsing."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The deterministic native-PDF path is distinct from the related vision inspection prototype; the two are not presented as separate delivered client projects."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/healthcare-document-intelligence-1973dd984be94a7a4a1ec9581d8ef3499be61acaa93d44680156e0f3c3d60151.png",
+                  "alt": "Original schedule PDF extractor implementation",
+                  "caption": "Original schedule PDF extractor implementation",
+                  "width": 1098,
+                  "height": 1524
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "outcome",
+          "heading": "The outcome",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The extractor produces rows a scheduling coordinator can compare with the source calendar. Unknown colors and unreadable cells are not guessed. This is operational document processing, not clinical EHR or medical records. No measured accuracy figure is claimed."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "image": {
+        "src": "/assets/case-studies/healthcare-document-intelligence-workflow-diagram.png",
+        "alt": "Color-coded staff schedule PDF converted into reviewable Excel date, shift and request-code rows.",
+        "caption": "Illustrative workflow. Native-PDF extraction turns staff calendars into reviewable Excel rows, preserving dates, shifts and color-coded requests. Illustrative data only.",
+        "width": 1620,
+        "height": 920
+      }
+    },
+    {
+      "id": "invoice-ocr-extraction",
+      "slug": "invoice-ocr-extraction",
+      "title": "From Invoice Photos to Reviewable Client Data",
+      "summary": "A local Python OCR tool that reads client details from invoice photos and exports spreadsheet rows linked to the original files.",
+      "projectStatus": "completed",
+      "completedAt": "2025-08",
+      "category": "Document AI",
+      "sections": [
+        {
+          "key": "problem",
+          "heading": "The problem",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The assignment asked for seller and client information from invoice photos. The delivered parser focused on the client block in the supplied layout. A full-page OCR dump would still leave someone separating names, addresses and tax IDs by hand."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "built",
+          "heading": "What I built",
+          "nodes": [
+            {
+              "type": "list",
+              "ordered": false,
+              "start": "",
+              "items": [
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "A batch script that reads invoice photos from a local folder."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Cropping of the client region before OCR recognition."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Layout-specific parsing for client name, address and tax ID."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Excel output with the source filename beside each extracted record."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Logging and skipping of unreadable images so failed inputs do not become invented records."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Python, PaddleOCR, OpenCV and pandas form the delivered processing path. The invoice overlay and spreadsheet show the input-to-output relationship."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/invoice-ocr-extraction-95e609aecb33ad070dee910b85f165354eabe1f4bb078fb909ff467552183d4d.png",
+                  "alt": "Spreadsheet output with source filenames and extracted client fields",
+                  "width": 1068,
+                  "height": 436
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/invoice-ocr-extraction-e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4.webp",
+                  "alt": "Invoice image with bounding boxes showing extracted client information via OCR.",
+                  "width": 1654,
+                  "height": 2339
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "outcome",
+          "heading": "The outcome",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The handoff turns invoice photos into structured client-field rows that a person can check against the original image. It is useful for a repeatable document layout and a local batch workflow. It is not a general invoice platform: new layouts need parser changes, and the delivered scope does not include automated seller-block extraction or a measured accuracy guarantee."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "image": {
+        "src": "/assets/case-studies/invoice-ocr-workflow-illustration.png",
+        "alt": "Illustrative OCR workflow from invoice input through recognition and field parsing to structured data.",
+        "caption": "Conceptual OCR workflow illustration. The 94% faster claim and JSON/database output shown here are not verified results for this project. The delivered tool exports client fields from invoice photos to Excel for review.",
+        "width": 1672,
+        "height": 941
+      }
+    },
+    {
+      "id": "n8n-openai-data-extraction",
+      "slug": "n8n-openai-data-extraction",
+      "title": "Website Data to Structured JSON with n8n and OpenAI",
+      "summary": "A website-data extraction workflow that discovers downloadable datasets, normalizes their structure, and produces JSON for downstream use.",
+      "projectStatus": "completed",
+      "completedAt": "2025-10",
+      "category": "AI Workflow Automation",
+      "sections": [
+        {
+          "key": "problem",
+          "heading": "The problem",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The client needed useful datasets from websites rather than another list of links. Inputs included spreadsheets, CSV files and embedded HTML tables. Each source could use a different layout, so discovery and normalization had to work together. The requested handoff was structured JSON organized by the starting URL."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "built",
+          "heading": "What I built",
+          "nodes": [
+            {
+              "type": "list",
+              "ordered": false,
+              "start": "",
+              "items": [
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "An n8n workflow that accepts starting URLs and discovers candidate data links."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Separate processing paths for Excel workbooks, CSV files and HTML tables."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Table-to-JSON transformation with schema generation and classification steps."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Configurable crawling and processing settings, with reusable subworkflows."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Structured error logging and a separate notifier for fatal failures."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The workflow screenshots show the main discovery path and the supporting processors. They make the orchestration inspectable instead of hiding the entire process in one script."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/n8n-openai-data-extraction-7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b.png",
+                  "alt": "Data processor routing Excel, CSV and HTML tables",
+                  "width": 1679,
+                  "height": 981
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/n8n-openai-data-extraction-ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338.png",
+                  "alt": "Excel workbook extraction and conversion to JSON",
+                  "width": 3400,
+                  "height": 955
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/n8n-openai-data-extraction-f60a6d00c4e80b105fe22f03ddd6d500689c0d956a85ff4457e6f11cd14d27f7.png",
+                  "alt": "Table normalization, schema generation and tagging workflow",
+                  "width": 2645,
+                  "height": 967
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/n8n-openai-data-extraction-3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66.png",
+                  "alt": "Error classification and structured logging workflow",
+                  "width": 1142,
+                  "height": 923
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/n8n-openai-data-extraction-489e4160aa64c5141e750196c0de330320839b345c2f9aaa28137cce795f9275.png",
+                  "alt": "Fatal workflow error notification setup",
+                  "width": 1702,
+                  "height": 1063
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/n8n-openai-data-extraction-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png",
+                  "alt": "Main n8n workflow for discovering and extracting website datasets",
+                  "width": 2984,
+                  "height": 874
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "outcome",
+          "heading": "The outcome",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The project provides a reusable path from website sources to structured datasets, with processing and error-handling steps that can be inspected and adapted. It fits teams collecting recurring external data for analysis or internal tools. Source-specific changes can still require adjustment; no measured coverage, accuracy or time-saving figure is claimed."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "image": {
+        "src": "/assets/case-studies/n8n-openai-data-extraction-workflow-diagram.png",
+        "alt": "Website datasets branch into Excel, CSV and HTML processors, then become structured JSON grouped by starting URL.",
+        "caption": "Illustrative workflow. An n8n and OpenAI workflow discovers website datasets, processes Excel, CSV and HTML tables separately, and produces structured JSON organized by starting URL. Source-specific changes may need adjustment.",
+        "width": 1620,
+        "height": 920
+      }
+    },
+    {
+      "id": "n8n-python-ai-agents",
+      "slug": "n8n-python-ai-agents",
+      "title": "Maintainable n8n Pipelines and a Read-Only SQL Agent",
+      "summary": "Repeat automation work moved scripted data flows into n8n and added a database-question agent with an explicit SQL execution boundary.",
+      "projectStatus": "completed",
+      "completedAt": "2026-05",
+      "category": "AI Workflow Automation",
+      "sections": [
+        {
+          "key": "problem",
+          "heading": "The problem",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The team needed a multi-step data pipeline maintained as inspectable workflows and a way for operators to ask questions of Postgres. Moving scripts into visual nodes had to preserve insert, update and delete handling. The question-answering agent needed a separate read-only execution path."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "built",
+          "heading": "What I built",
+          "nodes": [
+            {
+              "type": "list",
+              "ordered": false,
+              "start": "",
+              "items": [
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "n8n workflows for collection, comparison, enrichment and record synchronization."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Separate insert, update and delete routes with shared error handling."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "AI enrichment and vector-index synchronization with confidence-based review."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "A chat agent that loads the database schema and calls an SQL tool."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "SELECT-only validation and result limits in the executor path."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/n8n-python-ai-agents-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png",
+                  "alt": "Representative n8n data extraction workflow from other portfolio work",
+                  "width": 2984,
+                  "height": 874,
+                  "caption": "Representative n8n data extraction workflow from other portfolio work"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/n8n-python-ai-agents-7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b.png",
+                  "alt": "Representative n8n data processor workflow from other portfolio work",
+                  "width": 1679,
+                  "height": 981,
+                  "caption": "Representative n8n data processor workflow from other portfolio work"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/n8n-python-ai-agents-3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66.png",
+                  "alt": "Representative n8n error handler workflow from other portfolio work",
+                  "width": 1142,
+                  "height": 923,
+                  "caption": "Representative n8n error handler workflow from other portfolio work"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/n8n-python-ai-agents-ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338.png",
+                  "alt": "Representative n8n Excel-to-JSON processor from other portfolio work",
+                  "width": 3400,
+                  "height": 955,
+                  "caption": "Representative n8n Excel-to-JSON processor from other portfolio work"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/n8n-python-ai-agents-f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png",
+                  "alt": "Representative invoice orchestrator workflow from other portfolio work",
+                  "width": 2448,
+                  "height": 684,
+                  "caption": "Representative invoice orchestrator workflow from other portfolio work"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/n8n-python-ai-agents-c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9.png",
+                  "alt": "Representative invoice extractor workflow from other portfolio work",
+                  "width": 1862,
+                  "height": 800,
+                  "caption": "Representative invoice extractor workflow from other portfolio work"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/n8n-python-ai-agents-e542384f4f7532d230440cb9a68e0e7e66d951996959221225633fc5304b08b7.png",
+                  "alt": "Original client-supplied PostgreSQL table overview used as project input; not an agent-result screenshot",
+                  "caption": "Original client-supplied PostgreSQL table overview used as project input; not an agent-result screenshot",
+                  "width": 2262,
+                  "height": 769
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "outcome",
+          "heading": "The outcome",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The result is an inspectable n8n pipeline and a constrained way to ask operational database questions. Uncertain enrichment and empty query results remain visible. No scored agent-accuracy result, standalone Python service or measured savings figure is claimed."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "image": {
+        "src": "/assets/case-studies/n8n-python-ai-agents-workflow-diagram.png",
+        "alt": "Separate lanes show n8n record and vector synchronization, and schema-aware SQL queries with SELECT-only validation and bounded results.",
+        "caption": "Illustrative workflow. Inspectable n8n synchronization and a separate SQL question agent with SELECT-only validation and bounded results.",
+        "width": 1620,
+        "height": 920
+      }
+    },
+    {
+      "id": "python-ci-workflow-automation",
+      "slug": "python-ci-workflow-automation",
+      "title": "Testable Python Automation for Code-Quality Workflows",
+      "summary": "A Python toolkit organizes linting, review generation and repository workflow steps behind reusable commands.",
+      "projectStatus": "completed",
+      "completedAt": "2025-09",
+      "category": "Developer Automation",
+      "sections": [
+        {
+          "key": "problem",
+          "heading": "The problem",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The project addressed repository automation that was difficult to debug and test when spread across long workflow definitions. The aim was to put workflow decisions into code with clearer interfaces and reusable entry points."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "built",
+          "heading": "What I built",
+          "nodes": [
+            {
+              "type": "list",
+              "ordered": false,
+              "start": "",
+              "items": [
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Python entry points for linting and code-quality orchestration."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Integration points for linter execution and AI-assisted review text."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Repository workflow helpers for pull-request-related operations."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Modular components and tests for workflow logic."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Configuration and usage documentation for the handoff."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The source describes a Python-based automation toolkit rather than a replacement hosting or CI platform."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "outcome",
+          "heading": "The outcome",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The toolkit makes code-quality workflow logic easier to inspect and test as ordinary Python. It demonstrates developer-tooling and workflow integration work. It does not establish an independently measured coverage rate, productivity gain or autonomous review accuracy. Client source remains private."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "image": {
+        "src": "/assets/case-studies/python-ci-workflow-automation-workflow-diagram.png",
+        "alt": "Python workflow code becomes reusable entry points for linting, AI-assisted review text and pull-request helpers.",
+        "caption": "Illustrative workflow. A Python toolkit organizes code-quality workflow logic behind reusable entry points, with independent linting, assisted review-text and PR-helper capabilities.",
+        "width": 1620,
+        "height": 920
+      }
+    },
+    {
+      "id": "resumable-listing-data-extraction",
+      "slug": "resumable-listing-data-extraction",
+      "title": "Resumable Listing Extraction to CSV and JSONL",
+      "summary": "A Python batch extractor collects listing details with progress tracking, incremental exports and restart support.",
+      "projectStatus": "completed",
+      "completedAt": "2025-11",
+      "category": "Data Extraction",
+      "sections": [
+        {
+          "key": "problem",
+          "heading": "The problem",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The client needed a structured dataset from many listing pages. A long run could fail midway, so the process needed to retain progress and avoid restarting completed work. The output also needed to be usable before the final page had finished."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "built",
+          "heading": "What I built",
+          "nodes": [
+            {
+              "type": "list",
+              "ordered": false,
+              "start": "",
+              "items": [
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Separate URL-collection and listing-detail extraction stages."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Concurrent processing with controlled delays and retry handling."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "A record of completed listings to support restart and resume."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Incremental JSONL and CSV output during extraction."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Progress reporting and configurable execution settings."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The workflow supports review of the extracted dataset and recovery from interrupted runs."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "outcome",
+          "heading": "The outcome",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The project delivers a repeatable batch-extraction process with visible progress and reusable output files. Website changes and source-access requirements still need maintenance. README timing and volume claims are not presented here as independently verified benchmarks, and this story does not promise unrestricted extraction from arbitrary websites."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "image": {
+        "src": "/assets/case-studies/resumable-listing-data-extraction-workflow-diagram.png",
+        "alt": "Listing URLs feed concurrent detail extraction, incremental CSV and JSONL files, and a completed-listing checkpoint for resume.",
+        "caption": "Illustrative workflow. Collect listing URLs, extract details with controlled delays and retries, retain completed listings for restart, and export incremental CSV and JSONL files. Website changes and source-access requirements still need maintenance.",
+        "width": 1620,
+        "height": 920
+      }
+    },
+    {
+      "id": "yolo-computer-vision-optimization",
+      "slug": "yolo-computer-vision-optimization",
+      "title": "Reviewable Body-Pose Detection for Fitness Images",
+      "summary": "A Python pose-estimation project with training scripts and image outputs showing person boxes and body keypoints.",
+      "projectStatus": "completed",
+      "completedAt": "2025-09",
+      "category": "Computer Vision",
+      "sections": [
+        {
+          "key": "problem",
+          "heading": "The problem",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The client needed a vision component for a fitness application: a way to detect a person and inspect body joints in exercise images. The handoff needed to be repeatable on the client’s own labeled images rather than limited to a single notebook demonstration."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "built",
+          "heading": "What I built",
+          "nodes": [
+            {
+              "type": "list",
+              "ordered": false,
+              "start": "",
+              "items": [
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "A packaged Python project for training and testing YOLO pose models."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Support for a YOLO-format dataset and configurable model checkpoints."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Inference on still images with person boxes and body-keypoint overlays."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Example outputs showing different exercise poses."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Environment lockfile and instructions for rerunning the training and inference commands."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The images make individual predictions reviewable. Their detection scores describe those predictions, not a measured project-wide accuracy rate."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/yolo-computer-vision-optimization-5d40e830aa8d828e7fe3c360c8e867ad6ece4f2fdca5e4efc917744df42d4661.jpg",
+                  "alt": "YOLO body keypoints: Standing wide stance with arms extended",
+                  "width": 1500,
+                  "height": 1000
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/yolo-computer-vision-optimization-eeeef2e888f1d90f3f74cc2dedce3217b69875c67001b95e138dbda8dfa92249.jpg",
+                  "alt": "YOLO body keypoints: Standing lunge with arms raised",
+                  "width": 1500,
+                  "height": 1000
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/yolo-computer-vision-optimization-ceb105f111468c414425a9b66c60f83d1c05152495eeae4b79d9770637fba7e6.jpg",
+                  "alt": "YOLO body keypoints: Kneeling pose with back arched",
+                  "width": 1920,
+                  "height": 1281
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/yolo-computer-vision-optimization-e0fda8e3265b2103cda475ec21735f245b48aeee64505137ffb1d446ce8fb869.jpg",
+                  "alt": "YOLO body keypoints: Wide stance with bent knee and arms extended",
+                  "width": 1000,
+                  "height": 563
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/yolo-computer-vision-optimization-b3a9d87cd8189721b815648379e5c41748bd8db215f20b201fe3e56024e2eb80.jpg",
+                  "alt": "YOLO body keypoints: Prone backbend with arms supporting the torso",
+                  "width": 960,
+                  "height": 540
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/yolo-computer-vision-optimization-a1c141cdaa34086f779a22bbc54861dd5a0b6bd6c956df38456a3313983c2c0c.webp",
+                  "alt": "YOLO model detecting and estimating a yoga pose in an image.",
+                  "width": 960,
+                  "height": 720
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "outcome",
+          "heading": "The outcome",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The delivered component converts exercise stills into visual pose outputs and gives the client a training path for their own data. It can support a fitness product’s computer-vision work, while the application and any form-scoring rules remain separate. Live-video latency, on-device deployment and automatic exercise scoring are not claimed."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "image": {
+        "src": "/assets/case-studies/yolo-computer-vision-optimization-workflow-diagram.png",
+        "alt": "Exercise still transformed into a person box and body-keypoint overlay by YOLO pose estimation.",
+        "caption": "Illustrative still-image inference. YOLO pose estimation produces a person box and body-keypoint overlay for visual inspection. Form scoring remains separate.",
+        "width": 1620,
+        "height": 920
+      }
+    }
+  ],
+  "assets": {
+    "/assets/case-studies/ai-invoice-verification-illustration.png": {
+      "source": "assets/b87ac7e2e0da834a12128e1fb97f7fe93dad80bed4f0d73decef3f35b81b6933.png",
+      "sha256": "b87ac7e2e0da834a12128e1fb97f7fe93dad80bed4f0d73decef3f35b81b6933",
+      "width": 1672,
+      "height": 941,
+      "format": "png"
+    },
+    "/assets/case-studies/ai-invoice-processing-automation-f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png": {
+      "source": "assets/f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png",
+      "sha256": "f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275",
+      "width": 2448,
+      "height": 684,
+      "format": "png"
+    },
+    "/assets/case-studies/ai-invoice-processing-automation-c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9.png": {
+      "source": "assets/c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9.png",
+      "sha256": "c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9",
+      "width": 1862,
+      "height": 800,
+      "format": "png"
+    },
+    "/assets/case-studies/ai-invoice-processing-automation-c4ef84c5245e7116671357858924a22b8a2dbd1f95695108125704d6021f9964.png": {
+      "source": "assets/c4ef84c5245e7116671357858924a22b8a2dbd1f95695108125704d6021f9964.png",
+      "sha256": "c4ef84c5245e7116671357858924a22b8a2dbd1f95695108125704d6021f9964",
+      "width": 2140,
+      "height": 458,
+      "format": "png"
+    },
+    "/assets/case-studies/ai-invoice-processing-automation-15fcb5d1f5daf1514ad0f41393d5ac9e432b1907d17835f8b62ab122e5043289.png": {
+      "source": "assets/15fcb5d1f5daf1514ad0f41393d5ac9e432b1907d17835f8b62ab122e5043289.png",
+      "sha256": "15fcb5d1f5daf1514ad0f41393d5ac9e432b1907d17835f8b62ab122e5043289",
+      "width": 883,
+      "height": 480,
+      "format": "png"
+    },
+    "/assets/case-studies/ai-invoice-processing-automation-e2386e51522d827d3ec7f44d144b173f3dbdae865dcb9db323c4c161fc6bc8fb.png": {
+      "source": "assets/e2386e51522d827d3ec7f44d144b173f3dbdae865dcb9db323c4c161fc6bc8fb.png",
+      "sha256": "e2386e51522d827d3ec7f44d144b173f3dbdae865dcb9db323c4c161fc6bc8fb",
+      "width": 1609,
+      "height": 794,
+      "format": "png"
+    },
+    "/assets/case-studies/ai-project-planning-illustration.png": {
+      "source": "assets/c3300da763e338ca89d04e53726d18cdb029b01bd52e58b56af1b1c266295309.png",
+      "sha256": "c3300da763e338ca89d04e53726d18cdb029b01bd52e58b56af1b1c266295309",
+      "width": 1672,
+      "height": 941,
+      "format": "png"
+    },
+    "/assets/case-studies/ai-project-planning-assistant-483e16b2c3afb3bf6273821ce09d831d07ae5a00ffce8c2b8e24b202062e41a8.webp": {
+      "source": "assets/483e16b2c3afb3bf6273821ce09d831d07ae5a00ffce8c2b8e24b202062e41a8.webp",
+      "sha256": "483e16b2c3afb3bf6273821ce09d831d07ae5a00ffce8c2b8e24b202062e41a8",
+      "width": 546,
+      "height": 958,
+      "format": "webp"
+    },
+    "/assets/case-studies/browser-search-to-spreadsheet-workflow-diagram.png": {
+      "source": "assets/8ae2242a5fc25fe5381c89710e3d03b339d64bcbd18e24fee7ab585ecc71f240.png",
+      "sha256": "8ae2242a5fc25fe5381c89710e3d03b339d64bcbd18e24fee7ab585ecc71f240",
+      "width": 1620,
+      "height": 920,
+      "format": "png"
+    },
+    "/assets/case-studies/depth-based-distance-estimation-workflow-diagram.png": {
+      "source": "assets/6f27eac0ad723f3f4efd36a0ad81d7893a8410409f1cb841d61cc39c6c0f436e.png",
+      "sha256": "6f27eac0ad723f3f4efd36a0ad81d7893a8410409f1cb841d61cc39c6c0f436e",
+      "width": 1620,
+      "height": 920,
+      "format": "png"
+    },
+    "/assets/case-studies/depth-based-distance-estimation-6cff31a07362f0483bf43298af0366ffb4c8f40137291202506a8924b0d24957.png": {
+      "source": "assets/6cff31a07362f0483bf43298af0366ffb4c8f40137291202506a8924b0d24957.png",
+      "sha256": "6cff31a07362f0483bf43298af0366ffb4c8f40137291202506a8924b0d24957",
+      "width": 1280,
+      "height": 769,
+      "format": "png"
+    },
+    "/assets/case-studies/healthcare-document-intelligence-workflow-diagram.png": {
+      "source": "assets/b902df1b21e477101a86519a9ed58603cd960f7e5be68df053f9b70f783f7687.png",
+      "sha256": "b902df1b21e477101a86519a9ed58603cd960f7e5be68df053f9b70f783f7687",
+      "width": 1620,
+      "height": 920,
+      "format": "png"
+    },
+    "/assets/case-studies/healthcare-document-intelligence-1973dd984be94a7a4a1ec9581d8ef3499be61acaa93d44680156e0f3c3d60151.png": {
+      "source": "assets/1973dd984be94a7a4a1ec9581d8ef3499be61acaa93d44680156e0f3c3d60151.png",
+      "sha256": "1973dd984be94a7a4a1ec9581d8ef3499be61acaa93d44680156e0f3c3d60151",
+      "width": 1098,
+      "height": 1524,
+      "format": "png"
+    },
+    "/assets/case-studies/invoice-ocr-workflow-illustration.png": {
+      "source": "assets/4aa2f3b1bf229484593fbed8669fb684d8a579f0b3182f562d1a2304dc3aceaa.png",
+      "sha256": "4aa2f3b1bf229484593fbed8669fb684d8a579f0b3182f562d1a2304dc3aceaa",
+      "width": 1672,
+      "height": 941,
+      "format": "png"
+    },
+    "/assets/case-studies/invoice-ocr-extraction-95e609aecb33ad070dee910b85f165354eabe1f4bb078fb909ff467552183d4d.png": {
+      "source": "assets/95e609aecb33ad070dee910b85f165354eabe1f4bb078fb909ff467552183d4d.png",
+      "sha256": "95e609aecb33ad070dee910b85f165354eabe1f4bb078fb909ff467552183d4d",
+      "width": 1068,
+      "height": 436,
+      "format": "png"
+    },
+    "/assets/case-studies/invoice-ocr-extraction-e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4.webp": {
+      "source": "assets/e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4.webp",
+      "sha256": "e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4",
+      "width": 1654,
+      "height": 2339,
+      "format": "webp"
+    },
+    "/assets/case-studies/n8n-openai-data-extraction-workflow-diagram.png": {
+      "source": "assets/5f8d33c712e39a32dc57c65eab98aa8cac4e98d0eb9019594e41f389482e6c78.png",
+      "sha256": "5f8d33c712e39a32dc57c65eab98aa8cac4e98d0eb9019594e41f389482e6c78",
+      "width": 1620,
+      "height": 920,
+      "format": "png"
+    },
+    "/assets/case-studies/n8n-openai-data-extraction-7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b.png": {
+      "source": "assets/7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b.png",
+      "sha256": "7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b",
+      "width": 1679,
+      "height": 981,
+      "format": "png"
+    },
+    "/assets/case-studies/n8n-openai-data-extraction-ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338.png": {
+      "source": "assets/ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338.png",
+      "sha256": "ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338",
+      "width": 3400,
+      "height": 955,
+      "format": "png"
+    },
+    "/assets/case-studies/n8n-openai-data-extraction-f60a6d00c4e80b105fe22f03ddd6d500689c0d956a85ff4457e6f11cd14d27f7.png": {
+      "source": "assets/f60a6d00c4e80b105fe22f03ddd6d500689c0d956a85ff4457e6f11cd14d27f7.png",
+      "sha256": "f60a6d00c4e80b105fe22f03ddd6d500689c0d956a85ff4457e6f11cd14d27f7",
+      "width": 2645,
+      "height": 967,
+      "format": "png"
+    },
+    "/assets/case-studies/n8n-openai-data-extraction-3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66.png": {
+      "source": "assets/3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66.png",
+      "sha256": "3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66",
+      "width": 1142,
+      "height": 923,
+      "format": "png"
+    },
+    "/assets/case-studies/n8n-openai-data-extraction-489e4160aa64c5141e750196c0de330320839b345c2f9aaa28137cce795f9275.png": {
+      "source": "assets/489e4160aa64c5141e750196c0de330320839b345c2f9aaa28137cce795f9275.png",
+      "sha256": "489e4160aa64c5141e750196c0de330320839b345c2f9aaa28137cce795f9275",
+      "width": 1702,
+      "height": 1063,
+      "format": "png"
+    },
+    "/assets/case-studies/n8n-openai-data-extraction-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png": {
+      "source": "assets/b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png",
+      "sha256": "b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82",
+      "width": 2984,
+      "height": 874,
+      "format": "png"
+    },
+    "/assets/case-studies/n8n-python-ai-agents-workflow-diagram.png": {
+      "source": "assets/705758e6d203830ba8b9a8d02aa51efd5861b90c9aa2978035cfa55a5273f71d.png",
+      "sha256": "705758e6d203830ba8b9a8d02aa51efd5861b90c9aa2978035cfa55a5273f71d",
+      "width": 1620,
+      "height": 920,
+      "format": "png"
+    },
+    "/assets/case-studies/n8n-python-ai-agents-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png": {
+      "source": "assets/b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png",
+      "sha256": "b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82",
+      "width": 2984,
+      "height": 874,
+      "format": "png"
+    },
+    "/assets/case-studies/n8n-python-ai-agents-7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b.png": {
+      "source": "assets/7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b.png",
+      "sha256": "7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b",
+      "width": 1679,
+      "height": 981,
+      "format": "png"
+    },
+    "/assets/case-studies/n8n-python-ai-agents-3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66.png": {
+      "source": "assets/3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66.png",
+      "sha256": "3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66",
+      "width": 1142,
+      "height": 923,
+      "format": "png"
+    },
+    "/assets/case-studies/n8n-python-ai-agents-ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338.png": {
+      "source": "assets/ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338.png",
+      "sha256": "ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338",
+      "width": 3400,
+      "height": 955,
+      "format": "png"
+    },
+    "/assets/case-studies/n8n-python-ai-agents-f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png": {
+      "source": "assets/f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png",
+      "sha256": "f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275",
+      "width": 2448,
+      "height": 684,
+      "format": "png"
+    },
+    "/assets/case-studies/n8n-python-ai-agents-c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9.png": {
+      "source": "assets/c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9.png",
+      "sha256": "c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9",
+      "width": 1862,
+      "height": 800,
+      "format": "png"
+    },
+    "/assets/case-studies/n8n-python-ai-agents-e542384f4f7532d230440cb9a68e0e7e66d951996959221225633fc5304b08b7.png": {
+      "source": "assets/e542384f4f7532d230440cb9a68e0e7e66d951996959221225633fc5304b08b7.png",
+      "sha256": "e542384f4f7532d230440cb9a68e0e7e66d951996959221225633fc5304b08b7",
+      "width": 2262,
+      "height": 769,
+      "format": "png"
+    },
+    "/assets/case-studies/python-ci-workflow-automation-workflow-diagram.png": {
+      "source": "assets/b2e7442167276c591fd8a53ed27017dd0eaee1cd3e6d9c50542c8be123ca4f0a.png",
+      "sha256": "b2e7442167276c591fd8a53ed27017dd0eaee1cd3e6d9c50542c8be123ca4f0a",
+      "width": 1620,
+      "height": 920,
+      "format": "png"
+    },
+    "/assets/case-studies/resumable-listing-data-extraction-workflow-diagram.png": {
+      "source": "assets/852269fcf337a73b0cf5b42b21ed24a278e1974fa2b13e165927e951cc20e0d1.png",
+      "sha256": "852269fcf337a73b0cf5b42b21ed24a278e1974fa2b13e165927e951cc20e0d1",
+      "width": 1620,
+      "height": 920,
+      "format": "png"
+    },
+    "/assets/case-studies/yolo-computer-vision-optimization-workflow-diagram.png": {
+      "source": "assets/24ce758aad9d742640d262cd2f4c87d0800952848d30bf4e7ea0806b47c40ee5.png",
+      "sha256": "24ce758aad9d742640d262cd2f4c87d0800952848d30bf4e7ea0806b47c40ee5",
+      "width": 1620,
+      "height": 920,
+      "format": "png"
+    },
+    "/assets/case-studies/yolo-computer-vision-optimization-5d40e830aa8d828e7fe3c360c8e867ad6ece4f2fdca5e4efc917744df42d4661.jpg": {
+      "source": "assets/5d40e830aa8d828e7fe3c360c8e867ad6ece4f2fdca5e4efc917744df42d4661.jpeg",
+      "sha256": "5d40e830aa8d828e7fe3c360c8e867ad6ece4f2fdca5e4efc917744df42d4661",
+      "width": 1500,
+      "height": 1000,
+      "format": "jpeg"
+    },
+    "/assets/case-studies/yolo-computer-vision-optimization-eeeef2e888f1d90f3f74cc2dedce3217b69875c67001b95e138dbda8dfa92249.jpg": {
+      "source": "assets/eeeef2e888f1d90f3f74cc2dedce3217b69875c67001b95e138dbda8dfa92249.jpeg",
+      "sha256": "eeeef2e888f1d90f3f74cc2dedce3217b69875c67001b95e138dbda8dfa92249",
+      "width": 1500,
+      "height": 1000,
+      "format": "jpeg"
+    },
+    "/assets/case-studies/yolo-computer-vision-optimization-ceb105f111468c414425a9b66c60f83d1c05152495eeae4b79d9770637fba7e6.jpg": {
+      "source": "assets/ceb105f111468c414425a9b66c60f83d1c05152495eeae4b79d9770637fba7e6.jpeg",
+      "sha256": "ceb105f111468c414425a9b66c60f83d1c05152495eeae4b79d9770637fba7e6",
+      "width": 1920,
+      "height": 1281,
+      "format": "jpeg"
+    },
+    "/assets/case-studies/yolo-computer-vision-optimization-e0fda8e3265b2103cda475ec21735f245b48aeee64505137ffb1d446ce8fb869.jpg": {
+      "source": "assets/e0fda8e3265b2103cda475ec21735f245b48aeee64505137ffb1d446ce8fb869.jpeg",
+      "sha256": "e0fda8e3265b2103cda475ec21735f245b48aeee64505137ffb1d446ce8fb869",
+      "width": 1000,
+      "height": 563,
+      "format": "jpeg"
+    },
+    "/assets/case-studies/yolo-computer-vision-optimization-b3a9d87cd8189721b815648379e5c41748bd8db215f20b201fe3e56024e2eb80.jpg": {
+      "source": "assets/b3a9d87cd8189721b815648379e5c41748bd8db215f20b201fe3e56024e2eb80.jpeg",
+      "sha256": "b3a9d87cd8189721b815648379e5c41748bd8db215f20b201fe3e56024e2eb80",
+      "width": 960,
+      "height": 540,
+      "format": "jpeg"
+    },
+    "/assets/case-studies/yolo-computer-vision-optimization-a1c141cdaa34086f779a22bbc54861dd5a0b6bd6c956df38456a3313983c2c0c.webp": {
+      "source": "assets/a1c141cdaa34086f779a22bbc54861dd5a0b6bd6c956df38456a3313983c2c0c.webp",
+      "sha256": "a1c141cdaa34086f779a22bbc54861dd5a0b6bd6c956df38456a3313983c2c0c",
+      "width": 960,
+      "height": 720,
+      "format": "webp"
+    }
+  }
+}

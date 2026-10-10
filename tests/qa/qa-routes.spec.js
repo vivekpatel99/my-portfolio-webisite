@@ -62,14 +62,14 @@ test('multi-image gallery uses bounded previews and loads originals only when ex
   await page.goto('/project/n8n-openai-data-extraction/');
 
   const gallery = page.getByRole('region', { name: 'Case study images' });
+  const images = collectGalleryImages(caseStudies.find((story) => story.slug === 'n8n-openai-data-extraction'));
   const thumbnails = gallery.locator('.case-gallery-thumbnail img');
-  await expect(thumbnails).toHaveCount(6);
+  await expect(thumbnails).toHaveCount(images.length);
   for (let i = 0; i < await thumbnails.count(); i++) await thumbnails.nth(i).scrollIntoViewIfNeeded();
   await expect.poll(() => thumbnails.evaluateAll((elements) => elements.every((element) => element.complete && element.naturalWidth > 0))).toBe(true);
   const thumbnailSources = await thumbnails.evaluateAll((elements) => elements.map((element) => element.currentSrc || element.src));
   const thumbnailWidths = await thumbnails.evaluateAll((elements) => elements.map((element) => element.naturalWidth));
   expect(thumbnailWidths.every((width) => width > 0 && width <= 320)).toBe(true);
-  const images = collectGalleryImages(caseStudies.find((story) => story.slug === 'n8n-openai-data-extraction'));
   expect(thumbnailSources).toEqual(images.map((image) => new URL(galleryThumbnailSrc(image), page.url()).href));
   const originals = images.map((image) => new URL(image.src, page.url()).href);
   const requestedOriginals = () => [...new Set(requests.filter((url) => originals.includes(url)))];

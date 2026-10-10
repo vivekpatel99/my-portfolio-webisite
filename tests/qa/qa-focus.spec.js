@@ -344,7 +344,7 @@ test.describe('keyboard focus regressions', () => {
     await expect(dialog.getByRole('button', { name: 'Close enlarged image' })).toBeFocused();
     await clearFocusToBody(page);
     await page.keyboard.press('Shift+Tab');
-    await expect(dialog.getByRole('button', { name: /^Show image 2:/ })).toBeFocused();
+    await expect(dialog.locator('.case-gallery-thumbnail').last()).toBeFocused();
 
     // This is the WebKit gallery state documented under issue #77.
     await clearFocusToBody(page);

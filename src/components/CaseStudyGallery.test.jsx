@@ -132,13 +132,15 @@ describe('case study gallery', () => {
   it('uses display derivatives inline while the enlarged image keeps the original', () => {
     const published = compileCaseStudyPublication().find(({ slug }) => slug === 'n8n-openai-data-extraction');
     const [selected, other] = collectGalleryImages(published);
+    expect(galleryThumbnailSrc(selected)).not.toBe(selected.src);
+    expect(galleryThumbnailSrc(other)).not.toBe(other.src);
     const { container } = render(<Gallery images={[selected, other]} />);
     expect(container.querySelector('.case-gallery-open img')?.getAttribute('src')).toBe(caseStudyDisplaySrc(selected));
     expect(container.querySelector('.case-gallery-open img')?.getAttribute('src')).not.toBe(selected.src);
     expect([...container.querySelectorAll('.case-gallery-thumbnail img')].map((image) => image.getAttribute('src')))
       .toEqual([
-        '/assets/case-studies/n8n-openai-data-extraction-e6fbcc7caa954b217adfa063990d460059e44d08808ad85c9e8988418920104c-thumb-bd1dc61ef269.jpg',
-        '/assets/case-studies/n8n-openai-data-extraction-72c334f819d00fb872bea5cdb429e07a540b18794a627f758d0c8e092cb84636-thumb-a9dbf544caf7.jpg',
+        galleryThumbnailSrc(selected),
+        galleryThumbnailSrc(other),
       ]);
     fireEvent.click(screen.getByRole('button', { name: `Show image 2: ${other.alt}` }));
     expect(container.querySelector('.case-gallery-open img')?.getAttribute('src')).toBe(caseStudyDisplaySrc(other));

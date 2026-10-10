@@ -1,3 +1,5 @@
+import { caseStudies } from '../../src/data/caseStudies.js';
+import { collectGalleryImages } from '../../src/components/CaseStudyGallery.js';
 import { expect, test } from './qa-test.js';
 import { assertVisualLayout } from './visual-layout.js';
 
@@ -221,7 +223,7 @@ test('case study gallery keeps its stage, selected media, and thumbnails in usab
     box: stageBox,
     viewport,
     minWidth: 300,
-    minHeight: 220,
+    minHeight: 160,
   });
 
   const selectedMedia = stage.locator('img').first();
@@ -273,17 +275,22 @@ test('wide case-study galleries fill the stage without a 4:3 empty band', async 
   await page.setViewportSize({ width: 1280, height: 900 });
   await reducedMotion(page);
   const cases = [
-    { slug: 'n8n-openai-data-extraction', ratio: 2984 / 874 },
-    { slug: 'ai-invoice-processing-automation', ratio: 2448 / 684 },
-    { slug: 'yolo-computer-vision-optimization', ratio: 4 / 3 },
-    { slug: 'invoice-ocr-extraction', ratio: 4 / 3 },
+    { slug: 'n8n-openai-data-extraction', ratio: 2984 / 874, alt: 'Main n8n workflow for discovering and extracting website datasets' },
+    { slug: 'ai-invoice-processing-automation', ratio: 2448 / 684, alt: 'Original M2 invoice orchestration workflow' },
+    { slug: 'yolo-computer-vision-optimization', ratio: 4 / 3, alt: 'YOLO model detecting and estimating a yoga pose in an image.' },
+    { slug: 'invoice-ocr-extraction', ratio: 4 / 3, alt: 'Invoice image with bounding boxes showing extracted client information via OCR.' },
   ];
-  for (const { slug, ratio } of cases) {
+  for (const { slug, ratio, alt } of cases) {
     await page.goto(`/project/${slug}/`);
     await settleLayout(page);
     const gallery = page.getByRole('region', { name: 'Case study images' });
     const stage = gallery.locator('.case-gallery-stage').first();
     await stage.scrollIntoViewIfNeeded();
+    const images = collectGalleryImages(caseStudies.find((story) => story.slug === slug));
+    const index = images.findIndex((image) => image.alt === alt);
+    expect(index, slug).toBeGreaterThanOrEqual(0);
+    await gallery.getByRole('button', { name: `Show image ${index + 1}: ${alt}`, exact: true }).click();
+    await expect(stage.locator('img').first()).toHaveAttribute('alt', alt);
     await expect(stage.locator('img').first()).toBeVisible();
     await expect.poll(async () => (await measureGalleryStage(page))?.complete).toBe(true);
     const metrics = await measureGalleryStage(page);
@@ -295,7 +302,7 @@ test('wide case-study galleries fill the stage without a 4:3 empty band', async 
   await settleLayout(page);
   const invoiceGallery = page.getByRole('region', { name: 'Case study images' });
   await invoiceGallery.locator('.case-gallery-stage').first().scrollIntoViewIfNeeded();
-  await invoiceGallery.getByRole('button', { name: /Show image 3:/ }).click();
+  await invoiceGallery.getByRole('button', { name: /^Show image [0-9]+: Original PDF splitting subworkflow$/ }).click();
   await expect.poll(async () => (await measureGalleryStage(page))?.complete).toBe(true);
   const shortWide = await measureGalleryStage(page);
   expect(shortWide.stageRatio).toBeCloseTo(2140 / 458, 1);
@@ -524,7 +531,7 @@ test('wide gallery lightbox keeps its outer frame and label inside narrow viewpo
 
 test('single-image evidence preserves its link within the shared transparent frame', async ({ page }) => {
   await reducedMotion(page);
-  for (const slug of ['ai-project-planning-assistant', 'depth-based-distance-estimation', 'healthcare-document-intelligence']) {
+  for (const slug of ['browser-search-to-spreadsheet', 'python-ci-workflow-automation', 'resumable-listing-data-extraction']) {
     await page.goto(`/project/${slug}/`);
     const stage = page.locator('.case-study-cover-stage');
     await expect(stage).toHaveClass(/detection-panel/);

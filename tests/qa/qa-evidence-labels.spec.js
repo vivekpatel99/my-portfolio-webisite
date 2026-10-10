@@ -3,7 +3,7 @@ import { getCaseStudyBySlug } from '../../src/data/caseStudies.js';
 import { caseStudyDisplaySrc, collectGalleryImages } from '../../src/components/CaseStudyGallery.js';
 
 const viewports = [{ width: 1440, height: 900 }, { width: 980, height: 1324 }, { width: 390, height: 844 }, { width: 320, height: 740 }];
-const covers = ['depth-based-distance-estimation', 'ai-project-planning-assistant', 'healthcare-document-intelligence'];
+const covers = ['depth-based-distance-estimation', 'ai-project-planning-assistant', 'healthcare-document-intelligence', 'browser-search-to-spreadsheet', 'python-ci-workflow-automation', 'resumable-listing-data-extraction'];
 
 async function expectClearLabel(stage, media) {
   const label = stage.locator(':scope > .detection-label');
@@ -18,21 +18,24 @@ async function expectClearLabel(stage, media) {
 
 for (const viewport of viewports) {
   for (const slug of covers) {
-    test(`standalone evidence label clears ${slug} at ${viewport.width}x${viewport.height}`, async ({ page }, testInfo) => {
+    test(`cover evidence label clears ${slug} at ${viewport.width}x${viewport.height}`, async ({ page }, testInfo) => {
       await page.setViewportSize(viewport);
       await page.goto(`/project/${slug}/`);
-      const cover = page.locator('.case-study-cover');
-      const stage = cover.locator('.case-study-cover-stage');
-      const image = cover.locator('img');
-      const [source] = collectGalleryImages(getCaseStudyBySlug(slug));
+      const images = collectGalleryImages(getCaseStudyBySlug(slug));
+      const [source] = images;
+      const singleImage = images.length === 1;
+      const cover = singleImage ? page.locator('.case-study-cover') : page.getByRole('region', { name: 'Case study images' });
+      const stage = cover.locator(singleImage ? '.case-study-cover-stage' : '.case-gallery-stage').first();
+      const opener = stage.locator(singleImage ? 'a' : '.case-gallery-open');
+      const image = opener.locator('img');
       await expect(image).toHaveAttribute('src', caseStudyDisplaySrc(source));
       await expect(image).toHaveAttribute('alt', source.alt);
-      await expect(cover.locator('a')).toHaveAttribute('href', source.src);
+      if (singleImage) await expect(opener).toHaveAttribute('href', source.src);
       await expect.poll(() => image.evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
-      if (source.caption) await expect(cover.locator('figcaption')).toHaveText(source.caption);
+      if (source.caption) await expect(cover.locator(singleImage ? 'figcaption' : '.case-gallery-caption')).toHaveText(source.caption);
       await image.scrollIntoViewIfNeeded();
-      await cover.locator('a').focus();
-      await expect(cover.locator('a')).toBeFocused();
+      await opener.focus();
+      await expect(opener).toBeFocused();
       if (slug === 'depth-based-distance-estimation') {
         if (process.env.QA_ARTIFACT_SAFE_MODE !== '1') {
           await page.screenshot({ path: testInfo.outputPath(`depth-${viewport.width}x${viewport.height}.png`) });
@@ -44,11 +47,28 @@ for (const viewport of viewports) {
         const box = img.getBoundingClientRect();
         return { rendered: box.width / box.height, natural: img.naturalWidth / img.naturalHeight };
       });
-      expect(ratio.rendered).toBeCloseTo(ratio.natural, 2);
+      if (singleImage) {
+        expect(ratio.rendered).toBeCloseTo(ratio.natural, 2);
+      } else {
+        await expect(image).toHaveCSS('object-fit', 'contain');
+        const bounds = await stage.boundingBox();
+        expect(bounds.width / bounds.height).toBeCloseTo(Math.max(4 / 3, source.width / source.height), 1);
+      }
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-      await cover.locator('a').press('Enter');
-      await expect(page).toHaveURL(new URL(source.src, page.url()).href);
-      await expect.poll(() => page.locator('img').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
+      await opener.press('Enter');
+      if (singleImage) {
+        await expect(page).toHaveURL(new URL(source.src, page.url()).href);
+        await expect.poll(() => page.locator('img').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
+      } else {
+        const dialog = page.getByRole('dialog', { name: 'Enlarged case study images' });
+        await expect(dialog).toBeVisible();
+        const original = dialog.locator('.case-gallery-viewport img');
+        await expect(original).toHaveAttribute('src', source.src);
+        await expect.poll(() => original.evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
+        await page.keyboard.press('Escape');
+        await expect(dialog).toHaveCount(0);
+        await expect(opener).toBeFocused();
+      }
     });
   }
 
@@ -65,7 +85,7 @@ for (const viewport of viewports) {
     }
     await opener.focus();
     await opener.press('ArrowRight');
-    await expect(page.locator('.case-gallery-count').first()).toHaveText('2 of 2');
+    await expect(page.locator('.case-gallery-count').first()).toHaveText(`2 of ${collectGalleryImages(getCaseStudyBySlug('invoice-ocr-extraction')).length}`);
     await opener.press('Enter');
     const dialog = page.getByRole('dialog');
     await expect(dialog).toBeVisible();
