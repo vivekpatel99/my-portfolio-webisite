@@ -92,12 +92,13 @@ describe('retained completed case studies', () => {
     expect(headingMeta).not.toMatch(/broadcast/i);
     expect(`${story.title} ${story.summary}`).not.toMatch(/real-?time/i);
     expect(`${headingMeta} ${story.summary} ${problem}`.replace(/not live scoring\.?/gi, '')).not.toMatch(/live scoring/i);
-    expect(story.image).toBeUndefined();
+    expect(story.image.src).toBe('/assets/case-studies/sports-football-workflow.png');
+    expect(story.image.caption).toContain('batch processing of recorded footage');
 
     const module = await import(`data:text/javascript;base64,${Buffer.from(renderPublicCaseStudyModule(publication)).toString('base64')}`);
     const card = module.collectionCaseStudies.find((record) => record.slug === slug);
     expect(card.summary).toBe(summary);
-    expect(card.image).toBeUndefined();
+    expect(card.image).toEqual(story.image);
     expect(module.featuredCaseStudies.map((record) => record.slug)).not.toContain(slug);
   });
 
