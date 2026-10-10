@@ -236,6 +236,8 @@ Proposed default: other corner frames stay static. A brief 150 to 200ms hover or
 
 ### IM-01. Portraits and project imagery
 
+Confirmed on 10 October 2026: each case study uses its Excalidraw overview diagram as the cover, card thumbnail, and first gallery image. The diagram explains what was built at a glance, including the main inputs, workflow, and outputs, so clients can understand the project before reading the article. Real project screenshots and videos follow the diagram for deeper exploration. Keep the diagram readable at thumbnail size and match its labels and connections to the documented project scope.
+
 Proposed default: use Vivek's authentic portrait with recognizable likeness and natural proportions. Confirmed: the hero needs a closer head-and-shoulders crop under #293. Confirmed: the About photo has a separate 4:3 composition under #298.
 
 Confirmed About headroom is exactly 5 CSS pixels between the topmost hair and the displayed image's top edge. Confirmed: measure within the photograph, excluding card padding and corner decoration. Confirmed: preserve the complete hairline and chin at each reviewed width.
