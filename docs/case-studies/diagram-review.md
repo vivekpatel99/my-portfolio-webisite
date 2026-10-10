@@ -31,6 +31,8 @@ All twelve case-study titles, summaries and section paragraphs were reviewed for
 
 Verification: the complete unit suite passed all 936 tests across 72 files. The asset-delivery test verifies the exact published display set, including required bindings and exclusion of unpublished media. The initial CI failure came from its stale fixed count of 23 display images; the reviewed replacement also passed the combined-preview asset checks. After strengthening provenance and thumbnail assertions, 49 focused tests passed in the combined football-media preview. Stale expectations for prior cover paths and six-image counts were updated while retaining the original screenshots and measurement disclaimers.
 
+The passive browser CI jobs exposed stale assumptions about standalone covers, thumbnail counts, the last focusable thumbnail and which original image was selected. The corrected tests cover the three actual standalone diagrams and the former standalone cases through their galleries. Retained wide screenshots are selected by their exact alt labels, preserving their previous ratio and fill assertions. Gallery images retain `object-fit: contain`; their padded element bounds differ from the source pixel ratio, so gallery checks measure the stage ratio while standalone images keep direct native-ratio checks. A new 1620 × 920 diagram yields a shorter mobile stage than the previous 4:3 cover, with width, containment, media and thumbnail usability checks retained. Independent review passed these test changes. All 325 browser checks across the four affected specifications passed in desktop and mobile Chromium and WebKit, with one skip.
+
 The combined production build passed deterministic derivative verification and generated 21 static routes, with 36 public links checked. All twelve collection cards loaded on desktop (1280 × 900) and mobile (375 × 812); all twelve case-study routes displayed their cover and caption without horizontal overflow. All multi-image gallery thumbnails loaded. The SQL lightbox used the original PNG, ArrowRight changed the selected image and visible provenance, and Escape closed it and restored focus. Single-image cases retained direct original-image links. The football gallery loaded, and its muted 30-second H.264 tracking video played successfully.
 
 ## Reading the diagrams
@@ -101,6 +103,16 @@ Sources are canonical public PNGs. Galleries use small JPEG thumbnails; collecti
 | n8n-python-ai-agents | `705758e6d203830ba8b9a8d02aa51efd5861b90c9aa2978035cfa55a5273f71d` | 49698 |
 | python-ci-workflow-automation | `b2e7442167276c591fd8a53ed27017dd0eaee1cd3e6d9c50542c8be123ca4f0a` | 40096 |
 | resumable-listing-data-extraction | `852269fcf337a73b0cf5b42b21ed24a278e1974fa2b13e165927e951cc20e0d1` | 48118 |
+
+## Reviewed publication candidate
+
+The committed [publication candidate](diagram-publication-candidate.json) records the exact eleven reviewed stories, including the eight new diagrams and three supplied illustrations. Its SHA-256 is `592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2`. Forty canonical image paths refer to 34 distinct source snapshots; every snapshot matches its committed public image, hash, format and dimensions.
+
+Automated PR review found that the original integration incorrectly used individual image hashes as candidate digests, and omitted candidate digests on three supplied-image records. The official `tools/stage-case-study-publication.js` command regenerated record, claim and asset approvals from this independently reviewed candidate. Approval identity records Codex review under Viv’s creation and integration request; it does not claim owner approval of final pixels. The full compiled public publication is deeply equal before and after this audit correction. Published copy, claims, image placement and captions remain unchanged.
+
+The candidate keeps relative snapshot paths to avoid duplicating image binaries. To reconstruct its staging input, copy the JSON unchanged into a temporary directory. For each `assets` entry, copy the corresponding committed `public` file (the asset key appended to `public`) to the entry’s relative `source` path inside that directory. Verify each file against its `sha256` and verify the candidate digest above. The official staging command accepts that reconstructed `candidate.json`, its `--sha256`, and actual reviewer identity, review time and evidence through `--approved-by`, `--approved-at` and `--evidence`. A new review must provide its own truthful approval details.
+
+An independent follow-up checked candidate bytes, all story contents, asset snapshots and approval propagation. All 53 focused staging, publication, image, eligibility, public-copy and asset-delivery tests passed after restaging. The production build also passed, generating 21 routes and checking 36 public links.
 
 ## Delivery boundary
 

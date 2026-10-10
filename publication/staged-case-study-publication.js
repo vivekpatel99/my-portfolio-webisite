@@ -9,9 +9,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "933e803ae49960d926fe6ac8639adcaa54d77dfcb843f65c089279c196ff15d8",
-        "approvedBy": "Viv (direct request, illustrative captions and cover correction)",
-        "approvedAt": "2026-10-10T07:25:48.058Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/blob/feat/portfolio-case-study-illustrations/docs/case-studies/portfolio-illustrations.md"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       },
       "claimRefs": {
         "summary": "ai-invoice-processing-automation.summary",
@@ -249,9 +250,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "68df6068d5241845c195ecfd6867ec3e9177ca045be25d5714bc00d6604db2cd",
-        "approvedBy": "Viv (direct request, illustrative captions and cover correction)",
-        "approvedAt": "2026-10-10T07:25:48.058Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/blob/feat/portfolio-case-study-illustrations/docs/case-studies/portfolio-illustrations.md"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       },
       "claimRefs": {
         "summary": "ai-project-planning-assistant.summary",
@@ -402,10 +404,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "c024accf522687247b0fa2182fcbeabe796f265570a3b0966967c8034a73d88a",
-        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
-        "approvedAt": "2026-10-10T07:57:38.300Z",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "8ae2242a5fc25fe5381c89710e3d03b339d64bcbd18e24fee7ab585ecc71f240"
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       },
       "claimRefs": {
         "summary": "browser-search-to-spreadsheet.summary",
@@ -558,10 +560,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "7a14a97263764a3fc9cfcd3d97a0deafa5f907507d6882187c8261857b26fb99",
-        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
-        "approvedAt": "2026-10-10T07:57:38.376Z",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "6f27eac0ad723f3f4efd36a0ad81d7893a8410409f1cb841d61cc39c6c0f436e"
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       },
       "claimRefs": {
         "summary": "depth-based-distance-estimation.summary",
@@ -713,10 +715,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "e072979f597fd4066f5a8f8d356fcc951cdbee255c21df6e846d8967beda0dce",
-        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
-        "approvedAt": "2026-10-10T07:57:38.454Z",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "b902df1b21e477101a86519a9ed58603cd960f7e5be68df053f9b70f783f7687"
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       },
       "claimRefs": {
         "summary": "healthcare-document-intelligence.summary",
@@ -896,9 +898,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "7ea55845cf34f6ad235c09232ba3fa115e2618c8888ff59ddb630e902d66dc1b",
-        "approvedBy": "Viv (direct request, illustrative captions and cover correction)",
-        "approvedAt": "2026-10-10T07:25:48.057Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/blob/feat/portfolio-case-study-illustrations/docs/case-studies/portfolio-illustrations.md"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       },
       "claimRefs": {
         "summary": "invoice-ocr-extraction.summary",
@@ -1075,10 +1078,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "60f18f168830ddc2b5178c2905116bf8f55aca0045894406a09cde0ca9c84436",
-        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
-        "approvedAt": "2026-10-10T07:57:38.144Z",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "5f8d33c712e39a32dc57c65eab98aa8cac4e98d0eb9019594e41f389482e6c78"
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       },
       "claimRefs": {
         "summary": "n8n-openai-data-extraction.summary",
@@ -1303,10 +1306,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "3ec0b288928f4d723874c2b808db3e686b891208d8f65836e865db65126cae70",
-        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
-        "approvedAt": "2026-10-10T07:57:38.534Z",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "705758e6d203830ba8b9a8d02aa51efd5861b90c9aa2978035cfa55a5273f71d"
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       },
       "claimRefs": {
         "summary": "n8n-python-ai-agents.summary",
@@ -1541,10 +1544,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "86576aec4bbbcbc53e85c27a706d3175e54b0c0101e4e9ead7faaf85f2c5e925",
-        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
-        "approvedAt": "2026-10-10T07:57:38.613Z",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "b2e7442167276c591fd8a53ed27017dd0eaee1cd3e6d9c50542c8be123ca4f0a"
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       },
       "claimRefs": {
         "summary": "python-ci-workflow-automation.summary",
@@ -1697,10 +1700,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "292f4533fd67812d11b611b70de971cc947bbd5b6c08a233571ce2b47a9325d4",
-        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
-        "approvedAt": "2026-10-10T07:57:38.689Z",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "852269fcf337a73b0cf5b42b21ed24a278e1974fa2b13e165927e951cc20e0d1"
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       },
       "claimRefs": {
         "summary": "resumable-listing-data-extraction.summary",
@@ -2016,10 +2019,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "6f5f723d028bf4d7e584168d25eab7300f6df3ece409cc57f0efc9a81cd4d94b",
-        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
-        "approvedAt": "2026-10-10T07:57:38.227Z",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "24ce758aad9d742640d262cd2f4c87d0800952848d30bf4e7ea0806b47c40ee5"
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       },
       "claimRefs": {
         "summary": "yolo-computer-vision-optimization.summary",
@@ -2238,6 +2241,48 @@ export const stagedCaseStudyPublication = {
     }
   ],
   "claims": {
+    "sports-video-analytics-yolo.summary": {
+      "type": "content",
+      "recordId": "sports-video-analytics-yolo",
+      "placement": "summary",
+      "value": "A batch pipeline on recorded match footage produces tracks, event proposals, and JSON and CSV for human review. Not live scoring.",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "dc3c420992fae9a8bb66b20be70022de5ea09819f9aa6e4df595da11755e1db4",
+        "approvedBy": "Viv (issue #127)",
+        "approvedAt": "2026-09-21T14:15:00.000Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/127",
+        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+      }
+    },
+    "sports-video-analytics-yolo.outcome": {
+      "type": "content",
+      "recordId": "sports-video-analytics-yolo",
+      "placement": "outcome",
+      "value": {
+        "key": "outcome",
+        "heading": "The outcome",
+        "nodes": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "text",
+                "value": "The handoff links video analysis to reviewable events and exports. A person still checks the proposed tags before treating them as final. The scope is batch analysis of recorded footage, not real-time broadcasting or autonomous officiating. No public tracking-accuracy, latency or time-saving figure is claimed."
+              }
+            ]
+          }
+        ]
+      },
+      "approval": {
+        "kind": "explicit",
+        "sha256": "1e8f2f66a77868f288864ef10c758a4232376d05f53755b933ba2bf1a58085b3",
+        "approvedBy": "Viv",
+        "approvedAt": "2026-09-15T08:45:57.100Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
+        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+      }
+    },
     "ai-invoice-processing-automation.summary": {
       "type": "content",
       "recordId": "ai-invoice-processing-automation",
@@ -2246,10 +2291,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "90449d9bb6aac75d9d05824b61076e79ae1077176ec4ffc3c653030af45789c0",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "ai-invoice-processing-automation.outcome": {
@@ -2332,10 +2377,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "f01a9b9d662b292e4d3c9ee3e82bcfba005fa007bbe61d5ec92ed7a4cbe3b7ee",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "ai-project-planning-assistant.summary": {
@@ -2346,10 +2391,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "2d8f2c874ea8b3b0a73b288cf37dab9eab58511af82dd23e528f2ea6f14aebb0",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "ai-project-planning-assistant.outcome": {
@@ -2374,10 +2419,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "b1e148e6cdc893e00715f37f4a630217b9a1e8f4e68ed963a4e968c6fac04301",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "browser-search-to-spreadsheet.summary": {
@@ -2388,10 +2433,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "620d510278d116d8130f1d2784ab31a24524f0c7381090d706019f94d7555924",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "browser-search-to-spreadsheet.outcome": {
@@ -2416,262 +2461,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "1882162455741257502ca7b2abe8000552863bd40fcb63460f17e23a1fb3b637",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "resumable-listing-data-extraction.summary": {
-      "type": "content",
-      "recordId": "resumable-listing-data-extraction",
-      "placement": "summary",
-      "value": "A Python batch extractor collects listing details with progress tracking, incremental exports and restart support.",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "afd9aa3cd9b9ba5a53557ba4c11e4332df96daca0672107a102745803f7c172d",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "resumable-listing-data-extraction.outcome": {
-      "type": "content",
-      "recordId": "resumable-listing-data-extraction",
-      "placement": "outcome",
-      "value": {
-        "key": "outcome",
-        "heading": "The outcome",
-        "nodes": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "text",
-                "value": "The project delivers a repeatable batch-extraction process with visible progress and reusable output files. Website changes and source-access requirements still need maintenance. README timing and volume claims are not presented here as independently verified benchmarks, and this story does not promise unrestricted extraction from arbitrary websites."
-              }
-            ]
-          }
-        ]
-      },
-      "approval": {
-        "kind": "explicit",
-        "sha256": "c049b4ff3eaae2b2ce66f7f1d74be88786b8d7c829dd8877055d36aabff37a63",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "sports-video-analytics-yolo.summary": {
-      "type": "content",
-      "recordId": "sports-video-analytics-yolo",
-      "placement": "summary",
-      "value": "A batch pipeline on recorded match footage produces tracks, event proposals, and JSON and CSV for human review. Not live scoring.",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "dc3c420992fae9a8bb66b20be70022de5ea09819f9aa6e4df595da11755e1db4",
-        "approvedBy": "Viv (issue #127)",
-        "approvedAt": "2026-09-21T14:15:00.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/127",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "sports-video-analytics-yolo.outcome": {
-      "type": "content",
-      "recordId": "sports-video-analytics-yolo",
-      "placement": "outcome",
-      "value": {
-        "key": "outcome",
-        "heading": "The outcome",
-        "nodes": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "text",
-                "value": "The handoff links video analysis to reviewable events and exports. A person still checks the proposed tags before treating them as final. The scope is batch analysis of recorded footage, not real-time broadcasting or autonomous officiating. No public tracking-accuracy, latency or time-saving figure is claimed."
-              }
-            ]
-          }
-        ]
-      },
-      "approval": {
-        "kind": "explicit",
-        "sha256": "1e8f2f66a77868f288864ef10c758a4232376d05f53755b933ba2bf1a58085b3",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
-      }
-    },
-    "healthcare-document-intelligence.summary": {
-      "type": "content",
-      "recordId": "healthcare-document-intelligence",
-      "placement": "summary",
-      "value": "A Python extractor turns color-coded schedule PDFs into Excel rows. Not clinical EHR. Not medical records.",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "4c8dd1b65eb134e864331f5f3ed481dca51246f0268bbdddf3cb444c66cc69b6",
-        "approvedBy": "Viv (issue #126)",
-        "approvedAt": "2026-09-21T13:05:51.909Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/126",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
-      }
-    },
-    "healthcare-document-intelligence.outcome": {
-      "type": "content",
-      "recordId": "healthcare-document-intelligence",
-      "placement": "outcome",
-      "value": {
-        "key": "outcome",
-        "heading": "The outcome",
-        "nodes": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "text",
-                "value": "The extractor produces rows a scheduling coordinator can compare with the source calendar. Unknown colors and unreadable cells are not guessed. This is operational document processing, not clinical EHR or medical records. No measured accuracy figure is claimed."
-              }
-            ]
-          }
-        ]
-      },
-      "approval": {
-        "kind": "explicit",
-        "sha256": "62e6c7fd384e8f3262f2d61134959de0ceb4061562bed67e0a0517fd8fe092d5",
-        "approvedBy": "Viv (issue #126)",
-        "approvedAt": "2026-09-21T13:05:51.909Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/126",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
-      }
-    },
-    "invoice-ocr-extraction.summary": {
-      "type": "content",
-      "recordId": "invoice-ocr-extraction",
-      "placement": "summary",
-      "value": "A local Python OCR tool that reads client details from invoice photos and exports spreadsheet rows linked to the original files.",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "dd25204959450f8575efc8c57f57ddb5334c0b7f3af887d0cb9d606bfc8f6fd3",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
-      }
-    },
-    "invoice-ocr-extraction.outcome": {
-      "type": "content",
-      "recordId": "invoice-ocr-extraction",
-      "placement": "outcome",
-      "value": {
-        "key": "outcome",
-        "heading": "The outcome",
-        "nodes": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "text",
-                "value": "The handoff turns invoice photos into structured client-field rows that a person can check against the original image. It is useful for a repeatable document layout and a local batch workflow. It is not a general invoice platform: new layouts need parser changes, and the delivered scope does not include automated seller-block extraction or a measured accuracy guarantee."
-              }
-            ]
-          }
-        ]
-      },
-      "approval": {
-        "kind": "explicit",
-        "sha256": "d3d9fcb084dd3941ee0541a5d9bfd919cc6f3c6a27809fdfd2828a9da08fcee9",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
-      }
-    },
-    "n8n-openai-data-extraction.summary": {
-      "type": "content",
-      "recordId": "n8n-openai-data-extraction",
-      "placement": "summary",
-      "value": "A website-data extraction workflow that discovers downloadable datasets, normalizes their structure, and produces JSON for downstream use.",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "7f7d64db8d23a194ff49b6941f1a5324bb673734f926f07bae68930eb3493828",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
-      }
-    },
-    "n8n-openai-data-extraction.outcome": {
-      "type": "content",
-      "recordId": "n8n-openai-data-extraction",
-      "placement": "outcome",
-      "value": {
-        "key": "outcome",
-        "heading": "The outcome",
-        "nodes": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "text",
-                "value": "The project provides a reusable path from website sources to structured datasets, with processing and error-handling steps that can be inspected and adapted. It fits teams collecting recurring external data for analysis or internal tools. Source-specific changes can still require adjustment; no measured coverage, accuracy or time-saving figure is claimed."
-              }
-            ]
-          }
-        ]
-      },
-      "approval": {
-        "kind": "explicit",
-        "sha256": "77885ae5fb59f7570f1943b26397370b15b80ae99a1750d92d221141ab0679fd",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
-      }
-    },
-    "python-ci-workflow-automation.summary": {
-      "type": "content",
-      "recordId": "python-ci-workflow-automation",
-      "placement": "summary",
-      "value": "A Python toolkit organizes linting, review generation and repository workflow steps behind reusable commands.",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "e86e7c40d4bc19a7294dd1284d3ab8b50d70900682c8d31380ae5f0691261880",
-        "approvedBy": "Cloud Agent (Issue #125 synthetic hero removal)",
-        "approvedAt": "2026-09-21T17:04:00.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/125",
-        "candidateSha256": "6ca0b9be07fc064ac452f43d7ebb5886e0c6275352bf1ce93a06625cae74d59f"
-      }
-    },
-    "python-ci-workflow-automation.outcome": {
-      "type": "content",
-      "recordId": "python-ci-workflow-automation",
-      "placement": "outcome",
-      "value": {
-        "key": "outcome",
-        "heading": "The outcome",
-        "nodes": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "text",
-                "value": "The toolkit makes code-quality workflow logic easier to inspect and test as ordinary Python. It demonstrates developer-tooling and workflow integration work. It does not establish an independently measured coverage rate, productivity gain or autonomous review accuracy. Client source remains private."
-              }
-            ]
-          }
-        ]
-      },
-      "approval": {
-        "kind": "explicit",
-        "sha256": "b7d4661d69d44582e6c5dbc0ddc20f9dcd9c8c88f856647ef9f08230a55cb831",
-        "approvedBy": "Cloud Agent (Issue #125 synthetic hero removal)",
-        "approvedAt": "2026-09-21T17:04:00.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/125",
-        "candidateSha256": "6ca0b9be07fc064ac452f43d7ebb5886e0c6275352bf1ce93a06625cae74d59f"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "depth-based-distance-estimation.summary": {
@@ -2682,10 +2475,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "374708da591865ae345085df42c52f655aee614ed9f7c501b2508e06e1c0b205",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "depth-based-distance-estimation.outcome": {
@@ -2710,29 +2503,29 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "78d6b6298090f0ca556687200706a081cb468d59416920d47e792c5acab56ca2",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
-    "yolo-computer-vision-optimization.summary": {
+    "healthcare-document-intelligence.summary": {
       "type": "content",
-      "recordId": "yolo-computer-vision-optimization",
+      "recordId": "healthcare-document-intelligence",
       "placement": "summary",
-      "value": "A Python pose-estimation project with training scripts and image outputs showing person boxes and body keypoints.",
+      "value": "A Python extractor turns color-coded schedule PDFs into Excel rows. Not clinical EHR. Not medical records.",
       "approval": {
         "kind": "explicit",
-        "sha256": "a1cedfffe5e11e2c6ea7a2e3459c1f9788227bad1a91185b8cac2c75c9d956a1",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "sha256": "4c8dd1b65eb134e864331f5f3ed481dca51246f0268bbdddf3cb444c66cc69b6",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
-    "yolo-computer-vision-optimization.outcome": {
+    "healthcare-document-intelligence.outcome": {
       "type": "content",
-      "recordId": "yolo-computer-vision-optimization",
+      "recordId": "healthcare-document-intelligence",
       "placement": "outcome",
       "value": {
         "key": "outcome",
@@ -2743,7 +2536,7 @@ export const stagedCaseStudyPublication = {
             "children": [
               {
                 "type": "text",
-                "value": "The delivered component converts exercise stills into visual pose outputs and gives the client a training path for their own data. It can support a fitness product’s computer-vision work, while the application and any form-scoring rules remain separate. Live-video latency, on-device deployment and automatic exercise scoring are not claimed."
+                "value": "The extractor produces rows a scheduling coordinator can compare with the source calendar. Unknown colors and unreadable cells are not guessed. This is operational document processing, not clinical EHR or medical records. No measured accuracy figure is claimed."
               }
             ]
           }
@@ -2751,11 +2544,95 @@ export const stagedCaseStudyPublication = {
       },
       "approval": {
         "kind": "explicit",
-        "sha256": "09b81a547dec425652e521ad86601bb954610ae50b404eaaca44c11b86aeab66",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "sha256": "62e6c7fd384e8f3262f2d61134959de0ceb4061562bed67e0a0517fd8fe092d5",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
+      }
+    },
+    "invoice-ocr-extraction.summary": {
+      "type": "content",
+      "recordId": "invoice-ocr-extraction",
+      "placement": "summary",
+      "value": "A local Python OCR tool that reads client details from invoice photos and exports spreadsheet rows linked to the original files.",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "dd25204959450f8575efc8c57f57ddb5334c0b7f3af887d0cb9d606bfc8f6fd3",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
+      }
+    },
+    "invoice-ocr-extraction.outcome": {
+      "type": "content",
+      "recordId": "invoice-ocr-extraction",
+      "placement": "outcome",
+      "value": {
+        "key": "outcome",
+        "heading": "The outcome",
+        "nodes": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "text",
+                "value": "The handoff turns invoice photos into structured client-field rows that a person can check against the original image. It is useful for a repeatable document layout and a local batch workflow. It is not a general invoice platform: new layouts need parser changes, and the delivered scope does not include automated seller-block extraction or a measured accuracy guarantee."
+              }
+            ]
+          }
+        ]
+      },
+      "approval": {
+        "kind": "explicit",
+        "sha256": "d3d9fcb084dd3941ee0541a5d9bfd919cc6f3c6a27809fdfd2828a9da08fcee9",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
+      }
+    },
+    "n8n-openai-data-extraction.summary": {
+      "type": "content",
+      "recordId": "n8n-openai-data-extraction",
+      "placement": "summary",
+      "value": "A website-data extraction workflow that discovers downloadable datasets, normalizes their structure, and produces JSON for downstream use.",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "7f7d64db8d23a194ff49b6941f1a5324bb673734f926f07bae68930eb3493828",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
+      }
+    },
+    "n8n-openai-data-extraction.outcome": {
+      "type": "content",
+      "recordId": "n8n-openai-data-extraction",
+      "placement": "outcome",
+      "value": {
+        "key": "outcome",
+        "heading": "The outcome",
+        "nodes": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "text",
+                "value": "The project provides a reusable path from website sources to structured datasets, with processing and error-handling steps that can be inspected and adapted. It fits teams collecting recurring external data for analysis or internal tools. Source-specific changes can still require adjustment; no measured coverage, accuracy or time-saving figure is claimed."
+              }
+            ]
+          }
+        ]
+      },
+      "approval": {
+        "kind": "explicit",
+        "sha256": "77885ae5fb59f7570f1943b26397370b15b80ae99a1750d92d221141ab0679fd",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "n8n-python-ai-agents.summary": {
@@ -2766,10 +2643,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "499d8ae36b021db6cbe9889582e577808b1b1d0d101e3c47d380f2f0badc8bfe",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "n8n-python-ai-agents.outcome": {
@@ -2794,10 +2671,136 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "695f4215c24582ec03e78f8cd9bb3793364f21fc2b74be24da9d5f7f03486b2e",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
+      }
+    },
+    "python-ci-workflow-automation.summary": {
+      "type": "content",
+      "recordId": "python-ci-workflow-automation",
+      "placement": "summary",
+      "value": "A Python toolkit organizes linting, review generation and repository workflow steps behind reusable commands.",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "e86e7c40d4bc19a7294dd1284d3ab8b50d70900682c8d31380ae5f0691261880",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
+      }
+    },
+    "python-ci-workflow-automation.outcome": {
+      "type": "content",
+      "recordId": "python-ci-workflow-automation",
+      "placement": "outcome",
+      "value": {
+        "key": "outcome",
+        "heading": "The outcome",
+        "nodes": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "text",
+                "value": "The toolkit makes code-quality workflow logic easier to inspect and test as ordinary Python. It demonstrates developer-tooling and workflow integration work. It does not establish an independently measured coverage rate, productivity gain or autonomous review accuracy. Client source remains private."
+              }
+            ]
+          }
+        ]
+      },
+      "approval": {
+        "kind": "explicit",
+        "sha256": "b7d4661d69d44582e6c5dbc0ddc20f9dcd9c8c88f856647ef9f08230a55cb831",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
+      }
+    },
+    "resumable-listing-data-extraction.summary": {
+      "type": "content",
+      "recordId": "resumable-listing-data-extraction",
+      "placement": "summary",
+      "value": "A Python batch extractor collects listing details with progress tracking, incremental exports and restart support.",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "afd9aa3cd9b9ba5a53557ba4c11e4332df96daca0672107a102745803f7c172d",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
+      }
+    },
+    "resumable-listing-data-extraction.outcome": {
+      "type": "content",
+      "recordId": "resumable-listing-data-extraction",
+      "placement": "outcome",
+      "value": {
+        "key": "outcome",
+        "heading": "The outcome",
+        "nodes": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "text",
+                "value": "The project delivers a repeatable batch-extraction process with visible progress and reusable output files. Website changes and source-access requirements still need maintenance. README timing and volume claims are not presented here as independently verified benchmarks, and this story does not promise unrestricted extraction from arbitrary websites."
+              }
+            ]
+          }
+        ]
+      },
+      "approval": {
+        "kind": "explicit",
+        "sha256": "c049b4ff3eaae2b2ce66f7f1d74be88786b8d7c829dd8877055d36aabff37a63",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
+      }
+    },
+    "yolo-computer-vision-optimization.summary": {
+      "type": "content",
+      "recordId": "yolo-computer-vision-optimization",
+      "placement": "summary",
+      "value": "A Python pose-estimation project with training scripts and image outputs showing person boxes and body keypoints.",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "a1cedfffe5e11e2c6ea7a2e3459c1f9788227bad1a91185b8cac2c75c9d956a1",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
+      }
+    },
+    "yolo-computer-vision-optimization.outcome": {
+      "type": "content",
+      "recordId": "yolo-computer-vision-optimization",
+      "placement": "outcome",
+      "value": {
+        "key": "outcome",
+        "heading": "The outcome",
+        "nodes": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "text",
+                "value": "The delivered component converts exercise stills into visual pose outputs and gives the client a training path for their own data. It can support a fitness product’s computer-vision work, while the application and any form-scoring rules remain separate. Live-video latency, on-device deployment and automatic exercise scoring are not claimed."
+              }
+            ]
+          }
+        ]
+      },
+      "approval": {
+        "kind": "explicit",
+        "sha256": "09b81a547dec425652e521ad86601bb954610ae50b404eaaca44c11b86aeab66",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     }
   },
@@ -2810,10 +2813,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/ai-project-planning-assistant-483e16b2c3afb3bf6273821ce09d831d07ae5a00ffce8c2b8e24b202062e41a8.webp": {
@@ -2824,10 +2827,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "483e16b2c3afb3bf6273821ce09d831d07ae5a00ffce8c2b8e24b202062e41a8",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/depth-based-distance-estimation-6cff31a07362f0483bf43298af0366ffb4c8f40137291202506a8924b0d24957.png": {
@@ -2838,10 +2841,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "6cff31a07362f0483bf43298af0366ffb4c8f40137291202506a8924b0d24957",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/invoice-ocr-extraction-e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4.webp": {
@@ -2852,10 +2855,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/n8n-python-ai-agents-e542384f4f7532d230440cb9a68e0e7e66d951996959221225633fc5304b08b7.png": {
@@ -2866,10 +2869,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "e542384f4f7532d230440cb9a68e0e7e66d951996959221225633fc5304b08b7",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/yolo-computer-vision-optimization-a1c141cdaa34086f779a22bbc54861dd5a0b6bd6c956df38456a3313983c2c0c.webp": {
@@ -2880,10 +2883,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "a1c141cdaa34086f779a22bbc54861dd5a0b6bd6c956df38456a3313983c2c0c",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/yolo-computer-vision-optimization-5d40e830aa8d828e7fe3c360c8e867ad6ece4f2fdca5e4efc917744df42d4661.jpg": {
@@ -2894,10 +2897,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "5d40e830aa8d828e7fe3c360c8e867ad6ece4f2fdca5e4efc917744df42d4661",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/yolo-computer-vision-optimization-eeeef2e888f1d90f3f74cc2dedce3217b69875c67001b95e138dbda8dfa92249.jpg": {
@@ -2908,10 +2911,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "eeeef2e888f1d90f3f74cc2dedce3217b69875c67001b95e138dbda8dfa92249",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/yolo-computer-vision-optimization-ceb105f111468c414425a9b66c60f83d1c05152495eeae4b79d9770637fba7e6.jpg": {
@@ -2922,10 +2925,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "ceb105f111468c414425a9b66c60f83d1c05152495eeae4b79d9770637fba7e6",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/yolo-computer-vision-optimization-e0fda8e3265b2103cda475ec21735f245b48aeee64505137ffb1d446ce8fb869.jpg": {
@@ -2936,10 +2939,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "e0fda8e3265b2103cda475ec21735f245b48aeee64505137ffb1d446ce8fb869",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/yolo-computer-vision-optimization-b3a9d87cd8189721b815648379e5c41748bd8db215f20b201fe3e56024e2eb80.jpg": {
@@ -2950,10 +2953,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "b3a9d87cd8189721b815648379e5c41748bd8db215f20b201fe3e56024e2eb80",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/ai-invoice-processing-automation-c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9.png": {
@@ -2964,10 +2967,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/ai-invoice-processing-automation-c4ef84c5245e7116671357858924a22b8a2dbd1f95695108125704d6021f9964.png": {
@@ -2978,10 +2981,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "c4ef84c5245e7116671357858924a22b8a2dbd1f95695108125704d6021f9964",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/ai-invoice-processing-automation-15fcb5d1f5daf1514ad0f41393d5ac9e432b1907d17835f8b62ab122e5043289.png": {
@@ -2992,10 +2995,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "15fcb5d1f5daf1514ad0f41393d5ac9e432b1907d17835f8b62ab122e5043289",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/ai-invoice-processing-automation-e2386e51522d827d3ec7f44d144b173f3dbdae865dcb9db323c4c161fc6bc8fb.png": {
@@ -3006,10 +3009,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "e2386e51522d827d3ec7f44d144b173f3dbdae865dcb9db323c4c161fc6bc8fb",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-15T08:45:57.100Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/112",
-        "candidateSha256": "3d77da56d5164cc5eb01d9a5c776a7c2f884005d0911cbd0122550a633c55eaa"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/healthcare-document-intelligence-1973dd984be94a7a4a1ec9581d8ef3499be61acaa93d44680156e0f3c3d60151.png": {
@@ -3020,10 +3023,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "1973dd984be94a7a4a1ec9581d8ef3499be61acaa93d44680156e0f3c3d60151",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/invoice-ocr-extraction-95e609aecb33ad070dee910b85f165354eabe1f4bb078fb909ff467552183d4d.png": {
@@ -3034,10 +3037,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "95e609aecb33ad070dee910b85f165354eabe1f4bb078fb909ff467552183d4d",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/n8n-openai-data-extraction-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png": {
@@ -3048,10 +3051,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/n8n-openai-data-extraction-7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b.png": {
@@ -3062,10 +3065,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/n8n-openai-data-extraction-ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338.png": {
@@ -3076,10 +3079,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/n8n-openai-data-extraction-f60a6d00c4e80b105fe22f03ddd6d500689c0d956a85ff4457e6f11cd14d27f7.png": {
@@ -3090,10 +3093,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "f60a6d00c4e80b105fe22f03ddd6d500689c0d956a85ff4457e6f11cd14d27f7",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/n8n-openai-data-extraction-3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66.png": {
@@ -3104,10 +3107,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/n8n-openai-data-extraction-489e4160aa64c5141e750196c0de330320839b345c2f9aaa28137cce795f9275.png": {
@@ -3118,10 +3121,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "489e4160aa64c5141e750196c0de330320839b345c2f9aaa28137cce795f9275",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/n8n-python-ai-agents-f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png": {
@@ -3132,10 +3135,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/n8n-python-ai-agents-c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9.png": {
@@ -3146,10 +3149,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/n8n-python-ai-agents-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png": {
@@ -3160,10 +3163,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/n8n-python-ai-agents-7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b.png": {
@@ -3174,10 +3177,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/n8n-python-ai-agents-3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66.png": {
@@ -3188,10 +3191,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/n8n-python-ai-agents-ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338.png": {
@@ -3202,10 +3205,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/invoice-ocr-workflow-illustration.png": {
@@ -3216,9 +3219,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "4aa2f3b1bf229484593fbed8669fb684d8a579f0b3182f562d1a2304dc3aceaa",
-        "approvedBy": "Viv (direct request and illustrative-caption approval)",
-        "approvedAt": "2026-10-10T07:06:45.478Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/blob/feat/portfolio-case-study-illustrations/docs/case-studies/portfolio-illustrations.md"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/ai-invoice-verification-illustration.png": {
@@ -3229,9 +3233,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "b87ac7e2e0da834a12128e1fb97f7fe93dad80bed4f0d73decef3f35b81b6933",
-        "approvedBy": "Viv (direct request and illustrative-caption approval)",
-        "approvedAt": "2026-10-10T07:06:45.478Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/blob/feat/portfolio-case-study-illustrations/docs/case-studies/portfolio-illustrations.md"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/ai-project-planning-illustration.png": {
@@ -3242,9 +3247,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "c3300da763e338ca89d04e53726d18cdb029b01bd52e58b56af1b1c266295309",
-        "approvedBy": "Viv (direct request and illustrative-caption approval)",
-        "approvedAt": "2026-10-10T07:06:45.478Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/blob/feat/portfolio-case-study-illustrations/docs/case-studies/portfolio-illustrations.md"
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/n8n-openai-data-extraction-workflow-diagram.png": {
@@ -3255,10 +3261,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "5f8d33c712e39a32dc57c65eab98aa8cac4e98d0eb9019594e41f389482e6c78",
-        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
-        "approvedAt": "2026-10-10T07:57:38.144Z",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "5f8d33c712e39a32dc57c65eab98aa8cac4e98d0eb9019594e41f389482e6c78"
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/yolo-computer-vision-optimization-workflow-diagram.png": {
@@ -3269,10 +3275,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "24ce758aad9d742640d262cd2f4c87d0800952848d30bf4e7ea0806b47c40ee5",
-        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
-        "approvedAt": "2026-10-10T07:57:38.227Z",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "24ce758aad9d742640d262cd2f4c87d0800952848d30bf4e7ea0806b47c40ee5"
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/browser-search-to-spreadsheet-workflow-diagram.png": {
@@ -3283,10 +3289,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "8ae2242a5fc25fe5381c89710e3d03b339d64bcbd18e24fee7ab585ecc71f240",
-        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
-        "approvedAt": "2026-10-10T07:57:38.300Z",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "8ae2242a5fc25fe5381c89710e3d03b339d64bcbd18e24fee7ab585ecc71f240"
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/depth-based-distance-estimation-workflow-diagram.png": {
@@ -3297,10 +3303,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "6f27eac0ad723f3f4efd36a0ad81d7893a8410409f1cb841d61cc39c6c0f436e",
-        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
-        "approvedAt": "2026-10-10T07:57:38.376Z",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "6f27eac0ad723f3f4efd36a0ad81d7893a8410409f1cb841d61cc39c6c0f436e"
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/healthcare-document-intelligence-workflow-diagram.png": {
@@ -3311,10 +3317,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "b902df1b21e477101a86519a9ed58603cd960f7e5be68df053f9b70f783f7687",
-        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
-        "approvedAt": "2026-10-10T07:57:38.454Z",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "b902df1b21e477101a86519a9ed58603cd960f7e5be68df053f9b70f783f7687"
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/n8n-python-ai-agents-workflow-diagram.png": {
@@ -3325,10 +3331,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "705758e6d203830ba8b9a8d02aa51efd5861b90c9aa2978035cfa55a5273f71d",
-        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
-        "approvedAt": "2026-10-10T07:57:38.534Z",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "705758e6d203830ba8b9a8d02aa51efd5861b90c9aa2978035cfa55a5273f71d"
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/python-ci-workflow-automation-workflow-diagram.png": {
@@ -3339,10 +3345,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "b2e7442167276c591fd8a53ed27017dd0eaee1cd3e6d9c50542c8be123ca4f0a",
-        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
-        "approvedAt": "2026-10-10T07:57:38.613Z",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "b2e7442167276c591fd8a53ed27017dd0eaee1cd3e6d9c50542c8be123ca4f0a"
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     },
     "/assets/case-studies/resumable-listing-data-extraction-workflow-diagram.png": {
@@ -3353,10 +3359,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "852269fcf337a73b0cf5b42b21ed24a278e1974fa2b13e165927e951cc20e0d1",
-        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
-        "approvedAt": "2026-10-10T07:57:38.689Z",
+        "approvedBy": "Codex visual and factual review under Viv diagram creation and integration request",
+        "approvedAt": "2026-10-10T08:21:34.707Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "852269fcf337a73b0cf5b42b21ed24a278e1974fa2b13e165927e951cc20e0d1"
+        "candidateSha256": "592eb55db845de88746abba8aa9851b98f5d9add7a05a0e05eecb549862d4fc2"
       }
     }
   }
