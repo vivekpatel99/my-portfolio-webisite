@@ -27,6 +27,7 @@ Set `VITE_CONVEX_URL` in `.env.local` when you want the contact form to talk to 
 | `npm run qa:seo` | Check route SEO metadata for preview and production targets. |
 | `npm run qa:playwright:passive` | Run passive Playwright QA across configured preview and production projects. |
 | `npm run qa:playwright:ci` | Run Chromium preview QA plus desktop/mobile WebKit focus regressions (set `QA_LOCAL_ONLY=1`). |
+| `npm run qa:playwright:ci:chromium` / `:webkit` | Run one browser family of `qa:playwright:ci`; CI shards each family separately. |
 | `npm run qa:contact-lifecycle` | Start an isolated local server and test contact pending/failure/retry with an in-memory transport. |
 | `npm run qa:playwright:live-contact` | Opt-in live contact-form QA. This can create real Convex leads and send email. |
 | `npm run convex:dev` | Start Convex local/dev workflow. |
