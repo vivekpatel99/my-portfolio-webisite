@@ -134,11 +134,13 @@ describe('retained completed case studies', () => {
     expect(story.sections.find((section) => section.key === 'outcome').nodes[0].children[0].value).toBe(outcomeText);
 
     const headingMetaCaption = `${story.title} ${story.category} ${seo.title} ${story.image.alt} ${story.image.caption}`;
-    expect(story.image.src).toBe(coverSrc);
-    expect(story.image.alt).toBe(caption);
-    expect(story.image.caption).toBe(caption);
+    expect(story.image.src).toBe('/assets/case-studies/depth-based-distance-estimation-workflow-diagram.png');
+    const original = story.sections.flatMap((section) => section.nodes.flatMap((node) => node.children ?? []))
+      .find((node) => node.type === 'image' && node.src === coverSrc);
+    expect(original.alt).toBe(caption);
+    expect(original.caption).toBe(caption);
     expect(headingMetaCaption).toMatch(/lab demo/i);
-    expect(headingMetaCaption).toMatch(/not an accuracy benchmark/i);
+    expect(`${headingMetaCaption} ${original.caption}`).toMatch(/not an accuracy benchmark/i);
     expect(headingMetaCaption).not.toMatch(/not for proposals/i);
 
     const disclaimer = /lab demo|not an accuracy benchmark/gi;
@@ -151,7 +153,7 @@ describe('retained completed case studies', () => {
     const card = module.collectionCaseStudies.find((record) => record.slug === slug);
     expect(card.summary).toBe(summary);
     expect(card.title).toBe(title);
-    expect(card.image.src).toBe(coverSrc);
+    expect(card.image.src).toBe(story.image.src);
     expect(module.featuredCaseStudies.map((record) => record.slug)).not.toContain(slug);
   });
 

@@ -401,11 +401,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "8ff5933e61c7316210541e00dc8d275a18428937ec69cda9152a8d911755d2fe",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-21T16:54:00.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/124",
-        "candidateSha256": "a0a6ac99d359d7693e182cbe8d2c3e116581c5889a0c9d25de99dbf3c3d22a4e"
+        "sha256": "c024accf522687247b0fa2182fcbeabe796f265570a3b0966967c8034a73d88a",
+        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
+        "approvedAt": "2026-10-10T07:57:38.300Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "8ae2242a5fc25fe5381c89710e3d03b339d64bcbd18e24fee7ab585ecc71f240"
       },
       "claimRefs": {
         "summary": "browser-search-to-spreadsheet.summary",
@@ -540,7 +540,14 @@ export const stagedCaseStudyPublication = {
               }
             ]
           }
-        ]
+        ],
+        "image": {
+          "src": "/assets/case-studies/browser-search-to-spreadsheet-workflow-diagram.png",
+          "alt": "Spreadsheet inputs pass through browser searches into a sheet with result URLs, timestamps and execution status.",
+          "caption": "Illustrative workflow. Spreadsheet search inputs drive configurable browser runs. Result URLs, timestamps and row status return to a reviewable sheet. Ongoing operation requires maintenance and authorized access.",
+          "width": 1620,
+          "height": 920
+        }
       }
     },
     {
@@ -550,11 +557,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "182925263df784697ee3552481b0f86c54c7e4d581c49bb3d7de5a9a59108ac8",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "sha256": "7a14a97263764a3fc9cfcd3d97a0deafa5f907507d6882187c8261857b26fb99",
+        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
+        "approvedAt": "2026-10-10T07:57:38.376Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "6f27eac0ad723f3f4efd36a0ad81d7893a8410409f1cb841d61cc39c6c0f436e"
       },
       "claimRefs": {
         "summary": "depth-based-distance-estimation.summary",
@@ -657,6 +664,19 @@ export const stagedCaseStudyPublication = {
                     "value": "The delivered source separates detector, depth estimator and navigation logic so those components can be inspected or replaced independently."
                   }
                 ]
+              },
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "type": "image",
+                    "src": "/assets/case-studies/depth-based-distance-estimation-6cff31a07362f0483bf43298af0366ffb4c8f40137291202506a8924b0d24957.png",
+                    "alt": "Lab demo showing object detections and estimated distances. Displayed values are demo output, not an accuracy benchmark.",
+                    "caption": "Lab demo showing object detections and estimated distances. Displayed values are demo output, not an accuracy benchmark.",
+                    "width": 1280,
+                    "height": 769
+                  }
+                ]
               }
             ]
           },
@@ -677,11 +697,11 @@ export const stagedCaseStudyPublication = {
           }
         ],
         "image": {
-          "src": "/assets/case-studies/depth-based-distance-estimation-6cff31a07362f0483bf43298af0366ffb4c8f40137291202506a8924b0d24957.png",
-          "alt": "Lab demo showing object detections and estimated distances. Displayed values are demo output, not an accuracy benchmark.",
-          "caption": "Lab demo showing object detections and estimated distances. Displayed values are demo output, not an accuracy benchmark.",
-          "width": 1280,
-          "height": 769
+          "src": "/assets/case-studies/depth-based-distance-estimation-workflow-diagram.png",
+          "alt": "A scene feeds object detection and depth estimates, which combine into a spatial overlay in an uncalibrated lab demo.",
+          "caption": "Illustrative workflow for an uncalibrated lab demo combining object detection, Depth Anything V2, spatial calculations and navigation-zone logic. Camera and environment validation remains application-specific.",
+          "width": 1620,
+          "height": 920
         }
       }
     },
@@ -692,11 +712,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "02061674ea5598fd4389db9e6158d77dc23d460929a856d804085dd5bf83c883",
-        "approvedBy": "Viv (issue #126)",
-        "approvedAt": "2026-09-21T13:05:51.909Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/126",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+        "sha256": "e072979f597fd4066f5a8f8d356fcc951cdbee255c21df6e846d8967beda0dce",
+        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
+        "approvedAt": "2026-10-10T07:57:38.454Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "b902df1b21e477101a86519a9ed58603cd960f7e5be68df053f9b70f783f7687"
       },
       "claimRefs": {
         "summary": "healthcare-document-intelligence.summary",
@@ -827,6 +847,19 @@ export const stagedCaseStudyPublication = {
                     "value": "The deterministic native-PDF path is distinct from the related vision inspection prototype; the two are not presented as separate delivered client projects."
                   }
                 ]
+              },
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "type": "image",
+                    "src": "/assets/case-studies/healthcare-document-intelligence-1973dd984be94a7a4a1ec9581d8ef3499be61acaa93d44680156e0f3c3d60151.png",
+                    "alt": "Original schedule PDF extractor implementation",
+                    "caption": "Original schedule PDF extractor implementation",
+                    "width": 1098,
+                    "height": 1524
+                  }
+                ]
               }
             ]
           },
@@ -847,11 +880,11 @@ export const stagedCaseStudyPublication = {
           }
         ],
         "image": {
-          "src": "/assets/case-studies/healthcare-document-intelligence-1973dd984be94a7a4a1ec9581d8ef3499be61acaa93d44680156e0f3c3d60151.png",
-          "alt": "Original schedule PDF extractor implementation",
-          "caption": "Original schedule PDF extractor implementation",
-          "width": 1098,
-          "height": 1524
+          "src": "/assets/case-studies/healthcare-document-intelligence-workflow-diagram.png",
+          "alt": "Color-coded staff schedule PDF converted into reviewable Excel date, shift and request-code rows.",
+          "caption": "Illustrative workflow. Native-PDF extraction turns staff calendars into reviewable Excel rows, preserving dates, shifts and color-coded requests. Illustrative data only.",
+          "width": 1620,
+          "height": 920
         }
       }
     },
@@ -1041,11 +1074,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "748f6bbacf0fb845a8edba5ffdc023cb719c01974871a215d079b3151aa26ebf",
-        "approvedBy": "Viv (deployment authorized; review cleanup by Codex)",
-        "approvedAt": "2026-09-18T05:09:30.263Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/114",
-        "candidateSha256": "9080fe7a432cc33f40786a0bbf20af6912ac33f8c6c60233af1b48af4a439f7f"
+        "sha256": "60f18f168830ddc2b5178c2905116bf8f55aca0045894406a09cde0ca9c84436",
+        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
+        "approvedAt": "2026-10-10T07:57:38.144Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "5f8d33c712e39a32dc57c65eab98aa8cac4e98d0eb9019594e41f389482e6c78"
       },
       "claimRefs": {
         "summary": "n8n-openai-data-extraction.summary",
@@ -1222,6 +1255,18 @@ export const stagedCaseStudyPublication = {
                     "height": 1063
                   }
                 ]
+              },
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "type": "image",
+                    "src": "/assets/case-studies/n8n-openai-data-extraction-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png",
+                    "alt": "Main n8n workflow for discovering and extracting website datasets",
+                    "width": 2984,
+                    "height": 874
+                  }
+                ]
               }
             ]
           },
@@ -1242,10 +1287,11 @@ export const stagedCaseStudyPublication = {
           }
         ],
         "image": {
-          "src": "/assets/case-studies/n8n-openai-data-extraction-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png",
-          "alt": "Main n8n workflow for discovering and extracting website datasets",
-          "width": 2984,
-          "height": 874
+          "src": "/assets/case-studies/n8n-openai-data-extraction-workflow-diagram.png",
+          "alt": "Website datasets branch into Excel, CSV and HTML processors, then become structured JSON grouped by starting URL.",
+          "caption": "Illustrative workflow. An n8n and OpenAI workflow discovers website datasets, processes Excel, CSV and HTML tables separately, and produces structured JSON organized by starting URL. Source-specific changes may need adjustment.",
+          "width": 1620,
+          "height": 920
         }
       }
     },
@@ -1256,11 +1302,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "e3a4af1e07fffbcc91b6009cf85d8182fa712b951143f0dcf358895106e1d91c",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "sha256": "3ec0b288928f4d723874c2b808db3e686b891208d8f65836e865db65126cae70",
+        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
+        "approvedAt": "2026-10-10T07:57:38.534Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "705758e6d203830ba8b9a8d02aa51efd5861b90c9aa2978035cfa55a5273f71d"
       },
       "claimRefs": {
         "summary": "n8n-python-ai-agents.summary",
@@ -1377,7 +1423,8 @@ export const stagedCaseStudyPublication = {
                     "src": "/assets/case-studies/n8n-python-ai-agents-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png",
                     "alt": "Representative n8n data extraction workflow from other portfolio work",
                     "width": 2984,
-                    "height": 874
+                    "height": 874,
+                    "caption": "Representative n8n data extraction workflow from other portfolio work"
                   }
                 ]
               },
@@ -1389,7 +1436,8 @@ export const stagedCaseStudyPublication = {
                     "src": "/assets/case-studies/n8n-python-ai-agents-7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b.png",
                     "alt": "Representative n8n data processor workflow from other portfolio work",
                     "width": 1679,
-                    "height": 981
+                    "height": 981,
+                    "caption": "Representative n8n data processor workflow from other portfolio work"
                   }
                 ]
               },
@@ -1401,7 +1449,8 @@ export const stagedCaseStudyPublication = {
                     "src": "/assets/case-studies/n8n-python-ai-agents-3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66.png",
                     "alt": "Representative n8n error handler workflow from other portfolio work",
                     "width": 1142,
-                    "height": 923
+                    "height": 923,
+                    "caption": "Representative n8n error handler workflow from other portfolio work"
                   }
                 ]
               },
@@ -1413,7 +1462,8 @@ export const stagedCaseStudyPublication = {
                     "src": "/assets/case-studies/n8n-python-ai-agents-ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338.png",
                     "alt": "Representative n8n Excel-to-JSON processor from other portfolio work",
                     "width": 3400,
-                    "height": 955
+                    "height": 955,
+                    "caption": "Representative n8n Excel-to-JSON processor from other portfolio work"
                   }
                 ]
               },
@@ -1425,7 +1475,8 @@ export const stagedCaseStudyPublication = {
                     "src": "/assets/case-studies/n8n-python-ai-agents-f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png",
                     "alt": "Representative invoice orchestrator workflow from other portfolio work",
                     "width": 2448,
-                    "height": 684
+                    "height": 684,
+                    "caption": "Representative invoice orchestrator workflow from other portfolio work"
                   }
                 ]
               },
@@ -1437,7 +1488,21 @@ export const stagedCaseStudyPublication = {
                     "src": "/assets/case-studies/n8n-python-ai-agents-c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9.png",
                     "alt": "Representative invoice extractor workflow from other portfolio work",
                     "width": 1862,
-                    "height": 800
+                    "height": 800,
+                    "caption": "Representative invoice extractor workflow from other portfolio work"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "type": "image",
+                    "src": "/assets/case-studies/n8n-python-ai-agents-e542384f4f7532d230440cb9a68e0e7e66d951996959221225633fc5304b08b7.png",
+                    "alt": "Original client-supplied PostgreSQL table overview used as project input; not an agent-result screenshot",
+                    "caption": "Original client-supplied PostgreSQL table overview used as project input; not an agent-result screenshot",
+                    "width": 2262,
+                    "height": 769
                   }
                 ]
               }
@@ -1460,11 +1525,11 @@ export const stagedCaseStudyPublication = {
           }
         ],
         "image": {
-          "src": "/assets/case-studies/n8n-python-ai-agents-e542384f4f7532d230440cb9a68e0e7e66d951996959221225633fc5304b08b7.png",
-          "alt": "Original client-supplied PostgreSQL table overview used as project input; not an agent-result screenshot",
-          "caption": "Original client-supplied PostgreSQL table overview used as project input; not an agent-result screenshot",
-          "width": 2262,
-          "height": 769
+          "src": "/assets/case-studies/n8n-python-ai-agents-workflow-diagram.png",
+          "alt": "Separate lanes show n8n record and vector synchronization, and schema-aware SQL queries with SELECT-only validation and bounded results.",
+          "caption": "Illustrative workflow. Inspectable n8n synchronization and a separate SQL question agent with SELECT-only validation and bounded results.",
+          "width": 1620,
+          "height": 920
         }
       }
     },
@@ -1475,11 +1540,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "87c4d2f4eaf4e7bf2dd66c97313fd3b7d42d01197a0ea5a6775a77736d490a56",
-        "approvedBy": "Cloud Agent (Issue #125 synthetic hero removal)",
-        "approvedAt": "2026-09-21T17:04:00.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/125",
-        "candidateSha256": "6ca0b9be07fc064ac452f43d7ebb5886e0c6275352bf1ce93a06625cae74d59f"
+        "sha256": "86576aec4bbbcbc53e85c27a706d3175e54b0c0101e4e9ead7faaf85f2c5e925",
+        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
+        "approvedAt": "2026-10-10T07:57:38.613Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "b2e7442167276c591fd8a53ed27017dd0eaee1cd3e6d9c50542c8be123ca4f0a"
       },
       "claimRefs": {
         "summary": "python-ci-workflow-automation.summary",
@@ -1614,7 +1679,14 @@ export const stagedCaseStudyPublication = {
               }
             ]
           }
-        ]
+        ],
+        "image": {
+          "src": "/assets/case-studies/python-ci-workflow-automation-workflow-diagram.png",
+          "alt": "Python workflow code becomes reusable entry points for linting, AI-assisted review text and pull-request helpers.",
+          "caption": "Illustrative workflow. A Python toolkit organizes code-quality workflow logic behind reusable entry points, with independent linting, assisted review-text and PR-helper capabilities.",
+          "width": 1620,
+          "height": 920
+        }
       }
     },
     {
@@ -1624,11 +1696,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "b199dde5670ebc3402592e41ab99f1712529212f7876e4e9cd534ee3aef34c96",
-        "approvedBy": "Viv",
-        "approvedAt": "2026-09-21T16:54:00.000Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/123",
-        "candidateSha256": "14fc18eb9ff0e4dbaeb5acd60a669ef64496b1cbaa9d03b86d3e74b4d0e63c7e"
+        "sha256": "292f4533fd67812d11b611b70de971cc947bbd5b6c08a233571ce2b47a9325d4",
+        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
+        "approvedAt": "2026-10-10T07:57:38.689Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "852269fcf337a73b0cf5b42b21ed24a278e1974fa2b13e165927e951cc20e0d1"
       },
       "claimRefs": {
         "summary": "resumable-listing-data-extraction.summary",
@@ -1763,7 +1835,14 @@ export const stagedCaseStudyPublication = {
               }
             ]
           }
-        ]
+        ],
+        "image": {
+          "src": "/assets/case-studies/resumable-listing-data-extraction-workflow-diagram.png",
+          "alt": "Listing URLs feed concurrent detail extraction, incremental CSV and JSONL files, and a completed-listing checkpoint for resume.",
+          "caption": "Illustrative workflow. Collect listing URLs, extract details with controlled delays and retries, retain completed listings for restart, and export incremental CSV and JSONL files. Website changes and source-access requirements still need maintenance.",
+          "width": 1620,
+          "height": 920
+        }
       }
     },
     {
@@ -1936,11 +2015,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "e0d1600c854d80ac05306d554c030bf68011fd05cd6591f45cfde2e4752f5a5c",
-        "approvedBy": "Codex (Viv instruction, issue #187)",
-        "approvedAt": "2026-09-27T11:49:17.695Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/issues/187",
-        "candidateSha256": "35f312fdee481b63934df87f4af60c02b60c4c26cde1337eb8adde19121e0249"
+        "sha256": "6f5f723d028bf4d7e584168d25eab7300f6df3ece409cc57f0efc9a81cd4d94b",
+        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
+        "approvedAt": "2026-10-10T07:57:38.227Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "24ce758aad9d742640d262cd2f4c87d0800952848d30bf4e7ea0806b47c40ee5"
       },
       "claimRefs": {
         "summary": "yolo-computer-vision-optimization.summary",
@@ -2117,6 +2196,18 @@ export const stagedCaseStudyPublication = {
                     "height": 540
                   }
                 ]
+              },
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "type": "image",
+                    "src": "/assets/case-studies/yolo-computer-vision-optimization-a1c141cdaa34086f779a22bbc54861dd5a0b6bd6c956df38456a3313983c2c0c.webp",
+                    "alt": "YOLO model detecting and estimating a yoga pose in an image.",
+                    "width": 960,
+                    "height": 720
+                  }
+                ]
               }
             ]
           },
@@ -2137,10 +2228,11 @@ export const stagedCaseStudyPublication = {
           }
         ],
         "image": {
-          "src": "/assets/case-studies/yolo-computer-vision-optimization-a1c141cdaa34086f779a22bbc54861dd5a0b6bd6c956df38456a3313983c2c0c.webp",
-          "alt": "YOLO model detecting and estimating a yoga pose in an image.",
-          "width": 960,
-          "height": 720
+          "src": "/assets/case-studies/yolo-computer-vision-optimization-workflow-diagram.png",
+          "alt": "Exercise still transformed into a person box and body-keypoint overlay by YOLO pose estimation.",
+          "caption": "Illustrative still-image inference. YOLO pose estimation produces a person box and body-keypoint overlay for visual inspection. Form scoring remains separate.",
+          "width": 1620,
+          "height": 920
         }
       }
     }
@@ -3153,6 +3245,118 @@ export const stagedCaseStudyPublication = {
         "approvedBy": "Viv (direct request and illustrative-caption approval)",
         "approvedAt": "2026-10-10T07:06:45.478Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/blob/feat/portfolio-case-study-illustrations/docs/case-studies/portfolio-illustrations.md"
+      }
+    },
+    "/assets/case-studies/n8n-openai-data-extraction-workflow-diagram.png": {
+      "file": "public/assets/case-studies/n8n-openai-data-extraction-workflow-diagram.png",
+      "width": 1620,
+      "height": 920,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "5f8d33c712e39a32dc57c65eab98aa8cac4e98d0eb9019594e41f389482e6c78",
+        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
+        "approvedAt": "2026-10-10T07:57:38.144Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "5f8d33c712e39a32dc57c65eab98aa8cac4e98d0eb9019594e41f389482e6c78"
+      }
+    },
+    "/assets/case-studies/yolo-computer-vision-optimization-workflow-diagram.png": {
+      "file": "public/assets/case-studies/yolo-computer-vision-optimization-workflow-diagram.png",
+      "width": 1620,
+      "height": 920,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "24ce758aad9d742640d262cd2f4c87d0800952848d30bf4e7ea0806b47c40ee5",
+        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
+        "approvedAt": "2026-10-10T07:57:38.227Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "24ce758aad9d742640d262cd2f4c87d0800952848d30bf4e7ea0806b47c40ee5"
+      }
+    },
+    "/assets/case-studies/browser-search-to-spreadsheet-workflow-diagram.png": {
+      "file": "public/assets/case-studies/browser-search-to-spreadsheet-workflow-diagram.png",
+      "width": 1620,
+      "height": 920,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "8ae2242a5fc25fe5381c89710e3d03b339d64bcbd18e24fee7ab585ecc71f240",
+        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
+        "approvedAt": "2026-10-10T07:57:38.300Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "8ae2242a5fc25fe5381c89710e3d03b339d64bcbd18e24fee7ab585ecc71f240"
+      }
+    },
+    "/assets/case-studies/depth-based-distance-estimation-workflow-diagram.png": {
+      "file": "public/assets/case-studies/depth-based-distance-estimation-workflow-diagram.png",
+      "width": 1620,
+      "height": 920,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "6f27eac0ad723f3f4efd36a0ad81d7893a8410409f1cb841d61cc39c6c0f436e",
+        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
+        "approvedAt": "2026-10-10T07:57:38.376Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "6f27eac0ad723f3f4efd36a0ad81d7893a8410409f1cb841d61cc39c6c0f436e"
+      }
+    },
+    "/assets/case-studies/healthcare-document-intelligence-workflow-diagram.png": {
+      "file": "public/assets/case-studies/healthcare-document-intelligence-workflow-diagram.png",
+      "width": 1620,
+      "height": 920,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "b902df1b21e477101a86519a9ed58603cd960f7e5be68df053f9b70f783f7687",
+        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
+        "approvedAt": "2026-10-10T07:57:38.454Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "b902df1b21e477101a86519a9ed58603cd960f7e5be68df053f9b70f783f7687"
+      }
+    },
+    "/assets/case-studies/n8n-python-ai-agents-workflow-diagram.png": {
+      "file": "public/assets/case-studies/n8n-python-ai-agents-workflow-diagram.png",
+      "width": 1620,
+      "height": 920,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "705758e6d203830ba8b9a8d02aa51efd5861b90c9aa2978035cfa55a5273f71d",
+        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
+        "approvedAt": "2026-10-10T07:57:38.534Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "705758e6d203830ba8b9a8d02aa51efd5861b90c9aa2978035cfa55a5273f71d"
+      }
+    },
+    "/assets/case-studies/python-ci-workflow-automation-workflow-diagram.png": {
+      "file": "public/assets/case-studies/python-ci-workflow-automation-workflow-diagram.png",
+      "width": 1620,
+      "height": 920,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "b2e7442167276c591fd8a53ed27017dd0eaee1cd3e6d9c50542c8be123ca4f0a",
+        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
+        "approvedAt": "2026-10-10T07:57:38.613Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "b2e7442167276c591fd8a53ed27017dd0eaee1cd3e6d9c50542c8be123ca4f0a"
+      }
+    },
+    "/assets/case-studies/resumable-listing-data-extraction-workflow-diagram.png": {
+      "file": "public/assets/case-studies/resumable-listing-data-extraction-workflow-diagram.png",
+      "width": 1620,
+      "height": 920,
+      "format": "png",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "852269fcf337a73b0cf5b42b21ed24a278e1974fa2b13e165927e951cc20e0d1",
+        "approvedBy": "Viv (diagram creation and integration requested; reviewed by Codex)",
+        "approvedAt": "2026-10-10T07:57:38.689Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "852269fcf337a73b0cf5b42b21ed24a278e1974fa2b13e165927e951cc20e0d1"
       }
     }
   }
