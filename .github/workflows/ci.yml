@@ -9,8 +9,11 @@ on:
       - main
       - develop
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  # PRs share one group per ref so newer pushes supersede older runs. Pushes to
+  # develop/main get a group per commit, so no run is cancelled or dropped while
+  # pending.
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: true
 permissions:
   contents: read
 env:

@@ -86,14 +86,15 @@ and [commit-associated PRs](https://docs.github.com/en/rest/commits/commits#list
 Full CI runs for pull requests into `develop` or `main` and pushes to those
 integration/release branches. Feature-branch pushes do not start a second full
 pipeline; open a pull request to request remote verification. New commits cancel
-older runs for the same pull request. Pushes to `develop` and `main` are not
-cancelled, so every integration and release commit keeps a complete result.
+older runs for the same pull request. Pushes to `develop` and `main` use one
+concurrency group per commit, so no integration or release run is cancelled or
+dropped while pending.
 
 Unit tests, the production build, contact lifecycle QA, reduced-motion QA, and
-fake telemetry QA run independently. Contact lifecycle QA is split into three
-test-level shards. Apache service-route QA and four passive
-browser QA shards consume the same validated production build. Its archive
-preserves hidden deployment files such as `.htaccess`. Each shard publishes its
+fake telemetry QA run independently; contact lifecycle QA is split into three
+test-level shards. Apache service-route QA and four passive browser QA shards
+consume the same validated production build, whose archive preserves hidden
+deployment files such as `.htaccess`. Each shard publishes its
 own reconstructed, sanitized JSON
 artifact for seven days; raw browser captures are disabled.
 

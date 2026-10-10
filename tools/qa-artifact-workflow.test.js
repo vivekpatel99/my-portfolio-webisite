@@ -12,7 +12,9 @@ describe('parallel CI and sanitized QA artifacts', () => {
     expect(workflow.on.push.branches).toEqual(['main', 'develop']);
     expect(workflow.on.pull_request.branches).toEqual(['main', 'develop']);
     // PR runs are superseded by newer pushes; integration/release commits each keep a full result.
-    expect(workflow.concurrency['cancel-in-progress']).toBe("${{ github.event_name == 'pull_request' }}");
+    expect(workflow.concurrency.group)
+      .toBe("${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.sha }}");
+    expect(workflow.concurrency['cancel-in-progress']).toBe(true);
   });
 
   it('requires every independent suite even when a dependency fails or is skipped', () => {
