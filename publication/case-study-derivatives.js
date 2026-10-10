@@ -120,6 +120,11 @@ const displayDerivativesBySourceHash = Object.freeze({
 });
 
 const caseStudySourceRegistry = {
+  "/assets/case-studies/n8n-python-ai-agents-b3fe4c6f4f25417d5266723647a1ca1ae19e58ecb3ee23206ba08abcd19467d4.png": Object.freeze({"src":"/assets/case-studies/n8n-python-ai-agents-b3fe4c6f4f25417d5266723647a1ca1ae19e58ecb3ee23206ba08abcd19467d4-thumb-7beefe8a50be.jpg","sourceSha256":"b3fe4c6f4f25417d5266723647a1ca1ae19e58ecb3ee23206ba08abcd19467d4","thumbnailSha256":"7beefe8a50be6262d4ec98d5f1a879f78609c0c8431f5b492cf8e5a66244b7ec","display":{"src":"/assets/case-studies/case-study-display-b3fe4c6f4f25-26b598c4983d.webp","sha256":"26b598c4983d7f660f50ac9e4a3794a7106531da43b910b0b8ab61d3adbee4cf","width":600,"height":600}}),
+  "/assets/case-studies/n8n-python-ai-agents-169b87ff589c9463d4fb925ddd66692f684532ad83f9c65b4b1d33bfcfdf42c8.png": Object.freeze({"src":"/assets/case-studies/n8n-python-ai-agents-169b87ff589c9463d4fb925ddd66692f684532ad83f9c65b4b1d33bfcfdf42c8-thumb-13645aecb2fb.jpg","sourceSha256":"169b87ff589c9463d4fb925ddd66692f684532ad83f9c65b4b1d33bfcfdf42c8","thumbnailSha256":"13645aecb2fb1526b8e7fbf4e15e26b9921e70ac05c48d1a7dfa5665168392ce","display":{"src":"/assets/case-studies/case-study-display-169b87ff589c-fc078e305932.webp","sha256":"fc078e305932871e9649e041e50b9d710b7db2b2723e0dff14711ec84233bdd2","width":960,"height":600}}),
+  "/assets/case-studies/n8n-python-ai-agents-614405a42d8354e82862d24a4a1707a76177f1d420187fa6f640ca039ffa4a61.png": Object.freeze({"src":"/assets/case-studies/n8n-python-ai-agents-614405a42d8354e82862d24a4a1707a76177f1d420187fa6f640ca039ffa4a61-thumb-6b970675409a.jpg","sourceSha256":"614405a42d8354e82862d24a4a1707a76177f1d420187fa6f640ca039ffa4a61","thumbnailSha256":"6b970675409a8b644760930a504c768d7c70e37290cd04ef21bca5a8fae7f477","display":{"src":"/assets/case-studies/case-study-display-614405a42d83-3339cb428758.webp","sha256":"3339cb428758d9c32b08416437232352ede935ad9f947c2e5ebc8c001d37f60c","width":960,"height":600}}),
+
+
   '/assets/case-studies/invoice-ocr-excel-results.png': Object.freeze({
     src: '/assets/case-studies/invoice-ocr-excel-results-thumb-baf8afeedb27.jpg',
     sourceSha256: '30d08f427ad9dd6098464b4c1d28d180232ec3531b3e016853a3c605083fa9ad',
