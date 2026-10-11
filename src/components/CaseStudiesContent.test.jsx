@@ -186,4 +186,79 @@ describe('CaseStudiesContent collection return', () => {
       .dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true }));
     expect(savedSnapshot()).toBeNull();
   });
+
+  it('hides the in-progress region when no ongoing stories are published', () => {
+    render(<MemoryRouter><CaseStudiesContent ongoingStories={[]} /></MemoryRouter>);
+    expect(document.getElementById('in-progress')).toBeNull();
+    expect(screen.queryByRole('link', { name: /prototypes? in progress/i })).toBeNull();
+    expect(screen.queryByRole('heading', { name: 'In progress' })).toBeNull();
+    expect(screen.getByRole('status').textContent).toBe('Showing 6 of 12 case studies');
+  });
+
+  it('keeps the completed grid at six then twelve when one ongoing story is linked beside it', async () => {
+    const user = userEvent.setup();
+    const ongoing = [{
+      slug: 'bookkeeping-reconciliation-prototype',
+      title: 'Bookkeeping reconciliation prototype',
+      summary: 'Still reconciling sample ledgers.',
+      projectStatus: 'ongoing',
+      completedAt: '2024-01',
+    }];
+    render(
+      <MemoryRouter initialEntries={['/case-studies/']}>
+        <CaseStudiesContent ongoingStories={ongoing} />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole('status').textContent).toBe('Showing 6 of 12 case studies');
+    expect(screen.queryByRole('heading', { name: /other work/i })).toBeNull();
+    const jump = screen.getByRole('link', { name: '1 prototype in progress' });
+    expect(jump.getAttribute('href')).toBe('#in-progress');
+    expect(jump.closest('[role="status"]')).toBeNull();
+    expect(screen.getByRole('status').textContent).not.toMatch(/prototype/);
+
+    expect(collectionLinks()).toHaveLength(6);
+    await loadAll(user);
+    expect(collectionLinks()).toHaveLength(12);
+    expect(collectionLinks().map((link) => link.getAttribute('href'))).toEqual(
+      collectionCaseStudies.map((story) => `/project/${story.slug}/?from=collection`),
+    );
+
+    const region = document.getElementById('in-progress');
+    const ongoingLink = within(region).getByRole('link', { name: /Bookkeeping reconciliation prototype/ });
+    expect(ongoingLink.getAttribute('href')).toBe('/project/bookkeeping-reconciliation-prototype/');
+    expect(ongoingLink.getAttribute('href')).not.toContain('from=');
+    expect(ongoingLink.textContent).toContain('In progress');
+    expect(ongoingLink.textContent).toContain('Still reconciling sample ledgers.');
+    expect(ongoingLink.textContent).not.toMatch(/Read case study:/);
+    expect(region.querySelector('time')).toBeNull();
+    expect(region.querySelector('article')).toBeNull();
+    expect(region.textContent).not.toMatch(/2024|Jan|January/);
+
+    clearBrowsingState({ storage: sessionStorage });
+    ongoingLink.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true }));
+    expect(savedSnapshot()).toBeNull();
+
+    sessionStorage.setItem(CASE_STUDY_BROWSING_STORAGE_KEY, JSON.stringify({ loadedCount: 6, scrollY: 40 }));
+    ongoingLink.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true }));
+    expect(savedSnapshot()).toEqual({ loadedCount: 6, scrollY: 40 });
+  });
+
+  it('counts two ongoing stories without adding them to the completed grid', () => {
+    render(
+      <MemoryRouter initialEntries={['/case-studies/']}>
+        <CaseStudiesContent ongoingStories={[
+          { slug: 'padel-video-analysis-prototype', title: 'Padel video analysis', projectStatus: 'ongoing' },
+          { slug: 'pytorch-image-segmentation-prototype', title: 'Image segmentation', projectStatus: 'ongoing' },
+        ]} />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('link', { name: '2 prototypes in progress' }).getAttribute('href')).toBe('#in-progress');
+    expect(screen.getByRole('status').textContent).toBe('Showing 6 of 12 case studies');
+    expect(collectionLinks()).toHaveLength(6);
+    expect(within(document.getElementById('in-progress')).getAllByRole('link').map((link) => link.getAttribute('href'))).toEqual([
+      '/project/padel-video-analysis-prototype/',
+      '/project/pytorch-image-segmentation-prototype/',
+    ]);
+  });
 });

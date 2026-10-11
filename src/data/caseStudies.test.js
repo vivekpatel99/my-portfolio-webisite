@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { caseStudies, eligibleCaseStudies, collectionCaseStudies, otherWorkCaseStudies, otherWorkCaseStudySlugs, eligibleCaseStudyCount, featuredCaseStudies, getCaseStudyBySlug, caseStudySlugs, primaryContactHref } from './caseStudies';
+import { caseStudies, ongoingCaseStudies, eligibleCaseStudies, collectionCaseStudies, otherWorkCaseStudies, otherWorkCaseStudySlugs, eligibleCaseStudyCount, featuredCaseStudies, getCaseStudyBySlug, caseStudySlugs, primaryContactHref } from './caseStudies';
 import { routeSeo } from '../lib/seoConfig';
 import { selectFeaturedCaseStudies } from '../lib/featuredCaseStudies';
-import { selectCoreCollectionCaseStudies, selectOtherWorkCaseStudies } from '../lib/caseStudyCollection';
+import { selectCoreCollectionCaseStudies, selectOngoingCaseStudies, selectOtherWorkCaseStudies } from '../lib/caseStudyCollection';
 import { deploymentHtaccess } from '../../plugins/vite-plugin-case-study-publication.js';
 
 describe('caseStudies data structure', () => {
@@ -16,6 +16,16 @@ describe('caseStudies data structure', () => {
     expect(eligibleCaseStudyCount).toBe(eligibleCaseStudies.length);
     expect(eligibleCaseStudies).toEqual(caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed'));
     expect(eligibleCaseStudies.every((caseStudy) => caseStudy.projectStatus === 'completed')).toBe(true);
+  });
+
+  it('exports ongoing stories from the full publication and keeps them out of the collection', () => {
+    const publicationOrder = caseStudies.map((story) => story.slug);
+    expect(ongoingCaseStudies).toEqual(selectOngoingCaseStudies(caseStudies));
+    expect(ongoingCaseStudies.every((story) => story.projectStatus === 'ongoing')).toBe(true);
+    expect(ongoingCaseStudies.every((story) => !Object.prototype.hasOwnProperty.call(story, 'completedAt'))).toBe(true);
+    const collectionSlugs = new Set(collectionCaseStudies.map((story) => story.slug));
+    expect(ongoingCaseStudies.filter((story) => collectionSlugs.has(story.slug))).toEqual([]);
+    expect(caseStudies.map((story) => story.slug)).toEqual(publicationOrder);
   });
 
   it('sorts the collection projection while preserving homepage feature order', () => {

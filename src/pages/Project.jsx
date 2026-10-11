@@ -24,10 +24,14 @@ const Project = () => {
 
   if (!project) return <NotFound />;
 
+  const backHref = project.projectStatus === 'ongoing'
+    ? '/case-studies/#in-progress'
+    : collectionReturnHref(location);
+
   return (
     <>
       <Seo {...routeSeo[`/project/${project.slug}`]} />
-      <CaseStudyArticle story={project} backHref={collectionReturnHref(location)} />
+      <CaseStudyArticle story={project} backHref={backHref} />
     </>
   );
 };

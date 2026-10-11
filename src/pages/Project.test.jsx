@@ -10,6 +10,30 @@ import { toast } from '@/components/ui/use-toast';
 import { caseStudies } from '@/data/caseStudies';
 import Project from './Project';
 
+vi.mock('@/data/caseStudies', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    getCaseStudyBySlug: (slug) => {
+      if (slug === 'ongoing-prototype') {
+        return {
+          id: 'ongoing-prototype',
+          slug: 'ongoing-prototype',
+          title: 'Ongoing prototype',
+          summary: 'Still being built.',
+          projectStatus: 'ongoing',
+          sections: [
+            { key: 'problem', heading: 'The problem', nodes: [] },
+            { key: 'built', heading: 'What I built', nodes: [] },
+            { key: 'outcome', heading: 'The outcome', nodes: [] },
+          ],
+        };
+      }
+      return actual.getCaseStudyBySlug(slug);
+    },
+  };
+});
+
 vi.mock('@/components/ui/use-toast', () => ({
   toast: vi.fn(),
 }));
@@ -99,6 +123,23 @@ describe('Project collection return link', () => {
     window.sessionStorage.setItem('case-studies-browsing', JSON.stringify({ loadedCount: 18, scrollY: 900 }));
     renderProject(`/project/${project.slug}`);
     expect(screen.getByRole('link', { name: '← View case studies' }).getAttribute('href')).toBe('/case-studies/');
+    expect(screen.queryByText('In progress', { exact: true })).toBeNull();
+  });
+
+  it('returns an ongoing story to the in-progress list without resuming the completed collection', async () => {
+    window.sessionStorage.setItem('case-studies-browsing', JSON.stringify({ loadedCount: 12, scrollY: 900 }));
+    renderProject({ pathname: '/project/ongoing-prototype', state: { fromCollection: true } });
+    const back = screen.getByRole('link', { name: '← View case studies' });
+    expect(back.getAttribute('href')).toBe('/case-studies/#in-progress');
+    expect(back.getAttribute('href')).not.toContain('resume');
+    expect(screen.getByText('In progress', { exact: true })).toBeTruthy();
+    expect(document.querySelector('time')).toBeNull();
+
+    cleanup();
+    renderProject('/project/ongoing-prototype?from=collection');
+    expect(screen.getByRole('link', { name: '← View case studies' }).getAttribute('href')).toBe('/case-studies/#in-progress');
+    await waitFor(() => expect(screen.getByText('(empty)')).toBeTruthy());
+    expect(screen.getByRole('link', { name: '← View case studies' }).getAttribute('href')).toBe('/case-studies/#in-progress');
   });
 
   it('resumes the collection when history state marks a collection origin', () => {

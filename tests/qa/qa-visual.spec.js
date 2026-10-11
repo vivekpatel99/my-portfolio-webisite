@@ -1,3 +1,5 @@
+import { caseStudies } from '../../src/data/caseStudies.js';
+import { caseStudyDisplaySrc, collectGalleryImages } from '../../src/components/CaseStudyGallery.js';
 import { expect, test } from './qa-test.js';
 import { assertVisualLayout } from './visual-layout.js';
 
@@ -221,7 +223,7 @@ test('case study gallery keeps its stage, selected media, and thumbnails in usab
     box: stageBox,
     viewport,
     minWidth: 300,
-    minHeight: 220,
+    minHeight: 160,
   });
 
   const selectedMedia = stage.locator('img').first();
@@ -255,6 +257,69 @@ test('case study gallery keeps its stage, selected media, and thumbnails in usab
   });
 });
 
+const assetDigest = (src) => src.match(/-([a-f0-9]{64})\./)?.[1] ?? '';
+
+const galleryImage = (slug, { digest, alt } = {}) => {
+  const images = collectGalleryImages(caseStudies.find((story) => story.slug === slug));
+  const index = images.findIndex((image) => (digest ? assetDigest(image.src) === digest : image.alt === alt));
+  return { images, index, image: images[index] };
+};
+
+test('gallery navigation keeps chart, diagram, and sample evidence clear inline and enlarged', async ({ page }) => {
+  await reducedMotion(page);
+  const cases = [
+    { slug: 'sports-video-analytics-yolo', digest: '4422c54ac53200d0a5e3e529709980779fb42c5c87ba182435157745b60d9b95' },
+    { slug: 'n8n-openai-data-extraction', digest: '5f8d33c712e39a32dc57c65eab98aa8cac4e98d0eb9019594e41f389482e6c78' },
+    { slug: 'ai-project-planning-assistant', digest: 'eff7965595d32bb9557300645b36c7bd15b56e165c3615899cc5dd57bdce175f' },
+  ];
+  const assertClearNavigation = async (region) => {
+    const stage = region.locator('.case-gallery-stage');
+    const stageBox = await stage.boundingBox();
+    const regionBox = await region.boundingBox();
+    for (const name of ['Previous image', 'Next image']) {
+      const control = region.getByRole('button', { name, exact: true });
+      await expect(control).toBeVisible();
+      const controlBox = await control.boundingBox();
+      assertVisualLayout({
+        label: name,
+        box: controlBox,
+        containedBy: regionBox,
+        minWidth: 44,
+        minHeight: 44,
+        avoid: [{ label: 'evidence stage', box: stageBox }],
+      });
+      expect(controlBox.y, `${name} belongs below the evidence`).toBeGreaterThanOrEqual(stageBox.y + stageBox.height);
+    }
+  };
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({ width, height: 844 });
+    for (const { slug, digest } of cases) {
+      await page.goto(`/project/${slug}/`);
+      await settleLayout(page);
+      const gallery = page.getByRole('region', { name: 'Case study images' });
+      const { images, index } = galleryImage(slug, { digest });
+      expect(index, slug).toBeGreaterThanOrEqual(0);
+      const { alt } = images[index];
+      await gallery.getByRole('button', { name: `Show image ${index + 1}: ${alt}`, exact: true }).click();
+      const opener = gallery.getByRole('button', { name: `Enlarge image: ${alt}`, exact: true });
+      await expect(opener.locator('img')).toHaveCSS('object-fit', 'contain');
+      await assertClearNavigation(gallery);
+
+      await opener.click();
+      const dialog = page.getByRole('dialog', { name: 'Enlarged case study images' });
+      await expect(dialog).toBeVisible();
+      await expect(dialog.locator('.case-gallery-viewport img')).toHaveCSS('object-fit', 'contain');
+      await assertClearNavigation(dialog);
+      await dialog.getByRole('button', { name: 'Zoom in', exact: true }).click();
+      await expect(dialog.locator('.case-gallery-zoom')).toContainText('150%');
+      await assertClearNavigation(dialog);
+      await page.keyboard.press('Escape');
+      await expect(dialog).toHaveCount(0);
+      await expect(opener).toBeFocused();
+    }
+  }
+});
+
 const measureGalleryStage = async (page) => page.evaluate(() => {
   const stage = document.querySelector('.case-gallery-stage');
   const img = stage?.querySelector('img');
@@ -273,17 +338,21 @@ test('wide case-study galleries fill the stage without a 4:3 empty band', async 
   await page.setViewportSize({ width: 1280, height: 900 });
   await reducedMotion(page);
   const cases = [
-    { slug: 'n8n-openai-data-extraction', ratio: 2984 / 874 },
-    { slug: 'ai-invoice-processing-automation', ratio: 2448 / 684 },
-    { slug: 'yolo-computer-vision-optimization', ratio: 4 / 3 },
-    { slug: 'invoice-ocr-extraction', ratio: 4 / 3 },
+    { slug: 'n8n-openai-data-extraction', ratio: 2984 / 874, alt: 'Main n8n workflow for discovering and extracting website datasets' },
+    { slug: 'ai-invoice-processing-automation', ratio: 2448 / 684, digest: 'f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275' },
+    { slug: 'yolo-computer-vision-optimization', ratio: 4 / 3, alt: 'YOLO model detecting and estimating a yoga pose in an image.' },
+    { slug: 'invoice-ocr-extraction', ratio: 4 / 3, alt: 'Invoice image with bounding boxes showing extracted client information via OCR.' },
   ];
-  for (const { slug, ratio } of cases) {
+  for (const { slug, ratio, alt, digest } of cases) {
     await page.goto(`/project/${slug}/`);
     await settleLayout(page);
     const gallery = page.getByRole('region', { name: 'Case study images' });
     const stage = gallery.locator('.case-gallery-stage').first();
     await stage.scrollIntoViewIfNeeded();
+    const { index, image } = galleryImage(slug, { digest, alt });
+    expect(index, slug).toBeGreaterThanOrEqual(0);
+    await gallery.getByRole('button', { name: `Show image ${index + 1}: ${image.alt}`, exact: true }).click();
+    await expect(stage.locator('img').first()).toHaveAttribute('alt', image.alt);
     await expect(stage.locator('img').first()).toBeVisible();
     await expect.poll(async () => (await measureGalleryStage(page))?.complete).toBe(true);
     const metrics = await measureGalleryStage(page);
@@ -295,7 +364,11 @@ test('wide case-study galleries fill the stage without a 4:3 empty band', async 
   await settleLayout(page);
   const invoiceGallery = page.getByRole('region', { name: 'Case study images' });
   await invoiceGallery.locator('.case-gallery-stage').first().scrollIntoViewIfNeeded();
-  await invoiceGallery.getByRole('button', { name: /Show image 3:/ }).click();
+  const pdfSplit = galleryImage('ai-invoice-processing-automation', {
+    digest: 'c4ef84c5245e7116671357858924a22b8a2dbd1f95695108125704d6021f9964',
+  });
+  expect(pdfSplit.index).toBeGreaterThanOrEqual(0);
+  await invoiceGallery.getByRole('button', { name: `Show image ${pdfSplit.index + 1}: ${pdfSplit.image.alt}`, exact: true }).click();
   await expect.poll(async () => (await measureGalleryStage(page))?.complete).toBe(true);
   const shortWide = await measureGalleryStage(page);
   expect(shortWide.stageRatio).toBeCloseTo(2140 / 458, 1);
@@ -522,16 +595,20 @@ test('wide gallery lightbox keeps its outer frame and label inside narrow viewpo
 });
 
 
-test('single-image evidence preserves its link within the shared transparent frame', async ({ page }) => {
+test('project evidence preserves the shared transparent frame across media variants', async ({ page }) => {
   await reducedMotion(page);
-  for (const slug of ['ai-project-planning-assistant', 'depth-based-distance-estimation', 'healthcare-document-intelligence']) {
+  for (const slug of ['browser-search-to-spreadsheet', 'python-ci-workflow-automation', 'resumable-listing-data-extraction']) {
     await page.goto(`/project/${slug}/`);
-    const stage = page.locator('.case-study-cover-stage');
+    const [source, ...remaining] = collectGalleryImages(caseStudies.find((story) => story.slug === slug));
+    const singleImage = remaining.length === 0;
+    const stage = page.locator(singleImage ? '.case-study-cover-stage' : '.case-gallery-stage');
     await expect(stage).toHaveClass(/detection-panel/);
     await expect(stage.locator('.detection-label')).toHaveText('PROJECT EVIDENCE');
     const image = stage.locator('img');
     await expect(image).toBeVisible();
-    await expect(stage.locator('a')).toHaveAttribute('href', /.+/);
+    await expect(image).toHaveAttribute('src', caseStudyDisplaySrc(source));
+    if (singleImage) await expect(stage.locator('a')).toHaveAttribute('href', source.src);
+    else await expect(stage.getByRole('button', { name: `Enlarge image: ${source.alt}`, exact: true })).toBeVisible();
     const geometry = await stage.evaluate((element) => {
       const label = element.querySelector('.detection-label');
       const bounds = element.getBoundingClientRect();

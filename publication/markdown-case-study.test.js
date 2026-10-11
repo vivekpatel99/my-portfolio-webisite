@@ -1,9 +1,11 @@
 // @vitest-environment node
-import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
+import { digest } from './case-study-evidence.js';
 import { parseMarkdownCaseStudy, prepareMarkdownCaseStudies, readPreparedCaseStudies } from './markdown-case-study.js';
+import { stageReviewedCaseStudyCandidate } from './stage-case-study-publication.js';
 
 const temporaryDirectories = [];
 afterEach(() => temporaryDirectories.splice(0).forEach((directory) => rmSync(directory, { recursive: true, force: true })));
@@ -84,6 +86,24 @@ describe('Markdown case-study preparation', () => {
     expect(() => parseMarkdownCaseStudy({ source: completed.replace('\ncompleted_at: 2026-08', ''), filePath: '/private/fixture.md' })).toThrow(/completed_at.*required.*project_status.*completed/i);
   });
 
+  it('parses an ongoing story that has no completion month', () => {
+    const ongoingSource = source().replace('category: Automation', 'category: Automation\nproject_status: ongoing');
+    const parsed = parseMarkdownCaseStudy({ source: ongoingSource, filePath: '/private/ongoing.md' });
+    expect(parsed).toMatchObject({ id: 'fixture-story', projectStatus: 'ongoing', title: 'Fixture story' });
+    expect(parsed).not.toHaveProperty('completedAt');
+    expect(parsed.sections.map((section) => section.heading)).toEqual(['The problem', 'What I built', 'The outcome']);
+
+    const directory = mkdtempSync(path.join(tmpdir(), 'markdown-case-study-ongoing-'));
+    temporaryDirectories.push(directory);
+    const candidatePath = path.join(directory, 'candidate.json');
+    writeFileSync(candidatePath, JSON.stringify({ schemaVersion: 1, stories: [parsed] }));
+    const loaded = readPreparedCaseStudies(candidatePath);
+    expect(loaded).toHaveLength(1);
+    expect(loaded[0].projectStatus).toBe('ongoing');
+    expect(loaded[0]).not.toHaveProperty('completedAt');
+    expect(JSON.stringify(loaded[0])).not.toContain('DO_NOT_EXPORT');
+  });
+
   it('rejects non-YAML frontmatter and duplicate YAML keys', () => {
     expect(() => parseMarkdownCaseStudy({ source: '---js\nmodule.exports = { id: "bad" }\n---\n', filePath: '/private/executable.md' })).toThrow(/executable\.md: frontmatter/);
     expect(() => parseMarkdownCaseStudy({ source: source().replace('id: fixture-story', 'id: fixture-story\nid: duplicate'), filePath: '/private/duplicate.md' })).toThrow(/duplicate\.md: frontmatter/);
@@ -159,5 +179,155 @@ describe('Markdown case-study preparation', () => {
     expect(story.sections[1].nodes[1].children[0].src).toBe(story.image.src);
     expect(Object.values(candidate.assets)[0].source).toMatch(/^assets\/[a-f0-9]{64}\.webp$/);
     expect(Object.values(candidate.assets)[0].source).not.toContain(directory);
+    expect(story).not.toHaveProperty('gallery');
+    const prior = readFileSync(result.candidatePath, 'utf8');
+    const snapshotPath = path.join(path.dirname(result.candidatePath), Object.values(candidate.assets)[0].source);
+    writeFileSync(snapshotPath, 'tampered snapshot');
+    expect(() => prepareMarkdownCaseStudies({ sourceFiles: [sourcePath], outputDirectory: path.dirname(result.candidatePath), assetsRoot })).toThrow(/candidate snapshot .* has changed bytes/);
+    expect(readFileSync(result.candidatePath, 'utf8')).toBe(prior);
+  });
+
+  it('keeps an authored image and MP4 gallery through prepare, reload, and stage', async () => {
+    const directory = mkdtempSync(path.join(realpathSync(tmpdir()), 'markdown-case-study-gallery-'));
+    temporaryDirectories.push(directory);
+    const assetsRoot = path.join(directory, 'assets', 'gallery-story');
+    mkdirSync(assetsRoot, { recursive: true });
+    const shipped = path.join(process.cwd(), 'public/assets/case-studies');
+    copyFileSync(path.join(shipped, 'sports-video-analytics-yolo-24b3bf7a4e342c9fb57488d8570f9bfa695e2321483670ed66b798df654385f0.png'), path.join(assetsRoot, 'workflow.png'));
+    copyFileSync(path.join(shipped, 'sports-football-tracking.mp4'), path.join(assetsRoot, 'tracking.mp4'));
+    copyFileSync(path.join(shipped, 'sports-football-tracking-poster.png'), path.join(assetsRoot, 'tracking-poster.png'));
+    copyFileSync(path.join(shipped, 'sports-football-confusion-matrix.png'), path.join(assetsRoot, 'matrix.png'));
+    const sourcePath = path.join(directory, 'gallery-story.md');
+    writeFileSync(sourcePath, `---
+id: gallery-story
+title: Gallery story
+summary: Gallery summary.
+private_note: DO_NOT_EXPORT
+gallery:
+  - src: workflow.png
+    alt: Workflow Diagram
+    caption: Workflow still
+  - src: tracking.mp4
+    alt: Football Tracking Clip
+    poster: tracking-poster.png
+    caption: Supplied tracking demonstration
+  - src: matrix.png
+    alt: Confusion Matrix
+    caption: Confusion matrix
+---
+## The problem
+A problem.
+## What I built
+Built.
+## The outcome
+An outcome.
+`);
+    const outputDirectory = path.join(directory, 'preview');
+    const result = prepareMarkdownCaseStudies({ sourceFiles: [sourcePath], outputDirectory, assetsRoot });
+    const loaded = readPreparedCaseStudies(result.candidatePath);
+    expect(loaded[0].gallery.map((item) => item.caption)).toEqual([
+      'Workflow still',
+      'Supplied tracking demonstration',
+      'Confusion matrix',
+    ]);
+    expect(loaded[0].gallery.map((item) => item.alt)).toEqual([
+      'Workflow Diagram',
+      'Football Tracking Clip',
+      'Confusion Matrix',
+    ]);
+    const [first, video, third] = loaded[0].gallery;
+    expect(first.src).toMatch(/^\/assets\/case-studies\/gallery-story-[a-f0-9]{64}\.png$/);
+    expect(third.src).toMatch(/^\/assets\/case-studies\/gallery-story-[a-f0-9]{64}\.png$/);
+    expect(third.src).not.toBe(first.src);
+    expect(first.width).toBeGreaterThan(0);
+    expect(first.height).toBeGreaterThan(0);
+    expect(video).toMatchObject({ width: 640, height: 360 });
+    expect(video.src).toMatch(/^\/assets\/case-studies\/gallery-story-[a-f0-9]{64}\.mp4$/);
+    expect(video.poster).toMatch(/^\/assets\/case-studies\/gallery-story-[a-f0-9]{64}\.png$/);
+    expect(video.poster).not.toBe(first.src);
+    expect(video).not.toHaveProperty('duration');
+    expect(JSON.stringify(loaded)).not.toContain('DO_NOT_EXPORT');
+    const candidate = JSON.parse(readFileSync(result.candidatePath, 'utf8'));
+    expect(candidate.assets[video.src]).toMatchObject({ format: 'mp4', width: 640, height: 360 });
+    expect(candidate.assets[video.src].source).toMatch(/^assets\/[a-f0-9]{64}\.mp4$/);
+    expect(candidate.assets[video.poster].format).toBe('png');
+    const stagedPath = path.join(directory, 'publication', 'staged-case-study-publication.js');
+    mkdirSync(path.dirname(stagedPath), { recursive: true });
+    mkdirSync(path.join(directory, 'public/assets/case-studies'), { recursive: true });
+    writeFileSync(stagedPath, 'export const stagedCaseStudyPublication = {"records":[],"claims":{},"assets":{}};\n');
+    writeFileSync(path.join(directory, 'publication/case-study-manifest.js'), 'export const caseStudyPublicationBaseline = {schemaVersion:1,records:[],claims:{},assets:{}};\n');
+    await stageReviewedCaseStudyCandidate({
+      candidatePath: result.candidatePath,
+      stagedPath,
+      metadata: {
+        candidateSha256: digest(readFileSync(result.candidatePath)),
+        approvedBy: 'Fixture',
+        approvedAt: '2026-09-09T00:00:00Z',
+        evidence: 'https://example.invalid/gallery',
+      },
+    });
+    const store = JSON.parse(readFileSync(stagedPath, 'utf8').match(/= ([\s\S]*);\s*$/)[1]);
+    expect(store.records[0].content.gallery).toEqual(loaded[0].gallery);
+    expect(store.assets[video.src].approval.sha256).toBe(candidate.assets[video.src].sha256);
+    const stagedVideo = readFileSync(path.join(directory, `public${video.src}`));
+    expect(stagedVideo.equals(readFileSync(path.join(shipped, 'sports-football-tracking.mp4')))).toBe(true);
+  });
+
+  it('rejects a null, empty, or unsupported gallery instead of dropping it', () => {
+    const withGallery = (yaml) => source().replace('category: Automation', `category: Automation\n${yaml}`);
+    const parse = (yaml) => parseMarkdownCaseStudy({ source: withGallery(yaml), filePath: '/private/fixture.md' });
+    expect(() => parse('gallery:')).toThrow(/fixture\.md: gallery must be a non-empty array/);
+    expect(() => parse('gallery: []')).toThrow(/fixture\.md: gallery must be a non-empty array/);
+    expect(() => parse('gallery: clip.mp4')).toThrow(/fixture\.md: gallery must be a non-empty array/);
+    expect(() => parse('gallery:\n  - src: shot.webp\n    alt: Shot\n    width: 640')).toThrow(/unsupported fields: width/);
+    expect(() => parse('gallery:\n  - src: clip.mp4\n    alt: Clip\n    poster: poster.webp\n    duration: 4')).toThrow(/unsupported fields: duration/);
+    expect(() => parse('gallery:\n  - src: clip.mp4\n    alt: Clip\n    poster: poster.webp\n    width: 640\n    height: 360')).toThrow(/unsupported fields: width, height/);
+    expect(() => parse('gallery:\n  - src: Clip.MP4\n    alt: Clip')).toThrow(/gallery\[0\]\.poster must be a non-empty string/);
+    expect(parseMarkdownCaseStudy({ source: source(), filePath: '/private/fixture.md' })).not.toHaveProperty('gallery');
+  });
+
+  it('rejects an unsafe gallery path without replacing the candidate', () => {
+    const directory = mkdtempSync(path.join(tmpdir(), 'markdown-case-study-gallery-unsafe-'));
+    temporaryDirectories.push(directory);
+    const assetsRoot = path.join(directory, 'assets', 'gallery-story');
+    mkdirSync(assetsRoot, { recursive: true });
+    const shipped = path.join(process.cwd(), 'public/assets/case-studies/sports-video-analytics-yolo-24b3bf7a4e342c9fb57488d8570f9bfa695e2321483670ed66b798df654385f0.png');
+    copyFileSync(shipped, path.join(assetsRoot, 'workflow.png'));
+    writeFileSync(path.join(directory, 'outside.png'), readFileSync(shipped));
+    symlinkSync(path.join(directory, 'outside.png'), path.join(assetsRoot, 'linked.png'));
+    const outputDirectory = path.join(directory, 'preview');
+    mkdirSync(outputDirectory, { recursive: true });
+    const prior = 'prior candidate\n';
+    writeFileSync(path.join(outputDirectory, 'candidate.json'), prior);
+    const writeStory = (galleryYaml) => {
+      const sourcePath = path.join(directory, 'gallery-story.md');
+      writeFileSync(sourcePath, `---
+id: gallery-story
+title: Gallery story
+summary: Gallery summary.
+gallery:
+${galleryYaml}
+---
+## The problem
+A problem.
+## What I built
+Built.
+## The outcome
+An outcome.
+`);
+      return sourcePath;
+    };
+    expect(() => prepareMarkdownCaseStudies({
+      sourceFiles: [writeStory('  - src: ../outside.png\n    alt: Outside')],
+      outputDirectory,
+      assetsRoot,
+    })).toThrow(/gallery source \.\.\/outside\.png must stay inside the story asset root/);
+    expect(readFileSync(path.join(outputDirectory, 'candidate.json'), 'utf8')).toBe(prior);
+    expect(() => prepareMarkdownCaseStudies({
+      sourceFiles: [writeStory('  - src: linked.png\n    alt: Linked')],
+      outputDirectory,
+      assetsRoot,
+    })).toThrow(/gallery source linked\.png escapes the story asset root/);
+    expect(readFileSync(path.join(outputDirectory, 'candidate.json'), 'utf8')).toBe(prior);
   });
 });

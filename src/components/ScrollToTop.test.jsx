@@ -54,6 +54,32 @@ describe('ScrollToTop', () => {
     expect(scrollTo).not.toHaveBeenCalled();
   });
 
+  it.each(['/case-studies/#in-progress', '/case-studies#in-progress'])('scrolls and focuses ongoing discovery on a cold hash visit: %s', (entry) => {
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    window.HTMLElement.prototype.scrollIntoView = vi.fn();
+    renderAt(entry);
+    const target = document.getElementById('services');
+    target.id = 'in-progress';
+    act(() => vi.advanceTimersByTime(100));
+    expect(target.scrollIntoView).toHaveBeenCalledTimes(1);
+    expect(document.activeElement).toBe(target);
+    expect(scrollTo).not.toHaveBeenCalled();
+  });
+
+  it('returns from a prototype to the ongoing section instead of the top of the collection', () => {
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    window.HTMLElement.prototype.scrollIntoView = vi.fn();
+    renderAt('/project/padel-video-analysis-prototype/');
+    const target = document.getElementById('services');
+    target.id = 'in-progress';
+    scrollTo.mockClear();
+    act(() => navigate('/case-studies/#in-progress'));
+    act(() => vi.advanceTimersByTime(100));
+    expect(target.scrollIntoView).toHaveBeenCalledTimes(1);
+    expect(document.activeElement).toBe(target);
+    expect(scrollTo).not.toHaveBeenCalled();
+  });
+
   it('resets ordinary route navigation to the top', () => {
     const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
 
