@@ -14,7 +14,7 @@ import {
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { caseStudySlugs } from '../src/data/caseStudies.js';
+import { caseStudySlugs, getCaseStudyBySlug } from '../src/data/caseStudies.js';
 import {
   assertCaseStudyRouteSources,
   assertSameCaseStudySlugs,
@@ -65,6 +65,7 @@ function fixture() {
     'src/components/DetectionFrame.js',
     'src/components/CaseStudyCollection.js',
     'src/components/CaseStudiesContent.js',
+    'src/components/OngoingCaseStudies.js',
     'src/components/ServiceDetailContent.js',
     'src/data/serviceOffers.js',
     'tools/case-study-route-integrity.js',
@@ -177,6 +178,9 @@ describe('case-study route integrity', () => {
     expect(readFileSync(path.join(staleDirectory, 'operator-note.txt'), 'utf8')).toBe('DO_NOT_REMOVE');
     for (const slug of caseStudySlugs) {
       expect(existsSync(path.join(directory, 'dist', projectRoute(slug), 'index.html'))).toBe(true);
+      const articleHtml = readFileSync(path.join(directory, 'dist', projectRoute(slug), 'index.html'), 'utf8');
+      const backHref = getCaseStudyBySlug(slug).projectStatus === 'ongoing' ? '/case-studies/#in-progress' : '/case-studies/';
+      expect(articleHtml).toContain(`href="${backHref}"`);
       expect(readFileSync(path.join(directory, 'dist/sitemap.xml'), 'utf8'))
         .toContain(`https://www.vivekapatel.com${projectRoute(slug)}/`);
     }

@@ -173,7 +173,8 @@ const renderStaticRoute = (route) => {
   const slug = route.slice('/project/'.length);
   const story = getCaseStudyBySlug(slug);
   if (!story) throw new Error(`Static case-study route has no public story: ${route}`);
-  const article = renderToStaticMarkup(React.createElement(CaseStudyArticle, { story, backHref: '/case-studies/' }));
+  const backHref = story.projectStatus === 'ongoing' ? '/case-studies/#in-progress' : '/case-studies/';
+  const article = renderToStaticMarkup(React.createElement(CaseStudyArticle, { story, backHref }));
   const rootMarker = '<div id="root"></div>';
   if (html.split(rootMarker).length !== 2) throw new Error('Static route shell must contain exactly one empty root element');
   return html.replace(rootMarker, () => `<div id="root">${article}</div>`);

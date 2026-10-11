@@ -3,7 +3,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { readFileSync } from 'node:fs';
 import { afterEach, describe, expect, it } from 'vitest';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { compileCaseStudyPublication } from '../../publication/compile-case-studies.js';
 import { caseStudyPublicationBaseline } from '../../publication/case-study-manifest.js';
 import Gallery, { caseStudyDisplaySrc, collectGalleryImages, galleryStageAspectRatio, galleryThumbnailSrc } from './CaseStudyGallery.js';
@@ -132,13 +132,15 @@ describe('case study gallery', () => {
   it('uses display derivatives inline while the enlarged image keeps the original', () => {
     const published = compileCaseStudyPublication().find(({ slug }) => slug === 'n8n-openai-data-extraction');
     const [selected, other] = collectGalleryImages(published);
+    expect(galleryThumbnailSrc(selected)).not.toBe(selected.src);
+    expect(galleryThumbnailSrc(other)).not.toBe(other.src);
     const { container } = render(<Gallery images={[selected, other]} />);
     expect(container.querySelector('.case-gallery-open img')?.getAttribute('src')).toBe(caseStudyDisplaySrc(selected));
     expect(container.querySelector('.case-gallery-open img')?.getAttribute('src')).not.toBe(selected.src);
     expect([...container.querySelectorAll('.case-gallery-thumbnail img')].map((image) => image.getAttribute('src')))
       .toEqual([
-        '/assets/case-studies/n8n-openai-data-extraction-e6fbcc7caa954b217adfa063990d460059e44d08808ad85c9e8988418920104c-thumb-bd1dc61ef269.jpg',
-        '/assets/case-studies/n8n-openai-data-extraction-72c334f819d00fb872bea5cdb429e07a540b18794a627f758d0c8e092cb84636-thumb-a9dbf544caf7.jpg',
+        galleryThumbnailSrc(selected),
+        galleryThumbnailSrc(other),
       ]);
     fireEvent.click(screen.getByRole('button', { name: `Show image 2: ${other.alt}` }));
     expect(container.querySelector('.case-gallery-open img')?.getAttribute('src')).toBe(caseStudyDisplaySrc(other));
@@ -223,6 +225,33 @@ describe('case study gallery', () => {
     expect(screen.getByText('1 of 3')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Show image 2: Output' }));
     expect(screen.getByText('2 of 3')).toBeTruthy();
+  });
+  it('keeps working navigation outside the evidence stage inline and enlarged', () => {
+    render(<Gallery images={images} />);
+    const gallery = screen.getByRole('region', { name: 'Case study images' });
+    const assertSeparateNavigation = (region) => {
+      const stage = region.querySelector('.case-gallery-stage');
+      for (const name of ['Previous image', 'Next image']) {
+        expect(stage.contains(within(region).getByRole('button', { name }))).toBe(false);
+      }
+    };
+    assertSeparateNavigation(gallery);
+    fireEvent.click(within(gallery).getByRole('button', { name: 'Next image' }));
+    expect(within(gallery).getByText('2 of 3')).toBeTruthy();
+
+    const opener = within(gallery).getByRole('button', { name: 'Enlarge image: Output' });
+    fireEvent.click(opener);
+    const dialog = screen.getByRole('dialog');
+    assertSeparateNavigation(dialog);
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Zoom in' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Next image' }));
+    expect(within(dialog).getByText('3 of 3')).toBeTruthy();
+    expect(within(dialog).getByText('100%')).toBeTruthy();
+    fireEvent.keyDown(within(dialog).getByRole('button', { name: 'Previous image' }), { key: 'ArrowLeft' });
+    expect(within(dialog).getByText('2 of 3')).toBeTruthy();
+    fireEvent.keyDown(dialog, { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.activeElement).toBe(opener);
   });
   it('supports keyboard navigation, enlargement, zoom and Escape focus restoration', () => {
     render(<Gallery images={images} />);

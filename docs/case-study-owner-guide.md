@@ -31,7 +31,22 @@ To add another screenshot, insert this under `## What I built` or another public
 ![Review screen showing extracted invoice fields](review-screen.png)
 ```
 
-Use filenames relative to the story's asset folder. Referenced images feed the article gallery automatically. Files merely copied into the folder do not appear. Do not edit generated assets under `public/` or `dist/`.
+Use filenames relative to the story's asset folder. The cover and images inside the three public sections still enter the article gallery. Files merely copied into the folder do not appear. Do not edit generated assets under `public/` or `dist/`.
+
+To add media that should not sit in the prose, add a `gallery` list in the frontmatter. Omit `gallery` when you do not need that list. An empty list is an error.
+
+```yaml
+gallery:
+  - src: workflow.png
+    alt: Workflow diagram
+    caption: Invoice intake and review workflow
+  - src: tracking.mp4
+    alt: Football tracking clip
+    poster: tracking-poster.png
+    caption: Supplied demonstration, not a project benchmark
+```
+
+Keep the filename's letter case. Stills are PNG, JPG, or WebP. A video is an MP4 plus a still poster. Do not add width, height, or duration. Preparation reads the real size from the file. An MP4 needs `ffprobe` from FFmpeg on your PATH. The [authoring guide](case-study-authoring.md) has the path rules and the stage command.
 
 ## Preview your edits
 

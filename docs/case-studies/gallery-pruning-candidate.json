@@ -1,0 +1,461 @@
+{
+  "candidateSha256": "740a5c8a5a017fe3d1283bd8f18f791c99f6179d20c5a70aead7b857c18a3ab3",
+  "stories": [
+    {
+      "id": "ai-invoice-processing-automation",
+      "slug": "ai-invoice-processing-automation",
+      "title": "n8n Invoice Extraction with Validation and Review",
+      "summary": "An n8n invoice workflow extracts headers and line items, translates descriptions, checks totals, and sends reviewable data to Google Sheets for an Excel handoff.",
+      "projectStatus": "completed",
+      "completedAt": "2026-09",
+      "category": "Document AI",
+      "image": {
+        "src": "/assets/case-studies/ai-invoice-processing-automation-c8dfbd729212333c91bfa50a3609df4b6917b43905088205637e79083c0b7942.png",
+        "alt": "N8n invoice workflow from intake through extraction, translation and checks into human review and spreadsheet output.",
+        "caption": "Illustrative n8n invoice workflow from intake through extraction, translation and checks into human review and spreadsheet output.",
+        "width": 1620,
+        "height": 920
+      },
+      "gallery": [
+        {
+          "src": "/assets/case-studies/ai-invoice-processing-automation-f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png",
+          "alt": "Original M2 invoice orchestration workflow",
+          "caption": "Earlier invoice orchestrator canvas, showing intake, extraction and spreadsheet handoffs. The 97.9% annotation is an internal target, not a verified project accuracy result.",
+          "width": 2448,
+          "height": 684
+        },
+        {
+          "src": "/assets/case-studies/ai-invoice-processing-automation-c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9.png",
+          "alt": "Original M1 extraction workflow; historical screenshot annotations are not independently verified benchmarks",
+          "caption": "Earlier extraction canvas with model processing and Greek-to-English translation. The benchmark and ranking annotations do not establish this project's measured performance.",
+          "width": 1862,
+          "height": 800
+        },
+        {
+          "src": "/assets/case-studies/ai-invoice-processing-automation-c4ef84c5245e7116671357858924a22b8a2dbd1f95695108125704d6021f9964.png",
+          "alt": "Original PDF splitting subworkflow",
+          "caption": "Historical PDF-splitting workflow. Combined multi-invoice PDF processing was an extension in progress, outside the delivered core described here.",
+          "width": 2140,
+          "height": 458
+        },
+        {
+          "src": "/assets/case-studies/ai-invoice-processing-automation-15fcb5d1f5daf1514ad0f41393d5ac9e432b1907d17835f8b62ab122e5043289.png",
+          "alt": "Original input-file scanning subworkflow",
+          "caption": "Project folder scanner used by the invoice intake workflow to find files in its folder structure.",
+          "width": 883,
+          "height": 480
+        },
+        {
+          "src": "/assets/case-studies/ai-invoice-processing-automation-e2386e51522d827d3ec7f44d144b173f3dbdae865dcb9db323c4c161fc6bc8fb.png",
+          "alt": "Original invoice error notification workflow",
+          "caption": "Project error-notification workflow, showing the log, failed-file handling and email notification path.",
+          "width": 1609,
+          "height": 794
+        }
+      ],
+      "sections": [
+        {
+          "key": "problem",
+          "heading": "The problem",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Invoice processing involved more than copying totals. The workflow needed to retain original descriptions, add English translations, and fit an existing spreadsheet review process without overwriting formula columns."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The task was to connect PDF and image intake to structured invoice data, while making questionable documents, duplicate records and extraction failures visible to a reviewer."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "built",
+          "heading": "What I built",
+          "nodes": [
+            {
+              "type": "list",
+              "ordered": false,
+              "start": "",
+              "items": [
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Google Drive intake and n8n orchestration for individual PDF and image invoices."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "AI extraction of invoice headers and line items, retaining Greek descriptions alongside English translations."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Document classification, VAT and total checks, with success, review, duplicate and failed states. Duplicate candidates remain available for human acceptance or rejection."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Correction memory from records marked Active or Corrected. It can reuse supplier details and line descriptions while preserving raw audit values and formula columns."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Google Sheets output designed for the existing Excel and Power Query handoff, plus failure logging and notifications."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "outcome",
+          "heading": "The outcome",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The delivered core connects intake, extraction, checks and reviewable spreadsheet output. Review states and retained source values give finance staff a way to investigate an invoice before accepting it. The combined multi-invoice PDF extension remained work in progress."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Who this approach suits"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Finance and operations teams that need invoice extraction to fit their spreadsheet rules and approval process. To scope similar work, bring redacted invoices, required fields, document languages and the workbook structure."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "link",
+                  "href": "/services/ai-workflow-buildout/",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "Discuss an invoice automation workflow"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": "."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "invoice-ocr-extraction",
+      "slug": "invoice-ocr-extraction",
+      "title": "Invoice Photo OCR to Excel with Python",
+      "summary": "A local Python OCR tool extracts client names, addresses and tax IDs from a known invoice-photo layout, with the source filename retained in each Excel row.",
+      "projectStatus": "completed",
+      "completedAt": "2025-08",
+      "category": "Document AI",
+      "image": {
+        "src": "/assets/case-studies/invoice-ocr-extraction-b8ce7ee800b1787f0c9b87d3ece9c63c05c235d214adb09a595ac6dee7c70bb9.png",
+        "alt": "Invoice photos pass through a fixed client-region crop and layout-specific OCR parsing into Excel rows with source filenames.",
+        "caption": "Invoice photos pass through a fixed client-region crop and layout-specific OCR parsing into Excel rows with source filenames.",
+        "width": 1620,
+        "height": 920
+      },
+      "gallery": [
+        {
+          "src": "/assets/case-studies/invoice-ocr-extraction-95e609aecb33ad070dee910b85f165354eabe1f4bb078fb909ff467552183d4d.png",
+          "alt": "Spreadsheet output with source filenames and extracted client fields",
+          "caption": "Project spreadsheet example showing the source filename and client-field columns. It is not presented as the output of the separate invoice image in this gallery or as an accuracy evaluation.",
+          "width": 1068,
+          "height": 436
+        },
+        {
+          "src": "/assets/case-studies/invoice-ocr-extraction-e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4.webp",
+          "alt": "Invoice image with bounding boxes showing extracted client information via OCR.",
+          "caption": "Project OCR demonstration with boxes over the client block. The numbers beside the text are OCR recognition scores for this image, not measured field accuracy; seller details elsewhere on the invoice were not extracted by the delivered parser.",
+          "width": 1654,
+          "height": 2339
+        }
+      ],
+      "sections": [
+        {
+          "key": "problem",
+          "heading": "The problem",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The task was to move client details from a batch of invoice photos into a spreadsheet. The supplied layout placed those details in a consistent region, allowing the tool to focus on the client block rather than parse the whole invoice."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "built",
+          "heading": "What I built",
+          "nodes": [
+            {
+              "type": "list",
+              "ordered": false,
+              "start": "",
+              "items": [
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "A local Python batch script reads files from an invoice folder."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "OpenCV crops a fixed region on the right side of each photo before PaddleOCR recognizes the text."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "A layout-specific parser extracts the client name, address and tax ID."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "pandas writes Excel columns for source_file, client_name, client_address and tax_id, keeping the original filename for checking the source photo."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Unreadable files, empty OCR results and processing errors are logged and skipped."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "outcome",
+          "heading": "The outcome",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The delivered tool provides a local photo-to-Excel handoff for client fields in the supplied layout. Extracted values still need review: the parser uses layout rules rather than validating invoice accuracy. Seller fields and different invoice layouts require additional work."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Who this approach suits"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Teams collecting client details from repeatable invoice-photo layouts into Excel. To scope a similar tool, bring redacted photos, the fields required and an example of the desired spreadsheet."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "link",
+                  "href": "/services/data-extraction-automation-sprint/",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "Discuss invoice photo extraction"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": "."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assets": {
+    "/assets/case-studies/ai-invoice-processing-automation-c8dfbd729212333c91bfa50a3609df4b6917b43905088205637e79083c0b7942.png": {
+      "sha256": "c8dfbd729212333c91bfa50a3609df4b6917b43905088205637e79083c0b7942",
+      "width": 1620,
+      "height": 920,
+      "format": "png"
+    },
+    "/assets/case-studies/ai-invoice-processing-automation-f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png": {
+      "sha256": "f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275",
+      "width": 2448,
+      "height": 684,
+      "format": "png"
+    },
+    "/assets/case-studies/ai-invoice-processing-automation-c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9.png": {
+      "sha256": "c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9",
+      "width": 1862,
+      "height": 800,
+      "format": "png"
+    },
+    "/assets/case-studies/ai-invoice-processing-automation-c4ef84c5245e7116671357858924a22b8a2dbd1f95695108125704d6021f9964.png": {
+      "sha256": "c4ef84c5245e7116671357858924a22b8a2dbd1f95695108125704d6021f9964",
+      "width": 2140,
+      "height": 458,
+      "format": "png"
+    },
+    "/assets/case-studies/ai-invoice-processing-automation-15fcb5d1f5daf1514ad0f41393d5ac9e432b1907d17835f8b62ab122e5043289.png": {
+      "sha256": "15fcb5d1f5daf1514ad0f41393d5ac9e432b1907d17835f8b62ab122e5043289",
+      "width": 883,
+      "height": 480,
+      "format": "png"
+    },
+    "/assets/case-studies/ai-invoice-processing-automation-e2386e51522d827d3ec7f44d144b173f3dbdae865dcb9db323c4c161fc6bc8fb.png": {
+      "sha256": "e2386e51522d827d3ec7f44d144b173f3dbdae865dcb9db323c4c161fc6bc8fb",
+      "width": 1609,
+      "height": 794,
+      "format": "png"
+    },
+    "/assets/case-studies/invoice-ocr-extraction-b8ce7ee800b1787f0c9b87d3ece9c63c05c235d214adb09a595ac6dee7c70bb9.png": {
+      "sha256": "b8ce7ee800b1787f0c9b87d3ece9c63c05c235d214adb09a595ac6dee7c70bb9",
+      "width": 1620,
+      "height": 920,
+      "format": "png"
+    },
+    "/assets/case-studies/invoice-ocr-extraction-95e609aecb33ad070dee910b85f165354eabe1f4bb078fb909ff467552183d4d.png": {
+      "sha256": "95e609aecb33ad070dee910b85f165354eabe1f4bb078fb909ff467552183d4d",
+      "width": 1068,
+      "height": 436,
+      "format": "png"
+    },
+    "/assets/case-studies/invoice-ocr-extraction-e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4.webp": {
+      "sha256": "e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4",
+      "width": 1654,
+      "height": 2339,
+      "format": "webp"
+    }
+  }
+}

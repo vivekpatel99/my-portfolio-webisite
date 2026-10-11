@@ -4,6 +4,7 @@
 export { otherWorkCaseStudySlugs } from '../../publication/case-study-other-work.js';
 export {
   caseStudies,
+  ongoingCaseStudies,
   eligibleCaseStudies,
   collectionCaseStudies,
   otherWorkCaseStudies,

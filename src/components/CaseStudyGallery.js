@@ -160,10 +160,11 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
         h('img', { src: selected.src, alt: selected.alt, style: { width: `${zoom * 100}%`, maxWidth: 'none', height: `${zoom * 100}%` } }))
         : interactive
           ? button(`Enlarge image: ${selected.alt}`, (event) => { opener.current = event.currentTarget; setExpanded(true); }, h('img', { src: caseStudyDisplaySrc(selected), alt: selected.alt, width: selected.width, height: selected.height }), { className: 'case-gallery-open' })
-          : h('a', { href: selected.src, className: 'case-gallery-open', style: { display: 'block', width: '100%', height: '100%', padding: '12px' } }, h('img', { src: caseStudyDisplaySrc(selected), alt: selected.alt, width: selected.width, height: selected.height })),
+          : h('a', { href: selected.src, className: 'case-gallery-open', style: { display: 'block', width: '100%', height: '100%', padding: '12px' } }, h('img', { src: caseStudyDisplaySrc(selected), alt: selected.alt, width: selected.width, height: selected.height }))),
+    h('div', { className: 'case-gallery-navigation' },
       interactive ? button('Previous image', () => select(index - 1), '‹', { className: 'case-gallery-arrow case-gallery-prev' }) : null,
+      h('p', { className: 'case-gallery-count', 'aria-live': 'polite', 'aria-atomic': true }, `${index + 1} of ${images.length}`),
       interactive ? button('Next image', () => select(index + 1), '›', { className: 'case-gallery-arrow case-gallery-next' }) : null),
-    h('p', { className: 'case-gallery-count', 'aria-live': 'polite', 'aria-atomic': true }, `${index + 1} of ${images.length}`),
     large && !isVideo(selected) ? h('div', { className: 'case-gallery-zoom' },
       button('Zoom out', () => setZoom(Math.max(1, zoom - 0.5)), '−', { disabled: zoom === 1 }),
       h('span', null, `${zoom * 100}%`),

@@ -332,19 +332,19 @@ pin(
   'defaultSeo.description is not the locked Linz sentence',
   'src/lib/seoConfig.js',
   defaultSeo.description ===
-    'Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients across Europe. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. Top Rated Plus on Upwork. €45/hour.',
+    'Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients worldwide. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. Top Rated Plus on Upwork. €45/hour.',
 );
 pin(
   'contact SEO description is not the locked Linz sentence',
   'src/lib/seoConfig.js',
   routeSeo['/contact'].description ===
-    'Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Linz, Austria, serving Europe. Get a quote within 24 hours. €45/hour.',
+    'Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Linz, Austria, serving clients worldwide. Discuss your workflow and request a project estimate. €45/hour.',
 );
 
 const homeTokens = keywordTokens(defaultSeo.keywords);
 const contactTokens = keywordTokens(routeSeo['/contact'].keywords);
 pin('home keywords missing AI Engineer Linz Austria', 'src/lib/seoConfig.js', homeTokens.includes('AI Engineer Linz Austria'));
-pin('home keywords missing Python Developer Europe', 'src/lib/seoConfig.js', homeTokens.includes('Python Developer Europe'));
+pin('home keywords missing Python Developer Worldwide', 'src/lib/seoConfig.js', homeTokens.includes('Python Developer Worldwide'));
 pin('home keywords still contain AI Engineer Europe', 'src/lib/seoConfig.js', !homeTokens.includes('AI Engineer Europe'));
 pin(
   'contact keywords missing Hire AI Engineer Linz Austria',
@@ -376,9 +376,9 @@ const workLocation = person?.workLocation;
 const areaServed = service?.areaServed;
 pin('Person workLocation.name is not Linz, Austria', 'index.html', workLocation?.name === 'Linz, Austria');
 pin(
-  'ProfessionalService areaServed.name is not Linz, Austria and Europe',
+  'ProfessionalService areaServed.name is not Worldwide',
   'index.html',
-  areaServed?.name === 'Linz, Austria and Europe',
+  areaServed?.name === 'Worldwide',
 );
 pin('workLocation and areaServed must stay different Place names', 'index.html', workLocation?.name !== areaServed?.name);
 pin('areaServed must be a Place object, not an array', 'index.html', Boolean(areaServed) && !Array.isArray(areaServed));
@@ -438,14 +438,14 @@ if (existsSync(distHomePath)) {
   const distContact = readFileSync(path.join(process.cwd(), 'dist/contact/index.html'), 'utf8');
   const distLegal = readFileSync(path.join(process.cwd(), 'dist/legal/index.html'), 'utf8');
   pin(
-    'dist home description missing Linz serving Europe',
+    'dist home description missing Linz serving clients worldwide',
     'dist/index.html',
-    getMeta(distHome, 'description')?.includes('based in Linz, Austria, serving clients across Europe'),
+    getMeta(distHome, 'description')?.includes('based in Linz, Austria, serving clients worldwide'),
   );
   pin(
-    'dist contact description missing Linz serving Europe',
+    'dist contact description missing Linz serving clients worldwide',
     'dist/contact/index.html',
-    getMeta(distContact, 'description')?.includes('based in Linz, Austria, serving Europe')
+    getMeta(distContact, 'description')?.includes('based in Linz, Austria, serving clients worldwide')
       && !leftoverBase.test(getMeta(distContact, 'description') ?? ''),
   );
   pin('dist legal description must stay GDPR-only', 'dist/legal/index.html', !getMeta(distLegal, 'description')?.includes('Linz'));

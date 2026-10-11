@@ -3,6 +3,9 @@ import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { compileCaseStudyPublication } from '../publication/compile-case-studies.js';
+import { caseStudyThumbnailRegistry } from '../publication/case-study-derivatives.js';
+import { caseStudyImageSources } from '../tools/generate-case-study-display-images.js';
 import publicationPlugin, {
   assertCaseStudyBinding,
   assertDisplayDimensions,
@@ -24,7 +27,13 @@ describe('gallery asset delivery', () => {
     expect(emitted).toContain(SOURCE.replace(/^\//, ''));
     expect(emitted).toContain(THUMBNAIL.replace(/^\//, ''));
     expect(emitted).toContain(DISPLAY.replace(/^\//, ''));
-    expect(emitted.filter((fileName) => fileName.startsWith('assets/case-studies/case-study-display-'))).toHaveLength(23);
+    const expectedDisplays = new Set(caseStudyImageSources(compileCaseStudyPublication()).map((source) => {
+      const display = caseStudyThumbnailRegistry[source]?.display?.src;
+      expect(display).toBeTruthy();
+      return display.replace(/^\//, '');
+    }));
+    expect(emitted.filter((fileName) => fileName.startsWith('assets/case-studies/case-study-display-')).sort())
+      .toEqual([...expectedDisplays].sort());
     expect(emitted).not.toContain('assets/case-studies/planning-graph.webp');
     expect(emitted).not.toContain('assets/case-studies/browser-search-to-spreadsheet-9ec23dd3d88e872e69136f02c3e8dcf5f4fa16f853591f7bff1417780711534c-thumb-4e197d56ac0d.jpg');
     expect(emitted).not.toContain('assets/case-studies/football-tracking.mp4');
