@@ -1,5 +1,7 @@
 # Independent portfolio review, 11 October 2026
 
+Historical presentation review. The later [source and media review](factual-review.md) supersedes factual scope and publication identity where corrected.
+
 **Pass for case-study publication clarity.** No substantive blocker or important defect remains in the scoped improvements. No further fix is required for this review gate.
 
 Reviewed candidate SHA-256: `a9571621fe07e557c7d688be715b06b3e6fdaacb568f2251d5550e517f8a83ea`. The exported source is the PR #353 candidate with supplied PR #350 sports media integrated. The review used `http://127.0.0.1:5174` and made no source edits, Git mutations, server changes or release actions.

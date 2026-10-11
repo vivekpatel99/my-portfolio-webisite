@@ -662,7 +662,7 @@ describe('case-study publication boundary', () => {
     expect(outputFiles(path.join(directory, 'dist')).some((file) => /assets\/case-studies\/text-story-one-.*\.png$/.test(file))).toBe(true);
     const firstHtml = readFileSync(path.join(directory, 'dist/project/text-story-one/index.html'), 'utf8');
     expect(firstHtml).toContain('<h1>Text story $&amp; one</h1>');
-    expect(firstHtml).toContain('content="Text story $&amp; one | AI Case Study - Vivek Patel"');
+    expect(firstHtml).toContain('content="Text story $&amp; one | Vivek Patel"');
     expect(firstHtml).toContain("content=\"A summary with $' replacement markers.\"");
     expect(firstHtml).toContain('Outcome with $&amp; and $&#x27; markers.');
     expect(firstHtml).toContain('<ul>');
@@ -687,7 +687,7 @@ describe('case-study publication boundary', () => {
     expect(revisedHtml).toContain('<h1>Text story $&amp; one revised</h1>');
     expect(revisedHtml).toContain('A revised summary with $\' markers.');
     expect(revisedHtml).toContain('A revised outcome with $&amp; and $&#x27; markers.');
-    expect(revisedHtml).toContain('<meta data-react-helmet="true" property="og:title" content="Text story $&amp; one revised | AI Case Study - Vivek Patel" />');
+    expect(revisedHtml).toContain('<meta data-react-helmet="true" property="og:title" content="Text story $&amp; one revised | Vivek Patel" />');
     expect(revisedHtml).toContain('<meta data-react-helmet="true" property="og:description" content="A revised summary with $\' markers." />');
     const revisedOgImage = revisedHtml.match(/<meta[^>]+property="og:image"[^>]+>/i)?.[0] ?? '';
     expect(revisedOgImage).toContain('https://www.vivekapatel.com/assets/case-studies/text-story-one-');

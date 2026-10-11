@@ -34,25 +34,52 @@ npm run case-study:stage -- \
   --evidence https://example.invalid/review
 ```
 
-Reviewed article candidates can also include an explicit gallery with local MP4
-video, an approved image poster and visible captions. Staging a candidate with
-video requires `ffprobe` from [FFmpeg](https://ffmpeg.org/ffprobe.html) on `PATH`
-(`brew install ffmpeg` on macOS; `sudo apt-get install ffmpeg` on Ubuntu). Image-only
-staging and ordinary builds do not require it. CI installs FFmpeg for the staging
-tests. The stage command probes the exact approved video bytes and requires real
-video stream dimensions to match the asset metadata and every gallery entry.
-Missing tooling, malformed media or mismatched dimensions stop staging before
-public assets or the staged store change. This verifies stream metadata; visual
-playback review remains part of media review.
+An explicit `gallery` list in the story frontmatter is prepared into the candidate.
+Omit the key when the story has no explicit gallery. `gallery:`, `gallery: []`, and
+any other empty or non-list value fail preparation. They are not treated as "no gallery".
+
+Each still item uses `src`, `alt`, and an optional `caption`. A video item uses
+those fields plus `poster`. The video `src` must end in `.mp4` (any letter case).
+The poster must be a PNG, JPEG, or WebP still. Do not write `width`, `height`,
+`duration`, or any other field. Preparation measures width and height from the
+file bytes and does not store duration. Author-supplied sizes are rejected so a
+candidate cannot carry a guessed or fake size.
+
+```yaml
+gallery:
+  - src: workflow.png
+    alt: Workflow diagram
+    caption: Invoice intake and review workflow
+  - src: tracking.mp4
+    alt: Football tracking clip
+    poster: tracking-poster.png
+    caption: Supplied demonstration, not a project benchmark
+```
+
+Paths use the same asset-root rules as covers. `..`, a symlink that leaves the
+root, a remote URL, and a mismatched image or MP4 fail before the candidate is
+replaced. Gallery order, alt text, and captions are kept, including letter case.
+The same bytes used twice share one content-addressed public path.
+
+Preparing a gallery that contains an MP4 requires `ffprobe` from
+[FFmpeg](https://ffmpeg.org/ffprobe.html) on `PATH` (`brew install ffmpeg` on
+macOS; `sudo apt-get install ffmpeg` on Ubuntu). Image-only preparation, image-only
+staging, and ordinary builds do not require it. CI installs FFmpeg for the staging
+tests. Preparation probes the selected local MP4 and freezes those bytes.
+Staging probes the frozen bytes again and requires the video stream dimensions
+to match the asset metadata and every gallery entry. Missing tooling, malformed
+media, or mismatched dimensions stop that step before public assets or the staged
+store change. This verifies stream metadata. Visual playback review remains part
+of media review.
 
 To revise a staged story, edit its Markdown and rerun `case-study:prepare` with
 that source explicitly selected. Review the resulting candidate, compute its
 new digest, and run `case-study:stage` again. A fresh digest and approval are
 required for every title, summary, public-section, public category/caption,
 or media byte change; a stale digest is rejected and leaves the last staged
-snapshot unchanged. Private notes and ignored frontmatter are excluded by
-design, so changing them leaves the candidate bytes unchanged. The stage
-command reports the selected identities it changed.
+snapshot unchanged. Private notes and other ignored frontmatter are excluded by
+design, so changing them leaves the candidate bytes unchanged. `gallery` is not
+an ignored field. The stage command reports the selected identities it changed.
 
 Preparation errors identify the source file and field. For a missing or
 duplicate public H2, repair the Markdown headings and rerun preparation with
@@ -99,7 +126,7 @@ The parser accepts paragraphs, lists, emphasis, inline code, ordinary internal
 paths or HTTPS links, subordinate headings, blockquotes, fenced code blocks, and
 PNG, JPEG, or WebP images. A cover uses `image.src`, `image.alt`, and optional
 `image.caption` frontmatter; inline images use ordinary Markdown such as
-`![Workflow screenshot](wide.png)`. Every image needs non-empty alt text. Image
+`![Workflow screenshot](wide.png)`. A `gallery` list, described above, uses the same asset rules for stills and MP4 clips. Every image needs non-empty alt text. Image
 sources are resolved beneath one real assets root, rejecting traversal,
 symlink escapes, missing files, external URLs, SVG, and malformed or mismatched
 image bytes. Public image paths must end in `.png`, `.jpg`, `.jpeg`, or `.webp`

@@ -34,8 +34,8 @@
       "y": 66,
       "width": 1440,
       "height": 90,
-      "text": "Record sync + read-only SQL answers",
-      "originalText": "Record sync + read-only SQL answers",
+      "text": "Record sync + SQL query assistant",
+      "originalText": "Record sync + SQL query assistant",
       "fontSize": 60,
       "fontFamily": 1,
       "textAlign": "left",
@@ -64,7 +64,7 @@
       "type": "line",
       "x": 82,
       "y": 167,
-      "width": 1285,
+      "width": 1088,
       "height": 3,
       "points": [
         [
@@ -72,15 +72,15 @@
           0
         ],
         [
-          460,
+          389,
           3
         ],
         [
-          890,
+          753,
           0
         ],
         [
-          1285,
+          1088,
           2
         ]
       ],
@@ -891,8 +891,8 @@
       "y": 539,
       "width": 1370,
       "height": 48,
-      "text": "Database questions \u00b7 read-only SQL agent",
-      "originalText": "Database questions \u00b7 read-only SQL agent",
+      "text": "Database questions \u00b7 SQL query assistant",
+      "originalText": "Database questions \u00b7 SQL query assistant",
       "fontSize": 38,
       "fontFamily": 1,
       "textAlign": "left",
@@ -1179,8 +1179,8 @@
       "y": 645,
       "width": 156,
       "height": 83,
-      "text": "SELECT\nonly",
-      "originalText": "SELECT\nonly",
+      "text": "SELECT\nchecks",
+      "originalText": "SELECT\nchecks",
       "fontSize": 32,
       "fontFamily": 2,
       "textAlign": "center",
@@ -1207,12 +1207,12 @@
     {
       "id": "gate-caption",
       "type": "text",
-      "x": 918,
-      "y": 789,
-      "width": 210,
-      "height": 33,
-      "text": "Validation",
-      "originalText": "Validation",
+      "x": 853,
+      "y": 776,
+      "width": 340,
+      "height": 66,
+      "text": "Default LIMIT 100\nNot a security guarantee",
+      "originalText": "Default LIMIT 100\nNot a security guarantee",
       "fontSize": 26,
       "fontFamily": 2,
       "textAlign": "center",
@@ -1431,8 +1431,8 @@
       "y": 777,
       "width": 269,
       "height": 45,
-      "text": "Bounded results",
-      "originalText": "Bounded results",
+      "text": "Query results",
+      "originalText": "Query results",
       "fontSize": 34,
       "fontFamily": 2,
       "textAlign": "center",

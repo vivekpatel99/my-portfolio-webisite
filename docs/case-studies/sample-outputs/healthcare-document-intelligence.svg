@@ -1,26 +1,60 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1080" height="810" viewBox="0 0 1080 810" role="img" aria-labelledby="title description">
-<title id="title">Schedule workbook. Illustrative output using fictional data.</title>
-<desc id="description">A fictional staff-schedule table contains date 2026-09-07, shift Day, request code P, and date 2026-09-08, shift Night, request code U. The sample legend defines P as preferred shift and U as unavailable. This is operational staff-schedule data, not patient records or a verified workbook export.</desc>
+<title id="title">Sample schedule workbook. Fictional data.</title>
+<desc id="description">Fictional rows for Person A. Exact exported fields are NAME, Date, Year, WEEKDAY, SHIFT, and REQUEST. This is not a full client workbook and not a client export. Code 0 is OFF for yellow or pink. Code 1 is Available when the highlight is missing or near-white. Code 2 is Request to Work for green. An unknown color and an unreadable date are skipped.</desc>
 <rect x="0" y="0" width="1080" height="810" fill="#FFFFFF"/>
-<rect x="0" y="0" width="1080" height="100" fill="#F5F3FF"/>
-<line x1="0" y1="0" x2="1080" y2="0" stroke="#6D28D9" stroke-width="8"/>
-<text x="64" y="65" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="700" fill="#6D28D9">Illustrative output | Fictional data</text>
-<text x="64" y="174" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="700" fill="#1E293B">Schedule workbook</text>
-<text x="64" y="232" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="400" fill="#475569">Two fictional Excel rows</text>
-<rect x="64" y="282" width="952" height="66" fill="#F5F3FF"/>
-<line x1="64" y1="282" x2="1016" y2="282" stroke="#6D28D9" stroke-width="3"/>
-<text x="88" y="328" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#6D28D9">Date</text>
-<text x="530" y="328" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#6D28D9">Shift</text>
-<text x="846" y="328" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#6D28D9">Code</text>
-<text x="88" y="416" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="48" font-weight="400" fill="#1E293B">2026-09-07</text>
-<text x="530" y="416" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="400" fill="#1E293B">Day</text>
-<text x="870" y="416" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="48" font-weight="400" fill="#1E293B">P</text>
-<line x1="64" y1="450" x2="1016" y2="450" stroke="#CBD5E1" stroke-width="2"/>
-<text x="88" y="514" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="48" font-weight="400" fill="#1E293B">2026-09-08</text>
-<text x="530" y="514" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="400" fill="#1E293B">Night</text>
-<text x="870" y="514" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="48" font-weight="400" fill="#1E293B">U</text>
-<line x1="64" y1="548" x2="1016" y2="548" stroke="#CBD5E1" stroke-width="2"/>
-<text x="64" y="625" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="400" fill="#475569">P = preferred shift</text>
-<text x="64" y="687" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="400" fill="#475569">U = unavailable</text>
-<text x="64" y="758" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#6D28D9">Staff schedule data only.</text>
+<rect x="0" y="0" width="1080" height="8" fill="#6D28D9"/>
+<rect x="0" y="8" width="1080" height="88" fill="#F5F3FF"/>
+<text x="48" y="62" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#6D28D9">Fictional data | Not a client export</text>
+<text x="48" y="156" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="700" fill="#1E293B">Sample schedule workbook</text>
+<text x="48" y="198" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="400" fill="#475569">Exact exported fields. Not a full client workbook.</text>
+<rect x="48" y="228" width="984" height="272" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2"/>
+<rect x="49" y="229" width="982" height="56" fill="#F5F3FF"/>
+<line x1="48" y1="285" x2="1032" y2="285" stroke="#6D28D9" stroke-width="3"/>
+<line x1="216" y1="228" x2="216" y2="500" stroke="#CBD5E1" stroke-width="1"/>
+<line x1="408" y1="228" x2="408" y2="500" stroke="#CBD5E1" stroke-width="1"/>
+<line x1="516" y1="228" x2="516" y2="500" stroke="#CBD5E1" stroke-width="1"/>
+<line x1="738" y1="228" x2="738" y2="500" stroke="#CBD5E1" stroke-width="1"/>
+<line x1="882" y1="228" x2="882" y2="500" stroke="#CBD5E1" stroke-width="1"/>
+<line x1="50" y1="356" x2="1030" y2="356" stroke="#CBD5E1" stroke-width="1"/>
+<line x1="50" y1="428" x2="1030" y2="428" stroke="#CBD5E1" stroke-width="1"/>
+<rect x="883" y="286" width="148" height="69" fill="#90ED90"/>
+<rect x="883" y="357" width="148" height="70" fill="#FFE7A3"/>
+<rect x="883" y="429" width="148" height="70" fill="#FFFFFF"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#6D28D9">
+<text x="62" y="264">NAME</text>
+<text x="230" y="264">Date</text>
+<text x="422" y="264">Year</text>
+<text x="530" y="264">WEEKDAY</text>
+<text x="752" y="264">SHIFT</text>
+<text x="896" y="264">REQUEST</text>
+</g>
+<g font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="400" fill="#1E293B">
+<text x="62" y="328">Person A</text>
+<text x="230" y="328">2026-09-07</text>
+<text x="422" y="328">2026</text>
+<text x="530" y="328">Monday</text>
+<text x="752" y="328">Day</text>
+<text x="896" y="328">2</text>
+<text x="62" y="400">Person A</text>
+<text x="230" y="400">2026-09-08</text>
+<text x="422" y="400">2026</text>
+<text x="530" y="400">Tuesday</text>
+<text x="752" y="400">Night</text>
+<text x="896" y="400">0</text>
+<text x="62" y="472">Person A</text>
+<text x="230" y="472">2026-09-09</text>
+<text x="422" y="472">2026</text>
+<text x="530" y="472">Wednesday</text>
+<text x="752" y="472">Day</text>
+<text x="896" y="472">1</text>
+</g>
+<rect x="48" y="548" width="22" height="22" fill="#FFE7A3" stroke="#B45309" stroke-width="2"/>
+<rect x="78" y="548" width="22" height="22" fill="#FFD9D9" stroke="#BE185D" stroke-width="2"/>
+<text x="114" y="566" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#475569">0 OFF, yellow or pink</text>
+<rect x="48" y="596" width="22" height="22" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="2"/>
+<text x="114" y="614" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#475569">1 Available, missing or near-white</text>
+<rect x="48" y="644" width="22" height="22" fill="#90ED90" stroke="#166534" stroke-width="2"/>
+<text x="114" y="664" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#475569">2 Request to Work, green</text>
+<text x="48" y="724" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#475569">Unknown color and an unreadable date are skipped.</text>
+<text x="48" y="772" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#6D28D9">Staff schedule data only.</text>
 </svg>

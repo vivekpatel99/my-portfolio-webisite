@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1080" height="810" viewBox="0 0 1080 810" role="img" aria-labelledby="title description">
 <title id="title">SQL answer example. Illustrative output using fictional data.</title>
-<desc id="description">An illustrative SELECT query reads id and state from a fictional_records table, orders by id and limits the result to two rows. The fictional result rows are A pending and B reviewed. The schema and rows are invented format examples and do not prove agent execution or SQL accuracy.</desc>
+<desc id="description">An illustrative SELECT query selects id and state from a fictional_records table and orders by id. The fictional result rows are A pending and B reviewed. The schema and rows are invented format examples. They do not prove agent execution, SQL accuracy, database permissions, or a maximum row bound.</desc>
 <rect x="0" y="0" width="1080" height="810" fill="#FFFFFF"/>
 <rect x="0" y="0" width="1080" height="100" fill="#F5F3FF"/>
 <line x1="0" y1="0" x2="1080" y2="0" stroke="#6D28D9" stroke-width="8"/>
@@ -11,7 +11,7 @@
 <line x1="64" y1="270" x2="1016" y2="270" stroke="#6D28D9" stroke-width="3"/>
 <text x="88" y="326" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="48" font-weight="400" fill="#6D28D9">SELECT id, state</text>
 <text x="88" y="386" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="46" font-weight="400" fill="#1E293B">FROM fictional_records</text>
-<text x="88" y="446" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="46" font-weight="400" fill="#1E293B">ORDER BY id LIMIT 2;</text>
+<text x="88" y="446" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="46" font-weight="400" fill="#1E293B">ORDER BY id;</text>
 <text x="88" y="532" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#6D28D9">ID</text>
 <text x="390" y="532" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#6D28D9">State</text>
 <line x1="64" y1="553" x2="1016" y2="553" stroke="#CBD5E1" stroke-width="2"/>
@@ -20,5 +20,5 @@
 <line x1="64" y1="637" x2="1016" y2="637" stroke="#CBD5E1" stroke-width="2"/>
 <text x="88" y="695" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="48" font-weight="400" fill="#1E293B">B</text>
 <text x="390" y="695" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="48" font-weight="400" fill="#1E293B">reviewed</text>
-<text x="64" y="777" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="400" fill="#475569">Does not prove agent execution.</text>
+<text x="64" y="777" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="400" fill="#475569">Does not prove agent execution or a row bound.</text>
 </svg>

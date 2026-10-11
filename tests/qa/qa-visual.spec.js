@@ -257,12 +257,20 @@ test('case study gallery keeps its stage, selected media, and thumbnails in usab
   });
 });
 
+const assetDigest = (src) => src.match(/-([a-f0-9]{64})\./)?.[1] ?? '';
+
+const galleryImage = (slug, { digest, alt } = {}) => {
+  const images = collectGalleryImages(caseStudies.find((story) => story.slug === slug));
+  const index = images.findIndex((image) => (digest ? assetDigest(image.src) === digest : image.alt === alt));
+  return { images, index, image: images[index] };
+};
+
 test('gallery navigation keeps chart, diagram, and sample evidence clear inline and enlarged', async ({ page }) => {
   await reducedMotion(page);
   const cases = [
-    { slug: 'sports-video-analytics-yolo', src: '/assets/case-studies/sports-football-f1-confidence.png' },
-    { slug: 'n8n-openai-data-extraction', src: '/assets/case-studies/n8n-openai-data-extraction-workflow-diagram.png' },
-    { slug: 'ai-project-planning-assistant', src: '/assets/case-studies/ai-project-planning-assistant-sample-output.png' },
+    { slug: 'sports-video-analytics-yolo', digest: '4422c54ac53200d0a5e3e529709980779fb42c5c87ba182435157745b60d9b95' },
+    { slug: 'n8n-openai-data-extraction', digest: '5f8d33c712e39a32dc57c65eab98aa8cac4e98d0eb9019594e41f389482e6c78' },
+    { slug: 'ai-project-planning-assistant', digest: 'eff7965595d32bb9557300645b36c7bd15b56e165c3615899cc5dd57bdce175f' },
   ];
   const assertClearNavigation = async (region) => {
     const stage = region.locator('.case-gallery-stage');
@@ -285,12 +293,11 @@ test('gallery navigation keeps chart, diagram, and sample evidence clear inline 
   };
   for (const width of [320, 390, 1440]) {
     await page.setViewportSize({ width, height: 844 });
-    for (const { slug, src } of cases) {
+    for (const { slug, digest } of cases) {
       await page.goto(`/project/${slug}/`);
       await settleLayout(page);
       const gallery = page.getByRole('region', { name: 'Case study images' });
-      const images = collectGalleryImages(caseStudies.find((story) => story.slug === slug));
-      const index = images.findIndex((image) => image.src === src);
+      const { images, index } = galleryImage(slug, { digest });
       expect(index, slug).toBeGreaterThanOrEqual(0);
       const { alt } = images[index];
       await gallery.getByRole('button', { name: `Show image ${index + 1}: ${alt}`, exact: true }).click();
@@ -332,21 +339,20 @@ test('wide case-study galleries fill the stage without a 4:3 empty band', async 
   await reducedMotion(page);
   const cases = [
     { slug: 'n8n-openai-data-extraction', ratio: 2984 / 874, alt: 'Main n8n workflow for discovering and extracting website datasets' },
-    { slug: 'ai-invoice-processing-automation', ratio: 2448 / 684, alt: 'Original M2 invoice orchestration workflow' },
+    { slug: 'ai-invoice-processing-automation', ratio: 2448 / 684, digest: 'f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275' },
     { slug: 'yolo-computer-vision-optimization', ratio: 4 / 3, alt: 'YOLO model detecting and estimating a yoga pose in an image.' },
     { slug: 'invoice-ocr-extraction', ratio: 4 / 3, alt: 'Invoice image with bounding boxes showing extracted client information via OCR.' },
   ];
-  for (const { slug, ratio, alt } of cases) {
+  for (const { slug, ratio, alt, digest } of cases) {
     await page.goto(`/project/${slug}/`);
     await settleLayout(page);
     const gallery = page.getByRole('region', { name: 'Case study images' });
     const stage = gallery.locator('.case-gallery-stage').first();
     await stage.scrollIntoViewIfNeeded();
-    const images = collectGalleryImages(caseStudies.find((story) => story.slug === slug));
-    const index = images.findIndex((image) => image.alt === alt);
+    const { index, image } = galleryImage(slug, { digest, alt });
     expect(index, slug).toBeGreaterThanOrEqual(0);
-    await gallery.getByRole('button', { name: `Show image ${index + 1}: ${alt}`, exact: true }).click();
-    await expect(stage.locator('img').first()).toHaveAttribute('alt', alt);
+    await gallery.getByRole('button', { name: `Show image ${index + 1}: ${image.alt}`, exact: true }).click();
+    await expect(stage.locator('img').first()).toHaveAttribute('alt', image.alt);
     await expect(stage.locator('img').first()).toBeVisible();
     await expect.poll(async () => (await measureGalleryStage(page))?.complete).toBe(true);
     const metrics = await measureGalleryStage(page);
@@ -358,7 +364,11 @@ test('wide case-study galleries fill the stage without a 4:3 empty band', async 
   await settleLayout(page);
   const invoiceGallery = page.getByRole('region', { name: 'Case study images' });
   await invoiceGallery.locator('.case-gallery-stage').first().scrollIntoViewIfNeeded();
-  await invoiceGallery.getByRole('button', { name: /^Show image [0-9]+: Original PDF splitting subworkflow$/ }).click();
+  const pdfSplit = galleryImage('ai-invoice-processing-automation', {
+    digest: 'c4ef84c5245e7116671357858924a22b8a2dbd1f95695108125704d6021f9964',
+  });
+  expect(pdfSplit.index).toBeGreaterThanOrEqual(0);
+  await invoiceGallery.getByRole('button', { name: `Show image ${pdfSplit.index + 1}: ${pdfSplit.image.alt}`, exact: true }).click();
   await expect.poll(async () => (await measureGalleryStage(page))?.complete).toBe(true);
   const shortWide = await measureGalleryStage(page);
   expect(shortWide.stageRatio).toBeCloseTo(2140 / 458, 1);

@@ -25,6 +25,18 @@ test.describe('Route rendering', () => {
   }
 });
 
+const assetDigest = (src) => src.match(/-([a-f0-9]{64})\./)?.[1] ?? '';
+
+const removedBorrowedN8nDigests = [
+  'b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82',
+  '7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b',
+  '3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66',
+  'ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338',
+  'f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275',
+  'c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9',
+  'e542384f4f7532d230440cb9a68e0e7e66d951996959221225633fc5304b08b7',
+];
+
 for (const slug of ['depth-based-distance-estimation', 'yolo-computer-vision-optimization', 'n8n-python-ai-agents']) {
   test(`buyer-facing copy for ${slug}`, async ({ page }) => {
     await page.goto(`/project/${slug}/`);
@@ -39,19 +51,34 @@ for (const slug of ['depth-based-distance-estimation', 'yolo-computer-vision-opt
     const staticHtml = await (await page.request.get(`/project/${slug}/`)).text();
     expect(containsCaseStudyCopyLeak(staticHtml)).toBe(false);
     if (slug === 'depth-based-distance-estimation') {
-      expect(copy).toMatch(/uncalibrated lab demo/i);
-      expect(copy).toContain('does not claim calibrated measurement accuracy or safety-critical navigation readiness');
+      expect(copy).toContain('A separate navigation module exists in the source but is not called by that loop.');
+      expect(copy).toContain('stored reference scale');
+      expect(copy).toContain('assumed camera geometry');
+      expect(copy).toContain('not a validated measurement system');
+      expect(copy).not.toMatch(/uncalibrated/i);
+      expect(staticHtml).toContain('6cff31a07362f0483bf43298af0366ffb4c8f40137291202506a8924b0d24957');
+      expect(staticHtml).not.toContain('6f27eac0ad723f3f4efd36a0ad81d7893a8410409f1cb841d61cc39c6c0f436e');
     }
     if (slug === 'n8n-python-ai-agents') {
-      const representativeImages = main.getByRole('button', { name: /^Show image \d+: Representative / });
-      await expect(representativeImages).toHaveCount(6);
-      for (let index = 0; index < 6; index++) {
-        await representativeImages.nth(index).click();
-        await expect(main.locator('.case-gallery-open img')).toHaveAttribute('alt', /^Representative (n8n|invoice) .+ from other portfolio work$/);
+      const images = collectGalleryImages(caseStudies.find((story) => story.slug === slug));
+      expect(images.map((image) => assetDigest(image.src))).toEqual([
+        '90b4eba309ed1497b89f6652c047139a008d69b03a203adfe3cf51d968325e35',
+        '42fdda3bc3ef015e2a296edba808640ac9b0ea347f2e26e8903e1cb5c60ab0a0',
+      ]);
+      await expect(main.getByRole('button', { name: /^Show image \d+: Representative / })).toHaveCount(0);
+      await expect(main.locator('.case-gallery-thumbnail')).toHaveCount(images.length);
+      for (const [index, image] of images.entries()) {
+        expect(image.alt.startsWith('Representative ')).toBe(false);
+        await main.getByRole('button', { name: `Show image ${index + 1}: ${image.alt}`, exact: true }).click();
+        await expect(main.locator('.case-gallery-open img')).toHaveAttribute('alt', image.alt);
       }
+      expect(copy).toContain('fallback LIMIT 100');
+      expect(copy).toContain('do not establish database-enforced read-only access or a maximum row count');
+      for (const digest of removedBorrowedN8nDigests) expect(staticHtml).not.toContain(digest);
     }
     if (slug === 'yolo-computer-vision-optimization') {
-      expect(copy).toContain('Live-video latency, on-device deployment and automatic exercise scoring are not claimed.');
+      expect(copy).toContain('The consumer app and automatic exercise-form scoring require additional work.');
+      expect(copy).toContain('it is not a project-wide accuracy score.');
     }
   });
 }

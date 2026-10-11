@@ -1,5 +1,7 @@
 # Case-study improvement review — 11 October 2026
 
+Historical presentation review. The later [source and media review](factual-review.md) supersedes factual scope and publication identity where corrected.
+
 This follow-up remains in PR #353. It incorporates the football media prepared in PR #350, so the images, video, galleries and explanations can be reviewed together in one PR. No integration merge or production release is included.
 
 ## Findings and changes

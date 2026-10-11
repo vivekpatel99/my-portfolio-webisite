@@ -1,4 +1,6 @@
+import { spawnSync } from 'node:child_process';
 import { readFileSync, renameSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, existsSync, lstatSync, realpathSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import matter from 'gray-matter';
@@ -9,28 +11,63 @@ import { caseStudyImageFormatForPath, completionMonthPattern, projectStatuses, s
 
 const imageExtensions = new Set(['.png', '.jpg', '.jpeg', '.webp']);
 const assetDigest = (bytes) => createHash('sha256').update(bytes).digest('hex');
-const imageIssue = (filePath, message) => issue(filePath, 'image', message);
-const imageDimensions = (bytes, extension, filePath) => {
+const imageDimensions = (bytes, extension, filePath, field = 'image') => {
+  const imageIssue = (message) => issue(filePath, field, message);
   let dimensions;
-  try { dimensions = imageSize(bytes); } catch { imageIssue(filePath, 'is not a valid PNG, JPEG, or WebP image'); }
+  try { dimensions = imageSize(bytes); } catch { imageIssue('is not a valid PNG, JPEG, or WebP image'); }
   const format = String(dimensions.type || '').toLowerCase();
-  if (!imageExtensions.has(extension) || !['png', 'jpg', 'jpeg', 'webp'].includes(format) || (extension === '.png' && format !== 'png') || ((extension === '.jpg' || extension === '.jpeg') && !['jpg', 'jpeg'].includes(format)) || (extension === '.webp' && format !== 'webp')) imageIssue(filePath, `extension ${extension} does not match its actual image format`);
-  if (!Number.isSafeInteger(dimensions.width) || !Number.isSafeInteger(dimensions.height) || dimensions.width < 1 || dimensions.height < 1) imageIssue(filePath, 'has invalid intrinsic dimensions');
+  if (!imageExtensions.has(extension) || !['png', 'jpg', 'jpeg', 'webp'].includes(format) || (extension === '.png' && format !== 'png') || ((extension === '.jpg' || extension === '.jpeg') && !['jpg', 'jpeg'].includes(format)) || (extension === '.webp' && format !== 'webp')) imageIssue(`extension ${extension} does not match its actual image format`);
+  if (!Number.isSafeInteger(dimensions.width) || !Number.isSafeInteger(dimensions.height) || dimensions.width < 1 || dimensions.height < 1) imageIssue('has invalid intrinsic dimensions');
   return { width: dimensions.width, height: dimensions.height, format: format === 'jpg' ? 'jpeg' : format };
 };
+const videoDimensions = (bytes, filePath) => {
+  if (bytes.length < 8 || bytes.toString('ascii', 4, 8) !== 'ftyp') issue(filePath, 'gallery', 'is not a valid MP4');
+  const temporaryDirectory = mkdtempSync(path.join(tmpdir(), 'case-study-prepare-mp4-'));
+  try {
+    const temporaryPath = path.join(temporaryDirectory, 'source.mp4');
+    writeFileSync(temporaryPath, bytes, { flag: 'wx', mode: 0o600 });
+    const result = spawnSync('ffprobe', [
+      '-v', 'error', '-select_streams', 'V:0', '-count_packets',
+      '-show_entries', 'format=format_name:stream=codec_type,codec_name,width,height,nb_read_packets',
+      '-of', 'json', temporaryPath,
+    ], { encoding: 'utf8', timeout: 10_000, maxBuffer: 1024 * 1024 });
+    if (result.error?.code === 'ENOENT') issue(filePath, 'gallery', 'MP4 validation requires ffprobe; install FFmpeg before preparing a video gallery');
+    if (result.error || result.status !== 0) issue(filePath, 'gallery', 'is not a valid MP4 (ffprobe failed)');
+    let probe;
+    try { probe = JSON.parse(result.stdout); } catch { issue(filePath, 'gallery', 'is not a valid MP4 (ffprobe returned invalid JSON)'); }
+    const formats = typeof probe?.format?.format_name === 'string' ? probe.format.format_name.split(',') : [];
+    if (!formats.includes('mp4')) issue(filePath, 'gallery', 'is not a valid MP4');
+    const video = Array.isArray(probe.streams) ? probe.streams.find((stream) => stream?.codec_type === 'video') : undefined;
+    const packetCount = Number(video?.nb_read_packets);
+    if (!video || typeof video.codec_name !== 'string' || !video.codec_name.trim() || video.codec_name.trim().toLowerCase() === 'unknown' || !Number.isSafeInteger(packetCount) || packetCount < 1) issue(filePath, 'gallery', 'MP4 has no valid video stream');
+    if (!Number.isSafeInteger(video.width) || video.width < 1 || !Number.isSafeInteger(video.height) || video.height < 1) issue(filePath, 'gallery', 'MP4 has invalid video dimensions');
+    return { width: video.width, height: video.height };
+  } finally { rmSync(temporaryDirectory, { recursive: true, force: true }); }
+};
 const defaultAssetsRoot = (sourceFile, storyId) => path.join(path.dirname(path.resolve(sourceFile)), 'assets', storyId);
-const resolveCaseStudyAsset = ({ source, filePath, storyId, assetsRoot }) => {
-  if (typeof source !== 'string' || source.trim() === '') imageIssue(filePath, 'source must be a non-empty local file path');
+const resolveCaseStudyAsset = ({ source, filePath, storyId, assetsRoot, kind = 'image', field = 'image' }) => {
+  const assetIssue = (message) => issue(filePath, field, message);
+  if (typeof source !== 'string' || source.trim() === '') assetIssue('source must be a non-empty local file path');
   const clean = source.trim();
-  if (clean.includes('\\') || clean.includes('\0') || path.posix.isAbsolute(clean) || /^[a-z][a-z0-9+.-]*:/i.test(clean) || clean.split('/').includes('..')) imageIssue(filePath, `source ${clean} must stay inside the story asset root`);
-  let rootInfo; try { rootInfo = lstatSync(assetsRoot); } catch (error) { imageIssue(filePath, `assets root could not be read (${error.message})`); }
-  if (!rootInfo.isDirectory() || rootInfo.isSymbolicLink()) imageIssue(filePath, 'assets root must be a real directory');
+  if (clean.includes('\\') || clean.includes('\0') || path.posix.isAbsolute(clean) || /^[a-z][a-z0-9+.-]*:/i.test(clean) || clean.split('/').includes('..')) assetIssue(`source ${clean} must stay inside the story asset root`);
+  let rootInfo; try { rootInfo = lstatSync(assetsRoot); } catch (error) { assetIssue(`assets root could not be read (${error.message})`); }
+  if (!rootInfo.isDirectory() || rootInfo.isSymbolicLink()) assetIssue('assets root must be a real directory');
   const root = realpathSync(assetsRoot); const candidate = path.resolve(root, ...clean.split('/')); let real;
-  try { real = realpathSync(candidate); } catch (error) { imageIssue(filePath, `source ${clean} is missing (${error.message})`); }
-  if (!(real === root || real.startsWith(`${root}${path.sep}`))) imageIssue(filePath, `source ${clean} escapes the story asset root`);
-  const info = lstatSync(real); if (!info.isFile()) imageIssue(filePath, `source ${clean} must be a regular file`);
-  const extension = path.extname(clean).toLowerCase(); if (!imageExtensions.has(extension)) imageIssue(filePath, `source ${clean} must be PNG, JPEG, or WebP`);
-  const bytes = readFileSync(real); const dimensions = imageDimensions(bytes, extension, filePath); const sha256 = assetDigest(bytes); const extensionForPath = extension === '.jpeg' ? '.jpg' : extension;
+  try { real = realpathSync(candidate); } catch (error) { assetIssue(`source ${clean} is missing (${error.message})`); }
+  if (!(real === root || real.startsWith(`${root}${path.sep}`))) assetIssue(`source ${clean} escapes the story asset root`);
+  const info = lstatSync(real); if (!info.isFile()) assetIssue(`source ${clean} must be a regular file`);
+  const extension = path.extname(clean).toLowerCase();
+  if (kind === 'video') {
+    if (extension !== '.mp4') assetIssue(`source ${clean} must be an MP4`);
+  } else if (!imageExtensions.has(extension)) assetIssue(`source ${clean} must be PNG, JPEG, or WebP`);
+  const bytes = readFileSync(real);
+  const sha256 = assetDigest(bytes);
+  if (kind === 'video') {
+    const dimensions = videoDimensions(bytes, filePath);
+    return { source: real, bytes, sha256, width: dimensions.width, height: dimensions.height, format: 'mp4', publicPath: `/assets/case-studies/${storyId}-${sha256}.mp4` };
+  }
+  const dimensions = imageDimensions(bytes, extension, filePath, field);
+  const extensionForPath = extension === '.jpeg' ? '.jpg' : extension;
   return { source: real, bytes, sha256, width: dimensions.width, height: dimensions.height, format: dimensions.format, publicPath: `/assets/case-studies/${storyId}-${sha256}${extensionForPath}` };
 };
 
@@ -124,6 +161,25 @@ const validateImageMetadata = (image, filePath) => {
   if (image.caption !== undefined) nonEmptyString(image.caption, filePath, 'image.caption');
 };
 
+const parseGallery = (gallery, filePath) => {
+  if (!Array.isArray(gallery) || gallery.length === 0) issue(filePath, 'gallery', 'must be a non-empty array');
+  return gallery.map((item, index) => {
+    const label = `gallery[${index}]`;
+    if (!item || typeof item !== 'object' || Array.isArray(item)) issue(filePath, label, 'must be an object');
+    const srcValue = typeof item.src === 'string' ? item.src.trim() : '';
+    const video = srcValue.toLowerCase().endsWith('.mp4');
+    const allowed = video ? ['src', 'alt', 'poster', 'caption'] : ['src', 'alt', 'caption'];
+    const unexpected = Object.keys(item).filter((key) => !allowed.includes(key));
+    if (unexpected.length) issue(filePath, label, `contains unsupported fields: ${unexpected.join(', ')}`);
+    const src = nonEmptyString(item.src, filePath, `${label}.src`);
+    const alt = nonEmptyString(item.alt, filePath, `${label}.alt`);
+    const caption = item.caption === undefined ? undefined : nonEmptyString(item.caption, filePath, `${label}.caption`);
+    if (!video) return { src, alt, ...(caption === undefined ? {} : { caption }) };
+    const poster = nonEmptyString(item.poster, filePath, `${label}.poster`);
+    return { src, alt, poster, ...(caption === undefined ? {} : { caption }) };
+  });
+};
+
 const parseFrontmatter = (data, filePath) => {
   if (!data || typeof data !== 'object' || Array.isArray(data)) issue(filePath, 'frontmatter', 'must be an object');
   const id = nonEmptyString(data.id, filePath, 'id');
@@ -141,7 +197,8 @@ const parseFrontmatter = (data, filePath) => {
   const category = data.category == null ? undefined : nonEmptyString(data.category, filePath, 'category');
   validateImageMetadata(data.image, filePath);
   const image = data.image;
-  return { id, slug, title, summary, ...(projectStatus === undefined ? {} : { projectStatus }), ...(completedAt === undefined ? {} : { completedAt }), ...(category ? { category } : {}), ...(image ? { image: { src: image.src.trim(), alt: image.alt.trim(), ...(image.caption === undefined ? {} : { caption: image.caption.trim() }) } } : {}) };
+  const gallery = data.gallery === undefined ? undefined : parseGallery(data.gallery, filePath);
+  return { id, slug, title, summary, ...(projectStatus === undefined ? {} : { projectStatus }), ...(completedAt === undefined ? {} : { completedAt }), ...(category ? { category } : {}), ...(image ? { image: { src: image.src.trim(), alt: image.alt.trim(), ...(image.caption === undefined ? {} : { caption: image.caption.trim() }) } } : {}), ...(gallery ? { gallery } : {}) };
 };
 
 const candidateIssue = (label, message) => { throw new Error(`${label}: ${message}`); };
@@ -325,20 +382,30 @@ export function parseMarkdownCaseStudy({ source, filePath = 'source.md' }) {
 
 const mapStoryAssets = (story, filePath, assetsRoot) => {
   const assets = {};
-  const resolve = (media) => {
-    const resolved = resolveCaseStudyAsset({ source: media.src, filePath, storyId: story.id, assetsRoot });
+  const resolve = (media, { kind = 'image', field = 'image' } = {}) => {
+    const resolved = resolveCaseStudyAsset({ source: media.src, filePath, storyId: story.id, assetsRoot, kind, field });
     assets[resolved.publicPath] = {
       source: resolved.source, bytes: resolved.bytes, sha256: resolved.sha256, width: resolved.width, height: resolved.height, format: resolved.format,
     };
+    return resolved;
+  };
+  const projectImage = (media, field = 'image') => {
+    const resolved = resolve(media, { field });
     return { src: resolved.publicPath, alt: media.alt, ...(media.caption ? { caption: media.caption } : {}), width: resolved.width, height: resolved.height };
+  };
+  const projectGalleryItem = (media) => {
+    if (!media.src.toLowerCase().endsWith('.mp4')) return projectImage(media, 'gallery');
+    const clip = resolve(media, { kind: 'video', field: 'gallery' });
+    const poster = resolve({ src: media.poster }, { field: 'gallery' });
+    return { src: clip.publicPath, alt: media.alt, poster: poster.publicPath, ...(media.caption ? { caption: media.caption } : {}), width: clip.width, height: clip.height };
   };
   const mapInline = (nodes) => nodes.map((node) => ({
     ...node,
-    ...(node.type === 'image' ? resolve(node) : {}),
+    ...(node.type === 'image' ? projectImage(node) : {}),
     ...(node.children ? { children: mapInline(node.children) } : {}),
     ...(node.items ? { items: node.items.map((item) => ({ ...item, children: mapInline(item.children) })) } : {}),
   }));
-  return { story: { ...story, ...(story.image ? { image: resolve(story.image) } : {}), sections: story.sections.map((section) => ({ ...section, nodes: mapInline(section.nodes) })) }, assets };
+  return { story: { ...story, ...(story.image ? { image: projectImage(story.image) } : {}), ...(story.gallery ? { gallery: story.gallery.map(projectGalleryItem) } : {}), sections: story.sections.map((section) => ({ ...section, nodes: mapInline(section.nodes) })) }, assets };
 };
 
 export function prepareMarkdownCaseStudies({ sourceFiles, outputDirectory, assetsRoot }) {
@@ -380,8 +447,8 @@ export function prepareMarkdownCaseStudies({ sourceFiles, outputDirectory, asset
         mkdirSync(path.dirname(snapshotPath), { recursive: true });
         let snapshotInfo; try { snapshotInfo = lstatSync(snapshotPath); } catch (error) { if (error.code !== 'ENOENT') throw error; }
         if (snapshotInfo) {
-          if (!snapshotInfo.isFile() || snapshotInfo.isSymbolicLink()) imageIssue(filePath, `candidate snapshot ${snapshotSource} must be a regular file`);
-          if (assetDigest(readFileSync(snapshotPath)) !== asset.sha256) imageIssue(filePath, `candidate snapshot ${snapshotSource} has changed bytes`);
+          if (!snapshotInfo.isFile() || snapshotInfo.isSymbolicLink()) issue(filePath, 'asset', `candidate snapshot ${snapshotSource} must be a regular file`);
+          if (assetDigest(readFileSync(snapshotPath)) !== asset.sha256) issue(filePath, 'asset', `candidate snapshot ${snapshotSource} has changed bytes`);
         } else { writeFileSync(snapshotPath, asset.bytes); newSnapshots.push(snapshotPath); }
         assets[publicPath] = { source: snapshotSource, sha256: asset.sha256, width: asset.width, height: asset.height, format: asset.format };
       }
