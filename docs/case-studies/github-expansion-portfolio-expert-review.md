@@ -1,5 +1,7 @@
 # Project expansion portfolio expert review
 
+Update, 11 October 2026: the owner later requested removal of the In progress section and its three prototype entries. This document describes the earlier reviewed implementation. See [the withdrawal record](prototype-withdrawal.md).
+
 **PASS — 11 October 2026**
 
 A fresh Cursor Grok 4.7 review at xhigh effort passed the frozen expansion candidate `6e0e0fbc87825f660c9a150823d7e5e0b9f65f2af4a9175ffbdd79c0f3054ad8`. A separate technical reviewer passed the source-bound prose, publication and media metadata, and final navigation changes. The parent inspected the final images and execution evidence before delivery.

@@ -1,5 +1,7 @@
 # GitHub project expansion review
 
+Update, 11 October 2026: the owner later requested removal of the In progress section and its three prototype entries. This document describes the earlier reviewed implementation. See [the withdrawal record](prototype-withdrawal.md).
+
 ## Selection
 
 The owner authorized adding worthwhile GitHub projects on 11 October 2026, with incomplete work described honestly. Reviewers checked the 59-repository catalogue and inspected source in 45 additional repositories. Three projects were selected for their implemented workflows and relevance to document automation and computer vision clients. No additional project was presented as a completed client delivery.

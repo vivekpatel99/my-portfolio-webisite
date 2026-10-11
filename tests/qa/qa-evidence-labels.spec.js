@@ -3,7 +3,7 @@ import { getCaseStudyBySlug } from '../../src/data/caseStudies.js';
 import { caseStudyDisplaySrc, collectGalleryImages } from '../../src/components/CaseStudyGallery.js';
 
 const viewports = [{ width: 1440, height: 900 }, { width: 980, height: 1324 }, { width: 390, height: 844 }, { width: 320, height: 740 }];
-const covers = ['depth-based-distance-estimation', 'ai-project-planning-assistant', 'healthcare-document-intelligence', 'browser-search-to-spreadsheet', 'python-ci-workflow-automation', 'resumable-listing-data-extraction', 'bookkeeping-reconciliation-prototype', 'padel-video-analysis-prototype', 'pytorch-image-segmentation-prototype'];
+const covers = ['depth-based-distance-estimation', 'ai-project-planning-assistant', 'healthcare-document-intelligence', 'browser-search-to-spreadsheet', 'python-ci-workflow-automation', 'resumable-listing-data-extraction'];
 
 async function expectClearLabel(stage, media) {
   const label = stage.locator(':scope > .detection-label');

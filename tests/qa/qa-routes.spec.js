@@ -230,19 +230,21 @@ test('lazy route shows content after load', async ({ page }) => {
 });
 
 
-test('ongoing work is discoverable separately from completed delivery', async ({ page }) => {
+test('withdrawn prototypes and their discovery section are absent', async ({ page }) => {
   await page.goto('/case-studies/');
   await expect(page.getByRole('status')).toHaveText('Showing 6 of 12 case studies');
   await expect(page.locator('article')).toHaveCount(6);
-  await page.getByRole('link', { name: '3 prototypes in progress', exact: true }).click();
-  await expect(page).toHaveURL(/#in-progress$/);
-  const region = page.getByRole('region', { name: 'In progress', exact: true });
-  await expect(region).toBeVisible();
-  await expect(region.locator('a')).toHaveCount(3);
-  await expect(region.locator('time')).toHaveCount(0);
-  for (const story of ongoingCaseStudies) {
-    await expect(region.locator(`a[href="/project/${story.slug}/"]`)).toContainText(story.title);
-    await expect(region.locator(`a[href="/project/${story.slug}/"]`)).toContainText('In progress');
+  await expect(page.getByRole('region', { name: 'In progress', exact: true })).toHaveCount(0);
+  await expect(page.locator('a[href="#in-progress"]')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Load more', exact: true }).click();
+  await expect(page.locator('article')).toHaveCount(12);
+  const withdrawnSlugs = ['bookkeeping-reconciliation-prototype', 'padel-video-analysis-prototype', 'pytorch-image-segmentation-prototype'];
+  for (const slug of withdrawnSlugs) {
+    await expect(page.locator(`a[href="/project/${slug}/"]`)).toHaveCount(0);
+  }
+  for (const slug of withdrawnSlugs) {
+    await page.goto(`/project/${slug}/`);
+    await expect(page.getByRole('heading', { name: 'Page Not Found', exact: true })).toBeVisible();
   }
 });
 

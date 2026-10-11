@@ -13,7 +13,7 @@ import {
 import { digest } from './case-study-evidence.js';
 import { collectGalleryImages } from '../src/components/CaseStudyGallery.js';
 
-const authorizedOngoingSlugs = [
+const withdrawnPrototypeSlugs = [
   'bookkeeping-reconciliation-prototype',
   'padel-video-analysis-prototype',
   'pytorch-image-segmentation-prototype',
@@ -94,21 +94,20 @@ describe('retained completed case studies', () => {
     expect(module.caseStudies).toEqual(nodeCaseStudies);
   });
 
-  it('lists the authorized ongoing prototypes outside the completed twelve', async () => {
+  it('excludes the owner-withdrawn prototypes from every public projection', async () => {
     const publication = compileCaseStudyPublication();
     const module = await import(`data:text/javascript;base64,${Buffer.from(renderPublicCaseStudyModule(publication)).toString('base64')}`);
-    expect(module.ongoingCaseStudies.map((story) => story.slug)).toEqual(authorizedOngoingSlugs);
-    expect(nodeOngoingCaseStudies.map((story) => story.slug)).toEqual(authorizedOngoingSlugs);
-    expect(module.caseStudySlugs).toHaveLength(12 + authorizedOngoingSlugs.length);
+    expect(module.ongoingCaseStudies).toEqual([]);
+    expect(nodeOngoingCaseStudies).toEqual([]);
+    expect(module.caseStudySlugs).toHaveLength(12);
     expect(monthsOf(publication.filter((story) => story.projectStatus === 'completed'))).toEqual(completionMonths);
-    for (const slug of authorizedOngoingSlugs) {
+    for (const slug of withdrawnPrototypeSlugs) {
       const story = module.getCaseStudyBySlug(slug);
-      expect(story?.projectStatus).toBe('ongoing');
-      expect(story).not.toHaveProperty('completedAt');
+      expect(story).toBeUndefined();
       expect(module.collectionCaseStudies.map((item) => item.slug)).not.toContain(slug);
       expect(module.featuredCaseStudies.map((item) => item.slug)).not.toContain(slug);
       expect(module.eligibleCaseStudies.map((item) => item.slug)).not.toContain(slug);
-      expect(module.caseStudySlugs).toContain(slug);
+      expect(module.caseStudySlugs).not.toContain(slug);
     }
   });
 

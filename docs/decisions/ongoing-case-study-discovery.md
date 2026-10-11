@@ -1,5 +1,7 @@
 # Ongoing case-study discovery
 
+Update, 11 October 2026: the owner later requested removal of the In progress section and its three prototype entries. This document describes the earlier reviewed implementation. See [the withdrawal record](../case-studies/prototype-withdrawal.md).
+
 ## Decision
 
 Publish an incomplete story as `project_status: ongoing` with no completion month. Show it on `/case-studies/` as a sibling link list under In progress. Keep it out of the completed card grid.
