@@ -30,6 +30,18 @@ const project = {
 describe('CaseStudyCard', () => {
   afterEach(cleanup);
 
+  it('shows the cover caption so illustrative claims have visible scope on the card', () => {
+    const caption = 'Conceptual OCR workflow. The 94% faster claim is not a verified project result.';
+    render(
+      <MemoryRouter>
+        <CaseStudyCard project={{ ...project, image: { ...project.image, caption } }} />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText(caption)).toBeTruthy();
+    expect(screen.getByText(project.summary)).toBeTruthy();
+  });
+
   it('renders one accessible router link containing the cover and title', () => {
     render(
       <MemoryRouter>
@@ -60,7 +72,8 @@ describe('CaseStudyCard', () => {
     expect(cover.getAttribute('width')).toBe(String(image.width));
     expect(cover.getAttribute('height')).toBe(String(image.height));
     expect(cover.getAttribute('loading')).toBe('lazy');
-    expect(cover.className).toContain('object-cover');
+    expect(cover.className).toContain('object-contain');
+    expect(cover.className).toContain('object-top');
   });
 
   it('loads an explicitly prioritized cover eagerly with high fetch priority', () => {
@@ -151,7 +164,7 @@ describe('CaseStudyCard', () => {
   });
 
   describe('Detection Card design (Option A)', () => {
-    it('keeps the labeled panel unclipped while its cover remains cropped', () => {
+    it('keeps the labeled panel unclipped while containing its media', () => {
       const { container } = render(
         <MemoryRouter>
           <CaseStudyCard project={project} />

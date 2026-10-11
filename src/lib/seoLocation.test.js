@@ -4,13 +4,13 @@ import { describe, expect, it } from 'vitest';
 import { defaultSeo, routeSeo } from './seoConfig.js';
 
 const HOME_DESCRIPTION =
-    'Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients across Europe. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. Top Rated Plus on Upwork. €45/hour.';
+    'Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients worldwide. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. Top Rated Plus on Upwork. €45/hour.';
 const BOOTSTRAP_DESCRIPTION =
-  'Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients across Europe. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. Production-ready AI systems. €45/hour.';
+  'Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients worldwide. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. Production-ready AI systems. €45/hour.';
 const TWITTER_DESCRIPTION =
-  'Freelance AI Engineer based in Linz, Austria, serving Europe. Expert in Computer Vision, Web Scraping & n8n Automation. €45/hour.';
+  'Freelance AI Engineer based in Linz, Austria, serving clients worldwide. Expert in Computer Vision, Web Scraping & n8n Automation. €45/hour.';
 const CONTACT_DESCRIPTION =
-  'Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Linz, Austria, serving Europe. Get a quote within 24 hours. €45/hour.';
+  'Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Linz, Austria, serving clients worldwide. Discuss your workflow and request a project estimate. €45/hour.';
 const INVENTED_CITY =
   /Vienna|Wien|Berlin|Munich|München|Zurich|Graz|Salzburg|Innsbruck|Wels|Leonding|Prague|Praha|Budapest|Linz an der Donau|Oberösterreich|Upper Austria/;
 const LEFTOVER_BASE = /based\s*-?\s*in\s+europe/i;
@@ -63,14 +63,14 @@ describe('public location copy', () => {
     expect(hero.replace(/\s+/g, ' ')).not.toMatch(LEFTOVER_BASE);
   });
 
-  it('pins home and contact SEO literals, tokens, and leftover Europe phrases', () => {
+  it('keeps worldwide availability and the Linz base in home and contact SEO', () => {
     expect(defaultSeo.description).toBe(HOME_DESCRIPTION);
     expect(routeSeo['/contact'].description).toBe(CONTACT_DESCRIPTION);
     expect(LEFTOVER_BASE.test(defaultSeo.description)).toBe(false);
     expect(LEFTOVER_BASE.test(routeSeo['/contact'].description)).toBe(false);
 
     expect(homeTokens).toContain('AI Engineer Linz Austria');
-    expect(homeTokens).toContain('Python Developer Europe');
+    expect(homeTokens).toContain('Python Developer Worldwide');
     expect(homeTokens).not.toContain('AI Engineer Europe');
     expect(homeTokens).not.toContain('Hire AI Engineer Linz Austria');
     expect(contactTokens).toContain('Hire AI Engineer Linz Austria');
@@ -83,12 +83,12 @@ describe('public location copy', () => {
     }
   });
 
-  it('names Linz in JSON-LD Place fields without a postal address', () => {
+  it('separates the Linz work location from worldwide service availability', () => {
     expect(person.name).toBe('Vivek Patel');
     expect(person.workLocation['@type']).toBe('Place');
     expect(person.workLocation.name).toBe('Linz, Austria');
     expect(service.areaServed['@type']).toBe('Place');
-    expect(service.areaServed.name).toBe('Linz, Austria and Europe');
+    expect(service.areaServed.name).toBe('Worldwide');
     expect(person.workLocation.name).not.toBe(service.areaServed.name);
     expect(Array.isArray(service.areaServed)).toBe(false);
     expect(Object.keys(person.workLocation).sort()).toEqual(['@type', 'name']);
@@ -148,13 +148,13 @@ describe('public location copy', () => {
     const distPerson = parseJsonLd(distHome).find((node) => node['@type'] === 'Person');
     const distService = parseJsonLd(distHome).find((node) => node['@type'] === 'ProfessionalService');
 
-    expect(getMeta(distHome, 'description')).toContain('based in Linz, Austria, serving clients across Europe');
+    expect(getMeta(distHome, 'description')).toContain('based in Linz, Austria, serving clients worldwide');
     expect(getMeta(distHome, 'description')).toContain('Top Rated Plus on Upwork');
-    expect(getMeta(distContact, 'description')).toContain('based in Linz, Austria, serving Europe');
+    expect(getMeta(distContact, 'description')).toContain('based in Linz, Austria, serving clients worldwide');
     expect(getMeta(distContact, 'description')).not.toMatch(LEFTOVER_BASE);
     expect(getMeta(distLegal, 'description')).not.toContain('Linz');
     expect(distPerson.workLocation.name).toBe('Linz, Austria');
-    expect(distService.areaServed.name).toBe('Linz, Austria and Europe');
+    expect(distService.areaServed.name).toBe('Worldwide');
     expect(distService.priceRange).toBe('€45/hour');
   });
 });

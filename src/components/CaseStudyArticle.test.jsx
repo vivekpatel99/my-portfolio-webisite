@@ -47,5 +47,31 @@ describe('case study internal navigation', () => {
     const markup = renderToStaticMarkup(<CaseStudyArticle story={story} />);
     for (const href of ['/#portfolio', '/', '/contact/']) expect(markup).toContain(`href="${href}"`);
     expect(markup).toContain('Discuss a similar project');
+    expect(markup).not.toContain('In progress');
+  });
+
+  it('shows In progress for an ongoing story and hides any completion time', () => {
+    const { container } = render(<MemoryRouter initialEntries={['/project/synthetic-story/']}>
+      <CaseStudyArticle story={{ ...story, projectStatus: 'ongoing', completedAt: '2026-08' }} />
+    </MemoryRouter>);
+    const heading = screen.getByRole('heading', { level: 1, name: story.title });
+    const status = screen.getByText('In progress', { exact: true });
+    const summary = screen.getByText(story.summary);
+    expect(status.tagName).toBe('P');
+    expect(heading.compareDocumentPosition(status) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(status.compareDocumentPosition(summary) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(container.querySelector('time')).toBeNull();
+    expect(container.textContent).not.toMatch(/2026|Aug|August|Completed/);
+  });
+
+  it('does not show In progress for a completed story or a story with no status', () => {
+    const { container, unmount } = render(<MemoryRouter>
+      <CaseStudyArticle story={{ ...story, projectStatus: 'completed', completedAt: '2025-04' }} />
+    </MemoryRouter>);
+    expect(screen.queryByText('In progress', { exact: true })).toBeNull();
+    expect(container.querySelector('time')).toBeNull();
+    unmount();
+    render(<MemoryRouter><CaseStudyArticle story={story} /></MemoryRouter>);
+    expect(screen.queryByText('In progress', { exact: true })).toBeNull();
   });
 });

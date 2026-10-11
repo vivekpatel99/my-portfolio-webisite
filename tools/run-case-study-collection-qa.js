@@ -123,7 +123,6 @@ const fixtureManifestSource = (eligibleCount) => {
     records.push(record);
   }
 
-  // Published ongoing content must be absent from the eligible collection.
   const ongoingId = 'qa-ongoing-project';
   const ongoingContent = {
     title: 'Ongoing fixture', summary: 'Should never appear in the collection.', projectStatus: 'ongoing',

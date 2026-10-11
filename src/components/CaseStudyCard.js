@@ -60,7 +60,7 @@ const CaseStudyCard = ({
         'div',
         { className: 'media relative min-h-[300px] bg-[#111] overflow-hidden' },
         project.image ? React.createElement('img', {
-          className: 'absolute inset-0 w-full h-full object-cover block',
+          className: 'absolute inset-0 w-full h-full object-contain object-top block',
           alt: project.image.alt, src: caseStudyDisplaySrc(project.image),
           width: project.image.width, height: project.image.height,
           loading: priorityImage ? 'eager' : 'lazy',
@@ -78,6 +78,7 @@ const CaseStudyCard = ({
     React.createElement(
       'div',
       { className: 'body p-5 flex flex-col gap-4 flex-1' },
+      project.image?.caption ? React.createElement('p', { className: 'text-xs leading-relaxed text-[#9ca3af]' }, project.image.caption) : null,
       React.createElement('p', { className: 'summary text-[0.875rem] leading-[1.5] text-[#9ca3af]' }, project.summary),
       React.createElement(
         'div',

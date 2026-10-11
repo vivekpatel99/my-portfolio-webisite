@@ -33,6 +33,10 @@ jobs:
           node-version: "24"
           cache: npm
       - run: npm ci --no-audit --no-fund
+      - name: Install video metadata probe for staging tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends ffmpeg
       - run: npm test -- --maxWorkers=2
   production-build:
     runs-on: ubuntu-latest

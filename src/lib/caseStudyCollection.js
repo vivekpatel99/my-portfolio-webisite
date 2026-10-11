@@ -40,3 +40,7 @@ export const selectCoreCollectionCaseStudies = (
   const otherWorkSlugs = new Set(slugs);
   return sortCaseStudiesByCompletion(eligibleStories.filter((story) => !otherWorkSlugs.has(story.slug)));
 };
+
+export const selectOngoingCaseStudies = (stories) => [...stories]
+  .filter((story) => story.projectStatus === 'ongoing')
+  .sort(compareSlugs);

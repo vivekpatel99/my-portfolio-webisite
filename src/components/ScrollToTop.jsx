@@ -29,7 +29,7 @@ const ScrollToTop = () => {
       return () => window.cancelAnimationFrame(frameId);
     };
 
-    if (pathname === '/case-studies' || pathname === '/case-studies/') {
+    if (!hash && (pathname === '/case-studies' || pathname === '/case-studies/')) {
       if (navigationType === 'PUSH') window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       return focusMainAfterNavigation();
     }

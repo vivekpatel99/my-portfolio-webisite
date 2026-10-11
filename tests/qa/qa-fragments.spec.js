@@ -37,10 +37,31 @@ const expectUsableShell = async (page) => {
 const expectAnchorArrival = async (page, id) => {
   const target = page.locator(`#${id}`);
   await expect(target).toBeFocused();
-  await expect.poll(() => page.evaluate((targetId) => {
-    const arrival = window.__fragmentNavigationCalls.findLast((call) => call.method === 'scrollIntoView' && call.id === targetId);
-    return arrival ? Math.abs(window.scrollY - arrival.expectedScrollY) : Infinity;
-  }, id)).toBeLessThan(2);
+  try {
+    await expect.poll(() => page.evaluate((targetId) => {
+      const arrival = window.__fragmentNavigationCalls.findLast((call) => call.method === 'scrollIntoView' && call.id === targetId);
+      return arrival ? Math.abs(window.scrollY - arrival.expectedScrollY) : Infinity;
+    }, id)).toBeLessThan(2);
+  } catch (error) {
+    const geometry = await target.evaluate((element) => {
+      const box = element.getBoundingClientRect();
+      const animator = element.closest('[data-section-animator]');
+      return {
+        id: element.id,
+        scrollY: window.scrollY,
+        viewport: { width: window.innerWidth, height: window.innerHeight },
+        maxScroll: document.documentElement.scrollHeight - window.innerHeight,
+        targetTop: box.top,
+        targetDocumentTop: box.top + window.scrollY,
+        scrollPaddingTop: getComputedStyle(document.documentElement).scrollPaddingTop,
+        animatorTransform: animator ? getComputedStyle(animator).transform : null,
+        targetFocused: document.activeElement === element,
+        navigationCalls: window.__fragmentNavigationCalls,
+      };
+    }).catch(diagnosticError => ({ diagnosticError: diagnosticError.message }));
+    console.error('Fragment arrival geometry:', JSON.stringify(geometry));
+    throw error;
+  }
   await expect(target).toBeInViewport();
 };
 
