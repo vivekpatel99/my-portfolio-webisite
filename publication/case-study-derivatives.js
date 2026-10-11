@@ -542,11 +542,6 @@ export const caseStudyThumbnailRegistry = Object.freeze({
     sourceSha256: "33538185e8421a6764d2dfea45ce0491c255c37346b372d5efd7c99c75dc53be",
     thumbnailSha256: "aa76be0828796c5ff52d67520b1a1cfa5c1feb19c10113e198f862ef1c967223",
   }),
-  "/assets/case-studies/sports-video-analytics-yolo-9a74c900f91b2c81d095d82ec7b1ca2ccad2d5a09935d88ccdcaaf714d3a5761.png": Object.freeze({
-    src: "/assets/case-studies/sports-video-analytics-yolo-9a74c900f91b2c81d095d82ec7b1ca2ccad2d5a09935d88ccdcaaf714d3a5761-thumb-a87998fc78f0.jpg",
-    sourceSha256: "9a74c900f91b2c81d095d82ec7b1ca2ccad2d5a09935d88ccdcaaf714d3a5761",
-    thumbnailSha256: "a87998fc78f06f12e07394fbf6fde4eac26509edb3c77afa71e55069adaf3de9",
-  }),
   "/assets/case-studies/ai-project-planning-assistant-sample-output.png": Object.freeze({
     src: "/assets/case-studies/ai-project-planning-assistant-sample-output-thumb-2f7d3d25db50.jpg",
     sourceSha256: "eff7965595d32bb9557300645b36c7bd15b56e165c3615899cc5dd57bdce175f",
@@ -610,17 +605,6 @@ export const caseStudyThumbnailRegistry = Object.freeze({
       src: "/assets/case-studies/case-study-display-793305363094-5a597b6e9026.webp",
       sha256: "5a597b6e9026740fc21c44fa740669c9fc2c5dfbb407787787d82ae078a1fd83",
       width: 800,
-      height: 600,
-    }),
-  }),
-  "/assets/case-studies/sports-football-workflow.png": Object.freeze({
-    src: "/assets/case-studies/sports-football-workflow-thumb-9e9d21771fd8.jpg",
-    sourceSha256: "890bce9082b77f882bfba6e8c08afd57459a547ec3624076bc79300fcd07328a",
-    thumbnailSha256: "9e9d21771fd8a2653d8a7314e995b5a65d4dd4d1544c0e6d9ce337123ae2abdb",
-    display: Object.freeze({
-      src: "/assets/case-studies/case-study-display-890bce9082b7-a0170fdbec26.webp",
-      sha256: "a0170fdbec2694457d637e80795c41b4235d8fc2fc460254ae9523f1d9aefffb",
-      width: 1066,
       height: 600,
     }),
   }),

@@ -193,7 +193,7 @@ describe('Markdown case-study preparation', () => {
     const assetsRoot = path.join(directory, 'assets', 'gallery-story');
     mkdirSync(assetsRoot, { recursive: true });
     const shipped = path.join(process.cwd(), 'public/assets/case-studies');
-    copyFileSync(path.join(shipped, 'sports-football-workflow.png'), path.join(assetsRoot, 'workflow.png'));
+    copyFileSync(path.join(shipped, 'sports-video-analytics-yolo-24b3bf7a4e342c9fb57488d8570f9bfa695e2321483670ed66b798df654385f0.png'), path.join(assetsRoot, 'workflow.png'));
     copyFileSync(path.join(shipped, 'sports-football-tracking.mp4'), path.join(assetsRoot, 'tracking.mp4'));
     copyFileSync(path.join(shipped, 'sports-football-tracking-poster.png'), path.join(assetsRoot, 'tracking-poster.png'));
     copyFileSync(path.join(shipped, 'sports-football-confusion-matrix.png'), path.join(assetsRoot, 'matrix.png'));
@@ -291,7 +291,7 @@ An outcome.
     temporaryDirectories.push(directory);
     const assetsRoot = path.join(directory, 'assets', 'gallery-story');
     mkdirSync(assetsRoot, { recursive: true });
-    const shipped = path.join(process.cwd(), 'public/assets/case-studies/sports-football-workflow.png');
+    const shipped = path.join(process.cwd(), 'public/assets/case-studies/sports-video-analytics-yolo-24b3bf7a4e342c9fb57488d8570f9bfa695e2321483670ed66b798df654385f0.png');
     copyFileSync(shipped, path.join(assetsRoot, 'workflow.png'));
     writeFileSync(path.join(directory, 'outside.png'), readFileSync(shipped));
     symlinkSync(path.join(directory, 'outside.png'), path.join(assetsRoot, 'linked.png'));

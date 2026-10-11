@@ -2,11 +2,13 @@
 
 On 10 October 2026, Viv requested adding the images and video in `missing-assests/sport-analytics` to the sports analytics case study. This record documents that direct instruction and the supplied files. PR review, merge and production release remain separate steps.
 
-The workflow illustration becomes the article and collection cover. The existing gallery includes the tracking video and both detector evaluation plots. The gallery uses the existing image enlargement, thumbnails, keyboard navigation and native video controls.
+The current article and collection cover is the source-aligned **Recorded match to labeled video** diagram. The gallery includes the football tracking video and both detector evaluation plots. It uses image enlargement, thumbnails, keyboard navigation and native video controls.
 
-The supplied illustration says real-time, while the article describes batch processing of recorded footage. The 11 October follow-up qualifies this wording and makes the relationship between the supplied football references and the delivered pose, shot and rally package explicit as unverified. The detector captions explain F1 and raw-count matrix margins without adding tracking accuracy, latency or event-detection claims; model, dataset and run context remain unverified. All reviewed media and the updated article are included in PR #353. See [the improvement review](improvement-review.md).
+The later [source and media review](factual-review.md) verified the football project against its public YOLO and ByteTrack implementation. That review replaced the earlier pose, shot and rally description, which came from an unrelated padel archive. The supplied illustration's real-time and win claims are absent from the public gallery. The detector captions describe the repository's 49-image validation scope without claiming tracking accuracy or processing speed. The video's visible team-colored IDs match the football project.
 
-| Supplied file | Repository asset | Supplied SHA-256 |
+The supplied-file table and verification below record the initial media integration. The latest public scope is the football article described above. Final cleanup removes the obsolete football illustration, its display copies and thumbnail registry entries. Publication tests use the current source-aligned cover as their image fixture.
+
+| Supplied file | Initial repository asset | Supplied SHA-256 |
 | --- | --- | --- |
 | image_original | sports-football-workflow.png | fa3e0352229ccf27bfc674ed45ef2d3f99abd896dd196f888f8ea1bb60a999b6 |
 | image_original (1) | sports-football-f1-confidence.png | 17675c81b372e6fb4505c19e5fe2d22c3eefdacc34b1ad9c4d12c6ca24edf0dc |

@@ -14,7 +14,7 @@ Cover images fit within the card instead of cropping away illustration content. 
 | ChatGPT Image Aug 8, 2026, 03_57_14 PM (2).png | ai-invoice-processing-automation | Added to its gallery | b62fc9703a746c28bc6eb4e0e2ea998069b81190d3aa8d0380553c5f44018768 |
 | ChatGPT Image Aug 8, 2026, 03_57_15 PM (4).png | ai-project-planning-assistant | Added to its gallery | d06f0fc78c42733d590f74f499f91b51c124d40532abbe1b7552ed57bc7ee590 |
 | ChatGPT Image Aug 8, 2026, 03_57_15 PM (3).png | Unassigned | Saved at `docs/case-studies/unassigned/n8n-lead-qualification.png`; excluded from production | 8d87723835fba138f2e047f1e3d5a4eb701cf4e2d21650749588625ca876cf67 |
-| ChatGPT Image Aug 8, 2026, 03_57_15 PM (5).png | sports-video-analytics-yolo | Same pixels as the football illustration prepared in [PR #350](https://github.com/vivekpatel99/my-portfolio-webisite/pull/350), retained as historical artwork; removed from the public gallery after verifying the football source in PR #353 | fa3e0352229ccf27bfc674ed45ef2d3f99abd896dd196f888f8ea1bb60a999b6 |
+| ChatGPT Image Aug 8, 2026, 03_57_15 PM (5).png | sports-video-analytics-yolo | Same pixels as the football illustration prepared in [PR #350](https://github.com/vivekpatel99/my-portfolio-webisite/pull/350); removed from the public gallery after verifying the football source in PR #353. Unused website copies were removed in final cleanup. This table retains the historical assignment record. | fa3e0352229ccf27bfc674ed45ef2d3f99abd896dd196f888f8ea1bb60a999b6 |
 
 ## Illustration scope
 
