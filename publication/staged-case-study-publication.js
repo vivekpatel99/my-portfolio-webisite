@@ -8,11 +8,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "d60a1b1dcb5a580714d57ea70a862298519a8df3d3f2c46175d3006452ae57f2",
-        "approvedBy": "Codex source and media review requested by Vivek",
-        "approvedAt": "2026-10-11T09:46:16.833Z",
+        "sha256": "5666d252706b8c58119ef83d72a43d97970d5e8503fc28094dca2e2ea2e3b7bc",
+        "approvedBy": "Codex media review requested by Vivek",
+        "approvedAt": "2026-10-11T11:55:23.107Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "a6d081a855788019362d50ea1fd866cb7b71a36ad0f785577b92b5a6ab94917f"
+        "candidateSha256": "740a5c8a5a017fe3d1283bd8f18f791c99f6179d20c5a70aead7b857c18a3ab3"
       },
       "claimRefs": {
         "summary": "ai-invoice-processing-automation.summary",
@@ -194,13 +194,6 @@ export const stagedCaseStudyPublication = {
           "height": 920
         },
         "gallery": [
-          {
-            "src": "/assets/case-studies/ai-invoice-processing-automation-b87ac7e2e0da834a12128e1fb97f7fe93dad80bed4f0d73decef3f35b81b6933.png",
-            "alt": "Illustrative invoice verification workflow with extraction, validation, comparison and error flags.",
-            "caption": "Concept illustration supplied for the gallery. Purchase-order matching, Azure OpenAI and the accuracy or audit-ready wording shown here are not claims about this project's delivered workflow.",
-            "width": 1672,
-            "height": 941
-          },
           {
             "src": "/assets/case-studies/ai-invoice-processing-automation-f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png",
             "alt": "Original M2 invoice orchestration workflow",
@@ -1095,11 +1088,11 @@ export const stagedCaseStudyPublication = {
       "variant": "article",
       "approval": {
         "kind": "explicit",
-        "sha256": "68b3b5ffe2fac1681d6a7b293cad7ec725adef9c8e138dff9eaf1fe6c50d40c6",
-        "approvedBy": "Codex source and media review requested by Vivek",
-        "approvedAt": "2026-10-11T09:46:16.833Z",
+        "sha256": "b2a9f9bd9209e1a874c538fc3b0315519e53481f7e1817c90c3277fa7ac6491c",
+        "approvedBy": "Codex media review requested by Vivek",
+        "approvedAt": "2026-10-11T11:55:23.107Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "a6d081a855788019362d50ea1fd866cb7b71a36ad0f785577b92b5a6ab94917f"
+        "candidateSha256": "740a5c8a5a017fe3d1283bd8f18f791c99f6179d20c5a70aead7b857c18a3ab3"
       },
       "claimRefs": {
         "summary": "invoice-ocr-extraction.summary",
@@ -1272,13 +1265,6 @@ export const stagedCaseStudyPublication = {
           "height": 920
         },
         "gallery": [
-          {
-            "src": "/assets/case-studies/invoice-ocr-extraction-4aa2f3b1bf229484593fbed8669fb684d8a579f0b3182f562d1a2304dc3aceaa.png",
-            "alt": "Illustrative OCR workflow from invoice input through recognition and field parsing to structured data.",
-            "caption": "Concept illustration supplied for the gallery. The 94% faster wording and JSON/database endpoint shown here are not delivered results; this project reads invoice photos and exports client fields to Excel.",
-            "width": 1672,
-            "height": 941
-          },
           {
             "src": "/assets/case-studies/invoice-ocr-extraction-95e609aecb33ad070dee910b85f165354eabe1f4bb078fb909ff467552183d4d.png",
             "alt": "Spreadsheet output with source filenames and extracted client fields",
@@ -3212,86 +3198,6 @@ export const stagedCaseStudyPublication = {
         "candidateSha256": "a6d081a855788019362d50ea1fd866cb7b71a36ad0f785577b92b5a6ab94917f"
       }
     },
-    "invoice-ocr-extraction.summary": {
-      "type": "content",
-      "recordId": "invoice-ocr-extraction",
-      "placement": "summary",
-      "value": "A local Python OCR tool extracts client names, addresses and tax IDs from a known invoice-photo layout, with the source filename retained in each Excel row.",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "359efcb7626566079647a27dbdc1d313d0e4866380b55bf8fb6b03f6f84f48a8",
-        "approvedBy": "Codex source and media review requested by Vivek",
-        "approvedAt": "2026-10-11T09:46:16.833Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "a6d081a855788019362d50ea1fd866cb7b71a36ad0f785577b92b5a6ab94917f"
-      }
-    },
-    "invoice-ocr-extraction.outcome": {
-      "type": "content",
-      "recordId": "invoice-ocr-extraction",
-      "placement": "outcome",
-      "value": {
-        "key": "outcome",
-        "heading": "The outcome",
-        "nodes": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "text",
-                "value": "The delivered tool provides a local photo-to-Excel handoff for client fields in the supplied layout. Extracted values still need review: the parser uses layout rules rather than validating invoice accuracy. Seller fields and different invoice layouts require additional work."
-              }
-            ]
-          },
-          {
-            "type": "heading",
-            "level": 3,
-            "children": [
-              {
-                "type": "text",
-                "value": "Who this approach suits"
-              }
-            ]
-          },
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "text",
-                "value": "Teams collecting client details from repeatable invoice-photo layouts into Excel. To scope a similar tool, bring redacted photos, the fields required and an example of the desired spreadsheet."
-              }
-            ]
-          },
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "link",
-                "href": "/services/data-extraction-automation-sprint/",
-                "children": [
-                  {
-                    "type": "text",
-                    "value": "Discuss invoice photo extraction"
-                  }
-                ]
-              },
-              {
-                "type": "text",
-                "value": "."
-              }
-            ]
-          }
-        ]
-      },
-      "approval": {
-        "kind": "explicit",
-        "sha256": "2353b186a30516cf352aa32643e95d6d3a2083bb0497ba4fe06439c2ed7d71a1",
-        "approvedBy": "Codex source and media review requested by Vivek",
-        "approvedAt": "2026-10-11T09:46:16.833Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "a6d081a855788019362d50ea1fd866cb7b71a36ad0f785577b92b5a6ab94917f"
-      }
-    },
     "yolo-computer-vision-optimization.summary": {
       "type": "content",
       "recordId": "yolo-computer-vision-optimization",
@@ -3361,86 +3267,6 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "04cd23dcfb8da7a5de547e393ec3328917526fe18b466f051aaf0d9d3487ee6d",
-        "approvedBy": "Codex source and media review requested by Vivek",
-        "approvedAt": "2026-10-11T09:46:16.833Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "a6d081a855788019362d50ea1fd866cb7b71a36ad0f785577b92b5a6ab94917f"
-      }
-    },
-    "ai-invoice-processing-automation.summary": {
-      "type": "content",
-      "recordId": "ai-invoice-processing-automation",
-      "placement": "summary",
-      "value": "An n8n invoice workflow extracts headers and line items, translates descriptions, checks totals, and sends reviewable data to Google Sheets for an Excel handoff.",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "2f58721a006bd8f67842cc48890f1168fe75527dc75a5e48f105e1b8f6d4dddb",
-        "approvedBy": "Codex source and media review requested by Vivek",
-        "approvedAt": "2026-10-11T09:46:16.833Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "a6d081a855788019362d50ea1fd866cb7b71a36ad0f785577b92b5a6ab94917f"
-      }
-    },
-    "ai-invoice-processing-automation.outcome": {
-      "type": "content",
-      "recordId": "ai-invoice-processing-automation",
-      "placement": "outcome",
-      "value": {
-        "key": "outcome",
-        "heading": "The outcome",
-        "nodes": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "text",
-                "value": "The delivered core connects intake, extraction, checks and reviewable spreadsheet output. Review states and retained source values give finance staff a way to investigate an invoice before accepting it. The combined multi-invoice PDF extension remained work in progress."
-              }
-            ]
-          },
-          {
-            "type": "heading",
-            "level": 3,
-            "children": [
-              {
-                "type": "text",
-                "value": "Who this approach suits"
-              }
-            ]
-          },
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "text",
-                "value": "Finance and operations teams that need invoice extraction to fit their spreadsheet rules and approval process. To scope similar work, bring redacted invoices, required fields, document languages and the workbook structure."
-              }
-            ]
-          },
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "type": "link",
-                "href": "/services/ai-workflow-buildout/",
-                "children": [
-                  {
-                    "type": "text",
-                    "value": "Discuss an invoice automation workflow"
-                  }
-                ]
-              },
-              {
-                "type": "text",
-                "value": "."
-              }
-            ]
-          }
-        ]
-      },
-      "approval": {
-        "kind": "explicit",
-        "sha256": "e6123edbfd55085bc1610015ac6782f2ff515931027b6ebd2385560a4dcf6871",
         "approvedBy": "Codex source and media review requested by Vivek",
         "approvedAt": "2026-10-11T09:46:16.833Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
@@ -4366,6 +4192,166 @@ export const stagedCaseStudyPublication = {
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
         "candidateSha256": "6e0e0fbc87825f660c9a150823d7e5e0b9f65f2af4a9175ffbdd79c0f3054ad8"
       }
+    },
+    "ai-invoice-processing-automation.summary": {
+      "type": "content",
+      "recordId": "ai-invoice-processing-automation",
+      "placement": "summary",
+      "value": "An n8n invoice workflow extracts headers and line items, translates descriptions, checks totals, and sends reviewable data to Google Sheets for an Excel handoff.",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "2f58721a006bd8f67842cc48890f1168fe75527dc75a5e48f105e1b8f6d4dddb",
+        "approvedBy": "Codex media review requested by Vivek",
+        "approvedAt": "2026-10-11T11:55:23.107Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "740a5c8a5a017fe3d1283bd8f18f791c99f6179d20c5a70aead7b857c18a3ab3"
+      }
+    },
+    "ai-invoice-processing-automation.outcome": {
+      "type": "content",
+      "recordId": "ai-invoice-processing-automation",
+      "placement": "outcome",
+      "value": {
+        "key": "outcome",
+        "heading": "The outcome",
+        "nodes": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "text",
+                "value": "The delivered core connects intake, extraction, checks and reviewable spreadsheet output. Review states and retained source values give finance staff a way to investigate an invoice before accepting it. The combined multi-invoice PDF extension remained work in progress."
+              }
+            ]
+          },
+          {
+            "type": "heading",
+            "level": 3,
+            "children": [
+              {
+                "type": "text",
+                "value": "Who this approach suits"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "text",
+                "value": "Finance and operations teams that need invoice extraction to fit their spreadsheet rules and approval process. To scope similar work, bring redacted invoices, required fields, document languages and the workbook structure."
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "link",
+                "href": "/services/ai-workflow-buildout/",
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "Discuss an invoice automation workflow"
+                  }
+                ]
+              },
+              {
+                "type": "text",
+                "value": "."
+              }
+            ]
+          }
+        ]
+      },
+      "approval": {
+        "kind": "explicit",
+        "sha256": "e6123edbfd55085bc1610015ac6782f2ff515931027b6ebd2385560a4dcf6871",
+        "approvedBy": "Codex media review requested by Vivek",
+        "approvedAt": "2026-10-11T11:55:23.107Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "740a5c8a5a017fe3d1283bd8f18f791c99f6179d20c5a70aead7b857c18a3ab3"
+      }
+    },
+    "invoice-ocr-extraction.summary": {
+      "type": "content",
+      "recordId": "invoice-ocr-extraction",
+      "placement": "summary",
+      "value": "A local Python OCR tool extracts client names, addresses and tax IDs from a known invoice-photo layout, with the source filename retained in each Excel row.",
+      "approval": {
+        "kind": "explicit",
+        "sha256": "359efcb7626566079647a27dbdc1d313d0e4866380b55bf8fb6b03f6f84f48a8",
+        "approvedBy": "Codex media review requested by Vivek",
+        "approvedAt": "2026-10-11T11:55:23.107Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "740a5c8a5a017fe3d1283bd8f18f791c99f6179d20c5a70aead7b857c18a3ab3"
+      }
+    },
+    "invoice-ocr-extraction.outcome": {
+      "type": "content",
+      "recordId": "invoice-ocr-extraction",
+      "placement": "outcome",
+      "value": {
+        "key": "outcome",
+        "heading": "The outcome",
+        "nodes": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "text",
+                "value": "The delivered tool provides a local photo-to-Excel handoff for client fields in the supplied layout. Extracted values still need review: the parser uses layout rules rather than validating invoice accuracy. Seller fields and different invoice layouts require additional work."
+              }
+            ]
+          },
+          {
+            "type": "heading",
+            "level": 3,
+            "children": [
+              {
+                "type": "text",
+                "value": "Who this approach suits"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "text",
+                "value": "Teams collecting client details from repeatable invoice-photo layouts into Excel. To scope a similar tool, bring redacted photos, the fields required and an example of the desired spreadsheet."
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "link",
+                "href": "/services/data-extraction-automation-sprint/",
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "Discuss invoice photo extraction"
+                  }
+                ]
+              },
+              {
+                "type": "text",
+                "value": "."
+              }
+            ]
+          }
+        ]
+      },
+      "approval": {
+        "kind": "explicit",
+        "sha256": "2353b186a30516cf352aa32643e95d6d3a2083bb0497ba4fe06439c2ed7d71a1",
+        "approvedBy": "Codex media review requested by Vivek",
+        "approvedAt": "2026-10-11T11:55:23.107Z",
+        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
+        "candidateSha256": "740a5c8a5a017fe3d1283bd8f18f791c99f6179d20c5a70aead7b857c18a3ab3"
+      }
     }
   },
   "assets": {
@@ -4377,10 +4363,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275",
-        "approvedBy": "Codex source and media review requested by Vivek",
-        "approvedAt": "2026-10-11T09:46:16.833Z",
+        "approvedBy": "Codex media review requested by Vivek",
+        "approvedAt": "2026-10-11T11:55:23.107Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "a6d081a855788019362d50ea1fd866cb7b71a36ad0f785577b92b5a6ab94917f"
+        "candidateSha256": "740a5c8a5a017fe3d1283bd8f18f791c99f6179d20c5a70aead7b857c18a3ab3"
       }
     },
     "/assets/case-studies/ai-project-planning-assistant-483e16b2c3afb3bf6273821ce09d831d07ae5a00ffce8c2b8e24b202062e41a8.webp": {
@@ -4419,10 +4405,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4",
-        "approvedBy": "Codex source and media review requested by Vivek",
-        "approvedAt": "2026-10-11T09:46:16.833Z",
+        "approvedBy": "Codex media review requested by Vivek",
+        "approvedAt": "2026-10-11T11:55:23.107Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "a6d081a855788019362d50ea1fd866cb7b71a36ad0f785577b92b5a6ab94917f"
+        "candidateSha256": "740a5c8a5a017fe3d1283bd8f18f791c99f6179d20c5a70aead7b857c18a3ab3"
       }
     },
     "/assets/case-studies/yolo-computer-vision-optimization-a1c141cdaa34086f779a22bbc54861dd5a0b6bd6c956df38456a3313983c2c0c.webp": {
@@ -4517,10 +4503,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9",
-        "approvedBy": "Codex source and media review requested by Vivek",
-        "approvedAt": "2026-10-11T09:46:16.833Z",
+        "approvedBy": "Codex media review requested by Vivek",
+        "approvedAt": "2026-10-11T11:55:23.107Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "a6d081a855788019362d50ea1fd866cb7b71a36ad0f785577b92b5a6ab94917f"
+        "candidateSha256": "740a5c8a5a017fe3d1283bd8f18f791c99f6179d20c5a70aead7b857c18a3ab3"
       }
     },
     "/assets/case-studies/ai-invoice-processing-automation-c4ef84c5245e7116671357858924a22b8a2dbd1f95695108125704d6021f9964.png": {
@@ -4531,10 +4517,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "c4ef84c5245e7116671357858924a22b8a2dbd1f95695108125704d6021f9964",
-        "approvedBy": "Codex source and media review requested by Vivek",
-        "approvedAt": "2026-10-11T09:46:16.833Z",
+        "approvedBy": "Codex media review requested by Vivek",
+        "approvedAt": "2026-10-11T11:55:23.107Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "a6d081a855788019362d50ea1fd866cb7b71a36ad0f785577b92b5a6ab94917f"
+        "candidateSha256": "740a5c8a5a017fe3d1283bd8f18f791c99f6179d20c5a70aead7b857c18a3ab3"
       }
     },
     "/assets/case-studies/ai-invoice-processing-automation-15fcb5d1f5daf1514ad0f41393d5ac9e432b1907d17835f8b62ab122e5043289.png": {
@@ -4545,10 +4531,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "15fcb5d1f5daf1514ad0f41393d5ac9e432b1907d17835f8b62ab122e5043289",
-        "approvedBy": "Codex source and media review requested by Vivek",
-        "approvedAt": "2026-10-11T09:46:16.833Z",
+        "approvedBy": "Codex media review requested by Vivek",
+        "approvedAt": "2026-10-11T11:55:23.107Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "a6d081a855788019362d50ea1fd866cb7b71a36ad0f785577b92b5a6ab94917f"
+        "candidateSha256": "740a5c8a5a017fe3d1283bd8f18f791c99f6179d20c5a70aead7b857c18a3ab3"
       }
     },
     "/assets/case-studies/ai-invoice-processing-automation-e2386e51522d827d3ec7f44d144b173f3dbdae865dcb9db323c4c161fc6bc8fb.png": {
@@ -4559,10 +4545,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "e2386e51522d827d3ec7f44d144b173f3dbdae865dcb9db323c4c161fc6bc8fb",
-        "approvedBy": "Codex source and media review requested by Vivek",
-        "approvedAt": "2026-10-11T09:46:16.833Z",
+        "approvedBy": "Codex media review requested by Vivek",
+        "approvedAt": "2026-10-11T11:55:23.107Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "a6d081a855788019362d50ea1fd866cb7b71a36ad0f785577b92b5a6ab94917f"
+        "candidateSha256": "740a5c8a5a017fe3d1283bd8f18f791c99f6179d20c5a70aead7b857c18a3ab3"
       }
     },
     "/assets/case-studies/healthcare-document-intelligence-1973dd984be94a7a4a1ec9581d8ef3499be61acaa93d44680156e0f3c3d60151.png": {
@@ -4587,10 +4573,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "95e609aecb33ad070dee910b85f165354eabe1f4bb078fb909ff467552183d4d",
-        "approvedBy": "Codex source and media review requested by Vivek",
-        "approvedAt": "2026-10-11T09:46:16.833Z",
+        "approvedBy": "Codex media review requested by Vivek",
+        "approvedAt": "2026-10-11T11:55:23.107Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "a6d081a855788019362d50ea1fd866cb7b71a36ad0f785577b92b5a6ab94917f"
+        "candidateSha256": "740a5c8a5a017fe3d1283bd8f18f791c99f6179d20c5a70aead7b857c18a3ab3"
       }
     },
     "/assets/case-studies/n8n-openai-data-extraction-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png": {
@@ -4691,20 +4677,6 @@ export const stagedCaseStudyPublication = {
         "candidateSha256": "a6d081a855788019362d50ea1fd866cb7b71a36ad0f785577b92b5a6ab94917f"
       }
     },
-    "/assets/case-studies/invoice-ocr-extraction-4aa2f3b1bf229484593fbed8669fb684d8a579f0b3182f562d1a2304dc3aceaa.png": {
-      "file": "public/assets/case-studies/invoice-ocr-extraction-4aa2f3b1bf229484593fbed8669fb684d8a579f0b3182f562d1a2304dc3aceaa.png",
-      "width": 1672,
-      "height": 941,
-      "format": "png",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "4aa2f3b1bf229484593fbed8669fb684d8a579f0b3182f562d1a2304dc3aceaa",
-        "approvedBy": "Codex source and media review requested by Vivek",
-        "approvedAt": "2026-10-11T09:46:16.833Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "a6d081a855788019362d50ea1fd866cb7b71a36ad0f785577b92b5a6ab94917f"
-      }
-    },
     "/assets/case-studies/yolo-computer-vision-optimization-24ce758aad9d742640d262cd2f4c87d0800952848d30bf4e7ea0806b47c40ee5.png": {
       "file": "public/assets/case-studies/yolo-computer-vision-optimization-24ce758aad9d742640d262cd2f4c87d0800952848d30bf4e7ea0806b47c40ee5.png",
       "width": 1620,
@@ -4713,20 +4685,6 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "24ce758aad9d742640d262cd2f4c87d0800952848d30bf4e7ea0806b47c40ee5",
-        "approvedBy": "Codex source and media review requested by Vivek",
-        "approvedAt": "2026-10-11T09:46:16.833Z",
-        "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "a6d081a855788019362d50ea1fd866cb7b71a36ad0f785577b92b5a6ab94917f"
-      }
-    },
-    "/assets/case-studies/ai-invoice-processing-automation-b87ac7e2e0da834a12128e1fb97f7fe93dad80bed4f0d73decef3f35b81b6933.png": {
-      "file": "public/assets/case-studies/ai-invoice-processing-automation-b87ac7e2e0da834a12128e1fb97f7fe93dad80bed4f0d73decef3f35b81b6933.png",
-      "width": 1672,
-      "height": 941,
-      "format": "png",
-      "approval": {
-        "kind": "explicit",
-        "sha256": "b87ac7e2e0da834a12128e1fb97f7fe93dad80bed4f0d73decef3f35b81b6933",
         "approvedBy": "Codex source and media review requested by Vivek",
         "approvedAt": "2026-10-11T09:46:16.833Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
@@ -4878,10 +4836,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "b8ce7ee800b1787f0c9b87d3ece9c63c05c235d214adb09a595ac6dee7c70bb9",
-        "approvedBy": "Codex source and media review requested by Vivek",
-        "approvedAt": "2026-10-11T09:46:16.833Z",
+        "approvedBy": "Codex media review requested by Vivek",
+        "approvedAt": "2026-10-11T11:55:23.107Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "a6d081a855788019362d50ea1fd866cb7b71a36ad0f785577b92b5a6ab94917f"
+        "candidateSha256": "740a5c8a5a017fe3d1283bd8f18f791c99f6179d20c5a70aead7b857c18a3ab3"
       }
     },
     "/assets/case-studies/ai-invoice-processing-automation-c8dfbd729212333c91bfa50a3609df4b6917b43905088205637e79083c0b7942.png": {
@@ -4892,10 +4850,10 @@ export const stagedCaseStudyPublication = {
       "approval": {
         "kind": "explicit",
         "sha256": "c8dfbd729212333c91bfa50a3609df4b6917b43905088205637e79083c0b7942",
-        "approvedBy": "Codex source and media review requested by Vivek",
-        "approvedAt": "2026-10-11T09:46:16.833Z",
+        "approvedBy": "Codex media review requested by Vivek",
+        "approvedAt": "2026-10-11T11:55:23.107Z",
         "evidence": "https://github.com/vivekpatel99/my-portfolio-webisite/pull/353",
-        "candidateSha256": "a6d081a855788019362d50ea1fd866cb7b71a36ad0f785577b92b5a6ab94917f"
+        "candidateSha256": "740a5c8a5a017fe3d1283bd8f18f791c99f6179d20c5a70aead7b857c18a3ab3"
       }
     },
     "/assets/case-studies/depth-based-distance-estimation-76b828a59b753889220e65c72ae309a71a0fae66385ca44b16fed43607aa1396.png": {

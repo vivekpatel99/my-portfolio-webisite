@@ -1,5 +1,7 @@
 # Case-study diagram review
 
+Update, 11 October 2026: the owner subsequently requested removal of the invoice and OCR concept illustrations replaced by the new diagrams. This report records the earlier reviewed snapshot. See [the current gallery pruning review](gallery-pruning-review.md).
+
 Historical presentation review. The later [source and media review](factual-review.md) supersedes factual scope and publication identity where corrected.
 
 Eight project-specific Excalidraw diagrams were created at Viv’s request, with one author per case study. Existing supplied invoice, OCR and planning illustrations stay assigned, and the football illustration, video and detector charts prepared in PR #350 are now included in PR #353. The unrelated n8n lead-qualification illustration stays unassigned.

@@ -90,28 +90,6 @@ export const caseStudyThumbnailRegistry = Object.freeze({
       height: 600,
     }),
   }),
-  "/assets/case-studies/invoice-ocr-workflow-illustration.png": Object.freeze({
-    src: "/assets/case-studies/invoice-ocr-workflow-illustration-thumb-fd94ef0a57f8.jpg",
-    sourceSha256: "4aa2f3b1bf229484593fbed8669fb684d8a579f0b3182f562d1a2304dc3aceaa",
-    thumbnailSha256: "fd94ef0a57f85bac8a90581f741ee4ae99c381f2e4a273a26b0e12fda3b626aa",
-    display: Object.freeze({
-      src: "/assets/case-studies/case-study-display-4aa2f3b1bf22-d52b2032c278.webp",
-      sha256: "d52b2032c278b6c843f8bdcfc4e50695d932d4469c7cbde13bb6011f9b957af2",
-      width: 1066,
-      height: 600,
-    }),
-  }),
-  "/assets/case-studies/ai-invoice-verification-illustration.png": Object.freeze({
-    src: "/assets/case-studies/ai-invoice-verification-illustration-thumb-c3ab37bb50c8.jpg",
-    sourceSha256: "b87ac7e2e0da834a12128e1fb97f7fe93dad80bed4f0d73decef3f35b81b6933",
-    thumbnailSha256: "c3ab37bb50c8fe5210bcd74a5d8a2c606ef296973b6416dc22f7b876af783b81",
-    display: Object.freeze({
-      src: "/assets/case-studies/case-study-display-b87ac7e2e0da-2bf7c29b6d0a.webp",
-      sha256: "2bf7c29b6d0ae9733ad8ae98e43017a438bb744df5f1c3541729b6102e757d20",
-      width: 1066,
-      height: 600,
-    }),
-  }),
   "/assets/case-studies/ai-project-planning-illustration.png": Object.freeze({
     src: "/assets/case-studies/ai-project-planning-illustration-thumb-468c21560637.jpg",
     sourceSha256: "c3300da763e338ca89d04e53726d18cdb029b01bd52e58b56af1b1c266295309",
@@ -701,17 +679,6 @@ export const caseStudyThumbnailRegistry = Object.freeze({
       height: 600,
     }),
   }),
-  "/assets/case-studies/invoice-ocr-extraction-4aa2f3b1bf229484593fbed8669fb684d8a579f0b3182f562d1a2304dc3aceaa.png": Object.freeze({
-    src: "/assets/case-studies/invoice-ocr-workflow-illustration-thumb-fd94ef0a57f8.jpg",
-    sourceSha256: "4aa2f3b1bf229484593fbed8669fb684d8a579f0b3182f562d1a2304dc3aceaa",
-    thumbnailSha256: "fd94ef0a57f85bac8a90581f741ee4ae99c381f2e4a273a26b0e12fda3b626aa",
-    display: Object.freeze({
-      src: "/assets/case-studies/case-study-display-4aa2f3b1bf22-d52b2032c278.webp",
-      sha256: "d52b2032c278b6c843f8bdcfc4e50695d932d4469c7cbde13bb6011f9b957af2",
-      width: 1066,
-      height: 600,
-    }),
-  }),
   "/assets/case-studies/yolo-computer-vision-optimization-24ce758aad9d742640d262cd2f4c87d0800952848d30bf4e7ea0806b47c40ee5.png": Object.freeze({
     src: "/assets/case-studies/yolo-computer-vision-optimization-workflow-diagram-thumb-641ea0c6afa3.jpg",
     sourceSha256: "24ce758aad9d742640d262cd2f4c87d0800952848d30bf4e7ea0806b47c40ee5",
@@ -731,17 +698,6 @@ export const caseStudyThumbnailRegistry = Object.freeze({
       src: "/assets/case-studies/case-study-display-c8dfbd729212-3410c73d2d36.webp",
       sha256: "3410c73d2d367055dc059598289bf5d3fbfabce8f961e15d9f17ff95bb23dcfe",
       width: 1057,
-      height: 600,
-    }),
-  }),
-  "/assets/case-studies/ai-invoice-processing-automation-b87ac7e2e0da834a12128e1fb97f7fe93dad80bed4f0d73decef3f35b81b6933.png": Object.freeze({
-    src: "/assets/case-studies/ai-invoice-verification-illustration-thumb-c3ab37bb50c8.jpg",
-    sourceSha256: "b87ac7e2e0da834a12128e1fb97f7fe93dad80bed4f0d73decef3f35b81b6933",
-    thumbnailSha256: "c3ab37bb50c8fe5210bcd74a5d8a2c606ef296973b6416dc22f7b876af783b81",
-    display: Object.freeze({
-      src: "/assets/case-studies/case-study-display-b87ac7e2e0da-2bf7c29b6d0a.webp",
-      sha256: "2bf7c29b6d0ae9733ad8ae98e43017a438bb744df5f1c3541729b6102e757d20",
-      width: 1066,
       height: 600,
     }),
   }),

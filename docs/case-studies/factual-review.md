@@ -23,7 +23,7 @@ The original-project corrections are integrated. Independent portfolio and techn
 
 ## Media and diagrams
 
-Each gallery item is classified as project output, implementation screenshot, conceptual diagram or fictional sample. Captions explain the distinction where it matters. The supplied invoice and OCR concept images remain in their matching galleries as requested; source-aligned workflow diagrams replace them as covers and social images.
+Each gallery item is classified as project output, implementation screenshot, conceptual diagram or fictional sample. Captions explain the distinction where it matters. The supplied invoice and OCR concept images were retained for the original review. On 11 October 2026, the owner requested their removal because the source-aligned workflow diagrams replace them. See [the gallery pruning review](gallery-pruning-review.md) for the current galleries and reviewed candidate.
 
 The football tracking clip matches the public repository demonstration after re-encoding. Its poster is a frame from that clip. The F1 plot and confusion matrix have identical decoded pixels to the repository plots. Detector validation is distinguished from tracking accuracy and processing speed. The separate supplied illustration's real-time and win claims are removed from the football gallery.
 

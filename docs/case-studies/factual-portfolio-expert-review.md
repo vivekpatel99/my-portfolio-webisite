@@ -1,5 +1,7 @@
 # Portfolio case-study review
 
+Update, 11 October 2026: the owner subsequently requested removal of the invoice and OCR concept illustrations replaced by the new diagrams. This report records the earlier reviewed snapshot. See [the current gallery pruning review](gallery-pruning-review.md).
+
 **Verdict: PASS**
 
 Reviewed publication digest: `a6d081a855788019362d50ea1fd866cb7b71a36ad0f785577b92b5a6ab94917f`

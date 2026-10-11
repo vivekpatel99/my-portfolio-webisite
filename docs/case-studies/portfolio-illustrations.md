@@ -1,5 +1,7 @@
 # Portfolio illustration assignments
 
+Update, 11 October 2026: the owner subsequently requested removal of the invoice and OCR concept illustrations replaced by the new diagrams. This report records the earlier reviewed snapshot. See [the current gallery pruning review](gallery-pruning-review.md).
+
 On 10 October 2026, Viv requested inspecting the top-level PNG files in `/Users/viv/Freelance/portfolio/*.png` and saving them to their matching case studies. All five images were viewed before assignment. Viv then approved displaying the OCR and invoice illustrations with captions explaining their illustrative scope, and requested keeping lead qualification unassigned.
 
 The initial version used three assigned illustrations as article and collection covers and in their existing galleries. Viv requested this cover correction after reviewing the local collection preview. Original project screenshots remain in the galleries, and the original source files are unchanged.
