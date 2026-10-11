@@ -86,6 +86,24 @@ describe('Markdown case-study preparation', () => {
     expect(() => parseMarkdownCaseStudy({ source: completed.replace('\ncompleted_at: 2026-08', ''), filePath: '/private/fixture.md' })).toThrow(/completed_at.*required.*project_status.*completed/i);
   });
 
+  it('parses an ongoing story that has no completion month', () => {
+    const ongoingSource = source().replace('category: Automation', 'category: Automation\nproject_status: ongoing');
+    const parsed = parseMarkdownCaseStudy({ source: ongoingSource, filePath: '/private/ongoing.md' });
+    expect(parsed).toMatchObject({ id: 'fixture-story', projectStatus: 'ongoing', title: 'Fixture story' });
+    expect(parsed).not.toHaveProperty('completedAt');
+    expect(parsed.sections.map((section) => section.heading)).toEqual(['The problem', 'What I built', 'The outcome']);
+
+    const directory = mkdtempSync(path.join(tmpdir(), 'markdown-case-study-ongoing-'));
+    temporaryDirectories.push(directory);
+    const candidatePath = path.join(directory, 'candidate.json');
+    writeFileSync(candidatePath, JSON.stringify({ schemaVersion: 1, stories: [parsed] }));
+    const loaded = readPreparedCaseStudies(candidatePath);
+    expect(loaded).toHaveLength(1);
+    expect(loaded[0].projectStatus).toBe('ongoing');
+    expect(loaded[0]).not.toHaveProperty('completedAt');
+    expect(JSON.stringify(loaded[0])).not.toContain('DO_NOT_EXPORT');
+  });
+
   it('rejects non-YAML frontmatter and duplicate YAML keys', () => {
     expect(() => parseMarkdownCaseStudy({ source: '---js\nmodule.exports = { id: "bad" }\n---\n', filePath: '/private/executable.md' })).toThrow(/executable\.md: frontmatter/);
     expect(() => parseMarkdownCaseStudy({ source: source().replace('id: fixture-story', 'id: fixture-story\nid: duplicate'), filePath: '/private/duplicate.md' })).toThrow(/duplicate\.md: frontmatter/);

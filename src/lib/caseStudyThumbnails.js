@@ -91,6 +91,18 @@ export const caseStudyThumbnailRegistry = Object.freeze({
   "/assets/case-studies/sports-video-analytics-yolo-dc043038188a069bd29249f0389a998e64cab98e0f5fc6cbe702bb9c60c87cbb.png": {"src":"/assets/case-studies/sports-football-tracking-poster-thumb-db5de6094a1c.jpg","display":{"src":"/assets/case-studies/case-study-display-dc043038188a-941664d962f4.webp"}},
   "/assets/case-studies/sports-video-analytics-yolo-4422c54ac53200d0a5e3e529709980779fb42c5c87ba182435157745b60d9b95.png": {"src":"/assets/case-studies/sports-football-f1-confidence-thumb-f2e8f79e83e4.jpg","display":{"src":"/assets/case-studies/case-study-display-4422c54ac532-4dfdaeb0779f.webp"}},
   "/assets/case-studies/sports-video-analytics-yolo-9cc6ca9b6368f9c1c0203c352d73a18f1fc19d0be2e5561544ce09679687a2e1.png": {"src":"/assets/case-studies/sports-football-confusion-matrix-thumb-c5be324694bd.jpg","display":{"src":"/assets/case-studies/case-study-display-9cc6ca9b6368-451881ce0ca7.webp"}},
+  "/assets/case-studies/bookkeeping-reconciliation-prototype-239e224d9fe07ca95db65b53b0623e3b06568e9b1e2b4a84236abb3b1d00b5fa.png": {
+    src: "/assets/case-studies/bookkeeping-reconciliation-prototype-thumb-d1e5cd19d087.jpg",
+    display: { src: "/assets/case-studies/case-study-display-239e224d9fe0-e69cb8311061.webp" },
+  },
+  "/assets/case-studies/padel-video-analysis-prototype-70126110b2f79558fd63d78d062fecf01344de5a47e580b94f352b965a00675c.png": {
+    src: "/assets/case-studies/padel-video-analysis-prototype-thumb-be174fa844bd.jpg",
+    display: { src: "/assets/case-studies/case-study-display-70126110b2f7-88373e9df0cc.webp" },
+  },
+  "/assets/case-studies/pytorch-image-segmentation-prototype-0b02a0a98bddf90c65102c2bce080e704004a822c549234a481ace8321d09b06.png": {
+    src: "/assets/case-studies/pytorch-image-segmentation-prototype-thumb-99bd3e2b97f7.jpg",
+    display: { src: "/assets/case-studies/case-study-display-0b02a0a98bdd-13c351b1e26f.webp" },
+  },
 });
 export const galleryThumbnailSrc = (item) => {
   const derivative = caseStudyThumbnailRegistry[item?.src] || caseStudyThumbnailRegistry[item?.poster];

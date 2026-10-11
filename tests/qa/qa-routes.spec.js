@@ -1,6 +1,6 @@
 import { caseStudyDisplaySrc, collectGalleryImages, galleryThumbnailSrc } from '../../src/components/CaseStudyGallery.js';
 import { expect, test } from './qa-test.js';
-import { caseStudies, featuredCaseStudies } from '../../src/data/caseStudies.js';
+import { caseStudies, featuredCaseStudies, ongoingCaseStudies } from '../../src/data/caseStudies.js';
 import { containsCaseStudyCopyLeak } from '../case-study-copy.js';
 
 const routes = [
@@ -228,3 +228,40 @@ test('lazy route shows content after load', async ({ page }) => {
   await page.goto('/contact');
   await expect(page.getByLabel('Full Name *')).toBeVisible();
 });
+
+
+test('ongoing work is discoverable separately from completed delivery', async ({ page }) => {
+  await page.goto('/case-studies/');
+  await expect(page.getByRole('status')).toHaveText('Showing 6 of 12 case studies');
+  await expect(page.locator('article')).toHaveCount(6);
+  await page.getByRole('link', { name: '3 prototypes in progress', exact: true }).click();
+  await expect(page).toHaveURL(/#in-progress$/);
+  const region = page.getByRole('region', { name: 'In progress', exact: true });
+  await expect(region).toBeVisible();
+  await expect(region.locator('a')).toHaveCount(3);
+  await expect(region.locator('time')).toHaveCount(0);
+  for (const story of ongoingCaseStudies) {
+    await expect(region.locator(`a[href="/project/${story.slug}/"]`)).toContainText(story.title);
+    await expect(region.locator(`a[href="/project/${story.slug}/"]`)).toContainText('In progress');
+  }
+});
+
+for (const story of ongoingCaseStudies) {
+  test(`prototype status and return path for ${story.slug}`, async ({ page }) => {
+    await page.goto(`/project/${story.slug}/?from=collection`);
+    await expect(page.locator('.case-study-status')).toHaveText('In progress');
+    await expect(page.locator('.case-study-article time')).toHaveCount(0);
+    const back = page.locator('a[href="/case-studies/#in-progress"]').first();
+    await expect(back).toBeVisible();
+    await back.focus();
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL(/\/case-studies\/#in-progress$/);
+    const region = page.getByRole('region', { name: 'In progress', exact: true });
+    await expect(region).toBeVisible();
+    await expect.poll(async () => (await region.boundingBox())?.y).toBeGreaterThanOrEqual(60);
+    await expect.poll(async () => (await region.boundingBox())?.y).toBeLessThan(180);
+    await expect(region).toBeFocused();
+    const staticHtml = await (await page.request.get(`/project/${story.slug}/`)).text();
+    expect(staticHtml).toContain('href="/case-studies/#in-progress"');
+  });
+}

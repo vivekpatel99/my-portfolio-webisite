@@ -1,6 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   selectCoreCollectionCaseStudies,
+  selectOngoingCaseStudies,
   selectOtherWorkCaseStudies,
   sortCaseStudiesByCompletion,
 } from './caseStudyCollection';
@@ -115,5 +116,49 @@ describe('other-work collection partition', () => {
     const stories = [story('kept', '2025-01'), story('core', '2025-01')];
 
     expect(selectOtherWorkCaseStudies(stories, ['KEPT', 'kept', '']).map(({ slug }) => slug)).toEqual(['kept']);
+  });
+});
+
+describe('selectOngoingCaseStudies', () => {
+  it('keeps ongoing stories and drops completed and unlabeled stories', () => {
+    const ongoing = story('padel', undefined, 'ongoing');
+    const completed = story('done', '2026-01', 'completed');
+    const unlabeled = { slug: 'unlabeled', title: 'No status field' };
+    const selected = selectOngoingCaseStudies([completed, unlabeled, ongoing]);
+
+    expect(selected).toEqual([ongoing]);
+    expect(selected[0]).toBe(ongoing);
+  });
+
+  it('orders by ASCII slug independently of input order and ignores a stray month', () => {
+    const zeta = story('zeta', '1999-01', 'ongoing');
+    const alpha = story('alpha', '2099-12', 'ongoing');
+    const bravo = story('Bravo', '2020-06', 'ongoing');
+    const first = selectOngoingCaseStudies([zeta, alpha, bravo]).map(({ slug }) => slug);
+    const reversed = selectOngoingCaseStudies([bravo, alpha, zeta]).map(({ slug }) => slug);
+
+    expect(first).toEqual(['Bravo', 'alpha', 'zeta']);
+    expect(reversed).toEqual(first);
+  });
+
+  it('does not call localeCompare and does not mutate the input', () => {
+    const localeCompare = vi.spyOn(String.prototype, 'localeCompare');
+    const stories = [story('zeta', '1999-01', 'ongoing'), story('alpha', undefined, 'ongoing')];
+    const snapshot = stories.map((item) => ({ ...item }));
+    try {
+      expect(selectOngoingCaseStudies(stories).map(({ slug }) => slug)).toEqual(['alpha', 'zeta']);
+      expect(localeCompare).not.toHaveBeenCalled();
+    } finally {
+      localeCompare.mockRestore();
+    }
+    expect(stories).toEqual(snapshot);
+  });
+
+  it('returns an empty list for empty or completed-only input', () => {
+    expect(selectOngoingCaseStudies([])).toEqual([]);
+    expect(selectOngoingCaseStudies([
+      story('done', '2026-08'),
+      { slug: 'unlabeled' },
+    ])).toEqual([]);
   });
 });

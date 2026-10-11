@@ -6,6 +6,7 @@ import path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { caseStudyPublicationManifest } from './case-study-manifest.js';
 import { compileCaseStudyPublication, renderPublicCaseStudyModule, sortCaseStudiesByCompletion } from './compile-case-studies.js';
+import { selectOngoingCaseStudies } from '../src/lib/caseStudyCollection.js';
 import { digest } from './case-study-evidence.js';
 import { deploymentHtaccess } from '../plugins/vite-plugin-case-study-publication.js';
 
@@ -329,6 +330,38 @@ describe('case-study publication boundary', () => {
     expect(module.featuredCaseStudies.map(({ id }) => id)).toEqual([
       'recently-published-older-project', 'older-published-newer-project',
     ]);
+    expect(module.ongoingCaseStudies.map(({ id }) => id)).toEqual(['ongoing-story']);
+    expect(module.getCaseStudyBySlug('ongoing-story')?.projectStatus).toBe('ongoing');
+    expect(module.caseStudySlugs).toContain('ongoing-story');
+    expect(module.eligibleCaseStudies.map(({ id }) => id)).not.toContain('ongoing-story');
+    expect(module.collectionCaseStudies.map(({ id }) => id)).not.toContain('ongoing-story');
+    expect(module.featuredCaseStudies.map(({ id }) => id)).not.toContain('ongoing-story');
+    expect(module.otherWorkCaseStudies).toEqual([]);
+    expect(rendered.match(/ongoing-story/g)).toHaveLength(2);
+    expect(rendered).toMatch(/export const ongoingCaseStudies = \[\d+\]\.map\(\(index\) => caseStudies\[index\]\);/);
+  });
+
+  it('exports ongoing stories in ASCII slug order and leaves unlabeled stories routable', async () => {
+    const publication = [
+      { id: 'zeta', slug: 'zeta', projectStatus: 'ongoing', completedAt: '1999-01' },
+      { id: 'done', slug: 'done', projectStatus: 'completed', completedAt: '2026-08' },
+      { id: 'plain', slug: 'plain' },
+      { id: 'alpha', slug: 'alpha', projectStatus: 'ongoing' },
+    ];
+    const originalOrder = publication.map((story) => story.slug);
+    const rendered = renderPublicCaseStudyModule(publication);
+    const module = await import(`data:text/javascript;base64,${Buffer.from(rendered).toString('base64')}`);
+
+    expect(publication.map((story) => story.slug)).toEqual(originalOrder);
+    expect(module.ongoingCaseStudies.map(({ slug }) => slug)).toEqual(['alpha', 'zeta']);
+    expect(module.ongoingCaseStudies.map(({ slug }) => slug)).toEqual(
+      selectOngoingCaseStudies(publication).map(({ slug }) => slug),
+    );
+    expect(module.eligibleCaseStudies.map(({ slug }) => slug)).toEqual(['done']);
+    expect(module.collectionCaseStudies.map(({ slug }) => slug)).toEqual(['done']);
+    expect(module.caseStudySlugs).toEqual(['zeta', 'done', 'plain', 'alpha']);
+    expect(module.getCaseStudyBySlug('plain')).toMatchObject({ slug: 'plain' });
+    expect(module.getCaseStudyBySlug('plain')).not.toHaveProperty('projectStatus');
   });
 
   it('drops a completed fixture slug from the collection when it is marked other-work', async () => {

@@ -20,6 +20,7 @@
 .case-study-article a:not(.detection-action):not(.detection-text-action):focus-visible { color: #eee5ff; text-decoration: underline; }
 .case-study-category { margin: 0 0 12px; color: #bca2db; font-size: 12px; letter-spacing: .4px; }
 .case-study-article h1 { margin: 0 0 18px; color: #fff; font-size: clamp(28px, 5vw, 38px); font-weight: 500; letter-spacing: -1px; line-height: 1.2; }
+.case-study-status { margin: -6px 0 18px; color: #8B5CF6; font-size: 14px; font-weight: 600; }
 .case-study-summary { margin: 0 0 36px; color: #b6b3bd; font-size: 17px; }
 .case-study-cover { margin: 0 0 38px; }
 .case-study-cover-stage { padding: 12px; }

@@ -1,0 +1,392 @@
+{
+  "sha256": "6e0e0fbc87825f660c9a150823d7e5e0b9f65f2af4a9175ffbdd79c0f3054ad8",
+  "stories": [
+    {
+      "id": "bookkeeping-reconciliation-prototype",
+      "slug": "bookkeeping-reconciliation-prototype",
+      "title": "Python bookkeeping reconciliation to Excel",
+      "summary": "An in-progress personal Python tool combines supported bank and marketplace CSVs with invoice PDFs into a ledger and Excel review workbook. Publication checks distinguish review copies from accepted records.",
+      "projectStatus": "ongoing",
+      "category": "Data Automation",
+      "image": {
+        "src": "/assets/case-studies/bookkeeping-reconciliation-prototype-239e224d9fe07ca95db65b53b0623e3b06568e9b1e2b4a84236abb3b1d00b5fa.png",
+        "alt": "Illustrative prototype: supported bank and marketplace CSVs and invoice PDFs feed a normalized ledger and publication checks. Checks can publish an accepted ledger and workbook, write a marked review-only copy, or leave the accepted set unchanged after a blocked refresh or failed check.",
+        "caption": "Illustrative prototype: supported bank and marketplace CSVs and invoice PDFs feed a normalized ledger and publication checks. Checks can publish an accepted ledger and workbook, write a marked review-only copy, or leave the accepted set unchanged after a blocked refresh or failed check.",
+        "width": 1620,
+        "height": 920
+      },
+      "sections": [
+        {
+          "key": "problem",
+          "heading": "The problem",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Bank statements, marketplace exports, and invoices can describe the same payment in different ways. Reviewing each file separately makes it hard to trace a payment to its evidence or decide which workbook is ready to use."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "This personal prototype brings those records into one review workflow. It extends document extraction with reconciliation between sources."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "built",
+          "heading": "What I built",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "I built a local Python command that imports supported CSV layouts, extracts invoice facts, and indexes original files by a hash of their contents. It normalizes the records into a ledger and writes an Excel workbook with source records, reconciliation checks, and items that need a decision."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Invoice checks compare net, VAT, and gross amounts. A bounded local model call can propose ambiguous fields. A failed or incomplete result stays in review. Explicit review answers are required before those decisions change the books."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Publication checks distinguish stale evidence, unknown completeness, blocked records, and readiness. Blocked refreshes and failed independent checks can prevent publication of a new accepted set. Some review states produce a visible review copy without accepting the candidate ledger and workbook. That distinction keeps a review file from becoming an accepted result. The tool prepares records and workbooks; it does not submit filings."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "outcome",
+          "heading": "The outcome",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The source contains the importers, ledger logic, review workflow, and workbook writer. This is an in-progress personal tool, without a verified client handover or a measured time-saving claim. The diagram illustrates the workflow and contains no financial records."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "For a similar project, share your file formats, the decisions a person must approve, and the workbook you need. The "
+                },
+                {
+                  "type": "link",
+                  "href": "/services/data-extraction-automation-sprint",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "Data Extraction Automation Sprint"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": " is a starting point for discussing extraction and reconciliation scope."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "padel-video-analysis-prototype",
+      "slug": "padel-video-analysis-prototype",
+      "title": "Single-camera padel video analysis prototype",
+      "summary": "An in-progress Python prototype for recorded padel video, with pose detection, two-player tracking, and a separate shot-tag path that exports JSON. Full rally-clip integration remains unfinished.",
+      "projectStatus": "ongoing",
+      "category": "Computer Vision",
+      "image": {
+        "src": "/assets/case-studies/padel-video-analysis-prototype-70126110b2f79558fd63d78d062fecf01344de5a47e580b94f352b965a00675c.png",
+        "alt": "Illustrative prototype with separate pose-processing and candidate shot-tag JSON entries. Rally-clip integration remains unfinished.",
+        "caption": "Illustrative prototype with separate pose-processing and candidate shot-tag JSON entries. Rally-clip integration remains unfinished.",
+        "width": 1620,
+        "height": 920
+      },
+      "sections": [
+        {
+          "key": "problem",
+          "heading": "The problem",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "A recorded padel clip contains player movement and short shot moments that a coach or sports-product team may want to review. A useful first pass needs to keep candidate events open to human correction."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "This prototype explores that workflow for recorded video and two tracked players. Camera position, court visibility, and available model weights constrain the next stage of development."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "built",
+          "heading": "What I built",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "I built video-reading and clip-writing modules, pose detection, player tracking, and a swappable ball-detector interface. The default entry processes pose and player tracks. Rally detection and rally-clip export in that entry are still commented out."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "A separate shot-inference entry reads the recording again and combines pose and ball signals into candidate shot tags. Its JSON export includes video frame rate and shot records, which can carry a frame index, timestamp, and assigned player. It does not continue the default pose run."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Rally grouping exists as a separate stage but is not connected to either entry. Unit tests are written for the stages and export shape. They establish intended software behavior, not match-analysis accuracy. Model weights and example recordings are outside the reviewed source."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "outcome",
+          "heading": "The outcome",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The implementation defines separate pose-review and shot-tag export paths. Full pipeline integration and rally-clip export remain unfinished. No measured accuracy, processing-speed result, or deployed-product claim is attached to this prototype. The diagram shows the implemented entries and the unfinished integration separately."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "For a related build, share representative recorded clips, the camera view, the events you need, and the processing machine. Discuss the required outputs through "
+                },
+                {
+                  "type": "link",
+                  "href": "/services/computer-vision-production-optimization",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "Computer Vision Model Development"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": "."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pytorch-image-segmentation-prototype",
+      "slug": "pytorch-image-segmentation-prototype",
+      "title": "PyTorch image segmentation with a shared encoder",
+      "summary": "An ongoing personal PyTorch research prototype uses one VGG encoder to return region-mask scores and image-class scores in a single forward pass. The work uses public ultrasound research images and is not a clinical tool.",
+      "projectStatus": "ongoing",
+      "category": "Machine Learning",
+      "image": {
+        "src": "/assets/case-studies/pytorch-image-segmentation-prototype-0b02a0a98bddf90c65102c2bce080e704004a822c549234a481ace8321d09b06.png",
+        "alt": "Illustrative research architecture: one shared VGG encoder returns mask scores and class scores. The geometry is synthetic and is not a model prediction or an ultrasound frame.",
+        "caption": "Illustrative research architecture: one shared VGG encoder returns mask scores and class scores. The geometry is synthetic and is not a model prediction or an ultrasound frame.",
+        "width": 1600,
+        "height": 900
+      },
+      "sections": [
+        {
+          "key": "problem",
+          "heading": "The problem",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Some image workflows need both a region mask and a label for the whole image. This personal research prototype explores whether a shared encoder can support both outputs."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The experiment uses the public Breast Ultrasound Dataset. It is research software, without clinical validation or a deployed medical workflow. The portfolio diagram uses synthetic geometry rather than ultrasound frames."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "built",
+          "heading": "What I built",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "I implemented a shared VGG encoder with an FCN segmentation decoder and a separate classification head. The decoder uses pooled feature maps to return region-mask scores. The classification head reads the deepest features and returns a score for each class. One forward pass returns both tensors under the keys "
+                },
+                {
+                  "type": "code",
+                  "value": "masks"
+                },
+                {
+                  "type": "text",
+                  "value": " and "
+                },
+                {
+                  "type": "code",
+                  "value": "labels"
+                },
+                {
+                  "type": "text",
+                  "value": ". These raw scores are not probabilities or a selected class name."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The code supports FCN8 and FCN16 decoder configurations. The dataset loader reads an image, its mask, and its class label. A Hydra-configured training entry uses mask and classification losses and can log experiments with MLflow. Shape tests document the two expected outputs; they do not demonstrate model quality."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "outcome",
+          "heading": "The outcome",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The repository contains the model, dataset loader, loss functions, training entry, and shape tests. It contains no saved checkpoint in the reviewed version. Its written result artifacts disagree, so no accuracy or Dice score is presented. Fresh training and evaluation are needed before inference use."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "For non-clinical image work, provide representative images, region annotations, class names, and evaluation criteria. "
+                },
+                {
+                  "type": "link",
+                  "href": "/services/computer-vision-production-optimization",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "Computer Vision Model Development"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": " can help define that scope."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "link",
+                  "href": "https://github.com/vivekpatel99/breast-cancer-segmentation-vgg-fcn-pytorch/tree/14483244efdcb91b2f4b5fb642aa3499880bfe25",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "View the reviewed source code on GitHub"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": "."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assets": {
+    "/assets/case-studies/bookkeeping-reconciliation-prototype-239e224d9fe07ca95db65b53b0623e3b06568e9b1e2b4a84236abb3b1d00b5fa.png": {
+      "sha256": "239e224d9fe07ca95db65b53b0623e3b06568e9b1e2b4a84236abb3b1d00b5fa",
+      "width": 1620,
+      "height": 920,
+      "format": "png"
+    },
+    "/assets/case-studies/padel-video-analysis-prototype-70126110b2f79558fd63d78d062fecf01344de5a47e580b94f352b965a00675c.png": {
+      "sha256": "70126110b2f79558fd63d78d062fecf01344de5a47e580b94f352b965a00675c",
+      "width": 1620,
+      "height": 920,
+      "format": "png"
+    },
+    "/assets/case-studies/pytorch-image-segmentation-prototype-0b02a0a98bddf90c65102c2bce080e704004a822c549234a481ace8321d09b06.png": {
+      "sha256": "0b02a0a98bddf90c65102c2bce080e704004a822c549234a481ace8321d09b06",
+      "width": 1600,
+      "height": 900,
+      "format": "png"
+    }
+  },
+  "reviewedSources": {
+    "bookkeeping": "Anonymous private implementation at 66638ad32d523e4d3e52b2a95a83e902249665f4",
+    "padel": "Anonymous private implementation at 4bcae7d6073104aa2ad52d4ce7f73d62ff4ae204",
+    "segmentation": "https://github.com/vivekpatel99/breast-cancer-segmentation-vgg-fcn-pytorch/tree/14483244efdcb91b2f4b5fb642aa3499880bfe25"
+  }
+}

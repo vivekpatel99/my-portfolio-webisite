@@ -932,4 +932,37 @@ export const caseStudyThumbnailRegistry = Object.freeze({
       height: 600,
     }),
   }),
+  "/assets/case-studies/bookkeeping-reconciliation-prototype-239e224d9fe07ca95db65b53b0623e3b06568e9b1e2b4a84236abb3b1d00b5fa.png": Object.freeze({
+    src: "/assets/case-studies/bookkeeping-reconciliation-prototype-thumb-d1e5cd19d087.jpg",
+    sourceSha256: "239e224d9fe07ca95db65b53b0623e3b06568e9b1e2b4a84236abb3b1d00b5fa",
+    thumbnailSha256: "d1e5cd19d087bc115a2cf87811ad9dc9a0337ca1f862a02929c4abd92cc13618",
+    display: Object.freeze({
+      src: "/assets/case-studies/case-study-display-239e224d9fe0-e69cb8311061.webp",
+      sha256: "e69cb83110611e32bc07eaa5fbb643b2f82c00c482af90700c8f4e3ac6a02894",
+      width: 1057,
+      height: 600,
+    }),
+  }),
+  "/assets/case-studies/padel-video-analysis-prototype-70126110b2f79558fd63d78d062fecf01344de5a47e580b94f352b965a00675c.png": Object.freeze({
+    src: "/assets/case-studies/padel-video-analysis-prototype-thumb-be174fa844bd.jpg",
+    sourceSha256: "70126110b2f79558fd63d78d062fecf01344de5a47e580b94f352b965a00675c",
+    thumbnailSha256: "be174fa844bd1313754074f6603c1205df7e6115caf4cce1f3002f217d08cb21",
+    display: Object.freeze({
+      src: "/assets/case-studies/case-study-display-70126110b2f7-88373e9df0cc.webp",
+      sha256: "88373e9df0cc87fa55a1b11c4387985466fc6d74d0a3e2025d14a5aceb4fa4e3",
+      width: 1057,
+      height: 600,
+    }),
+  }),
+  "/assets/case-studies/pytorch-image-segmentation-prototype-0b02a0a98bddf90c65102c2bce080e704004a822c549234a481ace8321d09b06.png": Object.freeze({
+    src: "/assets/case-studies/pytorch-image-segmentation-prototype-thumb-99bd3e2b97f7.jpg",
+    sourceSha256: "0b02a0a98bddf90c65102c2bce080e704004a822c549234a481ace8321d09b06",
+    thumbnailSha256: "99bd3e2b97f731155b3c52843ec822e3d19f0fc14c86ec7e02816506134b5ab7",
+    display: Object.freeze({
+      src: "/assets/case-studies/case-study-display-0b02a0a98bdd-13c351b1e26f.webp",
+      sha256: "13c351b1e26f4c93767c0673f07cb6bf85654d9cbd47f29342a8bc030171af5f",
+      width: 1067,
+      height: 600,
+    }),
+  }),
 });

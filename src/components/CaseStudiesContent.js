@@ -1,9 +1,14 @@
 import React from 'react';
 import { DetectionLabel } from './DetectionFrame.js';
-import { collectionCaseStudies } from '../data/caseStudies.js';
+import { collectionCaseStudies, ongoingCaseStudies } from '../data/caseStudies.js';
 import CaseStudyCollection from './CaseStudyCollection.js';
+import OngoingCaseStudies from './OngoingCaseStudies.js';
 
-const CaseStudiesContent = ({ stories }) => React.createElement(
+const prototypeJumpLabel = (count) => (
+  count === 1 ? '1 prototype in progress' : `${count} prototypes in progress`
+);
+
+const CaseStudiesContent = ({ stories, ongoingStories = ongoingCaseStudies }) => React.createElement(
   'section',
   { className: 'bg-[#0C0D0D] py-24 px-7 md:px-12', 'aria-labelledby': 'case-studies-heading' },
   React.createElement(
@@ -20,11 +25,23 @@ const CaseStudiesContent = ({ stories }) => React.createElement(
         React.createElement('span', { className: 'text-[#8B5CF6]' }, 'CASE STUDIES'),
       ),
       React.createElement('p', { className: 'mt-6 text-lg text-[#9ca3af]' }, 'Explore selected work in data extraction, OCR, automation, and computer vision.'),
+      ongoingStories.length > 0
+        ? React.createElement(
+          'p',
+          { className: 'mt-4 text-lg' },
+          React.createElement(
+            'a',
+            { href: '#in-progress', className: 'text-[#8B5CF6] underline decoration-[#8B5CF6]/40 underline-offset-4' },
+            prototypeJumpLabel(ongoingStories.length),
+          ),
+        )
+        : null,
     ),
     React.createElement(
       CaseStudyCollection,
       { stories: stories ?? collectionCaseStudies },
     ),
+    React.createElement(OngoingCaseStudies, { stories: ongoingStories }),
   ),
 );
 

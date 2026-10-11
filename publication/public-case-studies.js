@@ -2,10 +2,11 @@
 // replaces this module before dependency traversal, so the manifest and its
 // draft/approval metadata can never enter a browser bundle.
 import { compileCaseStudyPublication } from './compile-case-studies.js';
-import { selectCoreCollectionCaseStudies, selectOtherWorkCaseStudies } from '../src/lib/caseStudyCollection.js';
+import { selectCoreCollectionCaseStudies, selectOngoingCaseStudies, selectOtherWorkCaseStudies } from '../src/lib/caseStudyCollection.js';
 import { selectFeaturedCaseStudies } from '../src/lib/featuredCaseStudies.js';
 
 export const caseStudies = compileCaseStudyPublication();
+export const ongoingCaseStudies = selectOngoingCaseStudies(caseStudies);
 export const eligibleCaseStudies = caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed');
 export const collectionCaseStudies = selectCoreCollectionCaseStudies(eligibleCaseStudies);
 export const otherWorkCaseStudies = selectOtherWorkCaseStudies(eligibleCaseStudies);

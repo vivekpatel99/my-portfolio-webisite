@@ -174,6 +174,8 @@ excluded from collection cards and homepage counts. The retained legacy records
 may be owner-confirmed completed without a month. New Markdown articles still
 require a valid `completed_at` month with completed status.
 
+A published ongoing story has no completion month and is linked from the separate In progress list on `/case-studies/`. That list is outside the completed collection cards and outside the homepage feature count.
+
 Homepage cards use the build-only `publication/case-study-featured.js` slug
 configuration. The selector keeps configured order, ignores unavailable or
 ineligible slugs, removes duplicates, and caps the result at three stories.

@@ -143,12 +143,14 @@ test('custom cursor disabled on touch emulation', async ({ page }) => {
   await expect(page.locator('html')).not.toHaveClass(/custom-cursor-enabled/);
 });
 
-test('skip link is focusable at 200% zoom', async ({ page }) => {
+test('skip link is focusable at 200% zoom', async ({ page, browserName }) => {
   await page.setViewportSize({ width: 640, height: 800 });
   await page.goto('/');
+  await expect(page.getByRole('heading', { name: /Computer Vision & AI Engineer/i })).toBeVisible();
   const skipLink = page.getByRole('link', { name: 'Skip to main content' });
   await expect(skipLink).toBeAttached();
-  await page.keyboard.press('Tab');
+  const nextLinkKey = browserName === 'webkit' && process.platform === 'darwin' ? 'Alt+Tab' : 'Tab';
+  await page.keyboard.press(nextLinkKey);
   await expect(skipLink).toBeFocused();
 });
 
@@ -182,7 +184,8 @@ for (const width of [320, 768, 1280]) {
         }
       }
       if (width === 320 && isCollection) {
-        const wrapped = cards.filter({ hasText: 'Maintainable n8n Pipelines' }).locator('.detection-label');
+        const wrapped = cards.filter({ has: page.locator('a[href^="/project/n8n-python-ai-agents/"]') }).locator('.detection-label');
+        await expect(wrapped).toHaveCount(1);
         const box = await wrapped.boundingBox();
         const lineHeight = await wrapped.evaluate((element) => parseFloat(getComputedStyle(element).lineHeight));
         expect(box.height).toBeGreaterThan(lineHeight);

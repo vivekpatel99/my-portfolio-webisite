@@ -5,9 +5,19 @@ import { caseStudyPublicationBaseline, caseStudyPublicationManifest } from './ca
 import { describe, expect, it } from 'vitest';
 import { routeSeo } from '../src/lib/seoConfig.js';
 import { compileCaseStudyPublication, renderPublicCaseStudyModule, repositoryRoot } from './compile-case-studies.js';
+import {
+  caseStudies as nodeCaseStudies,
+  ongoingCaseStudies as nodeOngoingCaseStudies,
+  collectionCaseStudies as nodeCollectionCaseStudies,
+} from './public-case-studies.js';
 import { digest } from './case-study-evidence.js';
 import { collectGalleryImages } from '../src/components/CaseStudyGallery.js';
 
+const authorizedOngoingSlugs = [
+  'bookkeeping-reconciliation-prototype',
+  'padel-video-analysis-prototype',
+  'pytorch-image-segmentation-prototype',
+];
 const footballEstimatedCompletionMonth = '2025-04';
 const completionMonths = {
   'ai-invoice-processing-automation': '2026-09',
@@ -63,7 +73,8 @@ describe('retained completed case studies', () => {
     migratedSlugs.forEach((slug) => expect(module.collectionCaseStudies.filter((story) => story.slug === slug)).toHaveLength(1));
     expect(new Set(module.collectionCaseStudies.map((story) => story.slug)).size).toBe(12);
     expect(module.collectionCaseStudies.every((story) => story.projectStatus === 'completed' && /^\d{4}-\d{2}$/.test(story.completedAt))).toBe(true);
-    expect(monthsOf(publication)).toEqual(completionMonths);
+    const completedPublication = publication.filter((story) => story.projectStatus === 'completed');
+    expect(monthsOf(completedPublication)).toEqual(completionMonths);
     expect(monthsOf(module.collectionCaseStudies)).toEqual(completionMonths);
     expect(module.eligibleCaseStudies).toHaveLength(12);
     expect(module.eligibleCaseStudyCount).toBe(module.eligibleCaseStudies.length);
@@ -72,9 +83,33 @@ describe('retained completed case studies', () => {
     expect(module.getCaseStudyBySlug('ai-project-planning-assistant')?.slug).toBe('ai-project-planning-assistant');
     expect(module.getCaseStudyBySlug('python-ci-workflow-automation')?.slug).toBe('python-ci-workflow-automation');
     expect(module.caseStudySlugs).toEqual(expect.arrayContaining(migratedSlugs));
-    expect(module.caseStudySlugs).toHaveLength(12);
+    expect(module.caseStudySlugs).toHaveLength(12 + module.ongoingCaseStudies.length);
     expect(module.caseStudySlugs).toContain('healthcare-document-intelligence');
     expect(module.caseStudySlugs).toContain('ai-invoice-processing-automation');
+    expect(module.ongoingCaseStudies.every((story) => story.projectStatus === 'ongoing' && story.completedAt === undefined)).toBe(true);
+    const collectionSlugs = new Set(module.collectionCaseStudies.map((story) => story.slug));
+    expect(module.ongoingCaseStudies.filter((story) => collectionSlugs.has(story.slug))).toEqual([]);
+    expect(module.ongoingCaseStudies).toEqual(nodeOngoingCaseStudies);
+    expect(module.collectionCaseStudies.map((story) => story.slug)).toEqual(nodeCollectionCaseStudies.map((story) => story.slug));
+    expect(module.caseStudies).toEqual(nodeCaseStudies);
+  });
+
+  it('lists the authorized ongoing prototypes outside the completed twelve', async () => {
+    const publication = compileCaseStudyPublication();
+    const module = await import(`data:text/javascript;base64,${Buffer.from(renderPublicCaseStudyModule(publication)).toString('base64')}`);
+    expect(module.ongoingCaseStudies.map((story) => story.slug)).toEqual(authorizedOngoingSlugs);
+    expect(nodeOngoingCaseStudies.map((story) => story.slug)).toEqual(authorizedOngoingSlugs);
+    expect(module.caseStudySlugs).toHaveLength(12 + authorizedOngoingSlugs.length);
+    expect(monthsOf(publication.filter((story) => story.projectStatus === 'completed'))).toEqual(completionMonths);
+    for (const slug of authorizedOngoingSlugs) {
+      const story = module.getCaseStudyBySlug(slug);
+      expect(story?.projectStatus).toBe('ongoing');
+      expect(story).not.toHaveProperty('completedAt');
+      expect(module.collectionCaseStudies.map((item) => item.slug)).not.toContain(slug);
+      expect(module.featuredCaseStudies.map((item) => item.slug)).not.toContain(slug);
+      expect(module.eligibleCaseStudies.map((item) => item.slug)).not.toContain(slug);
+      expect(module.caseStudySlugs).toContain(slug);
+    }
   });
 
   it('keeps the healthcare slug on schedule-PDF copy that is not clinical EHR', () => {

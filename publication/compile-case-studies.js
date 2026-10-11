@@ -11,6 +11,7 @@ import { otherWorkCaseStudySlugs } from './case-study-other-work.js';
 import { selectFeaturedCaseStudies } from '../src/lib/featuredCaseStudies.js';
 import {
   selectCoreCollectionCaseStudies,
+  selectOngoingCaseStudies,
   selectOtherWorkCaseStudies,
   sortCaseStudiesByCompletion,
 } from '../src/lib/caseStudyCollection.js';
@@ -208,8 +209,9 @@ export const renderPublicCaseStudyModule = (
   otherWorkSlugs = otherWorkCaseStudySlugs,
 ) => {
   const eligibleCaseStudies = publication.filter((caseStudy) => caseStudy.projectStatus === 'completed');
+  const ongoingIndices = selectOngoingCaseStudies(publication).map((caseStudy) => publication.indexOf(caseStudy));
   const collectionIndices = selectCoreCollectionCaseStudies(eligibleCaseStudies, otherWorkSlugs).map((caseStudy) => publication.indexOf(caseStudy));
   const otherWorkIndices = selectOtherWorkCaseStudies(eligibleCaseStudies, otherWorkSlugs).map((caseStudy) => publication.indexOf(caseStudy));
   const featuredIndices = selectFeaturedCaseStudies(eligibleCaseStudies, configuredSlugs).map((caseStudy) => publication.indexOf(caseStudy));
-  return `// Generated in-memory by vite-plugin-case-study-publication.\nexport const caseStudies = ${JSON.stringify(publication)};\nexport const eligibleCaseStudies = caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed');\nexport const collectionCaseStudies = ${JSON.stringify(collectionIndices)}.map((index) => caseStudies[index]);\nexport const otherWorkCaseStudies = ${JSON.stringify(otherWorkIndices)}.map((index) => caseStudies[index]);\nexport const eligibleCaseStudyCount = eligibleCaseStudies.length;\nexport const featuredCaseStudies = ${JSON.stringify(featuredIndices)}.map((index) => caseStudies[index]);\nexport const getCaseStudyBySlug = (slug) => caseStudies.find((caseStudy) => caseStudy.slug === slug);\nexport const caseStudySlugs = caseStudies.map((caseStudy) => caseStudy.slug);\nexport const primaryContactHref = '/contact/';\nexport const directEmailHref = 'mailto:contact@vivekpatel.com';\n`;
+  return `// Generated in-memory by vite-plugin-case-study-publication.\nexport const caseStudies = ${JSON.stringify(publication)};\nexport const ongoingCaseStudies = ${JSON.stringify(ongoingIndices)}.map((index) => caseStudies[index]);\nexport const eligibleCaseStudies = caseStudies.filter((caseStudy) => caseStudy.projectStatus === 'completed');\nexport const collectionCaseStudies = ${JSON.stringify(collectionIndices)}.map((index) => caseStudies[index]);\nexport const otherWorkCaseStudies = ${JSON.stringify(otherWorkIndices)}.map((index) => caseStudies[index]);\nexport const eligibleCaseStudyCount = eligibleCaseStudies.length;\nexport const featuredCaseStudies = ${JSON.stringify(featuredIndices)}.map((index) => caseStudies[index]);\nexport const getCaseStudyBySlug = (slug) => caseStudies.find((caseStudy) => caseStudy.slug === slug);\nexport const caseStudySlugs = caseStudies.map((caseStudy) => caseStudy.slug);\nexport const primaryContactHref = '/contact/';\nexport const directEmailHref = 'mailto:contact@vivekpatel.com';\n`;
 };
