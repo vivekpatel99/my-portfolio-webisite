@@ -1,5 +1,5 @@
 import { caseStudies } from '../../src/data/caseStudies.js';
-import { collectGalleryImages } from '../../src/components/CaseStudyGallery.js';
+import { caseStudyDisplaySrc, collectGalleryImages } from '../../src/components/CaseStudyGallery.js';
 import { expect, test } from './qa-test.js';
 import { assertVisualLayout } from './visual-layout.js';
 
@@ -255,6 +255,62 @@ test('case study gallery keeps its stage, selected media, and thumbnails in usab
     minWidth: 44,
     minHeight: 44,
   });
+});
+
+test('gallery navigation keeps chart, diagram, and sample evidence clear inline and enlarged', async ({ page }) => {
+  await reducedMotion(page);
+  const cases = [
+    { slug: 'sports-video-analytics-yolo', src: '/assets/case-studies/sports-football-f1-confidence.png' },
+    { slug: 'n8n-openai-data-extraction', src: '/assets/case-studies/n8n-openai-data-extraction-workflow-diagram.png' },
+    { slug: 'ai-project-planning-assistant', src: '/assets/case-studies/ai-project-planning-assistant-sample-output.png' },
+  ];
+  const assertClearNavigation = async (region) => {
+    const stage = region.locator('.case-gallery-stage');
+    const stageBox = await stage.boundingBox();
+    const regionBox = await region.boundingBox();
+    for (const name of ['Previous image', 'Next image']) {
+      const control = region.getByRole('button', { name, exact: true });
+      await expect(control).toBeVisible();
+      const controlBox = await control.boundingBox();
+      assertVisualLayout({
+        label: name,
+        box: controlBox,
+        containedBy: regionBox,
+        minWidth: 44,
+        minHeight: 44,
+        avoid: [{ label: 'evidence stage', box: stageBox }],
+      });
+      expect(controlBox.y, `${name} belongs below the evidence`).toBeGreaterThanOrEqual(stageBox.y + stageBox.height);
+    }
+  };
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({ width, height: 844 });
+    for (const { slug, src } of cases) {
+      await page.goto(`/project/${slug}/`);
+      await settleLayout(page);
+      const gallery = page.getByRole('region', { name: 'Case study images' });
+      const images = collectGalleryImages(caseStudies.find((story) => story.slug === slug));
+      const index = images.findIndex((image) => image.src === src);
+      expect(index, slug).toBeGreaterThanOrEqual(0);
+      const { alt } = images[index];
+      await gallery.getByRole('button', { name: `Show image ${index + 1}: ${alt}`, exact: true }).click();
+      const opener = gallery.getByRole('button', { name: `Enlarge image: ${alt}`, exact: true });
+      await expect(opener.locator('img')).toHaveCSS('object-fit', 'contain');
+      await assertClearNavigation(gallery);
+
+      await opener.click();
+      const dialog = page.getByRole('dialog', { name: 'Enlarged case study images' });
+      await expect(dialog).toBeVisible();
+      await expect(dialog.locator('.case-gallery-viewport img')).toHaveCSS('object-fit', 'contain');
+      await assertClearNavigation(dialog);
+      await dialog.getByRole('button', { name: 'Zoom in', exact: true }).click();
+      await expect(dialog.locator('.case-gallery-zoom')).toContainText('150%');
+      await assertClearNavigation(dialog);
+      await page.keyboard.press('Escape');
+      await expect(dialog).toHaveCount(0);
+      await expect(opener).toBeFocused();
+    }
+  }
 });
 
 const measureGalleryStage = async (page) => page.evaluate(() => {
@@ -529,16 +585,20 @@ test('wide gallery lightbox keeps its outer frame and label inside narrow viewpo
 });
 
 
-test('single-image evidence preserves its link within the shared transparent frame', async ({ page }) => {
+test('project evidence preserves the shared transparent frame across media variants', async ({ page }) => {
   await reducedMotion(page);
   for (const slug of ['browser-search-to-spreadsheet', 'python-ci-workflow-automation', 'resumable-listing-data-extraction']) {
     await page.goto(`/project/${slug}/`);
-    const stage = page.locator('.case-study-cover-stage');
+    const [source, ...remaining] = collectGalleryImages(caseStudies.find((story) => story.slug === slug));
+    const singleImage = remaining.length === 0;
+    const stage = page.locator(singleImage ? '.case-study-cover-stage' : '.case-gallery-stage');
     await expect(stage).toHaveClass(/detection-panel/);
     await expect(stage.locator('.detection-label')).toHaveText('PROJECT EVIDENCE');
     const image = stage.locator('img');
     await expect(image).toBeVisible();
-    await expect(stage.locator('a')).toHaveAttribute('href', /.+/);
+    await expect(image).toHaveAttribute('src', caseStudyDisplaySrc(source));
+    if (singleImage) await expect(stage.locator('a')).toHaveAttribute('href', source.src);
+    else await expect(stage.getByRole('button', { name: `Enlarge image: ${source.alt}`, exact: true })).toBeVisible();
     const geometry = await stage.evaluate((element) => {
       const label = element.querySelector('.detection-label');
       const bounds = element.getBoundingClientRect();

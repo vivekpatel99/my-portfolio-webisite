@@ -248,6 +248,8 @@ Confirmed on 4 October 2026: the hero uses a closer head-and-shoulders crop with
 
 Proposed default: optional image generation for the About portrait preserves likeness and the authentic original. Proposed default: a generated edit requires Vivek's visual review. Proposed default: project screenshots and videos remain legible evidence with controls and captions clear of corners.
 
+Existing reference on 11 October 2026: case-study gallery navigation occupies a separate row below the media stage, including in the enlarged dialog. Previous and next controls use 44px targets and remain clear of diagram and chart labels at mobile widths. The media opener, count, thumbnails, zoom, swipe, keyboard navigation and dialog focus behavior remain available.
+
 ### FM-01. Forms and feedback
 
 Existing reference: the [contact-field reference](docs/design-system.md) governs grey resting corners, purple focus, fill, label position, required indicators, and forced-colors behavior. Existing reference: preserve the control's actual accessible label.

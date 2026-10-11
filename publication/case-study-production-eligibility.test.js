@@ -28,7 +28,7 @@ describe('retained completed case studies', () => {
 
   it('keeps the healthcare slug on schedule-PDF copy that is not clinical EHR', () => {
     const slug = 'healthcare-document-intelligence';
-    const summary = 'A Python extractor turns color-coded schedule PDFs into Excel rows. Not clinical EHR. Not medical records.';
+    const summary = 'A Python extractor turns color-coded staff schedule PDFs into reviewable Excel rows.';
     const publication = compileCaseStudyPublication();
     const story = publication.find((record) => record.slug === slug);
     expect(story).toBeDefined();
@@ -48,7 +48,6 @@ describe('retained completed case studies', () => {
     expect(problem).toMatch(/staff schedule PDFs/i);
     expect(problem).toMatch(/not clinical EHR or medical records/i);
     expect(outcome).toMatch(/scheduling coordinator/i);
-    expect(outcome).toMatch(/not clinical EHR or medical records/i);
     expect(outcome).toContain('No measured accuracy figure is claimed.');
     expect(`${story.title} ${story.summary} ${problem} ${outcome}`).not.toMatch(/healthcare document intelligence/i);
   });
@@ -92,12 +91,14 @@ describe('retained completed case studies', () => {
     expect(headingMeta).not.toMatch(/broadcast/i);
     expect(`${story.title} ${story.summary}`).not.toMatch(/real-?time/i);
     expect(`${headingMeta} ${story.summary} ${problem}`.replace(/not live scoring\.?/gi, '')).not.toMatch(/live scoring/i);
-    expect(story.image).toBeUndefined();
+    expect(story.image.src).toBe('/assets/case-studies/sports-football-workflow.png');
+    expect(story.image.caption).toContain('relationship to the described delivery is unverified');
+    expect(story.image.caption).toContain('Real-time wording is not a delivery claim');
 
     const module = await import(`data:text/javascript;base64,${Buffer.from(renderPublicCaseStudyModule(publication)).toString('base64')}`);
     const card = module.collectionCaseStudies.find((record) => record.slug === slug);
     expect(card.summary).toBe(summary);
-    expect(card.image).toBeUndefined();
+    expect(card.image).toEqual(story.image);
     expect(module.featuredCaseStudies.map((record) => record.slug)).not.toContain(slug);
   });
 

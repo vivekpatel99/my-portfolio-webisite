@@ -136,7 +136,7 @@
                   "type": "image",
                   "src": "/assets/case-studies/ai-invoice-processing-automation-f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png",
                   "alt": "Original M2 invoice orchestration workflow",
-                  "caption": "Original M2 invoice orchestration workflow",
+                  "caption": "Original M2 invoice orchestration workflow. The 97.9% accuracy on an 18-invoice golden dataset is a historical screenshot annotation, not an independently verified benchmark for this case study.",
                   "width": 2448,
                   "height": 684
                 }
@@ -174,6 +174,7 @@
                   "type": "image",
                   "src": "/assets/case-studies/ai-invoice-processing-automation-c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9.png",
                   "alt": "Original M1 extraction workflow; historical screenshot annotations are not independently verified benchmarks",
+                  "caption": "Original M1 extraction workflow. The 97.9% accuracy on an 18-invoice golden dataset and #1 on OCR Arena ranking are historical screenshot annotations, not independently verified benchmarks for this case study.",
                   "width": 1862,
                   "height": 800
                 }
@@ -186,6 +187,7 @@
                   "type": "image",
                   "src": "/assets/case-studies/ai-invoice-processing-automation-c4ef84c5245e7116671357858924a22b8a2dbd1f95695108125704d6021f9964.png",
                   "alt": "Original PDF splitting subworkflow",
+                  "caption": "Original PDF splitting subworkflow. Combined multi-invoice PDF processing is outside the verified scope of this case study.",
                   "width": 2140,
                   "height": 458
                 }
@@ -337,6 +339,19 @@
                   "height": 958
                 }
               ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/ai-project-planning-assistant-sample-output.png",
+                  "alt": "Fictional Markdown planning example with a CSV-import goal, three steps, their dependencies and a technical-review requirement.",
+                  "caption": "Illustrative Markdown plan for a fictional CSV-import task. Inspect the goal, steps and dependencies. This authored example is not a captured agent result or verified estimate. Technical review is required.",
+                  "width": 1080,
+                  "height": 810
+                }
+              ]
             }
           ]
         },
@@ -475,6 +490,19 @@
                 {
                   "type": "text",
                   "value": "The archived delivery contains both project documentation and a packaged run path."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/browser-search-to-spreadsheet-sample-output.png",
+                  "alt": "Fictional search-output example showing a spreadsheet row with search input, result URL, timestamp and execution status.",
+                  "caption": "Illustrative output with fictional data. Inspect the search input, result URL, timestamp and row status. This example layout is not an exported client sheet or browser-run evidence and does not show booking completion.",
+                  "width": 1080,
+                  "height": 810
                 }
               ]
             }
@@ -647,7 +675,7 @@
       "id": "healthcare-document-intelligence",
       "slug": "healthcare-document-intelligence",
       "title": "Color-Coded Schedule PDFs to Reviewable Excel Rows",
-      "summary": "A Python extractor turns color-coded schedule PDFs into Excel rows. Not clinical EHR. Not medical records.",
+      "summary": "A Python extractor turns color-coded staff schedule PDFs into reviewable Excel rows.",
       "projectStatus": "completed",
       "completedAt": "2026-09",
       "category": "Document AI",
@@ -783,6 +811,19 @@
                   "height": 1524
                 }
               ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/healthcare-document-intelligence-sample-output.png",
+                  "alt": "Fictional schedule-output table with date, shift and request-code columns and a sample legend for preferred and unavailable shifts.",
+                  "caption": "Illustrative workbook rows with fictional staff schedules. Inspect the dates, shifts and sample request-code legend. This layout and its codes are examples, not a client export or evidence of extraction accuracy.",
+                  "width": 1080,
+                  "height": 810
+                }
+              ]
             }
           ]
         },
@@ -795,7 +836,7 @@
               "children": [
                 {
                   "type": "text",
-                  "value": "The extractor produces rows a scheduling coordinator can compare with the source calendar. Unknown colors and unreadable cells are not guessed. This is operational document processing, not clinical EHR or medical records. No measured accuracy figure is claimed."
+                  "value": "The extractor produces rows a scheduling coordinator can compare with the source calendar. Unknown colors and unreadable cells are not guessed. No measured accuracy figure is claimed."
                 }
               ]
             }
@@ -805,7 +846,7 @@
       "image": {
         "src": "/assets/case-studies/healthcare-document-intelligence-workflow-diagram.png",
         "alt": "Color-coded staff schedule PDF converted into reviewable Excel date, shift and request-code rows.",
-        "caption": "Illustrative workflow. Native-PDF extraction turns staff calendars into reviewable Excel rows, preserving dates, shifts and color-coded requests. Illustrative data only.",
+        "caption": "Illustrative extraction of dates, shifts and color-coded requests from staff calendars into Excel. The example data represents schedules, not clinical EHR or medical records.",
         "width": 1620,
         "height": 920
       }
@@ -1181,7 +1222,7 @@
       "image": {
         "src": "/assets/case-studies/n8n-openai-data-extraction-workflow-diagram.png",
         "alt": "Website datasets branch into Excel, CSV and HTML processors, then become structured JSON grouped by starting URL.",
-        "caption": "Illustrative workflow. An n8n and OpenAI workflow discovers website datasets, processes Excel, CSV and HTML tables separately, and produces structured JSON organized by starting URL. Source-specific changes may need adjustment.",
+        "caption": "Illustrative n8n and OpenAI workflow for website data. Separate Excel, CSV and HTML processors produce JSON grouped by starting URL. Source changes may require adjustment.",
         "width": 1620,
         "height": 920
       }
@@ -1190,7 +1231,7 @@
       "id": "n8n-python-ai-agents",
       "slug": "n8n-python-ai-agents",
       "title": "Maintainable n8n Pipelines and a Read-Only SQL Agent",
-      "summary": "Repeat automation work moved scripted data flows into n8n and added a database-question agent with an explicit SQL execution boundary.",
+      "summary": "Scripted data flows became inspectable n8n workflows, alongside a separate assistant for validated read-only SQL queries.",
       "projectStatus": "completed",
       "completedAt": "2026-05",
       "category": "AI Workflow Automation",
@@ -1352,7 +1393,7 @@
                   "alt": "Representative invoice orchestrator workflow from other portfolio work",
                   "width": 2448,
                   "height": 684,
-                  "caption": "Representative invoice orchestrator workflow from other portfolio work"
+                  "caption": "Representative invoice orchestrator workflow from other portfolio work. The 97.9% accuracy on an 18-invoice golden dataset is a historical screenshot annotation, not an independently verified benchmark for this case study."
                 }
               ]
             },
@@ -1365,7 +1406,7 @@
                   "alt": "Representative invoice extractor workflow from other portfolio work",
                   "width": 1862,
                   "height": 800,
-                  "caption": "Representative invoice extractor workflow from other portfolio work"
+                  "caption": "Representative invoice extractor workflow from other portfolio work. The 97.9% accuracy on an 18-invoice golden dataset and #1 on OCR Arena ranking are historical screenshot annotations, not independently verified benchmarks for this case study."
                 }
               ]
             },
@@ -1379,6 +1420,19 @@
                   "caption": "Original client-supplied PostgreSQL table overview used as project input; not an agent-result screenshot",
                   "width": 2262,
                   "height": 769
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/n8n-python-ai-agents-sample-output.png",
+                  "alt": "Fictional SELECT-only SQL example with an illustrative schema, a two-row limit and a bounded result table.",
+                  "caption": "Illustrative SELECT query and two fictional result rows from an illustrative schema. Inspect the read-only statement and bounded table. This authored example is not a client schema, actual query result or evidence of agent execution or accuracy.",
+                  "width": 1080,
+                  "height": 810
                 }
               ]
             }
@@ -1521,6 +1575,19 @@
                   "value": "The source describes a Python-based automation toolkit rather than a replacement hosting or CI platform."
                 }
               ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/python-ci-workflow-automation-sample-output.png",
+                  "alt": "Fictional quality-toolkit report with an unused-import lint message, an AI-assisted review draft and PR-helper handoff notes.",
+                  "caption": "Illustrative report for a fictional code change. Inspect the lint message, review draft and PR-helper handoff notes. These are representative text examples, not a tool run, accepted review, CI pass or demonstrated pull-request action.",
+                  "width": 1080,
+                  "height": 810
+                }
+              ]
             }
           ]
         },
@@ -1631,7 +1698,7 @@
                       "children": [
                         {
                           "type": "text",
-                          "value": "Incremental JSONL and CSV output during extraction."
+                          "value": "Incremental output in CSV and JSON Lines, also called JSONL, during extraction."
                         }
                       ]
                     }
@@ -1661,6 +1728,19 @@
                   "value": "The workflow supports review of the extracted dataset and recovery from interrupted runs."
                 }
               ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "image",
+                  "src": "/assets/case-studies/resumable-listing-data-extraction-sample-output.png",
+                  "alt": "Fictional CSV example with two listing IDs and source URLs, followed by a conceptual completed-ID record for resuming extraction.",
+                  "caption": "Illustrative CSV with fictional IDs and source URLs. Inspect row traceability and the conceptual completed-ID record used to explain restart. Field names and checkpoint layout are examples, not a recovered client export or execution evidence; the project also supports JSONL.",
+                  "width": 1080,
+                  "height": 810
+                }
+              ]
             }
           ]
         },
@@ -1682,11 +1762,198 @@
       ],
       "image": {
         "src": "/assets/case-studies/resumable-listing-data-extraction-workflow-diagram.png",
-        "alt": "Listing URLs feed concurrent detail extraction, incremental CSV and JSONL files, and a completed-listing checkpoint for resume.",
-        "caption": "Illustrative workflow. Collect listing URLs, extract details with controlled delays and retries, retain completed listings for restart, and export incremental CSV and JSONL files. Website changes and source-access requirements still need maintenance.",
+        "alt": "Listing URLs feed concurrent detail extraction, incremental CSV and JSON Lines files, and a completed-listing checkpoint for resume.",
+        "caption": "Illustrative listing extraction with controlled delays and retries, incremental CSV and JSON Lines output, and checkpoints for restart. Website changes and source access still require maintenance.",
         "width": 1620,
         "height": 920
       }
+    },
+    {
+      "id": "sports-video-analytics-yolo",
+      "slug": "sports-video-analytics-yolo",
+      "title": "Recorded Match Video to Reviewable Tracks and Event Tags",
+      "summary": "A batch pipeline on recorded match footage produces tracks, event proposals, and JSON and CSV for human review. Not live scoring.",
+      "projectStatus": "completed",
+      "completedAt": "2026-06",
+      "category": "Computer Vision",
+      "sections": [
+        {
+          "key": "problem",
+          "heading": "The problem",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The client needed recorded single-camera match footage converted into inspectable tracks and proposed events. This is batch review of recorded footage, not live scoring. A small moving ball, player overlap and missed detections meant a detector alone was not enough. Reviewers needed to see uncertainty and correct missed or incorrect tags."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The football gallery contains supplied illustrative and reference material. Its connection to the described pose, shot and rally package, including any shared model or evaluation run, has not been established."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "built",
+          "heading": "What I built",
+          "nodes": [
+            {
+              "type": "list",
+              "ordered": false,
+              "start": "",
+              "items": [
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "A configurable Python pipeline for recorded video and selected time ranges."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Player pose detection and persistent near-side player tracking."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Pluggable ball detection with trajectory cleanup and optional short-gap filling."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Shot proposals combining skeleton motion and ball-direction evidence."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Rally grouping, JSON event output and CSV ball-position output."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "children": [
+                        {
+                          "type": "text",
+                          "value": "Debug overlays, optional clips and manual annotation tools for review."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The package includes configuration, a Docker/GPU run path and tests. Stage caching supports retuning later grouping steps without rerunning every earlier stage."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "outcome",
+          "heading": "The outcome",
+          "nodes": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "The handoff links video analysis to reviewable events and exports. A person still checks the proposed tags before treating them as final. The scope is batch analysis of recorded footage, not real-time broadcasting or autonomous officiating. No public tracking-accuracy, latency or time-saving figure is claimed."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "image": {
+        "src": "/assets/case-studies/sports-football-workflow.png",
+        "alt": "Supplied football workflow illustration showing YOLO detection, player tracking and analytics.",
+        "width": 1672,
+        "height": 941,
+        "caption": "Supplied football workflow illustration; its relationship to the described delivery is unverified. Real-time wording is not a delivery claim."
+      },
+      "gallery": [
+        {
+          "src": "/assets/case-studies/sports-football-tracking.mp4",
+          "poster": "/assets/case-studies/sports-football-tracking-poster.png",
+          "alt": "Supplied football tracking demonstration with team colors and persistent player IDs.",
+          "width": 640,
+          "height": 360,
+          "caption": "Supplied football tracking demonstration with colored markers and player IDs. Its relationship to the delivered package is unverified; it is not verified pose, shot or rally output."
+        },
+        {
+          "src": "/assets/case-studies/sports-football-f1-confidence.png",
+          "alt": "Supplied detector reference plot with F1-confidence curves for ball, goalkeeper, player and referee detection.",
+          "width": 2250,
+          "height": 1500,
+          "caption": "Supplied detector reference plot. F1 is the harmonic mean of detection precision and recall. The all-class curve is labeled 0.90 at confidence 0.359, with a weaker ball-class curve. The model, dataset, evaluation run and connection to the delivered package are unverified. These curves do not measure tracking or event-tagging accuracy."
+        },
+        {
+          "src": "/assets/case-studies/sports-football-confusion-matrix.png",
+          "alt": "Supplied detector confusion matrix of raw counts for ball, goalkeeper, player and referee, with a background row for missed detections and a background column for unmatched predictions.",
+          "width": 3000,
+          "height": 2250,
+          "caption": "Supplied detector reference matrix of raw counts. The background row marks missed detections; the background column marks unmatched predictions, not a trained background class. The model, dataset, evaluation run and connection to the delivered package are unverified."
+        }
+      ]
     },
     {
       "id": "yolo-computer-vision-optimization",
@@ -1958,11 +2225,25 @@
       "height": 958,
       "format": "webp"
     },
+    "/assets/case-studies/ai-project-planning-assistant-sample-output.png": {
+      "source": "assets/eff7965595d32bb9557300645b36c7bd15b56e165c3615899cc5dd57bdce175f.png",
+      "sha256": "eff7965595d32bb9557300645b36c7bd15b56e165c3615899cc5dd57bdce175f",
+      "width": 1080,
+      "height": 810,
+      "format": "png"
+    },
     "/assets/case-studies/browser-search-to-spreadsheet-workflow-diagram.png": {
       "source": "assets/8ae2242a5fc25fe5381c89710e3d03b339d64bcbd18e24fee7ab585ecc71f240.png",
       "sha256": "8ae2242a5fc25fe5381c89710e3d03b339d64bcbd18e24fee7ab585ecc71f240",
       "width": 1620,
       "height": 920,
+      "format": "png"
+    },
+    "/assets/case-studies/browser-search-to-spreadsheet-sample-output.png": {
+      "source": "assets/f41570cb8d94aa364a7b72585ec57dd75f0cfbfe499c6747e651dbcb2ff0f97b.png",
+      "sha256": "f41570cb8d94aa364a7b72585ec57dd75f0cfbfe499c6747e651dbcb2ff0f97b",
+      "width": 1080,
+      "height": 810,
       "format": "png"
     },
     "/assets/case-studies/depth-based-distance-estimation-workflow-diagram.png": {
@@ -1991,6 +2272,13 @@
       "sha256": "1973dd984be94a7a4a1ec9581d8ef3499be61acaa93d44680156e0f3c3d60151",
       "width": 1098,
       "height": 1524,
+      "format": "png"
+    },
+    "/assets/case-studies/healthcare-document-intelligence-sample-output.png": {
+      "source": "assets/082df33a75889756d6775d712fd9a577e2a1d7618fb5b73fb994e4ee11d3b225.png",
+      "sha256": "082df33a75889756d6775d712fd9a577e2a1d7618fb5b73fb994e4ee11d3b225",
+      "width": 1080,
+      "height": 810,
       "format": "png"
     },
     "/assets/case-studies/invoice-ocr-workflow-illustration.png": {
@@ -2119,6 +2407,13 @@
       "height": 769,
       "format": "png"
     },
+    "/assets/case-studies/n8n-python-ai-agents-sample-output.png": {
+      "source": "assets/39463a417eec39966c51d0f6dffda491d511b52d3863be3dccd4ea592c087339.png",
+      "sha256": "39463a417eec39966c51d0f6dffda491d511b52d3863be3dccd4ea592c087339",
+      "width": 1080,
+      "height": 810,
+      "format": "png"
+    },
     "/assets/case-studies/python-ci-workflow-automation-workflow-diagram.png": {
       "source": "assets/b2e7442167276c591fd8a53ed27017dd0eaee1cd3e6d9c50542c8be123ca4f0a.png",
       "sha256": "b2e7442167276c591fd8a53ed27017dd0eaee1cd3e6d9c50542c8be123ca4f0a",
@@ -2126,11 +2421,60 @@
       "height": 920,
       "format": "png"
     },
+    "/assets/case-studies/python-ci-workflow-automation-sample-output.png": {
+      "source": "assets/b2489f2c3e945c7e978c5074fd895e808504097ed5cad9376c29b73c14d22ea5.png",
+      "sha256": "b2489f2c3e945c7e978c5074fd895e808504097ed5cad9376c29b73c14d22ea5",
+      "width": 1080,
+      "height": 810,
+      "format": "png"
+    },
     "/assets/case-studies/resumable-listing-data-extraction-workflow-diagram.png": {
-      "source": "assets/852269fcf337a73b0cf5b42b21ed24a278e1974fa2b13e165927e951cc20e0d1.png",
-      "sha256": "852269fcf337a73b0cf5b42b21ed24a278e1974fa2b13e165927e951cc20e0d1",
+      "source": "assets/f1f2fb83b4fea98a6e66d6e2e2f4904fcb5714564235b25228e50d462c1d1a48.png",
+      "sha256": "f1f2fb83b4fea98a6e66d6e2e2f4904fcb5714564235b25228e50d462c1d1a48",
       "width": 1620,
       "height": 920,
+      "format": "png"
+    },
+    "/assets/case-studies/resumable-listing-data-extraction-sample-output.png": {
+      "source": "assets/793305363094814e248eb621dc2d5f14288d319fbf34d439e89613dc4acb9e4a.png",
+      "sha256": "793305363094814e248eb621dc2d5f14288d319fbf34d439e89613dc4acb9e4a",
+      "width": 1080,
+      "height": 810,
+      "format": "png"
+    },
+    "/assets/case-studies/sports-football-workflow.png": {
+      "source": "assets/890bce9082b77f882bfba6e8c08afd57459a547ec3624076bc79300fcd07328a.png",
+      "sha256": "890bce9082b77f882bfba6e8c08afd57459a547ec3624076bc79300fcd07328a",
+      "width": 1672,
+      "height": 941,
+      "format": "png"
+    },
+    "/assets/case-studies/sports-football-tracking.mp4": {
+      "source": "assets/8cbcc66d4354a1e2e019c5724710e35d39a70e3dfdd2613f9912eca7e4f4cef3.mp4",
+      "sha256": "8cbcc66d4354a1e2e019c5724710e35d39a70e3dfdd2613f9912eca7e4f4cef3",
+      "width": 640,
+      "height": 360,
+      "format": "mp4"
+    },
+    "/assets/case-studies/sports-football-tracking-poster.png": {
+      "source": "assets/dc043038188a069bd29249f0389a998e64cab98e0f5fc6cbe702bb9c60c87cbb.png",
+      "sha256": "dc043038188a069bd29249f0389a998e64cab98e0f5fc6cbe702bb9c60c87cbb",
+      "width": 640,
+      "height": 360,
+      "format": "png"
+    },
+    "/assets/case-studies/sports-football-f1-confidence.png": {
+      "source": "assets/4422c54ac53200d0a5e3e529709980779fb42c5c87ba182435157745b60d9b95.png",
+      "sha256": "4422c54ac53200d0a5e3e529709980779fb42c5c87ba182435157745b60d9b95",
+      "width": 2250,
+      "height": 1500,
+      "format": "png"
+    },
+    "/assets/case-studies/sports-football-confusion-matrix.png": {
+      "source": "assets/9cc6ca9b6368f9c1c0203c352d73a18f1fc19d0be2e5561544ce09679687a2e1.png",
+      "sha256": "9cc6ca9b6368f9c1c0203c352d73a18f1fc19d0be2e5561544ce09679687a2e1",
+      "width": 3000,
+      "height": 2250,
       "format": "png"
     },
     "/assets/case-studies/yolo-computer-vision-optimization-workflow-diagram.png": {
@@ -2141,35 +2485,35 @@
       "format": "png"
     },
     "/assets/case-studies/yolo-computer-vision-optimization-5d40e830aa8d828e7fe3c360c8e867ad6ece4f2fdca5e4efc917744df42d4661.jpg": {
-      "source": "assets/5d40e830aa8d828e7fe3c360c8e867ad6ece4f2fdca5e4efc917744df42d4661.jpeg",
+      "source": "assets/5d40e830aa8d828e7fe3c360c8e867ad6ece4f2fdca5e4efc917744df42d4661.jpg",
       "sha256": "5d40e830aa8d828e7fe3c360c8e867ad6ece4f2fdca5e4efc917744df42d4661",
       "width": 1500,
       "height": 1000,
       "format": "jpeg"
     },
     "/assets/case-studies/yolo-computer-vision-optimization-eeeef2e888f1d90f3f74cc2dedce3217b69875c67001b95e138dbda8dfa92249.jpg": {
-      "source": "assets/eeeef2e888f1d90f3f74cc2dedce3217b69875c67001b95e138dbda8dfa92249.jpeg",
+      "source": "assets/eeeef2e888f1d90f3f74cc2dedce3217b69875c67001b95e138dbda8dfa92249.jpg",
       "sha256": "eeeef2e888f1d90f3f74cc2dedce3217b69875c67001b95e138dbda8dfa92249",
       "width": 1500,
       "height": 1000,
       "format": "jpeg"
     },
     "/assets/case-studies/yolo-computer-vision-optimization-ceb105f111468c414425a9b66c60f83d1c05152495eeae4b79d9770637fba7e6.jpg": {
-      "source": "assets/ceb105f111468c414425a9b66c60f83d1c05152495eeae4b79d9770637fba7e6.jpeg",
+      "source": "assets/ceb105f111468c414425a9b66c60f83d1c05152495eeae4b79d9770637fba7e6.jpg",
       "sha256": "ceb105f111468c414425a9b66c60f83d1c05152495eeae4b79d9770637fba7e6",
       "width": 1920,
       "height": 1281,
       "format": "jpeg"
     },
     "/assets/case-studies/yolo-computer-vision-optimization-e0fda8e3265b2103cda475ec21735f245b48aeee64505137ffb1d446ce8fb869.jpg": {
-      "source": "assets/e0fda8e3265b2103cda475ec21735f245b48aeee64505137ffb1d446ce8fb869.jpeg",
+      "source": "assets/e0fda8e3265b2103cda475ec21735f245b48aeee64505137ffb1d446ce8fb869.jpg",
       "sha256": "e0fda8e3265b2103cda475ec21735f245b48aeee64505137ffb1d446ce8fb869",
       "width": 1000,
       "height": 563,
       "format": "jpeg"
     },
     "/assets/case-studies/yolo-computer-vision-optimization-b3a9d87cd8189721b815648379e5c41748bd8db215f20b201fe3e56024e2eb80.jpg": {
-      "source": "assets/b3a9d87cd8189721b815648379e5c41748bd8db215f20b201fe3e56024e2eb80.jpeg",
+      "source": "assets/b3a9d87cd8189721b815648379e5c41748bd8db215f20b201fe3e56024e2eb80.jpg",
       "sha256": "b3a9d87cd8189721b815648379e5c41748bd8db215f20b201fe3e56024e2eb80",
       "width": 960,
       "height": 540,

@@ -1,6 +1,6 @@
 # Case-study diagram review
 
-Eight project-specific Excalidraw diagrams were created at Viv’s request, with one author per case study. Existing supplied invoice, OCR and planning illustrations stay assigned, and the football illustration and video remain in PR #350. The unrelated n8n lead-qualification illustration stays unassigned.
+Eight project-specific Excalidraw diagrams were created at Viv’s request, with one author per case study. Existing supplied invoice, OCR and planning illustrations stay assigned, and the football illustration, video and detector charts prepared in PR #350 are now included in PR #353. The unrelated n8n lead-qualification illustration stays unassigned.
 
 The diagrams use a white canvas, dark slate headings, purple arrows and pale-purple processing shapes. This follows the requested older thumbnail style. Native scenes are 1600 × 900; the unchanged renderer adds a 10-pixel border, producing 1620 × 920 PNGs. All scenes remain editable and exports are kept uncropped.
 

@@ -36,6 +36,61 @@ const metadata = (candidatePath) => ({
 const validPng = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64');
 
 describe('reviewed case-study staging', () => {
+  const galleryFixture = () => {
+    const media = [
+      { src: '/assets/case-studies/stage-video.mp4', poster: '/assets/case-studies/stage-poster.png', alt: 'Reviewed tracking demonstration.', caption: 'Supplied demonstration, not a project benchmark.', width: 640, height: 360 },
+      { src: '/assets/case-studies/stage-chart.png', alt: 'Reviewed detector chart.', caption: 'Detector evaluation only.', width: 1, height: 1 },
+    ];
+    const candidateStory = { ...story('gallery-story'), gallery: media };
+    const fixture = setup([candidateStory]);
+    const publicationDirectory = path.join(fixture.directory, 'publication');
+    mkdirSync(publicationDirectory);
+    const stagedPath = path.join(publicationDirectory, 'staged-case-study-publication.js');
+    writeFileSync(stagedPath, readFileSync(fixture.stagedPath));
+    writeFileSync(path.join(publicationDirectory, 'case-study-manifest.js'), readFileSync(path.join(fixture.directory, 'case-study-manifest.js')));
+    const video = readFileSync(path.join(process.cwd(), 'public/assets/case-studies/sports-football-tracking.mp4'));
+    mkdirSync(path.join(fixture.directory, 'assets'));
+    const assets = {};
+    for (const [publicPath, bytes, format, width, height] of [
+      [media[0].src, video, 'mp4', 640, 360],
+      [media[0].poster, validPng, 'png', 1, 1],
+      [media[1].src, validPng, 'png', 1, 1],
+    ]) {
+      const source = `assets/${path.basename(publicPath)}`;
+      writeFileSync(path.join(fixture.directory, source), bytes);
+      assets[publicPath] = { source, sha256: digest(bytes), width, height, format };
+    }
+    writeFileSync(fixture.candidatePath, JSON.stringify({ schemaVersion: 1, stories: [candidateStory], assets }));
+    return { ...fixture, stagedPath, media, candidateStory, assets };
+  };
+
+  it('stages a reviewed article gallery without losing video, poster, captions or asset approvals', async () => {
+    const fixture = galleryFixture();
+    await stageReviewedCaseStudyCandidate({ ...fixture, metadata: metadata(fixture.candidatePath) });
+    const store = JSON.parse(readFileSync(fixture.stagedPath, 'utf8').match(/= ([\s\S]*);\s*$/)[1]);
+    expect(store.records[0].content.gallery).toEqual(fixture.media);
+    const { compileCaseStudyPublication } = await import('./compile-case-studies.js');
+    const published = compileCaseStudyPublication({ manifest: { schemaVersion: 1, ...store }, root: fixture.directory });
+    expect(published[0].gallery).toEqual(fixture.media);
+    expect(store.assets[fixture.media[0].src].approval.sha256).toBe(fixture.assets[fixture.media[0].src].sha256);
+    expect(readFileSync(path.join(fixture.directory, 'public' + fixture.media[0].src))).toEqual(readFileSync(path.join(fixture.directory, fixture.assets[fixture.media[0].src].source)));
+  });
+
+  it.each([
+    ['missing poster', candidate => { delete candidate.stories[0].gallery[0].poster; }, /image poster/],
+    ['remote video', candidate => { candidate.stories[0].gallery[0].src = 'https://example.invalid/video.mp4'; }, /safe public case-study MP4 path/],
+    ['unsupported gallery field', candidate => { candidate.stories[0].gallery[0].secret = 'private'; }, /unsupported fields/],
+    ['changed video hash', candidate => { candidate.assets['/assets/case-studies/stage-video.mp4'].sha256 = '0'.repeat(64); }, /bytes changed without approval/],
+    ['invalid MP4 format', candidate => { candidate.assets['/assets/case-studies/stage-video.mp4'].format = 'png'; }, /valid MP4 snapshot/],
+  ])('rejects %s without changing staged publication', async (_, mutate, expected) => {
+    const fixture = galleryFixture();
+    const before = readFileSync(fixture.stagedPath, 'utf8');
+    const candidate = JSON.parse(readFileSync(fixture.candidatePath, 'utf8'));
+    mutate(candidate);
+    writeFileSync(fixture.candidatePath, JSON.stringify(candidate));
+    await expect(stageReviewedCaseStudyCandidate({ ...fixture, metadata: metadata(fixture.candidatePath) })).rejects.toThrow(expected);
+    expect(readFileSync(fixture.stagedPath, 'utf8')).toBe(before);
+  });
   it('rejects a calendar-invalid approval timestamp before changing staged bytes', async () => {
     const fixture = setup([story('first-story')]);
     const before = readFileSync(fixture.stagedPath, 'utf8');

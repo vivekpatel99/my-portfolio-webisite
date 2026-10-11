@@ -229,7 +229,7 @@ export const validatePreparedCaseStudies = (stories, label = 'candidate') => {
   const slugs = new Set();
   stories.forEach((story, index) => {
     const storyLabel = `${label}.stories[${index}]`;
-    candidateObject(story, ['id', 'slug', 'title', 'summary', 'projectStatus', 'completedAt', 'category', 'image', 'sections'], storyLabel);
+    candidateObject(story, ['id', 'slug', 'title', 'summary', 'projectStatus', 'completedAt', 'category', 'image', 'gallery', 'sections'], storyLabel);
     candidateString(story.id, `${storyLabel}.id`); candidateString(story.slug, `${storyLabel}.slug`);
     if (!slugPattern.test(story.id) || !slugPattern.test(story.slug)) candidateIssue(storyLabel, 'id and slug must be safe lowercase hyphenated values');
     if (ids.has(story.id)) candidateIssue(storyLabel, `id ${story.id} is duplicated`);
@@ -254,6 +254,24 @@ export const validatePreparedCaseStudies = (stories, label = 'candidate') => {
       if (story.image.caption !== undefined) candidateNonEmptyString(story.image.caption, `${storyLabel}.image.caption`);
       if (!Number.isSafeInteger(story.image.width) || story.image.width < 1) candidateIssue(`${storyLabel}.image.width`, 'must be a positive integer');
       if (!Number.isSafeInteger(story.image.height) || story.image.height < 1) candidateIssue(`${storyLabel}.image.height`, 'must be a positive integer');
+    }
+    if (story.gallery !== undefined) {
+      if (!Array.isArray(story.gallery)) candidateIssue(`${storyLabel}.gallery`, 'must be an array');
+      story.gallery.forEach((media, mediaIndex) => {
+        const mediaLabel = `${storyLabel}.gallery[${mediaIndex}]`;
+        if (typeof media?.src !== 'string' || !media.src.endsWith('.mp4')) {
+          candidateObject(media, ['src', 'alt', 'caption', 'width', 'height'], mediaLabel);
+          validateCandidateInline({ ...media, type: 'image' }, mediaLabel);
+          return;
+        }
+        candidateObject(media, ['src', 'alt', 'poster', 'caption', 'width', 'height'], mediaLabel);
+        candidateNonEmptyString(media.src, `${mediaLabel}.src`);
+        if (!/^\/assets\/case-studies\/[a-z0-9][a-z0-9._-]*\.mp4$/.test(media.src)) candidateIssue(`${mediaLabel}.src`, 'must use a safe public case-study MP4 path');
+        candidateNonEmptyString(media.alt, `${mediaLabel}.alt`);
+        if (media.caption !== undefined) candidateNonEmptyString(media.caption, `${mediaLabel}.caption`);
+        if (typeof media.poster !== 'string' || !/^\/assets\/case-studies\/[a-z0-9][a-z0-9._-]*$/.test(media.poster) || !caseStudyImageFormatForPath(media.poster)) candidateIssue(`${mediaLabel}.poster`, 'requires a safe public case-study image poster');
+        for (const field of ['width', 'height']) if (!Number.isSafeInteger(media[field]) || media[field] < 1) candidateIssue(`${mediaLabel}.${field}`, 'must be a positive integer');
+      });
     }
     if (!Array.isArray(story.sections) || story.sections.length !== PUBLIC_HEADINGS.length) candidateIssue(`${storyLabel}.sections`, 'must contain exactly the three public sections');
     story.sections.forEach((section, sectionIndex) => {

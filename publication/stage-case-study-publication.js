@@ -46,6 +46,7 @@ const articleRecord = (story, metadata) => {
     ...(story.category === undefined ? {} : { category: story.category }),
     sections: story.sections,
     ...(story.image === undefined ? {} : { image: story.image }),
+    ...(story.gallery === undefined ? {} : { gallery: story.gallery }),
   };
   const summaryRef = `${story.id}.summary`;
   const outcomeRef = `${story.id}.outcome`;
@@ -134,7 +135,14 @@ export async function stageReviewedCaseStudyCandidate({ candidatePath, stagedPat
     if (node.children) collect(node.children);
     if (node.items) node.items.forEach((item) => collect(item.children));
   });
-  for (const story of stories) { if (story.image) referenced.add(story.image.src); story.sections.forEach((section) => collect(section.nodes)); }
+  for (const story of stories) {
+    if (story.image) referenced.add(story.image.src);
+    story.gallery?.forEach((media) => {
+      referenced.add(media.src);
+      if (media.poster) referenced.add(media.poster);
+    });
+    story.sections.forEach((section) => collect(section.nodes));
+  }
   const assetEntries = {};
   const frozenAssetBytes = new Map();
   const candidateDirectory = realpathSync(path.resolve(path.dirname(candidatePath)));
@@ -152,6 +160,14 @@ export async function stageReviewedCaseStudyCandidate({ candidatePath, stagedPat
     const actualAssetDigest = digest(sourceBytes);
     if (actualAssetDigest !== sourceAsset.sha256) throw new Error(`Reviewed candidate asset bytes changed without approval: ${publicPath}`);
     frozenAssetBytes.set(publicPath, sourceBytes);
+    if (publicPath.endsWith('.mp4')) {
+      if (sourceAsset.format !== 'mp4' || sourceBytes.toString('ascii', 4, 8) !== 'ftyp' || !Number.isSafeInteger(sourceAsset.width) || sourceAsset.width < 1 || !Number.isSafeInteger(sourceAsset.height) || sourceAsset.height < 1) throw new Error(`Reviewed candidate asset is not a valid MP4 snapshot: ${publicPath}`);
+      assetEntries[publicPath] = {
+        file: `public${publicPath}`,
+        approval: explicitApproval(actualAssetDigest, metadata),
+      };
+      continue;
+    }
     let dimensions; try { dimensions = imageSize(sourceBytes); } catch { throw new Error(`Reviewed candidate asset is not a valid image: ${publicPath}`); }
     const format = String(dimensions.type || '').toLowerCase();
     if (!Number.isSafeInteger(dimensions.width) || !Number.isSafeInteger(dimensions.height) || dimensions.width < 1 || dimensions.height < 1 || dimensions.width !== sourceAsset.width || dimensions.height !== sourceAsset.height || !['png', 'jpg', 'jpeg', 'webp'].includes(format) || (sourceAsset.format === 'jpeg' ? !['jpg', 'jpeg'].includes(format) : sourceAsset.format !== format)) throw new Error(`Reviewed candidate asset dimensions or format changed without approval: ${publicPath}`);

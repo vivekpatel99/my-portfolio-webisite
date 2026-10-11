@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="810" viewBox="0 0 1080 810" role="img" aria-labelledby="title description">
+<title id="title">Listing CSV export. Illustrative output using fictional data.</title>
+<desc id="description">An illustrative CSV contains IDs A and B with fictional source URLs https://listing.example/A and https://listing.example/B. A separate conceptual completed-listing record contains A and B. Field names and checkpoint presentation are examples, not a recovered client export or a verified checkpoint storage format.</desc>
+<rect x="0" y="0" width="1080" height="810" fill="#FFFFFF"/>
+<rect x="0" y="0" width="1080" height="100" fill="#F5F3FF"/>
+<line x1="0" y1="0" x2="1080" y2="0" stroke="#6D28D9" stroke-width="8"/>
+<text x="64" y="65" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="700" fill="#6D28D9">Illustrative output | Fictional data</text>
+<text x="64" y="174" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="700" fill="#1E293B">Listing CSV export</text>
+<text x="64" y="232" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="400" fill="#475569">Two fictional records</text>
+<rect x="64" y="284" width="952" height="270" fill="#F8FAFC"/>
+<line x1="64" y1="284" x2="1016" y2="284" stroke="#6D28D9" stroke-width="3"/>
+<text x="88" y="352" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="48" font-weight="700" fill="#6D28D9">id,source_url</text>
+<line x1="88" y1="380" x2="992" y2="380" stroke="#CBD5E1" stroke-width="2"/>
+<text x="88" y="448" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="48" font-weight="400" fill="#1E293B">A,https://listing.example/A</text>
+<text x="88" y="522" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="48" font-weight="400" fill="#1E293B">B,https://listing.example/B</text>
+<text x="64" y="634" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="700" fill="#1E293B">Completed IDs</text>
+<text x="650" y="634" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="54" font-weight="400" fill="#6D28D9">A, B</text>
+<text x="64" y="720" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="400" fill="#475569">Conceptual record for restart and resume.</text>
+</svg>

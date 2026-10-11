@@ -12,7 +12,7 @@ Cover images fit within the card instead of cropping away illustration content. 
 | ChatGPT Image Aug 8, 2026, 03_57_14 PM (2).png | ai-invoice-processing-automation | Added to its gallery | b62fc9703a746c28bc6eb4e0e2ea998069b81190d3aa8d0380553c5f44018768 |
 | ChatGPT Image Aug 8, 2026, 03_57_15 PM (4).png | ai-project-planning-assistant | Added to its gallery | d06f0fc78c42733d590f74f499f91b51c124d40532abbe1b7552ed57bc7ee590 |
 | ChatGPT Image Aug 8, 2026, 03_57_15 PM (3).png | Unassigned | Saved at `docs/case-studies/unassigned/n8n-lead-qualification.png`; excluded from production | 8d87723835fba138f2e047f1e3d5a4eb701cf4e2d21650749588625ca876cf67 |
-| ChatGPT Image Aug 8, 2026, 03_57_15 PM (5).png | sports-video-analytics-yolo | Same pixels as the football illustration already delivered in [PR #350](https://github.com/vivekpatel99/my-portfolio-webisite/pull/350); no duplicate asset | fa3e0352229ccf27bfc674ed45ef2d3f99abd896dd196f888f8ea1bb60a999b6 |
+| ChatGPT Image Aug 8, 2026, 03_57_15 PM (5).png | sports-video-analytics-yolo | Same pixels as the football illustration prepared in [PR #350](https://github.com/vivekpatel99/my-portfolio-webisite/pull/350), now included with its video and charts in PR #353; no duplicate illustration asset | fa3e0352229ccf27bfc674ed45ef2d3f99abd896dd196f888f8ea1bb60a999b6 |
 
 ## Illustration scope
 
@@ -28,7 +28,7 @@ Lead qualification shows webhook intake, enrichment, AI scoring and ClickUp rout
 
 Assigned PNG copies retain source pixels and dimensions while removing metadata. Full-resolution images remain available for enlargement. WebP display images and JPEG thumbnails use the existing hash-bound derivative registry. The unassigned PNG is an exact source-file copy outside the public output.
 
-Publication approvals record the direct request, caption decision and cover correction. Existing summaries, outcome claims and unrelated case studies are unchanged. This PR requires its own review and merge; production release remains separate.
+Publication approvals record the direct request, caption decision and cover correction. The 11 October follow-up in PR #353 also qualifies historical screenshot claims and sports references, clarifies selected summaries, and adds fictional output examples. See [the improvement review](improvement-review.md) for that follow-up. Production release remains separate.
 
 ## Verification
 

@@ -79,7 +79,9 @@ for (const viewport of viewports) {
     const opener = stage.locator('.case-gallery-open');
     await expectClearLabel(stage, opener.locator('img'));
     const labelBox = await stage.locator('.detection-label').boundingBox();
-    for (const control of await stage.locator('button.case-gallery-arrow').all()) {
+    const controls = page.locator('.case-gallery-navigation').first().locator('button.case-gallery-arrow');
+    await expect(controls).toHaveCount(2);
+    for (const control of await controls.all()) {
       const box = await control.boundingBox();
       expect(box.y).toBeGreaterThan(labelBox.y + labelBox.height);
     }

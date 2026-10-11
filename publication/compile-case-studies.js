@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { caseStudyPublicationManifest } from './case-study-manifest.js';
 import { assertApprovedAsset, assertApproval, baselineApprovalHashes, digest } from './case-study-evidence.js';
 import { imageSize } from 'image-size';
-import { assertCompletionMonth, assertMedia, assertProjectStatus, assertSafeExternalUrl, assertStat, assertString, caseStudyImagePathMatchesFormat, exactKeys, fail, slugPattern } from './case-study-schema.js';
+import { assertCompletionMonth, assertMedia, assertProjectStatus, assertSafeExternalUrl, assertStat, assertString, caseStudyImageFormatForPath, caseStudyImagePathMatchesFormat, exactKeys, fail, slugPattern } from './case-study-schema.js';
 import { validatePreparedCaseStudies } from './markdown-case-study.js';
 import { featuredCaseStudySlugs } from './case-study-featured.js';
 import { otherWorkCaseStudySlugs } from './case-study-other-work.js';
@@ -20,7 +20,7 @@ export const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.met
 export const caseStudyAssetPrefix = '/assets/case-studies/';
 
 const publicRecordFields = new Set(['title', 'cardTitle', 'category', 'summary', 'challenge', 'solution', 'outcome', 'stats', 'image', 'gallery', 'stack', 'externalLinks', 'projectStatus', 'completedAt']);
-const articleRecordFields = new Set(['title', 'summary', 'category', 'sections', 'image', 'projectStatus', 'completedAt']);
+const articleRecordFields = new Set(['title', 'summary', 'category', 'sections', 'image', 'gallery', 'projectStatus', 'completedAt']);
 const caseStudyAssetUrls = (content) => [content.image, ...(content.gallery ?? [])]
   .flatMap((item) => [item?.src, item?.poster].filter(Boolean));
 const articleAssetUrls = (sections) => {
@@ -86,17 +86,30 @@ const compiledArticle = (manifest, record, root) => {
     sections: content.sections,
   }], `published ${record.slug}`);
   if (content.image !== undefined) assertMedia(content.image, `published ${record.slug} image`);
+  if (content.gallery !== undefined) {
+    if (!Array.isArray(content.gallery)) fail(`published ${record.slug} gallery must be an array`);
+    content.gallery.forEach((media, index) => {
+      const label = `published ${record.slug} gallery ${index + 1}`;
+      assertMedia(media, label);
+      if (!Number.isSafeInteger(media.width) || media.width < 1 || !Number.isSafeInteger(media.height) || media.height < 1) fail(`${label} requires intrinsic dimensions`);
+      if (media.src.endsWith('.mp4')) {
+        if (!media.poster || !caseStudyImageFormatForPath(media.poster)) fail(`${label} video requires an approved image poster`);
+      } else if (!caseStudyImageFormatForPath(media.src)) fail(`${label} must use an approved image or MP4 path`);
+    });
+  }
   const mediaByUrl = new Map();
   const addMedia = (media) => { if (!media) return; mediaByUrl.set(media.src, [...(mediaByUrl.get(media.src) ?? []), media]); };
   addMedia(content.image);
+  content.gallery?.forEach(addMedia);
   const collectArticleMedia = (nodes) => (nodes ?? []).forEach((node) => { if (node.type === 'image') addMedia(node); if (node.children) collectArticleMedia(node.children); if (node.items) node.items.forEach((item) => collectArticleMedia(item.children)); });
   content.sections.forEach((section) => collectArticleMedia(section.nodes));
-  for (const assetUrl of [...(content.image ? [content.image.src, content.image.poster].filter(Boolean) : []), ...articleAssetUrls(content.sections)]) {
+  for (const assetUrl of [...caseStudyAssetUrls(content), ...articleAssetUrls(content.sections)]) {
     if (!/^\/assets\/case-studies\/[A-Za-z0-9][A-Za-z0-9._-]*$/.test(assetUrl)) fail(`published ${record.slug} has an unsafe case-study asset path`);
     const asset = manifest.assets?.[assetUrl];
     if (!asset || typeof asset.file !== 'string') fail(`published ${record.slug} references an unapproved asset: ${assetUrl}`);
-    const binding = assertAssetBinding({ root, publicPath: assetUrl, asset, media: mediaByUrl.get(assetUrl), requireDimensions: true, label: `published ${record.slug} asset ${assetUrl}` });
-    if (!caseStudyImagePathMatchesFormat(assetUrl, binding.format)) fail(`published ${record.slug} image asset ${assetUrl} has a filename extension that does not match its actual ${binding.format} format`);
+    const isVideo = assetUrl.endsWith('.mp4');
+    const binding = assertAssetBinding({ root, publicPath: assetUrl, asset, media: mediaByUrl.get(assetUrl), requireDimensions: !isVideo, label: `published ${record.slug} asset ${assetUrl}` });
+    if (!isVideo && !caseStudyImagePathMatchesFormat(assetUrl, binding.format)) fail(`published ${record.slug} image asset ${assetUrl} has a filename extension that does not match its actual ${binding.format} format`);
   }
   exactKeys(record.claimRefs, ['summary', 'outcome'], `published ${record.slug} claim references`);
   assertContentClaim(manifest, record, record.claimRefs.summary, 'summary', content.summary);
@@ -111,6 +124,7 @@ const compiledArticle = (manifest, record, root) => {
     ...(content.category === undefined ? {} : { category: content.category }),
     sections: content.sections,
     ...(content.image === undefined ? {} : { image: { ...content.image } }),
+    ...(content.gallery === undefined ? {} : { gallery: content.gallery.map((media) => ({ ...media })) }),
   };
 };
 

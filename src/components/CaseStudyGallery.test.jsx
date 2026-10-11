@@ -3,7 +3,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { readFileSync } from 'node:fs';
 import { afterEach, describe, expect, it } from 'vitest';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { compileCaseStudyPublication } from '../../publication/compile-case-studies.js';
 import { caseStudyPublicationBaseline } from '../../publication/case-study-manifest.js';
 import Gallery, { caseStudyDisplaySrc, collectGalleryImages, galleryStageAspectRatio, galleryThumbnailSrc } from './CaseStudyGallery.js';
@@ -225,6 +225,33 @@ describe('case study gallery', () => {
     expect(screen.getByText('1 of 3')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Show image 2: Output' }));
     expect(screen.getByText('2 of 3')).toBeTruthy();
+  });
+  it('keeps working navigation outside the evidence stage inline and enlarged', () => {
+    render(<Gallery images={images} />);
+    const gallery = screen.getByRole('region', { name: 'Case study images' });
+    const assertSeparateNavigation = (region) => {
+      const stage = region.querySelector('.case-gallery-stage');
+      for (const name of ['Previous image', 'Next image']) {
+        expect(stage.contains(within(region).getByRole('button', { name }))).toBe(false);
+      }
+    };
+    assertSeparateNavigation(gallery);
+    fireEvent.click(within(gallery).getByRole('button', { name: 'Next image' }));
+    expect(within(gallery).getByText('2 of 3')).toBeTruthy();
+
+    const opener = within(gallery).getByRole('button', { name: 'Enlarge image: Output' });
+    fireEvent.click(opener);
+    const dialog = screen.getByRole('dialog');
+    assertSeparateNavigation(dialog);
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Zoom in' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Next image' }));
+    expect(within(dialog).getByText('3 of 3')).toBeTruthy();
+    expect(within(dialog).getByText('100%')).toBeTruthy();
+    fireEvent.keyDown(within(dialog).getByRole('button', { name: 'Previous image' }), { key: 'ArrowLeft' });
+    expect(within(dialog).getByText('2 of 3')).toBeTruthy();
+    fireEvent.keyDown(dialog, { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.activeElement).toBe(opener);
   });
   it('supports keyboard navigation, enlargement, zoom and Escape focus restoration', () => {
     render(<Gallery images={images} />);
