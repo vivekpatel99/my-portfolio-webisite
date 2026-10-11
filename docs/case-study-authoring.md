@@ -34,6 +34,17 @@ npm run case-study:stage -- \
   --evidence https://example.invalid/review
 ```
 
+Reviewed article candidates can also include an explicit gallery with local MP4
+video, an approved image poster and visible captions. Staging a candidate with
+video requires `ffprobe` from [FFmpeg](https://ffmpeg.org/ffprobe.html) on `PATH`
+(`brew install ffmpeg` on macOS; `sudo apt-get install ffmpeg` on Ubuntu). Image-only
+staging and ordinary builds do not require it. CI installs FFmpeg for the staging
+tests. The stage command probes the exact approved video bytes and requires real
+video stream dimensions to match the asset metadata and every gallery entry.
+Missing tooling, malformed media or mismatched dimensions stop staging before
+public assets or the staged store change. This verifies stream metadata; visual
+playback review remains part of media review.
+
 To revise a staged story, edit its Markdown and rerun `case-study:prepare` with
 that source explicitly selected. Review the resulting candidate, compute its
 new digest, and run `case-study:stage` again. A fresh digest and approval are

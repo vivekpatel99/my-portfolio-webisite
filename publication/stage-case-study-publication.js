@@ -1,4 +1,6 @@
 import { readFileSync, renameSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, existsSync, realpathSync, lstatSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { imageSize } from 'image-size';
@@ -120,6 +122,36 @@ const pruneStagedAssets = (assets, records, baseline) => {
   return Object.fromEntries(Object.entries(assets ?? {}).filter(([publicPath]) => referenced.has(publicPath)));
 };
 
+const assertReviewedMp4Snapshot = ({ publicPath, sourceAsset, sourceBytes, stories }) => {
+  if (sourceAsset.format !== 'mp4' || sourceBytes.toString('ascii', 4, 8) !== 'ftyp' || !Number.isSafeInteger(sourceAsset.width) || sourceAsset.width < 1 || !Number.isSafeInteger(sourceAsset.height) || sourceAsset.height < 1) throw new Error(`Reviewed candidate asset is not a valid MP4 snapshot: ${publicPath}`);
+  const temporaryDirectory = mkdtempSync(path.join(tmpdir(), 'case-study-mp4-'));
+  try {
+    const temporaryPath = path.join(temporaryDirectory, 'reviewed.mp4');
+    writeFileSync(temporaryPath, sourceBytes, { flag: 'wx', mode: 0o600 });
+    const result = spawnSync('ffprobe', [
+      '-v', 'error', '-select_streams', 'V:0', '-count_packets',
+      '-show_entries', 'format=format_name:stream=codec_type,codec_name,width,height,nb_read_packets',
+      '-of', 'json', temporaryPath,
+    ], { encoding: 'utf8', timeout: 10_000, maxBuffer: 1024 * 1024 });
+    if (result.error?.code === 'ENOENT') throw new Error(`Reviewed MP4 validation requires ffprobe; install FFmpeg before staging ${publicPath}`);
+    if (result.error || result.status !== 0) throw new Error(`Reviewed candidate asset is not a valid MP4 snapshot: ${publicPath} (ffprobe failed)`);
+    let probe;
+    try { probe = JSON.parse(result.stdout); } catch { throw new Error(`Reviewed candidate asset is not a valid MP4 snapshot: ${publicPath} (ffprobe returned invalid JSON)`); }
+    const formats = typeof probe?.format?.format_name === 'string' ? probe.format.format_name.split(',') : [];
+    if (!formats.includes('mp4')) throw new Error(`Reviewed candidate asset is not a valid MP4 snapshot: ${publicPath} (container is not in the MP4 family)`);
+    const video = Array.isArray(probe.streams) ? probe.streams.find((stream) => stream?.codec_type === 'video') : undefined;
+    const packetCount = Number(video?.nb_read_packets);
+    if (!video || typeof video.codec_name !== 'string' || !video.codec_name.trim() || video.codec_name.trim().toLowerCase() === 'unknown' || !Number.isSafeInteger(packetCount) || packetCount < 1) throw new Error(`Reviewed candidate MP4 snapshot has no valid video stream: ${publicPath}`);
+    if (!Number.isSafeInteger(video.width) || video.width < 1 || !Number.isSafeInteger(video.height) || video.height < 1) throw new Error(`Reviewed candidate MP4 snapshot has invalid video dimensions: ${publicPath}`);
+    if (video.width !== sourceAsset.width || video.height !== sourceAsset.height) throw new Error(`Reviewed candidate MP4 dimensions changed without approval: ${publicPath}`);
+    for (const story of stories) {
+      for (const media of story.gallery ?? []) {
+        if (media.src === publicPath && (media.width !== video.width || media.height !== video.height)) throw new Error(`Reviewed candidate gallery video dimensions do not match its MP4 snapshot: ${publicPath} (${story.id})`);
+      }
+    }
+  } finally { rmSync(temporaryDirectory, { recursive: true, force: true }); }
+};
+
 export async function stageReviewedCaseStudyCandidate({ candidatePath, stagedPath, metadata }) {
   validateMetadata(metadata);
   const bytes = readFileSync(candidatePath);
@@ -161,7 +193,7 @@ export async function stageReviewedCaseStudyCandidate({ candidatePath, stagedPat
     if (actualAssetDigest !== sourceAsset.sha256) throw new Error(`Reviewed candidate asset bytes changed without approval: ${publicPath}`);
     frozenAssetBytes.set(publicPath, sourceBytes);
     if (publicPath.endsWith('.mp4')) {
-      if (sourceAsset.format !== 'mp4' || sourceBytes.toString('ascii', 4, 8) !== 'ftyp' || !Number.isSafeInteger(sourceAsset.width) || sourceAsset.width < 1 || !Number.isSafeInteger(sourceAsset.height) || sourceAsset.height < 1) throw new Error(`Reviewed candidate asset is not a valid MP4 snapshot: ${publicPath}`);
+      assertReviewedMp4Snapshot({ publicPath, sourceAsset, sourceBytes, stories });
       assetEntries[publicPath] = {
         file: `public${publicPath}`,
         approval: explicitApproval(actualAssetDigest, metadata),

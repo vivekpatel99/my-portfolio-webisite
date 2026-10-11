@@ -7,6 +7,9 @@ const covers = ['depth-based-distance-estimation', 'ai-project-planning-assistan
 
 async function expectClearLabel(stage, media) {
   const label = stage.locator(':scope > .detection-label');
+  await expect(stage).toBeVisible();
+  await expect(media).toBeVisible();
+  await expect(label).toBeVisible();
   const labelBox = await label.boundingBox();
   const mediaBox = await media.boundingBox();
   const stageBox = await stage.boundingBox();
@@ -77,7 +80,10 @@ for (const viewport of viewports) {
     await page.goto('/project/invoice-ocr-extraction/');
     const stage = page.locator('.case-gallery-stage').first();
     const opener = stage.locator('.case-gallery-open');
-    await expectClearLabel(stage, opener.locator('img'));
+    const image = opener.locator('img');
+    await expect(image).toBeVisible();
+    await expect.poll(() => image.evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
+    await expectClearLabel(stage, image);
     const labelBox = await stage.locator('.detection-label').boundingBox();
     const controls = page.locator('.case-gallery-navigation').first().locator('button.case-gallery-arrow');
     await expect(controls).toHaveCount(2);
@@ -91,11 +97,11 @@ for (const viewport of viewports) {
     await opener.press('Enter');
     const dialog = page.getByRole('dialog');
     await expect(dialog).toBeVisible();
+    await expect.poll(() => dialog.locator('.case-gallery-viewport img').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
     await expectClearLabel(dialog, dialog.locator('.case-gallery-stage'));
     const dialogLabel = await dialog.locator(':scope > .detection-label').boundingBox();
     const closeButton = await dialog.getByRole('button', { name: 'Close enlarged image' }).boundingBox();
     expect(closeButton.y).toBeGreaterThanOrEqual(dialogLabel.y + dialogLabel.height);
-    await expect.poll(() => dialog.locator('.case-gallery-viewport img').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
     await page.keyboard.press('Escape');
     await expect(dialog).toHaveCount(0);
     await expect(opener).toBeFocused();
