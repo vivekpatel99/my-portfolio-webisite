@@ -118,7 +118,7 @@ The following map records the 3 October Corners + labels decision tracked in #29
 | Testimonials | Whole quote panel | Confirmed: two opposing static corners with testimonial and client metadata on the edge. Individual sentences remain unboxed. |
 | About | Portrait and biography panels | Confirmed: two opposing static corners with portrait and biography labels on the edge. |
 | Footer | Whole footer content panel | Confirmed: one corner frame and an attached label. Individual links remain unboxed. |
-| Case-study gallery | Inline evidence stage and outer lightbox | Confirmed on 5 October 2026: use the shared opposing outer corners with a transparent `PROJECT EVIDENCE` label centered on the top edge. No nested decorative stage frame inside the lightbox. Preserve media bounds, captions, and functional controls, thumbnails, selected/disabled states, and keyboard focus outlines. |
+| Case-study gallery | Inline evidence stage and outer lightbox | Confirmed on 5 October 2026: use the shared opposing outer corners with a transparent `PROJECT EVIDENCE` label centered on the top edge. No nested decorative stage frame inside the lightbox. Preserve media bounds, captions, and functional controls, thumbnails, selected/disabled states, and keyboard focus outlines. The Excalidraw overview diagram in IM-01 is not delivery evidence and does not use this label. |
 | Service detail | Engagement details and combined scope panels | Confirmed on 5 October 2026: shared opposing outer-edge corners with transparent `ENGAGEMENT DETAILS` and `PROJECT SCOPE` edge labels. Preserve scope separators, text, rates, and actions. |
 | Contact | Main request form and What happens next panel | Confirmed on 5 October 2026: shared opposing outer-edge corners with transparent `PROJECT · REQUEST` and `PROCESS · NEXT STEPS` edge labels. Remove the redundant interior `CONTACT · DETECTED` metadata. Preserve the actual heading and content, input boundaries, and form behavior. |
 | Case-study detail | Existing framed panels | Existing reference: separate review scope. The homepage decision does not establish completed implementation or verification for these routes. |
@@ -242,6 +242,10 @@ Pause is removed; that removal is confirmed. Confirmed: the cycle runs automatic
 Proposed default: other corner frames stay static. A brief 150 to 200ms hover or focus transition is the proposed default for clickable cards. Proposed default: no sitewide scanning loop, pointer-following brackets, or repeated idle pulse is added by the theme guide.
 
 ### IM-01. Portraits and project imagery
+
+Confirmed on 10 October 2026: each case study uses its Excalidraw overview diagram as the cover, card thumbnail, and first gallery image. The diagram explains what was built at a glance, including the main inputs, workflow, and outputs, so clients can understand the project before reading the article. Real project screenshots and videos follow the diagram for deeper exploration. Keep the diagram readable at thumbnail size and match its labels and connections to the documented project scope.
+
+The overview diagram explains the project. It is not delivery evidence, including when the artwork is a synthetic workflow illustration. Do not show it under the SH-02 `PROJECT EVIDENCE` label. Real screenshots and videos that follow it keep that label. Proposed default: give the diagram the same opposing corners and a transparent `PROJECT OVERVIEW` label.
 
 Proposed default: use Vivek's authentic portrait with recognizable likeness and natural proportions. Confirmed: the hero needs a closer head-and-shoulders crop under #293. Confirmed: the About photo has a separate 4:3 composition under #298.
 
