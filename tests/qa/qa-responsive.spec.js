@@ -5,6 +5,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { HOURLY_RATE_LABEL } from '../../src/config/pricing.js';
 
 const viewports = [
   { name: 'narrow-phone', width: 320, height: 568 },
@@ -301,7 +302,7 @@ const assertHeroInvoiceGaps = async (page, { requireMobileHeaderGap = false } = 
   const credentialValue = await box(invoice.getByText('Top Rated Plus', { exact: true }));
   const caption = await box(invoice.getByText('Upwork freelancer', { exact: true }));
   const rateLabel = await box(invoice.getByText('Rate', { exact: true }));
-  const rateValue = await box(invoice.getByText('€45/hour', { exact: true }));
+  const rateValue = await box(invoice.getByText(HOURLY_RATE_LABEL, { exact: true }));
 
   expect(title.y - bottom(pill)).toBeGreaterThanOrEqual(8);
   // #191 asks for one consistent panel-to-actions gap inside 16-24 px.

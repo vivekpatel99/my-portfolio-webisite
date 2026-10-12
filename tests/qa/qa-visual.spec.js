@@ -2,6 +2,7 @@ import { caseStudies } from '../../src/data/caseStudies.js';
 import { caseStudyDisplaySrc, collectGalleryImages } from '../../src/components/CaseStudyGallery.js';
 import { expect, test } from './qa-test.js';
 import { assertVisualLayout } from './visual-layout.js';
+import { HOURLY_RATE_LABEL } from '../../src/config/pricing.js';
 
 const COOKIE_KEY = 'cookie_consent_preferences';
 
@@ -168,7 +169,7 @@ test('desktop hero invoice proof fold: all elements visible, no clip', async ({ 
   await expect(page.getByText('Upwork freelancer')).toBeVisible();
   await expect(page.getByText('Client delivery record')).toBeVisible();
   
-  await expect(page.getByText('€45/hour', { exact: true })).toBeVisible();
+  await expect(page.getByText(HOURLY_RATE_LABEL, { exact: true })).toBeVisible();
   await expect(page.getByText('Linz, Austria', { exact: true })).toBeVisible();
   
   await expect(page.getByText('Detected total', { exact: true })).not.toBeVisible();

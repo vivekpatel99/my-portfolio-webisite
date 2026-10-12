@@ -1,12 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { DetectionHeading, DetectionLabel } from './DetectionFrame';
-import {
-  HOURLY_FROM_LABEL,
-  serviceOffers,
-  serviceRouteForId,
-  serviceTimelineLabel,
-} from '@/data/serviceOffers';
+import { HOURLY_FROM_LABEL } from '@/config/pricing';
+import { serviceOffers, serviceRouteForId, serviceTimelineLabel } from '@/data/serviceOffers';
 
 const firstSentence = (text) => text.match(/^[\s\S]*?\.(?=\s)/)?.[0] ?? text;
 

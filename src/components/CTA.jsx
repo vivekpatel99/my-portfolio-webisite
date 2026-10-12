@@ -2,7 +2,7 @@ import React from 'react';
 import { DetectionHeading, DetectionLabel } from './DetectionFrame';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { HOURLY_FROM_LABEL } from '@/data/serviceOffers';
+import { HOURLY_FROM_LABEL } from '@/config/pricing';
 
 const CTA = () => {
   return (

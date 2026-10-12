@@ -2,7 +2,8 @@ import React from 'react';
 import { DetectionLabel } from './DetectionFrame.js';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { HOURLY_FROM_LABEL, serviceOffers, serviceTimelineLabel } from '../data/serviceOffers.js';
+import { HOURLY_FROM_LABEL } from '../config/pricing.js';
+import { serviceOffers, serviceTimelineLabel } from '../data/serviceOffers.js';
 
 // Plain .js (no JSX) so tools/generate-static-route-html.js can prerender the
 // same service content in Node that the SPA renders in the browser.

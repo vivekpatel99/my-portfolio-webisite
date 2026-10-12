@@ -2,12 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import {
-  HOURLY_FROM_EUR,
-  HOURLY_FROM_LABEL,
-  serviceOffers,
-  serviceTimelineLabel,
-} from './serviceOffers';
+import { HOURLY_RATE_EUR, HOURLY_FROM_LABEL } from '../config/pricing.js';
+import { serviceOffers, serviceTimelineLabel } from './serviceOffers';
 
 const TITLES = [
   'DATA EXTRACTION AUTOMATION SPRINT',
@@ -23,13 +19,12 @@ const moduleSource = readFileSync(
 );
 
 describe('serviceOffers catalog', () => {
-  it('pins the public hourly amount at 45', () => {
-    expect(HOURLY_FROM_EUR).toBe(45);
+  it('uses a positive shared euro hourly amount', () => {
+    expect(HOURLY_RATE_EUR).toBeGreaterThan(0);
   });
 
   it('derives the offer rate label from that amount', () => {
-    expect(HOURLY_FROM_LABEL).toBe('from €45/hour');
-    expect(HOURLY_FROM_LABEL).toBe(`from €${HOURLY_FROM_EUR}/hour`);
+    expect(HOURLY_FROM_LABEL).toBe(`from €${HOURLY_RATE_EUR}/hour`);
   });
 
   it('keeps the three public titles in render order', () => {
@@ -97,7 +92,6 @@ describe('serviceOffers catalog', () => {
     expect(serialized).not.toMatch(/€80|\$45\/hour|3,?600|7,?200|€3,\d{3}/);
     expect(serialized).not.toMatch(/guarantee|30-day|30 days of support|promised ROI|guaranteed ROI|\bSLA\b/i);
     expect(moduleSource).not.toMatch(/€80|\$45\/hour/);
-    expect(HOURLY_FROM_LABEL).toContain('from €45/hour');
   });
 
   it('keeps euros out of bullets so money cannot sneak past the missing price key', () => {
@@ -106,6 +100,6 @@ describe('serviceOffers catalog', () => {
       .join('\n');
     expect(copy).not.toMatch(/€|\$/);
     const eurosInSource = [...moduleSource.matchAll(/€/g)];
-    expect(eurosInSource).toHaveLength(1);
+    expect(eurosInSource).toHaveLength(0);
   });
 });

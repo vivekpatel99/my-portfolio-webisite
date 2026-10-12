@@ -6,6 +6,7 @@ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom';
 import { HERO_DETECTED_FIELD_WINDOWS, HERO_INVOICE_FIELDS } from '@/lib/heroDetectedFields';
 import Hero from './Hero';
+import { HOURLY_RATE_LABEL } from '@/config/pricing';
 
 afterEach(() => {
   cleanup();
@@ -39,7 +40,7 @@ describe('Hero invoice proof fold (#176)', () => {
   it('does not render Detected total footer (removed per #176)', () => {
     renderHero();
     expect(screen.queryByText('Detected total')).toBeNull();
-    expect(screen.queryByText(/€45.*\/hr/)).toBeNull();
+    expect(screen.queryByText(/€\d+.*\/hr/)).toBeNull();
     expect(screen.queryByText(/ok/i)).toBeNull();
   });
 
@@ -74,20 +75,20 @@ describe('Hero invoice proof fold (#176)', () => {
     expect(heading.textContent).toBe('Computer Vision & AI Engineer');
   });
 
-  it('displays Euro rate €45/hour only (no dollar or other currencies)', () => {
+  it('displays the configured Euro rate only (no dollar or other currencies)', () => {
     const { container } = renderHero();
-    const euroRate = screen.getByText('€45/hour', { exact: true });
+    const euroRate = screen.getByText(HOURLY_RATE_LABEL, { exact: true });
     expect(euroRate).toBeTruthy();
     expect(container.textContent).not.toMatch(/\$|USD|GBP|£/);
   });
 
   it('shows the rate once, in the invoice RATE field, without the old hero line (#195)', () => {
     const { container } = renderHero();
-    expect(screen.getAllByText('€45/hour', { exact: true })).toHaveLength(1);
-    expect(container.textContent.match(/€45/g)).toHaveLength(1);
+    expect(screen.getAllByText(HOURLY_RATE_LABEL, { exact: true })).toHaveLength(1);
+    expect(container.textContent.split(HOURLY_RATE_LABEL)).toHaveLength(2);
     expect(screen.queryByText(/Starting at/)).toBeNull();
     const rateLabel = screen.getByText('Rate', { exact: true });
-    expect(rateLabel.closest('.hero-ocr-field').textContent).toContain('€45/hour');
+    expect(rateLabel.closest('.hero-ocr-field').textContent).toContain(HOURLY_RATE_LABEL);
   });
 
   it('shows the location once, in the invoice LOCATION field (#266)', () => {
@@ -290,7 +291,7 @@ describe('Hero rotating annotations', () => {
     expect(ids(container)).toEqual(expected(0));
     expect(container.querySelectorAll('[data-hero-field]')).toHaveLength(6);
     expect(container.querySelectorAll('article .hero-field-label')).toHaveLength(6);
-    const values = ['Vivek Patel', 'Computer Vision & AI Engineer', 'Top Rated Plus', '100% Job Success', '€45/hour', 'Linz, Austria'];
+    const values = ['Vivek Patel', 'Computer Vision & AI Engineer', 'Top Rated Plus', '100% Job Success', HOURLY_RATE_LABEL, 'Linz, Austria'];
     values.forEach((value) => expect(screen.getByText(value, { exact: true }).closest('.hero-field-value').style.opacity).toBe(''));
     HERO_INVOICE_FIELDS.forEach((id) => expect(opacity(container, id)).toBe(HERO_DETECTED_FIELD_WINDOWS[0].includes(id) ? '1' : '0'));
     expect(container.querySelector('[data-hero-field="tags"]')).toBeNull();

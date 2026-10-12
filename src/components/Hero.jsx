@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { HERO_DETECTED_FIELD_WINDOWS, HERO_INVOICE_FIELDS } from '@/lib/heroDetectedFields';
 import { profileImages } from '@/config/links';
 import { DetectionLabel } from './DetectionFrame';
+import { HOURLY_RATE_LABEL } from '@/config/pricing';
 
 const BACKGROUND_LIGHTS = [
   { top: '9%', left: '4%', w: 64, h: 44, dur: 15, delay: 0, dx: 16, dy: -14, op: 0.78, depth: 0.55 },
@@ -363,7 +364,7 @@ const Hero = () => {
                     <div {...fieldBoxProps('rate', '')}>
                       <FieldLabel field="rate" />
                       <span className="hero-field-value">
-                        <span className="font-mono text-[1.05rem] font-semibold text-white leading-[1.2]">€45/hour</span>
+                        <span className="font-mono text-[1.05rem] font-semibold text-white leading-[1.2]">{HOURLY_RATE_LABEL}</span>
                       </span>
                     </div>
                   </div>

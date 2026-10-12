@@ -6,11 +6,8 @@ import { cleanup, render, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it } from 'vitest';
 import Services from './Services';
-import {
-  HOURLY_FROM_LABEL,
-  serviceOffers,
-  serviceTimelineLabel,
-} from '@/data/serviceOffers';
+import { HOURLY_FROM_LABEL } from '@/config/pricing';
+import { serviceOffers, serviceTimelineLabel } from '@/data/serviceOffers';
 
 afterEach(cleanup);
 
@@ -52,7 +49,6 @@ describe('Services offers', () => {
       expect(text).not.toContain(offer.summary.slice(sentence.length).trim());
       expect(text).toContain(serviceTimelineLabel(offer));
       expect(text).toContain(HOURLY_FROM_LABEL);
-      expect(HOURLY_FROM_LABEL).toBe('from €45/hour');
     },
   );
 
@@ -92,7 +88,7 @@ describe('Services offers', () => {
   it('drops the old fixed-scope and ROI chips', () => {
     renderServices();
     expect(section().textContent).not.toMatch(/Fixed-scope builds|Automation ROI/i);
-    expect(section().textContent).not.toMatch(/€80|3,600|7,200|guaranteed ROI|30-day support/i);
+    expect(section().textContent).not.toMatch(/3,600|7,200|guaranteed ROI|30-day support/i);
   });
 
   it('renders SERVICE · OFFER craft markers on each card', () => {

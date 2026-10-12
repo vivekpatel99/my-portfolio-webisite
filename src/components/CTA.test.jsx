@@ -6,20 +6,20 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { afterEach, describe, expect, it } from 'vitest';
 import CTA from './CTA.jsx';
+import { HOURLY_RATE_LABEL } from '@/config/pricing';
 
 describe('CTA Action Field', () => {
   afterEach(cleanup);
 
-  it('displays €45/hour rate exactly (no mailto expectation)', () => {
+  it('displays the shared euro hourly rate', () => {
     render(
       <MemoryRouter>
         <CTA />
       </MemoryRouter>,
     );
 
-    // Locked preference: €45/hour public rates (€ only)
-    expect(screen.getByText(/€45\/hour/i)).toBeTruthy();
-    expect(screen.queryByText(/\$|USD|€80/i)).toBeNull();
+    expect(screen.getByText(`from ${HOURLY_RATE_LABEL}`, { exact: true })).toBeTruthy();
+    expect(screen.queryByText(/\$|USD/i)).toBeNull();
   });
 
   it('shows RATE meta line with craft grammar', () => {

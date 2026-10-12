@@ -6,7 +6,8 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import ServiceDetail from './ServiceDetail';
-import { serviceOffers, HOURLY_FROM_LABEL, serviceTimelineLabel } from '@/data/serviceOffers';
+import { HOURLY_FROM_LABEL } from '@/config/pricing';
+import { serviceOffers, serviceTimelineLabel } from '@/data/serviceOffers';
 
 vi.mock('@/components/ui/button', () => ({
   Button: ({ children, asChild, ...props }) => {

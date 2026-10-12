@@ -1,5 +1,6 @@
 import { caseStudySlugs, getCaseStudyBySlug } from '../data/caseStudies.js';
 import { serviceOffers, serviceRouteForId } from '../data/serviceOffers.js';
+import { HOURLY_RATE_LABEL } from '../config/pricing.js';
 
 export const SITE_URL = 'https://www.vivekapatel.com';
 export const SITE_NAME = 'Vivek Patel';
@@ -8,7 +9,7 @@ export const DEFAULT_OG_IMAGE_PATH = '/og-image.png';
 export const defaultSeo = {
   title: 'Vivek Patel - Expert AI & Computer Vision Engineer',
   description:
-    'Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients worldwide. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. Top Rated Plus on Upwork. €45/hour.',
+    `Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients worldwide. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. Top Rated Plus on Upwork. ${HOURLY_RATE_LABEL}.`,
   keywords:
     'Vivek Patel, AI Engineer Linz Austria, Computer Vision Freelancer, n8n Automation, Web Scraping Expert, YOLO, PyTorch, LangChain, Data Extraction, Python Developer Worldwide',
   path: '/',
@@ -39,7 +40,7 @@ export const routeSeo = {
   '/contact': {
     title: 'Contact | Vivek Patel, AI & Computer Vision Engineer',
     description:
-      'Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Linz, Austria, serving clients worldwide. Discuss your workflow and request a project estimate. €45/hour.',
+      `Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Linz, Austria, serving clients worldwide. Discuss your workflow and request a project estimate. ${HOURLY_RATE_LABEL}.`,
     keywords:
       'Hire AI Engineer Linz Austria, Computer Vision Freelancer, n8n Developer, Web Scraping Expert, Project Quote, LangChain Developer, YOLO Expert',
     path: '/contact',
