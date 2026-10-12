@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useId } from 'react';
 import { Star } from 'lucide-react';
 import { testimonials } from '@/data/testimonials';
 import { DetectionHeading, DetectionLabel } from './DetectionFrame';
@@ -11,6 +11,7 @@ const getReducedMotionQuery = () => (
 );
 
 const Testimonials = () => {
+    const starGradientId = useId();
     const [activeIndex, setActiveIndex] = useState(0);
     const [prefersReducedMotion, setPrefersReducedMotion] = useState(
         () => getReducedMotionQuery()?.matches ?? false
@@ -117,9 +118,20 @@ const Testimonials = () => {
                                 <span className="text-[#8B5CF6]">”</span>
                             </blockquote>
                             {testimonial.rating === 5 && (
-                                <span role="img" aria-label="Rated 5 out of 5" className="inline-flex self-center items-center gap-1 mt-6 text-[#E4B65A]">
+                                <span role="img" aria-label="Rated 5 out of 5" className="inline-flex self-center items-center gap-1.5 mt-6 drop-shadow-[0_0_5px_rgba(251,191,36,0.45)]">
                                     {[1, 2, 3, 4, 5].map((star) => (
-                                        <Star key={star} size={16} fill="currentColor" strokeWidth={1.5} aria-hidden="true" />
+                                        <Star key={star} size={24} fill={`url(#${starGradientId})`} stroke="#FFE6A0" strokeWidth={1} aria-hidden="true">
+                                            {star === 1 && (
+                                                <defs>
+                                                    <linearGradient id={starGradientId} x1="0%" y1="0%" x2="0%" y2="100%">
+                                                        <stop offset="0%" stopColor="#FFF4BF" />
+                                                        <stop offset="35%" stopColor="#FFD568" />
+                                                        <stop offset="60%" stopColor="#F5B82E" />
+                                                        <stop offset="100%" stopColor="#D9921B" />
+                                                    </linearGradient>
+                                                </defs>
+                                            )}
+                                        </Star>
                                     ))}
                                 </span>
                             )}
