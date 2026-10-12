@@ -14,7 +14,7 @@ import {
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { caseStudySlugs } from '../src/data/caseStudies.js';
+import { caseStudySlugs, getCaseStudyBySlug } from '../src/data/caseStudies.js';
 import {
   assertCaseStudyRouteSources,
   assertSameCaseStudySlugs,
@@ -22,6 +22,7 @@ import {
   removeStaleProjectHtml,
 } from './case-study-route-integrity.js';
 import { deploymentHtaccess } from '../plugins/vite-plugin-case-study-publication.js';
+import { HOURLY_RATE_EUR } from '../src/config/pricing.js';
 
 const temporaryDirectories = [];
 afterEach(() => temporaryDirectories.splice(0).forEach((directory) => rmSync(directory, { recursive: true, force: true })));
@@ -34,7 +35,7 @@ const seoFor = (slugs) => ({
   ...Object.fromEntries(slugs.map((slug) => [projectRoute(slug), { path: projectRoute(slug) }])),
 });
 
-function fixture() {
+function fixture({ hourlyRateEur = HOURLY_RATE_EUR } = {}) {
   const directory = mkdtempSync(path.join(tmpdir(), 'case-study-route-fixture-'));
   temporaryDirectories.push(directory);
 
@@ -42,12 +43,15 @@ function fixture() {
     'index.html',
     'public/.htaccess',
     'src/config/links.js',
+    'src/config/pricing.js',
+    'plugins/vite-plugin-pricing-html.js',
     'src/data/caseStudies.js',
     'src/lib/caseStudyCollection.js',
     'src/lib/caseStudyBrowsing.js',
     'src/lib/caseStudyThumbnails.js',
     'src/lib/featuredCaseStudies.js',
     'src/lib/seoConfig.js',
+    'publication/case-study-derivatives.js',
     'publication/case-study-manifest.js',
     'publication/case-study-evidence.js',
     'publication/case-study-schema.js',
@@ -61,9 +65,14 @@ function fixture() {
     'src/components/CaseStudyArticle.js',
     'src/components/CaseStudyGallery.js',
     'src/components/CaseStudyCard.js',
+    'src/components/DetectionFrame.js',
     'src/components/CaseStudyCollection.js',
     'src/components/CaseStudiesContent.js',
+    'src/components/OngoingCaseStudies.js',
+    'src/components/ServiceDetailContent.js',
+    'src/data/serviceOffers.js',
     'tools/case-study-route-integrity.js',
+    'tools/public-route-integrity.js',
     'tools/generate-sitemap.js',
     'tools/generate-static-route-html.js',
   ]) {
@@ -74,7 +83,14 @@ function fixture() {
     cpSync('public/assets/case-studies', path.join(directory, 'public/assets/case-studies'), { recursive: true });
   }
   mkdirSync(path.join(directory, 'dist'), { recursive: true });
-  copyFileSync('index.html', path.join(directory, 'dist/index.html'));
+  const pricingPath = path.join(directory, 'src/config/pricing.js');
+  writeFileSync(pricingPath, readFileSync(pricingPath, 'utf8')
+    .replace(/(export const HOURLY_RATE_EUR = )[^;]+/, `$1${hourlyRateEur}`));
+  writeFileSync(path.join(directory, 'package.json'), '{"type":"module"}');
+  const bootstrapHtml = execFileSync(process.execPath, ['--input-type=module', '-e',
+    "import { readFileSync } from 'node:fs'; import { replacePricingTokens } from './plugins/vite-plugin-pricing-html.js'; process.stdout.write(replacePricingTokens(readFileSync('index.html', 'utf8')));",
+  ], { cwd: directory, encoding: 'utf8' });
+  writeFileSync(path.join(directory, 'dist/index.html'), bootstrapHtml);
   writeFileSync(
     path.join(directory, 'dist/.htaccess'),
     deploymentHtaccess(readFileSync(path.join(directory, 'public/.htaccess'), 'utf8'), caseStudySlugs),
@@ -93,6 +109,21 @@ const run = (directory, script) =>
   });
 
 describe('case-study route integrity', () => {
+  it('propagates one changed hourly amount through static metadata and every service page', () => {
+    const directory = fixture({ hourlyRateEur: 67 });
+    run(directory, 'generate-static-route-html');
+    const home = readFileSync(path.join(directory, 'dist/index.html'), 'utf8');
+    const contact = readFileSync(path.join(directory, 'dist/contact/index.html'), 'utf8');
+    expect(home).toContain('€67/hour');
+    expect(home).toMatch(/"priceRange":\s*"€67\/hour"/);
+    expect(contact).toContain('€67/hour');
+    for (const id of ['data-extraction-automation-sprint', 'computer-vision-production-optimization', 'ai-workflow-buildout']) {
+      const html = readFileSync(path.join(directory, `dist/services/${id}/index.html`), 'utf8');
+      expect(html).toContain('from €67/hour');
+      expect(html).not.toContain('€45/hour');
+      expect(html).not.toContain('__HOURLY_');
+    }
+  });
   it.each([{ slugs: [] }, { slugs: ['published-case-study'] }])('validates generated deployment routing for $slugs published slugs', ({ slugs }) => {
     const seo = {
       '/': { path: '/' },
@@ -172,6 +203,9 @@ describe('case-study route integrity', () => {
     expect(readFileSync(path.join(staleDirectory, 'operator-note.txt'), 'utf8')).toBe('DO_NOT_REMOVE');
     for (const slug of caseStudySlugs) {
       expect(existsSync(path.join(directory, 'dist', projectRoute(slug), 'index.html'))).toBe(true);
+      const articleHtml = readFileSync(path.join(directory, 'dist', projectRoute(slug), 'index.html'), 'utf8');
+      const backHref = getCaseStudyBySlug(slug).projectStatus === 'ongoing' ? '/case-studies/#in-progress' : '/case-studies/';
+      expect(articleHtml).toContain(`href="${backHref}"`);
       expect(readFileSync(path.join(directory, 'dist/sitemap.xml'), 'utf8'))
         .toContain(`https://www.vivekapatel.com${projectRoute(slug)}/`);
     }

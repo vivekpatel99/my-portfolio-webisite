@@ -1,0 +1,11 @@
+{
+  "noJs": {
+    "cursor": "none",
+    "rootText": 0
+  },
+  "chunkFailure": {
+    "headerVisible": 0,
+    "mainVisible": 0,
+    "text": "Something went wrong. Back to home"
+  }
+}

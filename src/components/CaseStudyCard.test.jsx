@@ -30,6 +30,18 @@ const project = {
 describe('CaseStudyCard', () => {
   afterEach(cleanup);
 
+  it('shows the cover caption so illustrative claims have visible scope on the card', () => {
+    const caption = 'Conceptual OCR workflow. The 94% faster claim is not a verified project result.';
+    render(
+      <MemoryRouter>
+        <CaseStudyCard project={{ ...project, image: { ...project.image, caption } }} />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText(caption)).toBeTruthy();
+    expect(screen.getByText(project.summary)).toBeTruthy();
+  });
+
   it('renders one accessible router link containing the cover and title', () => {
     render(
       <MemoryRouter>
@@ -40,10 +52,36 @@ describe('CaseStudyCard', () => {
     const cardLink = screen.getByRole('link', { name: `Read case study: ${project.title}` });
     expect(cardLink.getAttribute('href')).toBe(`/project/${project.slug}/`);
     expect(cardLink.getAttribute('href')).not.toContain('from=collection');
-    expect(cardLink.contains(screen.getByRole('heading', { name: project.title }))).toBe(true);
+    expect(cardLink.contains(screen.getByRole('heading', { level: 3, name: project.title }))).toBe(true);
     expect(cardLink.contains(screen.getByAltText(project.image.alt))).toBe(true);
     expect(screen.getAllByRole('link')).toHaveLength(1);
-    expect(screen.getByText('Read case study →')).toBeTruthy();
+  });
+
+  it('uses a bounded display derivative for a published cover', () => {
+    const image = {
+      alt: 'Published workflow cover',
+      src: '/assets/case-studies/ai-invoice-processing-automation-f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275.png',
+      width: 2448,
+      height: 684,
+    };
+    render(<MemoryRouter><CaseStudyCard project={{ ...project, image }} /></MemoryRouter>);
+
+    const cover = screen.getByAltText(image.alt);
+    expect(cover.getAttribute('src')).toBe('/assets/case-studies/case-study-display-f36fee637d46-5ad6c7685bd1.webp');
+    expect(cover.getAttribute('src')).not.toBe(image.src);
+    expect(cover.getAttribute('width')).toBe(String(image.width));
+    expect(cover.getAttribute('height')).toBe(String(image.height));
+    expect(cover.getAttribute('loading')).toBe('lazy');
+    expect(cover.className).toContain('object-contain');
+    expect(cover.className).toContain('object-top');
+  });
+
+  it('loads an explicitly prioritized cover eagerly with high fetch priority', () => {
+    render(<MemoryRouter><CaseStudyCard project={project} priorityImage /></MemoryRouter>);
+
+    const cover = screen.getByAltText(project.image.alt);
+    expect(cover.getAttribute('loading')).toBe('eager');
+    expect(cover.getAttribute('fetchpriority')).toBe('high');
   });
 
   it('keeps the Upwork destination separate from the full-card article link', () => {
@@ -94,6 +132,7 @@ describe('CaseStudyCard', () => {
     expect(screen.getByRole('link', { name: `Read case study: ${project.title}` }).getAttribute('href')).toBe(
       `/project/${project.slug}/?from=collection`,
     );
+    expect(screen.getByRole('heading', { level: 3, name: project.title })).toBeTruthy();
     await user.click(screen.getByRole('link', { name: `Read case study: ${project.title}` }));
     expect(JSON.parse(screen.getByText(/fromCollection/).textContent)).toEqual({ fromCollection: true });
   });
@@ -122,5 +161,69 @@ describe('CaseStudyCard', () => {
 
     expect(screen.queryByRole('time')).toBeNull();
     expect(screen.queryByText(/Completed|unavailable|approx/i)).toBeNull();
+  });
+
+  describe('Detection Card design (Option A)', () => {
+    it('keeps the labeled panel unclipped while containing its media', () => {
+      const { container } = render(
+        <MemoryRouter>
+          <CaseStudyCard project={project} />
+        </MemoryRouter>,
+      );
+
+      const article = container.querySelector('article');
+      expect(article.className).toContain('detection-panel');
+      expect(article.className).not.toContain('overflow-hidden');
+      expect(article.querySelector('.media').className).toContain('overflow-hidden');
+    });
+
+    it('places category and CASE STUDY once on the panel edge', () => {
+      const { container } = render(
+        <MemoryRouter>
+          <CaseStudyCard project={project} />
+        </MemoryRouter>,
+      );
+
+      const article = container.querySelector('article');
+      const label = article.querySelector('.cat');
+      expect(label.parentElement).toBe(article);
+      expect(label.textContent).toBe(`${project.category.toUpperCase()} · CASE STUDY`);
+      expect(article.querySelector('.media-meta .cat')).toBeNull();
+      expect(article.querySelectorAll('.cat')).toHaveLength(1);
+    });
+
+    it('preserves a visible focus boundary on the interactive panel', () => {
+      const { container } = render(
+        <MemoryRouter>
+          <CaseStudyCard project={project} />
+        </MemoryRouter>,
+      );
+
+      const article = container.querySelector('article');
+      expect(article.className).toContain('focus-within:outline-2');
+      expect(article.className).not.toContain('border-[rgba(139,92,246,0.4)]');
+      expect(article.className).not.toContain('rounded-lg');
+    });
+
+    it('renders geometric arrow glyph as SVG not filled circle with text', () => {
+      const { container } = render(
+        <MemoryRouter>
+          <CaseStudyCard project={project} />
+        </MemoryRouter>,
+      );
+
+      const glyphContainer = container.querySelector('.glyph-hit');
+      expect(glyphContainer).toBeTruthy();
+      const svg = glyphContainer.querySelector('svg');
+      expect(svg).toBeTruthy();
+      expect(svg.getAttribute('viewBox')).toBe('0 0 16 16');
+      expect(svg.getAttribute('stroke')).toBe('currentColor');
+      expect(svg.getAttribute('stroke-linecap')).toBe('square');
+      const paths = svg.querySelectorAll('path');
+      expect(paths.length).toBe(2);
+      expect(paths[0].getAttribute('d')).toContain('M5 3H13V11');
+      expect(paths[1].getAttribute('d')).toContain('M13 3L4 12');
+      expect(glyphContainer.textContent).not.toContain('↗');
+    });
   });
 });

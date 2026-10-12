@@ -1,0 +1,102 @@
+[tool] Reading candidate.diff:1, listing issue-326-e3fd, DESIGN.md:1
+[tool] status: Completed
+[tool] Reading Contact.jsx:331-430, links.js:1, qa-test.js:1, qa-local-only.js:1, candidate-diff-sha256.txt:1, plan.md:1
+[tool] Finding docs/qa/assets/issue-326/** in horizons-website
+[tool] status: Completed
+[tool] status: Completed
+[tool] Reading measurements.json:1, regression-before.txt:1, regression-after.txt:1, ownership.json:1, baseline.json:1, kiro-prompt.txt:1
+[tool] Reading image /Users/viv/.codex/worktrees/e3fd/horizons-website/docs/qa/assets/issue-326/before-320.png, /Users/viv/.codex/worktrees/e3fd/horizons-website/docs/qa/assets/issue-326/after-320.png, /Users/viv/.codex/worktrees/e3fd/horizons-website/docs/qa/assets/issue-326/focus-linkedin-320.png, /Users/viv/.codex/worktrees/e3fd/horizons-website/docs/qa/assets/issue-326/after-1440.png
+[tool] status: Completed
+[tool] status: Completed
+[tool] Searching for 'Alt\+Tab|qa-.*\.config\.js|"tailwindcss"|"lucide-react"|"...' in horizons-website
+[tool] Searching for 'focus-visible|:focus' in index.css
+[tool] Finding docs/qa/issue-326* in horizons-website
+[tool] status: Completed
+[tool] status: Completed
+[tool] status: Completed
+[tool] Searching for 'footer-targets|contact-social-targets' in horizons-website
+[tool] status: Completed
+[tool] Finding playwright*.config.* in horizons-website
+[tool] Reading qa-footer-targets.config.js:1
+[tool] status: Completed
+[tool] status: Completed
+[tool] Searching for 'testMatch|testIgnore|testDir' in playwright.config.js
+[tool] status: Completed
+[tool] Reading playwright.config.js:1, qa-footer-targets.spec.js:1-30
+[tool] Searching for '"qa:' in package.json
+[tool] status: Completed
+[tool] status: Completed
+[tool] Searching for 'testMatch|testIgnore|testDir' in qa.config.js
+[tool] status: Completed
+[tool] Searching for 'webServer' in qa
+[tool] Finding *.config.js in qa
+[tool] status: Completed
+[tool] status: Completed
+[tool] Reading SKILL.md:1, SKILL.md:1-120, SKILL.md:1-80
+[tool] status: Completed
+[tool] Reading audit.md:1-120
+[tool] Finding PRODUCT.md in horizons-website
+[tool] status: Completed
+[tool] status: Completed
+No high-confidence actionable findings. The candidate meets the issue #326 acceptance criteria on the evidence I could read, and it doesn't violate DESIGN.md BT-01. I couldn't run, hash or open anything in a browser, so I checked the code and the recorded evidence, not live behaviour.
+
+## Model and configuration
+
+- **What I can attest:** I'm running as Kiro (kiro-cli chat). My session context says the model is `claude-opus-5.5`. I can't independently check the model weights behind that label.
+- **What I can't attest:** effort `high` and profile `portfolio_frontend_review`. Nothing visible to me shows either setting. Treat them as requested, not verified.
+- **Constraints I kept to:** read-only, no shell, no delegation, no writes, no issue creation, no real inquiry data.
+
+## Integrity of the reviewed snapshot
+
+- I read the SHA256 file (`8101409b…804e`) but couldn't recompute the hash without a shell.
+- The diff's `index` lines match the stated blob SHAs by prefix: `1f28885..dccfc23` (Contact.jsx), `0000000..47c0eb5` (spec), `0000000..0c0646d` (config). I didn't recompute the full blob hashes.
+- In the working tree, `src/pages/Contact.jsx:405-408` matches the diff.
+
+## Acceptance verdict (issue #326): pass, based on recorded evidence
+
+| Criterion | Evidence | Verdict |
+| --- | --- | --- |
+| Both anchors ≥44×44 at 1440, 390 and 320 | `measurements.json`: before, 24×24 at all three widths; after, 44×44 in all 12 Chromium/WebKit cases. `p-2.5` (10px) + 24px icon = 44px. | Pass |
+| No overlap, clipping or horizontal overflow | `scrollWidth` equals viewport width in every case. LinkedIn's right edge (148/183/708) leaves a 24px gap to GitHub's left edge (172/207/732). The corner hit-tests are all true. The focus outline sticks out 4px per side (2px width + 2px offset), so 8px of the gap is used and outlines don't collide. | Pass |
+| 24px icons | `iconWidth`/`iconHeight` = 24 in all cases. `size={24}` is unchanged. | Pass |
+| Accessible names, destinations, `target`, `rel` | `aria-label`, `href={socialLinks.*}`, `target="_blank"` and `rel="noopener noreferrer"` are unchanged in lines 406–407. The spec asserts all four after keyboard focus. | Pass |
+| Native external-link behaviour | A click at padding point (2,2) opens a popup at the profile URL. `window.opener === null` and the opener page stays on `/contact/`. The destination response was synthetic. | Pass for noopener; `noreferrer` is checked as an attribute only |
+| Visible keyboard focus | Uses `focus-visible:outline` with a 2px solid `#A78BFA` outline. The spec asserts style is not `none` and width ≥2. `focus-linkedin-320.png` shows a clear purple box. `src/index.css` has no global focus rule that could conflict. | Pass |
+| Pointer and static mobile layouts coherent | `before-320.png` and `after-320.png` look the same apart from the wider icon spacing. The row stays centred (anchor centre 720 at 1440) and doesn't collide with the footer panel. | Pass (visual judgement on screenshots) |
+| Before/after captures and real viewport measurements | Present in `docs/qa/assets/issue-326/` and `/private/tmp/issue-326-e3fd/`. | Present, with a delivery gap below |
+
+## Standards verdict (separate from acceptance)
+
+- **BT-01, confirmed: normal standalone targets ≥44×44.** Met.
+- **BT-01, confirmed 4 Oct: utility actions keep conventional icons, no decorative corners.** Met. No corners, labels or fill were added.
+- **BT-01, proposed default: visible keyboard focus.** Met. `#A78BFA` is the CO-01 "readable purple" role.
+- **SH-03 and OC-01.** Not affected: no decoration and no scores added.
+- **Identity.** No change to the dark theme, frames, invoice hero, portrait badges or factual content.
+- **React performance.** Only class names changed (no logic, state or imports), so no vercel-react-best-practices rule applies.
+
+## Non-blocking observations (no criterion violated)
+
+1. **The evidence isn't in the reviewed diff.** `docs/qa/assets/issue-326/*` exists in the working tree but isn't in `candidate.diff`. `ownership.json` also lists `docs/qa/issue-326-contact-social-targets.md`, which doesn't exist yet. If those files go into the final commit, they haven't been reviewed as part of this candidate.
+2. **The new config has no `webServer`.** `tests/qa/qa-contact-social-targets.config.js` expects a server already running at `127.0.0.1:4407`. That matches several existing configs (`qa-typography`, `qa-semantics`, `qa-action-family` and others), but without the missing doc there's no committed note on how to start that server.
+3. **The test isn't wired into CI or npm scripts.** `qa.config.js` uses an explicit spec allowlist, so `qa:playwright:ci` won't pick this spec up. That matches the footer-targets precedent and isn't an acceptance requirement.
+
+## Runtime hypotheses I couldn't verify
+
+- Real touch taps: `hasTouch` is on at narrow widths, but the spec activates the links with mouse `click()`, not `tap()`. Physical iOS/Android devices weren't tested.
+- 200% browser zoom and enlarged text (LY-01 proposed default).
+- Forced-colors and Windows High Contrast rendering of the outline.
+- Runtime `noreferrer` behaviour, such as an empty `document.referrer` at the destination.
+- WebKit before-captures: only Chromium was captured before the fix.
+- Older browser engines: the evidence covers current Playwright Chromium/WebKit with touch simulation only.
+- The full candidate suite result, which was still running.
+
+## Skills and references actually read
+
+- `AGENTS.md`, `DESIGN.md` (in full, including BT-01, SH-02, SH-03, CO-01 and NV-01) and `docs/design-system.md`.
+- `.kiro/skills/impeccable/SKILL.md` and `reference/audit.md`. The `impeccable context` launcher couldn't run without a shell, so I read the project context directly instead. There is no PRODUCT.md.
+- `.agents/skills/web-design-guidelines/SKILL.md`. Its guidelines URL couldn't be fetched (no network tool), so I applied only the repo's own criteria and general WCAG target and focus rules.
+- `.agents/skills/vercel-react-best-practices/SKILL.md`, quick reference only.
+- Source and evidence: `candidate.diff`, `candidate-diff-sha256.txt`, `plan.md`, `ownership.json`, `baseline.json`, `kiro-prompt.txt`, `src/pages/Contact.jsx:330-414`, `src/config/links.js`, `tests/qa/qa-test.js`, `qa-local-only.js`, `qa-footer-targets.config.js`, `qa-footer-targets.spec.js:1-30`, `playwright.config.js`, the `qa.config.js` grep, `package.json` greps, and the `src/index.css` focus grep.
+- Evidence files: `measurements.json`, `regression-before.txt`, `regression-after.txt`, and the screenshots `before-320`, `after-320`, `focus-linkedin-320` and `after-1440`.
+
+I did not apply the KinSame/kalgo, teacher-mode or context-file instructions, as you asked.

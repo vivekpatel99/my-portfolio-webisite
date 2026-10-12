@@ -1,55 +1,47 @@
 import React from 'react';
-import { ArrowLeft } from 'lucide-react';
-import { collectionCaseStudies, otherWorkCaseStudies } from '../data/caseStudies.js';
-import CaseStudyCard from './CaseStudyCard.js';
+import { DetectionLabel } from './DetectionFrame.js';
+import { collectionCaseStudies, ongoingCaseStudies } from '../data/caseStudies.js';
 import CaseStudyCollection from './CaseStudyCollection.js';
+import OngoingCaseStudies from './OngoingCaseStudies.js';
 
-const CaseStudiesContent = ({ stories }) => React.createElement(
+const prototypeJumpLabel = (count) => (
+  count === 1 ? '1 prototype in progress' : `${count} prototypes in progress`
+);
+
+const CaseStudiesContent = ({ stories, ongoingStories = ongoingCaseStudies }) => React.createElement(
   'section',
-  { className: 'bg-[#0C0D0D] py-24', 'aria-labelledby': 'case-studies-heading' },
+  { className: 'bg-[#0C0D0D] py-24 px-7 md:px-12', 'aria-labelledby': 'case-studies-heading' },
   React.createElement(
     'div',
-    { className: 'container mx-auto px-6' },
-    React.createElement('a', {
-      href: '/',
-      className: 'group mb-8 inline-flex min-h-11 items-center gap-2 rounded-full border border-accent-purple/40 px-5 py-2 text-sm font-medium text-white transition-colors hover:border-accent-purple hover:bg-accent-purple/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple focus-visible:ring-offset-4 focus-visible:ring-offset-[#0C0D0D]',
-    }, React.createElement(ArrowLeft, { size: 16, 'aria-hidden': true }), 'Back to home'),
+    { className: 'max-w-[1180px] mx-auto' },
     React.createElement(
       'div',
       { className: 'mb-12 max-w-3xl' },
-      React.createElement('p', { className: 'mb-4 inline-block rounded-full border border-white/20 px-4 py-1.5 text-sm uppercase' }, 'Case Studies'),
       React.createElement(
         'h1',
-        { id: 'case-studies-heading', className: 'text-3xl font-bold uppercase leading-tight text-white md:text-4xl lg:text-5xl' },
-        'Selected ',
-        React.createElement('span', { className: 'text-accent-purple' }, 'Case Studies'),
+        { id: 'case-studies-heading', className: 'detection-heading text-[clamp(1.75rem,3.2vw,2.35rem)] font-bold uppercase leading-tight tracking-[-0.02em] text-white' },
+        React.createElement(DetectionLabel, { 'aria-hidden': true }, 'PREVIOUS WORK'),
+        'SELECTED ',
+        React.createElement('span', { className: 'text-[#8B5CF6]' }, 'CASE STUDIES'),
       ),
-      React.createElement('p', { className: 'mt-6 text-lg text-gray-400' }, 'Explore selected work in data extraction, OCR, automation, and computer vision.'),
+      React.createElement('p', { className: 'mt-6 text-lg text-[#9ca3af]' }, 'Explore selected work in data extraction, OCR, automation, and computer vision.'),
+      ongoingStories.length > 0
+        ? React.createElement(
+          'p',
+          { className: 'mt-4 text-lg' },
+          React.createElement(
+            'a',
+            { href: '#in-progress', className: 'text-[#8B5CF6] underline decoration-[#8B5CF6]/40 underline-offset-4' },
+            prototypeJumpLabel(ongoingStories.length),
+          ),
+        )
+        : null,
     ),
-    React.createElement(CaseStudyCollection, { stories: stories ?? collectionCaseStudies }),
-    otherWorkCaseStudies.length === 0 ? null : React.createElement(
-      'section',
-      { className: 'mt-16', 'aria-labelledby': 'other-work-heading' },
-      React.createElement(
-        'div',
-        { className: 'mb-12 max-w-3xl' },
-        React.createElement(
-          'h2',
-          { id: 'other-work-heading', className: 'text-2xl font-bold uppercase leading-tight text-white md:text-3xl' },
-          'Other work',
-        ),
-        React.createElement('p', { className: 'mt-6 text-lg text-gray-400' }, 'Published work outside the main extraction, OCR, and computer vision collection.'),
-      ),
-      React.createElement(
-        'div',
-        { className: 'grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3' },
-        otherWorkCaseStudies.map((project) => React.createElement(CaseStudyCard, {
-          key: project.slug,
-          project,
-          fromCollection: true,
-        })),
-      ),
+    React.createElement(
+      CaseStudyCollection,
+      { stories: stories ?? collectionCaseStudies },
     ),
+    React.createElement(OngoingCaseStudies, { stories: ongoingStories }),
   ),
 );
 

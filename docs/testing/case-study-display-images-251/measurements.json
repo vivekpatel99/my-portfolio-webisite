@@ -1,0 +1,74 @@
+{
+  "baseline": "282d2a20e4eec5bf947303d88efe7df91d3dc860",
+  "conditions": {
+    "cpu": 4,
+    "rtt": 150,
+    "down": 1600000,
+    "coldCache": true
+  },
+  "profiles": [
+    {
+      "route": "/case-studies/",
+      "viewport": {
+        "width": 412,
+        "height": 823
+      },
+      "deviceScaleFactor": 1.75,
+      "beforeLcpMs": [
+        4272,
+        4272,
+        4260
+      ],
+      "afterLcpMs": [
+        1720,
+        1728,
+        1736
+      ],
+      "beforeImageResourceBytes": 645089,
+      "afterImageResourceBytes": 414050,
+      "afterMaxImageRequestBytes": 87896
+    },
+    {
+      "route": "/project/n8n-openai-data-extraction/",
+      "viewport": {
+        "width": 1350,
+        "height": 940
+      },
+      "deviceScaleFactor": 1,
+      "beforeLcpMs": [
+        4116,
+        4112,
+        4116
+      ],
+      "afterLcpMs": [
+        1760,
+        1744,
+        1756
+      ],
+      "beforeImageResourceBytes": 577400,
+      "afterImageResourceBytes": 328642,
+      "afterMaxImageRequestBytes": 98082
+    },
+    {
+      "route": "/",
+      "viewport": {
+        "width": 1350,
+        "height": 940
+      },
+      "deviceScaleFactor": 1,
+      "beforeLcpMs": [
+        1772,
+        1788,
+        1808
+      ],
+      "afterLcpMs": [
+        1804,
+        1800,
+        1796
+      ],
+      "beforeImageResourceBytes": 700793,
+      "afterImageResourceBytes": 200142,
+      "afterMaxImageRequestBytes": 98082
+    }
+  ]
+}

@@ -2,26 +2,20 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { collectionCaseStudies, featuredCaseStudies } from '@/data/caseStudies';
 import CaseStudyCard from './CaseStudyCard.js';
+import { DetectionHeading } from './DetectionFrame';
 
 const Portfolio = () => {
   return (
-    <section id="portfolio" className="py-24 bg-[#0C0D0D]">
-      <div className="container mx-auto px-6">
-        <div className="flex flex-col lg:flex-row gap-8 items-start justify-between">
-          <div className="w-full lg:w-2/3">
-            <div className="inline-block px-4 py-1.5 border border-white/20 rounded-full text-sm mb-4 uppercase">
-              Portfolio
-            </div>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight uppercase">
-              Featured <span className="text-accent-purple">Case Studies</span>
-            </h2>
-            <p className="text-lg text-gray-400 mt-6 mb-12">
-              Selected work in data extraction, OCR, and computer vision. Each case study shows the problem, the build, and the outcome.
-            </p>
-          </div>
-        </div>
+    <section id="portfolio" className="portfolio relative bg-[#0C0D0D] py-16 px-7 md:px-12">
+      <div className="inner relative z-[2] max-w-[1180px] mx-auto">
+        <DetectionHeading label="Previous work" className="text-[clamp(1.75rem,3.2vw,2.35rem)] font-bold tracking-[-0.02em] leading-[1.15] mb-[14px]">
+          FEATURED <span className="text-[#8B5CF6]">CASE STUDIES</span>
+        </DetectionHeading>
+        <p className="blurb max-w-[560px] text-[0.95rem] leading-[1.55] text-[#9ca3af] mb-10">
+          Selected work in data extraction, OCR, and computer vision. Each case study shows the problem, the build, and the outcome.
+        </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-[22px] gap-y-12">
           {featuredCaseStudies.map((project) => (
             <CaseStudyCard
               key={project.id}
@@ -29,10 +23,11 @@ const Portfolio = () => {
             />
           ))}
         </div>
-        <div className="mt-8">
+        
+        <div className="footer-link mt-9 text-center">
           <Link
             to="/case-studies/"
-            className="min-h-11 inline-flex items-center text-accent-purple-text hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple focus-visible:ring-offset-2 focus-visible:ring-offset-[#0C0D0D]"
+            className="detection-text-action text-[0.9rem]"
           >
             View all case studies ({collectionCaseStudies.length})
           </Link>

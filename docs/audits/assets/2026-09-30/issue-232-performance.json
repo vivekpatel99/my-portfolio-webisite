@@ -1,0 +1,239 @@
+{
+  "issue": 232,
+  "base": "8fe91fb930275289bfe1f8f1f1ec3d0083e226f4",
+  "conditions": {
+    "browser": "148.0.7778.96",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "reducedMotion": "no-preference",
+    "pointer": "fine",
+    "samplingMs": 2000,
+    "settlingWaitMs": 3000,
+    "network": "loopback only; production server connect-src self",
+    "input": {
+      "x": 700,
+      "y": 300
+    },
+    "cache": "fresh browser context",
+    "throttling": "none",
+    "sequence": [
+      "idle 2s",
+      "pointer to 700,300 and active 2s",
+      "wait 3s and settled 2s",
+      "scroll footer, wait 500ms, offscreen 2s"
+    ]
+  },
+  "conditions_identical": true,
+  "before": [
+    {
+      "name": "idle",
+      "px": 1920,
+      "py": 1920,
+      "runningAnimations": [
+        "bg-drift",
+        "bg-drift",
+        "bg-drift-pulse",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift-pulse",
+        "bg-drift",
+        "ghost-trail-a",
+        "ghost-trail-b",
+        "ghost-trail-c",
+        "ghost-trail-d",
+        "photo-scan"
+      ]
+    },
+    {
+      "name": "active",
+      "px": 1928,
+      "py": 1928,
+      "runningAnimations": [
+        "bg-drift",
+        "bg-drift",
+        "bg-drift-pulse",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift-pulse",
+        "bg-drift",
+        "ghost-trail-a",
+        "ghost-trail-b",
+        "ghost-trail-c",
+        "ghost-trail-d",
+        "photo-scan"
+      ]
+    },
+    {
+      "name": "settled",
+      "px": 1920,
+      "py": 1920,
+      "runningAnimations": [
+        "bg-drift",
+        "bg-drift",
+        "bg-drift-pulse",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift-pulse",
+        "bg-drift",
+        "ghost-trail-a",
+        "ghost-trail-b",
+        "ghost-trail-c",
+        "ghost-trail-d",
+        "photo-scan"
+      ]
+    },
+    {
+      "name": "offscreen",
+      "px": 1920,
+      "py": 1920,
+      "runningAnimations": [
+        "bg-drift",
+        "bg-drift",
+        "bg-drift-pulse",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift-pulse",
+        "bg-drift",
+        "ghost-trail-a",
+        "ghost-trail-b",
+        "ghost-trail-c",
+        "ghost-trail-d",
+        "photo-scan"
+      ]
+    }
+  ],
+  "after": [
+    {
+      "name": "idle",
+      "px": 0,
+      "py": 0,
+      "runningAnimations": [
+        "bg-drift",
+        "bg-drift",
+        "bg-drift-pulse",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift-pulse",
+        "bg-drift",
+        "ghost-trail-a",
+        "ghost-trail-b",
+        "ghost-trail-c",
+        "ghost-trail-d",
+        "photo-scan"
+      ]
+    },
+    {
+      "name": "active",
+      "px": 408,
+      "py": 408,
+      "runningAnimations": [
+        "bg-drift",
+        "bg-drift",
+        "bg-drift-pulse",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift-pulse",
+        "bg-drift",
+        "ghost-trail-a",
+        "ghost-trail-b",
+        "ghost-trail-c",
+        "ghost-trail-d",
+        "photo-scan"
+      ]
+    },
+    {
+      "name": "settled",
+      "px": 0,
+      "py": 0,
+      "runningAnimations": [
+        "bg-drift",
+        "bg-drift",
+        "bg-drift-pulse",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift",
+        "bg-drift-pulse",
+        "bg-drift",
+        "ghost-trail-a",
+        "ghost-trail-b",
+        "ghost-trail-c",
+        "ghost-trail-d",
+        "photo-scan"
+      ]
+    },
+    {
+      "name": "offscreen",
+      "px": 0,
+      "py": 0,
+      "runningAnimations": []
+    }
+  ],
+  "resume_before": {
+    "name": "resume-idle",
+    "px": 1928,
+    "py": 1928,
+    "runningAnimations": [
+      "bg-drift",
+      "bg-drift",
+      "bg-drift-pulse",
+      "bg-drift",
+      "bg-drift",
+      "bg-drift",
+      "bg-drift-pulse",
+      "bg-drift",
+      "ghost-trail-a",
+      "ghost-trail-b",
+      "ghost-trail-c",
+      "ghost-trail-d",
+      "photo-scan"
+    ]
+  },
+  "resume_after": {
+    "name": "resume-idle",
+    "px": 0,
+    "py": 0,
+    "runningAnimations": [
+      "bg-drift",
+      "bg-drift",
+      "bg-drift-pulse",
+      "bg-drift",
+      "bg-drift",
+      "bg-drift",
+      "bg-drift-pulse",
+      "bg-drift",
+      "ghost-trail-a",
+      "ghost-trail-b",
+      "ghost-trail-c",
+      "ghost-trail-d",
+      "photo-scan"
+    ]
+  },
+  "fine_pointer_response_before": {
+    "x": "2.55px",
+    "y": "-3.21px"
+  },
+  "fine_pointer_response_after": {
+    "x": "2.55px",
+    "y": "-3.21px"
+  },
+  "desktop_geometry_identical": true,
+  "mobile_geometry_identical": true,
+  "mobile_widths": [
+    320,
+    390,
+    768
+  ],
+  "limits": [
+    "Local unthrottled work counts, no field Core Web Vitals, jank, or battery-life claim.",
+    "Single matched before/after sequence, not statistical latency analysis.",
+    "One neutral write occurs at disabling transitions when needed, before the offscreen measurement window."
+  ]
+}

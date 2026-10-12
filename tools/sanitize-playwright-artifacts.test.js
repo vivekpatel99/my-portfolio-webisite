@@ -6,6 +6,7 @@ import {
   sanitizePlaywrightArtifacts,
   sanitizePlaywrightReport, validateStagedArtifacts,
 } from './sanitize-playwright-artifacts.js';
+import { qaPassiveSpecs } from '../tests/qa/qa.config.js';
 
 const fixturePath = path.resolve('tests/qa/fixtures/playwright-failure-report.json');
 const temporaryDirectories = [];
@@ -65,6 +66,55 @@ describe('sanitized Playwright QA artifacts', () => {
     expect(serialized).not.toMatch(/QA_SECRET_SENTINEL|Injected title|raw stack|localStorage|trace\.zip/);
   });
 
+  it.each([
+    'preview-desktop',
+    'preview-mobile',
+    'preview-webkit-desktop',
+    'preview-webkit-mobile',
+  ])('reconstructs and validates a bounded hero OCR labels failure for %s', async (projectName) => {
+    const paths = await temporaryPaths();
+    const report = JSON.parse(await readFile(fixturePath, 'utf8'));
+    const suite = report.suites[0];
+    suite.file = 'qa-hero-ocr-labels.spec.js';
+    suite.specs[0].file = 'qa-hero-ocr-labels.spec.js';
+    suite.specs[0].tests[0].projectName = projectName;
+    await writeFile(paths.rawReport, JSON.stringify(report), 'utf8');
+
+    const result = await sanitizePlaywrightArtifacts({ paths });
+    const staged = await validateStagedArtifacts({ paths });
+    const serialized = `${await readFile(paths.summary, 'utf8')}${await readFile(paths.failureResults, 'utf8')}`;
+
+    expect(staged).toEqual({ summary: result.summary, failureResults: result.failureResults });
+    expect(staged.summary.suites).toEqual([{
+      suite: 'hero-ocr-labels',
+      projects: [{
+        project: projectName,
+        attempts: { passed: 0, failed: 1, skipped: 0, timed_out: 0, interrupted: 0 },
+      }],
+    }]);
+    expect(staged.failureResults.failures).toEqual([{
+      suite: 'hero-ocr-labels',
+      sourceLine: 53,
+      testOrdinal: 1,
+      project: projectName,
+      retry: 1,
+      outcome: 'failed',
+      durationMs: 60_000,
+    }]);
+    expect(serialized)
+      .not.toMatch(/QA_SECRET_SENTINEL|Injected title|raw stack|localStorage|trace\.zip|qa-hero-ocr-labels/);
+  });
+
+  it('keeps every local preview passive QA suite registered with the sanitizer', () => {
+    const report = {
+      errors: [],
+      suites: qaPassiveSpecs({ environment: 'preview', localOnly: true })
+        .map((file) => ({ file, specs: [] })),
+    };
+
+    expect(() => sanitizePlaywrightReport(report)).not.toThrow();
+  });
+
   it('fails closed for an unallowlisted normalized source path or project', () => {
     const unsafeSuite = {
       errors: [],
@@ -85,6 +135,21 @@ describe('sanitized Playwright QA artifacts', () => {
     expect(() => sanitizePlaywrightReport(unsafeProject)).toThrow('not allowlisted');
   });
 
+  it.each(['preview-desktop', 'preview-mobile'])(
+    'retains bounded cursor failures for %s without raw browser data', async (projectName) => {
+      const report = JSON.parse(await readFile(fixturePath, 'utf8'));
+      const suite = report.suites[0];
+      suite.file = 'qa-cursor.spec.js';
+      suite.specs[0].file = 'qa-cursor.spec.js';
+      suite.specs[0].tests[0].projectName = projectName;
+
+      const { summary, failureResults } = sanitizePlaywrightReport(report);
+      expect(summary.runStatus).toBe('failed');
+      expect(failureResults.failures[0]).toMatchObject({ suite: 'cursor-availability', project: projectName });
+      expect(JSON.stringify({ summary, failureResults })).not.toMatch(/QA_SECRET_SENTINEL|Injected title|raw stack|localStorage|trace\.zip/);
+    },
+  );
+
   it.each(['preview-webkit-desktop', 'preview-webkit-mobile'])(
     'retains bounded focus failures for %s without raw browser data', async (projectName) => {
       const report = JSON.parse(await readFile(fixturePath, 'utf8'));
@@ -99,6 +164,131 @@ describe('sanitized Playwright QA artifacts', () => {
       expect(JSON.stringify({ summary, failureResults })).not.toMatch(/QA_SECRET_SENTINEL|raw stack|trace\.zip/);
     },
   );
+
+  it.each(['preview-desktop', 'preview-mobile'])(
+    'reconstructs a bounded testimonials failure for %s and passes staged validation', async (projectName) => {
+      const paths = await temporaryPaths();
+      const report = JSON.parse(await readFile(fixturePath, 'utf8'));
+      const suite = report.suites[0];
+      suite.file = 'qa-testimonials.spec.js';
+      suite.specs[0].file = 'qa-testimonials.spec.js';
+      suite.specs[0].tests[0].projectName = projectName;
+      await writeFile(paths.rawReport, JSON.stringify(report), 'utf8');
+
+      const result = await sanitizePlaywrightArtifacts({ paths });
+      const staged = `${await readFile(paths.summary, 'utf8')}${await readFile(paths.failureResults, 'utf8')}`;
+
+      expect(result.summary.suites).toEqual([{
+        suite: 'testimonials-carousel',
+        projects: [{ project: projectName, attempts: { passed: 0, failed: 1, skipped: 0, timed_out: 0, interrupted: 0 } }],
+      }]);
+      expect(result.failureResults.failures).toEqual([{
+        suite: 'testimonials-carousel',
+        sourceLine: 53,
+        testOrdinal: 1,
+        project: projectName,
+        retry: 1,
+        outcome: 'failed',
+        durationMs: 60_000,
+      }]);
+      expect(staged).not.toMatch(/QA_SECRET_SENTINEL|Injected title|raw stack|localStorage|trace\.zip|qa-testimonials/);
+    },
+  );
+
+  it.each([
+    ['a public production project', { file: 'qa-testimonials.spec.js', projectName: 'prod-desktop' }, 'test project is not allowlisted'],
+    ['a directory-qualified source', { file: 'qa/qa-testimonials.spec.js', projectName: 'preview-desktop' }, 'suite source name is not allowlisted'],
+    ['a near-miss source name', { file: 'qa-testimonials.spec.ts', projectName: 'preview-desktop' }, 'suite source name is not allowlisted'],
+  ])('keeps failing closed for testimonials with %s', (_description, { file, projectName }, message) => {
+    const report = {
+      errors: [],
+      suites: [{ file, specs: [{ file, line: 1, tests: [{ projectName, results: [{ status: 'passed', duration: 1 }] }] }] }],
+    };
+
+    expect(() => sanitizePlaywrightReport(report)).toThrow(message);
+  });
+
+  it.each(['preview-desktop', 'preview-mobile'])(
+    'sanitizes route recovery failures for %s without raw browser data', async (projectName) => {
+      const paths = await temporaryPaths();
+      const report = JSON.parse(await readFile(fixturePath, 'utf8'));
+      const suite = report.suites[0];
+      suite.file = 'qa-route-recovery.spec.js';
+      suite.specs[0].file = 'qa-route-recovery.spec.js';
+      suite.specs[0].tests[0].projectName = projectName;
+      await writeFile(paths.rawReport, JSON.stringify(report), 'utf8');
+
+      await expect(sanitizePlaywrightArtifacts({ paths })).resolves.toMatchObject({ created: true });
+      const summary = JSON.parse(await readFile(paths.summary, 'utf8'));
+      const failures = JSON.parse(await readFile(paths.failureResults, 'utf8'));
+      expect(summary.runStatus).toBe('failed');
+      expect(failures.failures[0]).toMatchObject({ suite: 'route-recovery', project: projectName });
+      expect(JSON.stringify({ summary, failures })).not.toMatch(/QA_SECRET_SENTINEL|Injected title|raw stack|localStorage|trace\.zip/);
+    },
+  );
+
+  it('reconstructs a bounded hero-motion suite report without emitting hostile raw data', async () => {
+    const paths = await temporaryPaths();
+    const report = JSON.parse(await readFile(fixturePath, 'utf8'));
+    const suite = report.suites[0];
+    suite.file = 'qa-hero-motion.spec.js';
+    suite.title = 'QA_SECRET_SENTINEL hero title';
+    suite.specs[0].file = 'qa-hero-motion.spec.js';
+    suite.specs[0].tests[0].projectName = 'preview-mobile';
+    suite.specs[0].tests[0].results.push({
+      status: 'passed',
+      duration: 7.9,
+      error: { message: 'QA_SECRET_SENTINEL', stack: 'raw stack' },
+      attachments: [{ name: 'trace', path: 'trace.zip' }],
+      stdout: [{ text: 'localStorage QA_SECRET_SENTINEL' }],
+    });
+    await writeFile(paths.rawReport, JSON.stringify(report), 'utf8');
+
+    await sanitizePlaywrightArtifacts({ paths });
+    const summary = JSON.parse(await readFile(paths.summary, 'utf8'));
+    const failures = JSON.parse(await readFile(paths.failureResults, 'utf8'));
+
+    expect(summary.suites).toEqual([{
+      suite: 'hero-motion',
+      projects: [{
+        project: 'preview-mobile',
+        attempts: { passed: 1, failed: 1, skipped: 0, timed_out: 0, interrupted: 0 },
+      }],
+    }]);
+    expect(failures.failures).toEqual([{
+      suite: 'hero-motion', sourceLine: 53, testOrdinal: 1, project: 'preview-mobile', retry: 1, outcome: 'failed', durationMs: 60_000,
+    }]);
+    expect(`${JSON.stringify(summary)}${JSON.stringify(failures)}`)
+      .not.toMatch(/QA_SECRET_SENTINEL|Injected title|hero title|raw stack|localStorage|trace\.zip|qa-hero-motion/);
+  });
+
+  it('reconstructs and validates a bounded consent suite report without emitting hostile raw data', async () => {
+    const paths = await temporaryPaths();
+    const report = JSON.parse(await readFile(fixturePath, 'utf8'));
+    const suite = report.suites[0];
+    suite.file = 'qa-consent.spec.js';
+    suite.title = 'QA_SECRET_SENTINEL consent title';
+    suite.specs[0].file = 'qa-consent.spec.js';
+    await writeFile(paths.rawReport, JSON.stringify(report), 'utf8');
+
+    await expect(sanitizePlaywrightArtifacts({ paths })).resolves.toMatchObject({ created: true });
+    await validateStagedArtifacts({ paths });
+    const summary = JSON.parse(await readFile(paths.summary, 'utf8'));
+    const failures = JSON.parse(await readFile(paths.failureResults, 'utf8'));
+
+    expect(summary.suites).toEqual([{
+      suite: 'consent',
+      projects: [{
+        project: 'preview-desktop',
+        attempts: { passed: 0, failed: 1, skipped: 0, timed_out: 0, interrupted: 0 },
+      }],
+    }]);
+    expect(failures.failures).toEqual([{
+      suite: 'consent', sourceLine: 53, testOrdinal: 1, project: 'preview-desktop', retry: 1, outcome: 'failed', durationMs: 60_000,
+    }]);
+    expect(`${JSON.stringify(summary)}${JSON.stringify(failures)}`)
+      .not.toMatch(/QA_SECRET_SENTINEL|Injected title|consent title|raw stack|localStorage|trace\.zip|qa-consent/);
+  });
 
   it('removes prior upload candidates and emits nothing when no raw report exists', async () => {
     const paths = await temporaryPaths();

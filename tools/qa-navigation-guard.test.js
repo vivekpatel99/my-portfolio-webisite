@@ -6,18 +6,21 @@ import {
 
 function navigation({
   url = 'http://127.0.0.1:3000/',
+  method = 'GET',
   location,
   navigation = true,
   fetchError,
   fulfillError,
+  disposeError,
+  pageClosed = false,
 } = {}) {
   const response = {
     status: () => location ? 302 : 200,
     headers: () => location ? { location } : {},
-    dispose: vi.fn(),
+    dispose: disposeError ? vi.fn().mockRejectedValue(disposeError) : vi.fn(),
   };
   const route = {
-    request: () => ({ url: () => url, isNavigationRequest: () => navigation }),
+    request: () => ({ url: () => url, method: () => method, isNavigationRequest: () => navigation, frame: () => ({ page: () => ({ isClosed: () => pageClosed }) }) }),
     fetch: fetchError ? vi.fn().mockRejectedValue(fetchError) : vi.fn().mockResolvedValue(response),
     fulfill: fulfillError ? vi.fn().mockRejectedValue(fulfillError) : vi.fn(),
     abort: vi.fn(),
@@ -37,7 +40,7 @@ describe('local-only browser navigation', () => {
   it('blocks external redirects before the browser follows them', async () => {
     const { route, response } = navigation({ location: 'https://external.invalid/' });
     await guardLocalNavigation(route);
-    expect(route.fetch).toHaveBeenCalledWith({ maxRedirects: 0 });
+    expect(route.fetch).toHaveBeenCalledWith({ maxRedirects: 0, maxRetries: 1 });
     expect(route.abort).toHaveBeenCalledWith('blockedbyclient');
     expect(route.fulfill).not.toHaveBeenCalled();
     expect(response.dispose).toHaveBeenCalled();
@@ -46,7 +49,7 @@ describe('local-only browser navigation', () => {
   it.each([undefined, '/contact/'])('serves local navigation and relative redirects (%s)', async (location) => {
     const { route, response } = navigation({ location });
     await guardLocalNavigation(route);
-    expect(route.fetch).toHaveBeenCalledWith({ maxRedirects: 0 });
+    expect(route.fetch).toHaveBeenCalledWith({ maxRedirects: 0, maxRetries: 1 });
     expect(route.fulfill).toHaveBeenCalledWith({ response });
     expect(route.abort).not.toHaveBeenCalled();
   });
@@ -66,7 +69,7 @@ describe('local-only browser navigation', () => {
       navigation: false,
     });
     await guardLocalNavigation(route);
-    expect(route.fetch).toHaveBeenCalledWith({ maxRedirects: 0 });
+    expect(route.fetch).toHaveBeenCalledWith({ maxRedirects: 0, maxRetries: 1 });
     expect(route.abort).toHaveBeenCalledWith('blockedbyclient');
     expect(response.dispose).toHaveBeenCalled();
   });
@@ -89,15 +92,54 @@ describe('local-only browser navigation', () => {
     expect(response.dispose).not.toHaveBeenCalled();
   });
 
+  it.each(['\n', '\r\n'])('allows an exact browser cancellation followed by a Playwright call log (%j)', async (newline) => {
+    const { route } = navigation({
+      fetchError: new Error(`route.fetch: Target page, context or browser has been closed${newline}Call log:${newline}  - GET http://127.0.0.1:3000/image.png`),
+    });
+    await expect(guardLocalNavigation(route)).resolves.toBeUndefined();
+  });
+
+  it('still rejects a different error that only starts with a cancellation message', async () => {
+    const message = 'route.fetch: Target page, context or browser has been closed unexpectedly by a transport failure';
+    const { route } = navigation({ fetchError: new Error(message) });
+    await expect(guardLocalNavigation(route)).rejects.toThrow(message);
+  });
+
   it('preserves unexpected fulfillment errors', async () => {
     const { route, response } = navigation({ fulfillError: new Error('network write failed') });
     await expect(guardLocalNavigation(route)).rejects.toThrow('network write failed');
     expect(response.dispose).toHaveBeenCalled();
   });
 
+  it('allows response disposal after browser context closure', async () => {
+    const { route } = navigation({ disposeError: new Error('apiResponse.dispose: Target page, context or browser has been closed') });
+    await expect(guardLocalNavigation(route)).resolves.toBeUndefined();
+  });
+
+  it('preserves unexpected response disposal errors', async () => {
+    const { route } = navigation({ disposeError: new Error('response cleanup failed') });
+    await expect(guardLocalNavigation(route)).rejects.toThrow('response cleanup failed');
+  });
+
+  it('allows fulfillment cancellation when context closure disposed its response', async () => {
+    const { route } = navigation({ pageClosed: true, fulfillError: new Error('route.fulfill: Fetch response has been disposed') });
+    await expect(guardLocalNavigation(route)).resolves.toBeUndefined();
+  });
+
+  it('rejects disposed fulfillment responses while the page is open', async () => {
+    const { route } = navigation({ fulfillError: new Error('route.fulfill: Fetch response has been disposed') });
+    await expect(guardLocalNavigation(route)).rejects.toThrow('route.fulfill: Fetch response has been disposed');
+  });
+
   it('preserves unexpected fetch errors', async () => {
     const { route } = navigation({ fetchError: new Error('network read failed') });
     await expect(guardLocalNavigation(route)).rejects.toThrow('network read failed');
+  });
+
+  it.each([['HEAD', 1], ['POST', 0]])('limits connection-reset retries for %s to %s', async (method, maxRetries) => {
+    const { route } = navigation({ method });
+    await guardLocalNavigation(route);
+    expect(route.fetch).toHaveBeenCalledWith({ maxRedirects: 0, maxRetries });
   });
 });
 

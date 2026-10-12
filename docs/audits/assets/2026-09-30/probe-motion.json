@@ -1,0 +1,2061 @@
+[
+  {
+    "path": "/",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "bg-drift",
+          "bg-drift",
+          "bg-drift-pulse",
+          "bg-drift",
+          "bg-drift",
+          "bg-drift",
+          "bg-drift-pulse",
+          "bg-drift",
+          "ghost-trail-a",
+          "ghost-trail-b",
+          "ghost-trail-c",
+          "ghost-trail-d",
+          "photo-scan",
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "bg-drift",
+          "bg-drift",
+          "bg-drift-pulse",
+          "bg-drift",
+          "bg-drift",
+          "bg-drift",
+          "bg-drift-pulse",
+          "bg-drift",
+          "ghost-trail-a",
+          "ghost-trail-b",
+          "ghost-trail-c",
+          "ghost-trail-d",
+          "photo-scan",
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "bg-drift",
+          "bg-drift",
+          "bg-drift-pulse",
+          "bg-drift",
+          "bg-drift",
+          "bg-drift",
+          "bg-drift-pulse",
+          "bg-drift",
+          "ghost-trail-a",
+          "ghost-trail-b",
+          "ghost-trail-c",
+          "ghost-trail-d",
+          "photo-scan",
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/case-studies",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/contact",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 20)",
+        "animations": [
+          "Animation",
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 20.8448)",
+        "animations": [
+          "Animation",
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 1.94791)",
+        "animations": [
+          "Animation",
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/legal",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 20)",
+        "animations": [
+          "Animation",
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 20.8448)",
+        "animations": [
+          "Animation",
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 2.5)",
+        "animations": [
+          "Animation",
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/data-policy",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 20)",
+        "animations": [
+          "Animation",
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 20.8433)",
+        "animations": [
+          "Animation",
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 2.36514)",
+        "animations": [
+          "Animation",
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/services/data-extraction-automation-sprint",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/services/computer-vision-production-optimization",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/services/ai-workflow-buildout",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/n8n-openai-data-extraction",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/invoice-ocr-extraction",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/yolo-computer-vision-optimization",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/ai-invoice-processing-automation",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/ai-project-planning-assistant",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/browser-search-to-spreadsheet",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/depth-based-distance-estimation",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/healthcare-document-intelligence",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/n8n-python-ai-agents",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/python-ci-workflow-automation",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/resumable-listing-data-extraction",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/sports-video-analytics-yolo",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/audit-unknown-route",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "bg-drift",
+          "bg-drift",
+          "bg-drift-pulse",
+          "bg-drift",
+          "bg-drift",
+          "bg-drift",
+          "bg-drift-pulse",
+          "bg-drift",
+          "ghost-trail-a",
+          "ghost-trail-b",
+          "ghost-trail-c",
+          "ghost-trail-d",
+          "photo-scan",
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "bg-drift",
+          "bg-drift",
+          "bg-drift-pulse",
+          "bg-drift",
+          "bg-drift",
+          "bg-drift",
+          "bg-drift-pulse",
+          "bg-drift",
+          "ghost-trail-a",
+          "ghost-trail-b",
+          "ghost-trail-c",
+          "ghost-trail-d",
+          "photo-scan",
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "bg-drift",
+          "bg-drift",
+          "bg-drift-pulse",
+          "bg-drift",
+          "bg-drift",
+          "bg-drift",
+          "bg-drift-pulse",
+          "bg-drift",
+          "ghost-trail-a",
+          "ghost-trail-b",
+          "ghost-trail-c",
+          "ghost-trail-d",
+          "photo-scan",
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/case-studies",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/contact",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 20.8435)",
+        "animations": [
+          "Animation",
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 2.64254)",
+        "animations": [
+          "Animation",
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/legal",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 20)",
+        "animations": [
+          "Animation",
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 20.8449)",
+        "animations": [
+          "Animation",
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 2.5)",
+        "animations": [
+          "Animation",
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/data-policy",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 20)",
+        "animations": [
+          "Animation",
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 20.8443)",
+        "animations": [
+          "Animation",
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 2.36514)",
+        "animations": [
+          "Animation",
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/services/data-extraction-automation-sprint",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/services/computer-vision-production-optimization",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/services/ai-workflow-buildout",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/n8n-openai-data-extraction",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/invoice-ocr-extraction",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/yolo-computer-vision-optimization",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/ai-invoice-processing-automation",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/ai-project-planning-assistant",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/browser-search-to-spreadsheet",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/depth-based-distance-estimation",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/healthcare-document-intelligence",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/n8n-python-ai-agents",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/python-ci-workflow-automation",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/resumable-listing-data-extraction",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/sports-video-analytics-yolo",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/audit-unknown-route",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "none",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/case-studies",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/contact",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 20.8354)",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 2.36514)",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/legal",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 20)",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 20.8433)",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 2.30047)",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/data-policy",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 19.9986)",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 20.8443)",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 2.36514)",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/services/data-extraction-automation-sprint",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/services/computer-vision-production-optimization",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/services/ai-workflow-buildout",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/n8n-openai-data-extraction",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/invoice-ocr-extraction",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/yolo-computer-vision-optimization",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/ai-invoice-processing-automation",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/ai-project-planning-assistant",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/browser-search-to-spreadsheet",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/depth-based-distance-estimation",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/healthcare-document-intelligence",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/n8n-python-ai-agents",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/python-ci-workflow-automation",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/resumable-listing-data-extraction",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/sports-video-analytics-yolo",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/audit-unknown-route",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/case-studies",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/contact",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 20.8422)",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 2.71684)",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/legal",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 20)",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 20.8448)",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 2.36514)",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/data-policy",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 20)",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 20.8443)",
+        "animations": [
+          "Animation"
+        ]
+      },
+      {
+        "transform": "matrix(1, 0, 0, 1, 0, 2.36514)",
+        "animations": [
+          "Animation"
+        ]
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/services/data-extraction-automation-sprint",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/services/computer-vision-production-optimization",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/services/ai-workflow-buildout",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/n8n-openai-data-extraction",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/invoice-ocr-extraction",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/yolo-computer-vision-optimization",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/ai-invoice-processing-automation",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/ai-project-planning-assistant",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/browser-search-to-spreadsheet",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/depth-based-distance-estimation",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/healthcare-document-intelligence",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/n8n-python-ai-agents",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/python-ci-workflow-automation",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/resumable-listing-data-extraction",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/project/sports-video-analytics-yolo",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  },
+  {
+    "path": "/audit-unknown-route",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "samples": [
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      },
+      {
+        "transform": "none",
+        "animations": []
+      }
+    ],
+    "overflow": 0
+  }
+]

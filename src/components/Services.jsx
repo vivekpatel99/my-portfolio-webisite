@@ -1,115 +1,80 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Plus } from 'lucide-react';
-import {
-  HOURLY_FROM_LABEL,
-  serviceOffers,
-  typicalDurationLabel,
-} from '@/data/serviceOffers';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { DetectionHeading, DetectionLabel } from './DetectionFrame';
+import { HOURLY_FROM_LABEL } from '@/config/pricing';
+import { serviceOffers, serviceRouteForId, serviceTimelineLabel } from '@/data/serviceOffers';
+
+const firstSentence = (text) => text.match(/^[\s\S]*?\.(?=\s)/)?.[0] ?? text;
+
+const GeometricGlyph = () => (
+  <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" className="w-[14px] h-[14px]" aria-hidden="true">
+    <path d="M2 2h4M2 2v4"/>
+    <path d="M12 12H8M12 12V8"/>
+    <rect x="4.5" y="4.5" width="5" height="5"/>
+  </svg>
+);
 
 const Services = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const handleServiceClick = index => {
-    setActiveIndex(activeIndex === index ? null : index);
-  };
-
-  return <section id="services" className="py-24 bg-[#0C0D0D]">
-    <div className="container mx-auto px-6 relative z-10">
-      <div className="mb-16">
-        <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-white uppercase">
-          SERVICE <span className="text-accent-purple">OFFERS</span>
-        </h2>
-        <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mt-4">
-          Hourly engagements, {HOURLY_FROM_LABEL}. Each offer lists typical duration and what is in or out of scope. Estimates go through the contact form.
+  return (
+    <section id="services" className="relative bg-[#0C0D0D] py-14 px-7 md:px-12">
+      <div className="relative z-[2] max-w-[1080px] mx-auto">
+        <DetectionHeading label="Service offers" className="text-[clamp(1.85rem,3.4vw,2.6rem)] font-bold tracking-[-0.02em] leading-[1.1] uppercase mb-[14px]">
+          SERVICE <span className="text-[#8B5CF6]">OFFERS</span>
+        </DetectionHeading>
+        <p className="text-[0.95rem] leading-[1.55] text-[#9ca3af] max-w-[640px] mb-9">
+          Hourly engagements, {HOURLY_FROM_LABEL}. Each offer shows its timeline, with in- and out-of-scope details on its own page. Estimates go through the contact form.
         </p>
-      </div>
 
-      <div className="border-t border-gray-800">
-        {serviceOffers.map((service, index) => <div key={service.id} className="border-b border-gray-800">
-          <div
-            className="flex justify-between items-center cursor-pointer py-8 group gap-4"
-            onClick={() => handleServiceClick(index)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                handleServiceClick(index);
-              }
-            }}
-            role="button"
-            tabIndex={0}
-            aria-expanded={activeIndex === index}
-            aria-controls={`service-content-${service.id}`}
-          >
-            <div className="flex min-w-0 flex-1 items-center gap-4">
-              <h3 className={`text-xl sm:text-2xl md:text-5xl font-bold transition-colors duration-300 break-words ${activeIndex === index ? 'text-white' : 'text-gray-400'}`}>
-                {service.title}
-              </h3>
-              {activeIndex === index && <motion.div className="w-4 h-4 shrink-0 bg-accent-purple rounded-full" initial={{
-                scale: 0
-              }} animate={{
-                scale: 1
-              }} />}
-            </div>
-
-            <motion.div className="text-accent-purple shrink-0" animate={{
-              rotate: activeIndex === index ? 45 : 0
-            }}
-              transition={{
-                duration: 0.3
-              }}>
-              <Plus size={40} className={`${activeIndex === index ? 'text-accent-purple' : 'text-gray-400'} transition-colors`} />
-            </motion.div>
-          </div>
-
-          <AnimatePresence initial={false}>
-            {activeIndex === index && <motion.div
-              id={`service-content-${service.id}`}
-              initial={{
-                opacity: 0,
-                height: 0,
-                y: -20
-              }} animate={{
-                opacity: 1,
-                height: 'auto',
-                y: 0
-              }} exit={{
-                opacity: 0,
-                height: 0,
-                y: -20
-              }} transition={{
-                duration: 0.4,
-                ease: "easeInOut"
-              }} className="overflow-hidden">
-              <div className="pb-8 pr-4 sm:pr-8 md:pr-16 space-y-6">
-                <div className="flex flex-wrap gap-3 text-sm sm:text-base">
-                  <p className="text-white font-semibold">{HOURLY_FROM_LABEL}</p>
-                  <p className="text-gray-300">{typicalDurationLabel(service)}</p>
+        <ul className="grid gap-[14px] gap-y-6 lg:grid-cols-3">
+          {serviceOffers.map((service, index) => (
+            <li key={service.id} className="flex">
+              <article
+                aria-labelledby={`service-title-${service.id}`}
+                className="detection-panel relative flex flex-col w-full bg-transparent py-[22px] px-7"
+              >
+                <DetectionLabel>
+                  SERVICE · <em className="not-italic text-[#a78bfa]">OFFER {String(index + 1).padStart(2, '0')}</em>
+                </DetectionLabel>
+                <div className="flex items-start gap-[14px] mb-4">
+                  <span className="flex-shrink-0 w-[14px] h-[14px] mt-[0.3em] text-[#8B5CF6]">
+                    <GeometricGlyph />
+                  </span>
+                  <h3
+                    id={`service-title-${service.id}`}
+                    className="text-[clamp(1rem,2.2vw,1.2rem)] font-bold tracking-[-0.015em] leading-[1.25] uppercase text-white"
+                  >
+                    {service.title}
+                  </h3>
                 </div>
-                <div className="grid gap-6 md:grid-cols-2 max-w-4xl">
+
+                <p className="text-[0.9rem] leading-[1.55] text-[#9ca3af] mb-5">
+                  {firstSentence(service.summary)}
+                </p>
+
+                <dl className="mt-auto flex flex-wrap gap-[10px] gap-x-7 mb-5 pt-4 border-t border-[rgba(255,255,255,0.06)] font-mono text-[11px] leading-[1.4] tracking-[0.04em] text-[#9ca3af]">
                   <div>
-                    <h4 className="text-white font-semibold mb-3">In scope</h4>
-                    <ul className="space-y-2">
-                      {service.inScope.map((item) => (
-                        <li key={item} className="text-gray-400 text-sm">{item}</li>
-                      ))}
-                    </ul>
+                    <dt className="inline tracking-[0.08em] uppercase">Timeline<span aria-hidden="true" className="contents normal-case tracking-[0.04em]"> ·{' '}</span></dt>
+                    <dd className="inline font-medium text-[#d8caff] font-sans text-[0.88rem] tracking-normal">{serviceTimelineLabel(service)}</dd>
                   </div>
                   <div>
-                    <h4 className="text-white font-semibold mb-3">Out of scope</h4>
-                    <ul className="space-y-2">
-                      {service.outOfScope.map((item) => (
-                        <li key={item} className="text-gray-400 text-sm">{item}</li>
-                      ))}
-                    </ul>
+                    <dt className="inline tracking-[0.08em] uppercase">Rate<span aria-hidden="true" className="contents normal-case tracking-[0.04em]"> ·{' '}</span></dt>
+                    <dd className="inline font-medium text-[#d8caff] font-sans text-[0.88rem] tracking-normal">{HOURLY_FROM_LABEL}</dd>
                   </div>
-                </div>
-                <p className="text-lg text-gray-400 max-w-2xl">{service.summary}</p>
-              </div>
-            </motion.div>}
-          </AnimatePresence>
-        </div>)}
+                </dl>
+
+                <Link
+                  to={serviceRouteForId(service.id)}
+                  className="detection-text-action self-start text-[0.9rem]"
+                >
+                  Scope details<span className="sr-only"> for {service.title.toLowerCase()}</span> →
+                </Link>
+              </article>
+            </li>
+          ))}
+        </ul>
       </div>
-    </div>
-  </section>;
+    </section>
+  );
 };
+
 export default Services;

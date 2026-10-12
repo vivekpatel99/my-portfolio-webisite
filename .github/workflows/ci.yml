@@ -1,74 +1,62 @@
 name: CI
-
 on:
   push:
-    branches: [main, develop, "codex/**", "cursor/**"]
+    branches:
+      - main
+      - develop
   pull_request:
-    branches: [main, develop]
-
+    branches:
+      - main
+      - develop
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # PRs share one group per ref so newer pushes supersede older runs. Pushes to
+  # develop/main get a group per commit, so no run is cancelled or dropped while
+  # pending.
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
   cancel-in-progress: true
-
+permissions:
+  contents: read
+env:
+  CI: true
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  VITE_CONVEX_URL: ${{ vars.VITE_CONVEX_URL || vars.PRODUCTION_CONVEX_URL || vars.CONVEX_URL || secrets.VITE_CONVEX_URL || secrets.PRODUCTION_CONVEX_URL || secrets.CONVEX_URL }}
 jobs:
-  test-and-build:
+  unit-tests:
     runs-on: ubuntu-latest
-    # Keep this version aligned with @playwright/test in package-lock.json.
-    # The image includes browser libraries without apt update on runner mirrors.
-    container: mcr.microsoft.com/playwright:v1.60.0-noble
-    env:
-      CI: true
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-      VITE_CONVEX_URL: ${{ vars.VITE_CONVEX_URL || vars.PRODUCTION_CONVEX_URL || vars.CONVEX_URL || secrets.VITE_CONVEX_URL || secrets.PRODUCTION_CONVEX_URL || secrets.CONVEX_URL }}
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-
-      - name: Trust the mounted checkout for repository checks
-        # Container Git sees the runner-mounted checkout under a different owner.
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
           cache: npm
-
-      - run: npm ci
-
+      - run: npm ci --no-audit --no-fund
+      - name: Install video metadata probe for staging tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends ffmpeg
+      - run: npm test -- --maxWorkers=2
+  production-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci --no-audit --no-fund
       - name: Validate production-like Convex URL
         shell: bash
-        run: |
-          set -euo pipefail
-
-          if [[ -z "${VITE_CONVEX_URL:-}" ]]; then
-            if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
-              echo "::warning title=Missing Convex URL::Using the temporary PR fallback https://coordinated-mandrill-587.eu-west-1.convex.cloud"
-              VITE_CONVEX_URL="https://coordinated-mandrill-587.eu-west-1.convex.cloud"
-            else
-              echo "::error title=Missing Convex URL::Set the VITE_CONVEX_URL repository variable (or secret) to the production Convex deployment URL."
-              exit 1
-            fi
-          fi
-
-          echo "VITE_CONVEX_URL=$VITE_CONVEX_URL" >> "$GITHUB_ENV"
-
-          if [[ ! "$VITE_CONVEX_URL" =~ ^https://[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)?\.convex\.cloud/?$ ]]; then
-            echo "::error title=Invalid Convex URL::VITE_CONVEX_URL must be a production-like https://*.convex.cloud URL, including regional Convex hosts."
-            exit 1
-          fi
-
-          if [[ "$VITE_CONVEX_URL" =~ ^https://(your-|example\.) || "$VITE_CONVEX_URL" =~ (placeholder|localhost|127\.0\.0\.1|\[::1\]) ]]; then
-            echo "::error title=Unsafe Convex URL::VITE_CONVEX_URL must not point at a local or placeholder backend."
-            exit 1
-          fi
-
-      - run: npm test
-
+        run: bash tools/validate-convex-url.sh
       - name: Remove stale build output
         run: rm -rf dist
-
       - name: Build production bundle
         run: npm run build
-
       - name: Validate fresh production bundle
         shell: bash
         run: |
@@ -98,7 +86,6 @@ jobs:
             echo "::error title=Unsafe backend URL found::Fresh dist must not contain local or placeholder backend URLs."
             exit 1
           fi
-
       - name: Ensure generated dist is not tracked
         shell: bash
         run: |
@@ -109,17 +96,82 @@ jobs:
             git ls-files dist
             exit 1
           fi
-
-      - name: Install Playwright browsers
-        run: npx playwright install chromium webkit
-
+      - name: Archive validated production bundle
+        run: tar -czf "$RUNNER_TEMP/production-dist.tar.gz" dist
+      - name: Share validated production bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-dist
+          path: ${{ runner.temp }}/production-dist.tar.gz
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+  apache-service-qa:
+    needs: production-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - uses: actions/download-artifact@v4
+        with:
+          name: production-dist
+          path: ${{ runner.temp }}/production-dist
+      - name: Restore production bundle
+        run: tar -xzf "$RUNNER_TEMP/production-dist/production-dist.tar.gz"
+      - name: Check service routes under Apache HTTPS
+        run: npm run qa:apache-services
+  passive-qa:
+    needs: production-build
+    strategy:
+      fail-fast: false
+      # Count-based sharding would put every WebKit test on the last leg. Shard
+      # each browser family separately, weighted by measured cost: Chromium has
+      # 4x the tests at ~0.7s each, WebKit ~1.3s each.
+      matrix:
+        include:
+          - { browser: chromium, shard: 1, shards: 4 }
+          - { browser: chromium, shard: 2, shards: 4 }
+          - { browser: chromium, shard: 3, shards: 4 }
+          - { browser: chromium, shard: 4, shards: 4 }
+          - { browser: webkit, shard: 1, shards: 2 }
+          - { browser: webkit, shard: 2, shards: 2 }
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.60.0-noble
+    timeout-minutes: 15
+    env:
+      QA_LOCAL_ONLY: "1"
+      QA_ARTIFACT_SAFE_MODE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Trust the mounted checkout for repository checks
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - uses: actions/download-artifact@v4
+        with:
+          name: production-dist
+          path: ${{ runner.temp }}/production-dist
+      - name: Restore production bundle
+        run: tar -xzf "$RUNNER_TEMP/production-dist/production-dist.tar.gz"
       - name: Run passive Playwright QA against preview
         shell: bash
         env:
           QA_PREVIEW_URL: http://127.0.0.1:3000
           QA_PROD_URL: http://127.0.0.1:3000
-          QA_LOCAL_ONLY: '1'
-          QA_ARTIFACT_SAFE_MODE: '1'
+          QA_LOCAL_ONLY: "1"
+          QA_ARTIFACT_SAFE_MODE: "1"
         run: |
           set -euo pipefail
 
@@ -136,32 +188,141 @@ jobs:
 
           curl --fail --silent --show-error "$QA_PREVIEW_URL" >/dev/null
           npm run qa:seo
-          npm run qa:playwright:ci
-
-      - name: Run mocked contact lifecycle QA
-        env:
-          QA_LOCAL_ONLY: '1'
-          QA_ARTIFACT_SAFE_MODE: '1'
-        run: npm run qa:contact-lifecycle
-
-      - name: Run fake telemetry boundary QA
-        env:
-          QA_LOCAL_ONLY: '1'
-          QA_ARTIFACT_SAFE_MODE: '1'
-        run: npm run qa:telemetry-boundary
-
+          npm run qa:playwright:ci:${{ matrix.browser }} -- --shard=${{ matrix.shard }}/${{ matrix.shards }}
       - name: Reconstruct sanitized passive QA artifacts
         id: sanitize-qa-artifacts
         if: always()
         run: node tools/sanitize-playwright-artifacts.js
-
       - name: Retain sanitized passive QA artifacts
         if: always() && steps.sanitize-qa-artifacts.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
-          name: passive-qa-sanitized
+          name: passive-qa-sanitized-${{ matrix.browser }}-${{ matrix.shard }}
           path: |
             qa-artifacts/summary.json
             qa-artifacts/failure-results.json
           if-no-files-found: ignore
           retention-days: 7
+  contact-qa:
+    strategy:
+      fail-fast: false
+      matrix:
+        shard:
+          - 1
+          - 2
+          - 3
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.60.0-noble
+    timeout-minutes: 15
+    env:
+      QA_LOCAL_ONLY: "1"
+      QA_ARTIFACT_SAFE_MODE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Trust the mounted checkout for repository checks
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Run mocked contact lifecycle QA
+        env:
+          QA_LOCAL_ONLY: "1"
+          QA_ARTIFACT_SAFE_MODE: "1"
+        run: npm run qa:contact-lifecycle -- --shard=${{ matrix.shard }}/3
+  motion-qa:
+    strategy:
+      fail-fast: false
+      matrix:
+        browser:
+          - chromium
+          - webkit
+        viewport:
+          - desktop
+          - mobile
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.60.0-noble
+    timeout-minutes: 15
+    env:
+      QA_LOCAL_ONLY: "1"
+      QA_ARTIFACT_SAFE_MODE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Trust the mounted checkout for repository checks
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Run reduced-motion regression QA
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          QA_MOTION_OUTPUT_DIR="$(mktemp -d "$RUNNER_TEMP/qa-motion.XXXXXX")"
+          export QA_MOTION_OUTPUT_DIR
+          trap 'rm -rf "$QA_MOTION_OUTPUT_DIR"' EXIT
+
+          motion_projects=(--project=motion-${{ matrix.browser }}-${{ matrix.viewport }})
+          if [[ "${{ matrix.browser }}" == "webkit" ]]; then
+            xvfb-run --auto-servernum npm run qa:motion -- --headed "${motion_projects[@]}"
+          else
+            npm run qa:motion -- "${motion_projects[@]}"
+          fi
+  telemetry-qa:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.60.0-noble
+    timeout-minutes: 15
+    env:
+      QA_LOCAL_ONLY: "1"
+      QA_ARTIFACT_SAFE_MODE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Trust the mounted checkout for repository checks
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Validate production-like Convex URL
+        shell: bash
+        run: bash tools/validate-convex-url.sh
+      - name: Run fake telemetry boundary QA
+        env:
+          QA_LOCAL_ONLY: "1"
+          QA_ARTIFACT_SAFE_MODE: "1"
+        run: npm run qa:telemetry-boundary
+      - name: Verify production Replay consent lifecycle with synthetic transport
+        run: npm run qa:replay-consent
+  test-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs:
+      - unit-tests
+      - production-build
+      - apache-service-qa
+      - passive-qa
+      - contact-qa
+      - motion-qa
+      - telemetry-qa
+    if: ${{ always() }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Require every CI job to succeed
+        env:
+          CI_JOB_RESULTS: ${{ toJSON(needs) }}
+        run: node tools/check-ci-results.js

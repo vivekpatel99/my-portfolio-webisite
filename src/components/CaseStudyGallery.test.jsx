@@ -3,13 +3,65 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { readFileSync } from 'node:fs';
 import { afterEach, describe, expect, it } from 'vitest';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { compileCaseStudyPublication } from '../../publication/compile-case-studies.js';
 import { caseStudyPublicationBaseline } from '../../publication/case-study-manifest.js';
-import Gallery, { collectGalleryImages, galleryStageAspectRatio, galleryThumbnailSrc } from './CaseStudyGallery.js';
+import Gallery, { caseStudyDisplaySrc, collectGalleryImages, galleryStageAspectRatio, galleryThumbnailSrc } from './CaseStudyGallery.js';
+import CaseStudyArticle from './CaseStudyArticle.js';
 afterEach(cleanup);
 const images = ['Input', 'Output', 'Workflow'].map((alt, i) => ({ src: `/image-${i}.png`, alt, width: 800, height: 600 }));
 describe('case study gallery', () => {
+  it('updates overview and evidence labels when selecting media inline and in the lightbox', () => {
+    const { container } = render(<Gallery images={images} overviewSrc={images[0].src} />);
+    const inlineLabel = () => container.querySelector('.case-gallery-stage .detection-label').textContent;
+    expect(inlineLabel()).toBe('PROJECT OVERVIEW');
+    fireEvent.click(screen.getByRole('button', { name: 'Show image 2: Output' }));
+    expect(inlineLabel()).toBe('PROJECT EVIDENCE');
+    fireEvent.click(screen.getByRole('button', { name: 'Enlarge image: Output' }));
+    const dialog = screen.getByRole('dialog');
+    expect(dialog.querySelector('.detection-label').textContent).toBe('PROJECT EVIDENCE');
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Show image 1: Input' }));
+    expect(dialog.querySelector('.detection-label').textContent).toBe('PROJECT OVERVIEW');
+    expect(inlineLabel()).toBe('PROJECT OVERVIEW');
+    expect(dialog.querySelector('.case-gallery-stage .detection-label')).toBeNull();
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Next image' }));
+    expect(dialog.querySelector('.detection-label').textContent).toBe('PROJECT EVIDENCE');
+    expect(inlineLabel()).toBe('PROJECT EVIDENCE');
+  });
+  it('labels a single overview cover without adding gallery controls', () => {
+    const { container } = render(<Gallery images={[images[0]]} overviewSrc={images[0].src} />);
+    expect(container.querySelector('.case-study-cover-stage .detection-label').textContent).toBe('PROJECT OVERVIEW');
+    expect(screen.queryByRole('button')).toBeNull();
+    expect(screen.getByRole('link').getAttribute('href')).toBe(images[0].src);
+  });
+  it('keeps generic galleries and unmatched overview sources labeled as evidence', () => {
+    const { container, rerender } = render(<Gallery images={images} />);
+    expect(container.querySelector('.detection-label').textContent).toBe('PROJECT EVIDENCE');
+    rerender(<Gallery images={[images[0]]} overviewSrc="/another-overview.png" />);
+    expect(container.querySelector('.detection-label').textContent).toBe('PROJECT EVIDENCE');
+  });
+  it('labels the static overview while preserving media links and no-JS captions', () => {
+    const captioned = images.map((image, i) => ({ ...image, caption: `Caption ${i + 1}` }));
+    const html = renderToStaticMarkup(<Gallery images={captioned} overviewSrc={images[0].src} interactive={false} />);
+    expect(html).toContain('PROJECT OVERVIEW');
+    expect(html).not.toContain('PROJECT EVIDENCE');
+    captioned.forEach((image) => {
+      expect(html).toContain(`href="${image.src}"`);
+      expect(html).toContain(image.caption);
+    });
+    expect(html).toContain('<noscript>');
+    expect(html).not.toContain('<button');
+  });
+  it('renders every compiled public article cover as an overview', () => {
+    const stories = compileCaseStudyPublication();
+    expect(stories.length).toBeGreaterThan(0);
+    for (const story of stories) {
+      const html = renderToStaticMarkup(<CaseStudyArticle story={story} />);
+      expect(html, story.slug).toContain('PROJECT OVERVIEW');
+      expect(html, story.slug).not.toContain('PROJECT EVIDENCE');
+      expect(html, story.slug).toContain(`src="${caseStudyDisplaySrc(story.image)}"`);
+    }
+  });
   it('collects approved legacy gallery images from the public record', () => {
     const story = compileCaseStudyPublication({ manifest: caseStudyPublicationBaseline }).find(({ slug }) => slug === 'invoice-ocr-extraction');
     expect(story.gallery).toHaveLength(2);
@@ -93,6 +145,14 @@ describe('case study gallery', () => {
     expect(screen.queryByRole('button')).toBeNull();
     expect(screen.getByRole('link').getAttribute('href')).toBe(images[0].src);
   });
+  it('uses a display derivative for a single cover while its link keeps the original', () => {
+    const image = compileCaseStudyPublication().find(({ slug }) => slug === 'depth-based-distance-estimation').image;
+    render(<Gallery images={[image]} />);
+    const link = screen.getByRole('link');
+    expect(link.getAttribute('href')).toBe(image.src);
+    expect(link.querySelector('img').getAttribute('src')).toBe(caseStudyDisplaySrc(image));
+    expect(link.querySelector('img').getAttribute('src')).not.toBe(image.src);
+  });
   it('preserves and renders video sources while using the poster as a preview', () => {
     const video = {
       src: '/football-tracking.mp4',
@@ -112,21 +172,39 @@ describe('case study gallery', () => {
       .toBe('/assets/case-studies/yoga-pose-thumb-734c037c9f53.jpg');
     expect(galleryThumbnailSrc({ src: '/assets/case-studies/n8n-excel-to-json.png', poster: '/preview.webp' }))
       .toBe('/assets/case-studies/n8n-excel-to-json-thumb-7d0eae27bff6.jpg');
+    expect(galleryThumbnailSrc({ src: '/assets/case-studies/n8n-python-ai-agents-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png' }))
+      .toBe('/assets/case-studies/n8n-openai-data-extraction-e6fbcc7caa954b217adfa063990d460059e44d08808ad85c9e8988418920104c-thumb-bd1dc61ef269.jpg');
+    expect(caseStudyDisplaySrc({ src: '/assets/case-studies/n8n-python-ai-agents-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png' }))
+      .toBe('/assets/case-studies/case-study-display-b11f57c86cd2-3d31a82cd9be.webp');
     expect(galleryThumbnailSrc({ src: '/image-0.png', poster: '/preview.webp' })).toBe('/preview.webp');
     expect(galleryThumbnailSrc({ src: '/image-0.png' })).toBe('/image-0.png');
+    expect(caseStudyDisplaySrc({ src: '/image-0.png', poster: '/preview.webp' })).toBe('/image-0.png');
+    expect(caseStudyDisplaySrc({ src: '/image-0.png' })).toBe('/image-0.png');
   });
-  it('keeps the selected stage on the original while thumbnails use derivatives', () => {
-    const selected = { src: '/assets/case-studies/n8n-excel-to-json.png', alt: 'Excel workflow', width: 3400, height: 955 };
-    const other = { src: '/assets/case-studies/n8n-table-to-json.png', alt: 'Table workflow', width: 2645, height: 967 };
+  it('uses display derivatives inline while the enlarged image keeps the original', () => {
+    const published = compileCaseStudyPublication().find(({ slug }) => slug === 'n8n-openai-data-extraction');
+    const [selected, other] = collectGalleryImages(published);
+    expect(galleryThumbnailSrc(selected)).not.toBe(selected.src);
+    expect(galleryThumbnailSrc(other)).not.toBe(other.src);
     const { container } = render(<Gallery images={[selected, other]} />);
-    expect(container.querySelector('.case-gallery-open img')?.getAttribute('src')).toBe(selected.src);
+    expect(container.querySelector('.case-gallery-open img')?.getAttribute('src')).toBe(caseStudyDisplaySrc(selected));
+    expect(container.querySelector('.case-gallery-open img')?.getAttribute('src')).not.toBe(selected.src);
     expect([...container.querySelectorAll('.case-gallery-thumbnail img')].map((image) => image.getAttribute('src')))
       .toEqual([
-        '/assets/case-studies/n8n-excel-to-json-thumb-7d0eae27bff6.jpg',
-        '/assets/case-studies/n8n-table-to-json-thumb-a03edc14e212.jpg',
+        galleryThumbnailSrc(selected),
+        galleryThumbnailSrc(other),
       ]);
-    fireEvent.click(screen.getByRole('button', { name: 'Show image 2: Table workflow' }));
-    expect(container.querySelector('.case-gallery-open img')?.getAttribute('src')).toBe(other.src);
+    fireEvent.click(screen.getByRole('button', { name: `Show image 2: ${other.alt}` }));
+    expect(container.querySelector('.case-gallery-open img')?.getAttribute('src')).toBe(caseStudyDisplaySrc(other));
+    fireEvent.click(screen.getByRole('button', { name: `Enlarge image: ${other.alt}` }));
+    expect(screen.getByLabelText('Enlarged image; scroll to inspect when zoomed').querySelector('img').getAttribute('src')).toBe(other.src);
+  });
+  it('keeps the original href in the static multi-image fallback', () => {
+    const published = compileCaseStudyPublication().find(({ slug }) => slug === 'n8n-openai-data-extraction');
+    const selected = collectGalleryImages(published)[0];
+    const html = renderToStaticMarkup(<Gallery images={collectGalleryImages(published)} interactive={false} />);
+    expect(html).toContain(`href="${selected.src}"`);
+    expect(html).toContain(`src="${caseStudyDisplaySrc(selected)}"`);
   });
   it('leaves arrow keys to focused video controls', () => {
     const video = { src: '/football-tracking.mp4', poster: '/football-tracking.webp', alt: 'Tracked football players' };
@@ -199,6 +277,33 @@ describe('case study gallery', () => {
     expect(screen.getByText('1 of 3')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Show image 2: Output' }));
     expect(screen.getByText('2 of 3')).toBeTruthy();
+  });
+  it('keeps working navigation outside the evidence stage inline and enlarged', () => {
+    render(<Gallery images={images} />);
+    const gallery = screen.getByRole('region', { name: 'Case study images' });
+    const assertSeparateNavigation = (region) => {
+      const stage = region.querySelector('.case-gallery-stage');
+      for (const name of ['Previous image', 'Next image']) {
+        expect(stage.contains(within(region).getByRole('button', { name }))).toBe(false);
+      }
+    };
+    assertSeparateNavigation(gallery);
+    fireEvent.click(within(gallery).getByRole('button', { name: 'Next image' }));
+    expect(within(gallery).getByText('2 of 3')).toBeTruthy();
+
+    const opener = within(gallery).getByRole('button', { name: 'Enlarge image: Output' });
+    fireEvent.click(opener);
+    const dialog = screen.getByRole('dialog');
+    assertSeparateNavigation(dialog);
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Zoom in' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Next image' }));
+    expect(within(dialog).getByText('3 of 3')).toBeTruthy();
+    expect(within(dialog).getByText('100%')).toBeTruthy();
+    fireEvent.keyDown(within(dialog).getByRole('button', { name: 'Previous image' }), { key: 'ArrowLeft' });
+    expect(within(dialog).getByText('2 of 3')).toBeTruthy();
+    fireEvent.keyDown(dialog, { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.activeElement).toBe(opener);
   });
   it('supports keyboard navigation, enlargement, zoom and Escape focus restoration', () => {
     render(<Gallery images={images} />);

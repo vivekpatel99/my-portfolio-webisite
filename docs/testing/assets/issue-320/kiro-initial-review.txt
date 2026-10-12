@@ -1,0 +1,64 @@
+Original Kiro output for staged candidate c49def4786a8d37d247683eb1c7a208763adae61. Findings below describe the earlier candidate, not the final implementation.
+
+No blocking defect is runtime-verified. I did find one high-confidence race in the SDK source. It affects the default on-error (buffer) path and goes against acceptance criteria 2–4. I'd treat it as gating `Closes #320` until a fixture check confirms or refutes it. Every finding below comes from reading the source only; I ran nothing.
+
+## Source-traced defects (not reproduced at runtime)
+
+### F1 — HIGH: Withdrawal doesn't wait for an in-flight buffer→session upload
+- **Where:** `src/lib/sentryTelemetry.js:121` (`replay.stop()` in `closeSentryTelemetry`), together with these lines in the installed SDK (`node_modules/@sentry/replay/esm/index.js`):
+  - `:5796` — after an error is sent, a `setTimeout` calls `sendBufferedReplayOrFlush()`.
+  - `:8238–8274` — that function awaits `flushImmediate()`. It then calls `stopRecording()`, sets `recordingMode='session'` and calls `startRecording()` without checking `_isEnabled`.
+  - `:9435` — the integration's `stop()` only force-flushes in `session` mode, so in `buffer` mode teardown doesn't wait for `_flushLock`.
+  - `:7776–7789` — `sendReplay` retries after 5 s, 10 s and 30 s with the same `recordingData`.
+- **How it happens:** In buffer mode (about 95% of consented sessions), an error starts converting the buffer to a session upload, and the user withdraws while that upload is still in progress.
+  - `recordingMode` is still `'buffer'`, so `stop({forceFlush:false})` returns immediately.
+  - Teardown (`closing`) resolves as soon as `client.close(2000)` drains the transport, or after 2 s.
+  - The pending conversion then finishes and runs against the new state.
+- **What goes wrong:**
+  1. **Recorder restarted after withdrawal.** If the conversion finishes while consent is withdrawn, `:8274` starts rrweb again: its DOM observers and listeners come back with `_isEnabled=false`. Events are dropped because there is no session (`_checkSession()` returns false), so nothing is exported. This goes against criterion 2 ("removes or disables recorder listeners").
+  2. **Duplicate recorder after reaccept.** `_initializeRecording` → `startRecording` (`:8518`) overwrites `_stopRecording` without stopping the leaked recorder. rrweb's emit function is a single module-level variable (`:3519`, `:3602`), so the old observers feed the new buffer as well. Later withdrawals can't stop the leaked recorder. This goes against criterion 4.
+  3. **Old recording exported after reaccept.** Suppose the first upload attempt failed with a network error, then the user withdraws and reaccepts within the retry delay. The retry calls `sendReplayRequest` with the old `replayId` and old `recordingData`, and the gate (`:77–79`) is open again because `initialized=true`. This goes against criterion 3 and the doc's claim that immediate reaccept "does not dispatch that unsent recording". The same continuation can also stop the new recorder, or switch a new buffer-sampled session to full session mode without any error.
+- **Coverage gap:** The pending-send test (`tests/qa/qa-replay-consent.spec.js:115`) only covers session mode. The buffer test waits for `recordingMode==='session'` before withdrawing, so this window is never exercised.
+- **Measurable acceptance (fixture, buffer mode):**
+  - **Recorder stays stopped:** Hold sends, capture an error and release only the error envelope. Wait until a `replay_event` send is pending, then Withdraw and release it. After 200 ms, `_replay._stopRecording` must be falsy and `listenerCount()` must stay at its withdrawn value.
+  - **No old recording after reaccept:** Make the replay send reject once, withdraw, then accept within 5 s. Wait 6 s. No envelope may carry the old replay id after reaccept, and `listenerCount()` must equal the single-recorder baseline.
+- **Possible fixes, for you to choose from:**
+  - Drop `replay_event`/`replay_recording` envelope items whose `replay_id` doesn't match `replay.getReplayId()` (a public API). This fixes problem 3.
+  - Problems 1 and 2 need a stop-before-start in `startForConsent`. That means calling the container's `stopRecording()`, which uses the protected `_replay`. The alternative is to document the leaked recorder as a known limitation.
+
+### F2 — LOW: The transport wrapper turns off Replay's check of error-send status codes
+- **Where:** `src/lib/sentryTelemetry.js:72–80` (`{...transport, send: …}`).
+- **How it happens:** `createTransport` marks `send.__sentry__baseTransport__ = true` (`@sentry/core/esm/transports/base.js:85`). The wrapper replaces `send`, so `isBaseTransportSend()` returns false (`replay :5800–5813`). `enforceStatusCode` is then false (`:5732`, `:5744`).
+- **Effect:** A consented error replay is promoted even when its error envelope got a non-2xx or 429 response. This changes Replay behaviour compared with the baseline but doesn't leak anything without consent.
+- **Acceptance:** A replay is promoted only after a 2xx error response, or the change is documented as intended.
+
+## Hypotheses (lower confidence)
+- **H1 — LOW, fails closed:** In production the compression worker is on, but the fixture sets `useCompression:false`, so this path is untested.
+  - If the user withdraws in buffer mode while an error flush is waiting on the worker (`finish`/`addEvent`), `eventBuffer.destroy()` terminates the worker. The pending `postMessage` promise (`:5040–5070`) never settles, so `_flushLock` stays held.
+  - A later session-mode `stop()` would then wait forever at `:8979`, `closing` would never resolve, and every later reaccept would hang. That disables telemetry without any privacy leak.
+- **H2 — LOW:** Session-mode teardown waits on a pending upload's retry chain, so reaccept can be delayed by up to about 45 s. This is functional only.
+
+## Checked and found correct (from source)
+- **Async startup:** Withdrawing during the SDK download, during `await closing`, or during the synchronous `init()` cannot start recording. `requested` is checked again after every await (`:39–40`, `:100–105`).
+- **Startup timer:** The `setupOnce` timer (`:9396`) is overridden to do nothing.
+- **Single instance:** One `ConsentReplay` is constructed, so the "Multiple … instances" guard is never hit. Global listeners are added once (`_hasInitializedCoreListeners`), and window listeners are removed before being re-added.
+- **Session-mode force flush:** `initialized=false` is set before `stop()`, and `sendReplayRequest` uses `client.getTransport()`, which is the gated transport. So the forced flush is discarded, and a held send is awaited through `_flushLock`.
+- **Reaccept order:** `close()` sets `enabled=false` after its flush, and reaccept awaits `closing` first, so reaccept can't be undone afterwards.
+- **Masking:** The masking, block and ignore options are unchanged from the baseline.
+
+## Evidence review
+- `final-tests.log`: 68 files, 851 tests passed.
+- `runner-final.log`: 10/10 passed in Chromium and WebKit; the SDK version is asserted as 7.120.4.
+- `storage.log`: 3/3 passed, but only on `preview-desktop` (Chromium).
+- `browser-red-corrected.log`: only the 2 Chromium withdrawal tests, which fail at `getReplayId()`. It confirms the baseline recorder didn't stop.
+- These doc claims aren't backed by the supplied logs: the baseline setup-race failure, "20 targeted tests", ESLint passing, and CI running in the Playwright container. Treat them as unverified.
+- `docs/testing/issue-320-replay-consent.md` ends with a placeholder sentence ("…recorded below after completion") that has nothing after it. Fill it in or remove it before committing.
+
+## Sources and configuration actually loaded
+- **Read:** `candidate.diff`, `issue.md`, `docs/testing/issue-320-replay-consent.md`, `src/lib/sentryTelemetry.js`, `src/components/SentryTelemetry.jsx`, all four evidence logs (the unit-test log through grep only), `.github/workflows/ci.yml:240–322`, and a grep of `src/lib/sensitiveTelemetry.js`.
+- **Installed SDK:** the relevant ranges of `node_modules/@sentry/replay/esm/index.js`, `@sentry/core/esm/baseclient.js` and `transports/base.js`, and `@sentry/browser/esm/sdk.js`.
+- **From the diff only:** the test, fixture and runner files.
+- **AGENTS.md** came from the injected context; I didn't re-read it from disk.
+- **Skills:** I loaded none (impeccable, web-design-guidelines, vercel-react-best-practices) because this review covers only the consent lifecycle.
+- **Model:** The runtime context names the model as claude-opus-5.5. I can't independently confirm the effort level or that Auto mode was off.
+- **Not delegated:** I made no writes, ran no commands and delegated nothing.

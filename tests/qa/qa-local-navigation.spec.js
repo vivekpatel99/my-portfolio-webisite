@@ -1,5 +1,77 @@
 import { createServer } from 'node:http';
 import { test, expect } from './qa-test.js';
+import { guardLocalNavigation } from './qa-navigation-guard.js';
+
+test('local-only mode recovers a single loopback GET connection reset', async ({ page }, testInfo) => {
+  test.skip(process.env.QA_LOCAL_ONLY !== '1', 'The navigation guard is an explicit local-only control.');
+  let attempts = 0;
+  const server = createServer((request, response) => {
+    if (request.url !== '/') {
+      response.writeHead(204);
+      response.end();
+      return;
+    }
+    attempts += 1;
+    if (attempts === 1) return request.socket.destroy();
+    response.writeHead(200, { 'content-type': 'text/html' });
+    response.end('<p>Recovered loopback response</p>');
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  try {
+    await page.goto(`http://127.0.0.1:${server.address().port}/`, { timeout: 5000 });
+    await expect(page.getByText('Recovered loopback response')).toBeVisible();
+    expect(attempts).toBe(2);
+  } finally {
+    await testInfo.attach('transport-attempts', { body: JSON.stringify({ method: 'GET', attempts }), contentType: 'application/json' });
+    server.closeAllConnections();
+    await new Promise((resolve) => server.close(resolve));
+  }
+});
+
+for (const [method, expectedAttempts] of [['GET', 2], ['POST', 1]]) {
+  test(`local-only mode propagates a permanent ${method} reset after ${expectedAttempts} attempts`, async ({ page }, testInfo) => {
+    test.skip(process.env.QA_LOCAL_ONLY !== '1', 'The navigation guard is an explicit local-only control.');
+    let attempts = 0;
+    let guardError;
+    const server = createServer((request, response) => {
+      if (request.url === '/reset') {
+        attempts += 1;
+        return request.socket.destroy();
+      }
+      response.writeHead(200, { 'content-type': 'text/html' });
+      response.end('<p>Loopback test origin</p>');
+    });
+    await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+    const origin = `http://127.0.0.1:${server.address().port}`;
+    await page.route(`${origin}/reset`, async (route) => {
+      try {
+        await guardLocalNavigation(route);
+      } catch (error) {
+        guardError = error;
+        await route.abort('connectionreset');
+      }
+    });
+    try {
+      await page.goto(origin);
+      const result = await page.evaluate(async ({ method }) => {
+        try {
+          await fetch('/reset', { method });
+          return 'unexpected response';
+        } catch {
+          return 'request failed';
+        }
+      }, { method });
+      expect(result).toBe('request failed');
+      expect(guardError).toBeInstanceOf(Error);
+      expect(guardError.message).toMatch(/socket hang up|ECONNRESET/i);
+      expect(attempts).toBe(expectedAttempts);
+    } finally {
+      await testInfo.attach('transport-attempts', { body: JSON.stringify({ method, attempts, error: guardError?.message }), contentType: 'application/json' });
+      server.closeAllConnections();
+      await new Promise((resolve) => server.close(resolve));
+    }
+  });
+}
 
 test('local-only mode stops an external redirect before a browser request', async ({ page }) => {
   test.skip(process.env.QA_LOCAL_ONLY !== '1', 'The navigation guard is an explicit local-only control.');

@@ -37,10 +37,31 @@ describe('CaseStudyCollection', () => {
       </MemoryRouter>,
     );
 
-    const cards = screen.getAllByRole('article');
-    expect(cards.map((card) => card.querySelector('h3').textContent)).toEqual(['Newer synthetic story', 'Older synthetic story']);
+    expect(screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent)).toEqual([
+      'Newer synthetic story',
+      'Older synthetic story',
+    ]);
     expect(container.querySelector('.grid.grid-cols-1')).toBeTruthy();
     expect(container.querySelector('.md\\:grid-cols-2.lg\\:grid-cols-3')).toBeTruthy();
+  });
+
+  it('prioritizes only the first collection cover', () => {
+    const storiesWithImages = stories.map((story, index) => ({
+      ...story,
+      image: {
+        src: `/synthetic-cover-${index}.png`,
+        alt: `Synthetic cover ${index}`,
+        width: 1280,
+        height: 720,
+      },
+    }));
+    render(<MemoryRouter><CaseStudyCollection stories={storiesWithImages} /></MemoryRouter>);
+
+    const [first, second] = screen.getAllByRole('img');
+    expect(first.getAttribute('loading')).toBe('eager');
+    expect(first.getAttribute('fetchpriority')).toBe('high');
+    expect(second.getAttribute('loading')).toBe('lazy');
+    expect(second.hasAttribute('fetchpriority')).toBe(false);
   });
 
   it('renders a readable empty state', () => {
@@ -170,6 +191,20 @@ describe('CaseStudyCollection', () => {
 
     link.dispatchEvent(new MouseEvent('auxclick', { bubbles: true, cancelable: true, button: 1 }));
     expect(JSON.parse(window.sessionStorage.getItem(CASE_STUDY_BROWSING_STORAGE_KEY))).toEqual({ loadedCount: 6, scrollY: 0 });
+  });
+
+  it.each([[manyStories(12), 6], [[], 0]])('saves departures from child card groups and ignores other child links', (coreStories, loadedCount) => {
+    const scrollY = vi.spyOn(window, 'scrollY', 'get').mockReturnValue(1388.5);
+    render(<MemoryRouter><CaseStudyCollection stories={coreStories}>
+      <a href="/elsewhere/">Unrelated</a>
+      <a href="/project/child/?from=collection">Child card</a>
+    </CaseStudyCollection></MemoryRouter>);
+
+    screen.getByRole('link', { name: 'Unrelated' }).dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+    expect(sessionStorage.getItem(CASE_STUDY_BROWSING_STORAGE_KEY)).toBeNull();
+    screen.getByRole('link', { name: 'Child card' }).dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+    expect(JSON.parse(sessionStorage.getItem(CASE_STUDY_BROWSING_STORAGE_KEY))).toEqual({ loadedCount, scrollY: 1388.5 });
+    scrollY.mockRestore();
   });
 
   it('captures the current position when opening a card and restores it on explicit return', () => {

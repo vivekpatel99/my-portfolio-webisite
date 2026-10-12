@@ -1,0 +1,26 @@
+{
+  "offscreenHeroStyleCalls": 1920,
+  "collectionBefore": [
+    "Showing 6 of 10 case studies"
+  ],
+  "collectionAfter": [
+    "Showing 10 of 10 case studies"
+  ],
+  "secondImage": {
+    "alt": "Representative n8n data extraction workflow from other portfolio work; temporary stand-in for Andrew engagement screenshots",
+    "caption": []
+  },
+  "dialogOpen": true,
+  "galleryCount": "3 of 7",
+  "dialogClosed": true,
+  "restoredFocus": true,
+  "blankForm": {
+    "focus": "<button type=\"submit\" aria-label=\"Submit Project Estimate Request\" class=\"relative inline-flex items-center justify-center gap-3 border border-[rgba(139,92,246,0.78)] bg-[rgba(139,92,246,0.12)] px-10 py-4 font-mono text-[11px] tracking-[0.1em] uppercase text-white hover:border-[#8B5CF6] hover:bg-[rgba(139,92,246,0.18)] disabled:opacity-50 disabled:cursor-not-allowed transition-all\">SUBMIT · FIELD</button>",
+    "errors": [
+      "Name is required.",
+      "Email is required.",
+      "Project description is required."
+    ]
+  },
+  "contact320Overflow": false
+}

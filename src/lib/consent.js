@@ -5,9 +5,22 @@ export const DEFAULT_COOKIE_CONSENT_PREFERENCES = {
   analytics: false,
 };
 
+let unpersistedPreferences = null;
+
+function normalizePreferences(preferences) {
+  return {
+    necessary: true,
+    analytics: preferences?.analytics === true,
+  };
+}
+
 export function readCookieConsentPreferences() {
   if (typeof window === 'undefined') {
     return null;
+  }
+
+  if (unpersistedPreferences) {
+    return { ...unpersistedPreferences };
   }
 
   try {
@@ -16,11 +29,7 @@ export function readCookieConsentPreferences() {
       return null;
     }
 
-    const parsedPrefs = JSON.parse(savedPrefs);
-    return {
-      necessary: true,
-      analytics: parsedPrefs?.analytics === true,
-    };
+    return normalizePreferences(JSON.parse(savedPrefs));
   } catch {
     return null;
   }
@@ -35,11 +44,14 @@ export function saveCookieConsentPreferences(preferences) {
     return DEFAULT_COOKIE_CONSENT_PREFERENCES;
   }
 
-  const safePreferences = {
-    necessary: true,
-    analytics: preferences?.analytics === true,
-  };
+  const safePreferences = normalizePreferences(preferences);
 
-  window.localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(safePreferences));
-  return safePreferences;
+  try {
+    window.localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(safePreferences));
+    unpersistedPreferences = null;
+  } catch {
+    unpersistedPreferences = safePreferences;
+  }
+
+  return { ...safePreferences };
 }

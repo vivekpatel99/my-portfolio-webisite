@@ -1,0 +1,63 @@
+Requested profile portfolio_frontend_review, model claude-opus-5.5, effort high, engine v2. Read-only tools read, grep, glob. Candidate 1355fff9eb272bcc22ec27206aa94dc430ca692d, baseline 8a80ffb834ed9f28edf7eb497f8caa12bc8c4da7. CLI exit 0. No runtime model attestation.
+
+[tool] Reading candidate.diff:1, issue.json:1, evidence-labels-327.md:1
+[tool] status: Completed
+[tool] Reading CaseStudyGallery.js:1, CaseStudyArticle.css:1, DetectionFrame.css:1, listing evidence-labels-327
+[tool] Searching for 'SH-0[23]' in DESIGN.md
+[tool] status: Completed
+[tool] status: Completed
+[tool] Reading DESIGN.md:86-165, SKILL.md:1-120, SKILL.md:1, SKILL.md:1-80
+[tool] status: Completed
+[tool] Searching for 'case-study-cover|\.mp4|\.webm' in horizons-website
+[tool] Reading qa.config.js:1
+[tool] status: Completed
+[tool] status: Completed
+[tool] Reading qa-visual.spec.js:511-560
+[tool] status: Completed
+[tool] Reading image /Users/viv/.codex/worktrees/75fe/horizons-website/docs/qa/assets/evidence-labels-327/before-chromium-depth-1440x900.png, /Users/viv/.codex/worktrees/75fe/horizons-website/docs/qa/assets/evidence-labels-327/after-chromium-depth-1440x900.png, /Users/viv/.codex/worktrees/75fe/horizons-website/docs/qa/assets/evidence-labels-327/before-webkit-depth-320x740.png, /Users/viv/.codex/worktrees/75fe/horizons-website/docs/qa/assets/evidence-labels-327/after-webkit-depth-320x740.png
+[tool] status: Completed
+No source-confirmed production defects. The one production change, `.case-study-cover-stage { padding: 12px; }` at `src/components/CaseStudyArticle.css:25`, fixes the reported overlap, and the source supports the acceptance criteria. The findings are about whether the evidence is accurate and reproducible, plus two low-severity cleanups.
+
+**Model/provider:** I have no attestation. The only model reference is the configured claim "claude-opus-5.5", and I can't verify it.
+
+**What I loaded:** `AGENTS.md`, `DESIGN.md` lines 85–164 (SH-01 to SH-03, BT-01) and the main `SKILL.md` for impeccable, web-design-guidelines and vercel-react-best-practices. I did not load:
+- impeccable's `scripts/impeccable context` launcher, which needs a shell.
+- impeccable's audit or critique references.
+- The remote Web Interface Guidelines, which I couldn't fetch.
+
+No React logic changed, so none of the Vercel rules apply. This is one source review, not a complete critique.
+
+## Source-confirmed (geometry)
+- The label's 16px line box is centred on the top edge (`DetectionFrame.css:40-53`), so it spans −8px to +8px. The media now starts at 12px, which leaves a 4px gap.
+- The label stays transparent and the `.detection-panel::before` corners still sit on the stage's outer edge. Neither `DetectionFrame.css` nor `CaseStudyGallery.js` changed.
+- Link, alt text, caption, `width`/`height`, `loading` and the display/original source split are unchanged (`CaseStudyGallery.js:127-131`).
+- The 12px matches the gallery opener's existing padding (`CaseStudyArticle.css:73`, and the inline style at `CaseStudyGallery.js:162`). That's consistent with SH-03's rule that equivalent panels share geometry.
+- The existing `qa-visual.spec.js:523-548` assertion (label centred on the stage edge) still holds with padding.
+- Captures I viewed: Chromium 1440×900 and WebKit 320×740, before and after. Before, the lower half of the label sits over white pixels. After, it's fully readable on the dark background. The focus ring hugs the image and doesn't touch the label.
+
+## Findings
+
+1. **MEDIUM: the WebKit claim can't be reproduced from repo config.** Files: `docs/qa/evidence-labels-327.md:26` and `:29`, `tests/qa/qa.config.js:53`, `:71`, `:81-94`.
+   - The spec is registered only in `preview-desktop` and `preview-mobile`. Both are Chromium (`browserName: 'chromium'` overrides `iPhone 14`). The WebKit projects run only focus, cursor and route-recovery.
+   - Each project runs 16 cases, so 32 is exactly the Chromium-only total. The baseline count (24 failures + 8 passes) also equals 32.
+   - The WebKit captures exist, so a WebKit run probably happened outside the committed config. I couldn't verify that, and CI gives no WebKit regression protection.
+   - Fix: say in the doc that WebKit was an ad hoc run and give the exact command. Alternatively, add the spec to `webkitRegressionProjects`, but that widens the ticket.
+
+2. **LOW: stale comment.** `tests/qa/qa.config.js:52` says the preview-only list "Covers unreleased carousel behavior". The new spec is preview-only because production doesn't have the inset yet. Fix: update the comment.
+
+3. **LOW: forward-looking and unattested claims in a durable doc.** `docs/qa/evidence-labels-327.md:36` reports earlier review results and says "Kiro review follows… before PR delivery". That will be stale once merged. Fix: replace it with the PR or review reference, or remove it.
+
+4. **NIT: inconsistent spec names.** `tools/qa-artifact-config.test.js:95,97` uses the literal `'qa-evidence-labels.spec.js'`, while its neighbours use constants (`HERO_OCR_SPEC`).
+
+## Missing proof (unverified; coordinator to check)
+- **PNGs in the commit:** `candidate.diff` has no binary entries. The 16 PNGs are on disk, but I can't confirm they're in `1355fff`.
+- **Caption:** `qa-evidence-labels.spec.js:32` checks the caption only `if (source.caption)`. If none of the three covers has a caption, the caption criterion is never actually tested.
+- **Opposing corners:** no automated assertion. Both captures I viewed cut off the bottom-right corner and the caption at the fold (1440×900 and 320×740). "Corners preserved" therefore rests on unchanged source, not on proof.
+- **Label clipping:** `boundingBox` ignores ancestor `overflow` clipping. For the two non-depth covers, "no clipping" relies on geometry alone, with no capture.
+- **Lightbox close button:** label overlap with the close button isn't asserted. By source maths there's 2px vertical clearance at ≤450px (dialog padding 10px against the label's +8px bottom). No overlap expected.
+- **Worktree constraint:** the ticket says "no worktree is authorized". `evidence-labels-327.md:3` says the task ran in an isolated worktree. It may just be the Codex-managed default checkout; please confirm.
+
+## Scope
+There's no production scope creep. The test, config registration, sanitizer label, doc and assets all support verification, and #294 isn't changed.
+
+One design note, not a defect: padding all four sides also narrows the evidence image by 24px (about 9% at 320px). Only the top inset was needed for the label. The all-round inset is defensible because it matches the gallery, but it's a choice the owner could revisit.

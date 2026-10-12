@@ -6,6 +6,7 @@ import editModeDevPlugin from './plugins/visual-editor/vite-plugin-edit-mode.js'
 import iframeRouteRestorationPlugin from './plugins/vite-plugin-iframe-route-restoration.js';
 import selectionModePlugin from './plugins/selection-mode/vite-plugin-selection-mode.js';
 import caseStudyPublicationPlugin from './plugins/vite-plugin-case-study-publication.js';
+import pricingHtmlPlugin from './plugins/vite-plugin-pricing-html.js';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
@@ -282,6 +283,7 @@ const addTransformIndexHtml = {
 
 export default defineConfig({
 	plugins: [
+		pricingHtmlPlugin(),
 		caseStudyPublicationPlugin(),
 		...(isDev ? [inlineEditPlugin(), editModeDevPlugin(), iframeRouteRestorationPlugin(), selectionModePlugin()] : []),
 		react(),

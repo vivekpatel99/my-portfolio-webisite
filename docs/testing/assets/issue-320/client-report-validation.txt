@@ -1,0 +1,52 @@
+Final client-report repair validation. Real SDK 7.120.4, synthetic in-memory transport only.
+
+Red, before sendClientReports:false:
+
+  ✘  1 [chromium] › tests/qa/qa-replay-consent.spec.js:3:1 › withdrawn global errors cannot become client reports after reaccept (174ms)
+  ✘  2 [webkit] › tests/qa/qa-replay-consent.spec.js:3:1 › withdrawn global errors cannot become client reports after reaccept (521ms)
+  1) [chromium] › tests/qa/qa-replay-consent.spec.js:3:1 › withdrawn global errors cannot become client reports after reaccept 
+    +               "reason": "before_send",
+  2) [webkit] › tests/qa/qa-replay-consent.spec.js:3:1 › withdrawn global errors cannot become client reports after reaccept 
+    +               "reason": "before_send",
+  2 failed
+    [chromium] › tests/qa/qa-replay-consent.spec.js:3:1 › withdrawn global errors cannot become client reports after reaccept 
+    [webkit] › tests/qa/qa-replay-consent.spec.js:3:1 › withdrawn global errors cannot become client reports after reaccept 
+
+outcomes-green.log
+
+  ✓  47 [webkit] › tests/qa/qa-replay-consent.spec.js:358:3 › buffer: a performance-event failure inside flush cannot deadlock native stop (387ms)
+  ✓  48 [webkit] › tests/qa/qa-replay-consent.spec.js:388:1 › navigation tracing cannot cross a withdrawn consent interval (380ms)
+  ✓  49 [webkit] › tests/qa/qa-replay-consent.spec.js:431:1 › a queued transaction is discarded after withdrawal and reaccept (16.3s)
+  ✓  50 [webkit] › tests/qa/qa-replay-consent.spec.js:455:1 › a late error response cannot promote a later consent period (8.0s)
+  ✓  51 [webkit] › tests/qa/qa-replay-consent.spec.js:481:1 › a scheduled error promotion cannot affect a later consent period (5.9s)
+  ✓  52 [webkit] › tests/qa/qa-replay-consent.spec.js:514:1 › a queued error is discarded after withdrawal and reaccept (21.8s)
+
+  52 passed (2.3m)
+
+outcomes-unit.log
+
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+
+ Test Files  71 passed (71)
+      Tests  914 passed (914)
+   Start at  17:52:36
+   Duration  21.47s (transform 1.83s, setup 0ms, import 10.65s, tests 41.33s, environment 15.13s)
+
+
+outcomes-build.log
+
+dist/assets/ContactRoute-BzwteiFn.js                                                                                                                 19.07 kB │ gzip:   6.67 kB
+dist/assets/convexClient-BriewU4a.js                                                                                                                 69.16 kB │ gzip:  19.23 kB
+dist/assets/index-CxShlZDh.js                                                                                                                       331.00 kB │ gzip: 104.46 kB
+dist/assets/index-BUQdqHIg.js                                                                                                                       451.69 kB │ gzip: 142.27 kB
+✓ built in 2.08s
+✅ sitemap.xml generated successfully!
+Checked 36 public links against static output.
+Generated static HTML for 21 routes, including 404.html.
+
+Owned-file ESLint: exit 0, no errors or warnings.
+
+Independent Standards: clean; no actionable finding.
+
+Sandboxed initial runs could not bind loopback ports; authoritative escalated runs passed.

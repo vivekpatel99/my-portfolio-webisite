@@ -38,30 +38,44 @@ export function qaNetworkOptions({ localOnly }) {
 
 assertSafeArtifactConfiguration({ safeArtifacts: safeArtifactMode, localOnly, includeLiveContactSubmit });
 
-const passiveSpecs = [
-  'qa-a11y.spec.js',
-  'qa-local-navigation.spec.js',
-  'qa-contact.spec.js',
-  'qa-edge.spec.js',
-  ...(localOnly ? ['qa-focus.spec.js'] : []),
-  'qa-responsive.spec.js',
-  'qa-routes.spec.js',
-  'qa-upgrade-interactions.spec.js',
-  'qa-visual.spec.js',
-];
+export function qaPassiveSpecs({ environment, localOnly }) {
+  return [
+    'qa-a11y.spec.js',
+    'qa-local-navigation.spec.js',
+    'qa-contact.spec.js',
+    'qa-consent.spec.js',
+    'qa-cursor.spec.js',
+    'qa-edge.spec.js',
+    ...(localOnly ? ['qa-budget.spec.js', 'qa-focus.spec.js', 'qa-fragments.spec.js', 'qa-hero-motion.spec.js', 'qa-route-recovery.spec.js', 'qa-service-loading.spec.js'] : []),
+    'qa-responsive.spec.js',
+    'qa-routes.spec.js',
+    ...(environment === 'preview' ? ['qa-testimonials.spec.js', 'qa-hero-ocr-labels.spec.js', 'qa-evidence-labels.spec.js'] : []),
+    'qa-upgrade-interactions.spec.js',
+    'qa-visual.spec.js',
+  ];
+}
 
-const passiveProjects = resolveQaTargets({ localOnly, previewURL, prodURL }).flatMap(([environment, baseURL]) => [
-  {
-    name: `${environment}-desktop`,
-    use: { ...devices['Desktop Chrome'], baseURL, ...qaNetworkOptions({ localOnly }) },
-  },
-  {
-    name: `${environment}-mobile`,
-    use: {
-      ...devices['iPhone 14'], browserName: 'chromium', baseURL, ...qaNetworkOptions({ localOnly }),
-    },
-  },
-]).map((project) => ({ ...project, testMatch: passiveSpecs }));
+export function qaPassiveProjects({ localOnly, previewURL, prodURL }) {
+  return resolveQaTargets({ localOnly, previewURL, prodURL }).flatMap(([environment, baseURL]) => {
+    const testMatch = qaPassiveSpecs({ environment, localOnly });
+    return [
+      {
+        name: `${environment}-desktop`,
+        testMatch,
+        use: { ...devices['Desktop Chrome'], baseURL, ...qaNetworkOptions({ localOnly }) },
+      },
+      {
+        name: `${environment}-mobile`,
+        testMatch,
+        use: {
+          ...devices['iPhone 14'], browserName: 'chromium', baseURL, ...qaNetworkOptions({ localOnly }),
+        },
+      },
+    ];
+  });
+}
+
+const passiveProjects = qaPassiveProjects({ localOnly, previewURL, prodURL });
 
 const liveProjects = includeLiveContactSubmit && !localOnly
   ? [
@@ -75,15 +89,15 @@ const liveProjects = includeLiveContactSubmit && !localOnly
 
 // Keep the additional browser family bounded to the interactions that regressed.
 // These projects are never pointed at the public deployment.
-const focusProjects = localOnly ? [
+const webkitRegressionProjects = localOnly ? [
   {
     name: 'preview-webkit-desktop',
-    testMatch: 'qa-focus.spec.js',
+    testMatch: ['qa-budget.spec.js', 'qa-focus.spec.js', 'qa-fragments.spec.js', 'qa-cursor.spec.js', 'qa-route-recovery.spec.js', 'qa-service-loading.spec.js', 'qa-evidence-labels.spec.js'],
     use: { ...devices['Desktop Safari'], baseURL: previewURL, ...qaNetworkOptions({ localOnly }) },
   },
   {
     name: 'preview-webkit-mobile',
-    testMatch: 'qa-focus.spec.js',
+    testMatch: ['qa-budget.spec.js', 'qa-focus.spec.js', 'qa-fragments.spec.js', 'qa-cursor.spec.js', 'qa-route-recovery.spec.js', 'qa-service-loading.spec.js', 'qa-evidence-labels.spec.js'],
     use: { ...devices['iPhone 14'], baseURL: previewURL, ...qaNetworkOptions({ localOnly }) },
   },
 ] : [];
@@ -110,8 +124,11 @@ export default defineConfig({
   testDir,
   timeout: 60_000,
   expect: { timeout: 10_000 },
+  // Split CI shards by individual test while bounding concurrent browser work.
+  fullyParallel: Boolean(process.env.CI),
+  workers: process.env.CI ? 2 : undefined,
   use: qaCaptureOptions(),
   outputDir: path.join(artifactDir, 'test-results'),
   reporter: [['list'], ['json', { outputFile: path.join(artifactDir, 'qa-results.json') }]],
-  projects: [...passiveProjects, ...focusProjects, ...liveProjects],
+  projects: [...passiveProjects, ...webkitRegressionProjects, ...liveProjects],
 });

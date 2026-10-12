@@ -1,0 +1,57 @@
+{
+  "candidate": "88e0530d07342141744b087a667caf113071dee2",
+  "date": "2026-10-09",
+  "localNode": "24.5.0",
+  "containerNode": "24.15.0",
+  "browsers": {
+    "chromium": "148.0.7778.96",
+    "webkit": "26.4"
+  },
+  "ci": {
+    "unit": 917,
+    "passivePassed": 887,
+    "passiveSkipped": 29,
+    "contactPassed": 204,
+    "contactSkipped": 4,
+    "motionPassed": 64,
+    "fakeTelemetryPassed": 3,
+    "replayPassed": 54
+  },
+  "local": {
+    "unitPassed": 916,
+    "unitFailed": 1,
+    "publicationHostRetry": {
+      "passed": 16,
+      "failed": 2
+    },
+    "publicationContainerRetry": {
+      "passed": 16,
+      "failed": 2
+    },
+    "metadataPassed": 8,
+    "colorScheme": {
+      "passed": 16,
+      "failed": 1,
+      "skipped": 7
+    },
+    "typography": {
+      "passed": 12,
+      "failed": 2,
+      "skipped": 10
+    },
+    "actions": {
+      "passed": 10,
+      "failed": 2,
+      "skipped": 4
+    },
+    "apacheResponses": 15,
+    "javascriptRouteVisits": 160,
+    "noJavascriptRouteVisits": 64,
+    "colorSchemeTargetedRetry": {
+      "project": "webkit-1440-no-preference",
+      "passed": 1,
+      "failed": 0
+    }
+  },
+  "verdict": "NOT READY: supplemental failures and explicit release acceptance gaps remain"
+}

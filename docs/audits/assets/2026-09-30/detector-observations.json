@@ -1,0 +1,38 @@
+{
+  "cliWarnings": [
+    {
+      "antipattern": "side-tab",
+      "name": "Side-tab accent border",
+      "description": "Thick colored border on one side of a card \u2014 the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+      "severity": "warning",
+      "category": "slop",
+      "file": "src/components/CaseStudyArticle.css",
+      "line": 50,
+      "snippet": "border-left: 2px solid #59446e"
+    },
+    {
+      "antipattern": "gradient-text",
+      "name": "Gradient text",
+      "description": "Gradient text is decorative rather than meaningful \u2014 a common AI tell, especially on headings and metrics. Use solid colors for text.",
+      "severity": "warning",
+      "category": "slop",
+      "file": "src/index.css",
+      "line": 118,
+      "snippet": "background-clip: text + gradient"
+    }
+  ],
+  "verdicts": [
+    "side-tab: article blockquote accent, false positive as a card defect",
+    "gradient-text: unused utility, optional cleanup; no rendered design defect"
+  ],
+  "overlayRoutes": [
+    "/",
+    "/case-studies",
+    "/contact",
+    "/project/n8n-openai-data-extraction"
+  ],
+  "overlayScriptLoaded": true,
+  "overlayRuleAttributionAvailable": false,
+  "findingsFiledFromOverlays": 0,
+  "limitations": "T3 disconnected; persistent user-visible overlay state was not verified. Tokens and live-server output omitted."
+}

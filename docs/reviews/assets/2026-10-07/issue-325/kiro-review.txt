@@ -1,0 +1,55 @@
+[tool] Reading candidate.diff:1
+[tool] status: Completed
+[tool] Reading leadValidation.ts:1, Contact.jsx:56-385
+[tool] status: Completed
+[tool] Searching for 'submitLead|validateLeadInput|args:|v\.string|normalizeBudget' in convex
+[tool] Reading useContactDraft.js:1
+[tool] status: Completed
+[tool] status: Completed
+[tool] Reading leads.ts:181-230, Contact.test.jsx:341-400
+[tool] Searching for 'FM-01' in DESIGN.md
+[tool] status: Completed
+[tool] status: Completed
+[tool] Reading DESIGN.md:244-273
+[tool] status: Completed
+[tool] Searching for 'v\.any|validator|args' in guidelines.md
+[tool] status: Completed
+I found no blocking defects. Every acceptance criterion holds in the source I read. Two items below are worth fixing but don't block the change.
+
+**Model and skills:** The tool doesn't expose model or effort, so I can't confirm "claude-opus-5.5, high". I loaded no skill files: impeccable, web-design-guidelines and vercel-react-best-practices were not opened. So this is a source and diff review, not an impeccable or web-design-guidelines critique.
+
+**What I read:** `candidate.diff`, `convex/lib/leadValidation.ts`, `src/pages/Contact.jsx` (lines 55–384), `src/lib/useContactDraft.js`, `convex/leads.ts` (`submitLead`), part of `src/pages/Contact.test.jsx`, DESIGN.md FM-01, and the design-system and AGENTS.md context. I only searched `convex/_generated/ai/guidelines.md` for validator rules.
+
+## Acceptance check
+
+- **Normalized limits (name 200, email 254, description 5000):** Pass. `validateContactFields` checks the trimmed values against the `MAX_*` constants, and the error text uses those constants. A 5,001-character normalized description gets "Project description must be 5000 characters or fewer."
+- **Invalid or programmatic values can't reach the mutation:** Pass. `handleSubmit` validates the draft state, not the DOM, and returns before `beginSubmission`/`submitLead`.
+- **Focus, association and draft:** Pass. The errors object is built in DOM order (name, email, budget, description), so `Object.keys(errors)[0]` is the first invalid field. `aria-describedby` points to `*-error`, and the draft isn't changed on failure.
+- **Backend caps:** Pass. `validateLeadInput` rejects whenever `validateContactFields` returns any error. Each field's checks are an if/else chain, so a later raw-length or control-character check only runs when no earlier error exists. Any failure still rejects, so the backend accepts and rejects the same inputs as before.
+- **Unknown errors:** Pass. The catch path is unchanged and still uses `ACTIONABLE_SUBMIT_ERRORS` with `SUBMIT_FAILURE_FALLBACK`.
+
+## Non-blocking findings
+
+**1. Backend now normalizes before checking raw length** (`convex/lib/leadValidation.ts:13` and `:106–109`)
+- **Criterion affected:** backend caps enforced independently.
+- **Reasoning:** `submitLead` accepts `args: v.any()`. The old code rejected over-length raw input before it ran `.replace(/\r\n?/g)`, `.trim()` or `.toLowerCase()`. Now those run on unbounded strings first, so the size guard runs later. The comment at line 13, "Bounds apply before normalization", is no longer true. What gets accepted or rejected doesn't change; only the work done on oversized payloads does.
+- **Minimal fix:** at the start of `validateLeadInput`, after `isContactLeadInput`, add a raw-length check that calls `rejectLeadInput()` when any field exceeds its `MAX_RAW_*` limit. Then the backend still fails before normalizing, and the frontend messages stay the same. Alternatively, update the comment.
+
+**2. An unlisted budget in the draft can't be cleared back to blank** (`src/pages/Contact.jsx` budget `<select>`, around line 285)
+- **Criterion affected:** FM-01, which requires a recovery action for visible errors.
+- **Reasoning:** if the draft holds `budget: 'unlisted'`, the select has no matching option and shows the empty option. Choosing "Select your budget range" fires no `change` event, so the error and the bad value stay. The user can only recover by picking a listed range, although the message offers "leave it blank". I haven't tested this in a browser, but it's standard select behaviour. It only happens when a value is set programmatically.
+- **Minimal fix:** reset an unlisted budget to `''` in `handleSubmit` when the budget error is set, or render a temporary placeholder option for the bad value.
+
+## Hypotheses (not verified)
+
+- Limits count UTF-16 code units (`.length`). Emoji and other astral characters count as two, so the "200 characters" wording could undercount for non-BMP names. This matches the backend, so it's informational only.
+- The toast title depends on exact message strings (`=== 'Enter a valid email address.'` and `endsWith('is required.')`). Changing the wording would quietly change the title. That's a maintenance risk, not a current defect.
+- The Playwright `fill` on `type="email"`: browsers strip surrounding whitespace, so the test reads back `retainedValue` with `inputValue()`. That looks correct, but I didn't run it on WebKit.
+
+## Limits of this review
+
+- I didn't run any shell commands, tests, builds or browsers. The pass counts (865 tests, 114 targeted, typecheck, build) are as you reported, and I can't attest to them.
+- The Chromium and WebKit runs count as unverified until the log shows a final summary.
+- I have no device, deployed backend or Convex runtime evidence.
+- I read only the parts of `Contact.test.jsx` and `guidelines.md` described above.
+- This is one source-review session, not a complete design critique.

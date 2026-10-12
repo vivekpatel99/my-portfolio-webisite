@@ -1,0 +1,388 @@
+{
+  "fixtures": [
+    {
+      "animations": 0,
+      "brokenImages": [],
+      "cards": [
+        {
+          "h": 404,
+          "heading": "Short title",
+          "w": 273,
+          "x": 16,
+          "y": 56
+        },
+        {
+          "h": 658,
+          "heading": "Synthetic long title with several descriptive words to exercise wrapping across narrow card widths",
+          "w": 273,
+          "x": 16,
+          "y": 484
+        },
+        {
+          "h": 369,
+          "heading": "Missing optional fields",
+          "w": 273,
+          "x": 16,
+          "y": 1166
+        }
+      ],
+      "clientWidth": 305,
+      "h1": [],
+      "height": 900,
+      "motion": false,
+      "outOfBounds": [],
+      "overflow": 0,
+      "route": "[isolated synthetic CaseStudyCard fixture]",
+      "title": "Synthetic card fixtures",
+      "width": 320
+    },
+    {
+      "animations": 0,
+      "brokenImages": [],
+      "cards": [
+        {
+          "h": 404,
+          "heading": "Short title",
+          "w": 343,
+          "x": 16,
+          "y": 56
+        },
+        {
+          "h": 551,
+          "heading": "Synthetic long title with several descriptive words to exercise wrapping across narrow card widths",
+          "w": 343,
+          "x": 16,
+          "y": 484
+        },
+        {
+          "h": 369,
+          "heading": "Missing optional fields",
+          "w": 343,
+          "x": 16,
+          "y": 1060
+        }
+      ],
+      "clientWidth": 375,
+      "h1": [],
+      "height": 900,
+      "motion": false,
+      "outOfBounds": [],
+      "overflow": 0,
+      "route": "[isolated synthetic CaseStudyCard fixture]",
+      "title": "Synthetic card fixtures",
+      "width": 390
+    },
+    {
+      "animations": 0,
+      "brokenImages": [],
+      "cards": [
+        {
+          "h": 551,
+          "heading": "Short title",
+          "w": 349,
+          "x": 16,
+          "y": 56
+        },
+        {
+          "h": 551,
+          "heading": "Synthetic long title with several descriptive words to exercise wrapping across narrow card widths",
+          "w": 349,
+          "x": 389,
+          "y": 56
+        },
+        {
+          "h": 369,
+          "heading": "Missing optional fields",
+          "w": 349,
+          "x": 16,
+          "y": 631
+        }
+      ],
+      "clientWidth": 753,
+      "h1": [],
+      "height": 900,
+      "motion": false,
+      "outOfBounds": [],
+      "overflow": 0,
+      "route": "[isolated synthetic CaseStudyCard fixture]",
+      "title": "Synthetic card fixtures",
+      "width": 768
+    },
+    {
+      "animations": 0,
+      "brokenImages": [],
+      "cards": [
+        {
+          "h": 572,
+          "heading": "Short title",
+          "w": 315,
+          "x": 16,
+          "y": 56
+        },
+        {
+          "h": 572,
+          "heading": "Synthetic long title with several descriptive words to exercise wrapping across narrow card widths",
+          "w": 315,
+          "x": 355,
+          "y": 56
+        },
+        {
+          "h": 572,
+          "heading": "Missing optional fields",
+          "w": 315,
+          "x": 693,
+          "y": 56
+        }
+      ],
+      "clientWidth": 1024,
+      "h1": [],
+      "height": 900,
+      "motion": false,
+      "outOfBounds": [],
+      "overflow": 0,
+      "route": "[isolated synthetic CaseStudyCard fixture]",
+      "title": "Synthetic card fixtures",
+      "width": 1024
+    },
+    {
+      "animations": 0,
+      "brokenImages": [],
+      "cards": [
+        {
+          "h": 551,
+          "heading": "Short title",
+          "w": 347,
+          "x": 176,
+          "y": 56
+        },
+        {
+          "h": 551,
+          "heading": "Synthetic long title with several descriptive words to exercise wrapping across narrow card widths",
+          "w": 347,
+          "x": 547,
+          "y": 56
+        },
+        {
+          "h": 551,
+          "heading": "Missing optional fields",
+          "w": 347,
+          "x": 917,
+          "y": 56
+        }
+      ],
+      "clientWidth": 1440,
+      "h1": [],
+      "height": 900,
+      "motion": false,
+      "outOfBounds": [],
+      "overflow": 0,
+      "route": "[isolated synthetic CaseStudyCard fixture]",
+      "title": "Synthetic card fixtures",
+      "width": 1440
+    }
+  ],
+  "alignment": {
+    "containers": [
+      {
+        "bottom": 68,
+        "height": 68,
+        "left": 72.5,
+        "right": 1192.5,
+        "section": "HEADER",
+        "top": 0,
+        "width": 1120,
+        "x": 72.5,
+        "y": 0
+      },
+      {
+        "bottom": 1671.6328125,
+        "height": 699.65625,
+        "left": 48,
+        "right": 1217,
+        "section": "portfolio",
+        "top": 971.9765625,
+        "width": 1169,
+        "x": 48,
+        "y": 971.9765625
+      },
+      {
+        "bottom": 2269.453125,
+        "height": 477.8203125,
+        "left": 92.5,
+        "right": 1172.5,
+        "section": "services",
+        "top": 1791.6328125,
+        "width": 1080,
+        "x": 92.5,
+        "y": 1791.6328125
+      },
+      {
+        "bottom": 3108.890625,
+        "height": 691.4375,
+        "left": 72.5,
+        "right": 1192.5,
+        "section": "testimonials",
+        "top": 2417.453125,
+        "width": 1120,
+        "x": 72.5,
+        "y": 2417.453125
+      },
+      {
+        "bottom": 4368.7734375,
+        "height": 1123.8828125,
+        "left": 72.5,
+        "right": 1192.5,
+        "section": "about",
+        "top": 3244.890625,
+        "width": 1120,
+        "x": 72.5,
+        "y": 3244.890625
+      },
+      {
+        "bottom": 4843.640625,
+        "height": 350.8671875,
+        "left": 172.5,
+        "right": 1092.5,
+        "section": "cta",
+        "top": 4492.7734375,
+        "width": 920,
+        "x": 172.5,
+        "y": 4492.7734375
+      },
+      {
+        "bottom": 4980.140625,
+        "height": 92.5,
+        "left": 72.5,
+        "right": 1192.5,
+        "section": "site-footer",
+        "top": 4887.640625,
+        "width": 1120,
+        "x": 72.5,
+        "y": 4887.640625
+      }
+    ],
+    "pill": {
+      "bottom": 227.5,
+      "height": 30.5,
+      "left": 48,
+      "right": 203.765625,
+      "top": 197,
+      "width": 155.765625,
+      "x": 48,
+      "y": 197
+    },
+    "pillText": "Inference online",
+    "targets": [
+      {
+        "bottom": 3110.54736328125,
+        "height": 11.3134765625,
+        "label": "Slide 1",
+        "left": 545.8431396484375,
+        "right": 557.1568603515625,
+        "top": 3099.23388671875,
+        "width": 11.313720703125,
+        "x": 545.8431396484375,
+        "y": 3099.23388671875
+      },
+      {
+        "bottom": 3108.42626953125,
+        "height": 7.0712890625,
+        "label": "Slide 2",
+        "left": 567.4644775390625,
+        "right": 574.5355224609375,
+        "top": 3101.35498046875,
+        "width": 7.071044921875,
+        "x": 567.4644775390625,
+        "y": 3101.35498046875
+      },
+      {
+        "bottom": 3108.42626953125,
+        "height": 7.0712890625,
+        "label": "Slide 3",
+        "left": 585.4644775390625,
+        "right": 592.5355224609375,
+        "top": 3101.35498046875,
+        "width": 7.071044921875,
+        "x": 585.4644775390625,
+        "y": 3101.35498046875
+      },
+      {
+        "bottom": 3108.42626953125,
+        "height": 7.0712890625,
+        "label": "Slide 4",
+        "left": 603.4644775390625,
+        "right": 610.5355224609375,
+        "top": 3101.35498046875,
+        "width": 7.071044921875,
+        "x": 603.4644775390625,
+        "y": 3101.35498046875
+      },
+      {
+        "bottom": 3108.42626953125,
+        "height": 7.0712890625,
+        "label": "Slide 5",
+        "left": 621.4644775390625,
+        "right": 628.5355224609375,
+        "top": 3101.35498046875,
+        "width": 7.071044921875,
+        "x": 621.4644775390625,
+        "y": 3101.35498046875
+      },
+      {
+        "bottom": 3108.42626953125,
+        "height": 7.0712890625,
+        "label": "Slide 6",
+        "left": 639.4644775390625,
+        "right": 646.5355224609375,
+        "top": 3101.35498046875,
+        "width": 7.071044921875,
+        "x": 639.4644775390625,
+        "y": 3101.35498046875
+      },
+      {
+        "bottom": 3108.42626953125,
+        "height": 7.0712890625,
+        "label": "Slide 7",
+        "left": 657.4644775390625,
+        "right": 664.5355224609375,
+        "top": 3101.35498046875,
+        "width": 7.071044921875,
+        "x": 657.4644775390625,
+        "y": 3101.35498046875
+      },
+      {
+        "bottom": 3108.42626953125,
+        "height": 7.0712890625,
+        "label": "Slide 8",
+        "left": 675.4644775390625,
+        "right": 682.5355224609375,
+        "top": 3101.35498046875,
+        "width": 7.071044921875,
+        "x": 675.4644775390625,
+        "y": 3101.35498046875
+      },
+      {
+        "bottom": 3108.42626953125,
+        "height": 7.0712890625,
+        "label": "Slide 9",
+        "left": 693.4644775390625,
+        "right": 700.5355224609375,
+        "top": 3101.35498046875,
+        "width": 7.071044921875,
+        "x": 693.4644775390625,
+        "y": 3101.35498046875
+      },
+      {
+        "bottom": 3108.42626953125,
+        "height": 7.0712890625,
+        "label": "Slide 10",
+        "left": 711.4644775390625,
+        "right": 718.5355224609375,
+        "top": 3101.35498046875,
+        "width": 7.071044921875,
+        "x": 711.4644775390625,
+        "y": 3101.35498046875
+      }
+    ]
+  }
+}

@@ -3,8 +3,10 @@ import { useLocation, useNavigate, useNavigationType } from 'react-router-dom';
 import { collectionCaseStudies } from '../data/caseStudies.js';
 import {
   getInitialBrowsingState,
+  isCollectionArticleOrigin,
   saveBrowsingState,
 } from '../lib/caseStudyBrowsing.js';
+import { DetectionLabel } from './DetectionFrame.js';
 import CaseStudyCard from './CaseStudyCard.js';
 
 const PAGE_SIZE = 6;
@@ -27,7 +29,7 @@ const persistLoadedPage = (loadedCount) => {
   history.replaceState({ ...historyRecord(), loadedCount }, '');
 };
 
-const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
+const CaseStudyCollection = ({ stories = collectionCaseStudies, children = null }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const navigationType = useNavigationType();
@@ -91,10 +93,25 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
     window.history.replaceState({ ...window.history.state, loadedCount: initialState.loadedCount, caseStudyCollection: initialState }, '');
   }, [initialState, resumeRequested, location, navigate]);
 
+  const saveBeforeArticle = (event) => {
+    const link = event.target?.closest?.('a[href]');
+    if (link && isCollectionArticleOrigin(new URL(link.href, window.location.href))) {
+      persistBrowsingState(visibleCount, window.scrollY);
+    }
+  };
+  const boundary = (...content) => React.createElement(
+    'div',
+    {
+      onClickCapture: saveBeforeArticle,
+      onPointerDownCapture: saveBeforeArticle,
+      onAuxClickCapture: saveBeforeArticle,
+    },
+    ...content,
+    children,
+  );
+
   if (stories.length === 0) {
-    return React.createElement(
-      React.Fragment,
-      null,
+    return boundary(
       React.createElement('p', { role: 'status', 'aria-live': 'polite', className: 'mb-6 text-sm text-gray-400' }, 'Showing 0 of 0 case studies'),
       React.createElement('p', { className: 'rounded-lg border border-white/10 bg-white/[0.04] p-8 text-center text-gray-400' }, 'No case studies are available yet.'),
     );
@@ -110,22 +127,20 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
       return next;
     });
   };
-  const saveBeforeArticle = () => persistBrowsingState(visibleCount, window.scrollY);
   const status = React.createElement(
     'p',
-    { role: 'status', 'aria-live': 'polite', className: 'mb-6 text-sm text-gray-400' },
+    { role: 'status', 'aria-live': 'polite', className: 'mb-10 text-sm text-gray-400' },
     `Showing ${visibleStories.length} of ${stories.length} case studies`,
   );
   const grid = React.createElement(
     'div',
-    { id: gridId, className: 'grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3' },
-    visibleStories.map((story) => React.createElement(CaseStudyCard, {
+    { id: gridId, className: 'grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3' },
+    visibleStories.map((story, index) => React.createElement(CaseStudyCard, {
       key: story.slug,
       project: story,
       fromCollection: true,
-      onClickCapture: saveBeforeArticle,
-      onPointerDownCapture: saveBeforeArticle,
-      onAuxClickCapture: saveBeforeArticle,
+      headingLevel: 2,
+      priorityImage: index === 0,
     })),
   );
   const noscriptLinks = isStaticRender && hasMore
@@ -144,7 +159,7 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
       'button',
       {
         type: 'button',
-        className: 'mt-10 inline-flex min-h-11 items-center rounded-full border border-accent-purple px-5 text-sm font-semibold text-white transition-colors hover:bg-accent-purple disabled:cursor-default disabled:opacity-70 aria-disabled:cursor-default aria-disabled:opacity-70',
+        className: 'detection-panel detection-action detection-action--labeled mt-10 inline-flex',
         onClick: loadMore,
         // Without JavaScript the button cannot work, so the static markup ships it disabled.
         // Once exhausted it stays focusable via aria-disabled: natively disabling a focused
@@ -153,11 +168,12 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies }) => {
         'aria-disabled': !hasMore || isStaticRender,
         'aria-controls': gridId,
       },
+      React.createElement(DetectionLabel, { 'aria-hidden': true }, hasMore ? 'MORE WORK' : 'ALL WORK SHOWN'),
       hasMore ? 'Load more' : 'All case studies shown',
     )
     : null;
 
-  return React.createElement(React.Fragment, null, status, grid, noscriptLinks, loadMoreButton);
+  return boundary(status, grid, noscriptLinks, loadMoreButton);
 };
 
 export default CaseStudyCollection;

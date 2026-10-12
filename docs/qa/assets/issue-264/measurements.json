@@ -1,0 +1,18 @@
+{
+  "before": {
+    "entry": "/assets/index-CgFG2KQ8.js",
+    "minBytes": 502252,
+    "gzipBytes": 154624,
+    "hexStringCount": 218,
+    "nonFilenameDigestCount": 125
+  },
+  "after": {
+    "entry": "/assets/index-CFpe8O-z.js",
+    "minBytes": 451922,
+    "gzipBytes": 140228,
+    "hexStringCount": 93,
+    "nonFilenameDigestCount": 0
+  },
+  "baselineCommit": "e17a0a817f2a492acac1b76b5f16260f531fb3b7",
+  "implementationCommit": "01e719c0f73059721894945cef4cb8922cc63841"
+}

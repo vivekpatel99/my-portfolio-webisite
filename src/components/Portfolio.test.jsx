@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import { collectionCaseStudies, eligibleCaseStudies, featuredCaseStudies, getCaseStudyBySlug } from '@/data/caseStudies';
@@ -37,5 +37,19 @@ describe('Portfolio', () => {
       if (caseStudy.image) expect(cardLink.contains(screen.getByAltText(caseStudy.image.alt))).toBe(true);
     });
 
+  });
+
+  describe('Detection Card design (Option A)', () => {
+    it('keeps Featured Case Studies as the semantic section heading with purple emphasis', () => {
+      const { container } = render(
+        <MemoryRouter>
+          <Portfolio />
+        </MemoryRouter>,
+      );
+
+      const heading = within(container).getByRole('heading', { level: 2, name: 'FEATURED CASE STUDIES' });
+      expect(heading.closest('section').id).toBe('portfolio');
+      expect(within(heading).getByText('CASE STUDIES').className).toContain('text-[#8B5CF6]');
+    });
   });
 });

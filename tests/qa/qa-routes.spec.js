@@ -1,10 +1,10 @@
-import { collectGalleryImages, galleryThumbnailSrc } from '../../src/components/CaseStudyGallery.js';
+import { caseStudyDisplaySrc, collectGalleryImages, galleryThumbnailSrc } from '../../src/components/CaseStudyGallery.js';
 import { expect, test } from './qa-test.js';
-import { caseStudies, featuredCaseStudies } from '../../src/data/caseStudies.js';
+import { caseStudies, featuredCaseStudies, ongoingCaseStudies } from '../../src/data/caseStudies.js';
 import { containsCaseStudyCopyLeak } from '../case-study-copy.js';
 
 const routes = [
-  { path: '/', heading: /Vivek Patel/i },
+  { path: '/', heading: /Computer Vision & AI Engineer/i },
   { path: '/contact', heading: /Request a Project Estimate/i },
   { path: '/legal', heading: 'Privacy Policy' },
   { path: '/data-policy', heading: 'Cookie Policy' },
@@ -25,6 +25,18 @@ test.describe('Route rendering', () => {
   }
 });
 
+const assetDigest = (src) => src.match(/-([a-f0-9]{64})\./)?.[1] ?? '';
+
+const removedBorrowedN8nDigests = [
+  'b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82',
+  '7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b',
+  '3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66',
+  'ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338',
+  'f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275',
+  'c69906586afbf78dadaadc2e23461c8427034f20808a862cd681cff7189521f9',
+  'e542384f4f7532d230440cb9a68e0e7e66d951996959221225633fc5304b08b7',
+];
+
 for (const slug of ['depth-based-distance-estimation', 'yolo-computer-vision-optimization', 'n8n-python-ai-agents']) {
   test(`buyer-facing copy for ${slug}`, async ({ page }) => {
     await page.goto(`/project/${slug}/`);
@@ -39,45 +51,64 @@ for (const slug of ['depth-based-distance-estimation', 'yolo-computer-vision-opt
     const staticHtml = await (await page.request.get(`/project/${slug}/`)).text();
     expect(containsCaseStudyCopyLeak(staticHtml)).toBe(false);
     if (slug === 'depth-based-distance-estimation') {
-      expect(copy).toMatch(/uncalibrated lab demo/i);
-      expect(copy).toContain('does not claim calibrated measurement accuracy or safety-critical navigation readiness');
+      expect(copy).toContain('A separate navigation module exists in the source but is not called by that loop.');
+      expect(copy).toContain('stored reference scale');
+      expect(copy).toContain('assumed camera geometry');
+      expect(copy).toContain('not a validated measurement system');
+      expect(copy).not.toMatch(/uncalibrated/i);
+      expect(staticHtml).toContain('6cff31a07362f0483bf43298af0366ffb4c8f40137291202506a8924b0d24957');
+      expect(staticHtml).not.toContain('6f27eac0ad723f3f4efd36a0ad81d7893a8410409f1cb841d61cc39c6c0f436e');
     }
     if (slug === 'n8n-python-ai-agents') {
-      const representativeImages = main.getByRole('button', { name: /^Show image \d+: Representative / });
-      await expect(representativeImages).toHaveCount(6);
-      for (let index = 0; index < 6; index++) {
-        await representativeImages.nth(index).click();
-        await expect(main.locator('.case-gallery-open img')).toHaveAttribute('alt', /^Representative (n8n|invoice) .+ from other portfolio work$/);
+      const images = collectGalleryImages(caseStudies.find((story) => story.slug === slug));
+      expect(images.map((image) => assetDigest(image.src))).toEqual([
+        '90b4eba309ed1497b89f6652c047139a008d69b03a203adfe3cf51d968325e35',
+        '42fdda3bc3ef015e2a296edba808640ac9b0ea347f2e26e8903e1cb5c60ab0a0',
+      ]);
+      await expect(main.getByRole('button', { name: /^Show image \d+: Representative / })).toHaveCount(0);
+      await expect(main.locator('.case-gallery-thumbnail')).toHaveCount(images.length);
+      for (const [index, image] of images.entries()) {
+        expect(image.alt.startsWith('Representative ')).toBe(false);
+        await main.getByRole('button', { name: `Show image ${index + 1}: ${image.alt}`, exact: true }).click();
+        await expect(main.locator('.case-gallery-open img')).toHaveAttribute('alt', image.alt);
       }
+      expect(copy).toContain('fallback LIMIT 100');
+      expect(copy).toContain('do not establish database-enforced read-only access or a maximum row count');
+      for (const digest of removedBorrowedN8nDigests) expect(staticHtml).not.toContain(digest);
     }
     if (slug === 'yolo-computer-vision-optimization') {
-      expect(copy).toContain('Live-video latency, on-device deployment and automatic exercise scoring are not claimed.');
+      expect(copy).toContain('The consumer app and automatic exercise-form scoring require additional work.');
+      expect(copy).toContain('it is not a project-wide accuracy score.');
     }
   });
 }
 
-test('multi-image gallery uses bounded previews and loads selected originals on demand', async ({ page }) => {
+test('multi-image gallery uses bounded previews and loads originals only when expanded', async ({ page }) => {
   const requests = [];
   page.on('request', (request) => requests.push(request.url()));
   await page.goto('/project/n8n-openai-data-extraction/');
 
   const gallery = page.getByRole('region', { name: 'Case study images' });
+  const images = collectGalleryImages(caseStudies.find((story) => story.slug === 'n8n-openai-data-extraction'));
   const thumbnails = gallery.locator('.case-gallery-thumbnail img');
-  await expect(thumbnails).toHaveCount(6);
+  await expect(thumbnails).toHaveCount(images.length);
   for (let i = 0; i < await thumbnails.count(); i++) await thumbnails.nth(i).scrollIntoViewIfNeeded();
   await expect.poll(() => thumbnails.evaluateAll((elements) => elements.every((element) => element.complete && element.naturalWidth > 0))).toBe(true);
   const thumbnailSources = await thumbnails.evaluateAll((elements) => elements.map((element) => element.currentSrc || element.src));
   const thumbnailWidths = await thumbnails.evaluateAll((elements) => elements.map((element) => element.naturalWidth));
   expect(thumbnailWidths.every((width) => width > 0 && width <= 320)).toBe(true);
-  const images = collectGalleryImages(caseStudies.find((story) => story.slug === 'n8n-openai-data-extraction'));
   expect(thumbnailSources).toEqual(images.map((image) => new URL(galleryThumbnailSrc(image), page.url()).href));
   const originals = images.map((image) => new URL(image.src, page.url()).href);
   const requestedOriginals = () => [...new Set(requests.filter((url) => originals.includes(url)))];
-  await expect.poll(requestedOriginals).toEqual([originals[0]]);
+  await expect.poll(requestedOriginals).toEqual([]);
+  await expect(gallery.locator('.case-gallery-open img')).toHaveAttribute('src', caseStudyDisplaySrc(images[0]));
 
   await gallery.getByRole('button', { name: `Show image 2: ${images[1].alt}` }).click();
-  await expect(gallery.locator('.case-gallery-open img')).toHaveAttribute('src', images[1].src);
-  await expect.poll(requestedOriginals).toEqual([originals[0], originals[1]]);
+  await expect(gallery.locator('.case-gallery-open img')).toHaveAttribute('src', caseStudyDisplaySrc(images[1]));
+  await expect.poll(requestedOriginals).toEqual([]);
+  await gallery.getByRole('button', { name: `Enlarge image: ${images[1].alt}` }).click();
+  await expect(page.getByRole('dialog').locator('.case-gallery-viewport img')).toHaveAttribute('src', images[1].src);
+  await expect.poll(requestedOriginals).toEqual([originals[1]]);
 });
 
 test('unknown route renders a noindex 404 page', async ({ page }) => {
@@ -151,7 +182,7 @@ test('header hash nav from contact page lands on services', async ({ page }) => 
 test('primary estimate CTA navigates to contact', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/');
-  await page.getByRole('banner').getByRole('button', { name: /Request Estimate/i }).click();
+  await page.getByRole('banner').getByRole('link', { name: /Request Estimate/i }).click();
   await expect(page).toHaveURL(/\/contact/);
 });
 
@@ -197,3 +228,42 @@ test('lazy route shows content after load', async ({ page }) => {
   await page.goto('/contact');
   await expect(page.getByLabel('Full Name *')).toBeVisible();
 });
+
+
+test('withdrawn prototypes and their discovery section are absent', async ({ page }) => {
+  await page.goto('/case-studies/');
+  await expect(page.getByRole('status')).toHaveText('Showing 6 of 12 case studies');
+  await expect(page.locator('article')).toHaveCount(6);
+  await expect(page.getByRole('region', { name: 'In progress', exact: true })).toHaveCount(0);
+  await expect(page.locator('a[href="#in-progress"]')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Load more', exact: true }).click();
+  await expect(page.locator('article')).toHaveCount(12);
+  const withdrawnSlugs = ['bookkeeping-reconciliation-prototype', 'padel-video-analysis-prototype', 'pytorch-image-segmentation-prototype'];
+  for (const slug of withdrawnSlugs) {
+    await expect(page.locator(`a[href="/project/${slug}/"]`)).toHaveCount(0);
+  }
+  for (const slug of withdrawnSlugs) {
+    await page.goto(`/project/${slug}/`);
+    await expect(page.getByRole('heading', { name: 'Page Not Found', exact: true })).toBeVisible();
+  }
+});
+
+for (const story of ongoingCaseStudies) {
+  test(`prototype status and return path for ${story.slug}`, async ({ page }) => {
+    await page.goto(`/project/${story.slug}/?from=collection`);
+    await expect(page.locator('.case-study-status')).toHaveText('In progress');
+    await expect(page.locator('.case-study-article time')).toHaveCount(0);
+    const back = page.locator('a[href="/case-studies/#in-progress"]').first();
+    await expect(back).toBeVisible();
+    await back.focus();
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL(/\/case-studies\/#in-progress$/);
+    const region = page.getByRole('region', { name: 'In progress', exact: true });
+    await expect(region).toBeVisible();
+    await expect.poll(async () => (await region.boundingBox())?.y).toBeGreaterThanOrEqual(60);
+    await expect.poll(async () => (await region.boundingBox())?.y).toBeLessThan(180);
+    await expect(region).toBeFocused();
+    const staticHtml = await (await page.request.get(`/project/${story.slug}/`)).text();
+    expect(staticHtml).toContain('href="/case-studies/#in-progress"');
+  });
+}

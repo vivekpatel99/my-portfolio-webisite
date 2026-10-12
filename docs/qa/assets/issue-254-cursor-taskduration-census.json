@@ -1,0 +1,447 @@
+{
+  "premise": "Further optimizing the spring-driven CustomCursor path under this matched probe will bring TaskDuration under 200ms.",
+  "probe": {
+    "browser": "Chromium",
+    "viewport": {
+      "width": 1350,
+      "height": 940
+    },
+    "cpuThrottlingRate": 4,
+    "moves": 241,
+    "windowTargetMs": 2000,
+    "scrollY": 1200,
+    "consent": {
+      "necessary": true,
+      "analytics": false
+    }
+  },
+  "runs": [
+    {
+      "reducedMotion": "no-preference",
+      "run": 1,
+      "moves": 241,
+      "elapsedMs": 4063,
+      "windowTargetMs": 2000,
+      "paceSlipMs": 2063,
+      "commits": 1,
+      "commitTimesMs": [
+        6697.5
+      ],
+      "rafTicks": 244,
+      "scriptMs": 213.502,
+      "styleMs": 41.925,
+      "layoutMs": 19.355,
+      "taskMs": 1153.6840000000002,
+      "taskOtherMs": 878.2869999999999,
+      "attributedOtherMs": 878.9020000000003,
+      "styleCount": 242,
+      "layoutCount": 10,
+      "share": {
+        "script": 0.18506107391625434,
+        "style": 0.03634010699636988,
+        "layout": 0.016776691017644344,
+        "other": 0.7618221280697315
+      }
+    },
+    {
+      "reducedMotion": "no-preference",
+      "run": 2,
+      "moves": 241,
+      "elapsedMs": 4012,
+      "windowTargetMs": 2000,
+      "paceSlipMs": 2012,
+      "commits": 1,
+      "commitTimesMs": [
+        6240.799999952316
+      ],
+      "rafTicks": 242,
+      "scriptMs": 167.95399999999998,
+      "styleMs": 33.02,
+      "layoutMs": 6.149,
+      "taskMs": 892.769,
+      "taskOtherMs": 685.1080000000001,
+      "attributedOtherMs": 685.6460000000001,
+      "styleCount": 241,
+      "layoutCount": 10,
+      "share": {
+        "script": 0.1881270519025638,
+        "style": 0.036986051262980685,
+        "layout": 0.006887559939917269,
+        "other": 0.7679993368945383
+      }
+    },
+    {
+      "reducedMotion": "no-preference",
+      "run": 3,
+      "moves": 241,
+      "elapsedMs": 4021,
+      "windowTargetMs": 2000,
+      "paceSlipMs": 2021,
+      "commits": 1,
+      "commitTimesMs": [
+        6192.300000071526
+      ],
+      "rafTicks": 243,
+      "scriptMs": 152.76000000000002,
+      "styleMs": 35.293,
+      "layoutMs": 5.114,
+      "taskMs": 835.881,
+      "taskOtherMs": 642.5640000000001,
+      "attributedOtherMs": 642.7139999999999,
+      "styleCount": 241,
+      "layoutCount": 10,
+      "share": {
+        "script": 0.1827532866520474,
+        "style": 0.04222251732004915,
+        "layout": 0.006118095757649713,
+        "other": 0.7689061002702537
+      }
+    },
+    {
+      "reducedMotion": "reduce",
+      "run": 1,
+      "moves": 241,
+      "elapsedMs": 4025,
+      "windowTargetMs": 2000,
+      "paceSlipMs": 2025,
+      "commits": 0,
+      "commitTimesMs": [],
+      "rafTicks": 243,
+      "scriptMs": 53.187,
+      "styleMs": 0,
+      "layoutMs": 0,
+      "taskMs": 250.589,
+      "taskOtherMs": 196.727,
+      "attributedOtherMs": 197.402,
+      "styleCount": 0,
+      "layoutCount": 0,
+      "share": {
+        "script": 0.21224794384430282,
+        "style": 0,
+        "layout": 0,
+        "other": 0.7877520561556971
+      }
+    },
+    {
+      "reducedMotion": "reduce",
+      "run": 2,
+      "moves": 241,
+      "elapsedMs": 4013,
+      "windowTargetMs": 2000,
+      "paceSlipMs": 2013,
+      "commits": 0,
+      "commitTimesMs": [],
+      "rafTicks": 242,
+      "scriptMs": 53.496,
+      "styleMs": 0,
+      "layoutMs": 0,
+      "taskMs": 242.48600000000002,
+      "taskOtherMs": 187.7,
+      "attributedOtherMs": 188.99,
+      "styleCount": 0,
+      "layoutCount": 0,
+      "share": {
+        "script": 0.22061479838011266,
+        "style": 0,
+        "layout": 0,
+        "other": 0.7793852016198873
+      }
+    },
+    {
+      "reducedMotion": "reduce",
+      "run": 3,
+      "moves": 241,
+      "elapsedMs": 4033,
+      "windowTargetMs": 2000,
+      "paceSlipMs": 2033,
+      "commits": 0,
+      "commitTimesMs": [],
+      "rafTicks": 243,
+      "scriptMs": 43.324,
+      "styleMs": 0,
+      "layoutMs": 0,
+      "taskMs": 213.226,
+      "taskOtherMs": 169.38099999999997,
+      "attributedOtherMs": 169.902,
+      "styleCount": 0,
+      "layoutCount": 0,
+      "share": {
+        "script": 0.203183476686708,
+        "style": 0,
+        "layout": 0,
+        "other": 0.7968165233132919
+      }
+    }
+  ],
+  "census": {
+    "taskMs": {
+      "normalMedian": 892.769,
+      "reducedMedian": 242.48600000000002,
+      "normal": {
+        "min": 835.881,
+        "max": 1153.6840000000002,
+        "median": 892.769,
+        "values": [
+          1153.6840000000002,
+          892.769,
+          835.881
+        ]
+      },
+      "reduced": {
+        "min": 213.226,
+        "max": 250.589,
+        "median": 242.48600000000002,
+        "values": [
+          250.589,
+          242.48600000000002,
+          213.226
+        ]
+      },
+      "wholePageMotionModeDeltaMedian": null,
+      "comparativeValid": false
+    },
+    "scriptMs": {
+      "normalMedian": 167.95399999999998,
+      "reducedMedian": 53.187,
+      "normal": {
+        "min": 152.76000000000002,
+        "max": 213.502,
+        "median": 167.95399999999998,
+        "values": [
+          213.502,
+          167.95399999999998,
+          152.76000000000002
+        ]
+      },
+      "reduced": {
+        "min": 43.324,
+        "max": 53.496,
+        "median": 53.187,
+        "values": [
+          53.187,
+          53.496,
+          43.324
+        ]
+      },
+      "wholePageMotionModeDeltaMedian": null,
+      "comparativeValid": false
+    },
+    "styleMs": {
+      "normalMedian": 35.293,
+      "reducedMedian": 0,
+      "normal": {
+        "min": 33.02,
+        "max": 41.925,
+        "median": 35.293,
+        "values": [
+          41.925,
+          33.02,
+          35.293
+        ]
+      },
+      "reduced": {
+        "min": 0,
+        "max": 0,
+        "median": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      },
+      "wholePageMotionModeDeltaMedian": null,
+      "comparativeValid": false
+    },
+    "layoutMs": {
+      "normalMedian": 6.149,
+      "reducedMedian": 0,
+      "normal": {
+        "min": 5.114,
+        "max": 19.355,
+        "median": 6.149,
+        "values": [
+          19.355,
+          6.149,
+          5.114
+        ]
+      },
+      "reduced": {
+        "min": 0,
+        "max": 0,
+        "median": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      },
+      "wholePageMotionModeDeltaMedian": null,
+      "comparativeValid": false
+    },
+    "attributedOtherMs": {
+      "normalMedian": 685.6460000000001,
+      "reducedMedian": 188.99,
+      "normal": {
+        "min": 642.7139999999999,
+        "max": 878.9020000000003,
+        "median": 685.6460000000001,
+        "values": [
+          878.9020000000003,
+          685.6460000000001,
+          642.7139999999999
+        ]
+      },
+      "reduced": {
+        "min": 169.902,
+        "max": 197.402,
+        "median": 188.99,
+        "values": [
+          197.402,
+          188.99,
+          169.902
+        ]
+      },
+      "wholePageMotionModeDeltaMedian": null,
+      "comparativeValid": false
+    },
+    "taskOtherMs": {
+      "normalMedian": 685.1080000000001,
+      "reducedMedian": 187.7,
+      "normal": {
+        "min": 642.5640000000001,
+        "max": 878.2869999999999,
+        "median": 685.1080000000001,
+        "values": [
+          878.2869999999999,
+          685.1080000000001,
+          642.5640000000001
+        ]
+      },
+      "reduced": {
+        "min": 169.38099999999997,
+        "max": 196.727,
+        "median": 187.7,
+        "values": [
+          196.727,
+          187.7,
+          169.38099999999997
+        ]
+      },
+      "wholePageMotionModeDeltaMedian": null,
+      "comparativeValid": false
+    },
+    "commits": {
+      "normalMedian": 1,
+      "reducedMedian": 0,
+      "normal": {
+        "min": 1,
+        "max": 1,
+        "median": 1,
+        "values": [
+          1,
+          1,
+          1
+        ]
+      },
+      "reduced": {
+        "min": 0,
+        "max": 0,
+        "median": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      },
+      "wholePageMotionModeDeltaMedian": null,
+      "comparativeValid": false
+    },
+    "elapsedMs": {
+      "normalMedian": 4021,
+      "reducedMedian": 4025,
+      "normal": {
+        "min": 4012,
+        "max": 4063,
+        "median": 4021,
+        "values": [
+          4063,
+          4012,
+          4021
+        ]
+      },
+      "reduced": {
+        "min": 4013,
+        "max": 4033,
+        "median": 4025,
+        "values": [
+          4025,
+          4013,
+          4033
+        ]
+      },
+      "wholePageMotionModeDeltaMedian": null,
+      "comparativeValid": false
+    },
+    "rafTicks": {
+      "normalMedian": 243,
+      "reducedMedian": 243,
+      "normal": {
+        "min": 242,
+        "max": 244,
+        "median": 243,
+        "values": [
+          244,
+          242,
+          243
+        ]
+      },
+      "reduced": {
+        "min": 242,
+        "max": 243,
+        "median": 243,
+        "values": [
+          243,
+          242,
+          243
+        ]
+      },
+      "wholePageMotionModeDeltaMedian": null,
+      "comparativeValid": false
+    },
+    "styleCount": {
+      "normalMedian": 241,
+      "reducedMedian": 0,
+      "normal": {
+        "min": 241,
+        "max": 242,
+        "median": 241,
+        "values": [
+          242,
+          241,
+          241
+        ]
+      },
+      "reduced": {
+        "min": 0,
+        "max": 0,
+        "median": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      },
+      "wholePageMotionModeDeltaMedian": null,
+      "comparativeValid": false
+    }
+  },
+  "residualConclusionNotes": [
+    "Committed artifact runs are pre-fix incomplete samples (elapsed\u22484s, missing movesDone). comparativeValid=false; wholePageMotionModeDeltaMedian nulled to match the final census lever.",
+    "Do not use normal vs reduced-motion deltas from this artifact to revise the acceptance gate. Use absolute TaskDuration medians and committed paced labs in issue-254-cursor-metrics.json (delivered 232.922\u2013355.313ms; current_base_c4619c2 241.941\u2013401.483ms; 0 commits; elapsed\u22482s) instead.",
+    "attributedOtherMs is TaskDuration minus Script minus Style minus Layout for the whole page under the probe window.",
+    "IMPORTANT: when comparativeValid is true, normal vs reduced-motion delta is a whole-page motion-mode delta, not a cursor-only attribution.",
+    "Harness no longer injects a self-scheduling rAF loop into the measured window (rafTicks stay 0 on regenerated runs).",
+    "Withholding absolute-gate and commit-attribution conclusions until every normal run completes 241 moves with paceSlipMs<=32 (scheduler jitter after the final paced sleep)."
+  ],
+  "comparativeValid": false
+}

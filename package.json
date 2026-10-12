@@ -5,15 +5,20 @@
   "private": true,
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 3000",
-    "build": "vite build && node tools/generate-sitemap.js && node tools/generate-static-route-html.js",
+    "build": "node tools/generate-case-study-display-images.js --check && vite build && node tools/generate-sitemap.js && node tools/generate-static-route-html.js",
     "preview": "vite preview --host 127.0.0.1 --port 3000",
     "qa:playwright:passive": "playwright test -c tests/qa/qa.config.js",
     "qa:playwright:ci": "playwright test -c tests/qa/qa.config.js --project=preview-desktop --project=preview-mobile --project=preview-webkit-desktop --project=preview-webkit-mobile",
+    "qa:playwright:ci:chromium": "playwright test -c tests/qa/qa.config.js --project=preview-desktop --project=preview-mobile",
+    "qa:playwright:ci:webkit": "playwright test -c tests/qa/qa.config.js --project=preview-webkit-desktop --project=preview-webkit-mobile",
     "qa:telemetry-boundary": "node tools/run-telemetry-boundary-qa.js",
+    "qa:replay-consent": "node tools/run-replay-consent-qa.js",
     "qa:contact-lifecycle": "playwright test -c tests/qa/qa-contact-lifecycle.config.js",
+    "qa:motion": "playwright test -c tests/qa/qa-motion.config.js",
     "qa:playwright:live-contact": "QA_LIVE_CONTACT_SUBMIT=1 playwright test -c tests/qa/qa.config.js --project=prod-live-contact-submit",
     "qa:artifacts:verify": "node tools/verify-sanitized-qa-artifacts.js",
     "qa:seo": "node tests/qa/qa-seo-check.js",
+    "qa:apache-services": "node tools/run-apache-service-qa.js",
     "case-study:prepare": "node tools/prepare-case-study.js",
     "case-study:stage": "node tools/stage-case-study-publication.js",
     "case-study:withdraw": "node tools/withdraw-case-study.js",
@@ -26,6 +31,7 @@
   "dependencies": {
     "@babel/traverse": "^7.26.4",
     "@emotion/is-prop-valid": "^1.3.1",
+    "@headlessui/react": "^2.2.10",
     "@radix-ui/react-checkbox": "^1.0.4",
     "@radix-ui/react-collapsible": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
@@ -71,9 +77,12 @@
     "eslint-config-react-app": "^7.0.1",
     "jsdom": "^29.1.1",
     "postcss": "^8.4.31",
+    "postcss-selector-parser": "^6.1.2",
+    "sharp": "0.35.5",
     "tailwindcss": "^3.3.3",
     "terser": "^5.39.0",
     "vite": "6.4.3",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.8",
+    "yaml": "2.9.0"
   }
 }

@@ -1,0 +1,308 @@
+.detection-panel,
+.detection-heading {
+  --detection-top: #6b7280;
+  --detection-bottom: #6b7280;
+  position: relative;
+}
+
+.detection-panel::before,
+.detection-heading::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.detection-panel::before {
+  background:
+    linear-gradient(var(--detection-top), var(--detection-top)) left top / 23px 1.5px no-repeat,
+    linear-gradient(var(--detection-top), var(--detection-top)) left top / 1.5px 23px no-repeat,
+    linear-gradient(var(--detection-bottom), var(--detection-bottom)) right bottom / 23px 1.5px no-repeat,
+    linear-gradient(var(--detection-bottom), var(--detection-bottom)) right bottom / 1.5px 23px no-repeat;
+}
+
+.detection-heading {
+  width: fit-content;
+  max-width: 100%;
+  padding: 19px 23px 17px;
+}
+
+.detection-heading::before {
+  background:
+    linear-gradient(var(--detection-top), var(--detection-top)) left top / 19px 1px no-repeat,
+    linear-gradient(var(--detection-top), var(--detection-top)) left top / 1px 19px no-repeat,
+    linear-gradient(var(--detection-bottom), var(--detection-bottom)) right bottom / 19px 1px no-repeat,
+    linear-gradient(var(--detection-bottom), var(--detection-bottom)) right bottom / 1px 19px no-repeat;
+}
+
+.detection-label {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  left: 29px;
+  max-width: calc(100% - 58px);
+  transform: translateY(-50%);
+  padding-inline: 6px;
+  color: #c4b5fd;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.detection-heading > .detection-label {
+  left: 25px;
+  max-width: calc(100% - 50px);
+  padding-inline: 5px;
+  white-space: nowrap;
+}
+
+.card .media::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 32px;
+  z-index: 1;
+  background: linear-gradient(to bottom, rgba(12, 13, 13, 0.85) 16px, transparent);
+  pointer-events: none;
+}
+
+.detection-panel:hover,
+.detection-panel:focus-within,
+.detection-heading:hover,
+.detection-heading:focus-within {
+  --detection-top: #a78bfa;
+  --detection-bottom: #a78bfa;
+}
+
+.detection-panel--hero > .detection-label {
+  font-family: inherit;
+  font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: #9ca3af;
+}
+
+.detection-action {
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 56px;
+  min-width: 44px;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 14px 24px;
+  border: 0;
+  border-radius: 0;
+  background-color: #0c0d0d;
+  background-image: linear-gradient(to bottom, rgba(139, 92, 246, 0.06), transparent);
+  background-size: 100% 55%;
+  background-repeat: no-repeat;
+  color: white;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: center;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.detection-action--labeled > .detection-label {
+  max-width: calc(100% - 35px);
+  padding-inline: 0;
+  white-space: nowrap;
+}
+
+.detection-action:not(:disabled):not([aria-disabled="true"]):hover,
+.detection-action:not(:disabled):not([aria-disabled="true"]):focus-visible {
+  background-image: linear-gradient(to bottom, rgba(139, 92, 246, 0.1), transparent);
+}
+
+.detection-action:disabled,
+.detection-action[aria-disabled="true"] {
+  --detection-top: #6b7280;
+  --detection-bottom: #6b7280;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.detection-action--primary {
+  background-image: linear-gradient(to bottom, rgba(139, 92, 246, 0.28), transparent);
+  background-size: 100% 70%;
+  font-weight: 650;
+}
+
+.detection-action--primary:not(:disabled):not([aria-disabled="true"]):hover,
+.detection-action--primary:not(:disabled):not([aria-disabled="true"]):focus-visible {
+  background-image: linear-gradient(to bottom, rgba(139, 92, 246, 0.32), transparent);
+}
+
+.detection-action:not(:disabled):not([aria-disabled="true"]):active {
+  background-color: #21172f;
+}
+
+.detection-action:focus-visible {
+  outline: 2px solid #c4b5fd;
+  outline-offset: 4px;
+}
+
+.detection-action--compact {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.detection-action--large {
+  padding: 22px 36px;
+  font-size: 1.05rem;
+}
+
+.detection-action--submit {
+  display: inline-grid;
+  width: max-content;
+  padding-inline: 16px;
+  grid-template-columns: 16px minmax(0, 1fr) 16px;
+}
+
+.detection-action--submit .action-submit-label {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.detection-action--submit .action-submit-reserve {
+  visibility: hidden;
+}
+
+.detection-action--submit .action-submit-spinner {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.detection-text-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  max-width: 100%;
+  color: #c4b5fd;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+
+.detection-text-action:hover,
+.detection-text-action:focus-visible {
+  color: white;
+}
+
+.detection-text-action:active {
+  color: #a78bfa;
+}
+
+.detection-text-action:focus-visible,
+.detection-utility:focus-visible,
+.consent-checkbox-target:focus-visible {
+  outline: 2px solid #c4b5fd;
+  outline-offset: 4px;
+}
+
+.detection-utility {
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 2px;
+}
+
+.detection-utility:not(:disabled):hover,
+.detection-utility:not(:disabled):focus-visible {
+  background-color: #21172f;
+}
+
+.detection-utility:not(:disabled):active {
+  background-color: #342044;
+}
+
+/* Keep the conventional 16px checkbox inside a 44px hit area. */
+.consent-checkbox-target[data-state] {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+}
+
+.consent-checkbox-target::before {
+  content: '';
+  position: absolute;
+  inset: 14px;
+  border: 1px solid #c4b5fd;
+  border-radius: 2px;
+}
+
+.consent-checkbox-target[data-state="checked"]::before {
+  background: white;
+}
+
+.consent-checkbox-target > span {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .detection-action,
+  .detection-text-action,
+  .detection-utility {
+    transition: none;
+  }
+
+  .detection-action--submit .action-submit-spinner {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .detection-action,
+  .detection-utility {
+    border: 1px solid ButtonText;
+  }
+
+  .detection-action:focus-visible,
+  .detection-text-action:focus-visible,
+  .detection-utility:focus-visible {
+    outline-color: Highlight;
+  }
+}
+
+.detection-nav-link {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.detection-nav-link:focus-visible {
+  outline: 2px solid #c4b5fd;
+  outline-offset: 4px;
+}
+
+.detection-panel--nav-selected {
+  --detection-top: #a78bfa;
+  --detection-bottom: #a78bfa;
+}
+
+.detection-panel--nav-selected::before {
+  inset: 0 -8px;
+  background:
+    linear-gradient(var(--detection-top), var(--detection-top)) left top / 12px 1px no-repeat,
+    linear-gradient(var(--detection-top), var(--detection-top)) left top / 1px 12px no-repeat,
+    linear-gradient(var(--detection-bottom), var(--detection-bottom)) right bottom / 12px 1px no-repeat,
+    linear-gradient(var(--detection-bottom), var(--detection-bottom)) right bottom / 1px 12px no-repeat;
+}

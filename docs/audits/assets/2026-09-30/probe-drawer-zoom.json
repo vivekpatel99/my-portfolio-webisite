@@ -1,0 +1,347 @@
+{
+  "rows": [
+    {
+      "width": 568,
+      "height": 320,
+      "overflow": "visible",
+      "clientHeight": 320,
+      "scrollHeight": 320,
+      "scrollTop": 0,
+      "controls": [
+        {
+          "text": "",
+          "top": 7,
+          "bottom": 37
+        },
+        {
+          "text": "",
+          "top": 0,
+          "bottom": 44
+        },
+        {
+          "text": "Services",
+          "top": 45,
+          "bottom": 82.1875
+        },
+        {
+          "text": "About",
+          "top": 104.1875,
+          "bottom": 141.375
+        },
+        {
+          "text": "Case Studies",
+          "top": 163.375,
+          "bottom": 200.5625
+        },
+        {
+          "text": "Testimonials",
+          "top": 222.5625,
+          "bottom": 259.75
+        },
+        {
+          "text": "REQUEST ESTIMATE",
+          "top": 259.75,
+          "bottom": 306.25
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "height": 320,
+      "overflow": "visible",
+      "clientHeight": 320,
+      "scrollHeight": 320,
+      "scrollTop": 0,
+      "controls": [
+        {
+          "text": "",
+          "top": 7,
+          "bottom": 37
+        },
+        {
+          "text": "",
+          "top": 0,
+          "bottom": 44
+        },
+        {
+          "text": "Services",
+          "top": 45,
+          "bottom": 82.1875
+        },
+        {
+          "text": "About",
+          "top": 104.1875,
+          "bottom": 141.375
+        },
+        {
+          "text": "Case Studies",
+          "top": 163.375,
+          "bottom": 200.5625
+        },
+        {
+          "text": "Testimonials",
+          "top": 222.5625,
+          "bottom": 259.75
+        },
+        {
+          "text": "REQUEST ESTIMATE",
+          "top": 259.75,
+          "bottom": 306.25
+        }
+      ]
+    },
+    {
+      "width": 568,
+      "height": 256,
+      "overflow": "visible",
+      "clientHeight": 256,
+      "scrollHeight": 306,
+      "scrollTop": 0,
+      "controls": [
+        {
+          "text": "",
+          "top": 7,
+          "bottom": 37
+        },
+        {
+          "text": "",
+          "top": 0,
+          "bottom": 44
+        },
+        {
+          "text": "Services",
+          "top": 45,
+          "bottom": 82.1875
+        },
+        {
+          "text": "About",
+          "top": 104.1875,
+          "bottom": 141.375
+        },
+        {
+          "text": "Case Studies",
+          "top": 163.375,
+          "bottom": 200.5625
+        },
+        {
+          "text": "Testimonials",
+          "top": 222.5625,
+          "bottom": 259.75
+        },
+        {
+          "text": "REQUEST ESTIMATE",
+          "top": 259.75,
+          "bottom": 306.25
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "height": 256,
+      "overflow": "visible",
+      "clientHeight": 256,
+      "scrollHeight": 306,
+      "scrollTop": 0,
+      "controls": [
+        {
+          "text": "",
+          "top": 7,
+          "bottom": 37
+        },
+        {
+          "text": "",
+          "top": 0,
+          "bottom": 44
+        },
+        {
+          "text": "Services",
+          "top": 45,
+          "bottom": 82.1875
+        },
+        {
+          "text": "About",
+          "top": 104.1875,
+          "bottom": 141.375
+        },
+        {
+          "text": "Case Studies",
+          "top": 163.375,
+          "bottom": 200.5625
+        },
+        {
+          "text": "Testimonials",
+          "top": 222.5625,
+          "bottom": 259.75
+        },
+        {
+          "text": "REQUEST ESTIMATE",
+          "top": 259.75,
+          "bottom": 306.25
+        }
+      ]
+    },
+    {
+      "width": 568,
+      "height": 200,
+      "overflow": "visible",
+      "clientHeight": 200,
+      "scrollHeight": 306,
+      "scrollTop": 0,
+      "controls": [
+        {
+          "text": "",
+          "top": 7,
+          "bottom": 37
+        },
+        {
+          "text": "",
+          "top": 0,
+          "bottom": 44
+        },
+        {
+          "text": "Services",
+          "top": 45,
+          "bottom": 82.1875
+        },
+        {
+          "text": "About",
+          "top": 104.1875,
+          "bottom": 141.375
+        },
+        {
+          "text": "Case Studies",
+          "top": 163.375,
+          "bottom": 200.5625
+        },
+        {
+          "text": "Testimonials",
+          "top": 222.5625,
+          "bottom": 259.75
+        },
+        {
+          "text": "REQUEST ESTIMATE",
+          "top": 259.75,
+          "bottom": 306.25
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "height": 200,
+      "overflow": "visible",
+      "clientHeight": 200,
+      "scrollHeight": 306,
+      "scrollTop": 0,
+      "controls": [
+        {
+          "text": "",
+          "top": 7,
+          "bottom": 37
+        },
+        {
+          "text": "",
+          "top": 0,
+          "bottom": 44
+        },
+        {
+          "text": "Services",
+          "top": 45,
+          "bottom": 82.1875
+        },
+        {
+          "text": "About",
+          "top": 104.1875,
+          "bottom": 141.375
+        },
+        {
+          "text": "Case Studies",
+          "top": 163.375,
+          "bottom": 200.5625
+        },
+        {
+          "text": "Testimonials",
+          "top": 222.5625,
+          "bottom": 259.75
+        },
+        {
+          "text": "REQUEST ESTIMATE",
+          "top": 259.75,
+          "bottom": 306.25
+        }
+      ]
+    }
+  ],
+  "zoom": [
+    {
+      "path": "/",
+      "overflow": 0,
+      "main": {
+        "x": 0,
+        "y": 282,
+        "width": 1440,
+        "height": 11315.28125,
+        "top": 282,
+        "right": 1440,
+        "bottom": 11597.28125,
+        "left": 0
+      }
+    },
+    {
+      "path": "/contact",
+      "overflow": 0,
+      "main": {
+        "x": 0,
+        "y": 282,
+        "width": 1440,
+        "height": 1800,
+        "top": 282,
+        "right": 1440,
+        "bottom": 2082,
+        "left": 0
+      }
+    },
+    {
+      "path": "/case-studies",
+      "overflow": 0,
+      "main": {
+        "x": 0,
+        "y": 282,
+        "width": 1440,
+        "height": 5005.78125,
+        "top": 282,
+        "right": 1440,
+        "bottom": 5287.78125,
+        "left": 0
+      }
+    },
+    {
+      "path": "/services/ai-workflow-buildout",
+      "overflow": 0,
+      "main": {
+        "x": 0,
+        "y": 282,
+        "width": 1440,
+        "height": 2623.46875,
+        "top": 282,
+        "right": 1440,
+        "bottom": 2905.46875,
+        "left": 0
+      }
+    },
+    {
+      "path": "/project/n8n-openai-data-extraction",
+      "overflow": 0,
+      "main": {
+        "x": 0,
+        "y": 282,
+        "width": 1440,
+        "height": 3141.5625,
+        "top": 282,
+        "right": 1440,
+        "bottom": 3423.5625,
+        "left": 0
+      }
+    }
+  ],
+  "zoomMethod": "CSS zoom=2, native T3 Meta-plus did not change scale"
+}

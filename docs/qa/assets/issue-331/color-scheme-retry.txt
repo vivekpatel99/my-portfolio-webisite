@@ -1,0 +1,6 @@
+
+Running 1 test using 1 worker
+
+  ✓  1 [webkit-1440-no-preference] › tests/qa/qa-color-scheme.spec.js:57:1 › contact controls preserve layout, visual states, and keyboard access (4.2s)
+
+  1 passed (7.4s)

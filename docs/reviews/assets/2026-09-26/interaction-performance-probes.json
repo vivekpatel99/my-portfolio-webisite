@@ -1,0 +1,304 @@
+{
+  "rejectedConsent": {
+    "banner": false,
+    "spacerHeight": 60,
+    "mainTop": 129
+  },
+  "acceptedConsent": {
+    "mainTop": 69
+  },
+  "testimonialBefore": "Testimonial carousel, slide 1 of 10",
+  "testimonialAfter": "Testimonial carousel, slide 2 of 10",
+  "dotBoxes": [
+    {
+      "width": 5,
+      "height": 5,
+      "box": {
+        "x": 108.96446228027344,
+        "y": 807.7301025390625,
+        "width": 7.071075439453125,
+        "height": 7.071044921875,
+        "top": 807.7301025390625,
+        "right": 116.03553771972656,
+        "bottom": 814.8011474609375,
+        "left": 108.96446228027344
+      }
+    },
+    {
+      "width": 8,
+      "height": 8,
+      "box": {
+        "x": 126.34314727783203,
+        "y": 805.6087646484375,
+        "width": 11.313713073730469,
+        "height": 11.313720703125,
+        "top": 805.6087646484375,
+        "right": 137.6568603515625,
+        "bottom": 816.9224853515625,
+        "left": 126.34314727783203
+      }
+    },
+    {
+      "width": 5,
+      "height": 5,
+      "box": {
+        "x": 147.96446228027344,
+        "y": 807.7301025390625,
+        "width": 7.071075439453125,
+        "height": 7.071044921875,
+        "top": 807.7301025390625,
+        "right": 155.03553771972656,
+        "bottom": 814.8011474609375,
+        "left": 147.96446228027344
+      }
+    },
+    {
+      "width": 5,
+      "height": 5,
+      "box": {
+        "x": 165.96446228027344,
+        "y": 807.7301025390625,
+        "width": 7.071075439453125,
+        "height": 7.071044921875,
+        "top": 807.7301025390625,
+        "right": 173.03553771972656,
+        "bottom": 814.8011474609375,
+        "left": 165.96446228027344
+      }
+    },
+    {
+      "width": 5,
+      "height": 5,
+      "box": {
+        "x": 183.96446228027344,
+        "y": 807.7301025390625,
+        "width": 7.071075439453125,
+        "height": 7.071044921875,
+        "top": 807.7301025390625,
+        "right": 191.03553771972656,
+        "bottom": 814.8011474609375,
+        "left": 183.96446228027344
+      }
+    },
+    {
+      "width": 5,
+      "height": 5,
+      "box": {
+        "x": 201.96446228027344,
+        "y": 807.7301025390625,
+        "width": 7.071075439453125,
+        "height": 7.071044921875,
+        "top": 807.7301025390625,
+        "right": 209.03553771972656,
+        "bottom": 814.8011474609375,
+        "left": 201.96446228027344
+      }
+    },
+    {
+      "width": 5,
+      "height": 5,
+      "box": {
+        "x": 219.96446228027344,
+        "y": 807.7301025390625,
+        "width": 7.071075439453125,
+        "height": 7.071044921875,
+        "top": 807.7301025390625,
+        "right": 227.03553771972656,
+        "bottom": 814.8011474609375,
+        "left": 219.96446228027344
+      }
+    },
+    {
+      "width": 5,
+      "height": 5,
+      "box": {
+        "x": 237.96446228027344,
+        "y": 807.7301025390625,
+        "width": 7.071075439453125,
+        "height": 7.071044921875,
+        "top": 807.7301025390625,
+        "right": 245.03553771972656,
+        "bottom": 814.8011474609375,
+        "left": 237.96446228027344
+      }
+    },
+    {
+      "width": 5,
+      "height": 5,
+      "box": {
+        "x": 255.96446228027344,
+        "y": 807.7301025390625,
+        "width": 7.0710601806640625,
+        "height": 7.071044921875,
+        "top": 807.7301025390625,
+        "right": 263.0355224609375,
+        "bottom": 814.8011474609375,
+        "left": 255.96446228027344
+      }
+    },
+    {
+      "width": 5,
+      "height": 5,
+      "box": {
+        "x": 273.9644775390625,
+        "y": 807.7301025390625,
+        "width": 7.071044921875,
+        "height": 7.071044921875,
+        "top": 807.7301025390625,
+        "right": 281.0355224609375,
+        "bottom": 814.8011474609375,
+        "left": 273.9644775390625
+      }
+    }
+  ],
+  "offscreenHero": {
+    "styleMutationsInOneSecond": 0,
+    "heroBottom": -5762.71875,
+    "coarse": true
+  },
+  "contact": {
+    "labels": [
+      {
+        "text": "FULL NAME *",
+        "font": "9px",
+        "color": "rgb(107, 114, 128)"
+      },
+      {
+        "text": "EMAIL ADDRESS *",
+        "font": "9px",
+        "color": "rgb(107, 114, 128)"
+      },
+      {
+        "text": "BUDGET RANGE",
+        "font": "9px",
+        "color": "rgb(107, 114, 128)"
+      },
+      {
+        "text": "PROJECT DESCRIPTION *",
+        "font": "9px",
+        "color": "rgb(107, 114, 128)"
+      }
+    ],
+    "form": true,
+    "required": [
+      "name",
+      "email",
+      "description"
+    ],
+    "invalidBeforeSubmission": false
+  },
+  "noJsCursor": "none",
+  "localSyntheticPerformance": [
+    {
+      "lcpMs": 1340,
+      "cls": 0.0011980085456647078,
+      "resourceBytes": 888276,
+      "resources": [
+        {
+          "url": "https://horizons-cdn.hostinger.com/6c79ee82-b048-4e51-aa3e-90c95281746e/71f6723b117af5fb7e36d829dfcd6b7f.jpg",
+          "bytes": 0,
+          "duration": 1.100000023841858
+        },
+        {
+          "url": "http://127.0.0.1:4173/assets/index-CZC64533.css",
+          "bytes": 12461,
+          "duration": 283.19999998807907
+        },
+        {
+          "url": "http://127.0.0.1:4173/assets/index-j2GskmFX.js",
+          "bytes": 151076,
+          "duration": 980.3999999761581
+        },
+        {
+          "url": "http://127.0.0.1:4173/assets/images/vivek-black-and-white.webp",
+          "bytes": 73400,
+          "duration": 1060.3999999761581
+        },
+        {
+          "url": "http://127.0.0.1:4173/assets/case-studies/n8n-openai-data-extraction-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png",
+          "bytes": 510845,
+          "duration": 3689
+        },
+        {
+          "url": "http://127.0.0.1:4173/assets/case-studies/invoice-ocr-extraction-e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4.webp",
+          "bytes": 140494,
+          "duration": 1836.800000011921
+        }
+      ]
+    },
+    {
+      "lcpMs": 1348,
+      "cls": 0.0011980085456647078,
+      "resourceBytes": 888276,
+      "resources": [
+        {
+          "url": "https://horizons-cdn.hostinger.com/6c79ee82-b048-4e51-aa3e-90c95281746e/71f6723b117af5fb7e36d829dfcd6b7f.jpg",
+          "bytes": 0,
+          "duration": 1.7000000476837158
+        },
+        {
+          "url": "http://127.0.0.1:4173/assets/index-j2GskmFX.js",
+          "bytes": 151076,
+          "duration": 981.1000000238419
+        },
+        {
+          "url": "http://127.0.0.1:4173/assets/index-CZC64533.css",
+          "bytes": 12461,
+          "duration": 283.89999997615814
+        },
+        {
+          "url": "http://127.0.0.1:4173/assets/images/vivek-black-and-white.webp",
+          "bytes": 73400,
+          "duration": 1044.0999999642372
+        },
+        {
+          "url": "http://127.0.0.1:4173/assets/case-studies/invoice-ocr-extraction-e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4.webp",
+          "bytes": 140494,
+          "duration": 1827.8999999761581
+        },
+        {
+          "url": "http://127.0.0.1:4173/assets/case-studies/n8n-openai-data-extraction-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png",
+          "bytes": 510845,
+          "duration": 3680
+        }
+      ]
+    },
+    {
+      "lcpMs": 1332,
+      "cls": 0.0011980085456647078,
+      "resourceBytes": 888276,
+      "resources": [
+        {
+          "url": "https://horizons-cdn.hostinger.com/6c79ee82-b048-4e51-aa3e-90c95281746e/71f6723b117af5fb7e36d829dfcd6b7f.jpg",
+          "bytes": 0,
+          "duration": 1.600000023841858
+        },
+        {
+          "url": "http://127.0.0.1:4173/assets/index-j2GskmFX.js",
+          "bytes": 151076,
+          "duration": 973.8999999761581
+        },
+        {
+          "url": "http://127.0.0.1:4173/assets/index-CZC64533.css",
+          "bytes": 12461,
+          "duration": 276.69999998807907
+        },
+        {
+          "url": "http://127.0.0.1:4173/assets/images/vivek-black-and-white.webp",
+          "bytes": 73400,
+          "duration": 1059.699999988079
+        },
+        {
+          "url": "http://127.0.0.1:4173/assets/case-studies/n8n-openai-data-extraction-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png",
+          "bytes": 510845,
+          "duration": 3685.600000023842
+        },
+        {
+          "url": "http://127.0.0.1:4173/assets/case-studies/invoice-ocr-extraction-e6814512a97562f6ead7cd563262c97ffe80cd8ddd36408db2da67b50479b5b4.webp",
+          "bytes": 140494,
+          "duration": 1833.3999999761581
+        }
+      ]
+    }
+  ]
+}

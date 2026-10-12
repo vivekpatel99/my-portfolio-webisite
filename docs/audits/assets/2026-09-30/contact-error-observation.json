@@ -1,0 +1,7 @@
+{
+  "transport": "in-memory synthetic failure",
+  "syntheticPayload": "[Request ID: synthetic-audit] Server Error",
+  "visibleToastContainedEntireSyntheticPayload": true,
+  "productionRequestIdsCollected": false,
+  "note": "The observational probe asserted the bad current behavior; it is not a passing regression requirement."
+}

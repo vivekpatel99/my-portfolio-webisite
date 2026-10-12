@@ -132,3 +132,15 @@
 - [x] Problem: explain why stale deployment notes cause wrong-path or wrong-target changes.
 - [x] Solution: explain the skill's source-of-truth order, deployment decision tree, and verification gates.
 - [x] Impact: explain how the skill protects streaming uptime, processed-only output, and future agent handoffs.
+
+
+## Portfolio Website Audit - 2026-09-26
+- [x] Build + serve production preview (http://127.0.0.1:4173 via `/tmp/kiro-serve.sh`).
+- [x] Visual/UI team (alignment, layout, interactions) → `.kiro-audit-tmp/`.
+- [x] Content/trust team (copy, proof, conversion) → `.kiro-audit-tmp/`.
+- [x] Perf/SEO/a11y team → `.kiro-audit-tmp/`.
+- [x] Benchmark + animation team (shahzeb-ai.com, sahilsingh.space, animation playbook) → `.kiro-audit-tmp/`.
+- [x] Consolidate into `docs/reviews/2026-09-26-website-audit.md` (Kiro pass merged with the buyer-journey audit).
+- [x] Cross-reference both passes inside that file. The separate source audits were removed.
+- [x] Clean temp files: remove `.kiro-audit-tmp/`, `/tmp/kiro-serve.sh`; stop preview server on 4173.
+- [ ] Owner answers the 12 decisions in section 11 of docs/reviews/2026-09-26-website-audit.md, then start Sprint 1

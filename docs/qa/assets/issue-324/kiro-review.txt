@@ -1,0 +1,84 @@
+[tool] Reading candidate.diff:1, AGENTS.md:1, SKILL.md:1, SKILL.md:1, SKILL.md:1-80
+[tool] status: Completed
+[tool] Reading Services.jsx:1, Services.test.jsx:1, Services.compatibility.test.js:1, vite.config.js:1, serviceOffers.js:1
+[tool] Reading service-offers-safari-324.md:1, bundle-inspection.json:1, audit.md:1-60
+[tool] status: Completed
+[tool] status: Completed
+[tool] Finding {src,convex,tools,plugins,tests,scripts}/**/*.test.{js,js... in horizons-website
+[tool] Finding vitest.config.* in horizons-website
+[tool] status: Completed
+[tool] status: Completed
+[tool] Reading vitest.config.ts:1
+[tool] status: Completed
+[tool] Finding **/*.{test,spec}.{js,jsx,ts,tsx,mjs,cjs,mts,cts} in horizons-website
+[tool] status: Completed
+[tool] Searching for '^\s*(it|test)(\.each)?\(' in proposal-linking
+[tool] Searching for 'cursor' in horizons-website
+[tool] status: Completed
+[tool] status: Completed
+[tool] status: Failed
+[tool] Reading DESIGN.md:1-120
+[tool] status: Completed
+[tool] Finding DetectionFrame* in components
+[tool] status: Completed
+[tool] Reading DetectionFrame.js:1
+[tool] status: Completed
+[tool] Searching for '\(\?<[=!]' in horizons-website
+[tool] status: Completed
+[tool] Searching for 'new RegExp|RegExp\(' in src
+[tool] status: Completed
+[tool] Searching for 'browserslist|"vite":|build\.target|target:' in horizons-website
+[tool] status: Completed
+[tool] Searching for 'github\.com/vivekpatel99/[^/]+/issues' in qa
+[tool] status: Completed
+Verdict: clean on code. I found no in-scope code defect. There is one Low-severity accuracy problem in the QA document, and the Safari 14 release gate is still open. That gate is a gap in historical-engine evidence, not a code defect, and keeping `Refs #324` handles it correctly.
+
+## Model and skills
+
+- **Requested model:** claude-opus-5.5. The only attestation I can observe is the session context saying so. I have no provider attestation.
+- **Loaded:**
+  - `AGENTS.md` and `DESIGN.md` (lines 1–120, covering SH-02 for the Service offers row).
+  - `impeccable` `SKILL.md` and the first 60 lines of `reference/audit.md`. I did not run the `impeccable context` launcher because this review was read-only with no shell, so I read `DESIGN.md` directly.
+  - The `web-design-guidelines` `SKILL.md` wrapper only. I didn't fetch the remote ruleset (no fetch tool), so I didn't apply its rules.
+  - The `vercel-react-best-practices` `SKILL.md` index. No rule applies to this change; `js-hoist-regexp` is not triggered because this is a single literal in a module-level function.
+- **Not read:** `PRODUCT.md`, `docs/theme-review.md`, Convex files. Convex wasn't relevant.
+
+## Finding
+
+**[Low] Baseline test counts don't reconcile with the diff.** `docs/qa/service-offers-safari-324.md:17` and `:20`.
+- **Evidence:** The diff adds one test file (`Services.compatibility.test.js`, 1 test) and 11 cases to the existing `Services.test.jsx`. A like-for-like baseline should therefore be 68 files / 850 tests, given the reported final of 69 / 862. The row says 67 / 840, a gap of exactly one file and 10 tests. `Services.test.jsx` has exactly 10 earlier cases (1 + 3 from the parametrized test + 6). So the baseline run most likely left out that whole file, not just "the new boundary tests" as the row says.
+- **Cross-check:** Globbing with the `vitest.config.ts` excludes finds 69 test files in the candidate tree. The 31-test `.cursor/.../map.test.js` doesn't explain the gap.
+- **Impact:** This is wrong evidence, not a code defect. The final 69/862 run is the binding evidence and includes the card tests.
+- **Required action:** Correct the row to describe what actually ran, or rerun the full baseline suite and record its counts.
+
+## Acceptance check
+
+| Criterion | Result | Evidence |
+| --- | --- | --- |
+| Homepage offers have no lookbehind | Met | `Services.jsx:11`. A search of the repo finds `(?<=` / `(?<!` only in test oracles (`Services.test.jsx:47`, `tests/qa/qa-upgrade-interactions.spec.js:118`), the test's rejection check (`Services.compatibility.test.js:29`), and `.cursor` tooling. `src/` builds no dynamic `new RegExp` in production code. |
+| Same first-sentence result | Met | Both versions return the text up to and including the first `.` followed by `\s`, or the whole string if there is none. The trailing-whitespace, leading-period, empty-string and no-match cases all give the same result. A non-string summary throws in both. |
+| Representative empty, single, multiline and multi-sentence cases | Met | `Services.test.jsx:123-148`. `DetectionLabel` renders a `span`, so `querySelector('p')` selects the summary. The line-47 oracle still checks the real catalog text against the old split. |
+| Production bundle has no unsupported lookbehind | Met for the recorded build | `bundle-inspection.json`: target is `safari14`, `lookbehindAssets: []`, and the emitted extractor uses only lookahead. `package.json` pins Vite 6.4.3 with no browserslist, so the default `modules` target applies. Optional chaining was lowered; `??` and lookahead both work in Safari 14. |
+| Real oldest-supported Safari evidence, or a documented gap | Gap documented | Doc lines 36–40. `Refs #324` is correct under AGENTS.md ("Keep issues requiring production verification on `Refs`"). |
+| Titles, rate, timeline, links and responsive layout unchanged | Met | No changes to markup, classes or the catalog. SH-02 (Service offers corners and edge label) still holds. The output strings are identical, so layout can't change. The WebKit 390/320 `identical: false` captures are explained as a sticky-header capture difference (doc line 32). |
+
+## Non-blocking notes (optional, not required for merge)
+
+- `bundle-inspection.json` doesn't record the candidate SHA, asset names or hashes, or the search pattern used. That makes it harder to tie the file to SHA `56a1035…` later.
+- The "within 0.01 CSS pixel" geometry claim (doc line 30) isn't stored in any retained artifact.
+- The compatibility test only catches lookbehind because esbuild rewrites unsupported regex literals into `new RegExp(...)`. It checks titles and links but not summary text. The doc correctly calls it a capability guard, not an emulator.
+
+## Measurable release criteria still open
+
+On a real Safari 14.x engine or device:
+- The built `/#services` page throws no `SyntaxError`.
+- All 3 cards render.
+- Each summary equals `summary.split(/(?<=\.)\s+/)[0]`, computed in Node.
+- Each "Scope details" link goes to `/services/<id>`.
+- Record the engine version.
+
+## Runtime hypotheses I could not verify
+
+- **Probable:** Safari 14.0–16.3 parses the new literal and gives the same result. Lookahead and lazy `[\s\S]*?` have been supported for a long time.
+- **Not established:** that no other part of the Safari 14 runtime fails on the homepage. The bundle check only covered lookbehind.
+- **Not established:** that the stale Browserslist data has no effect on CSS output for Safari 14. CSS was outside this check.

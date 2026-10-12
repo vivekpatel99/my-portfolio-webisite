@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { galleryThumbnailSrc } from '../lib/caseStudyThumbnails.js';
+import { DetectionLabel } from './DetectionFrame.js';
+import { caseStudyDisplaySrc, galleryThumbnailSrc } from '../lib/caseStudyThumbnails.js';
 const h = React.createElement;
-export { galleryThumbnailSrc };
+export { caseStudyDisplaySrc, galleryThumbnailSrc };
 
 // Wide canvases own the inline stage; 4:3 is the floor so portrait media stay framed.
 export function galleryStageAspectRatio(media = {}) {
@@ -43,7 +44,7 @@ export function collectGalleryImages(story) {
   return images;
 }
 
-export default function CaseStudyGallery({ images, interactive = typeof window !== 'undefined' }) {
+export default function CaseStudyGallery({ images, overviewSrc, interactive = typeof window !== 'undefined' }) {
   const [index, setIndex] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const [zoom, setZoom] = useState(1);
@@ -105,11 +106,12 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
     return () => window.removeEventListener('keydown', handleExpandedKeyDown);
   }, [expanded]);
   if (!selected) return null;
+  const selectedLabel = selected.src === overviewSrc ? 'PROJECT OVERVIEW' : 'PROJECT EVIDENCE';
   const isVideo = (media) => /\.(?:mp4|webm|ogv)$/i.test(media.src);
   const media = (item, fitted = true) => isVideo(item)
     ? h('video', {
       src: item.src,
-      poster: item.poster,
+      poster: caseStudyDisplaySrc({ src: item.poster }),
       controls: true,
       preload: 'metadata',
       'aria-label': item.alt,
@@ -124,7 +126,9 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
     loading,
   });
   const cover = (image, loading = 'eager') => h('figure', { className: 'case-study-cover', key: image.src },
-    isVideo(image) ? media(image, false) : h('a', { href: image.src }, h('img', { src: image.src, alt: image.alt, width: image.width, height: image.height, loading })),
+    h('div', { className: 'case-study-cover-stage detection-panel' },
+      h(DetectionLabel, { 'aria-hidden': true }, selectedLabel),
+      isVideo(image) ? media(image, false) : h('a', { href: image.src }, h('img', { src: caseStudyDisplaySrc(image), alt: image.alt, width: image.width, height: image.height, loading }))),
     image.caption ? h('figcaption', null, image.caption) : null);
   if (images.length === 1) return cover(selected);
   const button = (label, action, content, props = {}) => h('button', { type: 'button', 'aria-label': label, onClick: action, ...props }, content);
@@ -144,22 +148,24 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
     }
   };
   const gallery = (large) => h(React.Fragment, null,
-    h('div', { className: 'case-gallery-stage', style: { ...(large ? {} : { aspectRatio: galleryStageAspectRatio(selected) }), ...(large && zoom > 1 ? { touchAction: 'auto' } : {}) }, onTouchStart: (event) => { touch.current = event.touches.length === 1 && !event.target.closest?.('video, audio') ? { x: event.touches[0].clientX, y: event.touches[0].clientY } : null; }, onTouchEnd: (event) => {
+    h('div', { className: `case-gallery-stage${large ? '' : ' detection-panel'}`, style: { ...(large ? {} : { aspectRatio: galleryStageAspectRatio(selected) }), ...(large && zoom > 1 ? { touchAction: 'auto' } : {}) }, onTouchStart: (event) => { touch.current = event.touches.length === 1 && !event.target.closest?.('video, audio') ? { x: event.touches[0].clientX, y: event.touches[0].clientY } : null; }, onTouchEnd: (event) => {
       if (!touch.current || zoom > 1) return;
       const dx = event.changedTouches[0].clientX - touch.current.x;
       const dy = event.changedTouches[0].clientY - touch.current.y;
       if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) select(index + (dx < 0 ? 1 : -1));
       touch.current = null;
     }, onTouchCancel: () => { touch.current = null; } },
+      large ? null : h(DetectionLabel, { 'aria-hidden': true }, selectedLabel),
       isVideo(selected) ? media(selected)
         : large ? h('div', { className: 'case-gallery-viewport', tabIndex: 0, 'aria-label': 'Enlarged image; scroll to inspect when zoomed' },
         h('img', { src: selected.src, alt: selected.alt, style: { width: `${zoom * 100}%`, maxWidth: 'none', height: `${zoom * 100}%` } }))
         : interactive
-          ? button(`Enlarge image: ${selected.alt}`, (event) => { opener.current = event.currentTarget; setExpanded(true); }, h('img', { src: selected.src, alt: selected.alt, width: selected.width, height: selected.height }), { className: 'case-gallery-open' })
-          : h('a', { href: selected.src, className: 'case-gallery-open', style: { display: 'block', width: '100%', height: '100%', padding: '12px' } }, h('img', { src: selected.src, alt: selected.alt, width: selected.width, height: selected.height })),
+          ? button(`Enlarge image: ${selected.alt}`, (event) => { opener.current = event.currentTarget; setExpanded(true); }, h('img', { src: caseStudyDisplaySrc(selected), alt: selected.alt, width: selected.width, height: selected.height }), { className: 'case-gallery-open' })
+          : h('a', { href: selected.src, className: 'case-gallery-open', style: { display: 'block', width: '100%', height: '100%', padding: '12px' } }, h('img', { src: caseStudyDisplaySrc(selected), alt: selected.alt, width: selected.width, height: selected.height }))),
+    h('div', { className: 'case-gallery-navigation' },
       interactive ? button('Previous image', () => select(index - 1), '‹', { className: 'case-gallery-arrow case-gallery-prev' }) : null,
+      h('p', { className: 'case-gallery-count', 'aria-live': 'polite', 'aria-atomic': true }, `${index + 1} of ${images.length}`),
       interactive ? button('Next image', () => select(index + 1), '›', { className: 'case-gallery-arrow case-gallery-next' }) : null),
-    h('p', { className: 'case-gallery-count', 'aria-live': 'polite', 'aria-atomic': true }, `${index + 1} of ${images.length}`),
     large && !isVideo(selected) ? h('div', { className: 'case-gallery-zoom' },
       button('Zoom out', () => setZoom(Math.max(1, zoom - 0.5)), '−', { disabled: zoom === 1 }),
       h('span', null, `${zoom * 100}%`),
@@ -175,6 +181,7 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
   return h(React.Fragment, null,
     h('section', { className: 'case-gallery', 'aria-label': 'Case study images', onKeyDown: keyboard, inert: expanded ? '' : undefined }, gallery(false)),
     expanded ? createPortal(h('div', { className: 'case-gallery-overlay', onClick: (event) => { if (event.target === event.currentTarget) close(); } },
-      h('div', { role: 'dialog', 'aria-modal': true, 'aria-label': 'Enlarged case study images', className: 'case-gallery-dialog', ref: dialog, onKeyDown: keyboard },
+      h('div', { role: 'dialog', 'aria-modal': true, 'aria-label': 'Enlarged case study images', className: 'case-gallery-dialog detection-panel', ref: dialog, onKeyDown: keyboard },
+        h(DetectionLabel, { 'aria-hidden': true }, selectedLabel),
         button('Close enlarged image', close, '×', { className: 'case-gallery-close' }), gallery(true))), document.body) : null);
 }

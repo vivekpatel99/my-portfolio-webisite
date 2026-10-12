@@ -30,7 +30,7 @@ If `ok` is false, read `error` and `rejected`. Drop blocked or unknown URLs. If 
 
 ## Rate and proof
 
-If the proposal mentions the site rate, use `SITE_RATE` (`€45/hour`). Do not invent proof, logos, client names, or metrics. Do not auto-link the homepage until GitHub #119 closes. Rate copy already on the site does not lift that ban.
+If the proposal mentions the site rate, use `SITE_RATE` from `map.js`, which derives it from `src/config/pricing.js`. Change only `HOURLY_RATE_EUR` in that shared setting to update the site and proposal rate together. Do not invent proof, logos, client names, or metrics. Do not auto-link the homepage until GitHub #119 closes. Rate copy already on the site does not lift that ban.
 
 ## Refresh
 

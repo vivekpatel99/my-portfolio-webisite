@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "QA Browser Zoom",
+  "version": "1.0.0",
+  "description": "Applies real Chromium browser zoom via chrome.tabs.setZoom for Playwright QA.",
+  "permissions": ["tabs"],
+  "background": {
+    "service_worker": "background.js"
+  }
+}

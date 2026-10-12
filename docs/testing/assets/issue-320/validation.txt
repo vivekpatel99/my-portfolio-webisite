@@ -1,0 +1,130 @@
+Issue #320 validation excerpts from actual command output. Synthetic transport only.
+
+Full unit suite
+    at performUnitOfWork (/Users/viv/.codex/worktrees/22db/horizons-website/node_modules/react-dom/cjs/react-dom.development.js:26560:12)
+    at workLoopSync (/Users/viv/.codex/worktrees/22db/horizons-website/node_modules/react-dom/cjs/react-dom.development.js:26466:5)
+    at renderRootSync (/Users/viv/.codex/worktrees/22db/horizons-website/node_modules/react-dom/cjs/react-dom.development.js:26434:7)
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+
+ Test Files  68 passed (68)
+      Tests  851 passed (851)
+   Start at  14:28:48
+   Duration  25.24s (transform 629ms, setup 0ms, import 3.93s, tests 32.37s, environment 6.78s)
+
+
+Targeted telemetry/privacy/consent suite
+
+ RUN  v4.1.8 /Users/viv/.codex/worktrees/22db/horizons-website
+
+
+ Test Files  3 passed (3)
+      Tests  20 passed (20)
+   Start at  14:03:05
+   Duration  576ms (transform 46ms, setup 0ms, import 59ms, tests 51ms, environment 754ms)
+
+
+Final production fixture, Chromium and WebKit
+  ✓   2 [chromium] › tests/qa/qa-replay-consent.spec.js:33:3 › buffer: withdraw discards unsent recording and reaccept starts one recorder (6.0s)
+  ✓   3 [chromium] › tests/qa/qa-replay-consent.spec.js:94:1 › withdraw during SDK download prevents later startup (365ms)
+  ✓   4 [chromium] › tests/qa/qa-replay-consent.spec.js:107:1 › withdraw during synchronous SDK setup defeats its delayed Replay timer (296ms)
+  ✓   5 [chromium] › tests/qa/qa-replay-consent.spec.js:120:3 › session: a dispatched segment may finish, but pending recording is not exported during immediate reaccept (202ms)
+  ✓   6 [chromium] › tests/qa/qa-replay-consent.spec.js:120:3 › buffer: a dispatched segment may finish, but pending recording is not exported during immediate reaccept (186ms)
+  ✓   7 [chromium] › tests/qa/qa-replay-consent.spec.js:148:3 › buffer: error-triggered successful send cannot restart a withdrawn recorder (182ms)
+  ✓   8 [chromium] › tests/qa/qa-replay-consent.spec.js:148:3 › buffer: error-triggered failed send cannot restart a withdrawn recorder (5.2s)
+  ✓   9 [chromium] › tests/qa/qa-replay-consent.spec.js:176:1 › withdraw during an expired session refresh prevents asynchronous recorder setup (104ms)
+  ✓  10 [chromium] › tests/qa/qa-replay-consent.spec.js:195:1 › a rejected error response does not promote a buffered replay (329ms)
+  ✓  11 [chromium] › tests/qa/qa-replay-consent.spec.js:211:1 › session: withdraw during real compression finish stops the recorder and permits reaccept (178ms)
+  ✓  12 [chromium] › tests/qa/qa-replay-consent.spec.js:211:1 › buffer: withdraw during real compression finish stops the recorder and permits reaccept (180ms)
+(node:87019) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:87019) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:87019) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  13 [webkit] › tests/qa/qa-replay-consent.spec.js:33:3 › session: withdraw discards unsent recording and reaccept starts one recorder (6.3s)
+  ✓  14 [webkit] › tests/qa/qa-replay-consent.spec.js:33:3 › buffer: withdraw discards unsent recording and reaccept starts one recorder (6.1s)
+  ✓  15 [webkit] › tests/qa/qa-replay-consent.spec.js:94:1 › withdraw during SDK download prevents later startup (605ms)
+  ✓  16 [webkit] › tests/qa/qa-replay-consent.spec.js:107:1 › withdraw during synchronous SDK setup defeats its delayed Replay timer (479ms)
+  ✓  17 [webkit] › tests/qa/qa-replay-consent.spec.js:120:3 › session: a dispatched segment may finish, but pending recording is not exported during immediate reaccept (459ms)
+  ✓  18 [webkit] › tests/qa/qa-replay-consent.spec.js:120:3 › buffer: a dispatched segment may finish, but pending recording is not exported during immediate reaccept (447ms)
+  ✓  19 [webkit] › tests/qa/qa-replay-consent.spec.js:148:3 › buffer: error-triggered successful send cannot restart a withdrawn recorder (396ms)
+  ✓  20 [webkit] › tests/qa/qa-replay-consent.spec.js:148:3 › buffer: error-triggered failed send cannot restart a withdrawn recorder (5.4s)
+  ✓  21 [webkit] › tests/qa/qa-replay-consent.spec.js:176:1 › withdraw during an expired session refresh prevents asynchronous recorder setup (324ms)
+  ✓  22 [webkit] › tests/qa/qa-replay-consent.spec.js:195:1 › a rejected error response does not promote a buffered replay (557ms)
+  ✓  23 [webkit] › tests/qa/qa-replay-consent.spec.js:211:1 › session: withdraw during real compression finish stops the recorder and permits reaccept (447ms)
+  ✓  24 [webkit] › tests/qa/qa-replay-consent.spec.js:211:1 › buffer: withdraw during real compression finish stops the recorder and permits reaccept (446ms)
+
+  24 passed (42.0s)
+
+Existing synthetic storage/contact browser checks
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44010) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:44009) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:44010) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44009) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [preview-desktop] › tests/qa/qa-contact.spec.js:74:1 › fake Sentry transport delivers allowed errors, blocks marked errors, and stays silent after revocation (2.2s)
+  ✓  2 [preview-desktop] › tests/qa/qa-edge.spec.js:298:1 › fake Sentry transport stops after session rejection overrides stale stored acceptance when storage writes throw (2.5s)
+  ✓  3 [preview-desktop] › tests/qa/qa-edge.spec.js:332:1 › fake Sentry transport follows first session acceptance then Close when storage writes throw (3.4s)
+
+  3 passed (6.4s)
+
+Production build with synthetic DSN
+dist/assets/pageMotion-9NaEimU0.js                                                                                                                    0.34 kB │ gzip:   0.22 kB
+dist/assets/ServiceDetail-XsE8JfnX.js                                                                                                                 3.97 kB │ gzip:   1.47 kB
+dist/assets/DataPolicy-u-E-rV5Z.js                                                                                                                    4.33 kB │ gzip:   1.84 kB
+dist/assets/Legal-CXAUNlPf.js                                                                                                                         7.12 kB │ gzip:   2.36 kB
+dist/assets/ContactRoute-WUFXve8E.js                                                                                                                 15.75 kB │ gzip:   5.78 kB
+dist/assets/convexClient-DEwStoWR.js                                                                                                                 69.16 kB │ gzip:  19.23 kB
+dist/assets/index-CmIdwHjY.js                                                                                                                       331.00 kB │ gzip: 104.46 kB
+dist/assets/index-69LU7qEy.js                                                                                                                       448.72 kB │ gzip: 141.12 kB
+✓ built in 2.61s
+✅ sitemap.xml generated successfully!
+Checked 36 public links against static output.
+Generated static HTML for 21 routes, including 404.html.
+
+ESLint recommended rules, JSX usage, existing underscore-unused convention. Command exit 0.
+[
+  {
+    "path": "src/lib/sentryTelemetry.js",
+    "errors": 0,
+    "warnings": 0
+  },
+  {
+    "path": "src/lib/sentryTelemetry.test.js",
+    "errors": 0,
+    "warnings": 0
+  },
+  {
+    "path": "tests/qa/fixtures/replay-consent/main.jsx",
+    "errors": 0,
+    "warnings": 0
+  },
+  {
+    "path": "tests/qa/fixtures/replay-consent/sdk.js",
+    "errors": 0,
+    "warnings": 0
+  },
+  {
+    "path": "tests/qa/qa-replay-consent.config.js",
+    "errors": 0,
+    "warnings": 0
+  },
+  {
+    "path": "tests/qa/qa-replay-consent.spec.js",
+    "errors": 0,
+    "warnings": 0
+  },
+  {
+    "path": "tests/qa/qa-replay-consent.vite.config.js",
+    "errors": 0,
+    "warnings": 0
+  },
+  {
+    "path": "tools/run-replay-consent-qa.js",
+    "errors": 0,
+    "warnings": 0
+  }
+]

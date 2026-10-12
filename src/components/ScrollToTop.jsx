@@ -1,17 +1,46 @@
-import React, { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect, useRef } from 'react';
+import { useLocation, useNavigationType } from 'react-router-dom';
+import { focusNavigationTarget } from '@/lib/focusTarget';
 
 const prefersReducedMotion = () =>
   typeof window !== 'undefined'
     && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
 const ScrollToTop = () => {
-  const { pathname, hash } = useLocation();
+  const { pathname, hash, key } = useLocation();
+  const navigationType = useNavigationType();
+  const isInitialRenderRef = useRef(true);
 
   useEffect(() => {
-    if (pathname === '/case-studies' || pathname === '/case-studies/') return undefined;
+    // Leave focus at the document start on first load without a hash.
+    const shouldFocusMain = !isInitialRenderRef.current;
+    isInitialRenderRef.current = false;
+
+    const focusMainAfterNavigation = () => {
+      if (!shouldFocusMain) return undefined;
+      // WebKit needs a frame after drawer inert cleanup before main can receive focus.
+      const frameId = window.requestAnimationFrame(() => {
+        const main = document.getElementById('main-content');
+        if ((pathname === '/contact' || pathname === '/contact/')
+          && main?.contains(document.activeElement)
+          && document.activeElement?.hasAttribute('data-contact-outcome-focus')) return;
+        if (!main?.querySelector('[data-route-error]')) focusNavigationTarget(main);
+      });
+      return () => window.cancelAnimationFrame(frameId);
+    };
+
+    if (!hash && (pathname === '/case-studies' || pathname === '/case-studies/')) {
+      if (navigationType === 'PUSH') window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      return focusMainAfterNavigation();
+    }
     if (hash) {
-      const id = decodeURIComponent(hash.slice(1));
+      let id;
+      try {
+        id = decodeURIComponent(hash.slice(1));
+      } catch (error) {
+        if (error instanceof URIError) return undefined;
+        throw error;
+      }
       let attempts = 0;
       const intervalId = window.setInterval(() => {
         const target = document.getElementById(id);
@@ -19,6 +48,7 @@ const ScrollToTop = () => {
 
         if (target) {
           target.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+          focusNavigationTarget(target);
           window.clearInterval(intervalId);
         }
 
@@ -31,8 +61,8 @@ const ScrollToTop = () => {
     }
 
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    return undefined;
-  }, [pathname, hash]);
+    return focusMainAfterNavigation();
+  }, [pathname, hash, key, navigationType]);
 
   return null;
 };

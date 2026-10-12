@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="810" viewBox="0 0 1080 810" role="img" aria-labelledby="title description">
+<title id="title">Implementation plan. Illustrative output using fictional data.</title>
+<desc id="description">A fictional Markdown plan has the goal of preparing a CSV import. Step one agrees the required columns. Step two validates rows and depends on step one. Step three exports rows and depends on step two. Technical review remains required. This is an authored format example, not an output captured from an agent run.</desc>
+<rect x="0" y="0" width="1080" height="810" fill="#FFFFFF"/>
+<rect x="0" y="0" width="1080" height="100" fill="#F5F3FF"/>
+<line x1="0" y1="0" x2="1080" y2="0" stroke="#6D28D9" stroke-width="8"/>
+<text x="64" y="65" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="700" fill="#6D28D9">Illustrative output | Fictional data</text>
+<text x="64" y="174" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="700" fill="#1E293B">Implementation plan</text>
+<text x="64" y="232" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="400" fill="#475569">Fictional Markdown example</text>
+<line x1="64" y1="279" x2="1016" y2="279" stroke="#6D28D9" stroke-width="3"/>
+<text x="64" y="337" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="48" font-weight="700" fill="#6D28D9"># CSV import</text>
+<text x="64" y="403" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="44" font-weight="400" fill="#1E293B">Goal: prepare a CSV import.</text>
+<text x="64" y="480" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="44" font-weight="400" fill="#1E293B">1. Agree the required columns.</text>
+<text x="64" y="543" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="44" font-weight="400" fill="#1E293B">2. Validate rows. Needs step 1.</text>
+<text x="64" y="606" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="44" font-weight="400" fill="#1E293B">3. Export rows. Needs step 2.</text>
+<rect x="64" y="674" width="952" height="83" fill="#F5F3FF"/>
+<text x="88" y="730" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="700" fill="#6D28D9">Technical review required.</text>
+</svg>

@@ -5,6 +5,7 @@ import App from '@/App';
 import ScrollToTop from '@/components/ScrollToTop';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import '@/index.css';
+import '@/components/DetectionFrame.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <ErrorBoundary>

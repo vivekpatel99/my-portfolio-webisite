@@ -1,0 +1,49 @@
+name: Issue lifecycle
+
+on:
+  pull_request:
+    branches: [develop]
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+  push:
+    branches: [develop]
+
+permissions: {}
+
+concurrency:
+  group: issue-lifecycle-${{ github.event_name }}-${{ github.sha }}-${{ github.event.pull_request.number || 'merge' }}
+  cancel-in-progress: false
+
+jobs:
+  issue-reference:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const { runIssueLifecycle } = await import(`${process.env.GITHUB_WORKSPACE}/tools/issue-lifecycle.js`);
+            await runIssueLifecycle({ github, context, core });
+
+  close-completed-issues:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop' && !github.event.deleted
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const { runIssueLifecycle } = await import(`${process.env.GITHUB_WORKSPACE}/tools/issue-lifecycle.js`);
+            await runIssueLifecycle({ github, context, core });

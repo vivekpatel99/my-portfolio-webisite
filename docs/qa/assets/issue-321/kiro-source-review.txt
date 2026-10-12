@@ -1,0 +1,86 @@
+[tool] Reading contact-remount-321.md:1, useContactDraft.js:1, Contact.jsx:1, ScrollToTop.jsx:1
+[tool] status: Completed
+[tool] Searching for 'useContactDraft|data-contact-outcome-focus|Request receiv...'
+[tool] status: Completed
+[tool] Reading useContactDraft.test.jsx:1, Contact.test.jsx:1, qa-contact-lifecycle.spec.js:1
+[tool] Searching for 'ScrollToTop|data-contact-outcome-focus' in src
+[tool] status: Completed
+[tool] status: Completed
+[tool] Searching for 'AnimatePresence|mode=|id="main-content"|<Footer|<Toaster' in src
+[tool] Reading ScrollToTop.test.jsx:1, focusTarget.js:1
+[tool] status: Completed
+[tool] status: Completed
+[tool] Searching for 'AnimatePresence|exit:|exit=' in src
+[tool] status: Completed
+[tool] Reading pageMotion.js:1, App.jsx:1
+[tool] status: Completed
+[tool] status: Failed
+[tool] Finding src/{lib/lazyRoute*,pages/ContactRoute*,main.jsx}
+[tool] status: Completed
+[tool] Reading main.jsx:1, lazyRoute.js:1, ContactRoute.jsx:1, Layout.jsx:101-135
+[tool] status: Completed
+[tool] Searching for 'duration|TOAST_REMOVE_DELAY|TOAST_LIMIT' in ui
+[tool] status: Completed
+[tool] Searching for 'feedbackToastRef|submittingRef|useEffect\(|receiptRef.cur...' in Contact.jsx
+[tool] Searching for 'function finishSubmission|outcome: snapshot|: null,|formS...' in useContactDraft.js
+[tool] status: Completed
+[tool] status: Completed
+[tool] Searching for 'feedbackToastRef|telemetrySource|setFieldErrors\(\{\}\)|f...' in Contact.jsx
+[tool] status: Completed
+I found no data-loss bugs. There are two actionable lifecycle bugs (one about a stale toast, one about focus) and a few gaps in acceptance coverage.
+
+**Scope limits.** I read the files listed below. I couldn't open PR #341 or diff against `origin/develop`, because this session can only read local files, not run commands or fetch URLs. The findings cover the current local source, not a verified PR diff.
+
+## Findings
+
+### 1. Medium: a "Submission Failed" toast can survive a remount and appear next to the receipt
+`src/pages/Contact.jsx:69, 140–141, 161`
+
+- **Cause:** `feedbackToastRef` belongs to each component instance. When a send is still pending and Contact unmounts, the old instance's `handleSubmit` keeps running after the `await`. Its toast handle is saved in the old, unmounted instance's ref (line 161).
+- **Effect:** after the user returns, the new instance's ref is `null`, so `feedbackToastRef.current?.dismiss()` at line 140 does nothing on retry. The failure toast lasts 5 seconds (`use-toast.js`, `duration || 5000`), so a quick retry that succeeds shows the receipt and "Submission Failed" together.
+- **Existing coverage:** issue #230 tests dismissal only within one instance. `'#265: pending failure after navigation…'` doesn't check dismissal.
+- **Acceptance criteria:**
+  - Unit test: start a pending submit, unmount, reject, remount, retry, and assert the failure handle's `dismiss` is called exactly once.
+  - Lifecycle spec: in the "failure completed away" case, retry within 5 seconds of returning. Expect zero failure toasts and one receipt.
+- **Likely fix:** keep the toast handle in the module store next to `submission`/`outcome`, or dismiss it inside `beginSubmission`.
+
+### 2. Medium: the saved outcome takes focus and scroll on every later visit to Contact
+`src/pages/Contact.jsx:73–76` with `src/lib/useContactDraft.js:7, 55`
+
+- **Cause:** `outcome` stays in the store until a field is edited. Contact's `useEffect(..., [outcome])` runs on every mount.
+- **Effect:** every later visit puts focus on the receipt (or the retry button) and scrolls to it. That includes a fresh header-CTA visit (PUSH) minutes later, and it overrides `ScrollToTop`'s scroll-to-top and focus on main. The receipt is `role="status"` and is re-inserted each time, which may also re-announce it.
+- **Spec gap:** `docs/qa/contact-remount-321.md` says the receipt "focuses … after returning" but doesn't say whether that applies once or on every visit. `returnToContactByBack` currently accepts focus on the receipt for any return.
+- **Acceptance criteria:** decide and test the rule. My suggestion: focus the outcome at most once per completion (for example, a `presented` flag in the store). For later visits, assert focus on `#main-content` and `scrollY === 0`, while the receipt remains visible.
+
+### 3. Low: the router's focus guard depends on Contact's DOM
+`src/components/ScrollToTop.jsx:24`
+
+- **What happens:** the generic route component checks a Contact-specific attribute for every path, without checking `pathname`.
+- **Today:** this is safe. `App.jsx` has no `AnimatePresence`, so the old route unmounts when navigation commits and the outcome element is already detached by the time the frame runs.
+- **Risk:** if exit animations are added later (the existing test "moves focus off a source action still mounted…" expects that), a focused receipt during browser Back would stop main from receiving focus on the destination route.
+- **Missing coverage:** no unit test in `ScrollToTop.test.jsx`, either positive or negative.
+- **Acceptance criteria:** add both cases to `ScrollToTop.test.jsx`, and ideally scope the guard to the destination path.
+
+### 4. Low: a successful send can show no feedback if the draft changed
+`src/lib/useContactDraft.js:48–58`
+
+If `formState` changes while a send is pending, a success sets `outcome: null` and shows no toast. The user never learns the send succeeded. The UI can't trigger this today because the fields are disabled while submitting. The existing test (`'does not let a stale completion…'`) treats this silence as intended. Either accept that explicitly or show some outcome.
+
+## Gaps in acceptance coverage
+- No test covers a second or third return, or a PUSH visit, while an outcome is saved (see finding 2).
+- No test covers toast dismissal across a remount (see finding 1).
+- The doc's "Kiro review gate" section says "No Kiro review ran." If this review counts as that gate, the coordinator needs to update the doc. The PR should keep `Refs #321`, since spoken screen-reader output still hasn't been verified.
+
+## Not verified at runtime
+- After a remount, `captureException(error, { telemetrySource })` (line 156) receives the detached old `<form>`. I haven't checked whether Sentry's sensitive-region scrubbing still works on a detached node.
+- A focused element with `role="status"` and `aria-live="polite"` may be announced twice in VoiceOver or NVDA.
+- I haven't confirmed whether the `.focus()` scroll at line 75 on a mobile Back is visually acceptable alongside `ScrollToTop`'s `scrollTo`.
+
+## Files read
+`docs/qa/contact-remount-321.md`, `src/lib/useContactDraft.js` and its test, `src/pages/Contact.jsx` and `Contact.test.jsx`, `src/components/ScrollToTop.jsx` and its test, `tests/qa/qa-contact-lifecycle.spec.js`, `src/lib/focusTarget.js`, `src/App.jsx`, `src/main.jsx`, `src/lib/lazyRoute.js`, `src/pages/ContactRoute.jsx`, `src/lib/pageMotion.js`, and part of `src/components/Layout.jsx`. I also searched `use-toast.js`.
+
+I didn't load any skill files (impeccable, web-design-guidelines, or vercel-react-best-practices) for this review.
+
+## Requested versus attested model limits
+- **Requested:** `claude-opus-5.5` at high effort, read-only, no writes, commands, delegation, credentials or production actions.
+- **Attested:** my session context reports `claude-opus-5.5`. I can't confirm the effort setting from inside the session. I used only read, grep and glob, and made no writes, commands, network requests or delegation. This is one source-review pass, not a complete critique.

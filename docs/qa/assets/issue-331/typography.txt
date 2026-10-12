@@ -1,0 +1,81 @@
+
+Running 24 tests using 1 worker
+
+  ✓   1 [chromium-320-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography / (1.4s)
+  -   2 [chromium-320-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography /project/ai-invoice-processing-automation/
+  -   3 [chromium-320-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography /case-studies/
+  -   4 [chromium-320-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography /contact/
+  -   5 [chromium-320-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography /legal/
+  -   6 [chromium-320-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography /data-policy/
+  ✘   7 [chromium-1440-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography / (2.0s)
+  ✓   8 [chromium-1440-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography /project/ai-invoice-processing-automation/ (1.2s)
+  ✓   9 [chromium-1440-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography /case-studies/ (680ms)
+  ✓  10 [chromium-1440-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography /contact/ (567ms)
+  ✓  11 [chromium-1440-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography /legal/ (525ms)
+  ✓  12 [chromium-1440-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography /data-policy/ (484ms)
+  ✓  13 [webkit-320-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography / (5.1s)
+  -  14 [webkit-320-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography /project/ai-invoice-processing-automation/
+  -  15 [webkit-320-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography /case-studies/
+  -  16 [webkit-320-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography /contact/
+  -  17 [webkit-320-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography /legal/
+  -  18 [webkit-320-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography /data-policy/
+  ✘  19 [webkit-1440-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography / (12.9s)
+  ✓  20 [webkit-1440-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography /project/ai-invoice-processing-automation/ (1.8s)
+  ✓  21 [webkit-1440-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography /case-studies/ (1.1s)
+  ✓  22 [webkit-1440-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography /contact/ (807ms)
+  ✓  23 [webkit-1440-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography /legal/ (914ms)
+  ✓  24 [webkit-1440-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography /data-policy/ (998ms)
+
+
+  1) [chromium-1440-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography / ───────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('h1')
+    Expected: visible
+    Error: strict mode violation: locator('h1') resolved to 2 elements:
+        1) <h1 class="text-[clamp(1.25rem,2.1vw,1.65rem)] font-bold text-white tracking-tight leading-[1.2] max-md:text-[1rem] max-md:leading-[1.1]">Computer Vision & AI Engineer</h1> aka getByText('Computer Vision & AI Engineer')
+        2) <h1 class="max-w-[760px] text-[clamp(2.25rem,5.4vw,4.25rem)] font-bold uppercase leading-[1.06] tracking-[-0.035em]">Loading page</h1> aka getByRole('heading', { name: 'Loading page' })
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('h1')
+
+
+      128 |       await page.keyboard.press('Enter');
+      129 |       await expect(page).toHaveURL(/\/contact\/$/);
+    > 130 |       await expect(page.locator('h1')).toBeVisible();
+          |                                        ^
+      131 |     }
+      132 |     if (route === articleRoute && [390, 1440].includes(width)) {
+      133 |       const opener = page.getByRole('button', { name: /^Enlarge image:/ });
+        at <repository>/tests/qa/qa-typography.spec.js:130:40
+
+    Error Context: ../../../../../..<task-directory>/typography/test-results/qa-typography-reading-typography--chromium-1440-reduce/error-context.md
+
+  2) [webkit-1440-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography / ─────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 0
+    Received: 1.264356
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      82 |         const transform = animator && getComputedStyle(animator).transform;
+      83 |         return !transform || transform === 'none' ? 0 : new DOMMatrixReadOnly(transform).m42;
+    > 84 |       })).toBe(0);
+         |           ^
+      85 |     }
+      86 |     const measured = await page.evaluate(measureTypography);
+      87 |     const key = `${testInfo.project.name}-${route === '/' ? 'home' : route.split('/').filter(Boolean).join('-')}`;
+        at <repository>/tests/qa/qa-typography.spec.js:84:11
+
+    Error Context: ../../../../../..<task-directory>/typography/test-results/qa-typography-reading-typography--webkit-1440-reduce/error-context.md
+
+  2 failed
+    [chromium-1440-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography / ────────────
+    [webkit-1440-reduce] › tests/qa/qa-typography.spec.js:64:3 › reading typography / ──────────────
+  10 skipped
+  12 passed (1.2m)

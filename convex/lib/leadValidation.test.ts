@@ -10,6 +10,7 @@ import {
   MAX_RAW_DESCRIPTION_LENGTH,
   MAX_RAW_EMAIL_LENGTH,
   MAX_RAW_NAME_LENGTH,
+  validateContactFields,
   validateLeadInput,
 } from "./leadValidation";
 
@@ -31,6 +32,32 @@ function expectInvalidLeadInput(input: unknown) {
 }
 
 describe("validateLeadInput", () => {
+  it.each([
+    ['name', 'n'.repeat(201), 'Full name must be 200 characters or fewer.'],
+    ['email', `${'a'.repeat(250)}@b.cd`, 'Email address must be 254 characters or fewer.'],
+    ['description', 'd'.repeat(5001), 'Project description must be 5000 characters or fewer.'],
+  ])('returns actionable %s guidance from the same rule that rejects backend input', (field, value, message) => {
+    const input = { ...validInput, [field]: `  ${value}  ` };
+    expect(validateContactFields(input)).toEqual({ ok: false, errors: { [field]: message } });
+    expectInvalidLeadInput(input);
+  });
+
+  it('accepts normalized boundary values with CRLF, tabs, case, and surrounding whitespace', () => {
+    const input = {
+      name: `  ${'n'.repeat(MAX_NAME_LENGTH)}  `,
+      email: `  ${'A'.repeat(MAX_EMAIL_LENGTH - 5)}@B.CD  `,
+      description: `  ${'d'.repeat(MAX_DESCRIPTION_LENGTH - 3)}\r\n\td  `,
+      budget: ` ${BUDGET_OPTIONS[0]} `,
+    };
+    const result = validateContactFields(input);
+    expect(result.ok).toBe(true);
+    if (!result.ok) throw new Error('Expected valid normalized input');
+    expect(result.value).toEqual(validateLeadInput(input));
+    expect(result.value.description).toHaveLength(MAX_DESCRIPTION_LENGTH);
+    expect(result.value.description).toContain('\n\td');
+    expect(result.value.email).toBe(`${'a'.repeat(MAX_EMAIL_LENGTH - 5)}@b.cd`);
+  });
+
   it("normalizes surrounding whitespace, email case, and description line endings", () => {
     expect(
       validateLeadInput({

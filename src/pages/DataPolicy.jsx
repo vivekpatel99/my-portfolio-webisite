@@ -1,29 +1,20 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Seo } from '@/lib/seo';
-
-const pageVariants = {
-  initial: { opacity: 0, y: 20 },
-  in: { opacity: 1, y: 0 },
-  out: { opacity: 0, y: -20 },
-};
-const pageTransition = { type: 'tween', ease: 'anticipate', duration: 0.5 };
+import { usePageMotion } from '@/lib/pageMotion';
 
 const DataPolicy = () => {
-  const handleManageCookies = (e) => {
-    e.preventDefault();
+  const pageMotion = usePageMotion();
+  const handleManageCookies = (event) => {
+    event.currentTarget.focus({ preventScroll: true });
     window.dispatchEvent(new CustomEvent('manage-cookies'));
   };
 
   return (
-    <motion.div
-      initial="initial"
-      animate="in"
-      exit="out"
-      variants={pageVariants}
-      transition={pageTransition}
+    <m.div
+      {...pageMotion}
       className="bg-[#0C0D0D] text-white py-24 sm:py-32"
     >
       <Seo
@@ -37,7 +28,7 @@ const DataPolicy = () => {
 
         <div className="prose prose-invert prose-lg max-w-none text-gray-300 space-y-6">
           <p>This Cookie Policy explains what cookies are and how we use them. You should read this policy to understand what cookies are, how we use them, the types of cookies we use, the information we collect using cookies, and how that information is used and how to control your cookie preferences.</p>
-          <p>For further information on how we use, store, and keep your personal data secure, see our <Link to="/legal/" className="text-accent-purple-text hover:underline">Privacy Policy</Link>.</p>
+          <p>For further information on how we use, store, and keep your personal data secure, see our <Link to="/legal/" className="text-accent-purple-text underline underline-offset-2">Privacy Policy</Link>.</p>
 
           <h2 className="text-2xl font-bold text-white mt-8">What Are Cookies?</h2>
           <p>Cookies are small text files that are used to store small pieces of information. They are stored on your device when the website is loaded on your browser. These cookies help us make the website function properly, make it more secure, provide a better user experience, and understand how the website performs and to analyze what works and where it needs improvement.</p>
@@ -53,17 +44,17 @@ const DataPolicy = () => {
           </ul>
 
           <h2 className="text-2xl font-bold text-white mt-8">How Can I Control My Cookie Preferences?</h2>
-          <p>You can manage your cookie preferences at any time by clicking the "Manage Consent" link in the footer of our website. This will let you revisit the cookie consent banner and change your preferences or withdraw your consent right away.</p>
+          <p>You can manage your cookie preferences at any time by clicking the “Manage Consent” link in the footer of our website. This will let you revisit the cookie consent banner and change your preferences or withdraw your consent right away.</p>
           <p>In addition to this, different browsers provide different methods to block and delete cookies used by websites. You can change the settings of your browser to block/delete the cookies. To find out more about how to manage and delete cookies, visit wikipedia.org, www.allaboutcookies.org.</p>
         </div>
 
         <div className="mt-12 text-center">
-            <Button asChild size="lg" className="bg-accent-purple text-white hover:bg-accent-purple/90 group rounded-full text-lg py-6 px-8">
-                <a href="#" onClick={handleManageCookies}>Manage Your Cookie Consent</a>
+            <Button type="button" onClick={handleManageCookies} size="lg" className="bg-accent-purple text-white hover:bg-accent-purple/90 group rounded-full text-lg py-6 px-8">
+                Manage Your Cookie Consent
             </Button>
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 };
 

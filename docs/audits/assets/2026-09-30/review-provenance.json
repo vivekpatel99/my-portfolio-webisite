@@ -1,0 +1,143 @@
+{
+  "cliVersion": "2.26.0",
+  "agent": "portfolio_frontend_review",
+  "configuredModel": "claude-opus-5.5",
+  "requestedEffort": "high",
+  "engine": "v2",
+  "modelListedAvailable": true,
+  "providerRuntimeModelIdentityReported": false,
+  "tools": [
+    "read",
+    "grep",
+    "glob"
+  ],
+  "reviewersExecutedBrowserOrShell": false,
+  "wrapperAttempts": 6,
+  "wrapperNonemptyResults": 0,
+  "directSessions": [
+    {
+      "lane": "A",
+      "sessionId": "33d9f96f-1649-4c0c-9dbc-a2ae72bd55bd",
+      "exit": 0,
+      "streamStatus": "success",
+      "readCalls": [
+        "Reading 2026-09-26-website-audit.md:1, CONTEXT.md:1, listing src",
+        "Reading CaseStudyGallery.js:1, CaseStudyCollection.js:1, CaseStudiesContent.js:1, ServiceDetailContent.js:1, CookieConsentBanner.jsx:1, CustomCursor.jsx:1",
+        "Reading Contact.jsx:1, Contact.css:1, Project.jsx:1, NotFound.jsx:1, ServiceDetail.jsx:1, CaseStudies.jsx:1",
+        "Reading Header.jsx:1, Footer.jsx:1, Portfolio.jsx:1, Services.jsx:1, CTA.jsx:1, About.jsx:1",
+        "Reading Home.jsx:1, App.jsx:1, Layout.jsx:1, Hero.jsx:1, heroDetectedFields.js:1, index.css:1",
+        "Reading SKILL.md:1, listing impeccable, SKILL.md:1, SKILL.md:1, SKILL.md:1, visual-qa.md:1",
+        "Reading Testimonials.jsx:1, Testimonials.css:1, CaseStudyCard.js:1, CaseStudyArticle.js:1, CaseStudyArticle.css:1, SectionAnimator.jsx:1",
+        "Reading audit.md:1, critique.md:1, web-interface-guidelines.md:1, listing reference, listing vercel-react-best-practices",
+        "Reading image [temporary public screenshot], [temporary public screenshot]",
+        "Reading rerender-no-inline-components.md:1, js-batch-dom-css.md:1, rerender-use-ref-transient-values.md:1, bundle-conditional.md:1",
+        "Reading tailwind.config.js:1, main.jsx:1, button.jsx:1, caseStudies.js:1, Legal.jsx:1-40, DataPolicy.jsx:1-30",
+        "Reading useMousePosition.js:1, links.js:1"
+      ]
+    },
+    {
+      "lane": "2",
+      "sessionId": "bbe1edfe-a218-4a17-8ce6-3fe745d875d5",
+      "exit": 0,
+      "streamStatus": "success",
+      "readCalls": [
+        "Reading App.jsx:1, main.jsx:1, Layout.jsx:1, ScrollToTop.jsx:1, focusTarget.js:1, .htaccess:1",
+        "Reading CTA.jsx:1, Hero.jsx:1-30, Portfolio.jsx:1",
+        "Reading CaseStudyCollection.js:1, CaseStudiesContent.js:1, CaseStudyCard.js:1",
+        "Reading CaseStudyGallery.js:1, CaseStudyArticle.js:1, CaseStudyArticle.css:1",
+        "Reading Hero.jsx:283-312, Services.jsx:1-60",
+        "Reading Legal.jsx:1-50",
+        "Reading SKILL.md:1, SKILL.md:1, SKILL.md:1, web-interface-guidelines.md:1",
+        "Reading ScrollToTop.test.jsx:1",
+        "Reading ServiceDetailContent.js:1, SectionAnimator.jsx:1, CookieConsentBanner.jsx:1",
+        "Reading audit.md:1, listing rules, listing vercel-react-best-practices, visual-qa.md:1, 2026-09-26-website-audit.md:1",
+        "Reading bundle-preload.md:1, bundle-dynamic-imports.md:1, client-localstorage-schema.md:1, rerender-derived-state-no-effect.md:1",
+        "Reading case-study-other-work.js:1, case-study-featured.js:1",
+        "Reading consent.js:1",
+        "Reading generate-static-route-html.js:1, Header.jsx:1, Footer.jsx:1",
+        "Reading index.css:1, Home.jsx:1, Project.jsx:1, CaseStudies.jsx:1, ServiceDetail.jsx:1, NotFound.jsx:1, ContactRoute.jsx:1",
+        "Reading qa-responsive.spec.js:1, qa-routes.spec.js:1, qa-local-navigation.spec.js:1-200",
+        "Reading qa-upgrade-interactions.spec.js:301-420, qa-focus.spec.js:1-130",
+        "Reading seoConfig.js:1, serviceOffers.js:1, caseStudies.js:1, caseStudyBrowsing.js:1, seo.js:1"
+      ]
+    },
+    {
+      "lane": "3-accessibility",
+      "sessionId": "d9ca1e75-c3df-41a6-8a7e-1e288bd94f86",
+      "exit": 0,
+      "streamStatus": "success",
+      "readCalls": [
+        "Reading 2026-09-26-website-audit.md:1, visual-qa.md:1, Testimonials.test.jsx:1",
+        "Reading App.jsx:1, main.jsx:1, Services.jsx:1, Contact.css:1",
+        "Reading CaseStudyCard.js:1, Legal.jsx:1-30, DataPolicy.jsx:1-30, CaseStudyArticle.css:1",
+        "Reading Contact.jsx:1",
+        "Reading CookieConsentBanner.jsx:1, CaseStudyGallery.js:1, Testimonials.jsx:1, Testimonials.css:1",
+        "Reading ErrorBoundary.jsx:1",
+        "Reading Hero.jsx:1, Header.jsx:1, Layout.jsx:1",
+        "Reading SKILL.md:1, audit.md:1, SKILL.md:1, SKILL.md:1, web-interface-guidelines.md:1",
+        "Reading index.css:1, SectionAnimator.jsx:1, CustomCursor.jsx:1, useMousePosition.js:1, ScrollToTop.jsx:1, focusTarget.js:1",
+        "Reading rerender-use-ref-transient-values.md:1, client-passive-event-listeners.md:1, animate.md:1-120"
+      ]
+    },
+    {
+      "lane": "4-performance",
+      "sessionId": "bd34b515-4351-435d-ac3f-ae92d37070cf",
+      "exit": 0,
+      "streamStatus": "success",
+      "readCalls": [
+        "Reading About.jsx:1-50, Header.jsx:41-110",
+        "Reading CaseStudyCard.js:1, Portfolio.jsx:1, Testimonials.jsx:1-60, ScrollToTop.jsx:1, CookieConsentBanner.jsx:1-90, .htaccess:1",
+        "Reading Hero.jsx:1, sentryTelemetry.js:1, index.html:1, vite.config.js:1",
+        "Reading SKILL.md:1, audit.md:1, SKILL.md:1, SKILL.md:1, web-interface-guidelines.md:1",
+        "Reading generate-static-route-html.js:151-210, links.js:1",
+        "Reading index.css:1, ContactRoute.jsx:1, heroDetectedFields.js:1, package.json:1, 2026-09-26-website-audit.md:1",
+        "Reading main.jsx:1, App.jsx:1, Layout.jsx:1, Home.jsx:1, SectionAnimator.jsx:1, CustomCursor.jsx:1, useMousePosition.js:1, GoogleAnalytics.jsx:1, SentryTelemetry.jsx:1",
+        "Reading rerender-use-ref-transient-values.md:1, bundle-conditional.md:1, js-batch-dom-css.md:1, bundle-defer-third-party.md:1, rendering-resource-hints.md:1",
+        "Reading visual-qa.md:1, Hero.test.jsx:1, useMousePosition.test.jsx:1, Project.jsx:1, CaseStudies.jsx:1",
+        "Reading vite-plugin-case-study-publication.js:81-200, caseStudies.js:1, CaseStudyArticle.js:1-60"
+      ]
+    },
+    {
+      "lane": "5-interactions",
+      "sessionId": "1923d347-1d6b-48df-9854-f4dd8e572294",
+      "exit": 0,
+      "streamStatus": "success",
+      "readCalls": [
+        "Reading .htaccess:1-45, qa-contact-lifecycle.spec.js:1",
+        "Reading AGENTS.md:1, SKILL.md:1, SKILL.md:1, SKILL.md:1, visual-qa.md:1",
+        "Reading CaseStudyCard.js:1, CookieConsentBanner.test.jsx:1, Contact.test.jsx:1",
+        "Reading CaseStudyCollection.js:1, caseStudyCollection.js:1, caseStudyBrowsing.js:1, CaseStudies.jsx:1, CaseStudiesContent.js:1, Project.jsx:1, CaseStudyArticle.js:1",
+        "Reading CaseStudyGallery.js:1, Services.jsx:1, serviceOffers.js:1, ServiceDetailContent.js:1, use-toast.js:1, toast.jsx:1, toaster.jsx:1, Footer.jsx:1",
+        "Reading Contact.jsx:1, App.jsx:1, main.jsx:1, budgetOptions.js:1, focusTarget.js:1, consent.js:1, ErrorBoundary.jsx:1, ContactRoute.jsx:1, NotFound.jsx:1, ServiceDetail.jsx:1",
+        "Reading CookieConsentBanner.jsx:1, Header.jsx:1, ScrollToTop.jsx:1, Layout.jsx:1, GoogleAnalytics.jsx:1",
+        "Reading ScrollToTop.test.jsx:1, Portfolio.jsx:1",
+        "Reading audit.md:1, web-interface-guidelines.md:1, 2026-09-26-website-audit.md:1, listing src, listing qa",
+        "Reading client-localstorage-schema.md:1, rerender-derived-state-no-effect.md:1",
+        "Reading qa-edge.spec.js:1, qa-visual.spec.js:61-170",
+        "Reading qa-routes.spec.js:91-220, qa-upgrade-interactions.spec.js:331-370",
+        "read"
+      ]
+    },
+    {
+      "lane": "B",
+      "sessionId": "686387a8-ef2d-4206-a79d-6efdafc02556",
+      "exit": 0,
+      "streamStatus": "success",
+      "references": [
+        "impeccable/SKILL.md",
+        "impeccable/reference/audit.md",
+        "impeccable/reference/critique.md",
+        "web-design-guidelines/SKILL.md",
+        "vercel-react-best-practices/SKILL.md (index only)",
+        "official Web Interface Guidelines local copy"
+      ]
+    }
+  ],
+  "officialGuidelinesURL": "https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md",
+  "guidelinesRetrieved": "2026-09-30",
+  "BReconciliation": [
+    "B read a stale T3 hero summary reporting zero writes; authoritative local production probe records 3840/3856/3856 writes.",
+    "B correctly rejected stale home history evidence; final probe records 898 before and after.",
+    "B scored consent gap and Other Work P1; coordinator used P2 for bounded, recoverable impact."
+  ]
+}

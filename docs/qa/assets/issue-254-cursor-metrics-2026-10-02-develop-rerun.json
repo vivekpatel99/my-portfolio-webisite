@@ -1,0 +1,80 @@
+[
+  {
+    "reducedMotion": "no-preference",
+    "run": 1,
+    "moves": 241,
+    "elapsedMs": 3997,
+    "commits": 1,
+    "scriptMs": 143.05,
+    "taskMs": 793.75,
+    "styleMs": 26.956,
+    "layoutMs": 5.696,
+    "styleCount": 242,
+    "layoutCount": 10
+  },
+  {
+    "reducedMotion": "no-preference",
+    "run": 2,
+    "moves": 241,
+    "elapsedMs": 3998,
+    "commits": 1,
+    "scriptMs": 164.886,
+    "taskMs": 915.4440000000001,
+    "styleMs": 31.392000000000003,
+    "layoutMs": 6.734,
+    "styleCount": 242,
+    "layoutCount": 10
+  },
+  {
+    "reducedMotion": "no-preference",
+    "run": 3,
+    "moves": 241,
+    "elapsedMs": 3999,
+    "commits": 1,
+    "scriptMs": 140.83499999999998,
+    "taskMs": 824.266,
+    "styleMs": 30.205,
+    "layoutMs": 6.673,
+    "styleCount": 242,
+    "layoutCount": 10
+  },
+  {
+    "reducedMotion": "reduce",
+    "run": 1,
+    "moves": 241,
+    "elapsedMs": 3994,
+    "commits": 0,
+    "scriptMs": 45.855,
+    "taskMs": 232.089,
+    "styleMs": 0,
+    "layoutMs": 0,
+    "styleCount": 0,
+    "layoutCount": 0
+  },
+  {
+    "reducedMotion": "reduce",
+    "run": 2,
+    "moves": 241,
+    "elapsedMs": 4000,
+    "commits": 0,
+    "scriptMs": 40.547,
+    "taskMs": 224.433,
+    "styleMs": 0,
+    "layoutMs": 0,
+    "styleCount": 0,
+    "layoutCount": 0
+  },
+  {
+    "reducedMotion": "reduce",
+    "run": 3,
+    "moves": 241,
+    "elapsedMs": 4002,
+    "commits": 0,
+    "scriptMs": 42.982,
+    "taskMs": 231.74099999999999,
+    "styleMs": 0,
+    "layoutMs": 0,
+    "styleCount": 0,
+    "layoutCount": 0
+  }
+]

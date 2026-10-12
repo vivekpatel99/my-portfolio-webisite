@@ -1,97 +1,185 @@
-import React from 'react';
+import React, { useState, useEffect, useRef, useId } from 'react';
 import { Star } from 'lucide-react';
-import { socialLinks } from '@/config/links';
-import './Testimonials.css';
+import { testimonials } from '@/data/testimonials';
+import { DetectionHeading, DetectionLabel } from './DetectionFrame';
 
-const UpworkIcon = () => (
-    <svg className="w-10 h-10 text-[#14A800] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M18.561 13.158c-1.102 0-2.135-.467-3.074-1.227l.228-1.076.008-.042c.207-1.143.849-3.06 2.839-3.06 1.492 0 2.703 1.212 2.703 2.703-.001 1.489-1.212 2.702-2.704 2.702zm0-8.14c-2.539 0-4.51 1.649-5.31 4.366-1.22-1.834-2.148-4.036-2.687-5.892H7.828v7.112c-.002 1.406-1.141 2.546-2.547 2.548-1.405-.002-2.543-1.143-2.545-2.548V3.492H0v7.112c0 2.914 2.37 5.303 5.281 5.303 2.913 0 5.283-2.389 5.283-5.303v-1.19c.529 1.107 1.182 2.229 1.974 3.221l-1.673 7.873h2.797l1.213-5.71c1.063.679 2.285 1.109 3.686 1.109 3 0 5.439-2.452 5.439-5.45 0-3-2.439-5.439-5.439-5.439z" />
-    </svg>
+const INTERVAL = 6000;
+const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
+
+const getReducedMotionQuery = () => (
+    typeof window === 'undefined' ? null : window.matchMedia?.(REDUCED_MOTION_QUERY) ?? null
 );
-
-const StarRating = () => (
-    <div className="flex items-center gap-1">
-        {[...Array(5)].map((_, i) => (
-            <Star
-                key={i}
-                className="w-5 h-5 fill-yellow-400 text-yellow-400"
-            />
-        ))}
-    </div>
-);
-
-const testimonials = [
-    {
-        id: 1,
-        projectTitle: 'Automated Data Extraction Workflow',
-        clientName: 'Stephan P.',
-        content: "Vivek delivered an excellent AI workflow fully aligned with our requirements. His work was precise, efficient, and exceeded our expectations. We highly recommend working with him!",
-        link: socialLinks.upwork,
-    },
-    {
-        id: 2,
-        projectTitle: 'Software Engineer',
-        clientName: 'Duncan H.',
-        content: "Very high quality work. Great communication. High quality code and engineering. Really shined on thorough QA which stood out. Would definitely work with Vivek again on future projects.",
-        link: socialLinks.upwork,
-    },
-    {
-        id: 3,
-        projectTitle: 'Pose Estimation for Fitness App',
-        clientName: 'Upwork Client',
-        content: "I find Vivek is highly professional and time bound individual. He has exceptional technical skills and understanding of the domain. He delivered the project on time with great quality.",
-        link: socialLinks.upwork,
-    },
-    {
-        id: 4,
-        projectTitle: 'Feasibility check: n8n workflow for local transcription',
-        clientName: 'Andrew W.',
-        content: "Great experience working with Vivek. I'm impressed by his knowledge, his autonomy and how quickly he provided me feedback on issues with my workflow idea and possible solutions.",
-        link: socialLinks.upwork,
-    },
-];
-
-const TestimonialCard = ({ projectTitle, clientName, content, link }) => (
-    <a
-        href={link}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="testimonial-card-link" // Use this for styling the card within the carousel
-    >
-        <div className="flex flex-col h-full bg-[#1E1E2A] p-6 rounded-2xl border border-white/10 transition-all duration-300 hover:border-accent-purple/50 hover:shadow-lg hover:shadow-accent-purple/10 hover:!transform-none">
-            <div className="flex items-start gap-4 mb-4">
-                <UpworkIcon />
-                <div className="flex-1">
-                    <h3 className="font-bold text-white text-lg leading-tight">{projectTitle}</h3>
-                    <p className="text-sm text-gray-400">{clientName}</p>
-                </div>
-            </div>
-            <div className="mb-4">
-                <StarRating />
-            </div>
-            <blockquote className="text-gray-300 text-base leading-relaxed flex-1">
-                "{content}"
-            </blockquote>
-        </div>
-    </a>
-);
-
 
 const Testimonials = () => {
+    const starGradientId = useId();
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [prefersReducedMotion, setPrefersReducedMotion] = useState(
+        () => getReducedMotionQuery()?.matches ?? false
+    );
+    // Independent stop reasons: a hover or focus exit clears only its own reason,
+    // so it can never undo an explicit user pause (or the other transient reason).
+    // Reduced motion is derived separately so a preference change never rewrites user intent.
+    const [isUserPaused, setIsUserPaused] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
+    const [hasFocusWithin, setHasFocusWithin] = useState(false);
+    const carouselRef = useRef(null);
+
+    const isRotating = !prefersReducedMotion && !isUserPaused && !isHovered && !hasFocusWithin
+        && testimonials.length > 1;
+
+    useEffect(() => {
+        const query = getReducedMotionQuery();
+        if (!query) return undefined;
+        const syncPreference = () => setPrefersReducedMotion(query.matches);
+        syncPreference();
+        if (typeof query.addEventListener === 'function') {
+            query.addEventListener('change', syncPreference);
+            return () => query.removeEventListener('change', syncPreference);
+        }
+        query.addListener?.(syncPreference);
+        return () => query.removeListener?.(syncPreference);
+    }, []);
+
+    useEffect(() => {
+        if (!isRotating) return undefined;
+
+        const timer = setInterval(() => {
+            setActiveIndex((prev) => (prev + 1) % testimonials.length);
+        }, INTERVAL);
+
+        return () => clearInterval(timer);
+    }, [isRotating]);
+
+    const goToSlide = (index) => {
+        setActiveIndex(index);
+        setIsUserPaused(true);
+    };
+
+    // Only a real mouse pointer counts as hover. Touch taps emit a compatibility
+    // mouseenter with no matching mouseleave, which would otherwise hold rotation forever.
+    const handlePointerEnter = (e) => {
+        if (e.pointerType === 'mouse') setIsHovered(true);
+    };
+    const handlePointerLeave = (e) => {
+        if (e.pointerType === 'mouse') setIsHovered(false);
+    };
+
+    const handleFocusIn = () => setHasFocusWithin(true);
+    const handleFocusOut = (e) => {
+        if (!carouselRef.current?.contains(e.relatedTarget)) {
+            setHasFocusWithin(false);
+        }
+    };
+
+    const testimonial = testimonials[activeIndex];
+
     return (
-        <section id="testimonials" className="py-24 bg-[#0C0D0D]">
-            <div className="container mx-auto px-6">
-                <div className="text-left mb-12">
-                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight uppercase">
-                        CLIENT <span className="text-accent-purple">RESULTS</span>
-                    </h2>
-                    <p className="text-lg text-gray-400 mt-2">Real projects. Real impact.</p>
+        <section id="testimonials" className="section relative py-[92px] px-5 sm:px-12 overflow-hidden bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.035),transparent_42%),#0C0D0D]">
+            <div className="inner relative z-[2] w-full max-w-[1120px] mx-auto">
+                <div className="section-head mb-[54px]">
+                    <DetectionHeading label="Testimonials" className="text-[clamp(2.35rem,4vw,4rem)] leading-[0.98] tracking-[-0.045em] uppercase font-[730]">
+                        CLIENT <span className="text-[#8B5CF6]">RESULTS</span>
+                    </DetectionHeading>
+                    <p className="sub mt-[17px] text-[#9ca3af] text-[15px] leading-[1.6]">
+                        Real projects. Real impact.
+                    </p>
                 </div>
 
-                <div className="testimonial-grid">
-                    {testimonials.map((testimonial) => (
-                        <TestimonialCard key={testimonial.id} {...testimonial} />
-                    ))}
+                <div
+                    ref={carouselRef}
+                    role="region"
+                    aria-roledescription="carousel"
+                    aria-label="Client testimonials"
+                    onPointerEnter={handlePointerEnter}
+                    onPointerLeave={handlePointerLeave}
+                    onFocus={handleFocusIn}
+                    onBlur={handleFocusOut}
+                >
+                    <div
+                        role="group"
+                        aria-roledescription="slide"
+                        aria-label={`${activeIndex + 1} of ${testimonials.length}`}
+                        aria-live={isRotating ? 'off' : 'polite'}
+                        tabIndex={0}
+                        className="field detection-panel relative min-h-[337px] flex flex-col focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a78bfa] transition-colors"
+                    >
+                        <DetectionLabel>
+                            TESTIMONIAL · <b className="font-medium">{testimonial.clientName}</b>
+                        </DetectionLabel>
+
+                        {/* Quote area */}
+                        <article className="quote-area py-[24px] md:py-[34px] px-5 md:px-12 flex flex-col flex-1">
+                            <div className="project font-mono mt-2 text-[#9ca3af] text-[10px]">
+                                PROJECT · <span className="text-[#c1b8da]">{testimonial.projectTitle || testimonial.project || 'Automated Data Extraction Workflow'}</span>
+                            </div>
+                            <blockquote className="quote mt-[19px] max-w-[790px] text-[clamp(1.2rem,2.35vw,2.12rem)] leading-[1.42] tracking-[-0.025em] font-[430]">
+                                <span className="text-[#8B5CF6] mr-[5px]">“</span>
+                                {testimonial.content}
+                                <span className="text-[#8B5CF6]">”</span>
+                            </blockquote>
+                            {testimonial.rating === 5 && (
+                                <span role="img" aria-label="Rated 5 out of 5" className="inline-flex self-center items-center gap-1.5 mt-6 drop-shadow-[0_0_5px_rgba(251,191,36,0.45)]">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <Star key={star} size={24} fill={`url(#${starGradientId})`} stroke="#FFE6A0" strokeWidth={1} aria-hidden="true">
+                                            {star === 1 && (
+                                                <defs>
+                                                    <linearGradient id={starGradientId} x1="0%" y1="0%" x2="0%" y2="100%">
+                                                        <stop offset="0%" stopColor="#FFF4BF" />
+                                                        <stop offset="35%" stopColor="#FFD568" />
+                                                        <stop offset="60%" stopColor="#F5B82E" />
+                                                        <stop offset="100%" stopColor="#D9921B" />
+                                                    </linearGradient>
+                                                </defs>
+                                            )}
+                                        </Star>
+                                    ))}
+                                </span>
+                            )}
+                            <footer className="tf-foot flex items-end justify-between gap-5 mt-auto pt-[31px] flex-wrap">
+                                <div className="identity">
+                                    <strong className="text-sm font-[650]">{testimonial.clientName}</strong>
+                                    {testimonial.source && (
+                                        <span className="source inline-block ml-[10px] border border-[rgba(255,255,255,0.13)] py-1 px-[7px] text-[#9ca3af] text-[8px] align-[2px]">
+                                            {testimonial.source}
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="count shrink-0 whitespace-nowrap font-mono text-[9px] text-[#9ca3af] leading-[1.8]">
+                                    Field<br/>
+                                    <b className="text-[#a78bfa] font-medium">
+                                        {String(activeIndex + 1).padStart(2, '0')} / {String(testimonials.length).padStart(2, '0')}
+                                    </b>
+                                </div>
+                            </footer>
+                        </article>
+
+                    </div>
+
+                    {/* Diamonds are decorative marks inside unrotated, larger hit targets. */}
+                    <div className="controls flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mt-[27px]">
+                        <div className="dots markers flex flex-wrap items-center justify-center" role="group" aria-label={`${testimonials.length} carousel slides`}>
+                            {testimonials.map((_, index) => (
+                                <button
+                                    key={index}
+                                    type="button"
+                                    className="dot detection-utility inline-flex items-center justify-center w-11 h-11 p-0 border-0 bg-transparent"
+                                    aria-label={`Slide ${index + 1}`}
+                                    aria-current={index === activeIndex ? 'true' : undefined}
+                                    onClick={() => goToSlide(index)}
+                                >
+                                    <span
+                                        aria-hidden="true"
+                                        className={`block ${index === activeIndex ? 'w-2 h-2 bg-[#8B5CF6] shadow-[0_0_14px_rgba(139,92,246,0.45)]' : 'w-[5px] h-[5px] bg-[#6b7280]'} rotate-45 transition-[width,height,background-color,box-shadow] motion-reduce:transition-none`}
+                                    ></span>
+                                </button>
+                            ))}
+                        </div>
+                        {prefersReducedMotion && (
+                            <span className="autoplay-status inline-flex items-center min-h-[44px] px-3 font-mono text-[10px] uppercase tracking-[0.15em] text-[#9ca3af]">
+                                Autoplay off · Reduced motion
+                            </span>
+                        )}
+                    </div>
                 </div>
             </div>
         </section>

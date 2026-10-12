@@ -12,21 +12,31 @@ export const socialLinks = {
   contactEmail: 'contact@vivekapatel.com',
 };
 
+// /assets/* is served immutable for a year (public/.htaccess), so derivative
+// filenames end in the first 12 hex chars of their own SHA-256. links.test.js
+// rejects a derivative whose name or recorded source digest no longer matches.
+// To regenerate one, rebuild it from the source, rename it with its new hash
+// and update the source digest in links.test.js (#252).
 export const logos = {
   favicon: '/assets/logos/mylogo.png',
-  logo: '/assets/logos/mylogo.png',
-};
-
-export const backgrounds = {
-  hero: `${BASE_URLS.hostingerCdn}/71f6723b117af5fb7e36d829dfcd6b7f.jpg`,
-  cta: `${BASE_URLS.hostingerCdn}/71f6723b117af5fb7e36d829dfcd6b7f.jpg`,
+  faviconLight: '/assets/logos/favicon-light-scheme.png',
+  // The header mark renders at 30px; these are 60/90px derivatives of mylogo.png (#252).
+  logo: '/assets/logos/mylogo-60-c6065baa4d50.webp',
+  logoSrcSet: '/assets/logos/mylogo-60-c6065baa4d50.webp 2x, /assets/logos/mylogo-90-cbffb31a1bdc.webp 3x',
 };
 
 export const profileImages = {
-  aboutPhoto: '/assets/images/vivek-black-and-white.webp',
+  portrait: '/assets/images/vivek-black-and-white.webp',
+  // Display-size derivatives of portrait (1008×1367), same crop (#252).
+  portraitSrcSet: '/assets/images/vivek-black-and-white-480w-3a7a7a1ab19c.webp 480w, /assets/images/vivek-black-and-white-720w-aa13477551ed.webp 720w, /assets/images/vivek-black-and-white.webp 1008w',
+  // About-only crop: (104, 118, 800, 664), hair starts at y=64. The 64px
+  // excess over 4:3 lets bottom + 5px positioning retain fixed CSS headroom.
+  aboutPortrait: '/assets/images/vivek-about-800w-77ce8032d2e7.webp',
+  aboutPortraitSrcSet: '/assets/images/vivek-about-400w-e9c1fa10c8ee.webp 400w, /assets/images/vivek-about-800w-77ce8032d2e7.webp 800w, /assets/images/vivek-about-1200w-d5b1ad36e4d4.webp 1200w',
   teamCollaboration: `${BASE_URLS.hostingerCdn}/michael-t-rxri-ho62y4-unsplash-2-tvxRc.jpg`,
 };
 
 export const assetsLinks = {
-  logo: logos.logo,
+  // Full-size mark for any future SEO/structured-data use, not the 30px header derivative.
+  logo: logos.favicon,
 };

@@ -1,0 +1,275 @@
+{
+  "date": "2026-10-08",
+  "baseline": "0c74308161c3af65377e4ec96693a4f56205cf06",
+  "sourceSha256": {
+    "src/components/BudgetSelect.jsx": "f44ee6f118c5cbd1b489d03d6a57ba91300f8ce6167d3608793ee4d3f213a4c6",
+    "src/pages/Contact.jsx": "1ef19412adbd59665c46022a57d23a549b88fa9aa30107a29f8ac9ccb61b672c",
+    "src/pages/Contact.css": "2a7e062303f6193a3003a645cc0e54e5e2331e0b95f99f7781d810208cff146c",
+    "src/pages/Contact.test.jsx": "85315bc8a5e489c895c7767cee5dbb208d9cc771ec0bfbe3becfcf256ec286b0",
+    "package-lock.json": "7151046e0b8346253919c6e9de6b13e6e6ab2423eb1d58e9f7394673d9001c93",
+    "tests/qa/qa-budget.spec.js": "ccf3b1c918aafb9d7256ed50ec7364326117a71aa94f92e973a52bc9e9631450",
+    "tests/qa/qa-budget.config.js": "07b53ddc98d30137f92b6c76a8d0dd6accabc7e0a3d9dd0a6357e00548e55bed",
+    "tests/qa/qa-color-scheme.spec.js": "ad7132a179d3eec03f8ce2157fb4dbb8b48dbd75f9b39394f35347fe43c9f7b2",
+    "tests/qa/qa-contact-lifecycle.spec.js": "50a901fa2f869647a27bc819612c90558d06f24e02374f336eaf42707aed245a"
+  },
+  "environment": [
+    {
+      "project": "chromium-1440-no-preference",
+      "browser": "148.0.7778.96",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "reducedMotion": "no-preference"
+    },
+    {
+      "project": "chromium-1440-reduce",
+      "browser": "148.0.7778.96",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "reducedMotion": "reduce"
+    },
+    {
+      "project": "chromium-320-no-preference",
+      "browser": "148.0.7778.96",
+      "viewport": {
+        "width": 320,
+        "height": 844
+      },
+      "reducedMotion": "no-preference"
+    },
+    {
+      "project": "chromium-320-reduce",
+      "browser": "148.0.7778.96",
+      "viewport": {
+        "width": 320,
+        "height": 844
+      },
+      "reducedMotion": "reduce"
+    },
+    {
+      "project": "chromium-390-no-preference",
+      "browser": "148.0.7778.96",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reducedMotion": "no-preference"
+    },
+    {
+      "project": "chromium-390-reduce",
+      "browser": "148.0.7778.96",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reducedMotion": "reduce"
+    },
+    {
+      "project": "webkit-1440-no-preference",
+      "browser": "26.4",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "reducedMotion": "no-preference"
+    },
+    {
+      "project": "webkit-1440-reduce",
+      "browser": "26.4",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "reducedMotion": "reduce"
+    },
+    {
+      "project": "webkit-320-no-preference",
+      "browser": "26.4",
+      "viewport": {
+        "width": 320,
+        "height": 844
+      },
+      "reducedMotion": "no-preference"
+    },
+    {
+      "project": "webkit-320-reduce",
+      "browser": "26.4",
+      "viewport": {
+        "width": 320,
+        "height": 844
+      },
+      "reducedMotion": "reduce"
+    },
+    {
+      "project": "webkit-390-no-preference",
+      "browser": "26.4",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reducedMotion": "no-preference"
+    },
+    {
+      "project": "webkit-390-reduce",
+      "browser": "26.4",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reducedMotion": "reduce"
+    }
+  ],
+  "verification": {
+    "unit": {
+      "passed": 916
+    },
+    "dropdown": {
+      "startTime": "2026-10-08T14:54:43.484Z",
+      "duration": 44457.072,
+      "expected": 30,
+      "skipped": 6,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "contactFields": {
+      "passed": 8
+    },
+    "contactLifecycle": {
+      "startTime": "2026-10-08T14:56:05.432Z",
+      "duration": 152137.65000000002,
+      "expected": 204,
+      "skipped": 4,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "passiveContact": {
+      "passed": 4
+    }
+  },
+  "limitations": [
+    "WebKit forced-colors emulation unavailable (six dropdown skips).",
+    "Four existing lifecycle middle-click skips for headless WebKit; physical Safari middle-click unverified.",
+    "Mobile WebKit anchor scrolling probe uses window.scrollBy; tap selection uses touchscreen input.",
+    "ARIA and native AX names/states inspected; spoken VoiceOver/NVDA and physical iOS/Safari not exercised."
+  ],
+  "nativeInput": {
+    "surface": "Codex in-app browser, final local build",
+    "sequence": [
+      "Enter on budget trigger",
+      "ArrowDown",
+      "Return",
+      "Tab"
+    ],
+    "observed": [
+      "Menu opens and is named Budget Range plus current value",
+      "Collapsed visible value < \u20ac5,000",
+      "Focus reaches Project Description",
+      "Reopening exposes selected option in native AX tree"
+    ]
+  },
+  "negativeProbe": {
+    "priorSource": "Primitive default closed-trigger Enter",
+    "observed": "Failed to open; native submit counter became 1 with a valid synthetic lead and blocked external transport",
+    "finalSource": "Same regression passes in all 12 browser/viewport/motion projects with zero submit events"
+  },
+  "externalSubmission": "Blocked HTTP and WebSocket egress for passive tests; lifecycle uses isolated synthetic Convex transport only",
+  "ciFollowUp": {
+    "date": "2026-10-09",
+    "originalHead": "9219cdb7fbdac750623e1f7ab7a6f9071892e7a1",
+    "sourceSha256": {
+      "src/components/BudgetSelect.jsx": "0311cfc26474455bdad7405585a223bbe50045c5050104e84661f39af9dea867",
+      "src/pages/Contact.test.jsx": "06eb19a17964adda36c33c755dab6408e8f4224b72a502f4f95a3e3615772a62"
+    },
+    "priorSourceRepetitions": {
+      "webkitKeyboardPassed": 10,
+      "webkitLifecyclePassed": 40
+    },
+    "typeaheadRegression": {
+      "priorSource": "Failed: typing < retained euro25k+",
+      "repairedSource": "Passed: typing < commits exact < euro5k value without submission"
+    },
+    "dropdown": {
+      "startTime": "2026-10-09T05:54:26.321Z",
+      "duration": 47348.246999999996,
+      "expected": 30,
+      "skipped": 6,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "contactLifecycle": {
+      "startTime": "2026-10-09T05:54:12.264Z",
+      "duration": 157230.734,
+      "expected": 204,
+      "skipped": 4,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "limitations": [
+      "Initial hosted mobile WebKit selection failure not reproduced locally.",
+      "Initial screenshots and native accessibility inspection precede the explicit option-label repair."
+    ]
+  },
+  "geometryFollowUp": {
+    "date": "2026-10-09",
+    "priorHead": "3cd00389bcb67b9900a6f480ee6384f2c652306c",
+    "sourceSha256": {
+      "src/components/BudgetSelect.jsx": "87bdfd92d832f75f010f9f8d4605eeeb04528d011788a053312fc576c635963e",
+      "src/pages/Contact.css": "a363dbdb6d330b5d62ce28886d2b34b99943bc5c34bb587c0d2f6a6406f5b8cc",
+      "src/pages/Contact.test.jsx": "d9e1b095259d1aebd7f096bae9c0681ea4ff13f40815ec73a9c286ba07a07014",
+      "tests/qa/qa-budget.js": "e2ed66c78a4930cd75cd9b09645907a91663c0b9859d2f634b292889981602ee",
+      "tests/qa/qa-budget.spec.js": "4f0cc69958b5d04c6173fdf9bdc4de2d6ee62c1a7c4a8246f806faf6a8842959"
+    },
+    "negativeGeometryProbe": {
+      "runs": 30,
+      "passed": 27,
+      "failed": 3,
+      "viewportHeight": 300,
+      "capturedTriggerTop": 358.744140625,
+      "capturedMenuBottom": 352.5,
+      "cause": "Option scrollIntoView moved the document to satisfy 128px header scroll padding"
+    },
+    "scrollPaddingRepairRepetitions": {
+      "passed": 30,
+      "failed": 0,
+      "predicate": "Original strict viewport bounds retained"
+    },
+    "mouseEnterRegression": {
+      "priorSource": "Failed to reopen after a mouse interaction",
+      "finalSource": "Passed using primitive ArrowDown handler"
+    },
+    "initialWidthProbe": {
+      "priorMenuWidth": 10,
+      "triggerWidth": 212,
+      "repair": "Seed primitive public button-width CSS variable on menu mount"
+    },
+    "unit": {
+      "passed": 917
+    },
+    "dropdown": {
+      "startTime": "2026-10-09T06:30:05.715Z",
+      "duration": 49034.062,
+      "expected": 30,
+      "skipped": 6,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "affectedMobileLifecycle": {
+      "startTime": "2026-10-09T06:30:09.036Z",
+      "duration": 46800.693,
+      "expected": 50,
+      "skipped": 2,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "typeahead": "Shift+Comma with explicit delivered-character assertion for < before checking focused option",
+    "offscreenDismissal": "Unchanged budget, collapsed trigger, no focus or scroll-back to offscreen field",
+    "limitations": [
+      "Full hosted checks and independent verdict must describe final PR head.",
+      "Screenshots and native AX inspection above precede follow-up repairs.",
+      "Physical devices and spoken screen readers remain unverified."
+    ]
+  }
+}

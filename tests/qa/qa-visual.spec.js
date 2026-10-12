@@ -1,5 +1,8 @@
+import { caseStudies } from '../../src/data/caseStudies.js';
+import { caseStudyDisplaySrc, collectGalleryImages } from '../../src/components/CaseStudyGallery.js';
 import { expect, test } from './qa-test.js';
 import { assertVisualLayout } from './visual-layout.js';
+import { HOURLY_RATE_LABEL } from '../../src/config/pricing.js';
 
 const COOKIE_KEY = 'cookie_consent_preferences';
 
@@ -30,8 +33,8 @@ test('home request CTA is visible, usable, and separated from its companion link
   await settleLayout(page);
 
   const viewport = viewportBox(page);
-  const cta = page.getByRole('button', { name: /Request a Project Estimate/i }).first();
-  const companion = page.getByRole('link', { name: 'View Case Studies' });
+  const cta = page.getByRole('link', { name: /Request a Project Estimate/i }).first();
+  const companion = page.getByRole('link', { name: 'View Case Studies', exact: true });
   await expect(cta).toBeVisible();
   await expect(companion).toBeVisible();
   const ctaBox = await cta.boundingBox();
@@ -70,18 +73,18 @@ test('mobile cookie dialog and its controls remain visible and do not cover the 
     box: dialogBox,
     viewport,
     minWidth: 320,
-    minHeight: 100,
+    minHeight: 44,
   });
 
   const close = dialog.getByRole('button', { name: /close cookie consent/i });
-  const accept = dialog.getByRole('button', { name: 'Accept All', exact: true });
-  const reject = dialog.getByRole('button', { name: 'Reject All', exact: true });
-  const customize = dialog.getByRole('button', { name: 'Customize', exact: true });
+  const accept = dialog.getByRole('button', { name: 'Accept', exact: true });
+  const reject = dialog.getByRole('button', { name: 'Reject', exact: true });
+  const options = dialog.getByRole('button', { name: 'Options', exact: true });
   for (const [label, locator] of [
     ['cookie close control', close],
     ['cookie accept control', accept],
     ['cookie reject control', reject],
-    ['cookie customize control', customize],
+    ['cookie options control', options],
   ]) {
     await expect(locator).toBeVisible();
     assertVisualLayout({
@@ -93,7 +96,7 @@ test('mobile cookie dialog and its controls remain visible and do not cover the 
     });
   }
 
-  const cta = page.getByRole('button', { name: /Request a Project Estimate/i }).first();
+  const cta = page.getByRole('link', { name: /Request a Project Estimate/i }).first();
   await expect(cta).toBeVisible();
   assertVisualLayout({
     label: 'hero request estimate CTA beside cookie dialog',
@@ -103,6 +106,96 @@ test('mobile cookie dialog and its controls remain visible and do not cover the 
     minHeight: 44,
     avoid: [{ label: 'mobile cookie dialog', box: dialogBox }],
   });
+});
+
+test('hero invoice proof fold design (#176): proofs visible, CTA routes correctly, no viewport clip', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await reducedMotion(page);
+  await page.addInitScript((key) => localStorage.removeItem(key), COOKIE_KEY);
+  await page.goto('/');
+  await settleLayout(page);
+
+  const h1 = page.getByRole('heading', { level: 1, name: 'Computer Vision & AI Engineer' });
+  await expect(h1).toBeVisible();
+  
+  const proofsGroup = page.locator('[role="group"][aria-label="Detected credentials"]');
+  await expect(proofsGroup).toBeVisible();
+  
+  await expect(page.getByText('Top Rated Plus', { exact: true })).toBeVisible();
+  await expect(page.getByText('100% Job Success', { exact: true })).toBeVisible();
+  
+  await expect(page.getByText('Detected total', { exact: true })).not.toBeVisible();
+  await expect(page.getByText('PROOF ·', { exact: true })).not.toBeVisible();
+  await expect(page.getByText('fields · 2', { exact: true })).not.toBeVisible();
+  
+  const viewport = viewportBox(page);
+  const dialog = page.getByRole('dialog', { name: /we value your privacy/i });
+  await expect(dialog).toBeVisible({ timeout: 5000 });
+  const dialogBox = await dialog.boundingBox();
+  
+  const cta = page.getByRole('link', { name: 'Request a Project Estimate' }).first();
+  await expect(cta).toBeVisible();
+  const ctaBox = await cta.boundingBox();
+  
+  assertVisualLayout({
+    label: 'hero CTA with cookie dialog and proof fold',
+    box: ctaBox,
+    viewport,
+    minWidth: 220,
+    minHeight: 44,
+    avoid: [{ label: 'cookie dialog', box: dialogBox }],
+  });
+  
+  await cta.click();
+  await expect(page).toHaveURL(/\/contact\/?$/);
+  await expect(page.getByRole('heading', { name: /Request a Project Estimate/i })).toBeVisible();
+});
+
+test('desktop hero invoice proof fold: all elements visible, no clip', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await reducedMotion(page);
+  await page.addInitScript((key) => localStorage.removeItem(key), COOKIE_KEY);
+  await page.goto('/');
+  await settleLayout(page);
+  
+  const h1 = page.getByRole('heading', { level: 1, name: 'Computer Vision & AI Engineer' });
+  await expect(h1).toBeVisible();
+  
+  const proofsGroup = page.locator('[role="group"][aria-label="Detected credentials"]');
+  await expect(proofsGroup).toBeVisible();
+  
+  await expect(page.getByText('Top Rated Plus', { exact: true })).toBeVisible();
+  await expect(page.getByText('100% Job Success', { exact: true })).toBeVisible();
+  await expect(page.getByText('Upwork freelancer')).toBeVisible();
+  await expect(page.getByText('Client delivery record')).toBeVisible();
+  
+  await expect(page.getByText(HOURLY_RATE_LABEL, { exact: true })).toBeVisible();
+  await expect(page.getByText('Linz, Austria', { exact: true })).toBeVisible();
+  
+  await expect(page.getByText('Detected total', { exact: true })).not.toBeVisible();
+  await expect(page.getByText('PROOF ·', { exact: true })).not.toBeVisible();
+  await expect(page.getByText('fields · 2', { exact: true })).not.toBeVisible();
+  
+  const viewport = viewportBox(page);
+  const dialog = page.getByRole('dialog', { name: /we value your privacy/i });
+  await expect(dialog).toBeVisible({ timeout: 5000 });
+  const dialogBox = await dialog.boundingBox();
+  
+  const cta = page.getByRole('link', { name: 'Request a Project Estimate' }).first();
+  await expect(cta).toBeVisible();
+  const ctaBox = await cta.boundingBox();
+  
+  assertVisualLayout({
+    label: 'desktop hero CTA with cookie dialog and proof fold',
+    box: ctaBox,
+    viewport,
+    minWidth: 220,
+    minHeight: 44,
+    avoid: [{ label: 'desktop cookie dialog', box: dialogBox }],
+  });
+  
+  await cta.click();
+  await expect(page).toHaveURL(/\/contact\/?$/);
 });
 
 test('case study gallery keeps its stage, selected media, and thumbnails in usable geometry', async ({ page }) => {
@@ -131,7 +224,7 @@ test('case study gallery keeps its stage, selected media, and thumbnails in usab
     box: stageBox,
     viewport,
     minWidth: 300,
-    minHeight: 220,
+    minHeight: 160,
   });
 
   const selectedMedia = stage.locator('img').first();
@@ -165,6 +258,69 @@ test('case study gallery keeps its stage, selected media, and thumbnails in usab
   });
 });
 
+const assetDigest = (src) => src.match(/-([a-f0-9]{64})\./)?.[1] ?? '';
+
+const galleryImage = (slug, { digest, alt } = {}) => {
+  const images = collectGalleryImages(caseStudies.find((story) => story.slug === slug));
+  const index = images.findIndex((image) => (digest ? assetDigest(image.src) === digest : image.alt === alt));
+  return { images, index, image: images[index] };
+};
+
+test('gallery navigation keeps chart, diagram, and sample evidence clear inline and enlarged', async ({ page }) => {
+  await reducedMotion(page);
+  const cases = [
+    { slug: 'sports-video-analytics-yolo', digest: '4422c54ac53200d0a5e3e529709980779fb42c5c87ba182435157745b60d9b95' },
+    { slug: 'n8n-openai-data-extraction', digest: '5f8d33c712e39a32dc57c65eab98aa8cac4e98d0eb9019594e41f389482e6c78' },
+    { slug: 'ai-project-planning-assistant', digest: 'eff7965595d32bb9557300645b36c7bd15b56e165c3615899cc5dd57bdce175f' },
+  ];
+  const assertClearNavigation = async (region) => {
+    const stage = region.locator('.case-gallery-stage');
+    const stageBox = await stage.boundingBox();
+    const regionBox = await region.boundingBox();
+    for (const name of ['Previous image', 'Next image']) {
+      const control = region.getByRole('button', { name, exact: true });
+      await expect(control).toBeVisible();
+      const controlBox = await control.boundingBox();
+      assertVisualLayout({
+        label: name,
+        box: controlBox,
+        containedBy: regionBox,
+        minWidth: 44,
+        minHeight: 44,
+        avoid: [{ label: 'evidence stage', box: stageBox }],
+      });
+      expect(controlBox.y, `${name} belongs below the evidence`).toBeGreaterThanOrEqual(stageBox.y + stageBox.height);
+    }
+  };
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({ width, height: 844 });
+    for (const { slug, digest } of cases) {
+      await page.goto(`/project/${slug}/`);
+      await settleLayout(page);
+      const gallery = page.getByRole('region', { name: 'Case study images' });
+      const { images, index } = galleryImage(slug, { digest });
+      expect(index, slug).toBeGreaterThanOrEqual(0);
+      const { alt } = images[index];
+      await gallery.getByRole('button', { name: `Show image ${index + 1}: ${alt}`, exact: true }).click();
+      const opener = gallery.getByRole('button', { name: `Enlarge image: ${alt}`, exact: true });
+      await expect(opener.locator('img')).toHaveCSS('object-fit', 'contain');
+      await assertClearNavigation(gallery);
+
+      await opener.click();
+      const dialog = page.getByRole('dialog', { name: 'Enlarged case study images' });
+      await expect(dialog).toBeVisible();
+      await expect(dialog.locator('.case-gallery-viewport img')).toHaveCSS('object-fit', 'contain');
+      await assertClearNavigation(dialog);
+      await dialog.getByRole('button', { name: 'Zoom in', exact: true }).click();
+      await expect(dialog.locator('.case-gallery-zoom')).toContainText('150%');
+      await assertClearNavigation(dialog);
+      await page.keyboard.press('Escape');
+      await expect(dialog).toHaveCount(0);
+      await expect(opener).toBeFocused();
+    }
+  }
+});
+
 const measureGalleryStage = async (page) => page.evaluate(() => {
   const stage = document.querySelector('.case-gallery-stage');
   const img = stage?.querySelector('img');
@@ -183,17 +339,21 @@ test('wide case-study galleries fill the stage without a 4:3 empty band', async 
   await page.setViewportSize({ width: 1280, height: 900 });
   await reducedMotion(page);
   const cases = [
-    { slug: 'n8n-openai-data-extraction', ratio: 2984 / 874 },
-    { slug: 'ai-invoice-processing-automation', ratio: 2448 / 684 },
-    { slug: 'yolo-computer-vision-optimization', ratio: 4 / 3 },
-    { slug: 'invoice-ocr-extraction', ratio: 4 / 3 },
+    { slug: 'n8n-openai-data-extraction', ratio: 2984 / 874, alt: 'Main n8n workflow for discovering and extracting website datasets' },
+    { slug: 'ai-invoice-processing-automation', ratio: 2448 / 684, digest: 'f36fee637d46a13baffb79337b87cb4ac1f7a1a6d29a330be71e4217a1633275' },
+    { slug: 'yolo-computer-vision-optimization', ratio: 4 / 3, alt: 'YOLO model detecting and estimating a yoga pose in an image.' },
+    { slug: 'invoice-ocr-extraction', ratio: 4 / 3, alt: 'Invoice image with bounding boxes showing extracted client information via OCR.' },
   ];
-  for (const { slug, ratio } of cases) {
+  for (const { slug, ratio, alt, digest } of cases) {
     await page.goto(`/project/${slug}/`);
     await settleLayout(page);
     const gallery = page.getByRole('region', { name: 'Case study images' });
     const stage = gallery.locator('.case-gallery-stage').first();
     await stage.scrollIntoViewIfNeeded();
+    const { index, image } = galleryImage(slug, { digest, alt });
+    expect(index, slug).toBeGreaterThanOrEqual(0);
+    await gallery.getByRole('button', { name: `Show image ${index + 1}: ${image.alt}`, exact: true }).click();
+    await expect(stage.locator('img').first()).toHaveAttribute('alt', image.alt);
     await expect(stage.locator('img').first()).toBeVisible();
     await expect.poll(async () => (await measureGalleryStage(page))?.complete).toBe(true);
     const metrics = await measureGalleryStage(page);
@@ -205,7 +365,11 @@ test('wide case-study galleries fill the stage without a 4:3 empty band', async 
   await settleLayout(page);
   const invoiceGallery = page.getByRole('region', { name: 'Case study images' });
   await invoiceGallery.locator('.case-gallery-stage').first().scrollIntoViewIfNeeded();
-  await invoiceGallery.getByRole('button', { name: /Show image 3:/ }).click();
+  const pdfSplit = galleryImage('ai-invoice-processing-automation', {
+    digest: 'c4ef84c5245e7116671357858924a22b8a2dbd1f95695108125704d6021f9964',
+  });
+  expect(pdfSplit.index).toBeGreaterThanOrEqual(0);
+  await invoiceGallery.getByRole('button', { name: `Show image ${pdfSplit.index + 1}: ${pdfSplit.image.alt}`, exact: true }).click();
   await expect.poll(async () => (await measureGalleryStage(page))?.complete).toBe(true);
   const shortWide = await measureGalleryStage(page);
   expect(shortWide.stageRatio).toBeCloseTo(2140 / 458, 1);
@@ -243,9 +407,9 @@ test('contact form stays horizontally contained with visible fields and submit c
   for (const [label, locator] of [
     ['contact name field', page.getByLabel('Full Name *', { exact: true })],
     ['contact email field', page.getByLabel('Email Address *', { exact: true })],
-    ['contact budget field', page.getByLabel('Budget Range (Optional)', { exact: true })],
+    ['contact budget field', page.getByLabel('Budget Range')],
     ['contact description field', page.getByLabel('Project Description *', { exact: true })],
-    ['contact submit control', page.getByRole('button', { name: /Request a Project Estimate/i })],
+    ['contact submit control', page.getByRole('button', { name: /Send project request/i })],
   ]) {
     await expect(locator).toBeVisible();
     assertVisualLayout({
@@ -298,15 +462,16 @@ test('custom cursor mounts on desktop fine pointer', async ({ page }, testInfo) 
   test.skip(testInfo.project.name.includes('mobile'), 'Desktop fine pointer assertion is covered by the desktop project.');
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/');
+  await expect(page.locator('[data-custom-cursor]')).toHaveCount(1);
   await page.mouse.move(400, 400);
   await expect(page.locator('html')).toHaveClass(/custom-cursor-enabled/);
 });
 
-test('cookie customize panel expands', async ({ page }) => {
+test('cookie options panel expands', async ({ page }) => {
   await page.addInitScript((key) => localStorage.removeItem(key), COOKIE_KEY);
   await page.goto('/');
-  await page.getByRole('button', { name: /Customize/i }).click({ timeout: 5000 });
-  await expect(page.getByLabel(/Analytics and Diagnostics Cookies/i)).toBeVisible();
+  await page.getByRole('button', { name: /Options/i }).click({ timeout: 5000 });
+  await expect(page.getByLabel(/^Analytics$/i)).toBeVisible();
 });
 
 test('case-study article renders sober sections without legacy stats panels', async ({ page }) => {
@@ -325,7 +490,7 @@ test('contact validation notice leaves cookie controls visible on tablet and des
     await page.addStyleTag({ content: '*, *::before, *::after { animation: none !important; transition: none !important; }' });
     const cookie = page.getByRole('dialog', { name: 'We value your privacy' });
     await expect(cookie).toBeVisible();
-    await page.getByRole('button', { name: 'Request a Project Estimate', exact: true }).click();
+    await page.getByRole('button', { name: 'Send project request', exact: true }).click();
     const message = page.getByText('Uh oh! Missing fields.', { exact: true }).first();
     await expect(message).toBeVisible();
     const notice = message.locator('xpath=ancestor::li[1]');
@@ -336,5 +501,140 @@ test('contact validation notice leaves cookie controls visible on tablet and des
       viewport: viewportBox(page),
       avoid: [{ label: 'cookie consent controls', box: await cookie.boundingBox() }],
     });
+  }
+});
+
+test('portfolio section shows Detection Card craft signals on homepage', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await reducedMotion(page);
+  await page.addInitScript((key) => {
+    localStorage.setItem(key, JSON.stringify({ necessary: true, analytics: false }));
+  }, COOKIE_KEY);
+  await page.goto('/');
+  await settleLayout(page);
+
+  const portfolio = page.locator('#portfolio');
+  await portfolio.scrollIntoViewIfNeeded();
+  await expect(portfolio).toBeVisible();
+
+  const heading = portfolio.getByRole('heading', { name: /Featured.*Case Studies/i });
+  await expect(heading).toBeVisible();
+  await expect(heading).toHaveAccessibleName('FEATURED CASE STUDIES');
+  const label = heading.locator('.detection-label');
+  await expect(label).toHaveText('Previous work');
+  await expect(label).toHaveAttribute('aria-hidden', 'true');
+  await expect(label).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+
+  const cards = portfolio.locator('article').all();
+  expect((await cards).length).toBeGreaterThan(0);
+
+  const firstCard = portfolio.locator('article').first();
+  await expect(firstCard).toBeVisible();
+  
+  const metaLine = firstCard.locator('.detection-label').filter({ hasText: /·.*CASE STUDY/i });
+  await expect(metaLine).toBeVisible();
+  
+  const svg = firstCard.locator('svg[viewBox="0 0 16 16"]').first();
+  await expect(svg).toBeVisible();
+
+  const cardBox = await firstCard.boundingBox();
+  expect(cardBox.width).toBeGreaterThan(200);
+  expect(cardBox.height).toBeGreaterThan(400);
+});
+
+test('portfolio card click navigates to case study detail', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await reducedMotion(page);
+  await page.addInitScript((key) => {
+    localStorage.setItem(key, JSON.stringify({ necessary: true, analytics: false }));
+  }, COOKIE_KEY);
+  await page.goto('/');
+  await settleLayout(page);
+
+  const portfolio = page.locator('#portfolio');
+  await portfolio.scrollIntoViewIfNeeded();
+
+  const firstCardLink = portfolio.getByRole('link', { name: /Read case study:/i }).first();
+  const href = await firstCardLink.getAttribute('href');
+  expect(href).toMatch(/^\/project\/.+\/$/);
+
+  await firstCardLink.click();
+  await page.waitForURL(href);
+  await settleLayout(page);
+
+  await expect(page.getByRole('heading', { name: /The problem/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /What I built/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /The outcome/i })).toBeVisible();
+});
+
+test('wide gallery lightbox keeps its outer frame and label inside narrow viewports', async ({ page }) => {
+  await reducedMotion(page);
+  for (const width of [320, 390]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/project/n8n-openai-data-extraction/');
+    const opener = page.getByRole('button', { name: /Enlarge image:/ });
+    await opener.click();
+    const dialog = page.getByRole('dialog', { name: 'Enlarged case study images' });
+    const bounds = await dialog.boundingBox();
+    expect(bounds.x).toBeGreaterThanOrEqual(8);
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual(width - 8);
+    const geometry = await dialog.evaluate((element) => {
+      const label = element.querySelector('.detection-label');
+      const frame = element.getBoundingClientRect();
+      const text = label.getBoundingClientRect();
+      return {
+        center: (text.top + text.bottom) / 2 - frame.top,
+        contained: text.left >= frame.left && text.right <= frame.right,
+        background: getComputedStyle(label).backgroundColor,
+      };
+    });
+    expect(geometry).toEqual({ center: 0, contained: true, background: 'rgba(0, 0, 0, 0)' });
+    await page.keyboard.press('Escape');
+    await expect(dialog).toHaveCount(0);
+    await expect(opener).toBeFocused();
+  }
+});
+
+
+test('project overview and evidence preserve the shared transparent frame across media variants', async ({ page }) => {
+  await reducedMotion(page);
+  for (const slug of ['browser-search-to-spreadsheet', 'python-ci-workflow-automation', 'resumable-listing-data-extraction', 'n8n-openai-data-extraction']) {
+    await page.goto(`/project/${slug}/`);
+    const [source, ...remaining] = collectGalleryImages(caseStudies.find((story) => story.slug === slug));
+    const singleImage = remaining.length === 0;
+    const stage = page.locator(singleImage ? '.case-study-cover-stage' : '.case-gallery > .case-gallery-stage');
+    await expect(stage).toHaveClass(/detection-panel/);
+    await expect(stage.locator('.detection-label')).toHaveText('PROJECT OVERVIEW');
+    const image = stage.locator('img');
+    await expect(image).toBeVisible();
+    await expect(image).toHaveAttribute('src', caseStudyDisplaySrc(source));
+    if (singleImage) await expect(stage.locator('a')).toHaveAttribute('href', source.src);
+    else await expect(stage.getByRole('button', { name: `Enlarge image: ${source.alt}`, exact: true })).toBeVisible();
+    const geometry = await stage.evaluate((element) => {
+      const label = element.querySelector('.detection-label');
+      const bounds = element.getBoundingClientRect();
+      const text = label.getBoundingClientRect();
+      return {
+        center: (text.top + text.bottom) / 2 - bounds.top,
+        background: getComputedStyle(label).backgroundColor,
+        imageBorder: getComputedStyle(element.querySelector('img')).borderTopWidth,
+        contained: bounds.left >= 0 && bounds.right <= innerWidth,
+      };
+    });
+    expect(geometry).toEqual({ center: 0, background: 'rgba(0, 0, 0, 0)', imageBorder: '0px', contained: true });
+    if (slug === 'n8n-openai-data-extraction') {
+      const screenshot = remaining[0];
+      await page.getByRole('button', { name: `Show image 2: ${screenshot.alt}`, exact: true }).click();
+      await expect(stage.locator('.detection-label')).toHaveText('PROJECT EVIDENCE');
+      await expect(stage.locator('img')).toHaveAttribute('src', caseStudyDisplaySrc(screenshot));
+      await stage.getByRole('button', { name: `Enlarge image: ${screenshot.alt}`, exact: true }).click();
+      const dialog = page.getByRole('dialog', { name: 'Enlarged case study images' });
+      await expect(dialog.locator('.detection-label')).toHaveText('PROJECT EVIDENCE');
+      await dialog.getByRole('button', { name: 'Previous image', exact: true }).click();
+      await expect(dialog.locator('.detection-label')).toHaveText('PROJECT OVERVIEW');
+      await expect(stage.locator('.detection-label')).toHaveText('PROJECT OVERVIEW');
+      await page.keyboard.press('Escape');
+      await expect(dialog).toHaveCount(0);
+    }
   }
 });

@@ -1,0 +1,44 @@
+[tool] Reading repair.diff:1, Contact.jsx:1
+[tool] status: Completed
+[tool] Searching for 'errors\.|errors\[|is required|Enter a valid|characters or...' in leadValidation.ts
+[tool] Reading qa-contact.spec.js:101-175
+[tool] status: Completed
+[tool] status: Completed
+[tool] Reading leadValidation.ts:101-170
+[tool] status: Completed
+[tool] Searching for 'const (MIN|MAX)_\w+ =|function getBudgetError|return ' in leadValidation.ts
+[tool] Searching for 'fillValidLead|vi\.mock\(.*use-toast|toHaveBeenLastCalledW...' in Contact.test.jsx
+[tool] status: Completed
+[tool] status: Completed
+[tool] Reading Contact.test.jsx:2-86, qa-contact-lifecycle.spec.js:2-61
+[tool] status: Completed
+[tool] Searching for 'getByRole\('status'\)' in qa-contact-lifecycle.spec.js
+[tool] status: Completed
+[tool] Searching for 'is required\.|Choose|budget' in leadValidation.ts
+[tool] status: Completed
+No blocking defects in the PR335 repair diff.
+
+**Contact.jsx title/description repair (lines 109–119)**
+- `firstError` now drives the description, the title choice and focus, so all three point at the same field. `firstError` is always defined: the branch only runs when `!ok`, and that means at least one key exists.
+- The first error always matches the first invalid field in the form. The validator inserts keys in the order name, email, budget, description (`leadValidation.ts:115–148`), which is also the order of the fields on the page.
+- The two reported cases now come out right. `''` + `bad@` gives "Name is required." and the title "Uh oh! Missing fields." 201×`n` + `''` gives the message from line 120 and the title "Check your project details."
+
+**Tests**
+- The `Contact.test.jsx` cases use `toHaveBeenLastCalledWith` with an exact object. They also check focus and confirm no mutation was sent.
+- The lifecycle tests use the same `getByRole('status').filter(...)` pattern already in use at lines 334 and 480.
+- The `qa-contact.spec.js:145` selector is correct for an empty form, because name fails first. The contrast, opacity, layer and close checks are unchanged.
+
+**Regression risks (not blocking)**
+- The title depends on the exact validator wording ("Enter a valid email address.", messages ending in `is required.`). If that wording changes, the title can change without any error. The new tests partly guard against this.
+- The `firstInvalidField === 'email' &&` check is redundant (nit).
+- `qa-contact.spec.js:145` now assumes name is the first field. Reordering the fields would break it.
+- The plural "Missing fields." title still appears when only one field is described. This was true before the repair.
+
+**Not verified**
+I ran nothing. Pass/fail on the baseline or candidate, the four-project passive results, and how the toast's announce region interacts with `getByRole('status')` are all unconfirmed.
+
+**Loaded**
+I read `repair.diff`, `Contact.jsx`, part of `Contact.test.jsx`, part of `qa-contact-lifecycle.spec.js`, part of `qa-contact.spec.js` and `convex/lib/leadValidation.ts`. AGENTS.md came only from context. I did not open any skill files (impeccable, web-design-guidelines, vercel-react-best-practices) or DESIGN.md FM-01.
+
+**Model/effort**
+You requested claude-opus-5.5 at high effort. The context says claude-opus-5.5, but I can't confirm my own model or effort level.

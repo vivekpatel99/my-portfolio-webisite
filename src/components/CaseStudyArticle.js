@@ -1,4 +1,7 @@
 import React from 'react';
+import { Link, useInRouterContext } from 'react-router-dom';
+import { DetectionLabel } from './DetectionFrame.js';
+import { ArrowRight } from 'lucide-react';
 import CaseStudyGallery, { collectGalleryImages } from './CaseStudyGallery.js';
 
 // Images belong to the top gallery; prune their now-empty text containers.
@@ -51,25 +54,36 @@ const renderBlocks = (nodes, keyPrefix) => nodes.map((node, index) => {
   }
 });
 
-export const CaseStudyArticle = ({ story, backHref = '/#portfolio' }) => React.createElement(
-  'article', { className: 'case-study-article' },
-  React.createElement('nav', { className: 'case-study-navigation', 'aria-label': 'Case study navigation' },
-    React.createElement('a', { className: 'case-study-back', href: backHref }, '← View case studies'),
-    React.createElement('a', { className: 'case-study-home', href: '/' }, 'Back to home'),
-  ),
-  story.category ? React.createElement('p', { className: 'case-study-category' }, story.category) : null,
-  React.createElement('h1', null, story.title),
-  React.createElement('p', { className: 'case-study-summary' }, story.summary),
-  React.createElement(CaseStudyGallery, { key: story.slug || story.id, images: collectGalleryImages(story) }),
-  React.createElement('div', { className: 'case-study-sections' }, story.sections.map((section) => ({ ...section, nodes: withoutImages(section.nodes) })).map((section) => React.createElement(
-    'section', { key: section.key },
-    React.createElement('h2', null, section.heading),
-    renderBlocks(section.nodes, section.key),
-  ))),
-  React.createElement('div', { className: 'case-study-cta' },
-    React.createElement('p', null, 'Working on something similar?'),
-    React.createElement('a', { href: '/contact/' }, 'Discuss a similar project →'),
-  ),
-);
+export const CaseStudyArticle = ({ story, backHref = '/#portfolio' }) => {
+  const inRouter = useInRouterContext();
+  const NavigationLink = inRouter ? Link : 'a';
+  const destination = inRouter ? 'to' : 'href';
+  return React.createElement(
+    'article', { className: 'case-study-article' },
+    React.createElement('nav', { className: 'case-study-navigation', 'aria-label': 'Case study navigation' },
+      React.createElement(NavigationLink, { className: 'case-study-back detection-panel detection-action detection-action--compact inline-flex', [destination]: backHref }, '← View case studies'),
+      React.createElement(NavigationLink, { className: 'case-study-home detection-panel detection-action detection-action--compact inline-flex', [destination]: '/' }, 'Back to home'),
+    ),
+    story.category ? React.createElement('p', { className: 'case-study-category' }, story.category) : null,
+    React.createElement('h1', null, story.title),
+    story.projectStatus === 'ongoing'
+      ? React.createElement('p', { className: 'case-study-status' }, 'In progress')
+      : null,
+    React.createElement('p', { className: 'case-study-summary' }, story.summary),
+    React.createElement(CaseStudyGallery, { key: story.slug || story.id, images: collectGalleryImages(story), overviewSrc: story.image?.src }),
+    React.createElement('div', { className: 'case-study-sections' }, story.sections.map((section) => ({ ...section, nodes: withoutImages(section.nodes) })).map((section) => React.createElement(
+      'section', { key: section.key },
+      React.createElement('h2', null, section.heading),
+      renderBlocks(section.nodes, section.key),
+    ))),
+    React.createElement('div', { className: 'case-study-cta' },
+      React.createElement('p', null, 'Working on something similar?'),
+      React.createElement(NavigationLink, {
+        className: 'detection-panel detection-action detection-action--labeled detection-action--primary inline-flex',
+        [destination]: '/contact/',
+      }, React.createElement(DetectionLabel, { 'aria-hidden': true }, 'PROJECT INQUIRY'), 'Discuss a similar project', React.createElement(ArrowRight, { size: 16, className: 'shrink-0', 'aria-hidden': true })),
+    ),
+  );
+};
 
 export default CaseStudyArticle;

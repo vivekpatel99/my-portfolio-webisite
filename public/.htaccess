@@ -26,6 +26,11 @@
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule ^project/(n8n-openai-data-extraction|invoice-ocr-extraction|yolo-computer-vision-optimization)/?$ index.html [L]
 
+  # Keep in sync with src/data/serviceOffers.js; the build fails on drift.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^services/(data-extraction-automation-sprint|computer-vision-production-optimization|ai-workflow-buildout)/?$ index.html [L]
+
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule ^ - [R=404,L]

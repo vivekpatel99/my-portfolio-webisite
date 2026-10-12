@@ -1,20 +1,67 @@
 // @vitest-environment node
-import { execFileSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { caseStudyPublicationManifest } from './case-study-manifest.js';
 import { compileCaseStudyPublication, renderPublicCaseStudyModule, sortCaseStudiesByCompletion } from './compile-case-studies.js';
+import { selectOngoingCaseStudies } from '../src/lib/caseStudyCollection.js';
 import { digest } from './case-study-evidence.js';
 import { deploymentHtaccess } from '../plugins/vite-plugin-case-study-publication.js';
+
+const fixtureProcesses = new Map();
+const stopFixtureProcess = (child) => {
+  if (!child.pid) return;
+  if (process.platform === 'win32') child.kill('SIGTERM');
+  else {
+    try { process.kill(-child.pid, 'SIGTERM'); } catch (error) {
+      if (error.code !== 'ESRCH') throw error;
+    }
+  }
+};
+
+const runFixtureCommand = (command, args, { timeout, ...options }) => new Promise((resolve, reject) => {
+  const child = spawn(command, args, {
+    ...options,
+    stdio: 'pipe',
+    detached: process.platform !== 'win32',
+  });
+  const processes = fixtureProcesses.get(options.cwd) ?? new Set();
+  fixtureProcesses.set(options.cwd, processes);
+  processes.add(child);
+  const stdout = [];
+  const stderr = [];
+  child.stdout.on('data', (chunk) => stdout.push(chunk));
+  child.stderr.on('data', (chunk) => stderr.push(chunk));
+  child.once('error', (error) => {
+    clearTimeout(timer);
+    reject(error);
+  });
+  child.once('close', (code, signal) => {
+    processes.delete(child);
+    if (processes.size === 0) fixtureProcesses.delete(options.cwd);
+    clearTimeout(timer);
+    if (code === 0) resolve(Buffer.concat(stdout).toString('utf8'));
+    else {
+      const error = new Error(`Command failed${signal ? ` (${signal})` : ''}: ${command} ${args.join(' ')}\n${Buffer.concat(stdout).toString('utf8')}\n${Buffer.concat(stderr).toString('utf8')}`);
+      error.code = code;
+      error.signal = signal;
+      reject(error);
+    }
+  });
+  const timer = setTimeout(() => {
+    // npm spawns Vite and the generators; stop the entire fixture command tree.
+    stopFixtureProcess(child);
+  }, timeout);
+});
 
 const outputDirectories = [];
 afterEach(() => outputDirectories.splice(0).forEach((directory) => rmSync(directory, { recursive: true, force: true })));
 
 const explicitApproval = (sha256) => ({ kind: 'explicit', sha256, approvedBy: 'Viv', approvedAt: '2026-09-08T00:00:00Z', evidence: 'https://example.invalid/approval/43' });
 const unitAssetPath = '/assets/case-studies/fixture-unit.webp';
-const unitAssetBytes = Buffer.from('UklGRiIAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEALAAAAAABAAgAAQUxQSDIAAA=', 'base64');
+const unitAssetBytes = Buffer.from('UklGRiYAAABXRUJQVlA4IBoAAAAwAQCdASoBAAEAAQAaJaQAA3AA/v5HgAAAAA==', 'base64');
 const fixtureContent = (id) => ({
   title: `${id} title`, cardTitle: `${id} card`, category: 'Fixture', summary: `${id} summary`,
   projectStatus: 'completed', completedAt: '2026-08',
@@ -66,11 +113,75 @@ const outputFiles = (directory) => readdirSync(directory, { withFileTypes: true 
   return entry.isDirectory() ? outputFiles(file) : [file];
 });
 const validFixturePng = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64');
-const validFixtureWebp = Buffer.from('UklGRiIAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEALAAAAAABAAgAAQUxQSDIAAA=', 'base64');
+const validFixtureWebp = Buffer.from('UklGRiYAAABXRUJQVlA4IBoAAAAwAQCdASoBAAEAAQAaJaQAA3AA/v5HgAAAAA==', 'base64');
+const validFixtureJpeg = readFileSync('public/assets/case-studies/n8n-openai-data-extraction-e6fbcc7caa954b217adfa063990d460059e44d08808ad85c9e8988418920104c-thumb-bd1dc61ef269.jpg');
 
-function buildFixture() {
+const fixtureDerivativeSources = new Map();
+const writeFixtureDerivativeRegistry = async (directory) => {
+  const sources = JSON.parse(await runFixtureCommand('node', ['--input-type=module', '-e', `
+import { readFileSync } from 'node:fs';
+import { compileCaseStudyPublication } from './publication/compile-case-studies.js';
+import { digest } from './publication/case-study-evidence.js';
+import { caseStudyImageSources } from './tools/generate-case-study-display-images.js';
+const sources = caseStudyImageSources(compileCaseStudyPublication()).map((src) => [src, digest(readFileSync('public' + src))]);
+process.stdout.write(JSON.stringify(sources));
+`], { cwd: directory, encoding: 'utf8', timeout: 20_000 }));
+  const prepared = fixtureDerivativeSources.get(directory);
+  // Withdrawals can reuse validated bindings; new paths or bytes need regeneration.
+  // npm run build still regenerates/checks every published derivative each time.
+  let registry;
+  if (prepared && sources.every(([src, sha256]) => prepared.sources.get(src) === sha256)) {
+    registry = Object.fromEntries(sources.map(([src]) => [src, prepared.registry[src]]));
+  } else {
+    const assetDirectory = path.join(directory, 'public/assets/case-studies');
+    const thumbnailSha256 = digest(validFixtureJpeg);
+    const thumbnailPath = `/assets/case-studies/fixture-thumb-${thumbnailSha256.slice(0, 12)}.jpg`;
+    writeFileSync(path.join(assetDirectory, path.basename(thumbnailPath)), validFixtureJpeg);
+    const generated = JSON.parse(await runFixtureCommand('node', [
+      path.join(directory, 'tools/generate-case-study-display-images.js'),
+      '--write',
+    ], { cwd: directory, encoding: 'utf8', stdio: 'pipe', timeout: 60_000 }));
+    registry = Object.fromEntries(generated.bindings.map((binding) => [
+      binding.sourcePath,
+      {
+        src: thumbnailPath,
+        sourceSha256: binding.sourceSha256,
+        thumbnailSha256,
+        display: {
+          src: binding.displayPath,
+          sha256: binding.displaySha256,
+          width: binding.displayWidth,
+          height: binding.displayHeight,
+        },
+      },
+    ]));
+  }
+  fixtureDerivativeSources.set(directory, { sources: new Map(sources), registry });
+  writeFileSync(path.join(directory, 'publication/case-study-derivatives.js'), `export const caseStudyThumbnailRegistry = Object.freeze(${JSON.stringify(registry, null, 2)});\n`);
+  const browserRegistry = Object.fromEntries(Object.entries(registry).map(([sourcePath, entry]) => [sourcePath, { src: entry.src, display: { src: entry.display.src } }]));
+  writeFileSync(path.join(directory, 'src/lib/caseStudyThumbnails.js'), `
+export const caseStudyThumbnailRegistry = Object.freeze(${JSON.stringify(browserRegistry, null, 2)});
+export const galleryThumbnailSrc = (item) => {
+  const derivative = caseStudyThumbnailRegistry[item?.src] || caseStudyThumbnailRegistry[item?.poster];
+  return derivative?.src || item?.poster || item?.src;
+};
+export const caseStudyDisplaySrc = (item) => {
+  const derivative = caseStudyThumbnailRegistry[item?.src] || caseStudyThumbnailRegistry[item?.poster];
+  return derivative?.display?.src || item?.src || item?.poster;
+};
+`);
+};
+
+function buildFixture(onTestFinished, { publicationOnly = false } = {}) {
   const directory = mkdtempSync(path.join(realpathSync(tmpdir()), 'case-study-publication-fixture-'));
-  outputDirectories.push(directory);
+  onTestFinished(async () => {
+    await Promise.all([...(fixtureProcesses.get(directory) ?? [])].map((child) => new Promise((resolve) => {
+      child.once('close', resolve);
+      stopFixtureProcess(child);
+    })));
+    fixtureDerivativeSources.delete(directory);
+    rmSync(directory, { recursive: true, force: true });
+  });
   for (const source of ['src', 'public', 'publication', 'plugins', 'tools', 'convex']) cpSync(source, path.join(directory, source), { recursive: true });
   writeFileSync(path.join(directory, 'publication/staged-case-study-publication.js'), 'export const stagedCaseStudyPublication = { "records": [], "claims": {}, "assets": {} };\n');
   const assetDirectory = path.join(directory, 'public/assets/case-studies');
@@ -80,19 +191,38 @@ function buildFixture() {
   writeFileSync(path.join(assetDirectory, 'obsolete-approved.webp'), 'OBSOLETE_FIXTURE_ASSET');
   writeFileSync(path.join(directory, 'publication/case-study-featured.js'), "export const featuredCaseStudySlugs = ['fixture-case-study', 'text-story-one', 'text-story-two'];\n");
   for (const source of ['index.html', 'package.json', 'vite.config.js', 'vitest.config.ts']) cpSync(source, path.join(directory, source));
+  // Fixture runners share dependencies, but never their transform/results caches.
+  const testConfig = path.join(directory, 'vitest.config.ts');
+  writeFileSync(testConfig, readFileSync(testConfig, 'utf8').replace('defineConfig({', "defineConfig({ cacheDir: path.join(__dirname, '.vitest-cache'),"));
+  if (publicationOnly) {
+    // These lifecycle cases exercise publication, not unrelated application code.
+    // The publish/withdraw case below still builds the complete SPA twice.
+    const index = path.join(directory, 'index.html');
+    writeFileSync(index, readFileSync(index, 'utf8').replace('/src/main.jsx', '/src/publication-fixture-entry.js'));
+    writeFileSync(path.join(directory, 'src/publication-fixture-entry.js'), `
+import * as caseStudies from './data/caseStudies.js';
+import * as thumbnails from './lib/caseStudyThumbnails.js';
+window.publicationFixture = { caseStudies, thumbnails };
+`);
+  }
   symlinkSync(path.join(process.cwd(), 'node_modules'), path.join(directory, 'node_modules'));
   return directory;
 }
 
-const runPublicationBuild = (directory) => execFileSync('npm', ['run', 'build'], {
-  cwd: directory,
-  encoding: 'utf8',
-  stdio: 'pipe',
-  timeout: 60_000,
-  killSignal: 'SIGTERM',
-});
-const runAffectedTests = (directory) => execFileSync(path.join(directory, 'node_modules/.bin/vitest'), [
+const runPublicationBuild = async (directory) => {
+  await writeFixtureDerivativeRegistry(directory);
+  return runFixtureCommand('npm', ['run', 'build'], {
+    cwd: directory,
+    encoding: 'utf8',
+    stdio: 'pipe',
+    timeout: 60_000,
+    killSignal: 'SIGTERM',
+  });
+};
+const runAffectedTests = (directory) => runFixtureCommand(path.join(directory, 'node_modules/.bin/vitest'), [
   'run',
+  // The outer runner's worker limit does not apply to this child Vitest process.
+  '--maxWorkers=2',
   'src/data/caseStudies.test.js',
   'tools/case-study-route-integrity.test.js',
   'src/components/Portfolio.test.jsx',
@@ -105,13 +235,13 @@ const runAffectedTests = (directory) => execFileSync(path.join(directory, 'node_
   killSignal: 'SIGTERM',
 });
 
-const runCaseStudyPrepare = (directory, sourceFiles) => execFileSync('node', [
+const runCaseStudyPrepare = (directory, sourceFiles) => runFixtureCommand('node', [
   path.join(directory, 'tools/prepare-case-study.js'),
   ...sourceFiles.flatMap((source) => ['--source', source]),
 ], { cwd: directory, encoding: 'utf8', stdio: 'pipe', timeout: 20_000 });
 
 const runCaseStudyStageWithDigest = (directory, candidatePath, candidateSha256) => {
-  return execFileSync('node', [
+  return runFixtureCommand('node', [
     path.join(directory, 'tools/stage-case-study-publication.js'),
     '--candidate', candidatePath,
     '--sha256', candidateSha256,
@@ -121,7 +251,7 @@ const runCaseStudyStageWithDigest = (directory, candidatePath, candidateSha256) 
   ], { cwd: directory, encoding: 'utf8', stdio: 'pipe', timeout: 20_000 });
 };
 const runCaseStudyStage = (directory, candidatePath) => runCaseStudyStageWithDigest(directory, candidatePath, digest(readFileSync(candidatePath)));
-const runCaseStudyWithdraw = (directory, id) => execFileSync('node', [
+const runCaseStudyWithdraw = (directory, id) => runFixtureCommand('node', [
   path.join(directory, 'tools/withdraw-case-study.js'), '--id', id,
 ], { cwd: directory, encoding: 'utf8', stdio: 'pipe', timeout: 20_000 });
 
@@ -200,6 +330,38 @@ describe('case-study publication boundary', () => {
     expect(module.featuredCaseStudies.map(({ id }) => id)).toEqual([
       'recently-published-older-project', 'older-published-newer-project',
     ]);
+    expect(module.ongoingCaseStudies.map(({ id }) => id)).toEqual(['ongoing-story']);
+    expect(module.getCaseStudyBySlug('ongoing-story')?.projectStatus).toBe('ongoing');
+    expect(module.caseStudySlugs).toContain('ongoing-story');
+    expect(module.eligibleCaseStudies.map(({ id }) => id)).not.toContain('ongoing-story');
+    expect(module.collectionCaseStudies.map(({ id }) => id)).not.toContain('ongoing-story');
+    expect(module.featuredCaseStudies.map(({ id }) => id)).not.toContain('ongoing-story');
+    expect(module.otherWorkCaseStudies).toEqual([]);
+    expect(rendered.match(/ongoing-story/g)).toHaveLength(2);
+    expect(rendered).toMatch(/export const ongoingCaseStudies = \[\d+\]\.map\(\(index\) => caseStudies\[index\]\);/);
+  });
+
+  it('exports ongoing stories in ASCII slug order and leaves unlabeled stories routable', async () => {
+    const publication = [
+      { id: 'zeta', slug: 'zeta', projectStatus: 'ongoing', completedAt: '1999-01' },
+      { id: 'done', slug: 'done', projectStatus: 'completed', completedAt: '2026-08' },
+      { id: 'plain', slug: 'plain' },
+      { id: 'alpha', slug: 'alpha', projectStatus: 'ongoing' },
+    ];
+    const originalOrder = publication.map((story) => story.slug);
+    const rendered = renderPublicCaseStudyModule(publication);
+    const module = await import(`data:text/javascript;base64,${Buffer.from(rendered).toString('base64')}`);
+
+    expect(publication.map((story) => story.slug)).toEqual(originalOrder);
+    expect(module.ongoingCaseStudies.map(({ slug }) => slug)).toEqual(['alpha', 'zeta']);
+    expect(module.ongoingCaseStudies.map(({ slug }) => slug)).toEqual(
+      selectOngoingCaseStudies(publication).map(({ slug }) => slug),
+    );
+    expect(module.eligibleCaseStudies.map(({ slug }) => slug)).toEqual(['done']);
+    expect(module.collectionCaseStudies.map(({ slug }) => slug)).toEqual(['done']);
+    expect(module.caseStudySlugs).toEqual(['zeta', 'done', 'plain', 'alpha']);
+    expect(module.getCaseStudyBySlug('plain')).toMatchObject({ slug: 'plain' });
+    expect(module.getCaseStudyBySlug('plain')).not.toHaveProperty('projectStatus');
   });
 
   it('drops a completed fixture slug from the collection when it is marked other-work', async () => {
@@ -463,15 +625,15 @@ describe('case-study publication boundary', () => {
     expect(rendered).toContain('RewriteRule ^project/ - [R=404,L]');
   });
 
-  it('builds from a self-contained fixture, excludes drafts, and withdraws stale public output', () => {
-    const directory = buildFixture();
+  it.concurrent('builds from a self-contained fixture, excludes drafts, and withdraws stale public output', async ({ onTestFinished }) => {
+    const directory = buildFixture(onTestFinished);
     const manifestPath = path.join(directory, 'publication/case-study-manifest.js');
     const trackedHtaccess = readFileSync(path.join(directory, 'public/.htaccess'));
     const trackedSitemap = readFileSync(path.join(directory, 'public/sitemap.xml'));
     writeFileSync(path.join(directory, 'public/assets/case-studies/private-sentinel.webp'), 'PRIVATE_SENTINEL_ASSET');
     writeFileSync(manifestPath, `${readFileSync(manifestPath, 'utf8')}\n${fixtureManifestSetup}\ncaseStudyPublicationManifest.records.push({ id: 'private-sentinel', slug: 'private-sentinel', status: 'draft' });\n`);
-    runPublicationBuild(directory);
-    runAffectedTests(directory);
+    await runPublicationBuild(directory);
+    await runAffectedTests(directory);
     const dist = path.join(directory, 'dist');
     const initialFiles = outputFiles(dist);
     const initialEntry = initialFiles.find((file) => /\/assets\/index-.*\.js$/.test(file));
@@ -490,8 +652,8 @@ describe('case-study publication boundary', () => {
 
     writeFileSync(manifestPath, `${readFileSync(manifestPath, 'utf8')}\ncaseStudyPublicationManifest.records.splice(0, caseStudyPublicationManifest.records.length, { id: 'fixture-case-study', slug: 'fixture-case-study', status: 'draft' }, { id: 'private-sentinel', slug: 'private-sentinel', status: 'draft' });\n`);
     rmSync(path.join(directory, 'public/assets/case-studies/obsolete-approved.webp'));
-    runPublicationBuild(directory);
-    runAffectedTests(directory);
+    await runPublicationBuild(directory);
+    await runAffectedTests(directory);
     const withdrawnFiles = outputFiles(dist);
     const outputText = Buffer.concat(withdrawnFiles.map((file) => readFileSync(file))).toString('latin1');
     expect(outputText).not.toContain('fixture-case-study');
@@ -506,8 +668,8 @@ describe('case-study publication boundary', () => {
     expect(existsSync(path.join(dist, 'project'))).toBe(false);
   }, 180_000);
 
-  it('prepares, stages, and builds two text stories with safe literal-dollar SEO and revisions', () => {
-    const directory = buildFixture();
+  it.concurrent('prepares, stages, and builds two text stories with safe literal-dollar SEO and revisions', async ({ onTestFinished }) => {
+    const directory = buildFixture(onTestFinished, { publicationOnly: true });
     cpSync('public/assets/case-studies', path.join(directory, 'public/assets/case-studies'), { recursive: true, force: true });
     const sourceOne = path.join(directory, 'story-one.md');
     const sourceTwo = path.join(directory, 'story-two.md');
@@ -518,12 +680,12 @@ describe('case-study publication boundary', () => {
     writeStory(sourceOne, 'text-story-one', 'Text story $& one', "A summary with $' replacement markers.", "Outcome with $& and $' markers.", 'cover.png');
     writeStory(sourceTwo, 'text-story-two', 'Text story two', 'Second story summary.', 'Second story outcome.');
 
-    runCaseStudyPrepare(directory, [sourceOne, sourceTwo]);
+    await runCaseStudyPrepare(directory, [sourceOne, sourceTwo]);
     const candidatePath = path.join(directory, '.case-study-preview/candidate.json');
-    runCaseStudyStage(directory, candidatePath);
+    await runCaseStudyStage(directory, candidatePath);
     const stagedAfterInitial = JSON.parse(readFileSync(path.join(directory, 'publication/staged-case-study-publication.js'), 'utf8').match(/= ([\s\S]*);\s*$/)[1]);
     const secondRecordBeforeRevision = structuredClone(stagedAfterInitial.records.find((record) => record.id === 'text-story-two'));
-    runPublicationBuild(directory);
+    await runPublicationBuild(directory);
     const assertNoSentinels = () => {
       const output = Buffer.concat(outputFiles(path.join(directory, 'dist')).map((file) => readFileSync(file))).toString('utf8');
       expect(output).not.toContain('PRIVATE_CASE_STUDY_SENTINEL');
@@ -533,7 +695,7 @@ describe('case-study publication boundary', () => {
     expect(outputFiles(path.join(directory, 'dist')).some((file) => /assets\/case-studies\/text-story-one-.*\.png$/.test(file))).toBe(true);
     const firstHtml = readFileSync(path.join(directory, 'dist/project/text-story-one/index.html'), 'utf8');
     expect(firstHtml).toContain('<h1>Text story $&amp; one</h1>');
-    expect(firstHtml).toContain('content="Text story $&amp; one | AI Case Study - Vivek Patel"');
+    expect(firstHtml).toContain('content="Text story $&amp; one | Vivek Patel"');
     expect(firstHtml).toContain("content=\"A summary with $' replacement markers.\"");
     expect(firstHtml).toContain('Outcome with $&amp; and $&#x27; markers.');
     expect(firstHtml).toContain('<ul>');
@@ -545,20 +707,20 @@ describe('case-study publication boundary', () => {
     const stagedBeforeInvalidRevision = readFileSync(path.join(directory, 'publication/staged-case-study-publication.js'), 'utf8');
     const candidateBeforeFailedBatch = readFileSync(path.join(directory, '.case-study-preview/candidate.json'), 'utf8');
     writeFileSync(sourceTwo, '---\nid: text-story-two\ntitle: Broken story\nsummary: Broken summary\n---\n\n## Missing heading\n\nThis batch is intentionally invalid.\n');
-    expect(() => runCaseStudyPrepare(directory, [sourceOne, sourceTwo])).toThrow(/The problem|image|heading|required/i);
+    await expect(runCaseStudyPrepare(directory, [sourceOne, sourceTwo])).rejects.toThrow(/The problem|image|heading|required/i);
     expect(readFileSync(path.join(directory, '.case-study-preview/candidate.json'), 'utf8')).toBe(candidateBeforeFailedBatch);
     writeStory(sourceTwo, 'text-story-two', 'Text story two', 'Second story summary.', 'Second story outcome.');
     writeStory(sourceOne, 'text-story-one', 'Text story $& one revised', "A revised summary with $' markers.", "A revised outcome with $& and $' markers.", 'cover-revised.webp');
-    runCaseStudyPrepare(directory, [sourceOne]);
-    expect(() => runCaseStudyStageWithDigest(directory, candidatePath, staleDigest)).toThrow(/digest mismatch/i);
+    await runCaseStudyPrepare(directory, [sourceOne]);
+    await expect(runCaseStudyStageWithDigest(directory, candidatePath, staleDigest)).rejects.toThrow(/digest mismatch/i);
     expect(readFileSync(path.join(directory, 'publication/staged-case-study-publication.js'), 'utf8')).toBe(stagedBeforeInvalidRevision);
-    runCaseStudyStage(directory, candidatePath);
-    runPublicationBuild(directory);
+    await runCaseStudyStage(directory, candidatePath);
+    await runPublicationBuild(directory);
     const revisedHtml = readFileSync(path.join(directory, 'dist/project/text-story-one/index.html'), 'utf8');
     expect(revisedHtml).toContain('<h1>Text story $&amp; one revised</h1>');
     expect(revisedHtml).toContain('A revised summary with $\' markers.');
     expect(revisedHtml).toContain('A revised outcome with $&amp; and $&#x27; markers.');
-    expect(revisedHtml).toContain('<meta data-react-helmet="true" property="og:title" content="Text story $&amp; one revised | AI Case Study - Vivek Patel" />');
+    expect(revisedHtml).toContain('<meta data-react-helmet="true" property="og:title" content="Text story $&amp; one revised | Vivek Patel" />');
     expect(revisedHtml).toContain('<meta data-react-helmet="true" property="og:description" content="A revised summary with $\' markers." />');
     const revisedOgImage = revisedHtml.match(/<meta[^>]+property="og:image"[^>]+>/i)?.[0] ?? '';
     expect(revisedOgImage).toContain('https://www.vivekapatel.com/assets/case-studies/text-story-one-');
@@ -569,7 +731,7 @@ describe('case-study publication boundary', () => {
     expect(revisedHtml).not.toContain('A summary with $\' replacement markers.');
     const stagedAfterRevision = JSON.parse(readFileSync(path.join(directory, 'publication/staged-case-study-publication.js'), 'utf8').match(/= ([\s\S]*);\s*$/)[1]);
     expect(stagedAfterRevision.records.find((record) => record.id === 'text-story-two')).toEqual(secondRecordBeforeRevision);
-    runAffectedTests(directory);
+    await runAffectedTests(directory);
     const secondAfterRevision = readFileSync(path.join(directory, 'dist/project/text-story-two/index.html'), 'utf8');
     expect(secondAfterRevision).toContain('<h1>Text story two</h1>');
     expect(secondAfterRevision).toContain('Second story outcome.');
@@ -580,14 +742,14 @@ describe('case-study publication boundary', () => {
     const entryBeforeWithdrawal = outputFiles(path.join(directory, 'dist')).find((file) => /\/assets\/index-[A-Za-z0-9_-]+\.js$/.test(file));
     expect(entryBeforeWithdrawal).toBeTruthy();
     const stagedBeforeWithdrawal = readFileSync(path.join(directory, 'publication/staged-case-study-publication.js'), 'utf8');
-    expect(runCaseStudyWithdraw(directory, 'text-story-two')).toContain('text-story-two');
+    expect(await runCaseStudyWithdraw(directory, 'text-story-two')).toContain('text-story-two');
     const withdrawalOutput = readFileSync(path.join(directory, 'publication/staged-case-study-publication.js'), 'utf8');
     expect(withdrawalOutput).toContain('"id": "text-story-two"');
     expect(withdrawalOutput).toContain('"status": "draft"');
     expect(withdrawalOutput).not.toContain('Second story outcome.');
     expect(withdrawalOutput).toContain('text-story-one');
     expect(withdrawalOutput).not.toBe(stagedBeforeWithdrawal);
-    runPublicationBuild(directory);
+    await runPublicationBuild(directory);
     expect(existsSync(path.join(directory, 'dist/project/text-story-two'))).toBe(false);
     expect(existsSync(path.join(directory, 'dist/project/text-story-one/index.html'))).toBe(true);
     expect(existsSync(entryBeforeWithdrawal)).toBe(false);
@@ -596,9 +758,9 @@ describe('case-study publication boundary', () => {
     expect(readFileSync(path.join(directory, 'dist/sitemap.xml'), 'utf8')).not.toContain('/project/text-story-two/');
   }, 180_000);
 
-  it('withdraws baseline identities through the CLI while retaining a genuinely shared public asset', () => {
-    const directory = buildFixture();
-    const sharedBytes = Buffer.from('UklGRiIAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEALAAAAAABAAgAAQUxQSDIAAA=', 'base64');
+  it.concurrent('withdraws baseline identities through the CLI while retaining a genuinely shared public asset', async ({ onTestFinished }) => {
+    const directory = buildFixture(onTestFinished, { publicationOnly: true });
+    const sharedBytes = validFixtureWebp;
     const sharedPath = path.join(directory, 'public/assets/case-studies/shared-fixture.webp');
     writeFileSync(sharedPath, sharedBytes);
     const manifestPath = path.join(directory, 'publication/case-study-manifest.js');
@@ -632,21 +794,20 @@ describe('case-study publication boundary', () => {
     };
     writeFileSync(manifestPath, `import { stagedCaseStudyPublication } from './staged-case-study-publication.js';\nimport { mergeCaseStudyManifest } from './case-study-manifest-merge.js';\nexport const caseStudyPublicationBaseline = ${JSON.stringify(sharedBaseline)};\nexport const caseStudyPublicationManifest = mergeCaseStudyManifest(caseStudyPublicationBaseline, stagedCaseStudyPublication);\n`);
 
-    runPublicationBuild(directory);
+    await runPublicationBuild(directory);
     expect(existsSync(path.join(directory, 'dist/project/text-story-one/index.html'))).toBe(true);
     expect(existsSync(path.join(directory, 'dist/project/text-story-two/index.html'))).toBe(true);
     expect(existsSync(path.join(directory, 'dist/assets/case-studies/shared-fixture.webp'))).toBe(true);
 
-    expect(runCaseStudyWithdraw(directory, 'text-story-one')).toContain('text-story-one');
-    runPublicationBuild(directory);
+    expect(await runCaseStudyWithdraw(directory, 'text-story-one')).toContain('text-story-one');
+    await runPublicationBuild(directory);
     expect(existsSync(path.join(directory, 'dist/project/text-story-one'))).toBe(false);
     expect(existsSync(path.join(directory, 'dist/project/text-story-two/index.html'))).toBe(true);
     expect(existsSync(path.join(directory, 'dist/assets/case-studies/shared-fixture.webp'))).toBe(true);
     expect(readFileSync(path.join(directory, 'dist/.htaccess'), 'utf8')).toContain('RewriteRule ^project/(text-story-two)/?$ index.html [L]');
 
-    expect(runCaseStudyWithdraw(directory, 'text-story-two')).toContain('text-story-two');
-    runPublicationBuild(directory);
-    runAffectedTests(directory);
+    expect(await runCaseStudyWithdraw(directory, 'text-story-two')).toContain('text-story-two');
+    await runPublicationBuild(directory);
     expect(existsSync(path.join(directory, 'dist/project'))).toBe(false);
     expect(existsSync(path.join(directory, 'dist/assets/case-studies/shared-fixture.webp'))).toBe(false);
     expect(readFileSync(path.join(directory, 'dist/.htaccess'), 'utf8')).toContain('RewriteRule ^project/ - [R=404,L]');

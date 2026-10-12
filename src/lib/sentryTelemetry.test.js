@@ -13,6 +13,10 @@ let sdk;
 let close;
 let load;
 let scope;
+let replayStop;
+let replayStart;
+let clientOptions;
+let send;
 
 beforeEach(() => {
   vi.resetModules();
@@ -20,12 +24,25 @@ beforeEach(() => {
   vi.stubEnv('VITE_SENTRY_DSN', 'test-dsn');
   const gate = new Promise((resolve) => { release = resolve; });
   close = vi.fn();
+  replayStop = vi.fn(() => Promise.resolve());
+  replayStart = vi.fn();
+  clientOptions = { enabled: true, tracesSampleRate: 0.2 };
+  send = vi.fn(() => Promise.resolve({ statusCode: 200 }));
   scope = { setTag: vi.fn() };
+  const client = { close, getOptions: () => clientOptions, getDsn: () => 'synthetic-dsn' };
   sdk = {
     init: vi.fn(),
     browserTracingIntegration: vi.fn(() => 'tracing'),
-    replayIntegration: vi.fn(() => 'replay'),
-    getCurrentHub: () => ({ getClient: () => ({ close }) }),
+    Replay: class {
+      constructor(options) {
+        sdk.replayOptions = options;
+        this._replay = { eventBuffer: null, stop: () => replayStop() };
+      }
+      _initialize() { replayStart(); }
+      stop() { return replayStop(); }
+    },
+    makeFetchTransport: () => ({ send, flush: () => Promise.resolve(true) }),
+    getCurrentHub: () => ({ getClient: () => client }),
     withScope: vi.fn((callback) => callback(scope)),
     captureException: vi.fn(),
   };
@@ -67,7 +84,8 @@ describe('deferred Sentry SDK', () => {
       replaysOnErrorSampleRate: 1,
       tracePropagationTargets: ['localhost', 'https://test.convex.cloud'],
     }));
-    expect(sdk.replayIntegration).toHaveBeenCalledWith({
+    expect(sdk.replayOptions).toEqual({
+      beforeErrorSampling: expect.any(Function),
       maskAllText: true,
       maskAllInputs: true,
       blockAllMedia: true,
@@ -78,6 +96,8 @@ describe('deferred Sentry SDK', () => {
     telemetry.captureException(error);
     expect(sdk.captureException).toHaveBeenCalledWith(error, undefined);
     telemetry.closeSentryTelemetry();
+    expect(replayStop).toHaveBeenCalledTimes(1);
+    expect(clientOptions.enabled).toBe(false);
     expect(close).toHaveBeenCalledWith(2000);
     telemetry.captureException(error);
     expect(sdk.captureException).toHaveBeenCalledTimes(1);
@@ -99,11 +119,12 @@ describe('deferred Sentry SDK', () => {
     expect(options.beforeBreadcrumb({ category: 'ui.click' }, { event: { target } })).toBeNull();
     expect(options.beforeBreadcrumb({ category: 'ui.click' }, { event: { target: {} } })).toEqual({ category: 'ui.click' });
     expect(options.beforeBreadcrumb({ category: 'fetch' }, { event: { target } })).toEqual({ category: 'fetch' });
-    expect(options.beforeSend({
+    const prepare = (event) => { options.integrations[0].preprocessEvent(event); return event; };
+    expect(options.beforeSend(prepare({
       message: 'synthetic form error',
       tags: { [SENSITIVE_TELEMETRY_TAG]: SENSITIVE_TELEMETRY_TAG_VALUE },
-    })).toBeNull();
-    expect(options.beforeSend({ message: 'synthetic background error', tags: {} }))
+    }))).toBeNull();
+    expect(options.beforeSend(prepare({ message: 'synthetic background error', tags: {} })))
       .toEqual({ message: 'synthetic background error', tags: {} });
 
     const sensitiveError = new Error('synthetic contact error');
@@ -135,4 +156,81 @@ describe('deferred Sentry SDK', () => {
     await expect(telemetry.initializeSentryTelemetry()).resolves.toBeUndefined();
     expect(console.warn).toHaveBeenCalledWith('Sentry telemetry could not be initialized', expect.any(Error));
   });
+
+  it('keeps transport closed through pending teardown and reuses the integration on reaccept', async () => {
+    const telemetry = await import('./sentryTelemetry');
+    const pending = telemetry.initializeSentryTelemetry();
+    release();
+    await pending;
+    const options = sdk.init.mock.calls[0][0];
+    const transport = options.transport({});
+    expect(sdk.getCurrentHub().getClient().getDsn()).toBe('synthetic-dsn');
+    const envelope = ['synthetic'];
+    await transport.send(envelope);
+    expect(send).toHaveBeenCalledTimes(1);
+
+    let finishResponse;
+    send.mockImplementationOnce(() => new Promise((resolve) => { finishResponse = resolve; }));
+    const oldResponse = transport.send(envelope);
+    let finishStop;
+    replayStop.mockImplementationOnce(() => new Promise((resolve) => { finishStop = resolve; }));
+    const stopping = telemetry.closeSentryTelemetry();
+    expect(sdk.getCurrentHub().getClient().getDsn()).toBeUndefined();
+    const accepting = telemetry.initializeSentryTelemetry();
+    await expect(transport.send(envelope)).resolves.toEqual({ statusCode: 0 });
+    expect(send).toHaveBeenCalledTimes(2);
+    expect(replayStart).toHaveBeenCalledTimes(1);
+    finishStop();
+    await stopping;
+    await accepting;
+    expect(clientOptions.enabled).toBe(true);
+    expect(sdk.getCurrentHub().getClient().getDsn()).toBe('synthetic-dsn');
+    expect(sdk.init).toHaveBeenCalledTimes(1);
+    expect(replayStart).toHaveBeenCalledTimes(2);
+    finishResponse({ statusCode: 200 });
+    await expect(oldResponse).resolves.toEqual({ statusCode: 0 });
+    await expect(transport.send(envelope)).resolves.toEqual({ statusCode: 200 });
+    expect(send).toHaveBeenCalledTimes(3);
+  });
+});
+
+it('rejects tracing from an earlier consent period and stops active transactions', async () => {
+  const telemetry = await import('./sentryTelemetry');
+  const pending = telemetry.initializeSentryTelemetry();
+  release();
+  await pending;
+  const options = sdk.init.mock.calls[0][0];
+  const hooks = {};
+  options.integrations[0].setup({ on: (name, callback) => { hooks[name] = callback; } });
+  const transaction = () => {
+    const trace = { sampled: true, tags: {} };
+    trace.setTag = (key, value) => { trace.tags[key] = value; };
+    trace.finish = vi.fn(() => hooks.finishTransaction(trace));
+    hooks.startTransaction(trace);
+    return trace;
+  };
+  const old = transaction();
+  const oldError = { message: 'queued error' };
+  options.integrations[0].preprocessEvent(oldError);
+  expect(options.beforeSend(oldError)).toEqual({ message: 'queued error', tags: {} });
+  const queued = { tags: { ...old.tags }, transaction: 'old' };
+  expect(options.beforeSendTransaction(queued)).toEqual({ tags: {}, transaction: 'old' });
+  await telemetry.closeSentryTelemetry();
+  expect(old.sampled).toBe(false);
+  expect(old.finish).toHaveBeenCalledOnce();
+  expect(clientOptions).not.toHaveProperty('tracesSampleRate');
+  expect(options.beforeBreadcrumb({ category: 'navigation' }, {})).toBeNull();
+  const withdrawn = transaction();
+  expect(withdrawn.sampled).toBe(false);
+  await telemetry.initializeSentryTelemetry();
+  expect(clientOptions.tracesSampleRate).toBe(0.2);
+  expect(options.beforeSendTransaction(queued)).toBeNull();
+  expect(options.beforeSend(oldError)).toBeNull();
+  const freshError = { message: 'fresh error' };
+  options.integrations[0].preprocessEvent(freshError);
+  expect(options.beforeSend(freshError)).toEqual({ message: 'fresh error', tags: {} });
+  expect(options.beforeSendTransaction({ tags: withdrawn.tags })).toBeNull();
+  const fresh = transaction();
+  expect(options.beforeSendTransaction({ tags: fresh.tags, transaction: 'fresh' }))
+    .toEqual({ tags: {}, transaction: 'fresh' });
 });

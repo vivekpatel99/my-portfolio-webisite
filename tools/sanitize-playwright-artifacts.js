@@ -15,12 +15,22 @@ export const artifactPaths = Object.freeze({
 
 const suites = Object.freeze({
   'qa-a11y.spec.js': { label: 'accessibility' },
+  'qa-budget.spec.js': { label: 'budget-dropdown' },
+  'qa-consent.spec.js': { label: 'consent' },
   'qa-contact.spec.js': { label: 'contact-validation' },
+  'qa-cursor.spec.js': { label: 'cursor-availability' },
   'qa-edge.spec.js': { label: 'edge-behavior' },
+  'qa-evidence-labels.spec.js': { label: 'evidence-labels' },
   'qa-focus.spec.js': { label: 'focus-regressions' },
+  'qa-fragments.spec.js': { label: 'fragment-navigation' },
+  'qa-hero-motion.spec.js': { label: 'hero-motion' },
+  'qa-hero-ocr-labels.spec.js': { label: 'hero-ocr-labels' },
   'qa-local-navigation.spec.js': { label: 'local-navigation' },
   'qa-responsive.spec.js': { label: 'responsive-layout' },
+  'qa-route-recovery.spec.js': { label: 'route-recovery' },
+  'qa-service-loading.spec.js': { label: 'service-loading' },
   'qa-routes.spec.js': { label: 'routing' },
+  'qa-testimonials.spec.js': { label: 'testimonials-carousel' },
   'qa-upgrade-interactions.spec.js': { label: 'upgrade-interactions' },
   'qa-visual.spec.js': { label: 'visual-smoke' },
 });

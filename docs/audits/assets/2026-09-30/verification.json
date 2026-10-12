@@ -1,0 +1,40 @@
+{
+  "auditedSHA": "2df30703fb450d6ae47a5f47ed45e10f119abd20",
+  "remoteDevelopSHAAtDeliveryPreparation": "2df30703fb450d6ae47a5f47ed45e10f119abd20",
+  "canonicalRepository": "vivekpatel99/my-portfolio-webisite",
+  "baselineCheckBeforeReportEdits": "passed",
+  "unit": {
+    "filesPassed": 54,
+    "testsPassed": 559
+  },
+  "build": {
+    "staticPages": 21,
+    "publicLinksChecked": 36
+  },
+  "localSEO": "passed",
+  "passiveQA": {
+    "passed": 341,
+    "skipped": 7
+  },
+  "isolatedContactLifecycle": {
+    "passed": 1,
+    "realSubmissions": 0
+  },
+  "extendedContactObservation": {
+    "passed": 1,
+    "realSubmissions": 0
+  },
+  "geometryCells": 105,
+  "motionCells": 84,
+  "browserEngines": [
+    "T3 Chrome 152 / Electron 44",
+    "local Playwright Chromium",
+    "Playwright WebKit focus projects only"
+  ],
+  "native200PercentBrowserZoom": "unverified; CSS zoom=2 only",
+  "fieldCoreWebVitals": "not measured",
+  "ApacheHosting": "not verified",
+  "fontAndReactRerenderCounts": "source-reviewed; dedicated quantitative traces not collected",
+  "originalBaselineSHA256": "4c871a664009a2142eb00051306a84beff90b9d5ef78bee879352446ad0d8e9f",
+  "freshReportReview": "Independent read-only Codex review found no blocking report defects; accepted source-pointer and method precision corrections."
+}

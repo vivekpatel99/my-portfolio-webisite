@@ -1,0 +1,74 @@
+
+ RUN  v4.1.8 <repository>
+
+ ❯ publication/case-study-publication.test.js (18 tests | 2 failed) 136947ms
+     ✓ generates one completed-only collection set for browser consumers 9ms
+     ✓ drops a completed fixture slug from the collection when it is marked other-work 4ms
+     ✓ breaks equal-month ties by ASCII slug order, independent of runtime locale 3ms
+     ✓ accepts approved legacy completion without inventing a month 22ms
+     ✓ projects project status from approved article content 9ms
+     ✓ keeps published articles available while eligible collection data requires completed status 76ms
+     ✓ keeps the completion month absent for approved legacy content 21ms
+     ✓ still compiles the default fixture with completed status and 2026-08 15ms
+     ✓ still compiles when both projectStatus and completedAt are omitted 9ms
+     ✓ rejects ongoing status with a valid completion month 4ms
+     ✓ retains dated and undated completed legacy records together 9ms
+     ✓ rejects draft payloads, changed baseline identity, and moved approved claims 29ms
+     ✓ fails closed for duplicate slugs, missing approvals, and unsafe external links 48ms
+     ✓ rejects new-article image paths with unsupported or mismatched extensions 24ms
+     ✓ renders a deny-all deployment rule when every case study is withdrawn 17ms
+     × builds from a self-contained fixture, excludes drafts, and withdraws stale public output 70050ms
+     × prepares, stages, and builds two text stories with safe literal-dollar SEO and revisions 136640ms
+     ✓ withdraws baseline identities through the CLI while retaining a genuinely shared public asset  73187ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  publication/case-study-publication.test.js > case-study publication boundary > builds from a self-contained fixture, excludes drafts, and withdraws stale public output
+Error: Command failed (SIGTERM): npm run build
+
+> vivekapatel-portfolio@0.13.0 build
+> node tools/generate-case-study-display-images.js --check && vite build && node tools/generate-sitemap.js && node tools/generate-static-route-html.js
+
+Verified 1 regenerated display derivatives for 1 published image sources.
+vite v6.4.3 building for production...
+transforming...
+
+
+ ❯ ChildProcess.<anonymous> publication/case-study-publication.test.js:46:21
+     44|     if (code === 0) resolve(Buffer.concat(stdout).toString('utf8'));
+     45|     else {
+     46|       const error = new Error(`Command failed${signal ? ` (${signal})`…
+       |                     ^
+     47|       error.code = code;
+     48|       error.signal = signal;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  publication/case-study-publication.test.js > case-study publication boundary > prepares, stages, and builds two text stories with safe literal-dollar SEO and revisions
+Error: Command failed: /tmp/case-study-publication-fixture-yfQI3l/node_modules/.bin/vitest run src/data/caseStudies.test.js tools/case-study-route-integrity.test.js src/components/Portfolio.test.jsx src/pages/Project.test.jsx
+
+ RUN  v4.1.8 /tmp/case-study-publication-fixture-yfQI3l
+
+ ✓ src/data/caseStudies.test.js (22 tests) 22ms
+ ✓ tools/case-study-route-integrity.test.js (17 tests) 2381ms
+     ✓ runs real generators, preserves tracked deployment routing bytes, and removes only stale generated HTML  1112ms
+     ✓ fails before writing through a canonical route directory symlink  389ms
+     ✓ fails before writing through a canonical route index symlink  407ms
+ ✓ src/components/Portfolio.test.jsx (2 tests) 256ms
+
+
+ ❯ ChildProcess.<anonymous> publication/case-study-publication.test.js:46:21
+     44|     if (code === 0) resolve(Buffer.concat(stdout).toString('utf8'));
+     45|     else {
+     46|       const error = new Error(`Command failed${signal ? ` (${signal})`…
+       |                     ^
+     47|       error.code = code;
+     48|       error.signal = signal;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 16 passed (18)
+   Start at  07:36:05
+   Duration  140.00s (transform 682ms, setup 0ms, import 1.01s, tests 136.95s, environment 0ms)

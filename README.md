@@ -16,6 +16,10 @@ npm run dev
 
 Set `VITE_CONVEX_URL` in `.env.local` when you want the contact form to talk to Convex. For UI-only local work, the app can start without it, but contact submissions will fail with a clear disabled-client message.
 
+## Update the hourly rate
+
+Change `HOURLY_RATE_EUR` in `src/config/pricing.js`. The hero, service offers, service pages, estimate CTA, page descriptions, structured data, and the proposal-linking skill's `SITE_RATE` use that single amount. Both `€<amount>/hour` and `from €<amount>/hour` are derived from it. Rebuild and release through the normal PR workflow to update the deployed site.
+
 ## Core Commands
 
 | Command | Purpose |
@@ -27,6 +31,7 @@ Set `VITE_CONVEX_URL` in `.env.local` when you want the contact form to talk to 
 | `npm run qa:seo` | Check route SEO metadata for preview and production targets. |
 | `npm run qa:playwright:passive` | Run passive Playwright QA across configured preview and production projects. |
 | `npm run qa:playwright:ci` | Run Chromium preview QA plus desktop/mobile WebKit focus regressions (set `QA_LOCAL_ONLY=1`). |
+| `npm run qa:playwright:ci:chromium` / `:webkit` | Run one browser family of `qa:playwright:ci`; CI shards each family separately. |
 | `npm run qa:contact-lifecycle` | Start an isolated local server and test contact pending/failure/retry with an in-memory transport. |
 | `npm run qa:playwright:live-contact` | Opt-in live contact-form QA. This can create real Convex leads and send email. |
 | `npm run convex:dev` | Start Convex local/dev workflow. |
@@ -78,12 +83,12 @@ Important frontend files:
 | --- | --- |
 | `src/components/Header.jsx` | Fixed desktop/mobile navigation, hash navigation, contact CTA. |
 | `src/components/Footer.jsx` | Footer links, cookie manager trigger, contact/social links. |
-| `src/components/Services.jsx` | Local accordion state for service copy. |
+| `src/components/Services.jsx` | Three home offer cards with a link to each service's scope details. |
 | `src/components/Portfolio.jsx` | Published case-study cards, optional covers, summaries, and article links. |
 | `src/components/Experience.jsx` | Timeline/collapsible experience section. |
 | `src/pages/Contact.jsx` | Contact form state, client-side validation, Convex mutation call, toasts, Sentry capture. |
 | `src/pages/Project.jsx` | Case-study route lookup, SEO, article rendering, and missing-project handling. |
-| `src/config/links.js` | Centralized social links, remote image URLs, logos, backgrounds, tech icons, gallery images. |
+| `src/config/links.js` | Social and contact links, logo paths, and profile image URLs. |
 | `src/lib/seoConfig.js` | Site URL, default SEO, route-specific SEO config. |
 | `src/lib/seo.js` | React Helmet SEO component. |
 | `src/lib/consent.js` | Cookie consent persistence helpers. |

@@ -1,0 +1,210 @@
+{
+  "rows": [
+    {
+      "width": 320,
+      "pill": {
+        "x": 16,
+        "y": 129,
+        "width": 155.765625,
+        "height": 30.5,
+        "top": 129,
+        "right": 171.765625,
+        "bottom": 159.5,
+        "left": 16
+      },
+      "chip": {
+        "x": 35,
+        "y": 147.5,
+        "width": 148.421875,
+        "height": 23,
+        "top": 147.5,
+        "right": 183.421875,
+        "bottom": 170.5,
+        "left": 35
+      },
+      "overlapY": 12
+    },
+    {
+      "width": 390,
+      "pill": {
+        "x": 16,
+        "y": 129,
+        "width": 155.765625,
+        "height": 30.5,
+        "top": 129,
+        "right": 171.765625,
+        "bottom": 159.5,
+        "left": 16
+      },
+      "chip": {
+        "x": 35,
+        "y": 147.5,
+        "width": 148.421875,
+        "height": 23,
+        "top": 147.5,
+        "right": 183.421875,
+        "bottom": 170.5,
+        "left": 35
+      },
+      "overlapY": 12
+    },
+    {
+      "width": 768,
+      "pill": {
+        "x": 48,
+        "y": 197,
+        "width": 155.765625,
+        "height": 30.5,
+        "top": 197,
+        "right": 203.765625,
+        "bottom": 227.5,
+        "left": 48
+      },
+      "chip": {
+        "x": 67,
+        "y": 215.5,
+        "width": 148.421875,
+        "height": 23,
+        "top": 215.5,
+        "right": 215.421875,
+        "bottom": 238.5,
+        "left": 67
+      },
+      "overlapY": 12
+    },
+    {
+      "width": 1024,
+      "pill": {
+        "x": 48,
+        "y": 197,
+        "width": 155.765625,
+        "height": 30.5,
+        "top": 197,
+        "right": 203.765625,
+        "bottom": 227.5,
+        "left": 48
+      },
+      "chip": {
+        "x": 67,
+        "y": 215.5,
+        "width": 148.421875,
+        "height": 23,
+        "top": 215.5,
+        "right": 215.421875,
+        "bottom": 238.5,
+        "left": 67
+      },
+      "overlapY": 12
+    },
+    {
+      "width": 1440,
+      "pill": {
+        "x": 68,
+        "y": 197,
+        "width": 155.765625,
+        "height": 30.5,
+        "top": 197,
+        "right": 223.765625,
+        "bottom": 227.5,
+        "left": 68
+      },
+      "chip": {
+        "x": 87,
+        "y": 215.5,
+        "width": 148.421875,
+        "height": 23,
+        "top": 215.5,
+        "right": 235.421875,
+        "bottom": 238.5,
+        "left": 87
+      },
+      "overlapY": 12
+    }
+  ],
+  "gallery": [
+    {
+      "i": 0,
+      "stage": {
+        "x": 22,
+        "y": 580.984375,
+        "width": 346,
+        "height": 101.328125,
+        "top": 580.984375,
+        "right": 368,
+        "bottom": 682.3125,
+        "left": 22
+      },
+      "selected": "/assets/case-studies/n8n-openai-data-extraction-b11f57c86cd2e19c810cc72df7925d1ac3a65c0aabfcdf29a7298f78c5b6dc82.png"
+    },
+    {
+      "i": 1,
+      "stage": {
+        "x": 22,
+        "y": 580.984375,
+        "width": 346,
+        "height": 202.15625,
+        "top": 580.984375,
+        "right": 368,
+        "bottom": 783.140625,
+        "left": 22
+      },
+      "selected": "/assets/case-studies/n8n-openai-data-extraction-7e992ce1c04c997787f1eb7790f0bc04e59ad3403e5f8c5e227b4d594db7829b.png"
+    },
+    {
+      "i": 2,
+      "stage": {
+        "x": 22,
+        "y": 530.984375,
+        "width": 346,
+        "height": 97.171875,
+        "top": 530.984375,
+        "right": 368,
+        "bottom": 628.15625,
+        "left": 22
+      },
+      "selected": "/assets/case-studies/n8n-openai-data-extraction-ef68f8fb2060291419713daf3c385f923333fbe87869f5828ada20ba68d3f338.png"
+    },
+    {
+      "i": 3,
+      "stage": {
+        "x": 22,
+        "y": 530.984375,
+        "width": 346,
+        "height": 126.484375,
+        "top": 530.984375,
+        "right": 368,
+        "bottom": 657.46875,
+        "left": 22
+      },
+      "selected": "/assets/case-studies/n8n-openai-data-extraction-f60a6d00c4e80b105fe22f03ddd6d500689c0d956a85ff4457e6f11cd14d27f7.png"
+    },
+    {
+      "i": 4,
+      "stage": {
+        "x": 22,
+        "y": 530.984375,
+        "width": 346,
+        "height": 259.5,
+        "top": 530.984375,
+        "right": 368,
+        "bottom": 790.484375,
+        "left": 22
+      },
+      "selected": "/assets/case-studies/n8n-openai-data-extraction-3b3acaaa3beaef9b7c4e2c33ac9ff98b294a28be75d13abbac29af3292599b66.png"
+    },
+    {
+      "i": 5,
+      "stage": {
+        "x": 22,
+        "y": 473.984375,
+        "width": 346,
+        "height": 216.09375,
+        "top": 473.984375,
+        "right": 368,
+        "bottom": 690.078125,
+        "left": 22
+      },
+      "selected": "/assets/case-studies/n8n-openai-data-extraction-489e4160aa64c5141e750196c0de330320839b345c2f9aaa28137cce795f9275.png"
+    }
+  ]
+}

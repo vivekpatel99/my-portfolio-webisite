@@ -1,0 +1,63 @@
+
+ RUN  v4.1.8 <repository>
+
+ ❯ publication/case-study-publication.test.js (18 tests | 2 failed) 82479ms
+     × builds from a self-contained fixture, excludes drafts, and withdraws stale public output 61993ms
+     × prepares, stages, and builds two text stories with safe literal-dollar SEO and revisions 82299ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  publication/case-study-publication.test.js > case-study publication boundary > builds from a self-contained fixture, excludes drafts, and withdraws stale public output
+Error: Command failed: /tmp/case-study-publication-fixture-Eo4MTn/node_modules/.bin/vitest run src/data/caseStudies.test.js tools/case-study-route-integrity.test.js src/components/Portfolio.test.jsx src/pages/Project.test.jsx
+
+failed to load config from /tmp/case-study-publication-fixture-Eo4MTn/vitest.config.ts
+
+⎯⎯⎯⎯⎯⎯⎯ Startup Error ⎯⎯⎯⎯⎯⎯⎯⎯
+Error: The service was stopped: write EPIPE
+    at <repository>/node_modules/esbuild/lib/main.js:949:34
+    at responseCallbacks.<computed> (<repository>/node_modules/esbuild/lib/main.js:603:9)
+    at afterClose (<repository>/node_modules/esbuild/lib/main.js:594:28)
+    at <repository>/node_modules/esbuild/lib/main.js:1986:18
+    at onwriteError (node:internal/streams/writable:603:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:92:21)
+
+
+
+
+ ❯ node_modules/esbuild/lib/main.js:949:34
+ ❯ responseCallbacks.<computed> node_modules/esbuild/lib/main.js:603:9
+ ❯ afterClose node_modules/esbuild/lib/main.js:594:28
+ ❯ node_modules/esbuild/lib/main.js:1986:18
+ ❯ ChildProcess.<anonymous> publication/case-study-publication.test.js:46:21
+     44|     if (code === 0) resolve(Buffer.concat(stdout).toString('utf8'));
+     45|     else {
+     46|       const error = new Error(`Command failed${signal ? ` (${signal})`…
+       |                     ^
+     47|       error.code = code;
+     48|       error.signal = signal;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  publication/case-study-publication.test.js > case-study publication boundary > prepares, stages, and builds two text stories with safe literal-dollar SEO and revisions
+Error: Command failed (SIGTERM): npm run build
+
+> vivekapatel-portfolio@0.13.0 build
+> node tools/generate-case-study-display-images.js --check && vite build && node tools/generate-sitemap.js && node tools/generate-static-route-html.js
+
+
+
+ ❯ ChildProcess.<anonymous> publication/case-study-publication.test.js:46:21
+     44|     if (code === 0) resolve(Buffer.concat(stdout).toString('utf8'));
+     45|     else {
+     46|       const error = new Error(`Command failed${signal ? ` (${signal})`…
+       |                     ^
+     47|       error.code = code;
+     48|       error.signal = signal;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 16 passed (18)
+   Start at  09:33:25
+   Duration  83.22s (transform 280ms, setup 0ms, import 469ms, tests 82.48s, environment 0ms)

@@ -1,0 +1,54 @@
+{
+  "target": [
+    "es2020",
+    "edge88",
+    "firefox78",
+    "chrome87",
+    "safari14"
+  ],
+  "assetCount": 6,
+  "lookbehindAssets": [],
+  "extractor": "children:(n=e.summary,(null==(r=n.match(/^[\\s\\S]*?\\.(?=\\s)/))?void 0:r[0])??n)}),h.jsxs(\"dl\",{className:\"mt-auto flex flex-wrap gap-[10px] gap-x-7 mb-5 pt-4 bor",
+  "pixels": [
+    {
+      "browser": "chromium",
+      "width": 1440,
+      "identical": true
+    },
+    {
+      "browser": "chromium",
+      "width": 980,
+      "identical": true
+    },
+    {
+      "browser": "chromium",
+      "width": 390,
+      "identical": true
+    },
+    {
+      "browser": "chromium",
+      "width": 320,
+      "identical": true
+    },
+    {
+      "browser": "webkit",
+      "width": 1440,
+      "identical": true
+    },
+    {
+      "browser": "webkit",
+      "width": 980,
+      "identical": true
+    },
+    {
+      "browser": "webkit",
+      "width": 390,
+      "identical": false
+    },
+    {
+      "browser": "webkit",
+      "width": 320,
+      "identical": false
+    }
+  ]
+}

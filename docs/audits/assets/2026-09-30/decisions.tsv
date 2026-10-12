@@ -1,0 +1,11 @@
+# Checkpoints after the first row were reconstructed at report preparation from executed artifacts; times are date-only.
+time	decision	reason	evidence	result
+2026-09-30	audit remote develop	local one commit behind	git ls-remote and GitHub branches API	fast-forwarded without changing baseline files
+2026-09-30	read-only Kiro direct fallback	wrapper returned empty output six times	review-provenance.json	six direct sessions succeeded; runtime identity unreported
+2026-09-30	reject T3 timing	scheduled animation-frame control did not run	production probe-performance.json	used working local Chromium measurements
+2026-09-30	reconcile repeated probes	click-induced scrolling distorted first home history sample	probe-history.json	home Back refuted; Other Work retained
+2026-09-30	narrow drawer scope	320px height fits; 256px and 200px do not	probe-drawer-zoom.json	filed only reproduced short-height defect
+2026-09-30	classify design exceptions	approved framing and media aspect ratios are intentional	layout-observations.json; detector-observations.json	no generic redesign issues
+2026-09-30	deduplicate before each write	existing closed acceptance scopes remain relevant	live GitHub issue list and findings.json	12 new issues; matching history reused without state changes
+2026-09-30	reconcile B	stale summary and severity differed from final probes	review-provenance.json; probe-performance.json	coordinator decisions explicit in report
+2026-09-30	fresh report review	independent evidence and claim check	verification.json	no blockers; exact pointers and probe conditions corrected

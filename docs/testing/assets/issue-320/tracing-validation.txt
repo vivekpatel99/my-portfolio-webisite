@@ -1,0 +1,75 @@
+Tracing consent regression: synthetic-only real SDK validation.
+
+tracing-red.log
+
+  2) [webkit] › tests/qa/qa-replay-consent.spec.js:362:1 › navigation tracing cannot cross a withdrawn consent interval
+
+    Error: expect(received).not.toContain(expected) // indexOf
+
+    Expected substring: not "WITHOUT_CONSENT"
+
+      387 |   });
+      388 |   const sent = await page.evaluate(() => JSON.stringify(window.qa.envelopes));
+    > 389 |   expect(sent).not.toContain('WITHOUT_CONSENT');
+          |                    ^
+      390 |   expect(sent).not.toContain('/before-withdrawal');
+      391 |   expect(await page.evaluate(() => window.qa.withdrawnTrace.isRecording())).toBe(false);
+      392 |   await page.evaluate(async () => {
+        at /Users/viv/.codex/worktrees/22db/horizons-website/tests/qa/qa-replay-consent.spec.js:389:20
+
+    Error Context: ../../../../../../var/folders/ps/3qyy3_ms4fb64jwckmxppgtr0000gn/T/replay-consent-YIQR1y/results/qa-replay-consent-navigati-7d9dc--withdrawn-consent-interval-webkit/error-context.md
+
+  2 failed
+    [chromium] › tests/qa/qa-replay-consent.spec.js:362:1 › navigation tracing cannot cross a withdrawn consent interval
+    [webkit] › tests/qa/qa-replay-consent.spec.js:362:1 › navigation tracing cannot cross a withdrawn consent interval
+file:///Users/viv/.codex/worktrees/22db/horizons-website/tools/run-replay-consent-qa.js:30
+      else reject(new Error(`${path.basename(script)} failed (${code ?? signal})`));
+                  ^
+
+Error: cli.js failed (1)
+    at ChildProcess.<anonymous> (file:///Users/viv/.codex/worktrees/22db/horizons-website/tools/run-replay-consent-qa.js:30:19)
+    at ChildProcess.wrapper (node:events:639:12)
+    at ChildProcess.emit (node:events:514:20)
+    at ChildProcess._handle.onexit (node:internal/child_process:323:12)
+
+Node.js v26.10.0
+
+tracing-green.log
+(node:47203) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✓  2 [webkit] › tests/qa/qa-replay-consent.spec.js:362:1 › navigation tracing cannot cross a withdrawn consent interval (499ms)
+
+  2 passed (1.4s)
+
+tracing-final44.log
+  ✓  42 [webkit] › tests/qa/qa-replay-consent.spec.js:332:3 › buffer: a performance-event failure inside flush cannot deadlock native stop (376ms)
+  ✓  43 [webkit] › tests/qa/qa-replay-consent.spec.js:362:1 › navigation tracing cannot cross a withdrawn consent interval (371ms)
+  ✓  44 [webkit] › tests/qa/qa-replay-consent.spec.js:405:1 › a queued transaction is discarded after withdrawal and reaccept (16.3s)
+
+  44 passed (1.3m)
+
+tracing-final-unit.log
+Not implemented: navigation to another Document
+
+ Test Files  71 passed (71)
+      Tests  905 passed (905)
+   Start at  16:36:25
+   Duration  24.89s (transform 640ms, setup 0ms, import 4.14s, tests 31.21s, environment 6.88s)
+
+
+tracing-final-build.log
+dist/assets/index-B_Xd_gak.js                                                                                                                       451.04 kB │ gzip: 142.07 kB
+✓ built in 2.29s
+✅ sitemap.xml generated successfully!
+Checked 36 public links against static output.
+Generated static HTML for 21 routes, including 404.html.
+
+anchor-repeat.log
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   9 [preview-webkit-mobile] › tests/qa/qa-fragments.spec.js:125:3 › ordinary footer Portfolio link preserves anchor position and focus (1.8s)
+  ✓  10 [preview-webkit-mobile] › tests/qa/qa-fragments.spec.js:125:3 › ordinary footer Portfolio link preserves anchor position and focus (1.8s)
+
+  10 passed (11.6s)
+
+ESLint: exit0, existing shared plugin resolved read-only from primary checkout.
+[{"filePath":"/Users/viv/.codex/worktrees/22db/horizons-website/src/lib/sentryTelemetry.js","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[{"ruleId":"no-extra-semi","replacedBy":[]},{"ruleId":"no-mixed-spaces-and-tabs","replacedBy":[]}]},{"filePath":"/Users/viv/.codex/worktrees/22db/horizons-website/src/lib/sentryTelemetry.test.js","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[{"ruleId":"no-extra-semi","replacedBy":[]},{"ruleId":"no-mixed-spaces-and-tabs","replacedBy":[]}]},{"filePath":"/Users/viv/.codex/worktrees/22db/horizons-website/tests/qa/fixtures/replay-consent/main.jsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[{"ruleId":"no-extra-semi","replacedBy":[]},{"ruleId":"no-mixed-spaces-and-tabs","replacedBy":[]}]},{"filePath":"/Users/viv/.codex/worktrees/22db/horizons-website/tests/qa/fixtures/replay-consent/sdk.js","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[{"ruleId":"no-extra-semi","replacedBy":[]},{"ruleId":"no-mixed-spaces-and-tabs","replacedBy":[]}]},{"filePath":"/Users/viv/.codex/worktrees/22db/horizons-website/tests/qa/qa-replay-consent.spec.js","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[{"ruleId":"no-extra-semi","replacedBy":[]},{"ruleId":"no-mixed-spaces-and-tabs","replacedBy":[]}]}]

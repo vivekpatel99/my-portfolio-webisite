@@ -1,0 +1,666 @@
+{
+  "before": [
+    {
+      "width": 1440,
+      "height": 900,
+      "hero": {
+        "hash": "#portfolio",
+        "heading": "Selected workFEATURED CASE STUDIES",
+        "label": "Selected work",
+        "headingBox": {
+          "top": 191.75,
+          "bottom": 270.96875,
+          "height": 79.21875
+        },
+        "paragraphBox": {
+          "top": 284.96875,
+          "bottom": 332.09375,
+          "height": 47.125
+        },
+        "cardBox": {
+          "top": 372.09375,
+          "bottom": 837.390625,
+          "height": 465.296875
+        },
+        "sectionBox": {
+          "top": 127.75,
+          "bottom": 961.390625,
+          "height": 833.640625
+        },
+        "headerBox": {
+          "top": 0,
+          "bottom": 69,
+          "height": 69
+        },
+        "overflow": false,
+        "cardLinks": [
+          {
+            "text": "Read case study: Website Data to Structured JSON with n8n and OpenAI",
+            "href": "/project/n8n-openai-data-extraction/"
+          },
+          {
+            "text": "Read case study: From Invoice Photos to Reviewable Client Data",
+            "href": "/project/invoice-ocr-extraction/"
+          },
+          {
+            "text": "Read case study: Reviewable Body-Pose Detection for Fitness Images",
+            "href": "/project/yolo-computer-vision-optimization/"
+          },
+          {
+            "text": "View all case studies (12)",
+            "href": "/case-studies/"
+          }
+        ],
+        "corners": "linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128))",
+        "headingCorners": "linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128))",
+        "headingPadding": "19px 23px 17px",
+        "paragraphMargin": "40px"
+      },
+      "footer": {
+        "hash": "#portfolio",
+        "heading": "Selected workFEATURED CASE STUDIES",
+        "label": "Selected work",
+        "headingBox": {
+          "top": 209.75,
+          "bottom": 288.96875,
+          "height": 79.21875
+        },
+        "paragraphBox": {
+          "top": 302.96875,
+          "bottom": 350.09375,
+          "height": 47.125
+        },
+        "cardBox": {
+          "top": 390.09375,
+          "bottom": 855.390625,
+          "height": 465.296875
+        },
+        "sectionBox": {
+          "top": 145.75,
+          "bottom": 979.390625,
+          "height": 833.640625
+        },
+        "headerBox": {
+          "top": 0,
+          "bottom": 69,
+          "height": 69
+        },
+        "overflow": false,
+        "cardLinks": [
+          {
+            "text": "Read case study: Website Data to Structured JSON with n8n and OpenAI",
+            "href": "/project/n8n-openai-data-extraction/"
+          },
+          {
+            "text": "Read case study: From Invoice Photos to Reviewable Client Data",
+            "href": "/project/invoice-ocr-extraction/"
+          },
+          {
+            "text": "Read case study: Reviewable Body-Pose Detection for Fitness Images",
+            "href": "/project/yolo-computer-vision-optimization/"
+          },
+          {
+            "text": "View all case studies (12)",
+            "href": "/case-studies/"
+          }
+        ],
+        "corners": "linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250)), linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250)), linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250)), linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250))",
+        "headingCorners": "linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128))",
+        "headingPadding": "19px 23px 17px",
+        "paragraphMargin": "40px"
+      }
+    },
+    {
+      "width": 980,
+      "height": 1324,
+      "hero": {
+        "hash": "#portfolio",
+        "heading": "Selected workFEATURED CASE STUDIES",
+        "label": "Selected work",
+        "headingBox": {
+          "top": 192.15625,
+          "bottom": 264.21875,
+          "height": 72.0625
+        },
+        "paragraphBox": {
+          "top": 278.21875,
+          "bottom": 325.34375,
+          "height": 47.125
+        },
+        "cardBox": {
+          "top": 365.34375,
+          "bottom": 809.640625,
+          "height": 444.296875
+        },
+        "sectionBox": {
+          "top": 128.15625,
+          "bottom": 1425.9375,
+          "height": 1297.78125
+        },
+        "headerBox": {
+          "top": 0,
+          "bottom": 69,
+          "height": 69
+        },
+        "overflow": false,
+        "cardLinks": [
+          {
+            "text": "Read case study: Website Data to Structured JSON with n8n and OpenAI",
+            "href": "/project/n8n-openai-data-extraction/"
+          },
+          {
+            "text": "Read case study: From Invoice Photos to Reviewable Client Data",
+            "href": "/project/invoice-ocr-extraction/"
+          },
+          {
+            "text": "Read case study: Reviewable Body-Pose Detection for Fitness Images",
+            "href": "/project/yolo-computer-vision-optimization/"
+          },
+          {
+            "text": "View all case studies (12)",
+            "href": "/case-studies/"
+          }
+        ],
+        "corners": "linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128))",
+        "headingCorners": "linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128))",
+        "headingPadding": "19px 23px 17px",
+        "paragraphMargin": "40px"
+      },
+      "footer": {
+        "hash": "#portfolio",
+        "heading": "Selected workFEATURED CASE STUDIES",
+        "label": "Selected work",
+        "headingBox": {
+          "top": 210.15625,
+          "bottom": 282.21875,
+          "height": 72.0625
+        },
+        "paragraphBox": {
+          "top": 296.21875,
+          "bottom": 343.34375,
+          "height": 47.125
+        },
+        "cardBox": {
+          "top": 383.34375,
+          "bottom": 827.640625,
+          "height": 444.296875
+        },
+        "sectionBox": {
+          "top": 146.15625,
+          "bottom": 1443.9375,
+          "height": 1297.78125
+        },
+        "headerBox": {
+          "top": 0,
+          "bottom": 69,
+          "height": 69
+        },
+        "overflow": false,
+        "cardLinks": [
+          {
+            "text": "Read case study: Website Data to Structured JSON with n8n and OpenAI",
+            "href": "/project/n8n-openai-data-extraction/"
+          },
+          {
+            "text": "Read case study: From Invoice Photos to Reviewable Client Data",
+            "href": "/project/invoice-ocr-extraction/"
+          },
+          {
+            "text": "Read case study: Reviewable Body-Pose Detection for Fitness Images",
+            "href": "/project/yolo-computer-vision-optimization/"
+          },
+          {
+            "text": "View all case studies (12)",
+            "href": "/case-studies/"
+          }
+        ],
+        "corners": "linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128))",
+        "headingCorners": "linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128))",
+        "headingPadding": "19px 23px 17px",
+        "paragraphMargin": "40px"
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "hero": {
+        "hash": "#portfolio",
+        "heading": "Selected workFEATURED CASE STUDIES",
+        "label": "Selected work",
+        "headingBox": {
+          "top": 191.796875,
+          "bottom": 292.171875,
+          "height": 100.375
+        },
+        "paragraphBox": {
+          "top": 306.171875,
+          "bottom": 376.859375,
+          "height": 70.6875
+        },
+        "cardBox": {
+          "top": 416.859375,
+          "bottom": 882.15625,
+          "height": 465.296875
+        },
+        "sectionBox": {
+          "top": 127.796875,
+          "bottom": 2032.75,
+          "height": 1904.953125
+        },
+        "headerBox": {
+          "top": 0,
+          "bottom": 69,
+          "height": 69
+        },
+        "overflow": false,
+        "cardLinks": [
+          {
+            "text": "Read case study: Website Data to Structured JSON with n8n and OpenAI",
+            "href": "/project/n8n-openai-data-extraction/"
+          },
+          {
+            "text": "Read case study: From Invoice Photos to Reviewable Client Data",
+            "href": "/project/invoice-ocr-extraction/"
+          },
+          {
+            "text": "Read case study: Reviewable Body-Pose Detection for Fitness Images",
+            "href": "/project/yolo-computer-vision-optimization/"
+          },
+          {
+            "text": "View all case studies (12)",
+            "href": "/case-studies/"
+          }
+        ],
+        "corners": "linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250)), linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250)), linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250)), linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250))",
+        "headingCorners": "linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128))",
+        "headingPadding": "19px 23px 17px",
+        "paragraphMargin": "40px"
+      },
+      "footer": {
+        "hash": "#portfolio",
+        "heading": "Selected workFEATURED CASE STUDIES",
+        "label": "Selected work",
+        "headingBox": {
+          "top": 201.796875,
+          "bottom": 302.171875,
+          "height": 100.375
+        },
+        "paragraphBox": {
+          "top": 316.171875,
+          "bottom": 386.859375,
+          "height": 70.6875
+        },
+        "cardBox": {
+          "top": 426.859375,
+          "bottom": 892.15625,
+          "height": 465.296875
+        },
+        "sectionBox": {
+          "top": 137.796875,
+          "bottom": 2042.75,
+          "height": 1904.953125
+        },
+        "headerBox": {
+          "top": 0,
+          "bottom": 69,
+          "height": 69
+        },
+        "overflow": false,
+        "cardLinks": [
+          {
+            "text": "Read case study: Website Data to Structured JSON with n8n and OpenAI",
+            "href": "/project/n8n-openai-data-extraction/"
+          },
+          {
+            "text": "Read case study: From Invoice Photos to Reviewable Client Data",
+            "href": "/project/invoice-ocr-extraction/"
+          },
+          {
+            "text": "Read case study: Reviewable Body-Pose Detection for Fitness Images",
+            "href": "/project/yolo-computer-vision-optimization/"
+          },
+          {
+            "text": "View all case studies (12)",
+            "href": "/case-studies/"
+          }
+        ],
+        "corners": "linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250)), linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250)), linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250)), linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250))",
+        "headingCorners": "linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128))",
+        "headingPadding": "19px 23px 17px",
+        "paragraphMargin": "40px"
+      }
+    }
+  ],
+  "after": [
+    {
+      "width": 1440,
+      "height": 900,
+      "hero": {
+        "hash": "#portfolio",
+        "heading": "FEATURED CASE STUDIES",
+        "label": null,
+        "headingBox": {
+          "top": 191.75,
+          "bottom": 270.96875,
+          "height": 79.21875
+        },
+        "paragraphBox": {
+          "top": 284.96875,
+          "bottom": 332.09375,
+          "height": 47.125
+        },
+        "cardBox": {
+          "top": 372.09375,
+          "bottom": 837.390625,
+          "height": 465.296875
+        },
+        "sectionBox": {
+          "top": 127.75,
+          "bottom": 961.390625,
+          "height": 833.640625
+        },
+        "headerBox": {
+          "top": 0,
+          "bottom": 69,
+          "height": 69
+        },
+        "overflow": false,
+        "cardLinks": [
+          {
+            "text": "Read case study: Website Data to Structured JSON with n8n and OpenAI",
+            "href": "/project/n8n-openai-data-extraction/"
+          },
+          {
+            "text": "Read case study: From Invoice Photos to Reviewable Client Data",
+            "href": "/project/invoice-ocr-extraction/"
+          },
+          {
+            "text": "Read case study: Reviewable Body-Pose Detection for Fitness Images",
+            "href": "/project/yolo-computer-vision-optimization/"
+          },
+          {
+            "text": "View all case studies (12)",
+            "href": "/case-studies/"
+          }
+        ],
+        "corners": "linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128))",
+        "headingCorners": "linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128))",
+        "headingPadding": "19px 23px 17px",
+        "paragraphMargin": "40px"
+      },
+      "footer": {
+        "hash": "#portfolio",
+        "heading": "FEATURED CASE STUDIES",
+        "label": null,
+        "headingBox": {
+          "top": 209.75,
+          "bottom": 288.96875,
+          "height": 79.21875
+        },
+        "paragraphBox": {
+          "top": 302.96875,
+          "bottom": 350.09375,
+          "height": 47.125
+        },
+        "cardBox": {
+          "top": 390.09375,
+          "bottom": 855.390625,
+          "height": 465.296875
+        },
+        "sectionBox": {
+          "top": 145.75,
+          "bottom": 979.390625,
+          "height": 833.640625
+        },
+        "headerBox": {
+          "top": 0,
+          "bottom": 69,
+          "height": 69
+        },
+        "overflow": false,
+        "cardLinks": [
+          {
+            "text": "Read case study: Website Data to Structured JSON with n8n and OpenAI",
+            "href": "/project/n8n-openai-data-extraction/"
+          },
+          {
+            "text": "Read case study: From Invoice Photos to Reviewable Client Data",
+            "href": "/project/invoice-ocr-extraction/"
+          },
+          {
+            "text": "Read case study: Reviewable Body-Pose Detection for Fitness Images",
+            "href": "/project/yolo-computer-vision-optimization/"
+          },
+          {
+            "text": "View all case studies (12)",
+            "href": "/case-studies/"
+          }
+        ],
+        "corners": "linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250)), linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250)), linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250)), linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250))",
+        "headingCorners": "linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128))",
+        "headingPadding": "19px 23px 17px",
+        "paragraphMargin": "40px"
+      }
+    },
+    {
+      "width": 980,
+      "height": 1324,
+      "hero": {
+        "hash": "#portfolio",
+        "heading": "FEATURED CASE STUDIES",
+        "label": null,
+        "headingBox": {
+          "top": 192.15625,
+          "bottom": 264.21875,
+          "height": 72.0625
+        },
+        "paragraphBox": {
+          "top": 278.21875,
+          "bottom": 325.34375,
+          "height": 47.125
+        },
+        "cardBox": {
+          "top": 365.34375,
+          "bottom": 809.640625,
+          "height": 444.296875
+        },
+        "sectionBox": {
+          "top": 128.15625,
+          "bottom": 1425.9375,
+          "height": 1297.78125
+        },
+        "headerBox": {
+          "top": 0,
+          "bottom": 69,
+          "height": 69
+        },
+        "overflow": false,
+        "cardLinks": [
+          {
+            "text": "Read case study: Website Data to Structured JSON with n8n and OpenAI",
+            "href": "/project/n8n-openai-data-extraction/"
+          },
+          {
+            "text": "Read case study: From Invoice Photos to Reviewable Client Data",
+            "href": "/project/invoice-ocr-extraction/"
+          },
+          {
+            "text": "Read case study: Reviewable Body-Pose Detection for Fitness Images",
+            "href": "/project/yolo-computer-vision-optimization/"
+          },
+          {
+            "text": "View all case studies (12)",
+            "href": "/case-studies/"
+          }
+        ],
+        "corners": "linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128))",
+        "headingCorners": "linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128))",
+        "headingPadding": "19px 23px 17px",
+        "paragraphMargin": "40px"
+      },
+      "footer": {
+        "hash": "#portfolio",
+        "heading": "FEATURED CASE STUDIES",
+        "label": null,
+        "headingBox": {
+          "top": 210.15625,
+          "bottom": 282.21875,
+          "height": 72.0625
+        },
+        "paragraphBox": {
+          "top": 296.21875,
+          "bottom": 343.34375,
+          "height": 47.125
+        },
+        "cardBox": {
+          "top": 383.34375,
+          "bottom": 827.640625,
+          "height": 444.296875
+        },
+        "sectionBox": {
+          "top": 146.15625,
+          "bottom": 1443.9375,
+          "height": 1297.78125
+        },
+        "headerBox": {
+          "top": 0,
+          "bottom": 69,
+          "height": 69
+        },
+        "overflow": false,
+        "cardLinks": [
+          {
+            "text": "Read case study: Website Data to Structured JSON with n8n and OpenAI",
+            "href": "/project/n8n-openai-data-extraction/"
+          },
+          {
+            "text": "Read case study: From Invoice Photos to Reviewable Client Data",
+            "href": "/project/invoice-ocr-extraction/"
+          },
+          {
+            "text": "Read case study: Reviewable Body-Pose Detection for Fitness Images",
+            "href": "/project/yolo-computer-vision-optimization/"
+          },
+          {
+            "text": "View all case studies (12)",
+            "href": "/case-studies/"
+          }
+        ],
+        "corners": "linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128))",
+        "headingCorners": "linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128))",
+        "headingPadding": "19px 23px 17px",
+        "paragraphMargin": "40px"
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "hero": {
+        "hash": "#portfolio",
+        "heading": "FEATURED CASE STUDIES",
+        "label": null,
+        "headingBox": {
+          "top": 191.796875,
+          "bottom": 292.171875,
+          "height": 100.375
+        },
+        "paragraphBox": {
+          "top": 306.171875,
+          "bottom": 376.859375,
+          "height": 70.6875
+        },
+        "cardBox": {
+          "top": 416.859375,
+          "bottom": 882.15625,
+          "height": 465.296875
+        },
+        "sectionBox": {
+          "top": 127.796875,
+          "bottom": 2032.75,
+          "height": 1904.953125
+        },
+        "headerBox": {
+          "top": 0,
+          "bottom": 69,
+          "height": 69
+        },
+        "overflow": false,
+        "cardLinks": [
+          {
+            "text": "Read case study: Website Data to Structured JSON with n8n and OpenAI",
+            "href": "/project/n8n-openai-data-extraction/"
+          },
+          {
+            "text": "Read case study: From Invoice Photos to Reviewable Client Data",
+            "href": "/project/invoice-ocr-extraction/"
+          },
+          {
+            "text": "Read case study: Reviewable Body-Pose Detection for Fitness Images",
+            "href": "/project/yolo-computer-vision-optimization/"
+          },
+          {
+            "text": "View all case studies (12)",
+            "href": "/case-studies/"
+          }
+        ],
+        "corners": "linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250)), linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250)), linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250)), linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250))",
+        "headingCorners": "linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128))",
+        "headingPadding": "19px 23px 17px",
+        "paragraphMargin": "40px"
+      },
+      "footer": {
+        "hash": "#portfolio",
+        "heading": "FEATURED CASE STUDIES",
+        "label": null,
+        "headingBox": {
+          "top": 201.796875,
+          "bottom": 302.171875,
+          "height": 100.375
+        },
+        "paragraphBox": {
+          "top": 316.171875,
+          "bottom": 386.859375,
+          "height": 70.6875
+        },
+        "cardBox": {
+          "top": 426.859375,
+          "bottom": 892.15625,
+          "height": 465.296875
+        },
+        "sectionBox": {
+          "top": 137.796875,
+          "bottom": 2042.75,
+          "height": 1904.953125
+        },
+        "headerBox": {
+          "top": 0,
+          "bottom": 69,
+          "height": 69
+        },
+        "overflow": false,
+        "cardLinks": [
+          {
+            "text": "Read case study: Website Data to Structured JSON with n8n and OpenAI",
+            "href": "/project/n8n-openai-data-extraction/"
+          },
+          {
+            "text": "Read case study: From Invoice Photos to Reviewable Client Data",
+            "href": "/project/invoice-ocr-extraction/"
+          },
+          {
+            "text": "Read case study: Reviewable Body-Pose Detection for Fitness Images",
+            "href": "/project/yolo-computer-vision-optimization/"
+          },
+          {
+            "text": "View all case studies (12)",
+            "href": "/case-studies/"
+          }
+        ],
+        "corners": "linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250)), linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250)), linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250)), linear-gradient(rgb(167, 139, 250), rgb(167, 139, 250))",
+        "headingCorners": "linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128)), linear-gradient(rgb(107, 114, 128), rgb(107, 114, 128))",
+        "headingPadding": "19px 23px 17px",
+        "paragraphMargin": "40px"
+      }
+    }
+  ]
+}

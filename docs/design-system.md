@@ -1,0 +1,31 @@
+# Form field style
+
+This is the detailed form reference for the [portfolio theme guide](../DESIGN.md). Follow that guide for sitewide corners, buttons, simulation scores, and motion. The form rules below remain the existing implementation reference.
+
+Use the contact form's corner-only field treatment as the reference for future form fields. The implementation lives in [`src/pages/Contact.css`](../src/pages/Contact.css); reuse its values and behavior when introducing the style elsewhere. This document does not mean existing pages have been migrated.
+
+![Grey resting corners on a filled name field and purple corners on the focused email field](design-assets/contact-fields-grey-purple.png)
+
+The example uses synthetic text and shows the name field filled but unfocused, with focus on email.
+
+- **One boundary:** Draw four short corner brackets around each field. Do not add a complete field outline or a second border behind them. Keep the subtle field fill (`rgba(255, 255, 255, 0.025)`).
+- **Resting, empty or filled:** Use `#6b7280` grey corners at `16px` length and `1px` width. Entered content remains white; a filled select changes from its placeholder grey to white. Filling a field alone does not turn the corners purple.
+- **Focused:** Use `#a78bfa` purple corners at `18px` length and `2px` width, with the existing `rgba(167, 139, 250, 0.07)` field fill. Return to grey corners when focus leaves, even if the field contains a value.
+- **Label:** Place one readable, uppercase label just above the field edge (`12px/16px`, `#b6b9c3` at rest, `#c4b5fd` on focus). Use the field's actual name, such as “Full Name,” and connect it to the control with `htmlFor`/`id`. Keep the required asterisk distinct. Do not add a separate “FIELD” chip.
+- **Interaction and sizing:** Use `:focus-within` so mouse and keyboard focus receive the same visible state. Keep controls at least `54px` tall, with a text area sized for longer input. At widths up to `420px`, inset the label to avoid the brackets. Preserve the existing forced-colors outline and reduced-motion behavior.
+
+Apply these rules to new form controls when appropriate, and check the empty, filled, focused, keyboard, and narrow-screen states before reusing the pattern across the site.
+
+## Budget Range dropdown
+
+Confirmed on 8 October 2026 under DESIGN.md FM-01: the budget menu uses a subtle purple highlight, white text, and a visible checkmark for the chosen option. The field retains its grey resting corners and purple corners while focused or open. Its existing placeholder, labels, optional empty choice, and exact stored budget values remain unchanged.
+
+The implementation uses Headless UI's controlled Listbox in `src/components/BudgetSelect.jsx`. The menu is portalled to avoid panel clipping, anchored to the field, and constrained to the viewport with scrolling when needed. Options use the form's sans-serif text at `0.95rem`, with 44px minimum rows. Focus adds an outline; selection adds a checkmark and `aria-selected`. The primitive manages arrow navigation, commitment, Escape, Tab, typeahead, and focus return.
+
+Enter on the closed trigger opens the menu instead of invoking the primitive's default form-submit action. Only empty or listed values can be emitted; a disabled stale choice cannot clear its validation error.
+
+While the menu is open, document scroll padding is removed so active-option scrolling stays within the menu. If the field leaves the viewport completely, the menu dismisses without changing the budget or returning focus to the offscreen field. Normal close and commitment still restore focus to an in-view field.
+
+Unknown restored budgets retain the existing disabled recovery label until the visitor chooses a listed range or clears the optional choice. The menu and its hidden form value remain in sensitive telemetry regions. Forced-colors mode uses system colors with a visible boundary, focused outline, and checkmark. The dropdown adds no motion; reduced motion still removes the field's focus transition.
+
+The earlier [native budget QA](qa/2026-10-07-issue-330-native-budget.md) records the superseded implementation. It is not verification of this dropdown.
