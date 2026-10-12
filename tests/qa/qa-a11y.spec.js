@@ -1262,6 +1262,8 @@ test('primary CTAs keep readable text and shared corners at rest, hover, and foc
   );
 
   await page.goto(`/services/${serviceOffers[0].id}/`);
+  await expect(page.locator('header').getByRole('link', { name: 'Vivek Patel home' })).toBeVisible();
+  await expect(page.locator('#main-content').getByRole('status', { name: 'Loading page' })).toHaveCount(0);
   await expectCornerPrimaryStates(
     page,
     page.locator('#main-content').getByRole('link', { name: 'Request a Project Estimate' }),
