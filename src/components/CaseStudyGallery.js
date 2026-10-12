@@ -44,7 +44,7 @@ export function collectGalleryImages(story) {
   return images;
 }
 
-export default function CaseStudyGallery({ images, interactive = typeof window !== 'undefined' }) {
+export default function CaseStudyGallery({ images, overviewSrc, interactive = typeof window !== 'undefined' }) {
   const [index, setIndex] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const [zoom, setZoom] = useState(1);
@@ -106,6 +106,7 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
     return () => window.removeEventListener('keydown', handleExpandedKeyDown);
   }, [expanded]);
   if (!selected) return null;
+  const selectedLabel = selected.src === overviewSrc ? 'PROJECT OVERVIEW' : 'PROJECT EVIDENCE';
   const isVideo = (media) => /\.(?:mp4|webm|ogv)$/i.test(media.src);
   const media = (item, fitted = true) => isVideo(item)
     ? h('video', {
@@ -126,7 +127,7 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
   });
   const cover = (image, loading = 'eager') => h('figure', { className: 'case-study-cover', key: image.src },
     h('div', { className: 'case-study-cover-stage detection-panel' },
-      h(DetectionLabel, { 'aria-hidden': true }, 'PROJECT EVIDENCE'),
+      h(DetectionLabel, { 'aria-hidden': true }, selectedLabel),
       isVideo(image) ? media(image, false) : h('a', { href: image.src }, h('img', { src: caseStudyDisplaySrc(image), alt: image.alt, width: image.width, height: image.height, loading }))),
     image.caption ? h('figcaption', null, image.caption) : null);
   if (images.length === 1) return cover(selected);
@@ -154,7 +155,7 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
       if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) select(index + (dx < 0 ? 1 : -1));
       touch.current = null;
     }, onTouchCancel: () => { touch.current = null; } },
-      large ? null : h(DetectionLabel, { 'aria-hidden': true }, 'PROJECT EVIDENCE'),
+      large ? null : h(DetectionLabel, { 'aria-hidden': true }, selectedLabel),
       isVideo(selected) ? media(selected)
         : large ? h('div', { className: 'case-gallery-viewport', tabIndex: 0, 'aria-label': 'Enlarged image; scroll to inspect when zoomed' },
         h('img', { src: selected.src, alt: selected.alt, style: { width: `${zoom * 100}%`, maxWidth: 'none', height: `${zoom * 100}%` } }))
@@ -181,6 +182,6 @@ export default function CaseStudyGallery({ images, interactive = typeof window !
     h('section', { className: 'case-gallery', 'aria-label': 'Case study images', onKeyDown: keyboard, inert: expanded ? '' : undefined }, gallery(false)),
     expanded ? createPortal(h('div', { className: 'case-gallery-overlay', onClick: (event) => { if (event.target === event.currentTarget) close(); } },
       h('div', { role: 'dialog', 'aria-modal': true, 'aria-label': 'Enlarged case study images', className: 'case-gallery-dialog detection-panel', ref: dialog, onKeyDown: keyboard },
-        h(DetectionLabel, { 'aria-hidden': true }, 'PROJECT EVIDENCE'),
+        h(DetectionLabel, { 'aria-hidden': true }, selectedLabel),
         button('Close enlarged image', close, '×', { className: 'case-gallery-close' }), gallery(true))), document.body) : null);
 }

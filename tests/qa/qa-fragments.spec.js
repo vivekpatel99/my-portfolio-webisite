@@ -146,22 +146,24 @@ for (const [name, id] of [['Services', 'services'], ['About', 'about'], ['Portfo
   test(`ordinary footer ${name} link preserves anchor position and focus`, async ({ page }) => {
     await page.goto('/');
     await page.evaluate(() => document.fonts.ready);
-    await page.locator(`#${id}`).scrollIntoViewIfNeeded();
-    await expect.poll(() => page.locator(`#${id}`).evaluate(async (target) => {
-      const animator = target.closest('[data-section-animator]');
-      const documentTop = () => target.getBoundingClientRect().top + window.scrollY;
-      const before = documentTop();
-      await new Promise(requestAnimationFrame);
-      const after = documentTop();
-      await new Promise(requestAnimationFrame);
-      return (!animator || getComputedStyle(animator).transform === 'none')
-        && before === after && after === documentTop();
-    })).toBe(true);
-    const link = page.locator('#site-footer').getByRole('link', { name, exact: true });
-    await link.focus();
-    await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(new RegExp(`/#${id}$`));
-    await expectAnchorArrival(page, id);
-    await expectUsableShell(page);
+    for (let activation = 0; activation < (id === 'portfolio' ? 5 : 1); activation += 1) {
+      await page.locator(`#${id}`).scrollIntoViewIfNeeded();
+      await expect.poll(() => page.locator(`#${id}`).evaluate(async (target) => {
+        const animator = target.closest('[data-section-animator]');
+        const documentTop = () => target.getBoundingClientRect().top + window.scrollY;
+        const before = documentTop();
+        await new Promise(requestAnimationFrame);
+        const after = documentTop();
+        await new Promise(requestAnimationFrame);
+        return (!animator || getComputedStyle(animator).transform === 'none')
+          && before === after && after === documentTop();
+      })).toBe(true);
+      const link = page.locator('#site-footer').getByRole('link', { name, exact: true });
+      await link.focus();
+      await page.keyboard.press('Enter');
+      await expect(page).toHaveURL(new RegExp(`/#${id}$`));
+      await expectAnchorArrival(page, id);
+      await expectUsableShell(page);
+    }
   });
 }
