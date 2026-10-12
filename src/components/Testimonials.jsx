@@ -116,21 +116,19 @@ const Testimonials = () => {
                                 {testimonial.content}
                                 <span className="text-[#8B5CF6]">”</span>
                             </blockquote>
+                            {testimonial.rating === 5 && (
+                                <span role="img" aria-label="Rated 5 out of 5" className="inline-flex self-center items-center gap-1 mt-6 text-[#E4B65A]">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <Star key={star} size={16} fill="currentColor" strokeWidth={1.5} aria-hidden="true" />
+                                    ))}
+                                </span>
+                            )}
                             <footer className="tf-foot flex items-end justify-between gap-5 mt-auto pt-[31px] flex-wrap">
-                                <div className="identity flex flex-wrap items-center gap-x-4 gap-y-2">
-                                    <div>
-                                        <strong className="text-sm font-[650]">{testimonial.clientName}</strong>
-                                        {testimonial.source && (
-                                            <span className="source inline-block ml-[10px] border border-[rgba(255,255,255,0.13)] py-1 px-[7px] text-[#9ca3af] text-[8px] align-[2px]">
-                                                {testimonial.source}
-                                            </span>
-                                        )}
-                                    </div>
-                                    {testimonial.rating === 5 && (
-                                        <span role="img" aria-label="Rated 5 out of 5" className="inline-flex shrink-0 items-center gap-1 text-[#E4B65A]">
-                                            {[1, 2, 3, 4, 5].map((star) => (
-                                                <Star key={star} size={16} fill="currentColor" strokeWidth={1.5} aria-hidden="true" />
-                                            ))}
+                                <div className="identity">
+                                    <strong className="text-sm font-[650]">{testimonial.clientName}</strong>
+                                    {testimonial.source && (
+                                        <span className="source inline-block ml-[10px] border border-[rgba(255,255,255,0.13)] py-1 px-[7px] text-[#9ca3af] text-[8px] align-[2px]">
+                                            {testimonial.source}
                                         </span>
                                     )}
                                 </div>
