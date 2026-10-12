@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { HOURLY_RATE_EUR } from '../../../src/config/pricing.js';
 import {
   SITE_RATE,
   MAX_CASE_STUDY_LINKS,
@@ -232,17 +233,17 @@ describe('markdown extraction', () => {
 });
 
 describe('SITE_RATE', () => {
-  it('is €45/hour', () => {
-    expect(SITE_RATE).toBe('€45/hour');
+  it('quotes the configured hourly amount', () => {
+    expect(SITE_RATE).toBe(`€${HOURLY_RATE_EUR}/hour`);
   });
 });
 
 describe('isolation', () => {
-  it('map.js source does not reference publication/ or src/', () => {
+  it('map.js stays isolated from publication data while sharing pricing', () => {
     const dir = dirname(fileURLToPath(import.meta.url));
     const source = readFileSync(join(dir, 'map.js'), 'utf8');
     expect(source).not.toMatch(/publication\//);
-    expect(source).not.toMatch(/src\//);
+    expect(source.replace('../../../src/config/pricing.js', '')).not.toMatch(/src\//);
   });
 
   it('every blocked path has untilIssues and ready paths do not', () => {

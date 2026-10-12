@@ -3,8 +3,9 @@
 ## Decision
 
 **Hold production release pending fresh hosted CI, integration, and explicit owner approval.**
-Local verification passed after correcting gallery labels. The earlier CI run did
-not pass; its failure is not waived by local results. This report records a
+Local verification passed after correcting gallery labels. The initial CI run did
+not pass; the next complete run passed on `65bb900`. A later proposal-rate fix
+requires another complete run on the final head. This report records a
 snapshot, not an authorization to merge or proof of deployment.
 
 [PR #355](https://github.com/vivekpatel99/my-portfolio-webisite/pull/355) targets
@@ -57,6 +58,21 @@ failed on the pre-fix candidate:
 No speculative runtime scrolling change was made. A fresh hosted run must pass
 both jobs and the aggregate gate. A repeated anchor failure requires renewed
 investigation, not automatic retries or relaxed assertions.
+
+### Proposal helper retained an independent hourly rate
+
+Automated review of `65bb900` found that the proposal-linking skill still
+exported a hardcoded €45/hour. An isolated copy reproduced the mismatch when
+only `HOURLY_RATE_EUR` changed to 67. `SITE_RATE` now re-exports the shared
+formatted label. The skill instructions and README describe that dependency,
+and its existing rate assertion follows the configured amount. The same isolated
+€67 check passes after the fix; the actual configured amount remains 45.
+The helper remains isolated from publication data and case-study enumeration.
+
+[Run 38240649449](https://github.com/vivekpatel99/my-portfolio-webisite/actions/runs/38240649449)
+passed every CI job on `65bb900`, including both WebKit shards and telemetry.
+This clears hosted CI for `65bb900`, but does not validate the later
+proposal-rate fix. Recheck CI on the final pushed head.
 
 ## Verification completed locally
 

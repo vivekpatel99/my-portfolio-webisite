@@ -18,7 +18,7 @@ Set `VITE_CONVEX_URL` in `.env.local` when you want the contact form to talk to 
 
 ## Update the hourly rate
 
-Change `HOURLY_RATE_EUR` in `src/config/pricing.js`. The hero, service offers, service pages, estimate CTA, page descriptions, and structured data use that single amount. Both `€<amount>/hour` and `from €<amount>/hour` are derived from it. Rebuild and release through the normal PR workflow to update the deployed site.
+Change `HOURLY_RATE_EUR` in `src/config/pricing.js`. The hero, service offers, service pages, estimate CTA, page descriptions, structured data, and the proposal-linking skill's `SITE_RATE` use that single amount. Both `€<amount>/hour` and `from €<amount>/hour` are derived from it. Rebuild and release through the normal PR workflow to update the deployed site.
 
 ## Core Commands
 
