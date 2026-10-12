@@ -30,7 +30,7 @@ const scopeList = (heading, items, index) => React.createElement(
   ),
 );
 
-const ServiceDetailContent = ({ service }) => {
+const ServiceDetailContent = ({ service, backRef }) => {
   const offerNumber = String(serviceOffers.findIndex((offer) => offer.id === service.id) + 1).padStart(2, '0');
 
   return React.createElement(
@@ -45,7 +45,7 @@ const ServiceDetailContent = ({ service }) => {
       { className: 'relative mx-auto max-w-[1180px] px-6 md:px-12' },
       React.createElement(
         Link,
-        { to: SERVICES_SECTION_HREF, className: 'detection-text-action mb-12 gap-2 text-sm md:mb-16' },
+        { ref: backRef, to: SERVICES_SECTION_HREF, className: 'detection-text-action mb-12 gap-2 text-sm md:mb-16' },
         React.createElement(ArrowLeft, { size: 16, 'aria-hidden': true }),
         'Back to Services',
       ),

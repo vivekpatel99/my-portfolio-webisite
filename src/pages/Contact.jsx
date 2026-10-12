@@ -183,7 +183,7 @@ const Contact = () => {
               <span className="num text-[1.35rem] font-bold text-[#8B5CF6]">100%</span>
               <span className="lab text-xs leading-[1.25] text-[#9ca3af]">Job Success<br />on Upwork</span>
             </li>
-            <span className="sep w-px h-9 bg-[rgba(255,255,255,0.1)]" role="separator" aria-hidden="true"></span>
+            <li className="sep w-px h-9 bg-[rgba(255,255,255,0.1)]" role="presentation" aria-hidden="true"></li>
             <li className="flex items-center gap-[10px]">
               <span className="num text-[1.35rem] font-bold text-[#8B5CF6]">5★</span>
               <span className="lab text-xs leading-[1.25] text-[#9ca3af]">Average<br />Rating</span>

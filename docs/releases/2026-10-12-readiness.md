@@ -185,3 +185,29 @@ an existing ignored `playwright-output/qa-results.json`. The previous report was
 not backed up and could not be restored. The new `.last-run.json` and its empty
 `test-results` directory were removed; the overwritten report was retained.
 This is a local evidence-preservation gap, not a production artifact change.
+
+## Follow-up findings on production release PR #356
+
+The complete release CI passed on `f9700647` before its automated review raised
+two valid findings. Both are repaired through a follow-up PR into develop;
+release CI and review threads must be rechecked on the resulting final head.
+
+- Direct service loads recreated the prerendered body with a lazy-route fallback
+  containing only title and summary. While the service chunk was delayed, rate,
+  timeline and scope disappeared. The pending service renderer now uses the
+  same full `ServiceDetailContent` as the loaded page, retaining its metadata,
+  navigation, accessible loading status, and back-link focus handoff. Generic
+  loading and lazy-route retry/error behavior stay in place. This fixes content
+  availability without introducing full-app hydration.
+- The contact proof list contained a separator span directly under its `ul`.
+  It now uses a decorative hidden list item with the same styles, while the two
+  achievement items remain accessible.
+
+The strengthened held-chunk regression failed on the old production artifact
+because engagement details were absent. The fixed build passed all 60 service
+loading browser cases across Chromium/WebKit desktop/mobile, including focus,
+retry/error, unknown routes, consent, and no-JavaScript coverage. The contact
+list regression failed before its markup change and all 77 contact tests passed
+afterward. The combined unit suite passed 1,001 tests. The combined isolated
+production build passed with 21 outputs and 39 public links checked; hosted CI
+is still required on the follow-up and final release heads. No valid contact request was submitted.

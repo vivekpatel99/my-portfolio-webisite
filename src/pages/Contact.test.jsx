@@ -3,7 +3,7 @@
  */
 import React from "react";
 import { renderWithMotion as render } from '@/test/renderWithMotion';
-import { act, fireEvent, renderHook, screen, waitFor, cleanup } from "@testing-library/react";
+import { act, fireEvent, renderHook, screen, waitFor, cleanup, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { toast } from "@/components/ui/use-toast";
@@ -103,6 +103,19 @@ describe("Contact form", () => {
     cleanup();
     vi.clearAllMocks();
     mockSubmitLead.mockResolvedValue({ success: true });
+  });
+
+  it('renders the proof strip as a valid list with two accessible achievements', () => {
+    const { container } = render(<Contact />);
+    const proof = container.querySelector('ul.proof');
+
+    expect(Array.from(proof.children).every(child => child.tagName === 'LI')).toBe(true);
+    const achievements = within(proof).getAllByRole('listitem');
+    expect(achievements).toHaveLength(2);
+    expect(achievements[0].textContent).toContain('100%');
+    expect(achievements[0].textContent).toContain('Job Success');
+    expect(achievements[1].textContent).toContain('5★');
+    expect(achievements[1].textContent).toContain('Rating');
   });
 
   it('#265: restores every unsent field after navigation unmounts the contact route', () => {

@@ -1,5 +1,6 @@
 import { expect, test } from './qa-test.js';
-import { serviceOffers, serviceRouteForId } from '../../src/data/serviceOffers.js';
+import { serviceOffers, serviceRouteForId, serviceTimelineLabel } from '../../src/data/serviceOffers.js';
+import { HOURLY_FROM_LABEL } from '../../src/config/pricing.js';
 import { absoluteUrl, routeSeo } from '../../src/lib/seoConfig.js';
 
 const serviceChunk = /\/assets\/ServiceDetail-[^/]+\.js(?:\?.*)?$/;
@@ -41,6 +42,14 @@ async function expectServiceContext(page, service, pending) {
   await expect(main.getByRole('heading', { level: 1 })).toHaveCount(1);
   await expect(main.getByRole('heading', { level: 1, name: service.title, exact: true })).toBeVisible();
   await expect(main.getByText(service.summary, { exact: true })).toBeVisible();
+  await expect(main.getByRole('complementary', { name: 'Engagement details' })).toContainText(HOURLY_FROM_LABEL);
+  await expect(main.getByRole('complementary', { name: 'Engagement details' })).toContainText(serviceTimelineLabel(service));
+  for (const heading of ['In scope', 'Out of scope']) {
+    await expect(main.getByRole('heading', { name: heading, exact: true })).toBeVisible();
+  }
+  for (const item of [...service.inScope, ...service.outOfScope]) {
+    await expect(main.getByText(item, { exact: true })).toBeVisible();
+  }
   await expect(pendingStatus(page)).toHaveCount(pending ? 1 : 0);
   if (pending) await expect(pendingStatus(page)).toHaveText('Loading service details…');
   await expectServiceMetadata(page, service);
