@@ -211,3 +211,23 @@ list regression failed before its markup change and all 77 contact tests passed
 afterward. The combined unit suite passed 1,001 tests. The combined isolated
 production build passed with 21 outputs and 39 public links checked; hosted CI
 is still required on the follow-up and final release heads. No valid contact request was submitted.
+
+### CTA appearance QA readiness on release head `6196310`
+
+Release CI run `38245876312` failed one Chromium mobile appearance case when
+`scrollIntoViewIfNeeded` encountered a detached service CTA. The full service
+fallback deliberately exposes that CTA before the lazy route settles. Both
+initial client rendering and the later fallback handoff can replace its DOM
+node; the trace establishes detachment but cannot distinguish which transition
+caused that particular CI failure.
+
+The settled-state appearance test now waits for the runtime header (absent from
+the prerendered service document) and completion of the loading status before
+scrolling or measuring the CTA. All existing foreground, contrast, corner,
+hover, focus, and outline assertions remain unchanged, with no retries, skips,
+or relaxed thresholds. Pending-state behavior remains covered by the separate
+held-chunk suite. The corrected appearance case passed three repetitions in each
+of Chromium desktop/mobile (six cases); this spec is outside the repository's
+bounded WebKit matrix. A temporary held-chunk probe also observed the pending
+CTA becoming detached when the loaded route replaced it. Fresh hosted CI on the
+follow-up and final production head is still required.
