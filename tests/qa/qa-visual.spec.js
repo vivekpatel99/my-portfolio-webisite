@@ -2,6 +2,7 @@ import { caseStudies } from '../../src/data/caseStudies.js';
 import { caseStudyDisplaySrc, collectGalleryImages } from '../../src/components/CaseStudyGallery.js';
 import { expect, test } from './qa-test.js';
 import { assertVisualLayout } from './visual-layout.js';
+import { HOURLY_RATE_LABEL } from '../../src/config/pricing.js';
 
 const COOKIE_KEY = 'cookie_consent_preferences';
 
@@ -168,7 +169,7 @@ test('desktop hero invoice proof fold: all elements visible, no clip', async ({ 
   await expect(page.getByText('Upwork freelancer')).toBeVisible();
   await expect(page.getByText('Client delivery record')).toBeVisible();
   
-  await expect(page.getByText('€45/hour', { exact: true })).toBeVisible();
+  await expect(page.getByText(HOURLY_RATE_LABEL, { exact: true })).toBeVisible();
   await expect(page.getByText('Linz, Austria', { exact: true })).toBeVisible();
   
   await expect(page.getByText('Detected total', { exact: true })).not.toBeVisible();
@@ -595,15 +596,15 @@ test('wide gallery lightbox keeps its outer frame and label inside narrow viewpo
 });
 
 
-test('project evidence preserves the shared transparent frame across media variants', async ({ page }) => {
+test('project overview and evidence preserve the shared transparent frame across media variants', async ({ page }) => {
   await reducedMotion(page);
-  for (const slug of ['browser-search-to-spreadsheet', 'python-ci-workflow-automation', 'resumable-listing-data-extraction']) {
+  for (const slug of ['browser-search-to-spreadsheet', 'python-ci-workflow-automation', 'resumable-listing-data-extraction', 'n8n-openai-data-extraction']) {
     await page.goto(`/project/${slug}/`);
     const [source, ...remaining] = collectGalleryImages(caseStudies.find((story) => story.slug === slug));
     const singleImage = remaining.length === 0;
-    const stage = page.locator(singleImage ? '.case-study-cover-stage' : '.case-gallery-stage');
+    const stage = page.locator(singleImage ? '.case-study-cover-stage' : '.case-gallery > .case-gallery-stage');
     await expect(stage).toHaveClass(/detection-panel/);
-    await expect(stage.locator('.detection-label')).toHaveText('PROJECT EVIDENCE');
+    await expect(stage.locator('.detection-label')).toHaveText('PROJECT OVERVIEW');
     const image = stage.locator('img');
     await expect(image).toBeVisible();
     await expect(image).toHaveAttribute('src', caseStudyDisplaySrc(source));
@@ -621,5 +622,19 @@ test('project evidence preserves the shared transparent frame across media varia
       };
     });
     expect(geometry).toEqual({ center: 0, background: 'rgba(0, 0, 0, 0)', imageBorder: '0px', contained: true });
+    if (slug === 'n8n-openai-data-extraction') {
+      const screenshot = remaining[0];
+      await page.getByRole('button', { name: `Show image 2: ${screenshot.alt}`, exact: true }).click();
+      await expect(stage.locator('.detection-label')).toHaveText('PROJECT EVIDENCE');
+      await expect(stage.locator('img')).toHaveAttribute('src', caseStudyDisplaySrc(screenshot));
+      await stage.getByRole('button', { name: `Enlarge image: ${screenshot.alt}`, exact: true }).click();
+      const dialog = page.getByRole('dialog', { name: 'Enlarged case study images' });
+      await expect(dialog.locator('.detection-label')).toHaveText('PROJECT EVIDENCE');
+      await dialog.getByRole('button', { name: 'Previous image', exact: true }).click();
+      await expect(dialog.locator('.detection-label')).toHaveText('PROJECT OVERVIEW');
+      await expect(stage.locator('.detection-label')).toHaveText('PROJECT OVERVIEW');
+      await page.keyboard.press('Escape');
+      await expect(dialog).toHaveCount(0);
+    }
   }
 });

@@ -16,6 +16,10 @@ npm run dev
 
 Set `VITE_CONVEX_URL` in `.env.local` when you want the contact form to talk to Convex. For UI-only local work, the app can start without it, but contact submissions will fail with a clear disabled-client message.
 
+## Update the hourly rate
+
+Change `HOURLY_RATE_EUR` in `src/config/pricing.js`. The hero, service offers, service pages, estimate CTA, page descriptions, structured data, and the proposal-linking skill's `SITE_RATE` use that single amount. Both `€<amount>/hour` and `from €<amount>/hour` are derived from it. Rebuild and release through the normal PR workflow to update the deployed site.
+
 ## Core Commands
 
 | Command | Purpose |

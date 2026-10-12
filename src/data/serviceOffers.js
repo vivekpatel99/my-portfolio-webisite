@@ -1,6 +1,3 @@
-export const HOURLY_FROM_EUR = 45;
-export const HOURLY_FROM_LABEL = `from €${HOURLY_FROM_EUR}/hour`;
-
 export function serviceTimelineLabel({ minWeeks, maxWeeks, timelineLabel }) {
   return timelineLabel ?? `Typically ${minWeeks}–${maxWeeks} weeks`;
 }

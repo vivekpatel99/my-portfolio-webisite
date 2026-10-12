@@ -7,9 +7,61 @@ import { cleanup, fireEvent, render, screen, within } from '@testing-library/rea
 import { compileCaseStudyPublication } from '../../publication/compile-case-studies.js';
 import { caseStudyPublicationBaseline } from '../../publication/case-study-manifest.js';
 import Gallery, { caseStudyDisplaySrc, collectGalleryImages, galleryStageAspectRatio, galleryThumbnailSrc } from './CaseStudyGallery.js';
+import CaseStudyArticle from './CaseStudyArticle.js';
 afterEach(cleanup);
 const images = ['Input', 'Output', 'Workflow'].map((alt, i) => ({ src: `/image-${i}.png`, alt, width: 800, height: 600 }));
 describe('case study gallery', () => {
+  it('updates overview and evidence labels when selecting media inline and in the lightbox', () => {
+    const { container } = render(<Gallery images={images} overviewSrc={images[0].src} />);
+    const inlineLabel = () => container.querySelector('.case-gallery-stage .detection-label').textContent;
+    expect(inlineLabel()).toBe('PROJECT OVERVIEW');
+    fireEvent.click(screen.getByRole('button', { name: 'Show image 2: Output' }));
+    expect(inlineLabel()).toBe('PROJECT EVIDENCE');
+    fireEvent.click(screen.getByRole('button', { name: 'Enlarge image: Output' }));
+    const dialog = screen.getByRole('dialog');
+    expect(dialog.querySelector('.detection-label').textContent).toBe('PROJECT EVIDENCE');
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Show image 1: Input' }));
+    expect(dialog.querySelector('.detection-label').textContent).toBe('PROJECT OVERVIEW');
+    expect(inlineLabel()).toBe('PROJECT OVERVIEW');
+    expect(dialog.querySelector('.case-gallery-stage .detection-label')).toBeNull();
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Next image' }));
+    expect(dialog.querySelector('.detection-label').textContent).toBe('PROJECT EVIDENCE');
+    expect(inlineLabel()).toBe('PROJECT EVIDENCE');
+  });
+  it('labels a single overview cover without adding gallery controls', () => {
+    const { container } = render(<Gallery images={[images[0]]} overviewSrc={images[0].src} />);
+    expect(container.querySelector('.case-study-cover-stage .detection-label').textContent).toBe('PROJECT OVERVIEW');
+    expect(screen.queryByRole('button')).toBeNull();
+    expect(screen.getByRole('link').getAttribute('href')).toBe(images[0].src);
+  });
+  it('keeps generic galleries and unmatched overview sources labeled as evidence', () => {
+    const { container, rerender } = render(<Gallery images={images} />);
+    expect(container.querySelector('.detection-label').textContent).toBe('PROJECT EVIDENCE');
+    rerender(<Gallery images={[images[0]]} overviewSrc="/another-overview.png" />);
+    expect(container.querySelector('.detection-label').textContent).toBe('PROJECT EVIDENCE');
+  });
+  it('labels the static overview while preserving media links and no-JS captions', () => {
+    const captioned = images.map((image, i) => ({ ...image, caption: `Caption ${i + 1}` }));
+    const html = renderToStaticMarkup(<Gallery images={captioned} overviewSrc={images[0].src} interactive={false} />);
+    expect(html).toContain('PROJECT OVERVIEW');
+    expect(html).not.toContain('PROJECT EVIDENCE');
+    captioned.forEach((image) => {
+      expect(html).toContain(`href="${image.src}"`);
+      expect(html).toContain(image.caption);
+    });
+    expect(html).toContain('<noscript>');
+    expect(html).not.toContain('<button');
+  });
+  it('renders every compiled public article cover as an overview', () => {
+    const stories = compileCaseStudyPublication();
+    expect(stories.length).toBeGreaterThan(0);
+    for (const story of stories) {
+      const html = renderToStaticMarkup(<CaseStudyArticle story={story} />);
+      expect(html, story.slug).toContain('PROJECT OVERVIEW');
+      expect(html, story.slug).not.toContain('PROJECT EVIDENCE');
+      expect(html, story.slug).toContain(`src="${caseStudyDisplaySrc(story.image)}"`);
+    }
+  });
   it('collects approved legacy gallery images from the public record', () => {
     const story = compileCaseStudyPublication({ manifest: caseStudyPublicationBaseline }).find(({ slug }) => slug === 'invoice-ocr-extraction');
     expect(story.gallery).toHaveLength(2);

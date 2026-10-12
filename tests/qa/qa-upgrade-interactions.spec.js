@@ -5,7 +5,8 @@ import {
   collectionCaseStudies,
   featuredCaseStudies,
 } from '../../src/data/caseStudies.js';
-import { HOURLY_FROM_LABEL, serviceOffers, serviceTimelineLabel } from '../../src/data/serviceOffers.js';
+import { HOURLY_FROM_LABEL, HOURLY_RATE_LABEL } from '../../src/config/pricing.js';
+import { serviceOffers, serviceTimelineLabel } from '../../src/data/serviceOffers.js';
 
 const cardFor = (caseStudy) => ({
   cardName: `Read case study: ${caseStudy.cardTitle || caseStudy.title}`,
@@ -107,7 +108,7 @@ test('service cards show summary, timeline, and rate without opening', async ({ 
   const services = page.locator('#services');
   await expect(services.getByRole('article')).toHaveCount(serviceOffers.length);
   await expect(services).toContainText(HOURLY_FROM_LABEL);
-  await expect(services).not.toContainText('€80');
+  await expect(services).not.toContainText('$');
   await expect(services).not.toContainText('3,600');
   await expect(services).not.toContainText('7,200');
   await expect(services.getByRole('button', { name: /Request a Project Estimate/i })).toHaveCount(0);
@@ -231,7 +232,7 @@ test('craft signal surfaces: Services cards keep offer markers and metadata', as
   const firstService = page.locator('#services article').first();
   await expect(firstService.getByText(/SERVICE · OFFER \d+/i)).toBeVisible();
   await expect(firstService.locator('dt').filter({ hasText: /^Rate/ })).toBeVisible();
-  await expect(firstService).toContainText('€45/hour');
+  await expect(firstService).toContainText(HOURLY_RATE_LABEL);
   await expect(firstService.locator('dt').filter({ hasText: /^Timeline/ })).toBeVisible();
   await expect(firstService).toContainText('Typically');
   await expect(firstService.getByRole('link', { name: /Scope details/i })).toBeVisible();
@@ -278,7 +279,7 @@ test('CTA shows its starting rate and estimate link', async ({ page }) => {
   await expect(cta).toBeVisible();
   
   // Rate display
-  await expect(cta).toContainText('€45/hour');
+  await expect(cta).toContainText(HOURLY_RATE_LABEL);
   await expect(cta).toContainText('RATE');
   
   await expect(cta.getByRole('heading', { name: /Ready to start your project/i })
@@ -332,7 +333,7 @@ test('e2e: Home → Service → CTA → Contact → Fill validation', async ({ p
   await page.goto('/');
   const firstService = page.locator('#services article').first();
   await firstService.scrollIntoViewIfNeeded();
-  await expect(firstService).toContainText('€45/hour');
+  await expect(firstService).toContainText(HOURLY_RATE_LABEL);
   await firstService.getByRole('link', { name: /Scope details/i }).click();
   await expect(page).toHaveURL(/\/services\/data-extraction-automation-sprint\/?$/);
   await expect(page.getByRole('heading', { name: 'In scope' })).toBeVisible();

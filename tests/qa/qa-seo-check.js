@@ -5,6 +5,8 @@ import { caseStudies } from '../../publication/public-case-studies.js';
 import { defaultSeo, routeSeo } from '../../src/lib/seoConfig.js';
 import { serviceOffers } from '../../src/data/serviceOffers.js';
 import { resolveLoopbackRedirectUrl, resolveQaTargets } from './qa-local-only.js';
+import { HOURLY_RATE_LABEL } from '../../src/config/pricing.js';
+import { replacePricingTokens } from '../../plugins/vite-plugin-pricing-html.js';
 
 const PREVIEW = process.env.QA_PREVIEW_URL ?? 'http://127.0.0.1:3000';
 const PROD = process.env.QA_PROD_URL ?? 'https://www.vivekapatel.com';
@@ -214,7 +216,7 @@ if (sitemapPath) {
   findings.push({ issue: 'Missing sitemap.xml in dist/ or public/', severity: 'P3', ref: 'tools/generate-sitemap.js' });
 }
 
-const indexHtml = readFileSync(path.join(process.cwd(), 'index.html'), 'utf8');
+const indexHtml = replacePricingTokens(readFileSync(path.join(process.cwd(), 'index.html'), 'utf8'));
 const ogInIndex = indexHtml.match(/og:image[^>]+content=["']([^"']+)/i)?.[1];
 if (ogInIndex?.includes('github')) {
   findings.push({
@@ -229,33 +231,33 @@ if (indexHtml.includes('application/ld+json')) {
 
 const draftDescription = getMeta(indexHtml, 'description');
 const draftTwitter = getMeta(indexHtml, 'twitter:description');
-if (!draftDescription?.includes('€45/hour')) {
+if (!draftDescription?.includes(HOURLY_RATE_LABEL)) {
   findings.push({
-    issue: `index.html meta description missing €45/hour: ${draftDescription}`,
+    issue: `index.html meta description missing ${HOURLY_RATE_LABEL}: ${draftDescription}`,
     severity: 'P1',
     ref: 'index.html',
   });
 }
-if (!draftTwitter?.includes('€45/hour')) {
+if (!draftTwitter?.includes(HOURLY_RATE_LABEL)) {
   findings.push({
-    issue: `index.html twitter:description missing €45/hour: ${draftTwitter}`,
+    issue: `index.html twitter:description missing ${HOURLY_RATE_LABEL}: ${draftTwitter}`,
     severity: 'P1',
     ref: 'index.html',
   });
 }
 const priceRange = indexHtml.match(/"priceRange":\s*"([^"]+)"/)?.[1] ?? '';
-if (priceRange !== '€45/hour') {
+if (priceRange !== HOURLY_RATE_LABEL) {
   findings.push({
-    issue: `ProfessionalService priceRange is not €45/hour: ${priceRange}`,
+    issue: `ProfessionalService priceRange is not ${HOURLY_RATE_LABEL}: ${priceRange}`,
     severity: 'P1',
     ref: 'index.html',
   });
 }
 
 const seoConfig = readFileSync(path.join(process.cwd(), 'src/lib/seoConfig.js'), 'utf8');
-if (!seoConfig.includes('€45/hour')) {
+if (!defaultSeo.description.includes(HOURLY_RATE_LABEL) || !routeSeo['/contact'].description.includes(HOURLY_RATE_LABEL)) {
   findings.push({
-    issue: 'seoConfig.js missing €45/hour',
+    issue: `seoConfig.js missing ${HOURLY_RATE_LABEL}`,
     severity: 'P1',
     ref: 'src/lib/seoConfig.js',
   });
@@ -269,15 +271,15 @@ if (seoConfig.includes('94%')) {
 }
 
 const hero = readFileSync(path.join(process.cwd(), 'src/components/Hero.jsx'), 'utf8');
-if ((hero.match(/€45\/hour/g) || []).length !== 1 || hero.includes('Starting at €45/hour')) {
+if ((hero.match(/\{HOURLY_RATE_LABEL\}/g) || []).length !== 1 || hero.includes('Starting at')) {
   findings.push({
-    issue: 'Hero.jsx must show €45/hour exactly once, in the invoice RATE field (#195)',
+    issue: `Hero.jsx must show ${HOURLY_RATE_LABEL} exactly once, in the invoice RATE field (#195)`,
     severity: 'P1',
     ref: 'src/components/Hero.jsx',
   });
 }
 
-const leftoverRate = /€80|\$45\/hour/;
+const leftoverRate = /\$\d+(?:\.\d+)?\/hour/;
 const leftoverBase = /based\s*-?\s*in\s+europe/i;
 const inventedCity =
   /Vienna|Wien|Berlin|Munich|München|Zurich|Graz|Salzburg|Innsbruck|Wels|Leonding|Prague|Praha|Budapest|Linz an der Donau|Oberösterreich|Upper Austria/;
@@ -287,9 +289,9 @@ const pin = (issue, ref, ok) => {
 };
 
 const serviceOffersSource = readFileSync(path.join(process.cwd(), 'src/data/serviceOffers.js'), 'utf8');
-if (!serviceOffersSource.includes('HOURLY_FROM_EUR = 45')) {
+if (/export const HOURLY_/.test(serviceOffersSource)) {
   findings.push({
-    issue: 'serviceOffers.js missing HOURLY_FROM_EUR = 45',
+    issue: 'serviceOffers.js must not define pricing separately from src/config/pricing.js',
     severity: 'P1',
     ref: 'src/data/serviceOffers.js',
   });
@@ -332,13 +334,13 @@ pin(
   'defaultSeo.description is not the locked Linz sentence',
   'src/lib/seoConfig.js',
   defaultSeo.description ===
-    'Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients worldwide. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. Top Rated Plus on Upwork. €45/hour.',
+    `Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients worldwide. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. Top Rated Plus on Upwork. ${HOURLY_RATE_LABEL}.`,
 );
 pin(
   'contact SEO description is not the locked Linz sentence',
   'src/lib/seoConfig.js',
   routeSeo['/contact'].description ===
-    'Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Linz, Austria, serving clients worldwide. Discuss your workflow and request a project estimate. €45/hour.',
+    `Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Linz, Austria, serving clients worldwide. Discuss your workflow and request a project estimate. ${HOURLY_RATE_LABEL}.`,
 );
 
 const homeTokens = keywordTokens(defaultSeo.keywords);
@@ -383,7 +385,7 @@ pin(
 pin('workLocation and areaServed must stay different Place names', 'index.html', workLocation?.name !== areaServed?.name);
 pin('areaServed must be a Place object, not an array', 'index.html', Boolean(areaServed) && !Array.isArray(areaServed));
 pin('Person name must stay Vivek Patel', 'index.html', person?.name === 'Vivek Patel');
-pin('parsed ProfessionalService priceRange is not €45/hour', 'index.html', service?.priceRange === '€45/hour');
+pin(`parsed ProfessionalService priceRange is not ${HOURLY_RATE_LABEL}`, 'index.html', service?.priceRange === HOURLY_RATE_LABEL);
 pin('JSON-LD Place name must not be Europe-only', 'index.html', workLocation?.name !== 'Europe' && areaServed?.name !== 'Europe');
 
 if (/streetAddress|PostalAddress|postalCode|addressLocality|addressCountry|postOfficeBoxNumber|"geo"|latitude|longitude|"address"\s*:/.test(indexHtml)) {

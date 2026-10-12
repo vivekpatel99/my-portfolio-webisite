@@ -70,7 +70,7 @@ export const CaseStudyArticle = ({ story, backHref = '/#portfolio' }) => {
       ? React.createElement('p', { className: 'case-study-status' }, 'In progress')
       : null,
     React.createElement('p', { className: 'case-study-summary' }, story.summary),
-    React.createElement(CaseStudyGallery, { key: story.slug || story.id, images: collectGalleryImages(story) }),
+    React.createElement(CaseStudyGallery, { key: story.slug || story.id, images: collectGalleryImages(story), overviewSrc: story.image?.src }),
     React.createElement('div', { className: 'case-study-sections' }, story.sections.map((section) => ({ ...section, nodes: withoutImages(section.nodes) })).map((section) => React.createElement(
       'section', { key: section.key },
       React.createElement('h2', null, section.heading),

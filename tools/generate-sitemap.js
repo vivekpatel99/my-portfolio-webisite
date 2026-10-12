@@ -25,7 +25,7 @@ const gitLastmod = () => {
     try {
         const output = execFileSync(
             'git',
-            ['log', '-1', '--format=%cs', '--', 'src/lib/seoConfig.js', 'src/lib/seo.js', 'src/pages', 'src/components'],
+            ['log', '-1', '--format=%cs', '--', 'src/config/pricing.js', 'src/lib/seoConfig.js', 'src/lib/seo.js', 'src/pages', 'src/components'],
             { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }
         ).trim();
 

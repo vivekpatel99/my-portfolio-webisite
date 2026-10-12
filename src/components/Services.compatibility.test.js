@@ -9,6 +9,7 @@ import { expect, it } from 'vitest';
 import { transformWithEsbuild } from 'vite';
 import * as frames from './DetectionFrame';
 import * as catalog from '@/data/serviceOffers';
+import * as pricing from '@/config/pricing';
 
 it('renders service offers without lookbehind support after the Safari 14 transform', async () => {
   const source = readFileSync(new URL('./Services.jsx', import.meta.url), 'utf8');
@@ -21,6 +22,7 @@ it('renders service offers without lookbehind support after the Safari 14 transf
     'react-router-dom': router,
     './DetectionFrame': frames,
     '@/data/serviceOffers': catalog,
+    '@/config/pricing': pricing,
   };
   runInNewContext(code, {
     module,

@@ -1,4 +1,4 @@
-export const SITE_RATE = '€45/hour';
+export { HOURLY_RATE_LABEL as SITE_RATE } from '../../../src/config/pricing.js';
 export const MAX_CASE_STUDY_LINKS = 2;
 
 const SITE_ORIGIN = 'https://www.vivekapatel.com';

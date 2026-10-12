@@ -1,6 +1,7 @@
 import { expect, test } from './qa-test.js';
 import { caseStudies } from '../../src/data/caseStudies.js';
 import { serviceOffers } from '../../src/data/serviceOffers.js';
+import { HOURLY_RATE_LABEL } from '../../src/config/pricing.js';
 
 const measureRenderedContrast = (target) => {
   const parseColor = (value) => {
@@ -1117,7 +1118,7 @@ test('normal-size purple text and links meet contrast in rendered states', async
     localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false }));
   });
   await page.goto('/');
-  await expect(page.getByText('Starting at €45/hour', { exact: true })).toHaveCount(0);
+  await expect(page.getByText(`Starting at ${HOURLY_RATE_LABEL}`, { exact: true })).toHaveCount(0);
   const locationField = page.locator('[data-hero-field="location"]');
   const locationValue = locationField.getByText('Linz, Austria', { exact: true });
   await expect(locationValue).toBeVisible();
@@ -1453,8 +1454,8 @@ test('hero invoice proof fold structure per #176', async ({ page }) => {
   await expect(page.getByText('PROOF · DETECTED', { exact: true })).toHaveCount(0);
   
   const invoice = page.locator('article[aria-label="Profile invoice field parse"]');
-  const rateField = invoice.locator('div', { has: page.getByText('Rate') }).filter({ hasText: '€45/hour' });
-  await expect(rateField.getByText('€45/hour', { exact: true })).toBeVisible();
+  const rateField = invoice.locator('div', { has: page.getByText('Rate') }).filter({ hasText: HOURLY_RATE_LABEL });
+  await expect(rateField.getByText(HOURLY_RATE_LABEL, { exact: true })).toBeVisible();
   
   const locationField = invoice.locator('div', { has: page.getByText('Location') }).filter({ hasText: 'Linz, Austria' });
   await expect(locationField.getByText('Linz, Austria', { exact: true })).toBeVisible();
