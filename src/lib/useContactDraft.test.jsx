@@ -126,6 +126,27 @@ describe('tab-memory contact draft', () => {
     expect(draft.result.current.inquiryContext.id).toBe('data-extraction-automation-sprint');
   });
 
+  it.each(['unsent', 'failed'])('preserves a later %s draft and its feedback when returning to an earlier completed entry', (status) => {
+    const draft = renderHook(() => useContactDraft());
+    const completedKey = `earlier-completed-${status}`;
+    act(() => draft.result.current.applyInquiryContext('?service=ai-workflow-buildout', completedKey));
+    let submission;
+    act(() => { submission = draft.result.current.beginSubmission(); });
+    act(() => draft.result.current.finishSubmission(submission, true));
+    act(() => draft.result.current.applyInquiryContext('?service=data-extraction-automation-sprint', `later-${status}`));
+    act(() => draft.result.current.setFormState(filledFields));
+    if (status === 'failed') {
+      act(() => { submission = draft.result.current.beginSubmission(); });
+      act(() => draft.result.current.finishSubmission(submission, false, 'Synthetic retry feedback'));
+    }
+    const outcome = draft.result.current.outcome;
+    act(() => draft.result.current.applyInquiryContext('?service=ai-workflow-buildout', completedKey));
+    expect(draft.result.current.formState).toEqual(filledFields);
+    expect(draft.result.current.inquiryContext.id).toBe('data-extraction-automation-sprint');
+    expect(draft.result.current.outcome).toBe(outcome);
+    expect(unloadIsPrevented()).toBe(true);
+  });
+
   it('keeps one unload listener across StrictMode subscription cleanup and route remounts', () => {
     const addListener = vi.spyOn(window, 'addEventListener');
     const removeListener = vi.spyOn(window, 'removeEventListener');

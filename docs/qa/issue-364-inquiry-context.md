@@ -17,16 +17,23 @@ An untouched generated description does not trigger unload protection; it can
 be reconstructed from its public context URL. Entering another field or editing
 the description restores protection for the visitor's unsent data.
 
-Success clears the context with the submitted fields. Returning to that
-completed contact history entry retains the receipt and empty fields. A fresh
-CTA visit, including the same service/project, can seed a new inquiry. Failures
-keep the context for retry. React Router's existing entry key distinguishes the
-two navigation cases; no private form data is added to history state.
+Success clears the context with the submitted fields. Returning to a completed
+contact entry prevents re-seeding; when no later draft has been started, the
+receipt and empty fields remain available. A fresh CTA visit, including the same
+service/project, can seed a new inquiry. Failures keep the context for retry.
+React Router's existing entry key distinguishes the two navigation cases; no
+private form data is added to history state.
 Successful-entry markers are retained for every completed inquiry in this
 document. The originating entry key is captured when submission starts, so
 visiting another CTA during a send cannot move its completion marker. Returning
-to either of two completed inquiries keeps the cleared form; visiting an
-unsubmitted entry can still begin a new inquiry.
+to either of two completed inquiries keeps the cleared form when there is no
+later unsent draft; visiting an unsubmitted entry can still begin a new inquiry.
+The draft and its latest feedback remain shared across contact entries. If a
+visitor starts inquiry B after completing A, then returns to A while B is unsent
+or has failed, B's fields, visible context and retry feedback remain intact.
+Restoring A's old blank form would overwrite that populated inquiry, contrary
+to #364's preservation requirement. Completion markers do not replace newer
+visitor input with historical snapshots.
 
 The cue uses ordinary readable prose inside the existing sensitive form region.
 DESIGN.md FM-01's existing field, label, validation and feedback behavior is

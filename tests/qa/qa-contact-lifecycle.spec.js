@@ -163,6 +163,27 @@ test('an untouched contextual seed reloads without a discard warning and edited 
   expect(transport.state.mutations).toHaveLength(0);
 });
 
+test('a newer unsent inquiry stays intact when Back reaches an earlier completed contact entry', async ({ page, contactTransport: transport }) => {
+  await page.goto(`/services/${serviceOffers[0].id}/`);
+  await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+  await fillContactForm(page);
+  await page.getByRole('button', { name: 'Send project request', exact: true }).click();
+  await expect.poll(() => transport.state.mutations.length).toBe(1);
+  transport.releasePending('success');
+  await expect(page.locator('#contact-receipt-title')).toBeVisible();
+  await navigateToServicesByKeyboard(page);
+  await page.getByRole('link', { name: 'Scope details for ai workflow buildout →', exact: true }).click();
+  await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+  await fillContactForm(page);
+  for (let step = 0; step < 3; step += 1) await page.goBack();
+  await expect(page).toHaveURL(new RegExp(`/contact/\\?service=${serviceOffers[0].id}$`));
+  await expectPreservedValues(page);
+  await expect(page.locator('#contact-inquiry-context')).toHaveText('Inquiry about AI Workflow Buildout');
+  await expect(page.locator('#contact-receipt-title')).toHaveCount(0);
+  expect(await unloadIsPrevented(page)).toBe(true);
+  expect(transport.state.mutations).toHaveLength(1);
+});
+
 test.afterEach(async ({ context }) => {
   closingContexts.add(context);
   await context.close();
