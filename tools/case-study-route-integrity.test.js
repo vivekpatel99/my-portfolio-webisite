@@ -70,6 +70,8 @@ function fixture({ hourlyRateEur = HOURLY_RATE_EUR } = {}) {
     'src/components/CaseStudiesContent.js',
     'src/components/OngoingCaseStudies.js',
     'src/components/ServiceDetailContent.js',
+    'src/components/RelatedWork.js',
+    'src/data/relatedWork.js',
     'src/data/serviceOffers.js',
     'tools/case-study-route-integrity.js',
     'tools/public-route-integrity.js',

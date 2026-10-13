@@ -1,4 +1,6 @@
 import React from 'react';
+import RelatedWork from './RelatedWork.js';
+import { serviceRelatedWork } from '../data/relatedWork.js';
 import { DetectionLabel } from './DetectionFrame.js';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
@@ -107,6 +109,7 @@ const ServiceDetailContent = ({ service, backRef }) => {
           scopeList('Out of scope', service.outOfScope, '02'),
         ),
       ),
+      React.createElement(RelatedWork, { slugs: serviceRelatedWork[service.id] }),
     ),
   );
 };
