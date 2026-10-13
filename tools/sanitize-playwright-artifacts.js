@@ -30,6 +30,7 @@ const suites = Object.freeze({
   'qa-responsive.spec.js': { label: 'responsive-layout' },
   'qa-route-recovery.spec.js': { label: 'route-recovery' },
   'qa-service-loading.spec.js': { label: 'service-loading' },
+  'qa-static-contact.spec.js': { label: 'static-contact' },
   'qa-static-home.spec.js': { label: 'static-home' },
   'qa-routes.spec.js': { label: 'routing' },
   'qa-testimonials.spec.js': { label: 'testimonials-carousel' },
