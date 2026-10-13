@@ -64,6 +64,87 @@ const test = base.extend({
   }, { auto: true }],
 });
 
+// Synthetic GA transport at the real submission seam; production GA and all
+// non-loopback requests stay disabled/blocked by this suite's normal guards.
+async function installInquiryAnalyticsFixture(page) {
+  await page.evaluate(async () => {
+    const analytics = await import('/src/lib/inquiryAnalytics.js');
+    window.qaInquiryEvents = [];
+    window.gtag = (...args) => window.qaInquiryEvents.push(args);
+    analytics.registerInquiryAnalytics('G-SYNTHETIC');
+  });
+}
+
+async function inquirySuccessEvents(page) {
+  return page.evaluate(() => window.qaInquiryEvents.filter(args => args[0] === 'event' && args[1] === 'generate_lead'));
+}
+
+test('accepted inquiry analytics emits once after transport success away from Contact and never for invalid or pending sends', async ({ page, context, contactTransport: transport }) => {
+  await context.addInitScript(() => localStorage.setItem('cookie_consent_preferences', JSON.stringify({ analytics: true, necessary: true })));
+  await page.goto('/contact/?service=ai-workflow-buildout&utm_source=LinkedIn&private=PRIVATE_QUERY#PRIVATE_HASH');
+  await expect(page.locator('#contact-inquiry-context')).toBeVisible();
+  await installInquiryAnalyticsFixture(page);
+  await page.getByRole('button', { name: 'Send project request', exact: true }).click();
+  expect(transport.state.mutations).toHaveLength(0);
+  expect(await inquirySuccessEvents(page)).toHaveLength(0);
+  await fillContactForm(page);
+  await page.getByRole('button', { name: 'Send project request', exact: true }).click();
+  await expect.poll(() => transport.state.mutations.length).toBe(1);
+  expect(await inquirySuccessEvents(page)).toHaveLength(0);
+  await navigateToServicesByKeyboard(page);
+  transport.releasePending('success');
+  await expect.poll(async () => (await inquirySuccessEvents(page)).length).toBe(1);
+  await returnToContactByBack(page);
+  await expect(page.locator('#contact-receipt-title')).toBeVisible();
+  const events = await inquirySuccessEvents(page);
+  expect(events).toHaveLength(1);
+  expect(events[0][2]).toMatchObject({ inquiry_source: 'linkedin', inquiry_type: 'service', inquiry_id: 'ai-workflow-buildout', page_path: '/contact/' });
+  const serialized = await page.evaluate(() => JSON.stringify(window.qaInquiryEvents));
+  for (const privateValue of ['PRIVATE', 'Synthetic QA Contact', 'qa-contact@example.invalid', 'Synthetic transport lifecycle test.']) {
+    expect(serialized).not.toContain(privateValue);
+  }
+});
+
+test('failed inquiry analytics emits none until a confirmed retry succeeds', async ({ page, context, contactTransport: transport }) => {
+  await context.addInitScript(() => localStorage.setItem('cookie_consent_preferences', JSON.stringify({ analytics: true, necessary: true })));
+  await page.goto('/contact/?service=unknown-private-id');
+  await fillContactForm(page);
+  await installInquiryAnalyticsFixture(page);
+  await page.getByRole('button', { name: 'Send project request', exact: true }).click();
+  await expect.poll(() => transport.state.mutations.length).toBe(1);
+  transport.releasePending('failure');
+  await expect(page.locator('#contact-submit-error')).toBeVisible();
+  expect(await inquirySuccessEvents(page)).toHaveLength(0);
+  await page.getByRole('button', { name: 'Send project request', exact: true }).click();
+  await expect(page.locator('#contact-receipt-title')).toBeVisible();
+  const events = await inquirySuccessEvents(page);
+  expect(events).toHaveLength(1);
+  expect(events[0][2].inquiry_type).toBe('none');
+  expect(events[0][2]).not.toHaveProperty('inquiry_id');
+  expect(JSON.stringify(events)).not.toContain('unknown-private-id');
+});
+
+for (const consentState of ['rejected', 'withdrawn-and-regranted']) {
+  test(`${consentState} consent prevents inquiry success analytics`, async ({ page, context, contactTransport: transport }) => {
+    await context.addInitScript(granted => localStorage.setItem('cookie_consent_preferences', JSON.stringify({ analytics: granted, necessary: true })), consentState !== 'rejected');
+    await page.goto('/contact/');
+    await fillContactForm(page);
+    await installInquiryAnalyticsFixture(page);
+    await page.getByRole('button', { name: 'Send project request', exact: true }).click();
+    await expect.poll(() => transport.state.mutations.length).toBe(1);
+    if (consentState !== 'rejected') {
+      await page.evaluate(async () => {
+        const consent = await import('/src/lib/consent.js');
+        consent.saveCookieConsentPreferences({ analytics: false });
+        consent.saveCookieConsentPreferences({ analytics: true });
+      });
+    }
+    transport.releasePending('success');
+    await expect(page.locator('#contact-receipt-title')).toBeVisible();
+    expect(await inquirySuccessEvents(page)).toHaveLength(0);
+  });
+}
+
 test('public service and project inquiries seed trusted editable context and preserve drafts through pending navigation', async ({ page, contactTransport: transport }) => {
   for (const [type, id, label, route, cta] of [
     ...serviceOffers.slice(0, 1).map(item => ['service', item.id, item.name, `/services/${item.id}/`, 'Request a Project Estimate']),

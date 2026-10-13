@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import { readInquiryContext } from './inquiryContext.js';
+import { beginInquiryMeasurement, completeInquiryMeasurement } from './inquiryAnalytics.js';
 
 const emptyFields = () => ({ name: '', email: '', budget: '', description: '' });
 
@@ -11,6 +12,7 @@ let unloadProtected = false;
 let feedbackToast = null;
 let currentInquiryVisitKey = null;
 let submissionInquiryVisitKey = null;
+let submissionMeasurement = null;
 const completedInquiryVisitKeys = new Set();
 
 function warnBeforeUnload(event) {
@@ -72,12 +74,15 @@ function beginSubmission() {
   feedbackToast = null;
   const submittedFields = snapshot.formState;
   submissionInquiryVisitKey = currentInquiryVisitKey;
+  submissionMeasurement = beginInquiryMeasurement(snapshot.inquiryContext);
   publish({ ...snapshot, submission: submittedFields, outcome: null, presentedOutcome: null });
   return submittedFields;
 }
 
 function finishSubmission(submittedFields, succeeded, errorMessage) {
   if (snapshot.submission !== submittedFields) return;
+  if (succeeded) completeInquiryMeasurement(submissionMeasurement);
+  submissionMeasurement = null;
   if (succeeded && typeof submissionInquiryVisitKey === 'string') {
     completedInquiryVisitKeys.add(submissionInquiryVisitKey);
   }
