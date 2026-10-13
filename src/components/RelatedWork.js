@@ -14,7 +14,7 @@ export default function RelatedWork({ slugs, className = '' }) {
   React.createElement('ul', { className: 'space-y-5' }, stories.map((story) => React.createElement('li', { key: story.slug },
     React.createElement('a', {
       href: `/project/${story.slug}/`,
-      className: 'inline-flex min-h-[44px] items-center text-[#c8abea] underline underline-offset-4 hover:text-[#eee5ff] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#c8abea]',
+      className: 'related-work-link inline-flex min-h-[44px] items-center text-[#c8abea] underline underline-offset-4 hover:text-[#eee5ff] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#c8abea]',
     }, story.title),
     React.createElement('p', { className: 'mt-1 max-w-[70ch] text-sm leading-relaxed text-[#b6b8c2]' }, story.summary),
   ))));

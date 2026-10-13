@@ -287,6 +287,7 @@ for (const [source, targets] of [
     await expect(related).toBeVisible();
     const expected = targets.map((slug) => `/project/${slug}/`);
     await expect(related.locator('a')).toHaveCount(expected.length);
+    expect(await related.locator('a').evaluateAll((links) => links.map((link) => getComputedStyle(link).textDecorationLine))).toEqual(expected.map(() => 'underline'));
     expect(await related.locator('a').evaluateAll((links) => links.map((link) => link.getAttribute('href')))).toEqual(expected);
     const response = await page.request.get(source);
     expect(response.status()).toBe(200);
