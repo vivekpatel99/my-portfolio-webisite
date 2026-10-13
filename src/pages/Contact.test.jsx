@@ -13,6 +13,7 @@ import ScrollToTop from '@/components/ScrollToTop';
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { useContactDraft } from '@/lib/useContactDraft';
 import { BUDGET_LABELS } from "@/lib/budgetOptions";
+import { socialLinks } from '@/config/links';
 import { CONTACT_LEAD_VALIDATION_ERROR } from "../../convex/lib/leadValidation";
 
 const mockSubmitLead = vi.fn();
@@ -116,6 +117,14 @@ describe("Contact form", () => {
     expect(achievements[0].textContent).toContain('Job Success');
     expect(achievements[1].textContent).toContain('5★');
     expect(achievements[1].textContent).toContain('Rating');
+  });
+
+  it('provides a profile source immediately after the Upwork success and rating summaries', () => {
+    const { container } = render(<Contact />);
+    const source = screen.getByRole('link', { name: 'View Upwork profile for credentials and client feedback' });
+    expect(source.getAttribute('href')).toBe(socialLinks.upwork);
+    expect(container.querySelector('ul.proof').nextElementSibling.contains(source)).toBe(true);
+    expect(source.tabIndex).toBe(0);
   });
 
   it('#265: restores every unsent field after navigation unmounts the contact route', () => {

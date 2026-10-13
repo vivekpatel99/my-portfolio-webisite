@@ -178,7 +178,7 @@ const Contact = () => {
           </div>
 
           {/* Proof strip */}
-          <ul className="proof flex flex-wrap justify-center gap-7 mb-9">
+          <ul className="proof flex flex-wrap justify-center gap-7 mb-3">
             <li className="flex items-center gap-[10px]">
               <span className="num text-[1.35rem] font-bold text-[#8B5CF6]">100%</span>
               <span className="lab text-xs leading-[1.25] text-[#9ca3af]">Job Success<br />on Upwork</span>
@@ -189,6 +189,17 @@ const Contact = () => {
               <span className="lab text-xs leading-[1.25] text-[#9ca3af]">Average<br />Rating</span>
             </li>
           </ul>
+          <p className="text-center text-sm mb-9">
+            <a
+              href={socialLinks.upwork}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View Upwork profile for credentials and client feedback"
+              className="text-[#a78bfa] underline underline-offset-4 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a78bfa]"
+            >
+              View Upwork profile
+            </a>
+          </p>
 
           {/* Layout: aside + form */}
           <div className="layout grid grid-cols-1 md:grid-cols-[0.82fr_1.18fr] gap-7 items-start">

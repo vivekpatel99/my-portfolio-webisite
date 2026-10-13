@@ -6,6 +6,7 @@ import { render, screen, cleanup, fireEvent, act } from '@testing-library/react'
 import { describe, expect, it, vi, afterEach, beforeEach } from 'vitest';
 import Testimonials from './Testimonials';
 import { testimonials } from '@/data/testimonials';
+import { socialLinks } from '@/config/links';
 
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 
@@ -157,24 +158,35 @@ describe('Testimonials Carousel', () => {
     expect(quoteArea.textContent).not.toContain(testimonials[0].content);
   });
 
-  it('renders source chip for testimonials with source field', () => {
-    const { container } = render(<Testimonials />);
-    
-    const sourceChips = container.querySelectorAll('.source');
-    expect(sourceChips.length).toBeGreaterThan(0);
-    
-    const firstChip = sourceChips[0];
-    expect(['Upwork', 'Fiverr', 'Direct']).toContain(firstChip.textContent);
+  it('shows the profile source and recorded month/year for each Upwork quote', () => {
+    render(<Testimonials />);
+    const dates = ['September 2026', 'June 2026', 'May 2026', 'April 2026', 'March 2026', 'January 2026', 'January 2026'];
+    dates.forEach((date, index) => {
+      fireEvent.click(slideButtons()[index]);
+      const link = screen.getByRole('link', { name: "View Vivek Patel's Upwork profile for this review" });
+      expect(link.getAttribute('href')).toBe(socialLinks.upwork);
+      expect(link.textContent).toBe('Upwork profile');
+      expect(link.tabIndex).toBe(0);
+      const time = document.querySelector('#testimonials time');
+      expect(time.textContent).toBe(date);
+      expect(time.getAttribute('datetime')).toBe(testimonials[index].feedbackDate.slice(0, 7));
+      expectShowing(index);
+      expect(screen.getByRole('img', { name: 'Rated 5 out of 5' })).toBeTruthy();
+    });
   });
 
-  it('displays correct source for first testimonial', () => {
-    const { container } = render(<Testimonials />);
-    
-    const quoteArea = container.querySelector('.quote-area');
-    const sourceChip = quoteArea?.querySelector('.source');
-    
-    expect(sourceChip).toBeTruthy();
-    expect(sourceChip.textContent).toBe(testimonials[0].source);
+  it('keeps Direct sources separate and omits missing dates', () => {
+    render(<Testimonials />);
+    fireEvent.click(slideButtons()[7]);
+    expect(screen.queryByRole('link')).toBeNull();
+    expect(screen.getByText('Direct')).toBeTruthy();
+    expect(document.querySelector('#testimonials time').textContent).toBe('October 2025');
+    for (const index of [8, 9]) {
+      fireEvent.click(slideButtons()[index]);
+      expect(screen.queryByRole('link')).toBeNull();
+      expect(document.querySelector('#testimonials time')).toBeNull();
+      expect(screen.getByText('Direct')).toBeTruthy();
+    }
   });
 });
 
@@ -248,6 +260,22 @@ describe('Testimonials carousel controls (#225)', () => {
     fireEvent.focus(slideButtons()[3]);
     advance(20_000);
     expectShowing(0);
+  });
+
+  it('holds rotation and enables polite announcements while the source link has focus', () => {
+    installMotionPreference(false);
+    render(<Testimonials />);
+    const link = screen.getByRole('link', { name: "View Vivek Patel's Upwork profile for this review" });
+    fireEvent.focus(slideRegion());
+    fireEvent.blur(slideRegion(), { relatedTarget: link });
+    fireEvent.focus(link);
+    expect(slideRegion().getAttribute('aria-live')).toBe('polite');
+    advance(20_000);
+    expectShowing(0);
+    fireEvent.blur(link, { relatedTarget: null });
+    expect(slideRegion().getAttribute('aria-live')).toBe('off');
+    advance(INTERVAL_MS);
+    expectShowing(1);
   });
 
   it('moving focus between quote and controls does not resume rotation', () => {

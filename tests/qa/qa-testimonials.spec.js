@@ -1,5 +1,6 @@
 import { expect, test } from './qa-test.js';
 import { testimonials as testimonialData } from '../../src/data/testimonials.js';
+import { socialLinks } from '../../src/config/links.js';
 
 // Longer than one 6s rotation interval, so an unexpected advance is observable.
 const OVER_ONE_INTERVAL_MS = 7_000;
@@ -91,6 +92,8 @@ test('keyboard traversal reaches quote and slides; chosen slide persists 20s', a
 
   await quote.focus();
   await expect(quote).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(carousel.getByRole('link', { name: "View Vivek Patel's Upwork profile for this review" })).toBeFocused();
   for (let index = 0; index < slideCount; index += 1) {
     await page.keyboard.press('Tab');
     await expect(slides.nth(index)).toBeFocused();
@@ -110,11 +113,12 @@ test('keyboard traversal reaches quote and slides; chosen slide persists 20s', a
 
 test('focusing the quote or a control stops auto-advance until focus leaves', async ({ page }) => {
   test.setTimeout(60_000);
-  const { counter, quote, slides } = await openCarousel(page);
+  const { carousel, counter, quote, slides } = await openCarousel(page);
   await page.mouse.move(1, 1);
 
-  for (const target of [quote, slides.nth(4)]) {
+  for (const target of [quote, carousel.getByRole('link'), slides.nth(4)]) {
     await target.focus();
+    await expect(quote).toHaveAttribute('aria-live', 'polite');
     const heldAt = await counter.textContent();
     await page.clock.runFor(OVER_ONE_INTERVAL_MS);
     await expect(counter).toHaveText(heldAt);
@@ -192,7 +196,7 @@ test('controls are non-overlapping targets of at least 44x44 with decorative dia
 });
 
 test('focused quote and controls show a visible outline during keyboard traversal', async ({ page }) => {
-  const { quote, slides } = await openCarousel(page);
+  const { carousel, quote, slides } = await openCarousel(page);
   const expectVisibleOutline = async (target) => {
     await expect(target).toBeFocused();
     const outline = await target.evaluate((element) => {
@@ -206,12 +210,76 @@ test('focused quote and controls show a visible outline during keyboard traversa
   await quote.focus();
   await expectVisibleOutline(quote);
   await page.keyboard.press('Tab');
+  await expectVisibleOutline(carousel.getByRole('link'));
+  await page.keyboard.press('Tab');
   await expectVisibleOutline(slides.first());
   for (let index = 1; index < slideCount; index += 1) {
     await page.keyboard.press('Tab');
     await expectVisibleOutline(slides.nth(index));
   }
 });
+
+for (const width of [320, 390]) {
+  test(`profile sources and recorded feedback dates fit ${width}px and remain keyboard accessible`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 844 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    const { carousel, quote, slides } = await openCarousel(page);
+    const expectWithinViewport = async (locator) => {
+      await expect(locator).toBeVisible();
+      const box = await locator.boundingBox();
+      expect(box.x).toBeGreaterThanOrEqual(0);
+      expect(box.x + box.width).toBeLessThanOrEqual(width);
+    };
+    const checkSummarySource = async (source) => {
+      await expect(source).toHaveAttribute('href', socialLinks.upwork);
+      await page.keyboard.press('Tab');
+      await source.focus();
+      await expect(source).toBeFocused();
+      await expectWithinViewport(source);
+      const outline = await source.evaluate((link) => ({
+        style: getComputedStyle(link).outlineStyle,
+        width: parseFloat(getComputedStyle(link).outlineWidth),
+      }));
+      expect(outline.style).not.toBe('none');
+      expect(outline.width).toBeGreaterThanOrEqual(2);
+    };
+
+    await checkSummarySource(page.getByRole('group', { name: 'Detected credentials' })
+      .getByRole('link', { name: 'View Upwork profile for credentials and client feedback' }));
+
+    for (const [index, review] of testimonialData.entries()) {
+      await slides.nth(index).click();
+      await expect(quote.locator('blockquote')).toContainText(review.content);
+      await expect(quote).toContainText(review.clientName);
+      const source = carousel.getByRole('link', { name: "View Vivek Patel's Upwork profile for this review" });
+      if (review.source === 'Upwork') {
+        await expect(source).toHaveAttribute('href', socialLinks.upwork);
+        await quote.focus();
+        await page.keyboard.press('Tab');
+        await expect(source).toBeFocused();
+        await expectWithinViewport(source);
+      } else {
+        await expect(source).toHaveCount(0);
+        await expect(quote.getByText('Direct', { exact: true })).toBeVisible();
+      }
+      const date = quote.locator('time');
+      if (review.feedbackDate) {
+        await expect(date).toHaveAttribute('datetime', review.feedbackDate.slice(0, 7));
+        await expect(date).toHaveText(new Intl.DateTimeFormat('en-GB', {
+          month: 'long', year: 'numeric', timeZone: 'UTC',
+        }).format(new Date(`${review.feedbackDate}T00:00:00Z`)));
+        await expectWithinViewport(date);
+      } else {
+        await expect(date).toHaveCount(0);
+      }
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    }
+
+    await page.goto('/contact/');
+    await checkSummarySource(page.getByRole('link', { name: 'View Upwork profile for credentials and client feedback' }));
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  });
+}
 
 test('reduced motion shows autoplay off, offers no playback control, and keeps manual slides usable', async ({ page, hasTouch }) => {
   test.setTimeout(60_000);
