@@ -97,6 +97,72 @@ test('public service and project inquiries seed trusted editable context and pre
   await expect(page.getByLabel('Project Description *')).toHaveValue("I'd like to discuss AI Workflow Buildout.");
 });
 
+for (const pendingOtherVisit of [false, true]) {
+  test(`completed inquiry history stays clear after ${pendingOtherVisit ? 'another CTA during a pending send' : 'two successful inquiries'}`, async ({ page, contactTransport: transport }) => {
+    const startInquiry = async (service) => {
+      await page.getByRole('link', { name: `Scope details for ${service.title.toLowerCase()} →`, exact: true }).click();
+      await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+    };
+    await page.goto(`/services/${serviceOffers[0].id}/`);
+    await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+    await fillContactForm(page);
+    await page.getByRole('button', { name: 'Send project request', exact: true }).click();
+    await expect.poll(() => transport.state.mutations.length).toBe(1);
+    if (!pendingOtherVisit) {
+      transport.releasePending('success');
+      await expect(page.locator('#contact-receipt-title')).toBeVisible();
+    }
+    await navigateToServicesByKeyboard(page);
+    await startInquiry(serviceOffers[2]);
+    if (pendingOtherVisit) {
+      await expectPreservedValues(page);
+      transport.releasePending('success');
+    } else {
+      await fillContactForm(page);
+      await page.getByRole('button', { name: 'Send project request', exact: true }).click();
+      await expect.poll(() => transport.state.mutations.length).toBe(2);
+    }
+    await expect(page.locator('#contact-receipt-title')).toBeVisible();
+    for (let step = 0; step < 3; step += 1) await page.goBack();
+    await expect(page).toHaveURL(new RegExp(`/contact/\\?service=${serviceOffers[0].id}$`));
+    await expectEmptyContactForm(page);
+    await expect(page.locator('#contact-inquiry-context')).toHaveCount(0);
+    await expect(page.locator('#contact-receipt-title')).toBeVisible();
+    for (let step = 0; step < 3; step += 1) await page.goForward();
+    await expect(page).toHaveURL(/\/contact\/\?service=ai-workflow-buildout$/);
+    if (pendingOtherVisit) {
+      await expect(page.locator('#contact-inquiry-context')).toHaveText('Inquiry about AI Workflow Buildout');
+      await expect(page.getByLabel('Project Description *')).toHaveValue("I'd like to discuss AI Workflow Buildout.");
+    } else {
+      await expectEmptyContactForm(page);
+      await expect(page.locator('#contact-receipt-title')).toBeVisible();
+    }
+    expect(transport.state.mutations).toHaveLength(pendingOtherVisit ? 1 : 2);
+  });
+}
+
+test('an untouched contextual seed reloads without a discard warning and edited fields remain protected', async ({ page, contactTransport: transport }) => {
+  let warnings = 0;
+  page.on('dialog', async dialog => {
+    if (dialog.type() === 'beforeunload') warnings += 1;
+    await dialog.dismiss();
+  });
+  await page.goto(`/services/${serviceOffers[2].id}/`);
+  await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+  await expect(page.getByLabel('Project Description *')).toHaveValue("I'd like to discuss AI Workflow Buildout.");
+  expect(await unloadIsPrevented(page)).toBe(false);
+  await page.reload();
+  await expect(page.getByLabel('Project Description *')).toHaveValue("I'd like to discuss AI Workflow Buildout.");
+  expect(warnings).toBe(0);
+  await page.getByLabel('Full Name *').fill('Synthetic QA Contact');
+  expect(await unloadIsPrevented(page)).toBe(true);
+  await page.getByLabel('Full Name *').fill('');
+  expect(await unloadIsPrevented(page)).toBe(false);
+  await page.getByLabel('Project Description *').fill('My own project details.');
+  expect(await unloadIsPrevented(page)).toBe(true);
+  expect(transport.state.mutations).toHaveLength(0);
+});
+
 test.afterEach(async ({ context }) => {
   closingContexts.add(context);
   await context.close();

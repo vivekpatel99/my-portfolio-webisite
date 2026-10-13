@@ -13,12 +13,20 @@ name, email and budget values are preserved. A populated description or pending
 send preserves the existing draft and its original context. Context stays in
 document memory, outside the unchanged lead payload; no draft browser-storage
 persistence or hidden form fields were added.
+An untouched generated description does not trigger unload protection; it can
+be reconstructed from its public context URL. Entering another field or editing
+the description restores protection for the visitor's unsent data.
 
 Success clears the context with the submitted fields. Returning to that
 completed contact history entry retains the receipt and empty fields. A fresh
 CTA visit, including the same service/project, can seed a new inquiry. Failures
 keep the context for retry. React Router's existing entry key distinguishes the
 two navigation cases; no private form data is added to history state.
+Successful-entry markers are retained for every completed inquiry in this
+document. The originating entry key is captured when submission starts, so
+visiting another CTA during a send cannot move its completion marker. Returning
+to either of two completed inquiries keeps the cleared form; visiting an
+unsubmitted entry can still begin a new inquiry.
 
 The cue uses ordinary readable prose inside the existing sensitive form region.
 DESIGN.md FM-01's existing field, label, validation and feedback behavior is

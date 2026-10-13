@@ -44,6 +44,23 @@ describe('tab-memory contact draft', () => {
     expect(returned.result.current.formState.description).toBe('My own editable inquiry');
   });
 
+  it('warns before unload only after the visitor adds or edits data beyond an untouched seed', () => {
+    const draft = renderHook(() => useContactDraft());
+    act(() => draft.result.current.applyInquiryContext('?service=ai-workflow-buildout', 'untouched-seed'));
+    const seed = draft.result.current.formState.description;
+    expect(unloadIsPrevented()).toBe(false);
+    act(() => draft.result.current.setFormState(fields => ({ ...fields, name: 'Private visitor input' })));
+    expect(unloadIsPrevented()).toBe(true);
+    act(() => draft.result.current.setFormState(fields => ({ ...fields, name: '' })));
+    expect(unloadIsPrevented()).toBe(false);
+    act(() => draft.result.current.setFormState(fields => ({ ...fields, description: `${seed} My own details.` })));
+    expect(unloadIsPrevented()).toBe(true);
+    act(() => draft.result.current.setFormState(fields => ({ ...fields, description: seed })));
+    expect(unloadIsPrevented()).toBe(true);
+    act(() => draft.result.current.setFormState(emptyFields));
+    expect(unloadIsPrevented()).toBe(false);
+  });
+
   it('never overwrites a populated or pending inquiry, and clears context only on success', () => {
     const draft = renderHook(() => useContactDraft());
     act(() => draft.result.current.setFormState(filledFields));
@@ -76,6 +93,37 @@ describe('tab-memory contact draft', () => {
     expect(draft.result.current.inquiryContext.id).toBe('ai-workflow-buildout');
     expect(draft.result.current.formState.description).toBe("I'd like to discuss AI Workflow Buildout.");
     expect(draft.result.current.outcome).toBeNull();
+  });
+
+  it('retains completion markers for both earlier and later successful contact entries', () => {
+    const draft = renderHook(() => useContactDraft());
+    let submission;
+    act(() => draft.result.current.applyInquiryContext('?service=ai-workflow-buildout', 'completed-A'));
+    act(() => { submission = draft.result.current.beginSubmission(); });
+    act(() => draft.result.current.finishSubmission(submission, true));
+    act(() => draft.result.current.applyInquiryContext('?service=data-extraction-automation-sprint', 'completed-B'));
+    act(() => { submission = draft.result.current.beginSubmission(); });
+    act(() => draft.result.current.finishSubmission(submission, true));
+    for (const [search, key] of [['?service=ai-workflow-buildout', 'completed-A'], ['?service=data-extraction-automation-sprint', 'completed-B']]) {
+      act(() => draft.result.current.applyInquiryContext(search, key));
+      expect(draft.result.current.formState).toEqual(emptyFields);
+      expect(draft.result.current.inquiryContext).toBeNull();
+      expect(draft.result.current.outcome.status).toBe('success');
+    }
+  });
+
+  it('binds completion to the contact entry that started the pending submission', () => {
+    const draft = renderHook(() => useContactDraft());
+    act(() => draft.result.current.applyInquiryContext('?service=ai-workflow-buildout', 'pending-origin'));
+    let submission;
+    act(() => { submission = draft.result.current.beginSubmission(); });
+    act(() => draft.result.current.applyInquiryContext('?service=data-extraction-automation-sprint', 'pending-other-cta'));
+    act(() => draft.result.current.finishSubmission(submission, true));
+    act(() => draft.result.current.applyInquiryContext('?service=ai-workflow-buildout', 'pending-origin'));
+    expect(draft.result.current.formState).toEqual(emptyFields);
+    expect(draft.result.current.outcome.status).toBe('success');
+    act(() => draft.result.current.applyInquiryContext('?service=data-extraction-automation-sprint', 'pending-other-cta'));
+    expect(draft.result.current.inquiryContext.id).toBe('data-extraction-automation-sprint');
   });
 
   it('keeps one unload listener across StrictMode subscription cleanup and route remounts', () => {

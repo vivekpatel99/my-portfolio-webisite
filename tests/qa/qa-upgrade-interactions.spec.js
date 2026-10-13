@@ -339,7 +339,7 @@ test('e2e: Home → Service → CTA → Contact → Fill validation', async ({ p
   await expect(page.getByRole('heading', { name: 'In scope' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Out of scope' })).toBeVisible();
   await page.getByRole('link', { name: /Request a Project Estimate/i }).click();
-  await expect(page).toHaveURL(/\/contact\/?$/);
+  await expect(page).toHaveURL(/\/contact\/\?service=data-extraction-automation-sprint$/);
   await expect(page.getByRole('heading', { name: /Request a Project Estimate/i })).toBeVisible();
 
   await page.getByLabel('Full Name *').fill('QA Tester');

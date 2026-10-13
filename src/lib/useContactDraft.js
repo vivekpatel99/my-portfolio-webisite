@@ -5,12 +5,13 @@ const emptyFields = () => ({ name: '', email: '', budget: '', description: '' })
 
 // This SPA module lives only in the current browser document. Draft fields are
 // never serialized to browser storage and disappear on reload or tab close.
-let snapshot = { formState: emptyFields(), inquiryContext: null, submission: null, outcome: null, presentedOutcome: null };
+let snapshot = { formState: emptyFields(), inquiryContext: null, generatedDescription: null, submission: null, outcome: null, presentedOutcome: null };
 const subscribers = new Set();
 let unloadProtected = false;
 let feedbackToast = null;
 let currentInquiryVisitKey = null;
-let completedInquiryVisitKey = null;
+let submissionInquiryVisitKey = null;
+const completedInquiryVisitKeys = new Set();
 
 function warnBeforeUnload(event) {
   event.preventDefault();
@@ -19,7 +20,8 @@ function warnBeforeUnload(event) {
 
 function publish(nextSnapshot) {
   snapshot = nextSnapshot;
-  const dirty = Object.values(snapshot.formState).some((value) => value !== '');
+  const dirty = Object.entries(snapshot.formState).some(([field, value]) =>
+    value !== '' && (field !== 'description' || value !== snapshot.generatedDescription));
   if (typeof window !== 'undefined' && dirty !== unloadProtected) {
     if (dirty) window.addEventListener('beforeunload', warnBeforeUnload);
     else window.removeEventListener('beforeunload', warnBeforeUnload);
@@ -43,18 +45,22 @@ function setFormState(update) {
     feedbackToast?.dismiss();
     feedbackToast = null;
   }
-  publish({ ...snapshot, formState, inquiryContext: formState.description === '' ? null : snapshot.inquiryContext, outcome: null, presentedOutcome: null });
+  publish({ ...snapshot, formState,
+    generatedDescription: formState.description === snapshot.formState.description ? snapshot.generatedDescription : null,
+    inquiryContext: formState.description === '' ? null : snapshot.inquiryContext,
+    outcome: null, presentedOutcome: null,
+  });
 }
 
 function applyInquiryContext(search, visitKey = null) {
   // Track the contact entry even when a populated draft keeps its earlier
   // context. Back restores a completed entry; a fresh CTA has a new key.
   currentInquiryVisitKey = visitKey;
-  if (snapshot.outcome?.status === 'success' && completedInquiryVisitKey === visitKey) return;
+  if (completedInquiryVisitKeys.has(visitKey)) return;
   if (snapshot.submission || snapshot.formState.description !== '') return;
   const inquiryContext = readInquiryContext(search);
   if (!inquiryContext) return;
-  publish({ ...snapshot, inquiryContext,
+  publish({ ...snapshot, inquiryContext, generatedDescription: inquiryContext.description,
     formState: { ...snapshot.formState, description: inquiryContext.description },
     outcome: null, presentedOutcome: null,
   });
@@ -65,14 +71,19 @@ function beginSubmission() {
   feedbackToast?.dismiss();
   feedbackToast = null;
   const submittedFields = snapshot.formState;
+  submissionInquiryVisitKey = currentInquiryVisitKey;
   publish({ ...snapshot, submission: submittedFields, outcome: null, presentedOutcome: null });
   return submittedFields;
 }
 
 function finishSubmission(submittedFields, succeeded, errorMessage) {
   if (snapshot.submission !== submittedFields) return;
-  if (succeeded) completedInquiryVisitKey = currentInquiryVisitKey;
+  if (succeeded && typeof submissionInquiryVisitKey === 'string') {
+    completedInquiryVisitKeys.add(submissionInquiryVisitKey);
+  }
+  submissionInquiryVisitKey = null;
   publish({
+    generatedDescription: succeeded && snapshot.formState === submittedFields ? null : snapshot.generatedDescription,
     inquiryContext: succeeded && snapshot.formState === submittedFields ? null : snapshot.inquiryContext,
     formState: succeeded && snapshot.formState === submittedFields
       ? emptyFields()
