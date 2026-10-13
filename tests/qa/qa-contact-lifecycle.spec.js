@@ -7,6 +7,8 @@ import { assertVisualLayout } from './visual-layout.js';
 import { createConvexTransportMock, SYNTHETIC_FAILURE } from './qa-convex-transport-mock.js';
 
 import { chooseBudget, expectBudget } from './qa-budget.js';
+import { serviceOffers } from '../../src/data/serviceOffers.js';
+import { caseStudies } from '../../src/data/caseStudies.js';
 
 const CONVEX_MOCK_HOST = 'qa-contact-lifecycle.convex.cloud';
 const SAFE_FAILURE_MESSAGE = "We couldn't send your request. Please try again, or use the email address on this page.";
@@ -60,6 +62,126 @@ const test = base.extend({
     await installLocalGuardsAndTransport(context, transport);
     await use(transport);
   }, { auto: true }],
+});
+
+test('public service and project inquiries seed trusted editable context and preserve drafts through pending navigation', async ({ page, contactTransport: transport }) => {
+  for (const [type, id, label, route, cta] of [
+    ...serviceOffers.slice(0, 1).map(item => ['service', item.id, item.name, `/services/${item.id}/`, 'Request a Project Estimate']),
+    ...caseStudies.slice(0, 1).map(item => ['project', item.slug, item.title, `/project/${item.slug}/`, 'Discuss a similar project']),
+  ]) {
+    await page.goto(route);
+    const link = page.locator('main').getByRole('link', { name: cta, exact: true });
+    await expect(link).toHaveAttribute('href', `/contact/?${type}=${id}`);
+    await link.click();
+    await expect(page.locator('#contact-inquiry-context')).toHaveText(`Inquiry about ${label}`);
+    await expect(page.getByLabel('Project Description *')).toHaveValue(`I'd like to discuss ${label}.`);
+    await page.getByLabel('Project Description *').fill('Edited inquiry');
+  }
+  await fillContactForm(page);
+  await navigateToServicesByKeyboard(page);
+  await page.getByRole('link', { name: 'Scope details for ai workflow buildout →', exact: true }).click();
+  await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+  await expectPreservedValues(page);
+  await page.getByRole('button', { name: 'Send project request', exact: true }).click();
+  await expect.poll(() => transport.state.mutations.length).toBe(1);
+  await navigateToServicesByKeyboard(page);
+  transport.releasePending('success');
+  await returnToContactByBack(page);
+  await expect(page.getByRole('status', { name: 'Request received' })).toBeVisible();
+  await expect(page.locator('#contact-inquiry-context')).toHaveCount(0);
+  expect(transport.state.mutations).toHaveLength(1);
+  await navigateToServicesByKeyboard(page);
+  await page.getByRole('link', { name: 'Scope details for ai workflow buildout →', exact: true }).click();
+  await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+  await expect(page.locator('#contact-inquiry-context')).toHaveText('Inquiry about AI Workflow Buildout');
+  await expect(page.getByLabel('Project Description *')).toHaveValue("I'd like to discuss AI Workflow Buildout.");
+});
+
+for (const pendingOtherVisit of [false, true]) {
+  test(`completed inquiry history stays clear after ${pendingOtherVisit ? 'another CTA during a pending send' : 'two successful inquiries'}`, async ({ page, contactTransport: transport }) => {
+    const startInquiry = async (service) => {
+      await page.getByRole('link', { name: `Scope details for ${service.title.toLowerCase()} →`, exact: true }).click();
+      await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+    };
+    await page.goto(`/services/${serviceOffers[0].id}/`);
+    await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+    await fillContactForm(page);
+    await page.getByRole('button', { name: 'Send project request', exact: true }).click();
+    await expect.poll(() => transport.state.mutations.length).toBe(1);
+    if (!pendingOtherVisit) {
+      transport.releasePending('success');
+      await expect(page.locator('#contact-receipt-title')).toBeVisible();
+    }
+    await navigateToServicesByKeyboard(page);
+    await startInquiry(serviceOffers[2]);
+    if (pendingOtherVisit) {
+      await expectPreservedValues(page);
+      transport.releasePending('success');
+    } else {
+      await fillContactForm(page);
+      await page.getByRole('button', { name: 'Send project request', exact: true }).click();
+      await expect.poll(() => transport.state.mutations.length).toBe(2);
+    }
+    await expect(page.locator('#contact-receipt-title')).toBeVisible();
+    for (let step = 0; step < 3; step += 1) await page.goBack();
+    await expect(page).toHaveURL(new RegExp(`/contact/\\?service=${serviceOffers[0].id}$`));
+    await expectEmptyContactForm(page);
+    await expect(page.locator('#contact-inquiry-context')).toHaveCount(0);
+    await expect(page.locator('#contact-receipt-title')).toBeVisible();
+    for (let step = 0; step < 3; step += 1) await page.goForward();
+    await expect(page).toHaveURL(/\/contact\/\?service=ai-workflow-buildout$/);
+    if (pendingOtherVisit) {
+      await expect(page.locator('#contact-inquiry-context')).toHaveText('Inquiry about AI Workflow Buildout');
+      await expect(page.getByLabel('Project Description *')).toHaveValue("I'd like to discuss AI Workflow Buildout.");
+    } else {
+      await expectEmptyContactForm(page);
+      await expect(page.locator('#contact-receipt-title')).toBeVisible();
+    }
+    expect(transport.state.mutations).toHaveLength(pendingOtherVisit ? 1 : 2);
+  });
+}
+
+test('an untouched contextual seed reloads without a discard warning and edited fields remain protected', async ({ page, contactTransport: transport }) => {
+  let warnings = 0;
+  page.on('dialog', async dialog => {
+    if (dialog.type() === 'beforeunload') warnings += 1;
+    await dialog.dismiss();
+  });
+  await page.goto(`/services/${serviceOffers[2].id}/`);
+  await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+  await expect(page.getByLabel('Project Description *')).toHaveValue("I'd like to discuss AI Workflow Buildout.");
+  expect(await unloadIsPrevented(page)).toBe(false);
+  await page.reload();
+  await expect(page.getByLabel('Project Description *')).toHaveValue("I'd like to discuss AI Workflow Buildout.");
+  expect(warnings).toBe(0);
+  await page.getByLabel('Full Name *').fill('Synthetic QA Contact');
+  expect(await unloadIsPrevented(page)).toBe(true);
+  await page.getByLabel('Full Name *').fill('');
+  expect(await unloadIsPrevented(page)).toBe(false);
+  await page.getByLabel('Project Description *').fill('My own project details.');
+  expect(await unloadIsPrevented(page)).toBe(true);
+  expect(transport.state.mutations).toHaveLength(0);
+});
+
+test('a newer unsent inquiry stays intact when Back reaches an earlier completed contact entry', async ({ page, contactTransport: transport }) => {
+  await page.goto(`/services/${serviceOffers[0].id}/`);
+  await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+  await fillContactForm(page);
+  await page.getByRole('button', { name: 'Send project request', exact: true }).click();
+  await expect.poll(() => transport.state.mutations.length).toBe(1);
+  transport.releasePending('success');
+  await expect(page.locator('#contact-receipt-title')).toBeVisible();
+  await navigateToServicesByKeyboard(page);
+  await page.getByRole('link', { name: 'Scope details for ai workflow buildout →', exact: true }).click();
+  await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+  await fillContactForm(page);
+  for (let step = 0; step < 3; step += 1) await page.goBack();
+  await expect(page).toHaveURL(new RegExp(`/contact/\\?service=${serviceOffers[0].id}$`));
+  await expectPreservedValues(page);
+  await expect(page.locator('#contact-inquiry-context')).toHaveText('Inquiry about AI Workflow Buildout');
+  await expect(page.locator('#contact-receipt-title')).toHaveCount(0);
+  expect(await unloadIsPrevented(page)).toBe(true);
+  expect(transport.state.mutations).toHaveLength(1);
 });
 
 test.afterEach(async ({ context }) => {

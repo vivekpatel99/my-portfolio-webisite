@@ -106,6 +106,29 @@ describe("Contact form", () => {
     mockSubmitLead.mockResolvedValue({ success: true });
   });
 
+  it('shows trusted inquiry context and allows editing its seed without adding payload fields', async () => {
+    const view = render(<Contact inquirySearch="?service=ai-workflow-buildout&description=untrusted" />);
+    expect(screen.getByText('Inquiry about AI Workflow Buildout')).toBeTruthy();
+    expect(screen.getByLabelText('Project Description *').value).toBe("I'd like to discuss AI Workflow Buildout.");
+    fillValidLead(view.container);
+    fireEvent.submit(view.container.querySelector('form'));
+    await screen.findByRole('status', { name: 'Request received' });
+    expect(mockSubmitLead).toHaveBeenCalledWith({ name: 'Jane Doe', email: 'jane@example.com', budget: undefined, description: 'Need help.' });
+    expect(screen.queryByText('Inquiry about AI Workflow Buildout')).toBeNull();
+    expect(view.container.textContent).not.toContain('untrusted');
+  });
+
+  it('ignores unknown context and keeps typed inquiry content when a different CTA arrives', () => {
+    const first = render(<Contact inquirySearch="?project=withdrawn-story&description=untrusted" />);
+    expect(screen.getByLabelText('Project Description *').value).toBe('');
+    fillValidLead(first.container);
+    first.unmount();
+    render(<Contact inquirySearch="?service=ai-workflow-buildout" />);
+    expect(screen.getByLabelText('Full Name *').value).toBe('Jane Doe');
+    expect(screen.getByLabelText('Project Description *').value).toBe('Need help.');
+    expect(screen.queryByText('Inquiry about AI Workflow Buildout')).toBeNull();
+  });
+
   it('renders the proof strip as a valid list with two accessible achievements', () => {
     const { container } = render(<Contact />);
     const proof = container.querySelector('ul.proof');

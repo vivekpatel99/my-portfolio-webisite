@@ -143,7 +143,7 @@ test('all featured case-study cards and detail CTAs work', async ({ page }) => {
 
     await page.goto(caseStudy.path);
     await page.getByRole('link', { name: /Discuss a similar project/ }).click();
-    await expect(page).toHaveURL(/\/contact\/?$/);
+    await expect(page).toHaveURL(new RegExp(`/contact/\\?project=${caseStudy.path.split('/').filter(Boolean).at(-1)}$`));
   }
 });
 
@@ -152,7 +152,7 @@ test('all published case-study routes and detail CTAs remain reachable', async (
     await page.goto(caseStudy.path);
     await expect(page.getByRole('heading', { name: caseStudy.heading })).toBeVisible();
     await page.getByRole('link', { name: /Discuss a similar project/ }).click();
-    await expect(page).toHaveURL(/\/contact\/?$/);
+    await expect(page).toHaveURL(new RegExp(`/contact/\\?project=${caseStudy.path.split('/').filter(Boolean).at(-1)}$`));
   }
 });
 
@@ -339,7 +339,7 @@ test('e2e: Home → Service → CTA → Contact → Fill validation', async ({ p
   await expect(page.getByRole('heading', { name: 'In scope' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Out of scope' })).toBeVisible();
   await page.getByRole('link', { name: /Request a Project Estimate/i }).click();
-  await expect(page).toHaveURL(/\/contact\/?$/);
+  await expect(page).toHaveURL(/\/contact\/\?service=data-extraction-automation-sprint$/);
   await expect(page.getByRole('heading', { name: /Request a Project Estimate/i })).toBeVisible();
 
   await page.getByLabel('Full Name *').fill('QA Tester');

@@ -50,7 +50,7 @@ describe('ServiceDetail', () => {
     renderWithRouter(service.id);
 
     const primaryCta = screen.getByRole('link', { name: /Request a Project Estimate/i });
-    expect(primaryCta.getAttribute('href')).toBe('/contact');
+    expect(primaryCta.getAttribute('href')).toBe(`/contact/?service=${service.id}`);
 
     const secondaryCtas = screen.getAllByRole('link', { name: /View All Services/i });
     secondaryCtas.forEach(cta => {

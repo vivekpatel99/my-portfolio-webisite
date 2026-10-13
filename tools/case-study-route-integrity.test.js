@@ -47,6 +47,7 @@ function fixture({ hourlyRateEur = HOURLY_RATE_EUR } = {}) {
     'plugins/vite-plugin-pricing-html.js',
     'src/data/caseStudies.js',
     'src/lib/caseStudyCollection.js',
+    'src/lib/inquiryContext.js',
     'src/lib/caseStudyBrowsing.js',
     'src/lib/caseStudyThumbnails.js',
     'src/lib/featuredCaseStudies.js',
