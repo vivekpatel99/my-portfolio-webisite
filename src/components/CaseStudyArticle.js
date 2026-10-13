@@ -1,4 +1,6 @@
 import React from 'react';
+import RelatedWork from './RelatedWork.js';
+import { storyRelatedWork } from '../data/relatedWork.js';
 import { Link, useInRouterContext } from 'react-router-dom';
 import { DetectionLabel } from './DetectionFrame.js';
 import { ArrowRight } from 'lucide-react';
@@ -76,6 +78,7 @@ export const CaseStudyArticle = ({ story, backHref = '/#portfolio' }) => {
       React.createElement('h2', null, section.heading),
       renderBlocks(section.nodes, section.key),
     ))),
+    React.createElement(RelatedWork, { slugs: storyRelatedWork[story.slug] }),
     React.createElement('div', { className: 'case-study-cta' },
       React.createElement('p', null, 'Working on something similar?'),
       React.createElement(NavigationLink, {
