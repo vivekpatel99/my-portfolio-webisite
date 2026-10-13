@@ -514,11 +514,17 @@ const Hero = () => {
       </div>
 
       {/* CSS animations */}
-      <style jsx>{`
+      <style>{`
         /* Offscreen gate for every named hero animation. !important is required to
            override the inline animation shorthand; paused animations keep their phase. */
         [data-hero-motion="paused"] * {
           animation-play-state: paused !important;
+        }
+        /* Also honor the preference before JavaScript can read matchMedia. */
+        @media (prefers-reduced-motion: reduce) {
+          [data-hero-motion] * {
+            animation: none !important;
+          }
         }
         @keyframes bg-drift {
           0%, 100% { transform: translate(0, 0) scale(1); opacity: var(--op, 0.72); }

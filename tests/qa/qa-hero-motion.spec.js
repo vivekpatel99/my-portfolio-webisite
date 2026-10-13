@@ -206,7 +206,8 @@ test.describe('hero motion work (#232)', () => {
 
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await expect.poll(() => runningHeroAnimations(page)).toEqual([]);
-    expect(isNeutral(await boxPositions(page))).toBe(true);
+    // CSS honors the media query before React's change handler resets parallax.
+    await expect.poll(async () => isNeutral(await boxPositions(page))).toBe(true);
     await page.mouse.move(point.x - 40, point.y, { steps: 4 });
     expect(await writesDuring(page), 'reduced-motion change --px/--py writes').toBe(0);
   });

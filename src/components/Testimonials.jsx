@@ -184,6 +184,7 @@ const Testimonials = () => {
                                 <button
                                     key={index}
                                     type="button"
+                                    disabled={typeof window === 'undefined'}
                                     className="dot detection-utility inline-flex items-center justify-center w-11 h-11 p-0 border-0 bg-transparent"
                                     aria-label={`Slide ${index + 1}`}
                                     aria-current={index === activeIndex ? 'true' : undefined}

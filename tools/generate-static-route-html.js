@@ -16,6 +16,7 @@ import {
   removeStaleProjectHtml,
 } from './case-study-route-integrity.js';
 import { assertPublicLinksRouted, assertServiceRouteSources } from './public-route-integrity.js';
+import { renderStaticHome } from './render-static-home.js';
 
 const distDir = path.join(process.cwd(), 'dist');
 const deploymentHtaccess = readFileSync(path.join(process.cwd(), 'dist/.htaccess'), 'utf8');
@@ -25,7 +26,12 @@ const staticRoutes = Object.keys(routeSeo).filter((route) => route !== '/');
 assertSafeStaticOutput(distDir, staticRoutes);
 const removedStaleProjectHtml = removeStaleProjectHtml(distDir);
 const indexPath = path.join(distDir, 'index.html');
-const indexHtml = readFileSync(indexPath, 'utf8');
+// On repeat runs, recover the empty shell before generating any other route.
+// Only replace markup owned by this generator; unexpected shells still fail.
+const indexHtml = readFileSync(indexPath, 'utf8').replace(
+  /<div id="root"><!--static-home-->[\s\S]*?<!--\/static-home--><\/div>/,
+  '<div id="root"></div>',
+);
 const notFoundSeo = {
   title: 'Page Not Found | Vivek Patel',
   description: 'The requested page could not be found.',
@@ -147,7 +153,10 @@ function applyNoIndex(html) {
 }
 
 const rootHtml = applySeo(indexHtml, routeSeo['/']);
-writeFileSync(indexPath, rootHtml);
+const rootMarker = '<div id="root"></div>';
+if (rootHtml.split(rootMarker).length !== 2) throw new Error('Static route shell must contain exactly one empty root element');
+const homeContent = await renderStaticHome();
+writeFileSync(indexPath, rootHtml.replace(rootMarker, () => `<div id="root"><!--static-home-->${homeContent}<!--/static-home--></div>`));
 
 const renderStaticRoute = (route) => {
   const html = applySeo(rootHtml, routeSeo[route]);

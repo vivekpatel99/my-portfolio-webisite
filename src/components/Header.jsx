@@ -218,6 +218,7 @@ const Header = () => {
 
           <button
             ref={toggleButtonRef}
+            disabled={typeof window === 'undefined'}
             onClick={handleToggle}
             className="detection-utility md:hidden w-11 h-11 flex items-center justify-center ml-auto"
             aria-label="Toggle navigation menu"
