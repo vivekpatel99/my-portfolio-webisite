@@ -30,8 +30,8 @@ async function expectReadableHome(page) {
     }
     return {
       readable,
-      headingFits: rect.left >= 0 && rect.right <= innerWidth,
-      reflows: document.documentElement.scrollWidth <= innerWidth,
+      headingFits: rect.left >= 0 && rect.right <= window.innerWidth,
+      reflows: document.documentElement.scrollWidth <= window.innerWidth,
     };
   })).toEqual({ readable: true, headingFits: true, reflows: true });
 }
