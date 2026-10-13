@@ -16,7 +16,7 @@ import {
   removeStaleProjectHtml,
 } from './case-study-route-integrity.js';
 import { assertPublicLinksRouted, assertServiceRouteSources } from './public-route-integrity.js';
-import { renderStaticHome } from './render-static-home.js';
+import { renderStaticHome, renderStaticContact } from './render-static-home.js';
 
 const distDir = path.join(process.cwd(), 'dist');
 const deploymentHtaccess = readFileSync(path.join(process.cwd(), 'dist/.htaccess'), 'utf8');
@@ -157,9 +157,15 @@ const rootMarker = '<div id="root"></div>';
 if (rootHtml.split(rootMarker).length !== 2) throw new Error('Static route shell must contain exactly one empty root element');
 const homeContent = await renderStaticHome();
 writeFileSync(indexPath, rootHtml.replace(rootMarker, () => `<div id="root"><!--static-home-->${homeContent}<!--/static-home--></div>`));
+const contactContent = await renderStaticContact();
 
 const renderStaticRoute = (route) => {
   const html = applySeo(rootHtml, routeSeo[route]);
+  if (route === '/contact') {
+    const rootMarker = '<div id="root"></div>';
+    if (html.split(rootMarker).length !== 2) throw new Error('Static route shell must contain exactly one empty root element');
+    return html.replace(rootMarker, () => `<div id="root">${contactContent}</div>`);
+  }
   if (route.startsWith('/services/')) {
     const service = getServiceOfferById(route.slice('/services/'.length));
     if (!service) throw new Error(`Static service route has no service offer: ${route}`);

@@ -54,6 +54,8 @@ function fixture({ hourlyRateEur = HOURLY_RATE_EUR } = {}) {
     'src/lib/seo.js',
     'src/lib/heroDetectedFields.js',
     'src/pages/Home.jsx',
+    'src/pages/ContactFallback.jsx',
+    'src/components/ContactContent.jsx',
     'src/components/Hero.jsx',
     'src/components/Header.jsx',
     'src/lib/focusTarget.js',
@@ -151,6 +153,16 @@ describe('case-study route integrity', () => {
     expect(sourcePaths.map((file) => readFileSync(path.join(directory, file), 'utf8'))).toEqual(sourcesBefore);
     expect(firstOutputs[1]).not.toContain('Profile Invoice');
     expect(firstOutputs[2]).not.toContain('Profile Invoice');
+    const contact = firstOutputs[2];
+    expect(contact.match(/<h1\b/g)).toHaveLength(1);
+    expect(contact).toContain('REQUEST A');
+    expect(contact).toContain('PROJECT ESTIMATE');
+    expect(contact).toContain('href="mailto:contact@vivekapatel.com"');
+    expect(contact).toContain('WHAT HAPPENS NEXT');
+    expect(contact).toContain('You receive a suggested scope, timeline, and first milestone.');
+    expect(contact).toContain('The project request form needs JavaScript.');
+    expect(contact).toContain('Connect with Vivek Patel on Upwork');
+    expect(contact).not.toMatch(/<(?:form|input|textarea)\b/);
   }, 30_000);
   it('propagates one changed hourly amount through static metadata and every service page', () => {
     const directory = fixture({ hourlyRateEur: 67 });
