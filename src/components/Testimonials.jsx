@@ -1,10 +1,15 @@
 import React, { useState, useEffect, useRef, useId } from 'react';
 import { Star } from 'lucide-react';
 import { testimonials } from '@/data/testimonials';
+import { socialLinks } from '@/config/links';
 import { DetectionHeading, DetectionLabel } from './DetectionFrame';
 
 const INTERVAL = 6000;
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
+// Keep the English site's month/year stable across visitor and build time zones.
+const feedbackDateFormatter = new Intl.DateTimeFormat('en-GB', {
+    month: 'long', year: 'numeric', timeZone: 'UTC',
+});
 
 const getReducedMotionQuery = () => (
     typeof window === 'undefined' ? null : window.matchMedia?.(REDUCED_MOTION_QUERY) ?? null
@@ -136,13 +141,30 @@ const Testimonials = () => {
                                 </span>
                             )}
                             <footer className="tf-foot flex items-end justify-between gap-5 mt-auto pt-[31px] flex-wrap">
-                                <div className="identity">
+                                <div className="identity min-w-0">
                                     <strong className="text-sm font-[650]">{testimonial.clientName}</strong>
-                                    {testimonial.source && (
-                                        <span className="source inline-block ml-[10px] border border-[rgba(255,255,255,0.13)] py-1 px-[7px] text-[#9ca3af] text-[8px] align-[2px]">
-                                            {testimonial.source}
-                                        </span>
-                                    )}
+                                    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mt-2 text-xs text-[#9ca3af]">
+                                        {testimonial.source === 'Upwork' ? (
+                                            <a
+                                                href={socialLinks.upwork}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                aria-label="View Vivek Patel's Upwork profile for this review"
+                                                className="source text-[#a78bfa] underline underline-offset-4 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a78bfa]"
+                                            >
+                                                Upwork profile
+                                            </a>
+                                        ) : testimonial.source ? (
+                                            <span className="source">{testimonial.source}</span>
+                                        ) : null}
+                                        {testimonial.feedbackDate ? (
+                                            <span>
+                                                Feedback · <time dateTime={testimonial.feedbackDate.slice(0, 7)}>
+                                                    {feedbackDateFormatter.format(new Date(`${testimonial.feedbackDate}T00:00:00Z`))}
+                                                </time>
+                                            </span>
+                                        ) : null}
+                                    </div>
                                 </div>
                                 <div className="count shrink-0 whitespace-nowrap font-mono text-[9px] text-[#9ca3af] leading-[1.8]">
                                     Field<br/>
