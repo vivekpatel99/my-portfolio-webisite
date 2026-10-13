@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { HERO_DETECTED_FIELD_WINDOWS, HERO_INVOICE_FIELDS } from '@/lib/heroDetectedFields';
-import { profileImages } from '@/config/links';
+import { profileImages, socialLinks } from '@/config/links';
 import { DetectionLabel } from './DetectionFrame';
 import { HOURLY_RATE_LABEL } from '@/config/pricing';
 
@@ -356,6 +356,15 @@ const Hero = () => {
                     </div>
                     <p className="mt-[5px] ml-[2px] font-mono text-[9px] leading-[1.2] tracking-[0.04em] text-gray-400">Client delivery record</p>
                   </div>
+                  <a
+                    href={socialLinks.upwork}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="View Upwork profile for credentials and client feedback"
+                    className="col-span-2 max-[359px]:col-span-1 justify-self-start mt-2 text-xs text-[#a78bfa] underline underline-offset-4 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a78bfa]"
+                  >
+                    View Upwork profile
+                  </a>
                 </div>
 
                 {/* Rate & Location columns */}
