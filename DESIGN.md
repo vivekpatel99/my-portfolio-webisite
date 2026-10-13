@@ -149,6 +149,8 @@ Confirmed: attached labels sit after the top-left stroke, centered on the top-ed
 
 Confirmed on 10 October 2026: case-study card cover images, including illustrations and workflow diagrams, fit within the media area without cropping away their content. This applies to homepage featured case studies and collection cards and supersedes the earlier case-study cropping reference. Existing reference: `CaseStudyCard` uses `object-contain` with top alignment; unused media space may remain around the complete image, and existing scope captions appear below the media. Preserve the outer category label, corner geometry, title, navigation and keyboard focus. See [Portfolio illustration assignments](docs/case-studies/portfolio-illustrations.md) for the requested cover correction. Portrait cropping remains governed separately by IM-01.
 
+Confirmed under #360: home and collection card diagrams have no dark media overlays. Card titles and their arrows occupy a separate row below the diagram. Reserve space inside the card above the media for the transparent attached category label, including when it wraps. Preserve complete imagery, opposing corners, destinations, captions, and keyboard focus.
+
 Existing reference: case-study grids reserve 48px between rows for wrapped labels. Existing reference: the collection leaves 40px after its result count. Existing reference: the hero leaves at least 8px between the inference badge and the enlarged Profile Invoice title.
 
 Existing reference: hero value corners use 12px strokes at 1px thickness. Existing reference: form corners use 16px at 1px at rest, then 18px at 2px on focus. Existing reference: the outer hero portrait remains stronger. Existing reference: these roles keep their existing behavior.

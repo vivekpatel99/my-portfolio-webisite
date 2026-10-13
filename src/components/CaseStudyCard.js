@@ -53,7 +53,7 @@ const CaseStudyCard = ({
       {
         to: fromCollection ? `/project/${project.slug}/?from=collection` : `/project/${project.slug}/`,
         state: fromCollection ? { fromCollection: true } : undefined,
-        className: 'block focus:outline-none',
+        className: 'block pt-6 focus:outline-none',
         'aria-label': `Read case study: ${project.cardTitle || project.title}`,
       },
       React.createElement(
@@ -66,13 +66,12 @@ const CaseStudyCard = ({
           loading: priorityImage ? 'eager' : 'lazy',
           fetchpriority: priorityImage ? 'high' : undefined,
         }) : null,
-        React.createElement('div', { className: 'scrim absolute inset-0 bg-gradient-to-b from-transparent via-[rgba(12,13,13,0.35)] to-[rgba(12,13,13,0.92)] z-[1]', 'aria-hidden': true }),
-        React.createElement(
-          'div',
-          { className: 'media-meta absolute left-4 right-14 bottom-4 z-[2]' },
-          React.createElement(headingTag, { className: 'text-[1.05rem] font-[650] tracking-[-0.015em] leading-[1.3] text-white' }, project.cardTitle || project.title),
-        ),
-        React.createElement('span', { className: 'glyph-hit absolute right-3 bottom-3 z-[3] w-11 h-11 grid place-items-center text-[#d8caff]', 'aria-hidden': true }, React.createElement(ArrowGlyph)),
+      ),
+      React.createElement(
+        'div',
+        { className: 'media-meta flex items-center gap-3 px-5 pt-4' },
+        React.createElement(headingTag, { className: 'min-w-0 flex-1 break-words text-[1.05rem] font-[650] tracking-[-0.015em] leading-[1.3] text-white' }, project.cardTitle || project.title),
+        React.createElement('span', { className: 'glyph-hit w-11 h-11 shrink-0 grid place-items-center text-[#d8caff]', 'aria-hidden': true }, React.createElement(ArrowGlyph)),
       ),
     ),
     React.createElement(
