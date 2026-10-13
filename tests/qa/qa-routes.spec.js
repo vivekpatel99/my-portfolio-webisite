@@ -267,3 +267,61 @@ for (const story of ongoingCaseStudies) {
     expect(staticHtml).toContain('href="/case-studies/#in-progress"');
   });
 }
+
+// The map is rendered immediately on service/article pages, independent of the
+// collection's Load more state. Check real HTTP output against the hydrated DOM.
+for (const [source, targets] of [
+  ['/services/data-extraction-automation-sprint/', ['invoice-ocr-extraction', 'ai-invoice-processing-automation', 'healthcare-document-intelligence']],
+  ['/services/ai-workflow-buildout/', ['n8n-openai-data-extraction', 'n8n-python-ai-agents']],
+  ['/services/computer-vision-production-optimization/', ['sports-video-analytics-yolo', 'yolo-computer-vision-optimization', 'depth-based-distance-estimation']],
+  ['/project/ai-project-planning-assistant/', ['n8n-python-ai-agents']],
+  ['/project/python-ci-workflow-automation/', ['n8n-python-ai-agents']],
+  ['/project/n8n-python-ai-agents/', ['ai-project-planning-assistant', 'python-ci-workflow-automation']],
+  ['/project/resumable-listing-data-extraction/', ['browser-search-to-spreadsheet']],
+  ['/project/browser-search-to-spreadsheet/', ['resumable-listing-data-extraction']],
+]) {
+  test(`contextual proof links in HTTP and hydrated ${source}`, async ({ page }) => {
+    await page.goto(source);
+    await expect(page.locator('#main-content')).toBeVisible();
+    const related = page.getByRole('region', { name: 'Related work' });
+    await expect(related).toBeVisible();
+    const expected = targets.map((slug) => `/project/${slug}/`);
+    await expect(related.locator('a')).toHaveCount(expected.length);
+    expect(await related.locator('a').evaluateAll((links) => links.map((link) => getComputedStyle(link).textDecorationLine))).toEqual(expected.map(() => 'underline'));
+    expect(await related.locator('a').evaluateAll((links) => links.map((link) => link.getAttribute('href')))).toEqual(expected);
+    const response = await page.request.get(source);
+    expect(response.status()).toBe(200);
+    const rawHrefs = await page.evaluate((html) => {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      return [...doc.querySelectorAll('section[aria-label="Related work"] a')].map((link) => link.getAttribute('href'));
+    }, await response.text());
+    expect(rawHrefs).toEqual(expected);
+    for (const [index, href] of expected.entries()) {
+      const target = await page.request.get(href);
+      expect(target.status()).toBe(200);
+      expect(await target.text()).toContain(caseStudies.find((story) => `/project/${story.slug}/` === href).title);
+      await related.locator('a').nth(index).focus();
+      await expect(related.locator('a').nth(index)).toBeFocused();
+      expect((await related.locator('a').nth(index).boundingBox()).height).toBeGreaterThanOrEqual(44);
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  });
+}
+
+for (const width of [320, 390]) {
+  test(`service proof links and engagement remain usable at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 844 });
+    for (const id of ['data-extraction-automation-sprint', 'ai-workflow-buildout', 'computer-vision-production-optimization']) {
+      await page.goto(`/services/${id}/`);
+      await expect(page.locator('#main-content')).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'In scope' })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Out of scope' })).toBeVisible();
+      await expect(page.getByRole('link', { name: 'Request a Project Estimate', exact: true })).toBeVisible();
+      const related = page.getByRole('region', { name: 'Related work' });
+      await expect(related).toBeVisible();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await related.getByRole('link').first().focus();
+      await expect(related.getByRole('link').first()).toBeFocused();
+    }
+  });
+}
