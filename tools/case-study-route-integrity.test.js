@@ -51,6 +51,17 @@ function fixture({ hourlyRateEur = HOURLY_RATE_EUR } = {}) {
     'src/lib/caseStudyThumbnails.js',
     'src/lib/featuredCaseStudies.js',
     'src/lib/seoConfig.js',
+    'src/lib/seo.js',
+    'src/lib/heroDetectedFields.js',
+    'src/pages/Home.jsx',
+    'src/components/Hero.jsx',
+    'src/components/Portfolio.jsx',
+    'src/components/Services.jsx',
+    'src/components/Testimonials.jsx',
+    'src/components/About.jsx',
+    'src/components/CTA.jsx',
+    'src/components/SectionAnimator.jsx',
+    'src/data/testimonials.js',
     'publication/case-study-derivatives.js',
     'publication/case-study-manifest.js',
     'publication/case-study-evidence.js',
@@ -75,6 +86,7 @@ function fixture({ hourlyRateEur = HOURLY_RATE_EUR } = {}) {
     'tools/public-route-integrity.js',
     'tools/generate-sitemap.js',
     'tools/generate-static-route-html.js',
+    'tools/render-static-home.js',
   ]) {
     mkdirSync(path.dirname(path.join(directory, file)), { recursive: true });
     copyFileSync(file, path.join(directory, file));
@@ -109,6 +121,31 @@ const run = (directory, script) =>
   });
 
 describe('case-study route integrity', () => {
+  it('renders shared homepage content and preserves every HTML output on a second generation', () => {
+    const directory = fixture();
+    const sourcePaths = ['index.html', 'public/.htaccess', 'src/config/pricing.js', 'src/data/caseStudies.js'];
+    const sourcesBefore = sourcePaths.map((file) => readFileSync(path.join(directory, file), 'utf8'));
+    run(directory, 'generate-static-route-html');
+    const home = readFileSync(path.join(directory, 'dist/index.html'), 'utf8');
+    expect(home.match(/<h1\b/g)).toHaveLength(1);
+    expect(home).toContain('I build detectors, document extractors, and n8n workflows');
+    expect(home).toContain('href="/contact/"');
+    expect(home).toContain('href="/case-studies/"');
+    expect(home).toContain('Profile Invoice');
+    for (const service of ['data-extraction-automation-sprint', 'computer-vision-production-optimization', 'ai-workflow-buildout']) {
+      expect(home).toContain(`href="/services/${service}"`);
+    }
+    const outputs = ['index.html', '404.html', 'contact/index.html', 'case-studies/index.html',
+      ...caseStudySlugs.map((slug) => `project/${slug}/index.html`),
+      ...['data-extraction-automation-sprint', 'computer-vision-production-optimization', 'ai-workflow-buildout']
+        .map((id) => `services/${id}/index.html`)];
+    const firstOutputs = outputs.map((file) => readFileSync(path.join(directory, 'dist', file), 'utf8'));
+    run(directory, 'generate-static-route-html');
+    expect(outputs.map((file) => readFileSync(path.join(directory, 'dist', file), 'utf8'))).toEqual(firstOutputs);
+    expect(sourcePaths.map((file) => readFileSync(path.join(directory, file), 'utf8'))).toEqual(sourcesBefore);
+    expect(firstOutputs[1]).not.toContain('Profile Invoice');
+    expect(firstOutputs[2]).not.toContain('Profile Invoice');
+  }, 30_000);
   it('propagates one changed hourly amount through static metadata and every service page', () => {
     const directory = fixture({ hourlyRateEur: 67 });
     run(directory, 'generate-static-route-html');
