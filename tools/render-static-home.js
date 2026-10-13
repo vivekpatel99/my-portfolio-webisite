@@ -19,14 +19,17 @@ export async function renderStaticHome() {
     optimizeDeps: { noDiscovery: true },
   });
   try {
-    const { default: Home } = await server.ssrLoadModule('/src/pages/Home.jsx');
+    const [{ default: Home }, { default: Header }] = await Promise.all([
+      server.ssrLoadModule('/src/pages/Home.jsx'),
+      server.ssrLoadModule('/src/components/Header.jsx'),
+    ]);
     return renderToStaticMarkup(
       React.createElement(StaticRouter, { location: '/' },
         React.createElement(LazyMotion, { features: domAnimation, strict: true },
-          React.createElement('main', {
-            id: 'main-content',
-            className: 'min-h-screen bg-[#0C0D0D] text-white',
-          }, React.createElement(Home)),
+          React.createElement('div', { className: 'min-h-screen bg-[#0C0D0D] text-white flex flex-col' },
+            React.createElement(Header),
+            React.createElement('main', { id: 'main-content', className: 'flex-grow' }, React.createElement(Home)),
+          ),
         ),
       ),
     );

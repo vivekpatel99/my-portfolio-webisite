@@ -55,6 +55,8 @@ function fixture({ hourlyRateEur = HOURLY_RATE_EUR } = {}) {
     'src/lib/heroDetectedFields.js',
     'src/pages/Home.jsx',
     'src/components/Hero.jsx',
+    'src/components/Header.jsx',
+    'src/lib/focusTarget.js',
     'src/components/Portfolio.jsx',
     'src/components/Services.jsx',
     'src/components/Testimonials.jsx',
@@ -134,6 +136,8 @@ describe('case-study route integrity', () => {
     expect(home).toContain('href="/contact/"');
     expect(home).toContain('href="/case-studies/"');
     expect(home).toContain('Profile Invoice');
+    expect(home).toContain('aria-label="Vivek Patel home"');
+    expect(home).not.toContain('translateY(12px)');
     for (const service of ['data-extraction-automation-sprint', 'computer-vision-production-optimization', 'ai-workflow-buildout']) {
       expect(home).toContain(`href="/services/${service}"`);
     }

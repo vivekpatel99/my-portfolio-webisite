@@ -44,6 +44,11 @@ test.describe('homepage without JavaScript', () => {
       const response = await page.goto('/');
       expect(response.status()).toBe(200);
       await expectReadableHome(page);
+      await expect(page.locator('header')).toHaveCount(1);
+      await expect(page.getByRole('button', { name: 'Toggle navigation menu', includeHidden: true })).toBeDisabled();
+      for (const wrapper of await page.locator('[data-section-animator]').all()) {
+        await expect(wrapper).toHaveCSS('transform', 'none');
+      }
       for (const button of await page.getByRole('button', { name: /^Slide \d+$/ }).all()) {
         await expect(button).toBeDisabled();
       }
@@ -76,5 +81,37 @@ for (const width of [1440, 390, 320]) {
     await page.getByRole('button', { name: 'Slide 2', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Slide 2', exact: true })).toHaveAttribute('aria-current', 'true');
     expect(errors).toEqual([]);
+  });
+}
+
+for (const width of [1440, 320]) {
+  test(`hero stays in place when the delayed entry starts at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.addInitScript(() => {
+      localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false }));
+    });
+    let release;
+    const gate = new Promise((resolve) => { release = resolve; });
+    await page.route(/\/assets\/index-[^/]+\.js(?:\?.*)?$/, async (route) => {
+      await gate;
+      await route.fallback();
+    });
+    try {
+      await page.goto('/', { waitUntil: 'commit' });
+      const heading = page.getByRole('heading', { level: 1 });
+      const menu = page.getByRole('button', { name: 'Toggle navigation menu', includeHidden: true });
+      await expect(page.locator('header')).toHaveCSS('height', '69px');
+      await expect(menu).toBeDisabled();
+      const staticBox = await heading.boundingBox();
+      release();
+      await expect(menu).toBeEnabled();
+      await expect(heading).toHaveCount(1);
+      const clientBox = await heading.boundingBox();
+      expect(Math.abs(clientBox.y - staticBox.y)).toBeLessThanOrEqual(1);
+      expect(Math.abs(clientBox.x - staticBox.x)).toBeLessThanOrEqual(1);
+      await expect(page.locator('#main-content')).toHaveCount(1);
+    } finally {
+      release();
+    }
   });
 }
