@@ -1,0 +1,1921 @@
+{
+  "browser": "148.0.7778.96",
+  "observations": [
+    {
+      "route": "/",
+      "width": 1440,
+      "height": 900,
+      "cards": [
+        {
+          "title": "n8n Website Data Extraction to JSON",
+          "image": {
+            "x": 130,
+            "y": 226.09375,
+            "width": 378.65625,
+            "height": 300
+          },
+          "media": {
+            "x": 130,
+            "y": 226.09375,
+            "width": 378.65625,
+            "height": 300
+          },
+          "heading": {
+            "x": 150,
+            "y": 542.265625,
+            "width": 282.65625,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 159,
+            "y": 194.09375,
+            "width": 257.71875,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Invoice Photo OCR to Excel with Python",
+          "image": {
+            "x": 530.65625,
+            "y": 226.09375,
+            "width": 378.671875,
+            "height": 300
+          },
+          "media": {
+            "x": 530.65625,
+            "y": 226.09375,
+            "width": 378.671875,
+            "height": 300
+          },
+          "heading": {
+            "x": 550.65625,
+            "y": 542.265625,
+            "width": 282.671875,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 559.65625,
+            "y": 194.09375,
+            "width": 180.5,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "YOLO Pose Estimation for Fitness Images",
+          "image": {
+            "x": 931.328125,
+            "y": 226.09375,
+            "width": 378.65625,
+            "height": 300
+          },
+          "media": {
+            "x": 931.328125,
+            "y": 226.09375,
+            "width": 378.65625,
+            "height": 300
+          },
+          "heading": {
+            "x": 951.328125,
+            "y": 542.265625,
+            "width": 282.65625,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 960.328125,
+            "y": 194.09375,
+            "width": 208.578125,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        }
+      ]
+    },
+    {
+      "route": "/case-studies/",
+      "width": 1440,
+      "height": 900,
+      "cards": [
+        {
+          "title": "n8n Invoice Extraction with Validation and Review",
+          "image": {
+            "x": 130,
+            "y": -772.015625,
+            "width": 372,
+            "height": 300
+          },
+          "media": {
+            "x": 130,
+            "y": -772.015625,
+            "width": 372,
+            "height": 300
+          },
+          "heading": {
+            "x": 150,
+            "y": -455.84375,
+            "width": 276,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 159,
+            "y": -804.015625,
+            "width": 180.5,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Color-Coded Schedule PDF Extraction to Excel",
+          "image": {
+            "x": 534,
+            "y": -772.015625,
+            "width": 372,
+            "height": 300
+          },
+          "media": {
+            "x": 534,
+            "y": -772.015625,
+            "width": 372,
+            "height": 300
+          },
+          "heading": {
+            "x": 554,
+            "y": -455.84375,
+            "width": 276,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 563,
+            "y": -804.015625,
+            "width": 180.5,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "n8n Record Sync and a PostgreSQL Query Assistant",
+          "image": {
+            "x": 938,
+            "y": -772.015625,
+            "width": 372,
+            "height": 300
+          },
+          "media": {
+            "x": 938,
+            "y": -772.015625,
+            "width": 372,
+            "height": 300
+          },
+          "heading": {
+            "x": 958,
+            "y": -455.84375,
+            "width": 276,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 967,
+            "y": -804.015625,
+            "width": 257.71875,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Browser Search Automation from a Spreadsheet",
+          "image": {
+            "x": 130,
+            "y": -80.71875,
+            "width": 372,
+            "height": 300
+          },
+          "media": {
+            "x": 130,
+            "y": -80.71875,
+            "width": 372,
+            "height": 300
+          },
+          "heading": {
+            "x": 150,
+            "y": 235.453125,
+            "width": 276,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 159,
+            "y": -112.71875,
+            "width": 229.640625,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Resumable Python Listing Extraction to CSV",
+          "image": {
+            "x": 534,
+            "y": -80.71875,
+            "width": 372,
+            "height": 300
+          },
+          "media": {
+            "x": 534,
+            "y": -80.71875,
+            "width": 372,
+            "height": 300
+          },
+          "heading": {
+            "x": 554,
+            "y": 235.453125,
+            "width": 276,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 563,
+            "y": -112.71875,
+            "width": 208.578125,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "n8n Website Data Extraction to JSON",
+          "image": {
+            "x": 938,
+            "y": -80.71875,
+            "width": 372,
+            "height": 300
+          },
+          "media": {
+            "x": 938,
+            "y": -80.71875,
+            "width": 372,
+            "height": 300
+          },
+          "heading": {
+            "x": 958,
+            "y": 235.453125,
+            "width": 276,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 967,
+            "y": -112.71875,
+            "width": 257.71875,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "LangGraph Project Planning Assistant",
+          "image": {
+            "x": 130,
+            "y": 610.578125,
+            "width": 372,
+            "height": 300
+          },
+          "media": {
+            "x": 130,
+            "y": 610.578125,
+            "width": 372,
+            "height": 300
+          },
+          "heading": {
+            "x": 150,
+            "y": 926.75,
+            "width": 276,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 159,
+            "y": 578.578125,
+            "width": 166.453125,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Webcam Distance Estimation with Depth Anything V2",
+          "image": {
+            "x": 534,
+            "y": 610.578125,
+            "width": 372,
+            "height": 300
+          },
+          "media": {
+            "x": 534,
+            "y": 610.578125,
+            "width": 372,
+            "height": 300
+          },
+          "heading": {
+            "x": 554,
+            "y": 926.75,
+            "width": 276,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 563,
+            "y": 578.578125,
+            "width": 208.578125,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Python Automation for Code-Quality Workflows",
+          "image": {
+            "x": 938,
+            "y": 610.578125,
+            "width": 372,
+            "height": 300
+          },
+          "media": {
+            "x": 938,
+            "y": 610.578125,
+            "width": 372,
+            "height": 300
+          },
+          "heading": {
+            "x": 958,
+            "y": 926.75,
+            "width": 276,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 967,
+            "y": 578.578125,
+            "width": 243.6875,
+            "height": 16
+          },
+          "decoded": false,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "YOLO Pose Estimation for Fitness Images",
+          "image": {
+            "x": 130,
+            "y": 1301.875,
+            "width": 372,
+            "height": 300
+          },
+          "media": {
+            "x": 130,
+            "y": 1301.875,
+            "width": 372,
+            "height": 300
+          },
+          "heading": {
+            "x": 150,
+            "y": 1618.046875,
+            "width": 276,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 159,
+            "y": 1269.875,
+            "width": 208.578125,
+            "height": 16
+          },
+          "decoded": false,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Invoice Photo OCR to Excel with Python",
+          "image": {
+            "x": 534,
+            "y": 1301.875,
+            "width": 372,
+            "height": 300
+          },
+          "media": {
+            "x": 534,
+            "y": 1301.875,
+            "width": 372,
+            "height": 300
+          },
+          "heading": {
+            "x": 554,
+            "y": 1618.046875,
+            "width": 276,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 563,
+            "y": 1269.875,
+            "width": 180.5,
+            "height": 16
+          },
+          "decoded": false,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Football Player Tracking with YOLO and Team Colors",
+          "image": {
+            "x": 938,
+            "y": 1301.875,
+            "width": 372,
+            "height": 300
+          },
+          "media": {
+            "x": 938,
+            "y": 1301.875,
+            "width": 372,
+            "height": 300
+          },
+          "heading": {
+            "x": 958,
+            "y": 1618.046875,
+            "width": 276,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 967,
+            "y": 1269.875,
+            "width": 208.578125,
+            "height": 16
+          },
+          "decoded": false,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        }
+      ]
+    },
+    {
+      "route": "/",
+      "width": 980,
+      "height": 1324,
+      "cards": [
+        {
+          "title": "n8n Website Data Extraction to JSON",
+          "image": {
+            "x": 48,
+            "y": 152.34375,
+            "width": 431,
+            "height": 300
+          },
+          "media": {
+            "x": 48,
+            "y": 152.34375,
+            "width": 431,
+            "height": 300
+          },
+          "heading": {
+            "x": 68,
+            "y": 468.515625,
+            "width": 335,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 77,
+            "y": 120.34375,
+            "width": 257.71875,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Invoice Photo OCR to Excel with Python",
+          "image": {
+            "x": 501,
+            "y": 152.34375,
+            "width": 431,
+            "height": 300
+          },
+          "media": {
+            "x": 501,
+            "y": 152.34375,
+            "width": 431,
+            "height": 300
+          },
+          "heading": {
+            "x": 521,
+            "y": 468.515625,
+            "width": 335,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 530,
+            "y": 120.34375,
+            "width": 180.5,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "YOLO Pose Estimation for Fitness Images",
+          "image": {
+            "x": 48,
+            "y": 824.140625,
+            "width": 431,
+            "height": 300
+          },
+          "media": {
+            "x": 48,
+            "y": 824.140625,
+            "width": 431,
+            "height": 300
+          },
+          "heading": {
+            "x": 68,
+            "y": 1140.3125,
+            "width": 335,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 77,
+            "y": 792.140625,
+            "width": 208.578125,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        }
+      ]
+    },
+    {
+      "route": "/case-studies/",
+      "width": 980,
+      "height": 1324,
+      "cards": [
+        {
+          "title": "n8n Invoice Extraction with Validation and Review",
+          "image": {
+            "x": 48,
+            "y": -957.8125,
+            "width": 426,
+            "height": 300
+          },
+          "media": {
+            "x": 48,
+            "y": -957.8125,
+            "width": 426,
+            "height": 300
+          },
+          "heading": {
+            "x": 68,
+            "y": -641.640625,
+            "width": 330,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 77,
+            "y": -989.8125,
+            "width": 180.5,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Color-Coded Schedule PDF Extraction to Excel",
+          "image": {
+            "x": 506,
+            "y": -957.8125,
+            "width": 426,
+            "height": 300
+          },
+          "media": {
+            "x": 506,
+            "y": -957.8125,
+            "width": 426,
+            "height": 300
+          },
+          "heading": {
+            "x": 526,
+            "y": -641.640625,
+            "width": 330,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 535,
+            "y": -989.8125,
+            "width": 180.5,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "n8n Record Sync and a PostgreSQL Query Assistant",
+          "image": {
+            "x": 48,
+            "y": -286.015625,
+            "width": 426,
+            "height": 300
+          },
+          "media": {
+            "x": 48,
+            "y": -286.015625,
+            "width": 426,
+            "height": 300
+          },
+          "heading": {
+            "x": 68,
+            "y": 30.15625,
+            "width": 330,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 77,
+            "y": -318.015625,
+            "width": 257.71875,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Browser Search Automation from a Spreadsheet",
+          "image": {
+            "x": 506,
+            "y": -286.015625,
+            "width": 426,
+            "height": 300
+          },
+          "media": {
+            "x": 506,
+            "y": -286.015625,
+            "width": 426,
+            "height": 300
+          },
+          "heading": {
+            "x": 526,
+            "y": 30.15625,
+            "width": 330,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 535,
+            "y": -318.015625,
+            "width": 229.640625,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Resumable Python Listing Extraction to CSV",
+          "image": {
+            "x": 48,
+            "y": 384.28125,
+            "width": 426,
+            "height": 300
+          },
+          "media": {
+            "x": 48,
+            "y": 384.28125,
+            "width": 426,
+            "height": 300
+          },
+          "heading": {
+            "x": 68,
+            "y": 700.453125,
+            "width": 330,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 77,
+            "y": 352.28125,
+            "width": 208.578125,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "n8n Website Data Extraction to JSON",
+          "image": {
+            "x": 506,
+            "y": 384.28125,
+            "width": 426,
+            "height": 300
+          },
+          "media": {
+            "x": 506,
+            "y": 384.28125,
+            "width": 426,
+            "height": 300
+          },
+          "heading": {
+            "x": 526,
+            "y": 700.453125,
+            "width": 330,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 535,
+            "y": 352.28125,
+            "width": 257.71875,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "LangGraph Project Planning Assistant",
+          "image": {
+            "x": 48,
+            "y": 1035.078125,
+            "width": 426,
+            "height": 300
+          },
+          "media": {
+            "x": 48,
+            "y": 1035.078125,
+            "width": 426,
+            "height": 300
+          },
+          "heading": {
+            "x": 68,
+            "y": 1351.25,
+            "width": 330,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 77,
+            "y": 1003.078125,
+            "width": 166.453125,
+            "height": 16
+          },
+          "decoded": false,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Webcam Distance Estimation with Depth Anything V2",
+          "image": {
+            "x": 506,
+            "y": 1035.078125,
+            "width": 426,
+            "height": 300
+          },
+          "media": {
+            "x": 506,
+            "y": 1035.078125,
+            "width": 426,
+            "height": 300
+          },
+          "heading": {
+            "x": 526,
+            "y": 1351.25,
+            "width": 330,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 535,
+            "y": 1003.078125,
+            "width": 208.578125,
+            "height": 16
+          },
+          "decoded": false,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Python Automation for Code-Quality Workflows",
+          "image": {
+            "x": 48,
+            "y": 1726.375,
+            "width": 426,
+            "height": 300
+          },
+          "media": {
+            "x": 48,
+            "y": 1726.375,
+            "width": 426,
+            "height": 300
+          },
+          "heading": {
+            "x": 68,
+            "y": 2042.546875,
+            "width": 330,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 77,
+            "y": 1694.375,
+            "width": 243.6875,
+            "height": 16
+          },
+          "decoded": false,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "YOLO Pose Estimation for Fitness Images",
+          "image": {
+            "x": 506,
+            "y": 1726.375,
+            "width": 426,
+            "height": 300
+          },
+          "media": {
+            "x": 506,
+            "y": 1726.375,
+            "width": 426,
+            "height": 300
+          },
+          "heading": {
+            "x": 526,
+            "y": 2042.546875,
+            "width": 330,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 535,
+            "y": 1694.375,
+            "width": 208.578125,
+            "height": 16
+          },
+          "decoded": false,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Invoice Photo OCR to Excel with Python",
+          "image": {
+            "x": 48,
+            "y": 2396.671875,
+            "width": 426,
+            "height": 300
+          },
+          "media": {
+            "x": 48,
+            "y": 2396.671875,
+            "width": 426,
+            "height": 300
+          },
+          "heading": {
+            "x": 68,
+            "y": 2712.84375,
+            "width": 330,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 77,
+            "y": 2364.671875,
+            "width": 180.5,
+            "height": 16
+          },
+          "decoded": false,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Football Player Tracking with YOLO and Team Colors",
+          "image": {
+            "x": 506,
+            "y": 2396.671875,
+            "width": 426,
+            "height": 300
+          },
+          "media": {
+            "x": 506,
+            "y": 2396.671875,
+            "width": 426,
+            "height": 300
+          },
+          "heading": {
+            "x": 526,
+            "y": 2712.84375,
+            "width": 330,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 535,
+            "y": 2364.671875,
+            "width": 208.578125,
+            "height": 16
+          },
+          "decoded": false,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        }
+      ]
+    },
+    {
+      "route": "/",
+      "width": 390,
+      "height": 844,
+      "cards": [
+        {
+          "title": "n8n Website Data Extraction to JSON",
+          "image": {
+            "x": 28,
+            "y": 197.859375,
+            "width": 334,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": 197.859375,
+            "width": 334,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": 514.03125,
+            "width": 238,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 57,
+            "y": 165.859375,
+            "width": 257.71875,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Invoice Photo OCR to Excel with Python",
+          "image": {
+            "x": 28,
+            "y": 869.65625,
+            "width": 334,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": 869.65625,
+            "width": 334,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": 1185.828125,
+            "width": 238,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 57,
+            "y": 837.65625,
+            "width": 180.5,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "YOLO Pose Estimation for Fitness Images",
+          "image": {
+            "x": 28,
+            "y": 1562.453125,
+            "width": 334,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": 1562.453125,
+            "width": 334,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": 1878.625,
+            "width": 238,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 57,
+            "y": 1530.453125,
+            "width": 208.578125,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        }
+      ]
+    },
+    {
+      "route": "/case-studies/",
+      "width": 390,
+      "height": 844,
+      "cards": [
+        {
+          "title": "n8n Invoice Extraction with Validation and Review",
+          "image": {
+            "x": 28,
+            "y": -3703,
+            "width": 334,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": -3703,
+            "width": 334,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": -3387,
+            "width": 238,
+            "height": 65.484375
+          },
+          "label": {
+            "x": 57,
+            "y": -3735,
+            "width": 180.5,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Color-Coded Schedule PDF Extraction to Excel",
+          "image": {
+            "x": 28,
+            "y": -3009.71875,
+            "width": 334,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": -3009.71875,
+            "width": 334,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": -2693.546875,
+            "width": 238,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 57,
+            "y": -3041.71875,
+            "width": 180.5,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "n8n Record Sync and a PostgreSQL Query Assistant",
+          "image": {
+            "x": 28,
+            "y": -2318.421875,
+            "width": 334,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": -2318.421875,
+            "width": 334,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": -2002.421875,
+            "width": 238,
+            "height": 65.484375
+          },
+          "label": {
+            "x": 57,
+            "y": -2350.421875,
+            "width": 257.71875,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Browser Search Automation from a Spreadsheet",
+          "image": {
+            "x": 28,
+            "y": -1586.140625,
+            "width": 334,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": -1586.140625,
+            "width": 334,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": -1270.140625,
+            "width": 238,
+            "height": 65.484375
+          },
+          "label": {
+            "x": 57,
+            "y": -1618.140625,
+            "width": 229.640625,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Resumable Python Listing Extraction to CSV",
+          "image": {
+            "x": 28,
+            "y": -873.359375,
+            "width": 334,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": -873.359375,
+            "width": 334,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": -557.1875,
+            "width": 238,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 57,
+            "y": -905.359375,
+            "width": 208.578125,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "n8n Website Data Extraction to JSON",
+          "image": {
+            "x": 28,
+            "y": -182.0625,
+            "width": 334,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": -182.0625,
+            "width": 334,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": 134.109375,
+            "width": 238,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 57,
+            "y": -214.0625,
+            "width": 257.71875,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "LangGraph Project Planning Assistant",
+          "image": {
+            "x": 28,
+            "y": 489.734375,
+            "width": 334,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": 489.734375,
+            "width": 334,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": 805.90625,
+            "width": 238,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 57,
+            "y": 457.734375,
+            "width": 166.453125,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Webcam Distance Estimation with Depth Anything V2",
+          "image": {
+            "x": 28,
+            "y": 1181.03125,
+            "width": 334,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": 1181.03125,
+            "width": 334,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": 1497.03125,
+            "width": 238,
+            "height": 65.484375
+          },
+          "label": {
+            "x": 57,
+            "y": 1149.03125,
+            "width": 208.578125,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Python Automation for Code-Quality Workflows",
+          "image": {
+            "x": 28,
+            "y": 1914.8125,
+            "width": 334,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": 1914.8125,
+            "width": 334,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": 2230.984375,
+            "width": 238,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 57,
+            "y": 1882.8125,
+            "width": 243.6875,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "YOLO Pose Estimation for Fitness Images",
+          "image": {
+            "x": 28,
+            "y": 2625.609375,
+            "width": 334,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": 2625.609375,
+            "width": 334,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": 2941.78125,
+            "width": 238,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 57,
+            "y": 2593.609375,
+            "width": 208.578125,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Invoice Photo OCR to Excel with Python",
+          "image": {
+            "x": 28,
+            "y": 3316.90625,
+            "width": 334,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": 3316.90625,
+            "width": 334,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": 3633.078125,
+            "width": 238,
+            "height": 43.65625
+          },
+          "label": {
+            "x": 57,
+            "y": 3284.90625,
+            "width": 180.5,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Football Player Tracking with YOLO and Team Colors",
+          "image": {
+            "x": 28,
+            "y": 4009.703125,
+            "width": 334,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": 4009.703125,
+            "width": 334,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": 4325.703125,
+            "width": 238,
+            "height": 65.484375
+          },
+          "label": {
+            "x": 57,
+            "y": 3977.703125,
+            "width": 208.578125,
+            "height": 16
+          },
+          "decoded": false,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        }
+      ]
+    },
+    {
+      "route": "/",
+      "width": 320,
+      "height": 740,
+      "cards": [
+        {
+          "title": "n8n Website Data Extraction to JSON",
+          "image": {
+            "x": 28,
+            "y": 124.9375,
+            "width": 264,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": 124.9375,
+            "width": 264,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": 440.9375,
+            "width": 168,
+            "height": 65.484375
+          },
+          "label": {
+            "x": 57,
+            "y": 84.9375,
+            "width": 206,
+            "height": 32
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Invoice Photo OCR to Excel with Python",
+          "image": {
+            "x": 28,
+            "y": 839.21875,
+            "width": 264,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": 839.21875,
+            "width": 264,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": 1155.21875,
+            "width": 168,
+            "height": 65.484375
+          },
+          "label": {
+            "x": 57,
+            "y": 807.21875,
+            "width": 180.5,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "YOLO Pose Estimation for Fitness Images",
+          "image": {
+            "x": 28,
+            "y": 1594,
+            "width": 264,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": 1594,
+            "width": 264,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": 1910,
+            "width": 168,
+            "height": 65.484375
+          },
+          "label": {
+            "x": 57,
+            "y": 1554,
+            "width": 206,
+            "height": 32
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        }
+      ]
+    },
+    {
+      "route": "/case-studies/",
+      "width": 320,
+      "height": 740,
+      "cards": [
+        {
+          "title": "n8n Invoice Extraction with Validation and Review",
+          "image": {
+            "x": 28,
+            "y": -4146,
+            "width": 264,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": -4146,
+            "width": 264,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": -3830,
+            "width": 168,
+            "height": 87.3125
+          },
+          "label": {
+            "x": 57,
+            "y": -4178,
+            "width": 180.5,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Color-Coded Schedule PDF Extraction to Excel",
+          "image": {
+            "x": 28,
+            "y": -3369.390625,
+            "width": 264,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": -3369.390625,
+            "width": 264,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": -3053.390625,
+            "width": 168,
+            "height": 87.3125
+          },
+          "label": {
+            "x": 57,
+            "y": -3401.390625,
+            "width": 180.5,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "n8n Record Sync and a PostgreSQL Query Assistant",
+          "image": {
+            "x": 28,
+            "y": -2574.78125,
+            "width": 264,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": -2574.78125,
+            "width": 264,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": -2258.78125,
+            "width": 168,
+            "height": 65.484375
+          },
+          "label": {
+            "x": 57,
+            "y": -2614.78125,
+            "width": 206,
+            "height": 32
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Browser Search Automation from a Spreadsheet",
+          "image": {
+            "x": 28,
+            "y": -1802,
+            "width": 264,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": -1802,
+            "width": 264,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": -1486,
+            "width": 168,
+            "height": 65.484375
+          },
+          "label": {
+            "x": 57,
+            "y": -1842,
+            "width": 206,
+            "height": 32
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Resumable Python Listing Extraction to CSV",
+          "image": {
+            "x": 28,
+            "y": -1048.71875,
+            "width": 264,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": -1048.71875,
+            "width": 264,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": -732.71875,
+            "width": 168,
+            "height": 65.484375
+          },
+          "label": {
+            "x": 57,
+            "y": -1088.71875,
+            "width": 206,
+            "height": 32
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "n8n Website Data Extraction to JSON",
+          "image": {
+            "x": 28,
+            "y": -275.9375,
+            "width": 264,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": -275.9375,
+            "width": 264,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": 40.0625,
+            "width": 168,
+            "height": 65.484375
+          },
+          "label": {
+            "x": 57,
+            "y": -315.9375,
+            "width": 206,
+            "height": 32
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "LangGraph Project Planning Assistant",
+          "image": {
+            "x": 28,
+            "y": 438.34375,
+            "width": 264,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": 438.34375,
+            "width": 264,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": 754.34375,
+            "width": 168,
+            "height": 65.484375
+          },
+          "label": {
+            "x": 57,
+            "y": 406.34375,
+            "width": 166.453125,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Webcam Distance Estimation with Depth Anything V2",
+          "image": {
+            "x": 28,
+            "y": 1191.625,
+            "width": 264,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": 1191.625,
+            "width": 264,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": 1507.625,
+            "width": 168,
+            "height": 87.3125
+          },
+          "label": {
+            "x": 57,
+            "y": 1151.625,
+            "width": 206,
+            "height": 32
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Python Automation for Code-Quality Workflows",
+          "image": {
+            "x": 28,
+            "y": 2007.234375,
+            "width": 264,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": 2007.234375,
+            "width": 264,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": 2323.234375,
+            "width": 168,
+            "height": 87.3125
+          },
+          "label": {
+            "x": 57,
+            "y": 1967.234375,
+            "width": 206,
+            "height": 32
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "YOLO Pose Estimation for Fitness Images",
+          "image": {
+            "x": 28,
+            "y": 2821.34375,
+            "width": 264,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": 2821.34375,
+            "width": 264,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": 3137.34375,
+            "width": 168,
+            "height": 65.484375
+          },
+          "label": {
+            "x": 57,
+            "y": 2781.34375,
+            "width": 206,
+            "height": 32
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Invoice Photo OCR to Excel with Python",
+          "image": {
+            "x": 28,
+            "y": 3595.625,
+            "width": 264,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": 3595.625,
+            "width": 264,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": 3911.625,
+            "width": 168,
+            "height": 65.484375
+          },
+          "label": {
+            "x": 57,
+            "y": 3563.625,
+            "width": 180.5,
+            "height": 16
+          },
+          "decoded": true,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        },
+        {
+          "title": "Football Player Tracking with YOLO and Team Colors",
+          "image": {
+            "x": 28,
+            "y": 4350.40625,
+            "width": 264,
+            "height": 300
+          },
+          "media": {
+            "x": 28,
+            "y": 4350.40625,
+            "width": 264,
+            "height": 300
+          },
+          "heading": {
+            "x": 48,
+            "y": 4666.40625,
+            "width": 168,
+            "height": 87.3125
+          },
+          "label": {
+            "x": 57,
+            "y": 4310.40625,
+            "width": 206,
+            "height": 32
+          },
+          "decoded": false,
+          "objectFit": "contain",
+          "pseudoOverlay": "none",
+          "scrim": false
+        }
+      ]
+    }
+  ]
+}
