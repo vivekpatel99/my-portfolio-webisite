@@ -143,7 +143,7 @@ test('all featured case-study cards and detail CTAs work', async ({ page }) => {
 
     await page.goto(caseStudy.path);
     await page.getByRole('link', { name: /Discuss a similar project/ }).click();
-    await expect(page).toHaveURL(/\/contact\/?$/);
+    await expect(page).toHaveURL(new RegExp(`/contact/\\?project=${caseStudy.path.split('/').filter(Boolean).at(-1)}$`));
   }
 });
 
@@ -152,7 +152,7 @@ test('all published case-study routes and detail CTAs remain reachable', async (
     await page.goto(caseStudy.path);
     await expect(page.getByRole('heading', { name: caseStudy.heading })).toBeVisible();
     await page.getByRole('link', { name: /Discuss a similar project/ }).click();
-    await expect(page).toHaveURL(/\/contact\/?$/);
+    await expect(page).toHaveURL(new RegExp(`/contact/\\?project=${caseStudy.path.split('/').filter(Boolean).at(-1)}$`));
   }
 });
 

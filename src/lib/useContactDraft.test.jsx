@@ -30,6 +30,54 @@ afterEach(() => {
 });
 
 describe('tab-memory contact draft', () => {
+  it('seeds an editable public context once, preserves other fields, and retains it across remounts', () => {
+    const first = renderHook(() => useContactDraft());
+    act(() => first.result.current.setFormState({ ...emptyFields, name: 'Already entered', budget: '€5k-€10k' }));
+    act(() => first.result.current.applyInquiryContext('?service=ai-workflow-buildout'));
+    expect(first.result.current.formState).toEqual({ ...emptyFields, name: 'Already entered', budget: '€5k-€10k', description: "I'd like to discuss AI Workflow Buildout." });
+    act(() => first.result.current.applyInquiryContext('?service=data-extraction-automation-sprint'));
+    expect(first.result.current.inquiryContext.id).toBe('ai-workflow-buildout');
+    first.unmount();
+    const returned = renderHook(() => useContactDraft());
+    expect(returned.result.current.inquiryContext.id).toBe('ai-workflow-buildout');
+    act(() => returned.result.current.setFormState(fields => ({ ...fields, description: 'My own editable inquiry' })));
+    expect(returned.result.current.formState.description).toBe('My own editable inquiry');
+  });
+
+  it('never overwrites a populated or pending inquiry, and clears context only on success', () => {
+    const draft = renderHook(() => useContactDraft());
+    act(() => draft.result.current.setFormState(filledFields));
+    act(() => draft.result.current.applyInquiryContext('?service=ai-workflow-buildout'));
+    expect(draft.result.current.formState).toEqual(filledFields);
+    expect(draft.result.current.inquiryContext).toBeNull();
+    act(() => draft.result.current.setFormState(emptyFields));
+    act(() => draft.result.current.applyInquiryContext('?service=ai-workflow-buildout'));
+    let submission;
+    act(() => { submission = draft.result.current.beginSubmission(); });
+    act(() => draft.result.current.applyInquiryContext('?service=data-extraction-automation-sprint'));
+    expect(draft.result.current.inquiryContext.id).toBe('ai-workflow-buildout');
+    act(() => draft.result.current.finishSubmission(submission, false, 'Synthetic failure'));
+    expect(draft.result.current.inquiryContext.id).toBe('ai-workflow-buildout');
+    act(() => { submission = draft.result.current.beginSubmission(); });
+    act(() => draft.result.current.finishSubmission(submission, true));
+    expect(draft.result.current.inquiryContext).toBeNull();
+  });
+
+  it('keeps a completed contact history entry blank but seeds a fresh same-item CTA', () => {
+    const draft = renderHook(() => useContactDraft());
+    act(() => draft.result.current.applyInquiryContext('?service=ai-workflow-buildout', 'first-visit'));
+    let submission;
+    act(() => { submission = draft.result.current.beginSubmission(); });
+    act(() => draft.result.current.finishSubmission(submission, true));
+    act(() => draft.result.current.applyInquiryContext('?service=ai-workflow-buildout', 'first-visit'));
+    expect(draft.result.current.formState).toEqual(emptyFields);
+    expect(draft.result.current.outcome.status).toBe('success');
+    act(() => draft.result.current.applyInquiryContext('?service=ai-workflow-buildout', 'new-visit'));
+    expect(draft.result.current.inquiryContext.id).toBe('ai-workflow-buildout');
+    expect(draft.result.current.formState.description).toBe("I'd like to discuss AI Workflow Buildout.");
+    expect(draft.result.current.outcome).toBeNull();
+  });
+
   it('keeps one unload listener across StrictMode subscription cleanup and route remounts', () => {
     const addListener = vi.spyOn(window, 'addEventListener');
     const removeListener = vi.spyOn(window, 'removeEventListener');

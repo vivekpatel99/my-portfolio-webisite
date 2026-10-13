@@ -7,6 +7,8 @@ import { assertVisualLayout } from './visual-layout.js';
 import { createConvexTransportMock, SYNTHETIC_FAILURE } from './qa-convex-transport-mock.js';
 
 import { chooseBudget, expectBudget } from './qa-budget.js';
+import { serviceOffers } from '../../src/data/serviceOffers.js';
+import { caseStudies } from '../../src/data/caseStudies.js';
 
 const CONVEX_MOCK_HOST = 'qa-contact-lifecycle.convex.cloud';
 const SAFE_FAILURE_MESSAGE = "We couldn't send your request. Please try again, or use the email address on this page.";
@@ -60,6 +62,39 @@ const test = base.extend({
     await installLocalGuardsAndTransport(context, transport);
     await use(transport);
   }, { auto: true }],
+});
+
+test('public service and project inquiries seed trusted editable context and preserve drafts through pending navigation', async ({ page, contactTransport: transport }) => {
+  for (const [type, id, label, route, cta] of [
+    ...serviceOffers.slice(0, 1).map(item => ['service', item.id, item.name, `/services/${item.id}/`, 'Request a Project Estimate']),
+    ...caseStudies.slice(0, 1).map(item => ['project', item.slug, item.title, `/project/${item.slug}/`, 'Discuss a similar project']),
+  ]) {
+    await page.goto(route);
+    const link = page.locator('main').getByRole('link', { name: cta, exact: true });
+    await expect(link).toHaveAttribute('href', `/contact/?${type}=${id}`);
+    await link.click();
+    await expect(page.locator('#contact-inquiry-context')).toHaveText(`Inquiry about ${label}`);
+    await expect(page.getByLabel('Project Description *')).toHaveValue(`I'd like to discuss ${label}.`);
+    await page.getByLabel('Project Description *').fill('Edited inquiry');
+  }
+  await fillContactForm(page);
+  await navigateToServicesByKeyboard(page);
+  await page.getByRole('link', { name: 'Scope details for ai workflow buildout →', exact: true }).click();
+  await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+  await expectPreservedValues(page);
+  await page.getByRole('button', { name: 'Send project request', exact: true }).click();
+  await expect.poll(() => transport.state.mutations.length).toBe(1);
+  await navigateToServicesByKeyboard(page);
+  transport.releasePending('success');
+  await returnToContactByBack(page);
+  await expect(page.getByRole('status', { name: 'Request received' })).toBeVisible();
+  await expect(page.locator('#contact-inquiry-context')).toHaveCount(0);
+  expect(transport.state.mutations).toHaveLength(1);
+  await navigateToServicesByKeyboard(page);
+  await page.getByRole('link', { name: 'Scope details for ai workflow buildout →', exact: true }).click();
+  await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+  await expect(page.locator('#contact-inquiry-context')).toHaveText('Inquiry about AI Workflow Buildout');
+  await expect(page.getByLabel('Project Description *')).toHaveValue("I'd like to discuss AI Workflow Buildout.");
 });
 
 test.afterEach(async ({ context }) => {

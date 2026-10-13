@@ -29,8 +29,8 @@ const ACTIONABLE_SUBMIT_ERRORS = new Set([
 const SUBMIT_FAILURE_FALLBACK =
   "We couldn't send your request. Please try again, or use the email address on this page.";
 
-const Contact = () => {
-  const { formState, setFormState, isSubmitting, outcome, hasUnpresentedOutcome, claimOutcomePresentation, setFeedbackToast, beginSubmission, finishSubmission } = useContactDraft();
+const Contact = ({ inquirySearch = '', inquiryVisitKey = null }) => {
+  const { formState, inquiryContext, applyInquiryContext, setFormState, isSubmitting, outcome, hasUnpresentedOutcome, claimOutcomePresentation, setFeedbackToast, beginSubmission, finishSubmission } = useContactDraft();
   const [fieldErrors, setFieldErrors] = useState({});
   const submittingRef = useRef(false);
   const submitButtonRef = useRef(null);
@@ -39,6 +39,10 @@ const Contact = () => {
   const presentsOutcome = Boolean(outcome && (hasUnpresentedOutcome || announcingOutcome === outcome));
   const submitLead = useMutation(api.leads.submitLead);
   const pageMotion = usePageMotion();
+
+  useEffect(() => {
+    applyInquiryContext(inquirySearch, inquiryVisitKey);
+  }, [inquirySearch, inquiryVisitKey, applyInquiryContext]);
 
   useEffect(() => {
     if (!claimOutcomePresentation(outcome)) return;
@@ -143,6 +147,12 @@ const Contact = () => {
               className="form-panel detection-panel min-w-0 bg-gradient-to-b from-[rgba(139,92,246,0.035)] to-transparent bg-[length:100%_22%] bg-no-repeat p-7 px-[26px] pb-[26px]"
             >
               <DetectionLabel aria-hidden="true">PROJECT · REQUEST</DetectionLabel>
+
+              {inquiryContext && (
+                <p id="contact-inquiry-context" className="mb-7 text-sm leading-relaxed text-[#b6b9c3]">
+                  Inquiry about {inquiryContext.label}
+                </p>
+              )}
 
               <div className="contact-detection-field mb-5">
                 <div className="contact-detection-frame" data-filled={Boolean(formState.name)}>

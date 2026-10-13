@@ -5,6 +5,7 @@ import { Link, useInRouterContext } from 'react-router-dom';
 import { DetectionLabel } from './DetectionFrame.js';
 import { ArrowRight } from 'lucide-react';
 import CaseStudyGallery, { collectGalleryImages } from './CaseStudyGallery.js';
+import { inquiryHref } from '../lib/inquiryContext.js';
 
 // Images belong to the top gallery; prune their now-empty text containers.
 const withoutImages = (nodes) => nodes.flatMap((node) => {
@@ -83,7 +84,7 @@ export const CaseStudyArticle = ({ story, backHref = '/#portfolio' }) => {
       React.createElement('p', null, 'Working on something similar?'),
       React.createElement(NavigationLink, {
         className: 'detection-panel detection-action detection-action--labeled detection-action--primary inline-flex',
-        [destination]: '/contact/',
+        [destination]: inquiryHref('project', story.slug),
       }, React.createElement(DetectionLabel, { 'aria-hidden': true }, 'PROJECT INQUIRY'), 'Discuss a similar project', React.createElement(ArrowRight, { size: 16, className: 'shrink-0', 'aria-hidden': true })),
     ),
   );
