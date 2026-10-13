@@ -1,4 +1,5 @@
 import { caseStudies } from './caseStudies.js';
+import { serviceOffers } from './serviceOffers.js';
 
 // Explicit technical relevance, not a shared-client or shared-delivery claim.
 export const serviceRelatedWork = {
@@ -25,7 +26,11 @@ export const storyRelatedWork = {
 
 // Integrity checks use the public projection: private/draft records cannot
 // satisfy a mapping. Kept callable so isolated publication fixtures can build.
-export function validateRelatedWork(services = serviceRelatedWork, stories = storyRelatedWork, publishedStories = caseStudies) {
+export function validateRelatedWork(services = serviceRelatedWork, stories = storyRelatedWork, publishedStories = caseStudies, publishedServices = serviceOffers) {
+  const serviceIds = new Set(publishedServices.map((service) => service.id));
+  for (const id of Object.keys(services)) {
+    if (!serviceIds.has(id)) throw new Error(`Related work references an unknown or unpublished service: ${id}`);
+  }
   const published = new Set(publishedStories.map((story) => story.slug));
   for (const slug of [...Object.keys(stories), ...Object.values(services).flat(), ...Object.values(stories).flat()]) {
     if (!published.has(slug)) throw new Error(`Related work references an unknown or unpublished story: ${slug}`);

@@ -56,7 +56,15 @@ it('uses the same contextual links in server rendering and the initial client re
 it('rejects unknown or unpublished targets rather than quietly dropping proof links', async () => {
   const { validateRelatedWork } = await import('../data/relatedWork.js');
   expect(() => validateRelatedWork()).not.toThrow();
-  expect(() => validateRelatedWork({ service: ['draft-story'] }, {}, [{ slug: 'public-story' }])).toThrow(/draft-story/);
+  expect(() => validateRelatedWork({ [serviceOffers[0].id]: ['draft-story'] }, {}, [{ slug: 'public-story' }])).toThrow(/draft-story/);
   expect(() => validateRelatedWork({}, { 'draft-story': ['public-story'] }, [{ slug: 'public-story' }])).toThrow(/draft-story/);
   expect(() => validateRelatedWork({}, { 'public-story': ['unknown-story'] }, [{ slug: 'public-story' }])).toThrow(/unknown-story/);
+});
+
+it('rejects service mapping sources removed or renamed from the public offers', async () => {
+  const { validateRelatedWork } = await import('../data/relatedWork.js');
+  const publishedStories = [{ slug: 'public-story' }];
+  const publishedServices = [{ id: 'current-service' }];
+  expect(() => validateRelatedWork({ 'current-service': ['public-story'] }, {}, publishedStories, publishedServices)).not.toThrow();
+  expect(() => validateRelatedWork({ 'retired-service': ['public-story'] }, {}, publishedStories, publishedServices)).toThrow(/retired-service/);
 });
