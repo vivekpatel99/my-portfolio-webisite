@@ -62,7 +62,8 @@ const assertServicePage = (response, service, pathname) => {
     for (const copy of [service.summary, ...service.inScope, ...service.outOfScope]) {
       assert.ok(document.querySelector('#root')?.textContent.includes(copy), `${pathname}: missing service content`);
     }
-    assert.ok(document.querySelector('#root a[href="/contact"]'), `${pathname}: estimate link`);
+    assert.equal(document.querySelector('#root a.detection-action--primary')?.getAttribute('href'),
+      `/contact/?service=${service.id}`, `${pathname}: contextual estimate link`);
   } finally {
     dom.window.close();
   }

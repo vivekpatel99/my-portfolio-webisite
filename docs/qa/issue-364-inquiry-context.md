@@ -34,6 +34,10 @@ successful return, and a fresh same-service inquiry. All browser submissions
 use an in-memory Convex transport; no real lead was sent.
 
 The production build and targeted ESLint syntax/control-flow checks passed.
+Apache HTTPS QA verifies each static service's exact contextual estimate URL,
+alongside directory redirects, canonical metadata, content, sitemap entries,
+and real 404 responses for unknown services. Its old bare-contact assertion
+was updated after reproducing the CI failure locally.
 The full unit suite and browser lifecycle regression checks are delivery gates
 recorded in the associated PR. Local prerequisites included FFmpeg tools and
 the repository's pinned Playwright container for WebKit libraries.
