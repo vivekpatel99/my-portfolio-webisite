@@ -10,17 +10,21 @@ Replace only `public/og-image.png`. Keep its existing URL and every public
 project-specific share destination. The editable source is
 [issue-371-share-card.svg](assets/issue-371-share-card.svg).
 
-**Owner visual acceptance: pending.** The finished PNG and its copy must be
-accepted by Vivek before merge. CI success and general merge authorization do
-not satisfy this gate. The PR uses `Refs #371` until acceptance is recorded.
+**Owner visual acceptance: accepted on 14 October 2026.** In this task
+thread, Vivek answered “Approve card and copy” after viewing the finished
+card at full and 320px sizes. The accepted PNG has the SHA-256 recorded below;
+its pixels and copy are unchanged by this acceptance update. DESIGN.md IM-02
+records the decision. PR #382 uses `Closes #371`; merge still requires the
+full hosted gate on the exact final PR head. Acceptance does not authorize
+production release.
 
-![Proposed default portfolio card](../../public/og-image.png)
+![Owner-approved default portfolio card](../../public/og-image.png)
 
 Small preview, at 320 × 168 pixels:
 
 <img src="../../public/og-image.png" width="320" height="168" alt="Vivek Patel — Computer Vision and AI Engineer, at small share-preview size" />
 
-Copy proposed for acceptance:
+Accepted copy:
 
 - Vivek Patel
 - Computer Vision & AI Engineer
@@ -33,8 +37,8 @@ positioning. CO-01 (existing references): background `#0C0D0D`, white identity,
 `#A78BFA` specialty text, `#B6B9C3` domain and `#8B5CF6` corners.
 TY-01 (existing reference): preserve the sans-serif reading family; the SVG
 uses DejaVu Sans for deterministic raster export on this Ubuntu environment.
-SH-01's confirmed opposing-corner vocabulary informs this proposed card;
-this new placement remains subject to owner acceptance. There are no scores,
+SH-01's confirmed opposing-corner vocabulary informs the approved card;
+IM-02 records owner acceptance of this placement. There are no scores,
 metrics, client claims or new credentials.
 
 ## Consumers
@@ -56,7 +60,7 @@ not of production deployment.
 - PNG signature/decoder: 1200 × 630, sRGB; raster contains the proposed name
   and role. Browser decoded it at its natural 1200 × 630 dimensions.
 - Visual review: full card and 320px preview inspected together; identity and
-  role remain readable, with no clipping. Owner acceptance is separate.
+  role remain readable, with no clipping. Vivek explicitly accepted both.
 - Production build passed. All 20 route entries plus generated `404.html` have
   the expected OG/Twitter destinations. Every served image returned HTTP 200
   with `image/png`; all default images decoded as 1200 × 630. Built PNG bytes
