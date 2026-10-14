@@ -6,11 +6,11 @@ import { HOURLY_RATE_LABEL } from '../config/pricing.js';
 import { replacePricingTokens } from '../../plugins/vite-plugin-pricing-html.js';
 
 const HOME_DESCRIPTION =
-    `Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients worldwide. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. Top Rated Plus on Upwork. ${HOURLY_RATE_LABEL}.`;
+    `Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients worldwide. Document extraction, n8n automation, and computer vision for invoices, website data, and video. Top Rated Plus on Upwork. ${HOURLY_RATE_LABEL}.`;
 const BOOTSTRAP_DESCRIPTION =
-  `Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients worldwide. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. Production-ready AI systems. ${HOURLY_RATE_LABEL}.`;
+  `Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients worldwide. Document extraction, n8n automation, and computer vision for invoices, website data, and video. Production-ready AI systems. ${HOURLY_RATE_LABEL}.`;
 const TWITTER_DESCRIPTION =
-  `Freelance AI Engineer based in Linz, Austria, serving clients worldwide. Expert in Computer Vision, Web Scraping & n8n Automation. ${HOURLY_RATE_LABEL}.`;
+  `Freelance AI Engineer based in Linz, Austria, serving clients worldwide. Document extraction, n8n automation, and computer vision for invoices, website data, and video. ${HOURLY_RATE_LABEL}.`;
 const CONTACT_DESCRIPTION =
   `Hire Vivek Patel for your AI project. Freelance Computer Vision, Web Scraping & n8n Automation expert based in Linz, Austria, serving clients worldwide. Discuss your workflow and request a project estimate. ${HOURLY_RATE_LABEL}.`;
 const INVENTED_CITY =
