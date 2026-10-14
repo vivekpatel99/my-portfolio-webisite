@@ -8,6 +8,7 @@ import { assertCompletionMonth, assertMedia, assertProjectStatus, assertSafeExte
 import { validatePreparedCaseStudies } from './markdown-case-study.js';
 import { featuredCaseStudySlugs } from './case-study-featured.js';
 import { otherWorkCaseStudySlugs } from './case-study-other-work.js';
+import { compactCardCaption } from './case-study-card-copy.js';
 import { selectFeaturedCaseStudies } from '../src/lib/featuredCaseStudies.js';
 import {
   selectCoreCollectionCaseStudies,
@@ -200,7 +201,10 @@ export function compileCaseStudyPublication({ manifest = caseStudyPublicationMan
       gallery: record.content.gallery.map((media) => ({ ...media })),
     });
   }
-  return publicRecords;
+  return publicRecords.map((story) => {
+    const cardCaption = compactCardCaption(story);
+    return cardCaption === undefined ? story : { ...story, cardCaption };
+  });
 }
 
 export const renderPublicCaseStudyModule = (
