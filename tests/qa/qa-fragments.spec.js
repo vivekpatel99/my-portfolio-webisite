@@ -4,6 +4,7 @@ test.skip(process.env.QA_LOCAL_ONLY !== '1', 'Fragment regressions require a loo
 test.use({ viewport: { width: 1280, height: 720 }, reducedMotion: 'reduce' });
 
 test.beforeEach(async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.addInitScript(() => {
     localStorage.setItem('cookie_consent_preferences', JSON.stringify({ necessary: true, analytics: false }));
     window.__fragmentNavigationCalls = [];
@@ -145,6 +146,7 @@ for (const navigation of ['cold load', 'SPA link', 'native hash']) {
 for (const [name, id] of [['Services', 'services'], ['About', 'about'], ['Portfolio', 'portfolio']]) {
   test(`ordinary footer ${name} link preserves anchor position and focus`, async ({ page }) => {
     await page.goto('/');
+    await expect.poll(() => page.evaluate(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(true);
     await page.evaluate(() => document.fonts.ready);
     for (let activation = 0; activation < (id === 'portfolio' ? 5 : 1); activation += 1) {
       await page.locator(`#${id}`).scrollIntoViewIfNeeded();
