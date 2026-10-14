@@ -211,7 +211,7 @@ reviewed repository PR, retaining all material limitations. Verify both card
 paragraphs and the unchanged full article/gallery caption. The compiler projects
 only matching public note text as `cardCaption`; the digest bindings and this
 authoring module stay outside browser bundles. See
-`publication/case-study-card-copy.test.js` for coverage of all twelve notes,
+`publication/case-study-card-copy.test.js` for coverage of each reviewed note,
 material limitations and the stale-cover fallback.
 
 The small legacy adapter in `publication/compile-case-studies.js` remains
