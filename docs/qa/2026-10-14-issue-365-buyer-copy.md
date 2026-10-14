@@ -33,3 +33,11 @@ The listed dimensions are CSS viewport sizes; saved T3 images use their own capt
 | Weekly update promise | [Delivery rows](assets/issue-365/desktop-updates.png) | [Delivery rows](assets/issue-365/mobile-updates.png) |
 
 [Narrow hero at 320×740](assets/issue-365/narrow-hero.png) shows the existing stacked fields and wrapping introduction. The complete featured trio is verified through rendered destinations and browser navigation checks; one mobile viewport does not contain all three stacked cards.
+
+## First-screen CI repair
+
+On `b90088d`, Chromium shards 2 and 4 failed the existing 320×640 first-screen assertion: the estimate button ended at 643.65625px and 643.8125px. The longer approved introduction used more vertical space. The correction reduces only static OCR/CV/n8n chip padding from 6px to 2px above and below at the existing `max-[359px]` breakpoint, removing 8px from the invoice. Copy, font sizes, field spacing, motion, and the confirmed 16px invoice-to-actions gap stay intact. The first-screen test is unchanged.
+
+The production build, all 49 hero unit tests, and 18 Chromium responsive checks passed after the correction. Those browser checks cover the invoice gaps at 320, 390, 720, 768, 1024, and 1440px and the first-screen layouts at 390×844, 768×900, and 1280×720 in both desktop and mobile projects. Independent Standards and Spec reviews found no issues with the correction. The narrow screenshot above was refreshed.
+
+This host's DejaVu fallback produces a taller 320px layout than CI. A temporary DOM comparison with the original introduction and original chip padding already placed the estimate-button bottom at 665.53125px locally; the corrected approved introduction ends at 689.796875px here. Both exceed 640px locally, so the hosted rerun must establish 320×640 acceptance. The local correction was measured as exactly 8px while preserving the 16px gap and avoiding horizontal overflow. Temporary font experiments did not change the site's font configuration or the host configuration.

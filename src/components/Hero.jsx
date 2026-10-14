@@ -399,7 +399,7 @@ const Hero = () => {
                   {['OCR', 'CV', 'n8n'].map((tag) => (
                     <span
                       key={tag}
-                      className="font-mono text-[11px] text-purple-200 px-2.5 py-1.5 rounded-[3px] border border-white/[0.1] bg-white/[0.03]"
+                      className="font-mono text-[11px] text-purple-200 px-2.5 py-1.5 max-[359px]:py-0.5 rounded-[3px] border border-white/[0.1] bg-white/[0.03]"
                     >
                       {tag}
                     </span>
