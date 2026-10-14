@@ -259,7 +259,7 @@ Confirmed on 10 October 2026: each case study uses its Excalidraw overview diagr
 
 The overview diagram explains the project. It is not delivery evidence, including when the artwork is a synthetic workflow illustration. Do not show it under the SH-02 `PROJECT EVIDENCE` label. Real screenshots and videos that follow it keep that label. Proposed default: give the diagram the same opposing corners and a transparent `PROJECT OVERVIEW` label.
 
-Confirmed on 14 October 2026 under #369: homepage and collection card body copy begins with the buyer-facing summary, followed by a compact illustration note that retains every material cover limitation. Remove repeated workflow descriptions from that note; keep the full cover captions and technical caveats in the article/gallery. Preserve completion dates, category labels, destinations, loading order, imagery and keyboard focus. Compact notes are authored in the build-only card-copy source described in [Case-study authoring](docs/case-study-authoring.md), without hand-editing staged publication data.
+Confirmed on 14 October 2026 under #369: homepage and collection card body copy begins with the buyer-facing summary, followed by a compact illustration note that retains every material cover limitation. Remove repeated workflow descriptions from that note; keep the full cover captions and technical caveats in the article/gallery. Preserve completion dates, category labels, destinations, loading order, imagery and keyboard focus.
 
 Proposed default: use Vivek's authentic portrait with recognizable likeness and natural proportions. Confirmed: the hero needs a closer head-and-shoulders crop under #293. Confirmed: the About photo has a separate 4:3 composition under #298.
 

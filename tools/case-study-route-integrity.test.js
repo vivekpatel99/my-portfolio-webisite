@@ -78,6 +78,7 @@ function fixture({ hourlyRateEur = HOURLY_RATE_EUR } = {}) {
     'publication/case-study-schema.js',
     'publication/markdown-case-study.js',
     'publication/compile-case-studies.js',
+    'publication/case-study-card-copy.js',
     'publication/staged-case-study-publication.js',
     'publication/case-study-manifest-merge.js',
     'publication/public-case-studies.js',

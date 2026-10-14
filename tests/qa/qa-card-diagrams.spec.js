@@ -53,7 +53,9 @@ for (const [width, height] of viewports) {
         await expectUnobscuredDiagram(card);
         const paragraphs = card.locator('.body > p');
         await expect(paragraphs.first()).toHaveText(project.summary);
-        await expect(paragraphs.nth(1)).toHaveText(project.cardCaption);
+        const caption = project.cardCaption || project.image?.caption;
+        if (caption) await expect(paragraphs.nth(1)).toHaveText(caption);
+        else await expect(paragraphs).toHaveCount(1);
         await expect(card.locator('time')).toHaveAttribute('datetime', project.completedAt);
         await expect(card.getByRole('link', { name: `Read case study: ${project.cardTitle || project.title}` }))
           .toHaveAttribute('href', `/project/${project.slug}/${isCollection ? '?from=collection' : ''}`);

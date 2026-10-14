@@ -4,7 +4,7 @@ import { digest } from './case-study-evidence.js';
 // remains the authority for the full cover caption and all article/media data.
 // Bind each shortening to that exact cover path and caption: replacement media
 // or revised scope must fall back to its full caption until reviewed again.
-const reviewedCardCaptions = {
+export const reviewedCardCaptions = {
   'n8n-openai-data-extraction': {
     coverDigest: '76211a5f825314094611a8d6e18ecaed23436dc8b375ccfa866e17edaf8d2620',
     caption: 'Workflow illustration.',
@@ -43,7 +43,7 @@ const reviewedCardCaptions = {
   },
   'python-ci-workflow-automation': {
     coverDigest: '998d00d436887b6a777b25b0e926e1073dbdc9e3a5da9ce4b77ef427c02e2801',
-    caption: 'Workflow illustration, not an executed CI run.',
+    caption: 'Workflow illustration. Supports an existing code-quality workflow; not an executed CI run.',
   },
   'resumable-listing-data-extraction': {
     coverDigest: 'f9ae1759e98e623fbd1abba7bd3047128c5145bbfc88baaadbf638d01e154b01',
