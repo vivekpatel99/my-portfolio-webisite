@@ -260,7 +260,10 @@ test('a newer unsent inquiry stays intact when Back reaches an earlier completed
   await navigateToServicesByKeyboard(page);
   await page.getByRole('link', { name: 'Scope details for ai workflow buildout →', exact: true }).click();
   await openServiceInquiry(page, serviceOffers[2]);
+  // Finish the deferred navigation focus before WebKit inserts draft text.
+  await expect(page.locator('#main-content')).toBeFocused();
   await fillContactForm(page);
+  await expectPreservedValues(page);
   await traverseInquiryHistory(page, 'back');
   await expect(page).toHaveURL(new RegExp(`/contact/\\?service=${serviceOffers[0].id}$`));
   await expectPreservedValues(page);
