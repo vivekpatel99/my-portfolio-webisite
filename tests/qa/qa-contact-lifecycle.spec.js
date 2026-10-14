@@ -515,6 +515,9 @@ for (const activation of ['modified', 'middle']) {
         const opened = context.waitForEvent('page');
         await link.click(options);
         const popup = await opened;
+        // Inspect the new tab as a user would, after activating its web view.
+        // Headless WebKit can leave a background popup at its initial blank URL.
+        await popup.bringToFront();
         await expect(popup).toHaveURL(new URL(href, page.url()).href);
         await expect(page).toHaveURL(new RegExp(`${route}$`));
         await popup.close();
