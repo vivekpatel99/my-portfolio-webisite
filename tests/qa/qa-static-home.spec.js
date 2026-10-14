@@ -5,7 +5,7 @@ import { HOURLY_RATE_LABEL } from '../../src/config/pricing.js';
 
 test.skip(process.env.QA_LOCAL_ONLY !== '1', 'Homepage build acceptance runs only on a loopback preview.');
 
-const introduction = 'I build detectors, document extractors, and n8n workflows that turn camera feeds and messy files into reliable production data.';
+const introduction = 'Manual data entry, scattered website data, and unstructured video slow teams down. I build document extraction, n8n automation, and computer vision workflows to make that information usable.';
 
 async function expectReadableHome(page) {
   const heading = page.getByRole('heading', { level: 1 });

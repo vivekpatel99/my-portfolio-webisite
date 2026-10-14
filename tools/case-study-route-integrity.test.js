@@ -140,7 +140,7 @@ describe('case-study route integrity', () => {
     run(directory, 'generate-static-route-html');
     const home = readFileSync(path.join(directory, 'dist/index.html'), 'utf8');
     expect(home.match(/<h1\b/g)).toHaveLength(1);
-    expect(home).toContain('I build detectors, document extractors, and n8n workflows');
+    expect(home).toContain('Manual data entry, scattered website data, and unstructured video slow teams down. I build document extraction, n8n automation, and computer vision workflows to make that information usable.');
     expect(home).toContain('href="/contact/"');
     expect(home).toContain('href="/case-studies/"');
     expect(home).toContain('Profile Invoice');

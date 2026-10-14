@@ -179,7 +179,7 @@ describe('retained completed case studies', () => {
     expect(card.title).toBe(story.title);
     expect(card.completedAt).toBe(footballEstimatedCompletionMonth);
     expect(card.image).toEqual(story.image);
-    expect(module.featuredCaseStudies.map((record) => record.slug)).not.toContain(slug);
+    expect(module.featuredCaseStudies.map((record) => record.slug)).toContain(slug);
   });
 
   it('states the depth article is a webcam overlay with a reference scale, not a validated measurement', async () => {
@@ -252,8 +252,10 @@ describe('retained completed case studies', () => {
     const module = await import(`data:text/javascript;base64,${Buffer.from(rendered).toString('base64')}`);
     expect(module.eligibleCaseStudyCount).toBe(3);
     expect(module.collectionCaseStudies).toHaveLength(3);
-    expect(module.featuredCaseStudies).toHaveLength(3);
-    for (const story of module.featuredCaseStudies) {
+    // The original baseline only contains one of the current owner-selected
+    // features; unavailable features must not fill with unselected stories.
+    expect(module.featuredCaseStudies.map((record) => record.slug)).toEqual(['n8n-openai-data-extraction']);
+    for (const story of module.collectionCaseStudies) {
       expect(story.cardTitle).toBeTruthy();
       expect(story.externalLinks.find((link) => link.label === 'Upwork project').href).toMatch(/^https:\/\/www.upwork.com\//);
     }

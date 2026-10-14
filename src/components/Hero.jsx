@@ -390,7 +390,7 @@ const Hero = () => {
                 {/* Bio */}
                 <div className="mb-2.5 max-md:mb-1 max-[359px]:mb-0">
                   <p className="max-w-[54ch] text-[0.78rem] leading-[1.4] text-gray-400 font-normal max-md:text-[0.72rem] max-md:max-w-full">
-                    I build detectors, document extractors, and n8n workflows that turn camera feeds and messy files into reliable production data.
+                    Manual data entry, scattered website data, and unstructured video slow teams down. I build document extraction, n8n automation, and computer vision workflows to make that information usable.
                   </p>
                 </div>
 
@@ -399,7 +399,7 @@ const Hero = () => {
                   {['OCR', 'CV', 'n8n'].map((tag) => (
                     <span
                       key={tag}
-                      className="font-mono text-[11px] text-purple-200 px-2.5 py-1.5 rounded-[3px] border border-white/[0.1] bg-white/[0.03]"
+                      className="font-mono text-[11px] text-purple-200 px-2.5 py-1.5 max-[359px]:py-0.5 rounded-[3px] border border-white/[0.1] bg-white/[0.03]"
                     >
                       {tag}
                     </span>

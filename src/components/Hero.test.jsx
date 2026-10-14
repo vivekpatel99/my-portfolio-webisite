@@ -122,7 +122,7 @@ describe('Hero invoice proof fold (#176)', () => {
 
   it('renders bio after proofs and rate/location per invoice fold design', () => {
     renderHero();
-    const bio = screen.getByText(/I build detectors, document extractors, and n8n workflows/);
+    const bio = screen.getByText('Manual data entry, scattered website data, and unstructured video slow teams down. I build document extraction, n8n automation, and computer vision workflows to make that information usable.');
     expect(bio).toBeTruthy();
   });
 

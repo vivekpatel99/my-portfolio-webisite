@@ -39,7 +39,7 @@ const About = () => {
               Vivek Patel — AI Engineer specializing in Computer Vision
             </div>
             <p className="bio text-[0.92rem] leading-[1.55] text-[#9ca3af] mb-5">
-              I optimize complex AI systems for production. From real-time inference acceleration to automated data extraction at scale, I deliver measurable results faster than typical agency timelines.
+              I optimize complex AI systems for production, from real-time inference acceleration to automated data extraction at scale.
             </p>
             <div className="diff-label font-mono text-[10px] tracking-[0.12em] uppercase text-[#9ca3af] mb-[10px]">
               KEY DIFFERENTIATORS
@@ -78,7 +78,7 @@ const About = () => {
           <div className="hire-row grid md:grid-cols-[72px_200px_1fr] gap-5 items-baseline py-[18px] border-b border-[rgba(255,255,255,0.06)]">
             <div className="hire-num font-mono text-[11px] tracking-[0.12em] text-[#a78bfa]">02</div>
             <div className="hire-title text-[0.98rem] font-bold text-white">Regular Updates</div>
-            <div className="hire-copy text-[0.88rem] leading-[1.45] text-[#9ca3af]">Bi-weekly progress updates and proactive communication. No surprises.</div>
+            <div className="hire-copy text-[0.88rem] leading-[1.45] text-[#9ca3af]">Weekly progress updates and proactive communication. No surprises.</div>
           </div>
           <div className="hire-row grid md:grid-cols-[72px_200px_1fr] gap-5 items-baseline py-[18px] border-b border-[rgba(255,255,255,0.06)]">
             <div className="hire-num font-mono text-[11px] tracking-[0.12em] text-[#a78bfa]">03</div>
