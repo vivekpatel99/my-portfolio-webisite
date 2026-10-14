@@ -9,7 +9,7 @@ const prefersReducedMotion = () =>
   typeof window !== 'undefined'
   && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
-const Header = () => {
+const Header = ({ staticNavigation = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const headerRef = useRef(null);
   const menuRef = useRef(null);
@@ -216,17 +216,54 @@ const Header = () => {
             <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           </Link>
 
-          <button
-            ref={toggleButtonRef}
-            disabled={typeof window === 'undefined'}
-            onClick={handleToggle}
-            className="detection-utility md:hidden w-11 h-11 flex items-center justify-center ml-auto"
-            aria-label="Toggle navigation menu"
-            aria-expanded={isOpen}
-            aria-controls="mobile-menu"
-          >
-            <span className="relative block w-[18px] h-[1.5px] bg-white before:content-[''] before:block before:w-[18px] before:h-[1.5px] before:bg-white before:absolute before:left-0 before:-top-[6px] after:content-[''] after:block after:w-[18px] after:h-[1.5px] after:bg-white after:absolute after:left-0 after:top-[6px]"></span>
-          </button>
+          {staticNavigation ? (
+            <details className="md:hidden ml-auto">
+              <summary
+                className="detection-utility w-11 h-11 flex items-center justify-center cursor-pointer list-none [&::-webkit-details-marker]:hidden"
+                aria-label="Toggle navigation menu"
+                aria-controls="static-mobile-menu"
+              >
+                <span aria-hidden="true" className="relative block w-[18px] h-[1.5px] bg-white before:content-[''] before:block before:w-[18px] before:h-[1.5px] before:bg-white before:absolute before:left-0 before:-top-[6px] after:content-[''] after:block after:w-[18px] after:h-[1.5px] after:bg-white after:absolute after:left-0 after:top-[6px]"></span>
+              </summary>
+              <nav
+                id="static-mobile-menu"
+                aria-label="Navigation menu"
+                className="absolute left-0 right-0 top-full bg-[#0C0D0D] border-b border-[rgba(139,92,246,0.38)] px-7 py-4 flex flex-col items-start gap-2"
+              >
+                {navLinks.map((link) => (
+                  <a
+                    key={link.name}
+                    href={link.href}
+                    aria-current={isActiveLink(link.href) ? (link.href.startsWith('/#') ? 'location' : 'page') : undefined}
+                    className={`detection-nav-link text-[0.92rem] py-[10px] pb-3 ${isActiveLink(link.href) ? 'detection-panel detection-panel--nav-selected text-white' : 'text-[#9ca3af]'} hover:text-white transition-colors`}
+                  >
+                    {link.name}
+                  </a>
+                ))}
+                <a
+                  href="/contact/"
+                  aria-label="Request a Project Estimate"
+                  className="detection-panel detection-action detection-action--labeled detection-action--primary detection-action--compact inline-flex w-full mt-3"
+                >
+                  <DetectionLabel aria-hidden="true">Inquiry</DetectionLabel>
+                  Request Estimate
+                  <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                </a>
+              </nav>
+            </details>
+          ) : (
+            <button
+              ref={toggleButtonRef}
+              disabled={typeof window === 'undefined'}
+              onClick={handleToggle}
+              className="detection-utility md:hidden w-11 h-11 flex items-center justify-center ml-auto"
+              aria-label="Toggle navigation menu"
+              aria-expanded={isOpen}
+              aria-controls="mobile-menu"
+            >
+              <span className="relative block w-[18px] h-[1.5px] bg-white before:content-[''] before:block before:w-[18px] before:h-[1.5px] before:bg-white before:absolute before:left-0 before:-top-[6px] after:content-[''] after:block after:w-[18px] after:h-[1.5px] after:bg-white after:absolute after:left-0 after:top-[6px]"></span>
+            </button>
+          )}
         </div>
       </header>
 

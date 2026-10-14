@@ -57,8 +57,13 @@ function fixture({ hourlyRateEur = HOURLY_RATE_EUR } = {}) {
     'src/pages/Home.jsx',
     'src/pages/ContactFallback.jsx',
     'src/components/ContactContent.jsx',
+    'src/components/PrivacyPolicyContent.jsx',
+    'src/components/CookiePolicyContent.jsx',
+    'src/components/ui/button.jsx',
+    'src/lib/utils.js',
     'src/components/Hero.jsx',
     'src/components/Header.jsx',
+    'src/components/SkipLink.jsx',
     'src/lib/focusTarget.js',
     'src/components/Portfolio.jsx',
     'src/components/Services.jsx',
@@ -140,11 +145,12 @@ describe('case-study route integrity', () => {
     expect(home).toContain('href="/case-studies/"');
     expect(home).toContain('Profile Invoice');
     expect(home).toContain('aria-label="Vivek Patel home"');
+    expect(home).not.toContain('<details');
     expect(home).not.toContain('translateY(12px)');
     for (const service of ['data-extraction-automation-sprint', 'computer-vision-production-optimization', 'ai-workflow-buildout']) {
       expect(home).toContain(`href="/services/${service}"`);
     }
-    const outputs = ['index.html', '404.html', 'contact/index.html', 'case-studies/index.html',
+    const outputs = ['index.html', '404.html', 'contact/index.html', 'case-studies/index.html', 'legal/index.html', 'data-policy/index.html',
       ...caseStudySlugs.map((slug) => `project/${slug}/index.html`),
       ...['data-extraction-automation-sprint', 'computer-vision-production-optimization', 'ai-workflow-buildout']
         .map((id) => `services/${id}/index.html`)];
@@ -164,6 +170,37 @@ describe('case-study route integrity', () => {
     expect(contact).toContain('The project request form needs JavaScript.');
     expect(contact).toContain('Connect with Vivek Patel on Upwork');
     expect(contact).not.toMatch(/<(?:form|input|textarea)\b/);
+    expect(contact).not.toContain('<details');
+    const privacy = readFileSync(path.join(directory, 'dist/legal/index.html'), 'utf8');
+    const cookies = readFileSync(path.join(directory, 'dist/data-policy/index.html'), 'utf8');
+    for (const [html, heading, crossPath] of [
+      [privacy, 'Privacy Policy', '/data-policy/'],
+      [cookies, 'Cookie Policy', '/legal/'],
+    ]) {
+      expect(html.match(/<h1\b/g)).toHaveLength(1);
+      expect(html).toMatch(new RegExp(`<h1\\b[^>]*>${heading}</h1>`));
+      expect(html).toContain('href="mailto:contact@vivekapatel.com"');
+      expect(html).toContain(`href="${crossPath}"`);
+      expect(html.match(/href="#main-content"/g)).toHaveLength(1);
+      expect(html).toContain('Skip to main content');
+      expect(html.indexOf('href="#main-content"')).toBeLessThan(html.indexOf('<header'));
+      expect(html).toMatch(/<main\b[^>]*id="main-content"[^>]*tabindex="-1"/);
+      expect(html).not.toContain('Profile Invoice');
+      expect(html).not.toMatch(/opacity:0|translateY\(/);
+      expect(html.match(/<details\b/g)).toHaveLength(1);
+      expect(html).toMatch(/<summary\b[^>]*aria-label="Toggle navigation menu"/);
+      expect(html).toContain('id="static-mobile-menu"');
+      expect(html).toContain('href="/#services"');
+      expect(html).toContain('href="/case-studies/"');
+      expect(html).toContain('href="/contact/"');
+    }
+    expect(privacy).toContain('Last updated: June 1, 2026');
+    expect(privacy).toContain('Changes to This Privacy Policy');
+    expect(privacy).toContain('You are advised to review this Privacy Policy periodically for any changes.');
+    expect(cookies).toContain('Last updated: 30 August 2026');
+    expect(cookies).toContain('cookie_consent_preferences');
+    expect(cookies).toContain('Cookie consent controls need JavaScript.');
+    expect(cookies).not.toContain('Manage Your Cookie Consent');
   }, 30_000);
   it('propagates one changed hourly amount through static metadata and every service page', () => {
     const directory = fixture({ hourlyRateEur: 67 });

@@ -161,19 +161,19 @@ test('public service and project inquiries seed trusted editable context and pre
   await fillContactForm(page);
   await navigateToServicesByKeyboard(page);
   await page.getByRole('link', { name: 'Scope details for ai workflow buildout →', exact: true }).click();
-  await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+  await openServiceInquiry(page, serviceOffers[2]);
   await expectPreservedValues(page);
   await page.getByRole('button', { name: 'Send project request', exact: true }).click();
   await expect.poll(() => transport.state.mutations.length).toBe(1);
   await navigateToServicesByKeyboard(page);
   transport.releasePending('success');
   await returnToContactByBack(page);
-  await expect(page.getByRole('status', { name: 'Request received' })).toBeVisible();
+  await expect(page.getByRole('status', { name: 'Request received' })).toBeFocused();
   await expect(page.locator('#contact-inquiry-context')).toHaveCount(0);
   expect(transport.state.mutations).toHaveLength(1);
   await navigateToServicesByKeyboard(page);
   await page.getByRole('link', { name: 'Scope details for ai workflow buildout →', exact: true }).click();
-  await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+  await openServiceInquiry(page, serviceOffers[2]);
   await expect(page.locator('#contact-inquiry-context')).toHaveText('Inquiry about AI Workflow Buildout');
   await expect(page.getByLabel('Project Description *')).toHaveValue("I'd like to discuss AI Workflow Buildout.");
 });
@@ -182,18 +182,19 @@ for (const pendingOtherVisit of [false, true]) {
   test(`completed inquiry history stays clear after ${pendingOtherVisit ? 'another CTA during a pending send' : 'two successful inquiries'}`, async ({ page, contactTransport: transport }) => {
     const startInquiry = async (service) => {
       await page.getByRole('link', { name: `Scope details for ${service.title.toLowerCase()} →`, exact: true }).click();
-      await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+      await openServiceInquiry(page, service);
       // Finish navigation focus before WebKit focuses and inserts text into
       // the name field; the deferred main focus can otherwise interrupt fill.
       await expect(page.locator('#main-content')).toBeFocused();
     };
     await page.goto(`/services/${serviceOffers[0].id}/`);
-    await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+    await openServiceInquiry(page, serviceOffers[0]);
     await fillContactForm(page);
     await page.getByRole('button', { name: 'Send project request', exact: true }).click();
     await expect.poll(() => transport.state.mutations.length).toBe(1);
     if (!pendingOtherVisit) {
       transport.releasePending('success');
+      // Finish the outcome focus handoff before moving focus into navigation.
       await expect(page.getByRole('status', { name: 'Request received' })).toBeFocused();
     }
     await navigateToServicesByKeyboard(page);
@@ -207,7 +208,7 @@ for (const pendingOtherVisit of [false, true]) {
       await page.getByRole('button', { name: 'Send project request', exact: true }).click();
       await expect.poll(() => transport.state.mutations.length).toBe(2);
     }
-    await expect(page.locator('#contact-receipt-title')).toBeVisible();
+    await expect(page.getByRole('status', { name: 'Request received' })).toBeFocused();
     await traverseInquiryHistory(page, 'back');
     await expect(page).toHaveURL(new RegExp(`/contact/\\?service=${serviceOffers[0].id}$`));
     await expectEmptyContactForm(page);
@@ -233,7 +234,7 @@ test('an untouched contextual seed reloads without a discard warning and edited 
     await dialog.dismiss();
   });
   await page.goto(`/services/${serviceOffers[2].id}/`);
-  await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+  await openServiceInquiry(page, serviceOffers[2]);
   await expect(page.getByLabel('Project Description *')).toHaveValue("I'd like to discuss AI Workflow Buildout.");
   expect(await unloadIsPrevented(page)).toBe(false);
   await page.reload();
@@ -250,7 +251,7 @@ test('an untouched contextual seed reloads without a discard warning and edited 
 
 test('a newer unsent inquiry stays intact when Back reaches an earlier completed contact entry', async ({ page, contactTransport: transport }) => {
   await page.goto(`/services/${serviceOffers[0].id}/`);
-  await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+  await openServiceInquiry(page, serviceOffers[0]);
   await fillContactForm(page);
   await page.getByRole('button', { name: 'Send project request', exact: true }).click();
   await expect.poll(() => transport.state.mutations.length).toBe(1);
@@ -258,7 +259,7 @@ test('a newer unsent inquiry stays intact when Back reaches an earlier completed
   await expect(page.getByRole('status', { name: 'Request received' })).toBeFocused();
   await navigateToServicesByKeyboard(page);
   await page.getByRole('link', { name: 'Scope details for ai workflow buildout →', exact: true }).click();
-  await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+  await openServiceInquiry(page, serviceOffers[2]);
   await fillContactForm(page);
   await traverseInquiryHistory(page, 'back');
   await expect(page).toHaveURL(new RegExp(`/contact/\\?service=${serviceOffers[0].id}$`));
@@ -273,6 +274,17 @@ test.afterEach(async ({ context }) => {
   closingContexts.add(context);
   await context.close();
 });
+
+async function openServiceInquiry(page, service) {
+  // A lazy service navigation can still show the homepage's two estimate links.
+  // Wait for the intended service destination before activating its CTA.
+  const href = `/contact/?service=${service.id}`;
+  const link = page.locator(`main a[href="${href}"]`);
+  await expect(link).toHaveAccessibleName('Request a Project Estimate');
+  await link.click();
+  await expect(page).toHaveURL(new RegExp(`/contact/\\?service=${service.id}$`));
+  await expect(page.getByLabel('Full Name *')).toBeVisible();
+}
 
 async function traverseInquiryHistory(page, direction) {
   const routes = direction === 'back'
@@ -321,11 +333,18 @@ async function navigateToServicesByKeyboard(page) {
 
 async function returnToContactByBack(page) {
   await page.goBack();
-  // Outcome presentation can update its marker during Contact's mount. Keep
-  // the eligible focus target live throughout the assertion instead of choosing
-  // main from a transient marker-free render.
+  // ScrollToTop focuses main on the next frame. Wait for that focus handoff
+  // before the test focuses a form field or opens the mobile menu again.
   await expect(page.getByLabel('Full Name *')).toBeVisible();
-  await expect(page.locator('#main-content [data-contact-outcome-focus], #main-content:not(:has([data-contact-outcome-focus]))')).toBeFocused();
+  // Re-evaluate the expected target while React presents a pending outcome;
+  // an early marker count must not freeze the expectation at main.
+  await expect.poll(() => page.evaluate(() => {
+    const receipt = document.querySelector('[aria-labelledby="contact-receipt-title"][data-contact-outcome-focus]');
+    const retry = document.querySelector('#contact-submit-error')
+      ? document.querySelector('form button[data-contact-outcome-focus]') : null;
+    const target = receipt || retry || document.querySelector('#main-content');
+    return document.activeElement === target;
+  })).toBe(true);
   await expect(page.getByLabel('Full Name *')).toBeVisible();
 }
 

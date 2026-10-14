@@ -16,7 +16,12 @@ import {
   removeStaleProjectHtml,
 } from './case-study-route-integrity.js';
 import { assertPublicLinksRouted, assertServiceRouteSources } from './public-route-integrity.js';
-import { renderStaticHome, renderStaticContact } from './render-static-home.js';
+import {
+  renderStaticHome,
+  renderStaticContact,
+  renderStaticPrivacyPolicy,
+  renderStaticCookiePolicy,
+} from './render-static-home.js';
 
 const distDir = path.join(process.cwd(), 'dist');
 const deploymentHtaccess = readFileSync(path.join(process.cwd(), 'dist/.htaccess'), 'utf8');
@@ -158,13 +163,17 @@ if (rootHtml.split(rootMarker).length !== 2) throw new Error('Static route shell
 const homeContent = await renderStaticHome();
 writeFileSync(indexPath, rootHtml.replace(rootMarker, () => `<div id="root"><!--static-home-->${homeContent}<!--/static-home--></div>`));
 const contactContent = await renderStaticContact();
+const privacyPolicyContent = await renderStaticPrivacyPolicy();
+const cookiePolicyContent = await renderStaticCookiePolicy();
 
 const renderStaticRoute = (route) => {
   const html = applySeo(rootHtml, routeSeo[route]);
-  if (route === '/contact') {
+  if (route === '/contact' || route === '/legal' || route === '/data-policy') {
+    const content = route === '/contact' ? contactContent
+      : route === '/legal' ? privacyPolicyContent : cookiePolicyContent;
     const rootMarker = '<div id="root"></div>';
     if (html.split(rootMarker).length !== 2) throw new Error('Static route shell must contain exactly one empty root element');
-    return html.replace(rootMarker, () => `<div id="root">${contactContent}</div>`);
+    return html.replace(rootMarker, () => `<div id="root">${content}</div>`);
   }
   if (route.startsWith('/services/')) {
     const service = getServiceOfferById(route.slice('/services/'.length));
