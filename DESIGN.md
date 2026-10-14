@@ -271,6 +271,10 @@ Proposed default: optional image generation for the About portrait preserves lik
 
 Existing reference on 11 October 2026: case-study gallery navigation occupies a separate row below the media stage, including in the enlarged dialog. Previous and next controls use 44px targets and remain clear of diagram and chart labels at mobile widths. The media opener, count, thumbnails, zoom, swipe, keyboard navigation and dialog focus behavior remain available.
 
+### IM-02. Default portfolio share card
+
+Confirmed on 14 October 2026 under #371: Vivek accepted the finished 1200 × 630 default share card and copy shown at full and 320px preview sizes. Use `Vivek Patel`, `Computer Vision & AI Engineer`, `Document extraction · n8n automation`, `Computer vision`, and `vivekapatel.com`. Keep the approved dark background, white identity, purple specialty text and opposing top-left/bottom-right corners. The accepted asset is `public/og-image.png`; its editable source and acceptance evidence are in [the #371 report](docs/qa/2026-10-14-issue-371-share-card.md). Preserve all public project-specific share diagrams. This card acceptance does not authorize production release or profile/social changes.
+
 ### FM-01. Forms and feedback
 
 Existing reference: the [contact-field reference](docs/design-system.md) governs grey resting corners, purple focus, fill, label position, required indicators, and forced-colors behavior. Existing reference: preserve the control's actual accessible label.
