@@ -32,6 +32,7 @@ const suites = Object.freeze({
   'qa-service-loading.spec.js': { label: 'service-loading' },
   'qa-static-contact.spec.js': { label: 'static-contact' },
   'qa-static-home.spec.js': { label: 'static-home' },
+  'qa-static-policies.spec.js': { label: 'static-policies' },
   'qa-routes.spec.js': { label: 'routing' },
   'qa-testimonials.spec.js': { label: 'testimonials-carousel' },
   'qa-upgrade-interactions.spec.js': { label: 'upgrade-interactions' },

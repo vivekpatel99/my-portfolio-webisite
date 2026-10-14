@@ -57,6 +57,10 @@ function fixture({ hourlyRateEur = HOURLY_RATE_EUR } = {}) {
     'src/pages/Home.jsx',
     'src/pages/ContactFallback.jsx',
     'src/components/ContactContent.jsx',
+    'src/components/PrivacyPolicyContent.jsx',
+    'src/components/CookiePolicyContent.jsx',
+    'src/components/ui/button.jsx',
+    'src/lib/utils.js',
     'src/components/Hero.jsx',
     'src/components/Header.jsx',
     'src/lib/focusTarget.js',
@@ -144,7 +148,7 @@ describe('case-study route integrity', () => {
     for (const service of ['data-extraction-automation-sprint', 'computer-vision-production-optimization', 'ai-workflow-buildout']) {
       expect(home).toContain(`href="/services/${service}"`);
     }
-    const outputs = ['index.html', '404.html', 'contact/index.html', 'case-studies/index.html',
+    const outputs = ['index.html', '404.html', 'contact/index.html', 'case-studies/index.html', 'legal/index.html', 'data-policy/index.html',
       ...caseStudySlugs.map((slug) => `project/${slug}/index.html`),
       ...['data-extraction-automation-sprint', 'computer-vision-production-optimization', 'ai-workflow-buildout']
         .map((id) => `services/${id}/index.html`)];
@@ -164,6 +168,26 @@ describe('case-study route integrity', () => {
     expect(contact).toContain('The project request form needs JavaScript.');
     expect(contact).toContain('Connect with Vivek Patel on Upwork');
     expect(contact).not.toMatch(/<(?:form|input|textarea)\b/);
+    const privacy = readFileSync(path.join(directory, 'dist/legal/index.html'), 'utf8');
+    const cookies = readFileSync(path.join(directory, 'dist/data-policy/index.html'), 'utf8');
+    for (const [html, heading, crossPath] of [
+      [privacy, 'Privacy Policy', '/data-policy/'],
+      [cookies, 'Cookie Policy', '/legal/'],
+    ]) {
+      expect(html.match(/<h1\b/g)).toHaveLength(1);
+      expect(html).toMatch(new RegExp(`<h1\\b[^>]*>${heading}</h1>`));
+      expect(html).toContain('href="mailto:contact@vivekapatel.com"');
+      expect(html).toContain(`href="${crossPath}"`);
+      expect(html).not.toContain('Profile Invoice');
+      expect(html).not.toMatch(/opacity:0|translateY\(/);
+    }
+    expect(privacy).toContain('Last updated: June 1, 2026');
+    expect(privacy).toContain('Changes to This Privacy Policy');
+    expect(privacy).toContain('You are advised to review this Privacy Policy periodically for any changes.');
+    expect(cookies).toContain('Last updated: 30 August 2026');
+    expect(cookies).toContain('cookie_consent_preferences');
+    expect(cookies).toContain('Cookie consent controls need JavaScript.');
+    expect(cookies).not.toContain('Manage Your Cookie Consent');
   }, 30_000);
   it('propagates one changed hourly amount through static metadata and every service page', () => {
     const directory = fixture({ hourlyRateEur: 67 });

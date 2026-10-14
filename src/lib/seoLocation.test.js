@@ -44,10 +44,10 @@ describe('public location copy', () => {
   const hero = readSrc('src/components/Hero.jsx');
   const seoConfig = readSrc('src/lib/seoConfig.js');
   const indexHtml = replacePricingTokens(readSrc('index.html'));
-  const legal = readSrc('src/pages/Legal.jsx');
+  const legal = readSrc('src/pages/Legal.jsx') + readSrc('src/components/PrivacyPolicyContent.jsx');
   const footer = readSrc('src/components/Footer.jsx');
   const contact = readSrc('src/pages/Contact.jsx');
-  const dataPolicy = readSrc('src/pages/DataPolicy.jsx');
+  const dataPolicy = readSrc('src/pages/DataPolicy.jsx') + readSrc('src/components/CookiePolicyContent.jsx');
   const jsonLd = parseJsonLd(indexHtml);
   const person = jsonLd.find((node) => node['@type'] === 'Person');
   const service = jsonLd.find((node) => node['@type'] === 'ProfessionalService');

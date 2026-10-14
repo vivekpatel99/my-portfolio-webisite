@@ -42,3 +42,5 @@ async function renderStaticPage(pagePath, location) {
 
 export const renderStaticHome = () => renderStaticPage('/src/pages/Home.jsx', '/');
 export const renderStaticContact = () => renderStaticPage('/src/pages/ContactFallback.jsx', '/contact/');
+export const renderStaticPrivacyPolicy = () => renderStaticPage('/src/components/PrivacyPolicyContent.jsx', '/legal/');
+export const renderStaticCookiePolicy = () => renderStaticPage('/src/components/CookiePolicyContent.jsx', '/data-policy/');
