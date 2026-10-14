@@ -183,6 +183,9 @@ for (const pendingOtherVisit of [false, true]) {
     const startInquiry = async (service) => {
       await page.getByRole('link', { name: `Scope details for ${service.title.toLowerCase()} →`, exact: true }).click();
       await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
+      // Finish navigation focus before WebKit focuses and inserts text into
+      // the name field; the deferred main focus can otherwise interrupt fill.
+      await expect(page.locator('#main-content')).toBeFocused();
     };
     await page.goto(`/services/${serviceOffers[0].id}/`);
     await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
