@@ -10,6 +10,10 @@ describe('reviewed compact card captions', () => {
   it('projects each reviewed note without changing article content, and detects stale bindings', () => {
     for (const [id, reviewed] of Object.entries(reviewedCardCaptions)) {
       const story = publication.find((item) => item.id === id);
+      if (!story) {
+        expect(caseStudyPublicationManifest.records.find((record) => record.id === id)?.status, id).toBe('draft');
+        continue;
+      }
       expect(story, id).toBeDefined();
       expect(compactCardCaption(story), id).toBe(reviewed.caption);
       const approved = caseStudyPublicationManifest.records.find((record) => record.id === story.id).content;
@@ -44,11 +48,32 @@ describe('reviewed compact card captions', () => {
     expect(compactCardCaption({ ...story, image: undefined })).toBeUndefined();
   });
 
+  it.each(['summary', 'sections', 'gallery'])('falls back when the reviewed %s changes without a new cover', (field) => {
+    const story = structuredClone(publication.find((item) => item.cardCaption));
+    if (field === 'summary') story.summary += ' New material scope limitation.';
+    if (field === 'sections') story.sections[0].heading += ' New material scope limitation.';
+    if (field === 'gallery') story.gallery[0].caption = 'New evidence limitation.';
+    expect(compactCardCaption(story)).toBeUndefined();
+  });
+
+  it.each(Object.keys(reviewedCardCaptions))('does not project the retained note for withdrawn %s', (id) => {
+    const manifest = structuredClone(caseStudyPublicationManifest);
+    const index = manifest.records.findIndex((record) => record.id === id);
+    if (manifest.records[index]?.status === 'published') {
+      const { slug } = manifest.records[index];
+      manifest.records[index] = { id, slug, status: 'draft' };
+    }
+    const withdrawn = compileCaseStudyPublication({ manifest });
+    expect(reviewedCardCaptions[id]).toBeDefined();
+    expect(withdrawn.find((story) => story.id === id)).toBeUndefined();
+    expect(renderPublicCaseStudyModule(withdrawn, [], [])).not.toContain(`"id":"${id}"`);
+  });
+
   it('exposes only the public compact copy in the browser projection', () => {
     const module = renderPublicCaseStudyModule(publication);
     for (const story of publication.filter((item) => item.cardCaption)) {
       expect(module).toContain(story.cardCaption);
     }
-    expect(module).not.toMatch(/coverDigest|approvedCover|compactCardCaption/);
+    expect(module).not.toMatch(/scopeDigest|coverDigest|approvedCover|compactCardCaption/);
   });
 });

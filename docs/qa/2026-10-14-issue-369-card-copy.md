@@ -27,7 +27,7 @@ The invoice-photo summary still says “known invoice-photo layout” and retain
 
 ## Authoring and projection
 
-The private source library is outside this checkout. No generated publication data was hand-edited. The repository-owned, public-only `publication/case-study-card-copy.js` is the authored presentation source for this approved shortening; `compile-case-studies.js` adds only its validated-match note to the existing public record projection. Each note is bound to the original cover path and full caption digest. Changed covers/captions and new stories fall back to their full captions until a new compact note is reviewed. The authoring guide documents this maintenance rule.
+The private source library is outside this checkout. No generated publication data was hand-edited. The repository-owned, public-only `publication/case-study-card-copy.js` is the authored presentation source for this approved shortening; `compile-case-studies.js` adds only its validated-match note to the existing public record projection. Each note is bound to the reviewed summary, sections, cover and gallery digest. Changed scope or media and new stories fall back to their full captions until a new compact note is reviewed. Withdrawal tombstones omit the entire story without requiring the unused registry entry to be removed. The authoring guide documents this maintenance rule.
 
 ## Preserved behavior and metadata
 
@@ -51,3 +51,5 @@ Local WebKit checks could not launch because this host lacks WebKit runtime libr
 ## Independent review
 
 Cursor’s Opus 5.5 completed isolated Standards and Spec reviews using `$code-review` against base `fe0e46e` and reviewed head `61895f4` (final application source `d3a6db7`). Round-one findings were resolved: existing-CI-workflow scope restored, confirmed DESIGN decision limited to approved behavior, future-story fallback tests corrected, stale note bindings checked, report links repaired and browser acceptance results recorded. Final Standards review had no blocking findings; final Spec review had no findings. The later full-suite result and documentation wording updates do not change the reviewed application code. Remote CI is tracked by the PR, and integration merge requires its full gate to pass.
+
+Automated GitHub review of `61895f4` identified two lifecycle concerns. Regression checks confirmed that a summary, section or evidence-caption revision previously reused the old note. The binding now includes all those reviewed public fields. Twelve withdrawal cases also verify that retained notes never project draft stories or block their withdrawal. These lifecycle changes leave the current twelve public records and their card copy unchanged.

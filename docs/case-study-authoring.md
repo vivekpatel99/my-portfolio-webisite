@@ -196,14 +196,15 @@ JSON to shorten a card. Notes contain only reviewed public facts from the
 approved caption, summary and project scope. Do not place private authoring
 notes, approval metadata or new performance claims in this copy source.
 
-Each note is keyed by the stable story ID and bound to a `coverDigest`: the
+Each note is keyed by the stable story ID and bound to a `scopeDigest`: the
 existing publication `digest` function's SHA-256 of the object
-`{ src: story.image.src, caption: story.image.caption }` from the validated public
-projection. Review a note against that exact cover and caption before recording
-the digest. Changing the cover path or full caption invalidates the shortening;
+`{ summary: story.summary, sections: story.sections, image: story.image, gallery: story.gallery }` from the validated public
+projection. Review a note against that exact project scope and media before recording
+the digest. Changing the summary, sections or media invalidates the shortening;
 the card then displays the full approved caption after its summary until a new
 compact note is reviewed. New stories also use that safe fallback. Withdrawal
-still removes the story through the existing publication status controls.
+still removes the story through the existing publication status controls; an
+unused note may remain in the registry without blocking its draft tombstone.
 
 When revising a cover or its scope, first use the ordinary source preparation,
 review and staging flow. Then update or remove its compact note through a
@@ -212,7 +213,7 @@ paragraphs and the unchanged full article/gallery caption. The compiler projects
 only matching public note text as `cardCaption`; the digest bindings and this
 authoring module stay outside browser bundles. See
 `publication/case-study-card-copy.test.js` for coverage of each reviewed note,
-material limitations and the stale-cover fallback.
+material limitations, scope-change fallback and withdrawal.
 
 The small legacy adapter in `publication/compile-case-studies.js` remains
 because `n8n-openai-data-extraction`, `invoice-ocr-extraction`, and
