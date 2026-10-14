@@ -66,9 +66,12 @@ not of production deployment.
   both pointing to the default URL.
 - Full local unit suite: 1083/1096 passed on the first run. Failures were
   two contact timeouts, eight missing-`ffprobe` video checks, and three nested
-  publication fixture failures under concurrent build load. With temporary
+  publication fixture failures while builds ran concurrently. With temporary
   `ffprobe` outside the repository, affected contact/video files passed
-  129/129 in a single-worker rerun. Nested publication fixture rerun: pending.
+  129/129 in a single-worker rerun. The isolated nested publication rerun
+  passed 18/19; one fixture child Vitest process exited nonzero without a
+  diagnostic. A full local suite pass is not claimed. Hosted full unit and
+  `test-and-build` results are required before merge.
   No application or test code changed to accommodate these local failures.
 - Hosted `test-and-build`, including supported Chromium and WebKit: pending.
   Local Ubuntu26 WebKit is unsupported because required system libraries are
