@@ -35,7 +35,7 @@ A comparison against the pre-edit public projection confirms that removing the n
 
 ## Verification
 
-The final implementation commit is `d3a6db7fd3a25b3b44ed4783905611a975c388f5`. The following checks exercised that implementation; subsequent report-only commits do not change the application.
+The card rendering and approved copy were verified on `d3a6db7fd3a25b3b44ed4783905611a975c388f5`. The lifecycle follow-up `d6d5a61` changes only the build-time scope binding and withdrawal regression coverage; a public-projection comparison confirms identical current card copy, article content and ordering. The PR CI gate exercises the final delivered head.
 
 - Production build passed: all 43 display derivatives validated, sitemap generated, 39 static public links checked, 21 static routes generated.
 - 26 focused publication/card tests passed after review fixes. The initial 38-test run also included the existing public-copy suite.
@@ -53,3 +53,5 @@ Local WebKit checks could not launch because this host lacks WebKit runtime libr
 Cursor’s Opus 5.5 completed isolated Standards and Spec reviews using `$code-review` against base `fe0e46e` and reviewed head `61895f4` (final application source `d3a6db7`). Round-one findings were resolved: existing-CI-workflow scope restored, confirmed DESIGN decision limited to approved behavior, future-story fallback tests corrected, stale note bindings checked, report links repaired and browser acceptance results recorded. Final Standards review had no blocking findings; final Spec review had no findings. The later full-suite result and documentation wording updates do not change the reviewed application code. Remote CI is tracked by the PR, and integration merge requires its full gate to pass.
 
 Automated GitHub review of `61895f4` identified two lifecycle concerns. Regression checks confirmed that a summary, section or evidence-caption revision previously reused the old note. The binding now includes all those reviewed public fields. Twelve withdrawal cases also verify that retained notes never project draft stories or block their withdrawal. These lifecycle changes leave the current twelve public records and their card copy unchanged.
+
+The lifecycle follow-up passed all **53 focused tests**, the production build, ESLint parsing/no-undef and diff checks. The 15 new regressions cover three scope changes without a new cover and withdrawal of every registered story. The full CI suite is required again on this follow-up before merge.
