@@ -304,14 +304,11 @@ async function navigateToServicesByKeyboard(page) {
 
 async function returnToContactByBack(page) {
   await page.goBack();
-  // ScrollToTop focuses main on the next frame. Wait for that focus handoff
-  // before the test focuses a form field or opens the mobile menu again.
-  const receipt = page.getByRole('status', { name: 'Request received' });
-  const error = page.locator('#contact-submit-error');
+  // Outcome presentation can update its marker during Contact's mount. Keep
+  // the eligible focus target live throughout the assertion instead of choosing
+  // main from a transient marker-free render.
   await expect(page.getByLabel('Full Name *')).toBeVisible();
-  if (await page.locator('[aria-labelledby="contact-receipt-title"][data-contact-outcome-focus]').count()) await expect(receipt).toBeFocused();
-  else if (await error.count() && await page.locator('form button[data-contact-outcome-focus]').count()) await expect(page.locator('form button[type="submit"]')).toBeFocused();
-  else await expect(page.locator('#main-content')).toBeFocused();
+  await expect(page.locator('#main-content [data-contact-outcome-focus], #main-content:not(:has([data-contact-outcome-focus]))')).toBeFocused();
   await expect(page.getByLabel('Full Name *')).toBeVisible();
 }
 
