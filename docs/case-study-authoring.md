@@ -182,6 +182,38 @@ ineligible slugs, removes duplicates, and caps the result at three stories.
 Configuration chooses existing eligible public records; it does not publish a
 story or add metadata. Other-work slugs live in `publication/case-study-other-work.js`, stay on article routes, leave the main collection that homepage View all counts, and must not be auto-linked by proposal tooling.
 
+### Compact card illustration notes
+
+Home and collection cards show the approved story summary first. Their second
+paragraph distinguishes the overview illustration from project evidence and
+retains material cover limitations, without repeating the workflow description.
+The article and gallery continue to use the full approved cover caption.
+
+`publication/case-study-card-copy.js` is an authored, build-only source for these
+compact public notes, introduced under #369. It is separate from the mechanically
+staged story store; do not hand-edit `staged-case-study-publication.js` or candidate
+JSON to shorten a card. Notes contain only reviewed public facts from the
+approved caption, summary and project scope. Do not place private authoring
+notes, approval metadata or new performance claims in this copy source.
+
+Each note is keyed by the stable story ID and bound to a `coverDigest`: the
+existing publication `digest` function's SHA-256 of the object
+`{ src: story.image.src, caption: story.image.caption }` from the validated public
+projection. Review a note against that exact cover and caption before recording
+the digest. Changing the cover path or full caption invalidates the shortening;
+the card then displays the full approved caption after its summary until a new
+compact note is reviewed. New stories also use that safe fallback. Withdrawal
+still removes the story through the existing publication status controls.
+
+When revising a cover or its scope, first use the ordinary source preparation,
+review and staging flow. Then update or remove its compact note through a
+reviewed repository PR, retaining all material limitations. Verify both card
+paragraphs and the unchanged full article/gallery caption. The compiler projects
+only matching public note text as `cardCaption`; the digest bindings and this
+authoring module stay outside browser bundles. See
+`publication/case-study-card-copy.test.js` for coverage of all twelve notes,
+material limitations and the stale-cover fallback.
+
 The small legacy adapter in `publication/compile-case-studies.js` remains
 because `n8n-openai-data-extraction`, `invoice-ocr-extraction`, and
 `yolo-computer-vision-optimization` are retained records whose exact identity,

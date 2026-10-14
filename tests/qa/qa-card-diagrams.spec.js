@@ -47,7 +47,24 @@ for (const [width, height] of viewports) {
       }
       const cards = page.locator(isCollection ? 'main article.card' : '#portfolio article.card');
       await expect(cards).toHaveCount(isCollection ? collectionCaseStudies.length : featuredCaseStudies.length);
-      for (const card of await cards.all()) await expectUnobscuredDiagram(card);
+      const projects = isCollection ? collectionCaseStudies : featuredCaseStudies;
+      for (const [index, project] of projects.entries()) {
+        const card = cards.nth(index);
+        await expectUnobscuredDiagram(card);
+        const paragraphs = card.locator('.body > p');
+        await expect(paragraphs.first()).toHaveText(project.summary);
+        await expect(paragraphs.nth(1)).toHaveText(project.cardCaption);
+        await expect(card.locator('time')).toHaveAttribute('datetime', project.completedAt);
+        await expect(card.getByRole('link', { name: `Read case study: ${project.cardTitle || project.title}` }))
+          .toHaveAttribute('href', `/project/${project.slug}/${isCollection ? '?from=collection' : ''}`);
+        const bodyBox = await card.locator('.body').boundingBox();
+        for (const paragraph of await paragraphs.all()) {
+          const box = await paragraph.boundingBox();
+          expect(box.x).toBeGreaterThanOrEqual(bodyBox.x);
+          expect(box.x + box.width).toBeLessThanOrEqual(bodyBox.x + bodyBox.width);
+          expect(await paragraph.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+        }
+      }
       expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
     });
   }
