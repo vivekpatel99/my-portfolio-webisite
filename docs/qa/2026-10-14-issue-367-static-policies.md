@@ -24,4 +24,12 @@ The checkout initially lacked npm dependencies and FFprobe. Lockfile dependencie
 
 Independent standards and specification reviews, including the location-guard follow-up, found no blockers. The implementation preserves TY-01's existing one-H1 reference and NV-01's existing keyboard/consent behavior; narrow wrapping follows the LY-01 proposed default. This is scoped policy acceptance, not a whole-site theme audit, native zoom audit, or production deployment verification.
 
+## CI contact-harness follow-up
+
+The first CI run on `5addbc6` passed application unit tests, production build, and policy browser coverage, but failed two contact QA shards. [Shard 1](https://github.com/vivekpatel99/my-portfolio-webisite/actions/runs/38527680905/job/115731805757) selected two homepage estimate links while the test expected the service CTA during navigation. [Shard 2](https://github.com/vivekpatel99/my-portfolio-webisite/actions/runs/38527680905/job/115731805794) reported a missing second synthetic mutation and an inactive main focus target. The original WebKit scenarios passed in repeated warm local runs; the missing-mutation symptom was not reproduced locally.
+
+The follow-up changes only the contact test harness and this report. Service inquiries now wait for the exact service-specific destination, verify its accessible name, and verify the resulting contact URL and form. The Back helper recomputes its original receipt/retry/main focus priority while polling, instead of selecting one expectation from an early marker count. The fresh-success scenario now explicitly checks receipt focus. Mutation counts, draft values, history, payload, storage and outcome checks are preserved.
+
+All 48 targeted contact cases have passing evidence in the pinned Playwright image across Chromium/WebKit, 1280/390px, and both motion preferences. The first matrix passed 45 cases; three mobile WebKit cases hit local image-fetch/loading timeouts. A bounded rerun of those three passed with identical assertions and timeouts. Scoped lint and diff checks passed. Independent standards and specification reviews found no blockers. No application or repository timeout configuration changed.
+
 Disposable logs, configs, browser output and the FFprobe runtime are kept outside the repository until PR verification/monitoring finishes; task-owned servers and Docker containers are stopped when no longer needed. The current managed checkout was supplied at task start, and no additional worktree was created.
