@@ -35,4 +35,15 @@ A comparison against the pre-edit public projection confirms that removing the n
 
 ## Verification
 
-Verification results will be recorded before delivery.
+The final implementation commit is `d3a6db7fd3a25b3b44ed4783905611a975c388f5`. The following checks exercised that implementation; subsequent report-only commits do not change the application.
+
+- Production build passed: all 43 display derivatives validated, sitemap generated, 39 static public links checked, 21 static routes generated.
+- 26 focused publication/card tests passed after review fixes. The initial 38-test run also included the existing public-copy suite.
+- Chromium browser QA: **20 passed** on the final production build. `qa-card-diagrams.spec.js` exercised homepage, all twelve loaded collection cards and the six-card no-JavaScript collection at 1440, 980, 390 and 320px. It checked summary-first copy, notes, dates, destination/order preservation, image/title geometry and paragraph/page overflow.
+- `qa-upgrade-interactions.spec.js` collection-return cases passed in both normal and reduced motion: pointer departures, first/second batch restoration, keyboard Load more and Enter navigation with focus restoration, and browser Back preserving loaded count and scroll position.
+- T3 browser inspection at 1440, 390 and 320px confirmed the rendered hierarchy. Browser fetches of all twelve article HTML routes returned 200 and found each full original cover caption in the gallery; the CI toolkit article was also opened interactively after its compact-note refinement.
+- ESLint parsing and `no-undef` checks passed on changed JavaScript/JSX files. This repository has no application typecheck or configured lint script; the production build validates the application compilation. `git diff --check` passed.
+
+The initial full unit run found that the isolated route fixture did not copy the new authored module. Its explicit fixture file list now includes that dependency. A stable full-suite rerun with one worker is in progress; the final PR gate must pass before merge. Earlier overlapping verification/editing runs are not treated as a green full-suite result.
+
+Local WebKit checks could not launch because this host lacks WebKit runtime libraries (including GStreamer, flite, libavif and JPEG libraries). These are prerequisite failures before test execution, not acceptance passes. The required PR `test-and-build` gate includes the repository's WebKit jobs and must be green before merge. No production verification or release is claimed.
