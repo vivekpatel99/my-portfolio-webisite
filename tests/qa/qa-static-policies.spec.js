@@ -73,6 +73,61 @@ async function expectStaticActions(page, policy) {
   await expect(page.getByRole('dialog', { name: /we value your privacy/i })).toHaveCount(0);
 }
 
+async function expectNativePolicyNavigation(page, policy, width, browserName) {
+  const header = page.locator('header');
+  const details = header.locator('details');
+  const summary = details.locator('summary');
+  const openNavigation = async () => {
+    await expect.poll(async () => (await header.boundingBox()).height).toBe(69);
+    if (width < 768) {
+      await expect(summary).toBeVisible();
+      await expect(summary).toHaveAccessibleName('Toggle navigation menu');
+      await summary.focus();
+      await page.keyboard.press('Enter');
+      await expect(details).toHaveAttribute('open', '');
+      await expect(summary).not.toHaveCSS('outline-style', 'none');
+      // Opening the native disclosure preserves the established header bar height.
+      await expect.poll(async () => (await header.boundingBox()).height).toBe(69);
+      return details.getByRole('navigation', { name: 'Navigation menu', exact: true });
+    }
+    await expect(summary).toBeHidden();
+    return header.locator('nav').first();
+  };
+  const navigation = await openNavigation();
+  const links = width < 768 ? navigation.getByRole('link') : header.getByRole('link').filter({ hasNot: page.locator('img') });
+  const tabKey = browserName === 'webkit' ? 'Alt+Tab' : 'Tab';
+  await links.first().focus();
+  for (let index = 0; index < await links.count(); index += 1) {
+    const link = links.nth(index);
+    await expect(link).toBeFocused();
+    await expect(link).not.toHaveCSS('outline-style', 'none');
+    const box = await link.boundingBox();
+    expect(box.width).toBeGreaterThanOrEqual(44);
+    expect(box.height).toBeGreaterThanOrEqual(44);
+    expect(box.x).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width).toBeLessThanOrEqual(width);
+    if (index + 1 < await links.count()) await page.keyboard.press(tabKey);
+  }
+  for (const [name, href] of [
+    ['Services', '/#services'],
+    ['Case Studies', '/case-studies/'],
+    [width < 768 ? 'Request a Project Estimate' : 'Request Estimate', '/contact/'],
+  ]) {
+    // Reload the policy to exercise each native destination independently.
+    await page.goto(policy.path);
+    const currentNavigation = await openNavigation();
+    const link = name === 'Request Estimate'
+      ? header.getByRole('link', { name, exact: true })
+      : currentNavigation.getByRole('link', { name, exact: true });
+    await expect(link).toHaveAttribute('href', href);
+    await link.focus();
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL((url) => `${url.pathname}${url.hash}` === href);
+    if (name === 'Services') await expect(page.locator('#services')).toBeVisible();
+    else await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  }
+}
+
 test.describe('policies without JavaScript', () => {
   test.use({ javaScriptEnabled: false });
 
@@ -89,6 +144,7 @@ test.describe('policies without JavaScript', () => {
         expect(html).toContain(policy.end);
         expect(html).toContain(`href="${policy.crossPath}"`);
         expect(html).toContain(`href="${socialLinks.emailHref}"`);
+        expect(html).toMatch(/<summary\b[^>]*aria-label="Toggle navigation menu"/);
 
         await page.goto(policy.path);
         await expectReadablePolicy(page, policy);
@@ -115,18 +171,20 @@ test.describe('policies without JavaScript', () => {
         const destination = policies.find(({ path }) => path === policy.crossPath);
         await expectReadablePolicy(page, destination);
         await expectStaticActions(page, destination);
+        await expectNativePolicyNavigation(page, destination, width, browserName);
       });
     }
   }
 });
 
 for (const policy of policies) {
-  test(`${policy.heading} stays readable when the application entry fails`, async ({ page }) => {
+  test(`${policy.heading} stays readable when the application entry fails`, async ({ page, browserName }) => {
     await page.setViewportSize({ width: 320, height: 740 });
     await page.route(/\/assets\/index-[^/]+\.js(?:\?.*)?$/, (route) => route.abort());
     await page.goto(policy.path);
     await expectReadablePolicy(page, policy);
     await expectStaticActions(page, policy);
+    await expectNativePolicyNavigation(page, policy, 320, browserName);
   });
 
   test(`${policy.heading} preserves every static policy paragraph after the application mounts`, async ({ page }) => {
@@ -150,6 +208,7 @@ for (const policy of policies) {
       release();
       // The shared footer proves the application mounted; static policy HTML has no footer.
       await expect(page.locator('footer').getByRole('button', { name: /manage consent/i })).toBeVisible();
+      await expect(page.locator('header details')).toHaveCount(0);
       await expectReadablePolicy(page, policy);
       expect(await policyText()).toEqual(staticText);
       await expect(page.getByText(fallbackNotice, { exact: false })).toHaveCount(0);
@@ -169,6 +228,8 @@ for (const width of [1440, 390, 320]) {
       await page.goto(policy.path);
       const footerTrigger = page.locator('footer').getByRole('button', { name: /manage consent/i });
       await expect(footerTrigger).toBeVisible();
+      await expect(page.locator('header details')).toHaveCount(0);
+      if (width < 768) await expect(page.getByRole('button', { name: 'Toggle navigation menu', exact: true })).toBeEnabled();
       await expectReadablePolicy(page, policy);
       const triggers = policy.path === '/data-policy/'
         ? [page.getByRole('button', { name: 'Manage Your Cookie Consent', exact: true }), footerTrigger]

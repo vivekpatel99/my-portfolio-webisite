@@ -110,7 +110,8 @@ for (const pendingOtherVisit of [false, true]) {
     await expect.poll(() => transport.state.mutations.length).toBe(1);
     if (!pendingOtherVisit) {
       transport.releasePending('success');
-      await expect(page.locator('#contact-receipt-title')).toBeVisible();
+      // Finish the outcome focus handoff before moving focus into navigation.
+      await expect(page.getByRole('status', { name: 'Request received' })).toBeFocused();
     }
     await navigateToServicesByKeyboard(page);
     await startInquiry(serviceOffers[2]);
@@ -122,7 +123,7 @@ for (const pendingOtherVisit of [false, true]) {
       await page.getByRole('button', { name: 'Send project request', exact: true }).click();
       await expect.poll(() => transport.state.mutations.length).toBe(2);
     }
-    await expect(page.locator('#contact-receipt-title')).toBeVisible();
+    await expect(page.getByRole('status', { name: 'Request received' })).toBeFocused();
     for (let step = 0; step < 3; step += 1) await page.goBack();
     await expect(page).toHaveURL(new RegExp(`/contact/\\?service=${serviceOffers[0].id}$`));
     await expectEmptyContactForm(page);
@@ -170,7 +171,7 @@ test('a newer unsent inquiry stays intact when Back reaches an earlier completed
   await page.getByRole('button', { name: 'Send project request', exact: true }).click();
   await expect.poll(() => transport.state.mutations.length).toBe(1);
   transport.releasePending('success');
-  await expect(page.locator('#contact-receipt-title')).toBeVisible();
+  await expect(page.getByRole('status', { name: 'Request received' })).toBeFocused();
   await navigateToServicesByKeyboard(page);
   await page.getByRole('link', { name: 'Scope details for ai workflow buildout →', exact: true }).click();
   await openServiceInquiry(page, serviceOffers[2]);

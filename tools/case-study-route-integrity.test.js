@@ -144,6 +144,7 @@ describe('case-study route integrity', () => {
     expect(home).toContain('href="/case-studies/"');
     expect(home).toContain('Profile Invoice');
     expect(home).toContain('aria-label="Vivek Patel home"');
+    expect(home).not.toContain('<details');
     expect(home).not.toContain('translateY(12px)');
     for (const service of ['data-extraction-automation-sprint', 'computer-vision-production-optimization', 'ai-workflow-buildout']) {
       expect(home).toContain(`href="/services/${service}"`);
@@ -168,6 +169,7 @@ describe('case-study route integrity', () => {
     expect(contact).toContain('The project request form needs JavaScript.');
     expect(contact).toContain('Connect with Vivek Patel on Upwork');
     expect(contact).not.toMatch(/<(?:form|input|textarea)\b/);
+    expect(contact).not.toContain('<details');
     const privacy = readFileSync(path.join(directory, 'dist/legal/index.html'), 'utf8');
     const cookies = readFileSync(path.join(directory, 'dist/data-policy/index.html'), 'utf8');
     for (const [html, heading, crossPath] of [
@@ -180,6 +182,12 @@ describe('case-study route integrity', () => {
       expect(html).toContain(`href="${crossPath}"`);
       expect(html).not.toContain('Profile Invoice');
       expect(html).not.toMatch(/opacity:0|translateY\(/);
+      expect(html.match(/<details\b/g)).toHaveLength(1);
+      expect(html).toMatch(/<summary\b[^>]*aria-label="Toggle navigation menu"/);
+      expect(html).toContain('id="static-mobile-menu"');
+      expect(html).toContain('href="/#services"');
+      expect(html).toContain('href="/case-studies/"');
+      expect(html).toContain('href="/contact/"');
     }
     expect(privacy).toContain('Last updated: June 1, 2026');
     expect(privacy).toContain('Changes to This Privacy Policy');

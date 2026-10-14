@@ -8,7 +8,7 @@ import { createServer } from 'vite';
 
 // Load shared JSX and @ imports without the dev server, editor, or telemetry.
 // Effects only start in the browser; the contact fallback has no form transport.
-async function renderStaticPage(pagePath, location) {
+async function renderStaticPage(pagePath, location, { staticNavigation = false } = {}) {
   const server = await createServer({
     configFile: false,
     mode: 'production',
@@ -27,7 +27,7 @@ async function renderStaticPage(pagePath, location) {
       React.createElement(StaticRouter, { location },
         React.createElement(LazyMotion, { features: domAnimation, strict: true },
           React.createElement('div', { className: 'min-h-screen bg-[#0C0D0D] text-white flex flex-col' },
-            React.createElement(Header),
+            React.createElement(Header, { staticNavigation }),
             React.createElement('main', { id: 'main-content', className: 'flex-grow' }, React.createElement(Page)),
           ),
         ),
@@ -42,5 +42,5 @@ async function renderStaticPage(pagePath, location) {
 
 export const renderStaticHome = () => renderStaticPage('/src/pages/Home.jsx', '/');
 export const renderStaticContact = () => renderStaticPage('/src/pages/ContactFallback.jsx', '/contact/');
-export const renderStaticPrivacyPolicy = () => renderStaticPage('/src/components/PrivacyPolicyContent.jsx', '/legal/');
-export const renderStaticCookiePolicy = () => renderStaticPage('/src/components/CookiePolicyContent.jsx', '/data-policy/');
+export const renderStaticPrivacyPolicy = () => renderStaticPage('/src/components/PrivacyPolicyContent.jsx', '/legal/', { staticNavigation: true });
+export const renderStaticCookiePolicy = () => renderStaticPage('/src/components/CookiePolicyContent.jsx', '/data-policy/', { staticNavigation: true });
