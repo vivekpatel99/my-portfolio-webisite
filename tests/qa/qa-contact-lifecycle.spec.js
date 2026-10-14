@@ -191,7 +191,7 @@ for (const pendingOtherVisit of [false, true]) {
     await expect.poll(() => transport.state.mutations.length).toBe(1);
     if (!pendingOtherVisit) {
       transport.releasePending('success');
-      await expect(page.locator('#contact-receipt-title')).toBeVisible();
+      await expect(page.getByRole('status', { name: 'Request received' })).toBeFocused();
     }
     await navigateToServicesByKeyboard(page);
     await startInquiry(serviceOffers[2]);
@@ -200,16 +200,17 @@ for (const pendingOtherVisit of [false, true]) {
       transport.releasePending('success');
     } else {
       await fillContactForm(page);
+      await expectPreservedValues(page);
       await page.getByRole('button', { name: 'Send project request', exact: true }).click();
       await expect.poll(() => transport.state.mutations.length).toBe(2);
     }
     await expect(page.locator('#contact-receipt-title')).toBeVisible();
-    for (let step = 0; step < 3; step += 1) await page.goBack();
+    await traverseInquiryHistory(page, 'back');
     await expect(page).toHaveURL(new RegExp(`/contact/\\?service=${serviceOffers[0].id}$`));
     await expectEmptyContactForm(page);
     await expect(page.locator('#contact-inquiry-context')).toHaveCount(0);
     await expect(page.locator('#contact-receipt-title')).toBeVisible();
-    for (let step = 0; step < 3; step += 1) await page.goForward();
+    await traverseInquiryHistory(page, 'forward');
     await expect(page).toHaveURL(/\/contact\/\?service=ai-workflow-buildout$/);
     if (pendingOtherVisit) {
       await expect(page.locator('#contact-inquiry-context')).toHaveText('Inquiry about AI Workflow Buildout');
@@ -251,12 +252,12 @@ test('a newer unsent inquiry stays intact when Back reaches an earlier completed
   await page.getByRole('button', { name: 'Send project request', exact: true }).click();
   await expect.poll(() => transport.state.mutations.length).toBe(1);
   transport.releasePending('success');
-  await expect(page.locator('#contact-receipt-title')).toBeVisible();
+  await expect(page.getByRole('status', { name: 'Request received' })).toBeFocused();
   await navigateToServicesByKeyboard(page);
   await page.getByRole('link', { name: 'Scope details for ai workflow buildout →', exact: true }).click();
   await page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true }).click();
   await fillContactForm(page);
-  for (let step = 0; step < 3; step += 1) await page.goBack();
+  await traverseInquiryHistory(page, 'back');
   await expect(page).toHaveURL(new RegExp(`/contact/\\?service=${serviceOffers[0].id}$`));
   await expectPreservedValues(page);
   await expect(page.locator('#contact-inquiry-context')).toHaveText('Inquiry about AI Workflow Buildout');
@@ -269,6 +270,19 @@ test.afterEach(async ({ context }) => {
   closingContexts.add(context);
   await context.close();
 });
+
+async function traverseInquiryHistory(page, direction) {
+  const routes = direction === 'back'
+    ? [`/services/${serviceOffers[2].id}`, '/#services', `/contact/?service=${serviceOffers[0].id}`]
+    : ['/#services', `/services/${serviceOffers[2].id}`, `/contact/?service=${serviceOffers[2].id}`];
+  for (const route of routes) {
+    // These are SPA history entries. A full-document load may never occur;
+    // verify each arrival before issuing the next history traversal.
+    if (direction === 'back') await page.goBack({ waitUntil: 'commit' });
+    else await page.goForward({ waitUntil: 'commit' });
+    await expect(page).toHaveURL(new URL(route, page.url()).href);
+  }
+}
 
 async function fillContactForm(page) {
   await page.getByLabel('Full Name *').fill('Synthetic QA Contact');
