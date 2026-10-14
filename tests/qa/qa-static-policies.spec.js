@@ -73,6 +73,25 @@ async function expectStaticActions(page, policy) {
   await expect(page.getByRole('dialog', { name: /we value your privacy/i })).toHaveCount(0);
 }
 
+async function expectNativeSkipLink(page, browserName) {
+  const skipLink = page.getByRole('link', { name: 'Skip to main content', exact: true });
+  const tabKey = browserName === 'webkit' ? 'Alt+Tab' : 'Tab';
+  await expect(skipLink).toHaveCount(1);
+  await expect(skipLink).toHaveAttribute('href', '#main-content');
+  // Begin from the newly loaded document, proving this is the first Tab stop.
+  await page.keyboard.press(tabKey);
+  await expect(skipLink).toBeFocused();
+  await expect(skipLink).toBeInViewport();
+  await expect(skipLink).not.toHaveCSS('clip', 'rect(0px, 0px, 0px, 0px)');
+  await expect(skipLink).not.toHaveCSS('outline-style', 'none');
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL((url) => url.hash === '#main-content');
+  await expect(page.locator('#main-content')).toBeFocused();
+  // Continuing keyboard navigation starts in the policy, bypassing the header.
+  await page.keyboard.press(tabKey);
+  await expect(page.locator('#main-content a[href]').first()).toBeFocused();
+}
+
 async function expectNativePolicyNavigation(page, policy, width, browserName) {
   const header = page.locator('header');
   const details = header.locator('details');
@@ -145,10 +164,12 @@ test.describe('policies without JavaScript', () => {
         expect(html).toContain(`href="${policy.crossPath}"`);
         expect(html).toContain(`href="${socialLinks.emailHref}"`);
         expect(html).toMatch(/<summary\b[^>]*aria-label="Toggle navigation menu"/);
+        expect(html).toContain('href="#main-content"');
 
         await page.goto(policy.path);
         await expectReadablePolicy(page, policy);
         await expectStaticActions(page, policy);
+        await expectNativeSkipLink(page, browserName);
 
         const links = page.locator('#main-content a[href]');
         const tabKey = browserName === 'webkit' ? 'Alt+Tab' : 'Tab';
@@ -184,6 +205,7 @@ for (const policy of policies) {
     await page.goto(policy.path);
     await expectReadablePolicy(page, policy);
     await expectStaticActions(page, policy);
+    await expectNativeSkipLink(page, browserName);
     await expectNativePolicyNavigation(page, policy, 320, browserName);
   });
 
@@ -209,6 +231,7 @@ for (const policy of policies) {
       // The shared footer proves the application mounted; static policy HTML has no footer.
       await expect(page.locator('footer').getByRole('button', { name: /manage consent/i })).toBeVisible();
       await expect(page.locator('header details')).toHaveCount(0);
+      await expect(page.getByRole('link', { name: 'Skip to main content', exact: true })).toHaveCount(1);
       await expectReadablePolicy(page, policy);
       expect(await policyText()).toEqual(staticText);
       await expect(page.getByText(fallbackNotice, { exact: false })).toHaveCount(0);

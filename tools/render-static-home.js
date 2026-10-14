@@ -19,16 +19,18 @@ async function renderStaticPage(pagePath, location, { staticNavigation = false }
     optimizeDeps: { noDiscovery: true },
   });
   try {
-    const [{ default: Page }, { default: Header }] = await Promise.all([
+    const [{ default: Page }, { default: Header }, { default: SkipLink }] = await Promise.all([
       server.ssrLoadModule(pagePath),
       server.ssrLoadModule('/src/components/Header.jsx'),
+      server.ssrLoadModule('/src/components/SkipLink.jsx'),
     ]);
     return renderToStaticMarkup(
       React.createElement(StaticRouter, { location },
         React.createElement(LazyMotion, { features: domAnimation, strict: true },
+          React.createElement(SkipLink),
           React.createElement('div', { className: 'min-h-screen bg-[#0C0D0D] text-white flex flex-col' },
             React.createElement(Header, { staticNavigation }),
-            React.createElement('main', { id: 'main-content', className: 'flex-grow' }, React.createElement(Page)),
+            React.createElement('main', { id: 'main-content', tabIndex: -1, className: 'flex-grow' }, React.createElement(Page)),
           ),
         ),
       ),

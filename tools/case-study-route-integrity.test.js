@@ -63,6 +63,7 @@ function fixture({ hourlyRateEur = HOURLY_RATE_EUR } = {}) {
     'src/lib/utils.js',
     'src/components/Hero.jsx',
     'src/components/Header.jsx',
+    'src/components/SkipLink.jsx',
     'src/lib/focusTarget.js',
     'src/components/Portfolio.jsx',
     'src/components/Services.jsx',
@@ -180,6 +181,10 @@ describe('case-study route integrity', () => {
       expect(html).toMatch(new RegExp(`<h1\\b[^>]*>${heading}</h1>`));
       expect(html).toContain('href="mailto:contact@vivekapatel.com"');
       expect(html).toContain(`href="${crossPath}"`);
+      expect(html.match(/href="#main-content"/g)).toHaveLength(1);
+      expect(html).toContain('Skip to main content');
+      expect(html.indexOf('href="#main-content"')).toBeLessThan(html.indexOf('<header'));
+      expect(html).toMatch(/<main\b[^>]*id="main-content"[^>]*tabindex="-1"/);
       expect(html).not.toContain('Profile Invoice');
       expect(html).not.toMatch(/opacity:0|translateY\(/);
       expect(html.match(/<details\b/g)).toHaveLength(1);
