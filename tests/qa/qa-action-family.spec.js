@@ -232,6 +232,9 @@ test('prominent actions reflow at native Chromium 200% browser zoom', async ({ b
     testInfo.annotations.push({ type: 'native-200-percent-zoom', description: JSON.stringify({ before, after }) });
     for (const route of routes) {
       await page.goto(new URL(route, baseURL).href);
+      // Contact is lazy. At 200% the layout is below the md header action, so the
+      // loading heading is the only visible title and must clear before measurement.
+      await expect(page.getByRole('heading', { name: 'Loading page', exact: true })).toHaveCount(0);
       await inspectActions(page);
     }
   } finally {

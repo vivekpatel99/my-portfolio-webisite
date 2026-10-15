@@ -4,15 +4,47 @@ import {
   resolveLoopbackRedirectUrl,
 } from './qa-local-only.js';
 
-function isBrowserCancelledRoute(error) {
-  if (!(error instanceof Error)) return false;
+function routeErrorMessage(error) {
+  if (!(error instanceof Error)) return '';
   // Playwright can append request diagnostics to the same cancellation message.
-  const message = error.message.split(/\r?\nCall log:\r?\n/, 1)[0];
+  return error.message.split(/\r?\nCall log:\r?\n/, 1)[0];
+}
+
+function isBrowserCancelledRoute(error) {
+  const message = routeErrorMessage(error);
   return (
     message === 'route.fulfill: Route is already handled!'
     || message === 'route.fetch: Target page, context or browser has been closed'
     || message === 'apiResponse.dispose: Target page, context or browser has been closed'
   );
+}
+
+function isDisposedFulfill(error) {
+  return routeErrorMessage(error) === 'route.fulfill: Fetch response has been disposed';
+}
+
+function isTargetGone(error) {
+  const message = routeErrorMessage(error);
+  return message.endsWith('Target page, context or browser has been closed')
+    || message.endsWith('Frame was detached');
+}
+
+function pageIsClosed(request) {
+  try {
+    return request.frame().page().isClosed();
+  } catch (error) {
+    if (isTargetGone(error)) return true;
+    throw error;
+  }
+}
+
+// Playwright can drop a fetched body when the context closes before this handler
+// sees the page close event. One turn is enough for that queued event.
+// ponytail: one macrotask, not a timed poll; a still-open page must still fail.
+async function disposedDuringClosure(request) {
+  if (pageIsClosed(request)) return true;
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  return pageIsClosed(request);
 }
 
 export async function guardLocalNavigation(route) {
@@ -47,12 +79,10 @@ export async function guardLocalNavigation(route) {
   try {
     await route.fulfill({ response });
   } catch (error) {
-    // A page can cancel an already-fetched loopback subresource during client navigation.
-    // The route was handled by Chromium's cancellation, so only this exact race is non-actionable.
-    const disposedDuringClosure = error instanceof Error
-      && error.message === 'route.fulfill: Fetch response has been disposed'
-      && request.frame().page().isClosed();
-    if (!isBrowserCancelledRoute(error) && !disposedDuringClosure) throw error;
+    // A page can cancel an already-fetched loopback subresource as the context closes.
+    // Only that exact disposal is non-actionable, and only once the page is actually gone.
+    const closed = isDisposedFulfill(error) && await disposedDuringClosure(request);
+    if (!isBrowserCancelledRoute(error) && !closed) throw error;
   } finally {
     try {
       await response.dispose();
