@@ -25,8 +25,11 @@ function isDisposedFulfill(error) {
 
 function isTargetGone(error) {
   const message = routeErrorMessage(error);
-  return message.endsWith('Target page, context or browser has been closed')
-    || message.endsWith('Frame was detached');
+  const parts = message.split(': ');
+  // Playwright prefixes the reason with one API name. A longer suffix is a different error.
+  const reason = parts.length === 2 ? parts[1] : message;
+  return reason === 'Target page, context or browser has been closed'
+    || reason === 'Frame was detached';
 }
 
 function pageIsClosed(request) {
