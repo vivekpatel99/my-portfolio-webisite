@@ -52,6 +52,8 @@ Proposed default: check contrast in the rendered state before promoting a color 
 
 Confirmed on 14 October 2026 under #365: keep the hero Role h1 as `Computer Vision & AI Engineer` and use this introduction beneath the existing role/proof fields: “Manual data entry, scattered website data, and unstructured video slow teams down. I build document extraction, n8n automation, and computer vision workflows to make that information usable.” Preserve the profile invoice, CV identity, rate, worldwide targeting, and existing motion.
 
+Confirmed on 16 October 2026: the introductory paragraph in the hero Profile Invoice uses the card’s full inner width. Remove its separate reading-width cap while preserving the approved copy, font size, card padding, and responsive wrapping.
+
 Confirmed: feature these published case studies in this order: `n8n Invoice Extraction with Validation and Review`, `Football Player Tracking with YOLO and Team Colors`, and `n8n Website Data Extraction to JSON`. Their existing project content and metadata remain the evidence; do not infer testimonial pairings from this selection. This selection supersedes the earlier SH-02 references to preserving the three existing homepage features.
 
 Confirmed: progress updates mean weekly. Remove the unsupported agency-speed comparison from About. Metadata describing the selected positioning names document extraction, n8n automation, and computer vision for invoices, website data, and video, without adding outcome percentages, credentials, or client claims.

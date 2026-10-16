@@ -389,7 +389,7 @@ const Hero = () => {
 
                 {/* Bio */}
                 <div className="mb-2.5 max-md:mb-1 max-[359px]:mb-0">
-                  <p className="max-w-[54ch] text-[0.78rem] leading-[1.4] text-gray-400 font-normal max-md:text-[0.72rem] max-md:max-w-full">
+                  <p className="text-[0.78rem] leading-[1.4] text-gray-400 font-normal max-md:text-[0.72rem]">
                     Manual data entry, scattered website data, and unstructured video slow teams down. I build document extraction, n8n automation, and computer vision workflows to make that information usable.
                   </p>
                 </div>
