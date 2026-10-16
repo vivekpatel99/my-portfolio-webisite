@@ -1,4 +1,5 @@
 import React from 'react';
+import './Services.css';
 import { Link } from 'react-router-dom';
 import { DetectionHeading, DetectionLabel } from './DetectionFrame';
 import { HOURLY_FROM_LABEL } from '@/config/pricing';
@@ -30,7 +31,7 @@ const Services = () => {
             <li key={service.id} className="flex">
               <article
                 aria-labelledby={`service-title-${service.id}`}
-                className="detection-panel relative flex flex-col w-full bg-transparent py-[22px] px-7"
+                className="service-offer detection-panel relative flex flex-col w-full bg-transparent py-[22px] px-7"
               >
                 <DetectionLabel>
                   SERVICE · <em className="not-italic text-[#a78bfa]">OFFER {String(index + 1).padStart(2, '0')}</em>
@@ -64,9 +65,9 @@ const Services = () => {
 
                 <Link
                   to={serviceRouteForId(service.id)}
-                  className="detection-text-action self-start text-[0.9rem]"
+                  className="service-offer-link detection-text-action self-start text-[0.9rem]"
                 >
-                  Scope details<span className="sr-only"> for {service.title.toLowerCase()}</span> →
+                  Scope details{' '}<span className="sr-only">for {service.title.toLowerCase()}</span> →
                 </Link>
               </article>
             </li>
