@@ -82,7 +82,8 @@ async function inquirySuccessEvents(page) {
 test('accepted inquiry analytics emits once after transport success away from Contact and never for invalid or pending sends', async ({ page, context, contactTransport: transport }) => {
   await context.addInitScript(() => localStorage.setItem('cookie_consent_preferences', JSON.stringify({ analytics: true, necessary: true })));
   await page.goto('/contact/?service=ai-workflow-buildout&utm_source=LinkedIn&private=PRIVATE_QUERY#PRIVATE_HASH');
-  await expect(page.locator('#contact-inquiry-context')).toBeVisible();
+  await expect(page.locator('#contact-inquiry-context')).toHaveCount(0);
+  await expect(page.getByLabel('Project Description *')).toHaveValue('');
   await installInquiryAnalyticsFixture(page);
   await page.getByRole('button', { name: 'Send project request', exact: true }).click();
   expect(transport.state.mutations).toHaveLength(0);
@@ -98,7 +99,7 @@ test('accepted inquiry analytics emits once after transport success away from Co
   await expect(page.locator('#contact-receipt-title')).toBeVisible();
   const events = await inquirySuccessEvents(page);
   expect(events).toHaveLength(1);
-  expect(events[0][2]).toMatchObject({ inquiry_source: 'linkedin', inquiry_type: 'service', inquiry_id: 'ai-workflow-buildout', page_path: '/contact/' });
+  expect(events[0][2]).toMatchObject({ inquiry_source: 'linkedin', inquiry_type: 'none', page_path: '/contact/' });
   const serialized = await page.evaluate(() => JSON.stringify(window.qaInquiryEvents));
   for (const privateValue of ['PRIVATE', 'Synthetic QA Contact', 'qa-contact@example.invalid', 'Synthetic transport lifecycle test.']) {
     expect(serialized).not.toContain(privateValue);
@@ -145,18 +146,17 @@ for (const consentState of ['rejected', 'withdrawn-and-regranted']) {
   });
 }
 
-test('public service and project inquiries seed trusted editable context and preserve drafts through pending navigation', async ({ page, contactTransport: transport }) => {
-  for (const [type, id, label, route, cta] of [
-    ...serviceOffers.slice(0, 1).map(item => ['service', item.id, item.name, `/services/${item.id}/`, 'Request a Project Estimate']),
-    ...caseStudies.slice(0, 1).map(item => ['project', item.slug, item.title, `/project/${item.slug}/`, 'Discuss a similar project']),
+test('public service and project inquiries start blank and preserve drafts through pending navigation', async ({ page, contactTransport: transport }) => {
+  for (const [route, cta] of [
+    ...serviceOffers.slice(0, 1).map(item => [`/services/${item.id}/`, 'Request a Project Estimate']),
+    ...caseStudies.slice(0, 1).map(item => [`/project/${item.slug}/`, 'Discuss a similar project']),
   ]) {
     await page.goto(route);
     const link = page.locator('main').getByRole('link', { name: cta, exact: true });
-    await expect(link).toHaveAttribute('href', `/contact/?${type}=${id}`);
+    await expect(link).toHaveAttribute('href', /\/contact\/?$/);
     await link.click();
-    await expect(page.locator('#contact-inquiry-context')).toHaveText(`Inquiry about ${label}`);
-    await expect(page.getByLabel('Project Description *')).toHaveValue(`I'd like to discuss ${label}.`);
-    await page.getByLabel('Project Description *').fill('Edited inquiry');
+    await expect(page.locator('#contact-inquiry-context')).toHaveCount(0);
+    await expect(page.getByLabel('Project Description *')).toHaveValue('');
   }
   await fillContactForm(page);
   await navigateToServicesByKeyboard(page);
@@ -174,8 +174,8 @@ test('public service and project inquiries seed trusted editable context and pre
   await navigateToServicesByKeyboard(page);
   await page.getByRole('link', { name: 'Scope details for ai workflow buildout →', exact: true }).click();
   await openServiceInquiry(page, serviceOffers[2]);
-  await expect(page.locator('#contact-inquiry-context')).toHaveText('Inquiry about AI Workflow Buildout');
-  await expect(page.getByLabel('Project Description *')).toHaveValue("I'd like to discuss AI Workflow Buildout.");
+  await expect(page.locator('#contact-inquiry-context')).toHaveCount(0);
+  await expect(page.getByLabel('Project Description *')).toHaveValue('');
 });
 
 for (const pendingOtherVisit of [false, true]) {
@@ -210,15 +210,15 @@ for (const pendingOtherVisit of [false, true]) {
     }
     await expect(page.getByRole('status', { name: 'Request received' })).toBeFocused();
     await traverseInquiryHistory(page, 'back');
-    await expect(page).toHaveURL(new RegExp(`/contact/\\?service=${serviceOffers[0].id}$`));
+    await expect(page).toHaveURL(/\/contact\/?$/);
     await expectEmptyContactForm(page);
     await expect(page.locator('#contact-inquiry-context')).toHaveCount(0);
     await expect(page.locator('#contact-receipt-title')).toBeVisible();
     await traverseInquiryHistory(page, 'forward');
-    await expect(page).toHaveURL(/\/contact\/\?service=ai-workflow-buildout$/);
+    await expect(page).toHaveURL(/\/contact\/?$/);
     if (pendingOtherVisit) {
-      await expect(page.locator('#contact-inquiry-context')).toHaveText('Inquiry about AI Workflow Buildout');
-      await expect(page.getByLabel('Project Description *')).toHaveValue("I'd like to discuss AI Workflow Buildout.");
+      await expect(page.locator('#contact-inquiry-context')).toHaveCount(0);
+      await expect(page.getByLabel('Project Description *')).toHaveValue('');
     } else {
       await expectEmptyContactForm(page);
       await expect(page.locator('#contact-receipt-title')).toBeVisible();
@@ -227,7 +227,7 @@ for (const pendingOtherVisit of [false, true]) {
   });
 }
 
-test('an untouched contextual seed reloads without a discard warning and edited fields remain protected', async ({ page, contactTransport: transport }) => {
+test('an empty inquiry reloads without a discard warning and visitor fields remain protected', async ({ page, contactTransport: transport }) => {
   let warnings = 0;
   page.on('dialog', async dialog => {
     if (dialog.type() === 'beforeunload') warnings += 1;
@@ -235,10 +235,10 @@ test('an untouched contextual seed reloads without a discard warning and edited 
   });
   await page.goto(`/services/${serviceOffers[2].id}/`);
   await openServiceInquiry(page, serviceOffers[2]);
-  await expect(page.getByLabel('Project Description *')).toHaveValue("I'd like to discuss AI Workflow Buildout.");
+  await expect(page.getByLabel('Project Description *')).toHaveValue('');
   expect(await unloadIsPrevented(page)).toBe(false);
   await page.reload();
-  await expect(page.getByLabel('Project Description *')).toHaveValue("I'd like to discuss AI Workflow Buildout.");
+  await expect(page.getByLabel('Project Description *')).toHaveValue('');
   expect(warnings).toBe(0);
   await page.getByLabel('Full Name *').fill('Synthetic QA Contact');
   expect(await unloadIsPrevented(page)).toBe(true);
@@ -265,9 +265,9 @@ test('a newer unsent inquiry stays intact when Back reaches an earlier completed
   await fillContactForm(page);
   await expectPreservedValues(page);
   await traverseInquiryHistory(page, 'back');
-  await expect(page).toHaveURL(new RegExp(`/contact/\\?service=${serviceOffers[0].id}$`));
+  await expect(page).toHaveURL(/\/contact\/?$/);
   await expectPreservedValues(page);
-  await expect(page.locator('#contact-inquiry-context')).toHaveText('Inquiry about AI Workflow Buildout');
+  await expect(page.locator('#contact-inquiry-context')).toHaveCount(0);
   await expect(page.locator('#contact-receipt-title')).toHaveCount(0);
   expect(await unloadIsPrevented(page)).toBe(true);
   expect(transport.state.mutations).toHaveLength(1);
@@ -281,18 +281,18 @@ test.afterEach(async ({ context }) => {
 async function openServiceInquiry(page, service) {
   // A lazy service navigation can still show the homepage's two estimate links.
   // Wait for the intended service destination before activating its CTA.
-  const href = `/contact/?service=${service.id}`;
-  const link = page.locator(`main a[href="${href}"]`);
+  await expect(page).toHaveURL(new RegExp(`/services/${service.id}/?$`));
+  const link = page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true });
   await expect(link).toHaveAccessibleName('Request a Project Estimate');
   await link.click();
-  await expect(page).toHaveURL(new RegExp(`/contact/\\?service=${service.id}$`));
+  await expect(page).toHaveURL(/\/contact\/?$/);
   await expect(page.getByLabel('Full Name *')).toBeVisible();
 }
 
 async function traverseInquiryHistory(page, direction) {
   const routes = direction === 'back'
-    ? [`/services/${serviceOffers[2].id}`, '/#services', `/contact/?service=${serviceOffers[0].id}`]
-    : ['/#services', `/services/${serviceOffers[2].id}`, `/contact/?service=${serviceOffers[2].id}`];
+    ? [`/services/${serviceOffers[2].id}`, '/#services', '/contact']
+    : ['/#services', `/services/${serviceOffers[2].id}`, '/contact'];
   for (const route of routes) {
     // These are SPA history entries. A full-document load may never occur;
     // verify each arrival before issuing the next history traversal.

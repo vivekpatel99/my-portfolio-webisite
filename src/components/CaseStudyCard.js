@@ -45,7 +45,7 @@ const CaseStudyCard = ({
 
   return React.createElement(
     'article',
-    { className: 'card detection-panel relative flex flex-col bg-[#0C0D0D] focus-within:outline focus-within:outline-2 focus-within:outline-[rgba(139,92,246,0.55)] focus-within:outline-offset-2 transition-colors' },
+    { className: 'card case-study-card detection-panel relative flex flex-col bg-[#0C0D0D]' },
     React.createElement(DetectionLabel, { className: 'cat' },
       project.category ? `${project.category.toUpperCase()} · CASE STUDY` : 'CASE STUDY',
     ),
@@ -54,7 +54,7 @@ const CaseStudyCard = ({
       {
         to: fromCollection ? `/project/${project.slug}/?from=collection` : `/project/${project.slug}/`,
         state: fromCollection ? { fromCollection: true } : undefined,
-        className: 'block pt-6 focus:outline-none',
+        className: 'case-study-card-link block focus:outline-none',
         'aria-label': `Read case study: ${project.cardTitle || project.title}`,
       },
       React.createElement(
@@ -67,12 +67,13 @@ const CaseStudyCard = ({
           loading: priorityImage ? 'eager' : 'lazy',
           fetchpriority: priorityImage ? 'high' : undefined,
         }) : null,
-      ),
-      React.createElement(
-        'div',
-        { className: 'media-meta flex items-center gap-3 px-5 pt-4' },
-        React.createElement(headingTag, { className: 'min-w-0 flex-1 break-words text-[1.05rem] font-[650] tracking-[-0.015em] leading-[1.3] text-white' }, project.cardTitle || project.title),
-        React.createElement('span', { className: 'glyph-hit w-11 h-11 shrink-0 grid place-items-center text-[#d8caff]', 'aria-hidden': true }, React.createElement(ArrowGlyph)),
+        React.createElement('div', { className: 'scrim absolute inset-0 bg-gradient-to-b from-transparent via-[rgba(12,13,13,0.35)] to-[rgba(12,13,13,0.92)] z-[1]', 'aria-hidden': true }),
+        React.createElement(
+          'div',
+          { className: 'media-meta absolute left-4 right-14 bottom-4 z-[2]' },
+          React.createElement(headingTag, { className: 'text-[1.05rem] font-[650] tracking-[-0.015em] leading-[1.3] text-white' }, project.cardTitle || project.title),
+        ),
+        React.createElement('span', { className: 'glyph-hit absolute right-3 bottom-3 z-[3] w-11 h-11 grid place-items-center text-[#d8caff]', 'aria-hidden': true }, React.createElement(ArrowGlyph)),
       ),
     ),
     React.createElement(
@@ -85,7 +86,7 @@ const CaseStudyCard = ({
         { className: 'fields flex flex-wrap items-baseline justify-between gap-2 gap-x-4 pt-[10px] border-t border-[rgba(255,255,255,0.06)] mt-auto' },
         upworkLink ? React.createElement('a', {
           href: upworkLink.href, target: '_blank', rel: 'noopener noreferrer',
-          className: 'field font-mono text-[11px] leading-[1.3] tracking-[0.04em] text-[#9ca3af]',
+          className: 'case-study-card-external field font-mono text-[11px] leading-[1.3] tracking-[0.04em] text-[#9ca3af]',
         }, React.createElement('span', { className: 'text-[#a78bfa] border-b border-[rgba(167,139,250,0.35)] hover:text-white hover:border-[#8B5CF6]' }, 'Upwork project')) : null,
         completionDate ? React.createElement('time', {
           dateTime: project.completedAt, 'aria-label': `Completed ${completionDate}`,

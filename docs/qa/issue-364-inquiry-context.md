@@ -59,3 +59,9 @@ the repository's pinned Playwright container for WebKit libraries.
 
 This changes inquiry context only. Consent and success measurement are handled
 separately in #370. Production deployment remains a separate release decision.
+
+## Withdrawal on 16 October 2026
+
+The owner rejected the contextual inquiry treatment during the develop walkthrough. Service and project actions again open plain Contact, without an inquiry label or generated description. Existing tab-memory drafts, submission feedback, and consented accepted-inquiry measurement remain. Accepted inquiries now carry no service/project identifier. The implementation evidence above is historical.
+
+Revert verification: production build passed; 192 targeted unit/integration tests passed with Node native Web Storage disabled for jsdom; 12 synthetic Chromium desktop and reduced-motion WebKit mobile checks passed. Coverage includes blank service/project inquiries, legacy-query handling, drafts, pending completion, history navigation, and consented accepted-inquiry measurement. Added the service/testimonial stylesheets to the static-route fixture to cover the earlier clickable-card integration. No live inquiry was submitted.

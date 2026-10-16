@@ -207,7 +207,7 @@ describe('CaseStudyCard', () => {
       expect(article.querySelectorAll('.cat')).toHaveLength(1);
     });
 
-    it('preserves a visible focus boundary on the interactive panel', () => {
+    it('keeps the native article link as the card keyboard action', () => {
       const { container } = render(
         <MemoryRouter>
           <CaseStudyCard project={project} />
@@ -215,7 +215,9 @@ describe('CaseStudyCard', () => {
       );
 
       const article = container.querySelector('article');
-      expect(article.className).toContain('focus-within:outline-2');
+      expect(article.tabIndex).toBe(-1);
+      expect(article.querySelectorAll('a')).toHaveLength(1);
+      expect(article.querySelector('a').tabIndex).toBe(0);
       expect(article.className).not.toContain('border-[rgba(139,92,246,0.4)]');
       expect(article.className).not.toContain('rounded-lg');
     });
