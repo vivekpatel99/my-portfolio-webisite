@@ -126,3 +126,7 @@ syntax/control ESLint and diff checks passed; eight new offline lifecycle
 scenarios passed across Chromium desktop and WebKit mobile. Independent
 standards and specification reviews found no blockers, including the
 failed-storage/cross-tab withdrawal regression.
+
+## Contact-context withdrawal on 16 October 2026
+
+The owner reverted the service/project inquiry context feature. Contact no longer reads an originating item from the URL or prefills a description. Accepted submissions still use the consented exactly-once measurement lifecycle, but now emit `inquiry_type: none` without `inquiry_id`. The earlier service/project attribution examples describe the superseded integration.

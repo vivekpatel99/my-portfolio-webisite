@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import React from 'react';
-import { cleanup, render, within } from '@testing-library/react';
+import { cleanup, fireEvent, render, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it } from 'vitest';
 import Services from './Services';
@@ -73,6 +73,24 @@ describe('Services offers', () => {
       .getAllByRole('link', { name: /Scope details/i })
       .map((link) => link.textContent);
     expect(new Set(linkNames).size).toBe(3);
+  });
+
+  it('keeps card content readable alongside one native navigation link', () => {
+    renderServices();
+    serviceOffers.forEach((offer) => {
+      const card = cardFor(offer);
+      const link = within(card).getByRole('link', { name: `Scope details for ${offer.title.toLowerCase()} →` });
+      expect(link.tagName).toBe('A');
+      expect(link.contains(within(card).getByRole('heading', { level: 3 }))).toBe(false);
+      expect(link.contains(card.querySelector('p'))).toBe(false);
+      expect(link.contains(card.querySelector('dl'))).toBe(false);
+      expect(link.hasAttribute('aria-label')).toBe(false);
+      expect(link.textContent).toBe(`Scope details for ${offer.title.toLowerCase()} →`);
+      expect(card.querySelectorAll('a')).toHaveLength(1);
+      expect(link.querySelector('a, button, input, [tabindex]')).toBeNull();
+      expect(fireEvent.click(link, { button: 0, metaKey: true })).toBe(true);
+      expect(fireEvent.click(link, { button: 0, ctrlKey: true })).toBe(true);
+    });
   });
 
   it('shows model development with optimization as part of the computer-vision offer', () => {

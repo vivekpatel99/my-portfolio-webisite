@@ -1,5 +1,23 @@
 # Readable card overview diagrams — issue #360
 
+## Later owner decision
+
+On 16 October 2026, Vivek requested the earlier detection-field shadow effect.
+The card scrim, top gradient, and overlaid title/arrow placement are restored
+from before #375. The summary-first copy and compact illustration notes from
+#383 remain. SH-03 records the changed decision. The before/after captures and
+verification below describe the historical #360 implementation, not the current
+selected appearance. Current browser assertions cover the selected shadow
+treatment while retaining image fitting, copy, destinations, responsive bounds,
+and JavaScript-disabled collection navigation checks.
+
+The restoration was checked against the saved pre-#375 desktop screenshots and
+fresh localhost home/collection renders at 1440px and 320px. The two media
+styles were restored directly from the pre-#375 diff. Targeted card and
+collection unit tests passed all 17 cases. The production build passed, and
+12 Chromium card checks passed at 1440, 980, 390, and 320px, including the
+JavaScript-disabled collection. No production deployment was performed.
+
 ## Scope and implementation
 
 The home and collection cards previously darkened their overview diagrams with

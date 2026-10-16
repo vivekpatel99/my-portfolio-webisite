@@ -145,3 +145,46 @@
     min-height: 220px;
   }
 }
+
+.testimonial-card {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(139, 92, 246, 0.12);
+}
+
+.testimonial-card:focus-visible,
+.testimonial-card:has(.testimonial-link:focus-visible) {
+  --detection-top: #a78bfa;
+  --detection-bottom: #a78bfa;
+}
+
+.testimonial-card:focus-visible,
+.testimonial-card:has(.testimonial-link:focus-visible),
+.testimonial-link:focus-visible {
+  outline: 2px solid #c4b5fd;
+  outline-offset: 4px;
+  background-color: rgba(139, 92, 246, 0.06);
+}
+
+@media (hover: hover) {
+  .testimonial-card:hover {
+    background-color: rgba(139, 92, 246, 0.06);
+  }
+
+  .testimonial-card:hover .testimonial-link {
+    color: white;
+  }
+}
+
+.testimonial-card:active {
+  background-color: rgba(139, 92, 246, 0.12);
+}
+
+@media (forced-colors: active) {
+  .testimonial-card:focus-visible,
+  .testimonial-card:has(.testimonial-link:focus-visible),
+  .testimonial-link:focus-visible {
+    outline-color: Highlight;
+  }
+}

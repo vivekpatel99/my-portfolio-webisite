@@ -647,7 +647,7 @@ describe('case-study publication boundary', () => {
       expect(articleHtml).toContain(`<h1>${storyId} title</h1>`);
       expect(articleHtml).toContain(`${storyId} outcome`);
       expect(articleHtml).toContain('href="/case-studies/"');
-      expect(articleHtml).toContain(`href="/contact/?project=${storyId}"`);
+      expect(articleHtml).toContain('href="/contact/"');
     }
 
     writeFileSync(manifestPath, `${readFileSync(manifestPath, 'utf8')}\ncaseStudyPublicationManifest.records.splice(0, caseStudyPublicationManifest.records.length, { id: 'fixture-case-study', slug: 'fixture-case-study', status: 'draft' }, { id: 'private-sentinel', slug: 'private-sentinel', status: 'draft' });\n`);

@@ -5,7 +5,6 @@ import { MemoryRouter, useLocation } from 'react-router-dom';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it } from 'vitest';
 import CaseStudyArticle from './CaseStudyArticle.js';
-import { caseStudies } from '../data/caseStudies.js';
 
 const story = { slug: 'synthetic-story', title: 'Synthetic story', summary: 'Synthetic summary', sections: [] };
 const Location = () => {
@@ -16,11 +15,6 @@ const Location = () => {
 afterEach(cleanup);
 
 describe('case study internal navigation', () => {
-  it.each(caseStudies)('includes the public context in SPA and static inquiries for $slug', (published) => {
-    render(<MemoryRouter><CaseStudyArticle story={published} /></MemoryRouter>);
-    expect(screen.getByRole('link', { name: 'Discuss a similar project' }).getAttribute('href')).toBe(`/contact/?project=${published.slug}`);
-    expect(renderToStaticMarkup(<CaseStudyArticle story={published} />)).toContain(`href="/contact/?project=${published.slug}"`);
-  });
   const articleLinks = [
     ['← View case studies', '/case-studies/?resume=1'],
     ['Back to home', '/'],
