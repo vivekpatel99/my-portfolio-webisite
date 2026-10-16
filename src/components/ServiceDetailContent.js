@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { HOURLY_FROM_LABEL } from '../config/pricing.js';
 import { serviceOffers, serviceTimelineLabel } from '../data/serviceOffers.js';
-import { inquiryHref } from '../lib/inquiryContext.js';
 
 // Plain .js (no JSX) so tools/generate-static-route-html.js can prerender the
 // same service content in Node that the SPA renders in the browser.
@@ -91,7 +90,7 @@ const ServiceDetailContent = ({ service, backRef }) => {
             'div',
             { className: 'flex flex-col gap-3' },
             React.createElement(Link, {
-              to: inquiryHref('service', service.id),
+              to: '/contact',
               className: 'detection-panel detection-action detection-action--labeled detection-action--primary inline-flex',
             }, React.createElement(DetectionLabel, { 'aria-hidden': true }, 'Inquiry'), 'Request a Project Estimate', React.createElement(ArrowRight, { size: 16, className: 'shrink-0', 'aria-hidden': true })),
             React.createElement(Link, {

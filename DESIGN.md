@@ -285,6 +285,8 @@ Confirmed on 14 October 2026 under #371: Vivek accepted the finished 1200 × 630
 
 ### FM-01. Forms and feedback
 
+Confirmed on 16 October 2026: service and project inquiry actions open the plain Contact form. Do not show an “Inquiry about” label or prefill the project description from the originating item or URL. Preserve visitor-entered drafts and normal submission feedback.
+
 Existing reference: the [contact-field reference](docs/design-system.md) governs grey resting corners, purple focus, fill, label position, required indicators, and forced-colors behavior. Existing reference: preserve the control's actual accessible label.
 
 Confirmed on 8 October 2026: Budget Range uses a consistently themed accessible dropdown in Chromium and WebKit. Its menu has a subtle purple highlight, white option text, and a visible checkmark beside the chosen option. Preserve grey resting and purple focused field corners, the current form typography and density, the optional empty choice, exact budget values, drafts, validation, disabled states, and submission behavior. Keyboard focus and selection remain distinguishable beyond color. This supersedes the browser/OS-native option highlight and the select's local `color-scheme: normal` exception.
