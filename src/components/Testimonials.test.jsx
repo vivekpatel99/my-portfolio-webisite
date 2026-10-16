@@ -289,17 +289,15 @@ describe('Testimonials Carousel', () => {
     expect(forward).not.toHaveBeenCalled();
   });
 
-  it.each(['Enter', ' '])('opens the profile once when the focused card receives %s', (key) => {
+  it('exposes only the named native profile link as the card action, keeping the slide readable', () => {
     render(<Testimonials />);
     const card = slideRegion();
-    const link = screen.getByRole('link');
-    const openProfile = vi.spyOn(link, 'click').mockImplementation(() => {});
-    fireEvent.keyDown(card, { key });
-    expect(openProfile).toHaveBeenCalledTimes(1);
-    fireEvent.keyDown(card, { key, repeat: true });
-    fireEvent.keyDown(link, { key });
-    fireEvent.keyDown(card, { key: 'ArrowRight' });
-    expect(openProfile).toHaveBeenCalledTimes(1);
+    const link = screen.getByRole('link', { name: 'View my Upwork profile (opens in a new tab)' });
+    expect(card.tabIndex).toBe(-1);
+    expect(link.tabIndex).toBe(0);
+    expect(link.getAttribute('href')).toBe(socialLinks.upwork);
+    expect(link.contains(card.querySelector('blockquote'))).toBe(false);
+    expect(card.querySelectorAll('[tabindex="0"]')).toHaveLength(1);
   });
 
   it('keeps Direct sources separate and omits missing dates', () => {
@@ -360,17 +358,17 @@ describe('Testimonials carousel controls (#225)', () => {
     expectShowing(1);
   });
 
-  it('focusing the quote stops rotation and leaving it resumes', () => {
+  it('focusing the profile link stops rotation and leaving it resumes', () => {
     installMotionPreference(false);
     render(<Testimonials />);
     const quote = slideRegion();
-    expect(quote.tabIndex).toBe(0);
+    expect(quote.tabIndex).toBe(-1);
 
-    fireEvent.focus(quote);
+    fireEvent.focus(quote.querySelector('a'));
     advance(20_000);
     expectShowing(0);
 
-    fireEvent.blur(quote, { relatedTarget: null });
+    fireEvent.blur(quote.querySelector('a'), { relatedTarget: null });
     advance(INTERVAL_MS);
     expectShowing(1);
   });
@@ -393,8 +391,6 @@ describe('Testimonials carousel controls (#225)', () => {
     installMotionPreference(false);
     render(<Testimonials />);
     const link = screen.getByRole('link', { name: 'View my Upwork profile (opens in a new tab)' });
-    fireEvent.focus(slideRegion());
-    fireEvent.blur(slideRegion(), { relatedTarget: link });
     fireEvent.focus(link);
     expect(slideRegion().getAttribute('aria-live')).toBe('polite');
     advance(20_000);
@@ -405,14 +401,14 @@ describe('Testimonials carousel controls (#225)', () => {
     expectShowing(1);
   });
 
-  it('moving focus between quote and controls does not resume rotation', () => {
+  it('moving focus between profile link and controls does not resume rotation', () => {
     installMotionPreference(false);
     render(<Testimonials />);
     const quote = slideRegion();
     const control = slideButtons()[0];
 
-    fireEvent.focus(quote);
-    fireEvent.blur(quote, { relatedTarget: control });
+    fireEvent.focus(quote.querySelector('a'));
+    fireEvent.blur(quote.querySelector('a'), { relatedTarget: control });
     fireEvent.focus(control);
     advance(20_000);
     expectShowing(0);
@@ -425,12 +421,12 @@ describe('Testimonials carousel controls (#225)', () => {
     const quote = slideRegion();
 
     hoverWithMouse(boundary);
-    fireEvent.focus(quote);
+    fireEvent.focus(quote.querySelector('a'));
     unhoverWithMouse(boundary);
     advance(20_000);
     expectShowing(0);
 
-    fireEvent.blur(quote, { relatedTarget: null });
+    fireEvent.blur(quote.querySelector('a'), { relatedTarget: null });
     advance(INTERVAL_MS);
     expectShowing(1);
   });
@@ -441,9 +437,9 @@ describe('Testimonials carousel controls (#225)', () => {
     const boundary = interactionBoundary();
     const quote = slideRegion();
 
-    fireEvent.focus(quote);
+    fireEvent.focus(quote.querySelector('a'));
     hoverWithMouse(boundary);
-    fireEvent.blur(quote, { relatedTarget: null });
+    fireEvent.blur(quote.querySelector('a'), { relatedTarget: null });
     advance(20_000);
     expectShowing(0);
 
@@ -526,18 +522,18 @@ describe('Testimonials carousel controls (#225)', () => {
     expectShowing(2);
   });
 
-  it('keeps genuine quote focus holding rotation across a preference round trip', () => {
+  it('keeps genuine profile-link focus holding rotation across a preference round trip', () => {
     const preference = installMotionPreference(false);
     render(<Testimonials />);
-    act(() => slideRegion().focus());
+    act(() => slideRegion().querySelector('a').focus());
 
     act(() => preference.setReduced(true));
     act(() => preference.setReduced(false));
-    expect(document.activeElement).toBe(slideRegion());
+    expect(document.activeElement).toBe(slideRegion().querySelector('a'));
     advance(20_000);
     expectShowing(0);
 
-    act(() => slideRegion().blur());
+    act(() => slideRegion().querySelector('a').blur());
     advance(INTERVAL_MS);
     expectShowing(1);
   });

@@ -134,7 +134,6 @@ const Testimonials = () => {
                         aria-roledescription="slide"
                         aria-label={`${activeIndex + 1} of ${testimonials.length}`}
                         aria-live={isRotating ? 'off' : 'polite'}
-                        tabIndex={0}
                         className="field testimonial-card detection-panel relative min-h-[337px] flex flex-col min-w-0 transition-colors motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a78bfa]"
                         onPointerDown={(event) => {
                             cardGesture.current = { x: event.clientX, y: event.clientY, cancelled: false };
@@ -145,12 +144,6 @@ const Testimonials = () => {
                             if (cardGesture.current) cardGesture.current.cancelled = true;
                         }}
                         onClick={handleCardClick}
-                        onKeyDown={(event) => {
-                            if (event.target !== event.currentTarget || event.defaultPrevented
-                                || (event.key !== 'Enter' && event.key !== ' ')) return;
-                            event.preventDefault();
-                            if (!event.repeat) profileLinkRef.current?.click();
-                        }}
                     >
                         <DetectionLabel>
                             TESTIMONIAL · <b className="font-medium">{testimonial.clientName}</b>
