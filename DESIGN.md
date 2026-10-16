@@ -135,6 +135,9 @@ The following map records the 3 October Corners + labels decision tracked in #29
 
 Confirmed on 16 October 2026: the entire homepage service offer card links to its existing scope detail page. Keep one native link per card, the lightweight underlined Scope details cue, concise accessible names, and a separate full-card keyboard focus outline. Preserve the service copy, timeline, rate, and opposing corner theme. Proposed default: hover and press use a restrained purple fill without moving the card; reduced motion requires no animation.
 
+Confirmed on 16 October 2026: homepage and collection case-study cards use the same hover fill, pressed fill, opposing corner highlight, and full-card keyboard focus treatment as the service offers. The native article link covers the full card; any separate Upwork project link remains independently operable. Preserve the approved shadow overlays, card copy, media, geometry, destinations, and collection return behavior. Like service offers, no card movement or animation is needed under reduced motion.
+
+
 Confirmed on 4 October 2026: the contact page's Prefer email? card uses the shared top-left and bottom-right panel corners from SH-03 in place of its continuous border. Confirmed on 5 October 2026: add a transparent `EMAIL` label centered on the card's top-edge guide. This supersedes the earlier no-label exception. Confirmed: preserve the existing prompt, email link, fill, and opposing corners without a confidence score.
 
 Confirmed: the case-study collection page uses top-left and bottom-right corners around its semantic h1, Selected Case Studies, with the shared heading geometry and rest/hover colors from SH-03. Existing reference: preserve its white and purple text. Confirmed on 5 October 2026: it has the transparent `PREVIOUS WORK` edge label from the shared heading family. This supersedes the earlier no-edge-label exception; there is no separate Collection badge.

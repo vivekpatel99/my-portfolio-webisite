@@ -85,3 +85,65 @@ for (const [width, height] of viewports) {
     } finally { await context.close(); }
   });
 }
+
+
+test('case-study cards match service-offer feedback and navigate from the summary', async ({ page, hasTouch }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  const service = page.locator('.service-offer').first();
+  const serviceLink = service.getByRole('link');
+  const card = page.locator('#portfolio article.card').first();
+  const cardLink = card.getByRole('link', { name: /^Read case study:/ });
+  const dimensions = await card.boundingBox();
+
+  if (!hasTouch) {
+    await service.hover();
+    const serviceHover = await service.evaluate(element => ({
+      fill: getComputedStyle(element).backgroundColor,
+      corner: getComputedStyle(element).getPropertyValue('--detection-top'),
+    }));
+    await card.hover();
+    expect(await card.evaluate(element => ({
+      fill: getComputedStyle(element).backgroundColor,
+      corner: getComputedStyle(element).getPropertyValue('--detection-top'),
+    }))).toEqual(serviceHover);
+  }
+
+  const focusStyle = link => link.evaluate(element => {
+    const style = getComputedStyle(element, '::after');
+    return { outline: style.outlineStyle, width: style.outlineWidth, offset: style.outlineOffset, fill: style.backgroundColor };
+  });
+  await serviceLink.focus();
+  const serviceFocus = await focusStyle(serviceLink);
+  expect(serviceFocus.outline).toBe('solid');
+  expect(serviceFocus.width).toBe('2px');
+  await cardLink.focus();
+  expect(await focusStyle(cardLink)).toEqual(serviceFocus);
+  expect(await card.evaluate(element => getComputedStyle(element).transitionDuration)).toBe('0s');
+  const focusedDimensions = await card.boundingBox();
+  expect(focusedDimensions.width).toBe(dimensions.width);
+  expect(focusedDimensions.height).toBe(dimensions.height);
+  await expectShadowedDiagram(card);
+  const href = await cardLink.getAttribute('href');
+  const cardBox = await card.boundingBox();
+  const summaryBox = await card.locator('.summary').boundingBox();
+  await card.click({ position: { x: summaryBox.x - cardBox.x + 8, y: summaryBox.y - cardBox.y + 8 } });
+  await expect(page).toHaveURL(new URL(href, page.url()).href);
+});
+
+test('collection card body retains its collection-origin navigation', async ({ page }) => {
+  await page.goto('/case-studies/');
+  await page.getByRole('button', { name: 'Load more', exact: true }).click();
+  const card = page.locator('article.card').first();
+  const href = await card.getByRole('link', { name: /^Read case study:/ }).getAttribute('href');
+  expect(href).toContain('?from=collection');
+  const cardBox = await card.boundingBox();
+  const summaryBox = await card.locator('.summary').boundingBox();
+  await card.click({ position: { x: summaryBox.x - cardBox.x + 8, y: summaryBox.y - cardBox.y + 8 } });
+  const destination = new URL(href, page.url());
+  destination.search = '';
+  await expect(page).toHaveURL(destination.href);
+  await page.goBack({ waitUntil: 'commit' });
+  await expect(page).toHaveURL(new URL('/case-studies/', page.url()).href);
+  await expect(page.locator('article.card')).toHaveCount(collectionCaseStudies.length);
+});
