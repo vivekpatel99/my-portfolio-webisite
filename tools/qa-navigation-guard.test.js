@@ -15,6 +15,7 @@ function navigation({
   pageClosed = false,
   isClosed,
   pageError,
+  frameDetached = false,
 } = {}) {
   const response = {
     status: () => location ? 302 : 200,
@@ -27,6 +28,7 @@ function navigation({
       method: () => method,
       isNavigationRequest: () => navigation,
       frame: () => ({
+        isDetached: () => frameDetached,
         page: () => {
           if (pageError) throw pageError;
           return { isClosed: isClosed || (() => pageClosed) };
@@ -160,16 +162,20 @@ describe('local-only browser navigation', () => {
     await expect(guardLocalNavigation(route)).resolves.toBeUndefined();
   });
 
-  it.each(['Frame was detached', 'frame.page: Frame was detached'])(
-    'allows a disposed fulfillment when the frame is already gone (%j)',
-    async (pageMessage) => {
-      const { route } = navigation({
-        pageError: new Error(pageMessage),
-        fulfillError: new Error('route.fulfill: Fetch response has been disposed'),
-      });
-      await expect(guardLocalNavigation(route)).resolves.toBeUndefined();
-    },
-  );
+  it('allows a disposed fulfillment when the frame is detached but the page stays open', async () => {
+    const { route } = navigation({
+      frameDetached: true,
+      fulfillError: new Error('route.fulfill: Fetch response has been disposed'),
+    });
+    await expect(guardLocalNavigation(route)).resolves.toBeUndefined();
+  });
+
+  it('rejects a disposed fulfillment when the frame stays attached and the page stays open', async () => {
+    const { route } = navigation({
+      fulfillError: new Error('route.fulfill: Fetch response has been disposed'),
+    });
+    await expect(guardLocalNavigation(route)).rejects.toThrow('route.fulfill: Fetch response has been disposed');
+  });
 
   it('does not treat a page probe that only ends with a closure message as closure', async () => {
     const message = 'sensor offline Target page, context or browser has been closed';

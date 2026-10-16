@@ -19,7 +19,7 @@ The action-family failure before the wait was the contact route still showing th
 
 ## Disposed fetch during context close
 
-`guardLocalNavigation` still aborts external URLs and external redirects before the browser can follow them. A fulfill error is ignored only when the message is exactly `route.fulfill: Fetch response has been disposed` and the page is already closed, closes on the next turn, or the frame is already gone. The same error on a page that stays open still fails the check. Unit coverage is `tools/qa-navigation-guard.test.js` (31 cases in that file; full unit run 1133 passed).
+`guardLocalNavigation` still aborts external URLs and external redirects before the browser can follow them. A fulfill error is ignored only when the message is exactly `route.fulfill: Fetch response has been disposed` and the page is already closed, closes on the next turn, or the request's frame is detached (`frame.isDetached()`). The same error on a page that stays open still fails the check. Unit coverage is `tools/qa-navigation-guard.test.js` (32 cases in that file; full unit run 1133 passed).
 
 ## Forced-colors fields
 

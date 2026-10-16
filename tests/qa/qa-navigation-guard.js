@@ -23,22 +23,10 @@ function isDisposedFulfill(error) {
   return routeErrorMessage(error) === 'route.fulfill: Fetch response has been disposed';
 }
 
-function isTargetGone(error) {
-  const message = routeErrorMessage(error);
-  const parts = message.split(': ');
-  // Playwright prefixes the reason with one API name. A longer suffix is a different error.
-  const reason = parts.length === 2 ? parts[1] : message;
-  return reason === 'Target page, context or browser has been closed'
-    || reason === 'Frame was detached';
-}
-
 function pageIsClosed(request) {
-  try {
-    return request.frame().page().isClosed();
-  } catch (error) {
-    if (isTargetGone(error)) return true;
-    throw error;
-  }
+  // Playwright exposes these as synchronous getters; detachment is only visible via isDetached().
+  const frame = request.frame();
+  return frame.isDetached() || frame.page().isClosed();
 }
 
 // Playwright can drop a fetched body when the context closes before this handler
