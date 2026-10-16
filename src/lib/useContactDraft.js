@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react';
+import { beginInquiryMeasurement, completeInquiryMeasurement } from './inquiryAnalytics.js';
 
 const emptyFields = () => ({ name: '', email: '', budget: '', description: '' });
 
@@ -8,6 +9,7 @@ let snapshot = { formState: emptyFields(), submission: null, outcome: null, pres
 const subscribers = new Set();
 let unloadProtected = false;
 let feedbackToast = null;
+let submissionMeasurement = null;
 
 function warnBeforeUnload(event) {
   event.preventDefault();
@@ -48,12 +50,15 @@ function beginSubmission() {
   feedbackToast?.dismiss();
   feedbackToast = null;
   const submittedFields = snapshot.formState;
+  submissionMeasurement = beginInquiryMeasurement();
   publish({ ...snapshot, submission: submittedFields, outcome: null, presentedOutcome: null });
   return submittedFields;
 }
 
 function finishSubmission(submittedFields, succeeded, errorMessage) {
   if (snapshot.submission !== submittedFields) return;
+  if (succeeded) completeInquiryMeasurement(submissionMeasurement);
+  submissionMeasurement = null;
   publish({
     formState: succeeded && snapshot.formState === submittedFields
       ? emptyFields()

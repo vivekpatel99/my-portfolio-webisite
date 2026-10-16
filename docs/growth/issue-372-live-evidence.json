@@ -1,0 +1,235 @@
+{
+  "checked_at": "2026-10-14T14:02:07.996545+00:00",
+  "rows": [
+    {
+      "url": "https://www.vivekapatel.com/",
+      "final_url": "https://www.vivekapatel.com/",
+      "status": 200,
+      "sha256": "dcbb7758b1b8964f11f174809a1b750c1404051049328b9c7ee6440b54d838ac",
+      "bytes": 5247,
+      "canonical": [
+        "<link data-react-helmet=\"true\" rel=\"canonical\" href=\"https://www.vivekapatel.com/\" />"
+      ],
+      "h1": [],
+      "sitemap_locations": [],
+      "contains_generate_lead": false,
+      "contains_inquiry_source": false,
+      "contains_static_home": false
+    },
+    {
+      "url": "https://www.vivekapatel.com/services/data-extraction-automation-sprint/",
+      "final_url": "https://www.vivekapatel.com/services/data-extraction-automation-sprint/",
+      "status": 200,
+      "sha256": "f1e9931eb3df770f718aa46d90ae8bf128e5397b8a2e6bcbfc533ada4c7ac931",
+      "bytes": 11053,
+      "canonical": [
+        "<link data-react-helmet=\"true\" rel=\"canonical\" href=\"https://www.vivekapatel.com/services/data-extraction-automation-sprint/\" />"
+      ],
+      "h1": [
+        "DATA EXTRACTION AUTOMATION SPRINT"
+      ],
+      "sitemap_locations": [],
+      "contains_generate_lead": false,
+      "contains_inquiry_source": false,
+      "contains_static_home": false
+    },
+    {
+      "url": "https://www.vivekapatel.com/project/ai-invoice-processing-automation/",
+      "final_url": "https://www.vivekapatel.com/project/ai-invoice-processing-automation/",
+      "status": 200,
+      "sha256": "517e5ade92f0fe4f56ca49e49707b20079034309c9d9dfe24155d23faa268c9a",
+      "bytes": 13487,
+      "canonical": [
+        "<link data-react-helmet=\"true\" rel=\"canonical\" href=\"https://www.vivekapatel.com/project/ai-invoice-processing-automation/\" />"
+      ],
+      "h1": [
+        "n8n Invoice Extraction with Validation and Review"
+      ],
+      "sitemap_locations": [],
+      "contains_generate_lead": false,
+      "contains_inquiry_source": false,
+      "contains_static_home": false
+    },
+    {
+      "url": "https://www.vivekapatel.com/sitemap.xml",
+      "final_url": "https://www.vivekapatel.com/sitemap.xml",
+      "status": 200,
+      "sha256": "d318c1e50f9080c50992a720d3988f18033e54445e6e2256521beb339f68d7d6",
+      "bytes": 3222,
+      "canonical": [],
+      "h1": [],
+      "sitemap_locations": [
+        "https://www.vivekapatel.com/",
+        "https://www.vivekapatel.com/contact/",
+        "https://www.vivekapatel.com/legal/",
+        "https://www.vivekapatel.com/data-policy/",
+        "https://www.vivekapatel.com/case-studies/",
+        "https://www.vivekapatel.com/services/data-extraction-automation-sprint/",
+        "https://www.vivekapatel.com/services/computer-vision-production-optimization/",
+        "https://www.vivekapatel.com/services/ai-workflow-buildout/",
+        "https://www.vivekapatel.com/project/n8n-openai-data-extraction/",
+        "https://www.vivekapatel.com/project/invoice-ocr-extraction/",
+        "https://www.vivekapatel.com/project/yolo-computer-vision-optimization/",
+        "https://www.vivekapatel.com/project/ai-invoice-processing-automation/",
+        "https://www.vivekapatel.com/project/ai-project-planning-assistant/",
+        "https://www.vivekapatel.com/project/browser-search-to-spreadsheet/",
+        "https://www.vivekapatel.com/project/depth-based-distance-estimation/",
+        "https://www.vivekapatel.com/project/healthcare-document-intelligence/",
+        "https://www.vivekapatel.com/project/n8n-python-ai-agents/",
+        "https://www.vivekapatel.com/project/python-ci-workflow-automation/",
+        "https://www.vivekapatel.com/project/resumable-listing-data-extraction/",
+        "https://www.vivekapatel.com/project/sports-video-analytics-yolo/"
+      ]
+    },
+    {
+      "url": "https://www.vivekapatel.com/robots.txt",
+      "final_url": "https://www.vivekapatel.com/robots.txt",
+      "status": 200,
+      "sha256": "a69331973cbd179c61e2890cc7157635b2765343e6c5dc6a90dcd3938a7eaa2f",
+      "bytes": 105,
+      "canonical": [],
+      "h1": [],
+      "sitemap_locations": [],
+      "directives": [
+        "User-agent: *",
+        "Allow: /",
+        "",
+        "User-agent: Googlebot",
+        "Allow: /",
+        "",
+        "Sitemap: https://www.vivekapatel.com/sitemap.xml"
+      ]
+    },
+    {
+      "url": "https://www.vivekapatel.com/assets/index-B9M2yT6j.js",
+      "final_url": "https://www.vivekapatel.com/assets/index-B9M2yT6j.js",
+      "status": 200,
+      "sha256": "e8b557bb07e8468b19dda17f37566417b9e230dc9ce38544499d2048f7499c19",
+      "bytes": 488353,
+      "canonical": [],
+      "h1": [],
+      "sitemap_locations": [],
+      "contains_generate_lead": false,
+      "contains_inquiry_source": false,
+      "contains_static_home": false
+    }
+  ],
+  "relative_bundle_dependencies": [
+    {
+      "asset": "DataPolicy-CTZktNhE.js",
+      "status": 200,
+      "sha256": "e9b6ac1430807b3cbdafd8f47a89d8d3acede9e1101ba1673313293c1cfb0faf",
+      "contains_generate_lead": false,
+      "contains_inquiry_source": false
+    },
+    {
+      "asset": "pageMotion-CNXD_bLF.js",
+      "status": 200,
+      "sha256": "fe868734613693c2a6898b1c61f47411e157bf50b2109c427887e9fb15dd3fb6",
+      "contains_generate_lead": false,
+      "contains_inquiry_source": false
+    },
+    {
+      "asset": "Legal-BChTAigz.js",
+      "status": 200,
+      "sha256": "cf27fd9ba656f9078cdb75455df442cebcb9355149651ea977bad35702afb2f9",
+      "contains_generate_lead": false,
+      "contains_inquiry_source": false
+    },
+    {
+      "asset": "ServiceDetail-CGLi21Az.js",
+      "status": 200,
+      "sha256": "56fd9bf07d1fb3f24804caab25195e9ac539022116d7d4e5c0bda8a9c30f0d59",
+      "contains_generate_lead": false,
+      "contains_inquiry_source": false
+    },
+    {
+      "asset": "ContactRoute-CxVRsJja.js",
+      "status": 200,
+      "sha256": "09d2e099a1f1a3fd5aa7de655673a1d44ebe004f7d39d64385b1f275874d13ef",
+      "contains_generate_lead": false,
+      "contains_inquiry_source": false
+    },
+    {
+      "asset": "convexClient-BcgVsp4q.js",
+      "status": 200,
+      "sha256": "aafc052c66acd81ec42003d50148e9323b6cc25fffc291dc220ad4c1a6634bc2",
+      "contains_generate_lead": false,
+      "contains_inquiry_source": false
+    },
+    {
+      "asset": "index-bOjyPfYZ.js",
+      "status": 200,
+      "sha256": "195052becfe7fc6efd14ad6e72ae9f00c7b0bcca5fa3732d1d6b9b24dbe5b27e",
+      "contains_generate_lead": false,
+      "contains_inquiry_source": false
+    }
+  ],
+  "source_sha": "2dce0dcb9e87a73fbf9fa1aa872ac8794583e2bc",
+  "production_sha": "unconfirmed",
+  "scope": "Public HTTP responses and Chromium DOM; exact-string bundle inspection; no analytics consent, account metrics or real submissions. Contains fields are literal text searches in HTML/JS, not telemetry observations.",
+  "rendered_dom": {
+    "browser": "Chromium collaborative preview, default profile",
+    "checked_on": "2026-10-14",
+    "home": {
+      "url": "https://www.vivekapatel.com/",
+      "title": "Vivek Patel - Expert AI & Computer Vision Engineer",
+      "h1": [
+        "Computer Vision & AI Engineer"
+      ],
+      "scripts": [
+        "https://www.vivekapatel.com/assets/index-B9M2yT6j.js"
+      ]
+    },
+    "service": {
+      "url": "https://www.vivekapatel.com/services/data-extraction-automation-sprint/",
+      "title": "Data Extraction Automation Sprint | Freelance Service - Vivek Patel",
+      "h1": [
+        "DATA EXTRACTION AUTOMATION SPRINT"
+      ],
+      "links": [
+        {
+          "text": "InquiryRequest Estimate",
+          "url": "https://www.vivekapatel.com/contact/"
+        },
+        {
+          "text": "InquiryRequest a Project Estimate",
+          "url": "https://www.vivekapatel.com/contact"
+        },
+        {
+          "text": "Contact Me",
+          "url": "https://www.vivekapatel.com/contact/"
+        }
+      ]
+    },
+    "project": {
+      "url": "https://www.vivekapatel.com/project/ai-invoice-processing-automation/",
+      "title": "n8n Invoice Extraction with Validation and Review | Vivek Patel",
+      "h1": [
+        "n8n Invoice Extraction with Validation and Review"
+      ],
+      "links": [
+        {
+          "text": "InquiryRequest Estimate",
+          "url": "https://www.vivekapatel.com/contact/"
+        },
+        {
+          "text": "Discuss an invoice automation workflow",
+          "url": "https://www.vivekapatel.com/services/ai-workflow-buildout/"
+        },
+        {
+          "text": "PROJECT INQUIRYDiscuss a similar project",
+          "url": "https://www.vivekapatel.com/contact/"
+        },
+        {
+          "text": "Contact Me",
+          "url": "https://www.vivekapatel.com/contact/"
+        },
+        {
+          "text": "Github",
+          "url": "https://github.com/vivekpatel99"
+        }
+      ]
+    }
+  }
+}

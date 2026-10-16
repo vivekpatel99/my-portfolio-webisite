@@ -51,12 +51,35 @@ function fixture({ hourlyRateEur = HOURLY_RATE_EUR } = {}) {
     'src/lib/caseStudyThumbnails.js',
     'src/lib/featuredCaseStudies.js',
     'src/lib/seoConfig.js',
+    'src/lib/seo.js',
+    'src/lib/heroDetectedFields.js',
+    'src/pages/Home.jsx',
+    'src/pages/ContactFallback.jsx',
+    'src/components/ContactContent.jsx',
+    'src/components/PrivacyPolicyContent.jsx',
+    'src/components/CookiePolicyContent.jsx',
+    'src/components/ui/button.jsx',
+    'src/lib/utils.js',
+    'src/components/Hero.jsx',
+    'src/components/Header.jsx',
+    'src/components/SkipLink.jsx',
+    'src/lib/focusTarget.js',
+    'src/components/Portfolio.jsx',
+    'src/components/Services.jsx',
+    'src/components/Services.css',
+    'src/components/Testimonials.jsx',
+    'src/components/Testimonials.css',
+    'src/components/About.jsx',
+    'src/components/CTA.jsx',
+    'src/components/SectionAnimator.jsx',
+    'src/data/testimonials.js',
     'publication/case-study-derivatives.js',
     'publication/case-study-manifest.js',
     'publication/case-study-evidence.js',
     'publication/case-study-schema.js',
     'publication/markdown-case-study.js',
     'publication/compile-case-studies.js',
+    'publication/case-study-card-copy.js',
     'publication/staged-case-study-publication.js',
     'publication/case-study-manifest-merge.js',
     'publication/public-case-studies.js',
@@ -70,11 +93,14 @@ function fixture({ hourlyRateEur = HOURLY_RATE_EUR } = {}) {
     'src/components/CaseStudiesContent.js',
     'src/components/OngoingCaseStudies.js',
     'src/components/ServiceDetailContent.js',
+    'src/components/RelatedWork.js',
+    'src/data/relatedWork.js',
     'src/data/serviceOffers.js',
     'tools/case-study-route-integrity.js',
     'tools/public-route-integrity.js',
     'tools/generate-sitemap.js',
     'tools/generate-static-route-html.js',
+    'tools/render-static-home.js',
   ]) {
     mkdirSync(path.dirname(path.join(directory, file)), { recursive: true });
     copyFileSync(file, path.join(directory, file));
@@ -109,6 +135,75 @@ const run = (directory, script) =>
   });
 
 describe('case-study route integrity', () => {
+  it('renders shared homepage content and preserves every HTML output on a second generation', () => {
+    const directory = fixture();
+    const sourcePaths = ['index.html', 'public/.htaccess', 'src/config/pricing.js', 'src/data/caseStudies.js'];
+    const sourcesBefore = sourcePaths.map((file) => readFileSync(path.join(directory, file), 'utf8'));
+    run(directory, 'generate-static-route-html');
+    const home = readFileSync(path.join(directory, 'dist/index.html'), 'utf8');
+    expect(home.match(/<h1\b/g)).toHaveLength(1);
+    expect(home).toContain('Manual data entry, scattered website data, and unstructured video slow teams down. I build document extraction, n8n automation, and computer vision workflows to make that information usable.');
+    expect(home).toContain('href="/contact/"');
+    expect(home).toContain('href="/case-studies/"');
+    expect(home).toContain('Profile Invoice');
+    expect(home).toContain('aria-label="Vivek Patel home"');
+    expect(home).not.toContain('<details');
+    expect(home).not.toContain('translateY(12px)');
+    for (const service of ['data-extraction-automation-sprint', 'computer-vision-production-optimization', 'ai-workflow-buildout']) {
+      expect(home).toContain(`href="/services/${service}"`);
+    }
+    const outputs = ['index.html', '404.html', 'contact/index.html', 'case-studies/index.html', 'legal/index.html', 'data-policy/index.html',
+      ...caseStudySlugs.map((slug) => `project/${slug}/index.html`),
+      ...['data-extraction-automation-sprint', 'computer-vision-production-optimization', 'ai-workflow-buildout']
+        .map((id) => `services/${id}/index.html`)];
+    const firstOutputs = outputs.map((file) => readFileSync(path.join(directory, 'dist', file), 'utf8'));
+    run(directory, 'generate-static-route-html');
+    expect(outputs.map((file) => readFileSync(path.join(directory, 'dist', file), 'utf8'))).toEqual(firstOutputs);
+    expect(sourcePaths.map((file) => readFileSync(path.join(directory, file), 'utf8'))).toEqual(sourcesBefore);
+    expect(firstOutputs[1]).not.toContain('Profile Invoice');
+    expect(firstOutputs[2]).not.toContain('Profile Invoice');
+    const contact = firstOutputs[2];
+    expect(contact.match(/<h1\b/g)).toHaveLength(1);
+    expect(contact).toContain('REQUEST A');
+    expect(contact).toContain('PROJECT ESTIMATE');
+    expect(contact).toContain('href="mailto:contact@vivekapatel.com"');
+    expect(contact).toContain('WHAT HAPPENS NEXT');
+    expect(contact).toContain('You receive a suggested scope, timeline, and first milestone.');
+    expect(contact).toContain('The project request form needs JavaScript.');
+    expect(contact).toContain('Connect with Vivek Patel on Upwork');
+    expect(contact).not.toMatch(/<(?:form|input|textarea)\b/);
+    expect(contact).not.toContain('<details');
+    const privacy = readFileSync(path.join(directory, 'dist/legal/index.html'), 'utf8');
+    const cookies = readFileSync(path.join(directory, 'dist/data-policy/index.html'), 'utf8');
+    for (const [html, heading, crossPath] of [
+      [privacy, 'Privacy Policy', '/data-policy/'],
+      [cookies, 'Cookie Policy', '/legal/'],
+    ]) {
+      expect(html.match(/<h1\b/g)).toHaveLength(1);
+      expect(html).toMatch(new RegExp(`<h1\\b[^>]*>${heading}</h1>`));
+      expect(html).toContain('href="mailto:contact@vivekapatel.com"');
+      expect(html).toContain(`href="${crossPath}"`);
+      expect(html.match(/href="#main-content"/g)).toHaveLength(1);
+      expect(html).toContain('Skip to main content');
+      expect(html.indexOf('href="#main-content"')).toBeLessThan(html.indexOf('<header'));
+      expect(html).toMatch(/<main\b[^>]*id="main-content"[^>]*tabindex="-1"/);
+      expect(html).not.toContain('Profile Invoice');
+      expect(html).not.toMatch(/opacity:0|translateY\(/);
+      expect(html.match(/<details\b/g)).toHaveLength(1);
+      expect(html).toMatch(/<summary\b[^>]*aria-label="Toggle navigation menu"/);
+      expect(html).toContain('id="static-mobile-menu"');
+      expect(html).toContain('href="/#services"');
+      expect(html).toContain('href="/case-studies/"');
+      expect(html).toContain('href="/contact/"');
+    }
+    expect(privacy).toContain('Last updated: June 1, 2026');
+    expect(privacy).toContain('Changes to This Privacy Policy');
+    expect(privacy).toContain('You are advised to review this Privacy Policy periodically for any changes.');
+    expect(cookies).toContain('Last updated: 30 August 2026');
+    expect(cookies).toContain('cookie_consent_preferences');
+    expect(cookies).toContain('Cookie consent controls need JavaScript.');
+    expect(cookies).not.toContain('Manage Your Cookie Consent');
+  }, 30_000);
   it('propagates one changed hourly amount through static metadata and every service page', () => {
     const directory = fixture({ hourlyRateEur: 67 });
     run(directory, 'generate-static-route-html');

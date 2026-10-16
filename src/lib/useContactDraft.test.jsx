@@ -3,6 +3,8 @@ import React from 'react';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useContactDraft } from './useContactDraft';
+import { registerInquiryAnalytics } from './inquiryAnalytics';
+import { saveCookieConsentPreferences } from './consent';
 
 const emptyFields = { name: '', email: '', budget: '', description: '' };
 const filledFields = {
@@ -110,5 +112,74 @@ describe('tab-memory contact draft', () => {
     expect(draft.result.current.outcome).toBeNull();
     act(() => draft.result.current.setFormState(emptyFields));
     expect(unloadIsPrevented()).toBe(false);
+  });
+});
+
+describe('accepted inquiry measurement at the draft lifecycle boundary', () => {
+  let send;
+  let unregister;
+  beforeEach(() => {
+    saveCookieConsentPreferences({ analytics: true });
+    send = vi.fn();
+    window.gtag = send;
+    unregister = registerInquiryAnalytics('G-SYNTHETIC');
+  });
+  afterEach(() => {
+    unregister();
+    window.gtag = undefined;
+    localStorage.clear();
+  });
+
+  it('emits once after acceptance away from Contact without service context and never replays on remount', () => {
+    const first = renderHook(() => useContactDraft());
+    act(() => first.result.current.setFormState(filledFields));
+    let submission;
+    act(() => { submission = first.result.current.beginSubmission(); });
+    expect(send).not.toHaveBeenCalled();
+    const finish = first.result.current.finishSubmission;
+    first.unmount();
+    act(() => finish(submission, true));
+    act(() => finish(submission, true));
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(send.mock.calls[0]).toEqual(['event', 'generate_lead', expect.objectContaining({ inquiry_type: 'none' })]);
+    expect(send.mock.calls[0][2]).not.toHaveProperty('inquiry_id');
+    expect(JSON.stringify(send.mock.calls)).not.toContain(filledFields.name);
+    expect(JSON.stringify(send.mock.calls)).not.toContain(filledFields.email);
+    expect(JSON.stringify(send.mock.calls)).not.toContain('First line');
+    const returned = renderHook(() => useContactDraft());
+    act(() => returned.result.current.claimOutcomePresentation(returned.result.current.outcome));
+    expect(send).toHaveBeenCalledTimes(1);
+  });
+
+  it('emits none for pending, duplicate begin or failure, then one for each accepted retry or new send', () => {
+    const draft = renderHook(() => useContactDraft());
+    act(() => draft.result.current.setFormState(filledFields));
+    let failed;
+    act(() => { failed = draft.result.current.beginSubmission(); });
+    act(() => { expect(draft.result.current.beginSubmission()).toBeNull(); });
+    expect(send).not.toHaveBeenCalled();
+    act(() => draft.result.current.finishSubmission(failed, false, 'Synthetic safe error'));
+    expect(send).not.toHaveBeenCalled();
+    for (let index = 0; index < 2; index += 1) {
+      act(() => draft.result.current.setFormState({ ...filledFields }));
+      let accepted;
+      act(() => { accepted = draft.result.current.beginSubmission(); });
+      act(() => draft.result.current.finishSubmission(failed, true));
+      expect(send).toHaveBeenCalledTimes(index);
+      act(() => draft.result.current.finishSubmission(accepted, true));
+      expect(send).toHaveBeenCalledTimes(index + 1);
+    }
+  });
+
+  it('still clears accepted fields and exposes the receipt when the analytics transport throws', () => {
+    send.mockImplementation(() => { throw new Error('PRIVATE_TELEMETRY_ERROR'); });
+    const draft = renderHook(() => useContactDraft());
+    act(() => draft.result.current.setFormState(filledFields));
+    let submission;
+    act(() => { submission = draft.result.current.beginSubmission(); });
+    act(() => draft.result.current.finishSubmission(submission, true));
+    expect(draft.result.current.formState).toEqual(emptyFields);
+    expect(draft.result.current.outcome.status).toBe('success');
+    expect(draft.result.current.isSubmitting).toBe(false);
   });
 });

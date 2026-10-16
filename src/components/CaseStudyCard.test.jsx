@@ -30,7 +30,7 @@ const project = {
 describe('CaseStudyCard', () => {
   afterEach(cleanup);
 
-  it('shows the cover caption so illustrative claims have visible scope on the card', () => {
+  it('leads with the summary and retains a full cover caption when no reviewed compact note exists', () => {
     const caption = 'Conceptual OCR workflow. The 94% faster claim is not a verified project result.';
     render(
       <MemoryRouter>
@@ -40,6 +40,21 @@ describe('CaseStudyCard', () => {
 
     expect(screen.getByText(caption)).toBeTruthy();
     expect(screen.getByText(project.summary)).toBeTruthy();
+    expect(screen.getByText(project.summary).nextElementSibling.textContent).toBe(caption);
+  });
+
+  it('shows the reviewed compact note after the summary without repeating the full caption', () => {
+    const caption = 'An illustrative fixed-layout extraction workflow from invoice photos into spreadsheet rows.';
+    const cardCaption = 'Workflow illustration. Known layout and fixed crop.';
+    const { container } = render(
+      <MemoryRouter>
+        <CaseStudyCard project={{ ...project, cardCaption, image: { ...project.image, caption } }} />
+      </MemoryRouter>,
+    );
+
+    expect(container.querySelector('.body').firstElementChild.textContent).toBe(project.summary);
+    expect(screen.getByText(project.summary).nextElementSibling.textContent).toBe(cardCaption);
+    expect(screen.queryByText(caption)).toBeNull();
   });
 
   it('renders one accessible router link containing the cover and title', () => {

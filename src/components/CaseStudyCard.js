@@ -39,6 +39,7 @@ const CaseStudyCard = ({
   priorityImage = false,
 }) => {
   const completionDate = formatCompletionDate(project.completedAt);
+  const cardCaption = project.cardCaption || project.image?.caption;
   const upworkLink = project.externalLinks?.find((link) => link.label === 'Upwork project');
   const headingTag = headingLevel === 2 ? 'h2' : 'h3';
 
@@ -78,8 +79,8 @@ const CaseStudyCard = ({
     React.createElement(
       'div',
       { className: 'body p-5 flex flex-col gap-4 flex-1' },
-      project.image?.caption ? React.createElement('p', { className: 'text-xs leading-relaxed text-[#9ca3af]' }, project.image.caption) : null,
       React.createElement('p', { className: 'summary text-[0.875rem] leading-[1.5] text-[#9ca3af]' }, project.summary),
+      cardCaption ? React.createElement('p', { className: 'card-caption text-xs leading-relaxed text-[#9ca3af]' }, cardCaption) : null,
       React.createElement(
         'div',
         { className: 'fields flex flex-wrap items-baseline justify-between gap-2 gap-x-4 pt-[10px] border-t border-[rgba(255,255,255,0.06)] mt-auto' },

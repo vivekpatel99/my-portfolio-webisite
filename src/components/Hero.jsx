@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { HERO_DETECTED_FIELD_WINDOWS, HERO_INVOICE_FIELDS } from '@/lib/heroDetectedFields';
-import { profileImages } from '@/config/links';
+import { profileImages, socialLinks } from '@/config/links';
 import { DetectionLabel } from './DetectionFrame';
 import { HOURLY_RATE_LABEL } from '@/config/pricing';
 
@@ -356,6 +356,15 @@ const Hero = () => {
                     </div>
                     <p className="mt-[5px] ml-[2px] font-mono text-[9px] leading-[1.2] tracking-[0.04em] text-gray-400">Client delivery record</p>
                   </div>
+                  <a
+                    href={socialLinks.upwork}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="View Upwork profile for credentials and client feedback"
+                    className="col-span-2 max-[359px]:col-span-1 justify-self-start mt-2 text-xs text-[#a78bfa] underline underline-offset-4 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a78bfa]"
+                  >
+                    View Upwork profile
+                  </a>
                 </div>
 
                 {/* Rate & Location columns */}
@@ -380,8 +389,8 @@ const Hero = () => {
 
                 {/* Bio */}
                 <div className="mb-2.5 max-md:mb-1 max-[359px]:mb-0">
-                  <p className="max-w-[54ch] text-[0.78rem] leading-[1.4] text-gray-400 font-normal max-md:text-[0.72rem] max-md:max-w-full">
-                    I build detectors, document extractors, and n8n workflows that turn camera feeds and messy files into reliable production data.
+                  <p className="text-[0.78rem] leading-[1.4] text-gray-400 font-normal max-md:text-[0.72rem]">
+                    Manual data entry, scattered website data, and unstructured video slow teams down. I build document extraction, n8n automation, and computer vision workflows to make that information usable.
                   </p>
                 </div>
 
@@ -390,7 +399,7 @@ const Hero = () => {
                   {['OCR', 'CV', 'n8n'].map((tag) => (
                     <span
                       key={tag}
-                      className="font-mono text-[11px] text-purple-200 px-2.5 py-1.5 rounded-[3px] border border-white/[0.1] bg-white/[0.03]"
+                      className="font-mono text-[11px] text-purple-200 px-2.5 py-1.5 max-[359px]:py-0.5 rounded-[3px] border border-white/[0.1] bg-white/[0.03]"
                     >
                       {tag}
                     </span>
@@ -505,11 +514,17 @@ const Hero = () => {
       </div>
 
       {/* CSS animations */}
-      <style jsx>{`
+      <style>{`
         /* Offscreen gate for every named hero animation. !important is required to
            override the inline animation shorthand; paused animations keep their phase. */
         [data-hero-motion="paused"] * {
           animation-play-state: paused !important;
+        }
+        /* Also honor the preference before JavaScript can read matchMedia. */
+        @media (prefers-reduced-motion: reduce) {
+          [data-hero-motion] * {
+            animation: none !important;
+          }
         }
         @keyframes bg-drift {
           0%, 100% { transform: translate(0, 0) scale(1); opacity: var(--op, 0.72); }

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <title>Vivek Patel — Computer Vision &amp; AI Engineer</title>
+  <desc>Document extraction, n8n automation, and computer vision. vivekapatel.com</desc>
+  <rect width="1200" height="630" fill="#0C0D0D"/>
+  <path d="M56 122V56H122 M1078 574H1144V508" fill="none" stroke="#8B5CF6" stroke-width="5"/>
+  <g font-family="DejaVu Sans, sans-serif">
+    <text x="100" y="216" fill="#FFFFFF" font-size="88" font-weight="700" letter-spacing="-2">Vivek Patel</text>
+    <text x="100" y="294" fill="#FFFFFF" font-size="44">Computer Vision &amp; AI Engineer</text>
+    <text x="100" y="394" fill="#A78BFA" font-size="34">Document extraction · n8n automation</text>
+    <text x="100" y="442" fill="#A78BFA" font-size="34">Computer vision</text>
+    <text x="100" y="534" fill="#B6B9C3" font-size="28">vivekapatel.com</text>
+  </g>
+</svg>

@@ -5,14 +5,15 @@ const ENTRANCE_OFFSET_PX = 12;
 
 const SectionAnimator = ({ children, className }) => {
   const reduceMotion = useReducedMotion();
+  const animateEntrance = typeof window !== 'undefined' && !reduceMotion;
 
   return (
     <m.div
       data-section-animator=""
-      initial={reduceMotion ? false : { y: ENTRANCE_OFFSET_PX }}
+      initial={animateEntrance ? { y: ENTRANCE_OFFSET_PX } : false}
       whileInView={{ y: 0 }}
       viewport={{ once: true, amount: 0.1 }}
-      transition={{ duration: reduceMotion ? 0 : 0.4, ease: 'easeOut' }}
+      transition={{ duration: animateEntrance ? 0.4 : 0, ease: 'easeOut' }}
       className={className}
     >
       {children}

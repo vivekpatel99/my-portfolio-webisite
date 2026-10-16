@@ -12,7 +12,7 @@
 .case-study-article *::before,
 .case-study-article *::after { box-sizing: border-box; }
 
-.case-study-article a:not(.detection-action):not(.detection-text-action) { color: #c8abea; text-decoration: none; }
+.case-study-article a:not(.detection-action):not(.detection-text-action):not(.related-work-link) { color: #c8abea; text-decoration: none; }
 .case-study-navigation { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-bottom: 32px; }
 .case-study-navigation a { font-size: 14px; }
 .case-study-navigation .case-study-home { margin-inline-start: auto; }

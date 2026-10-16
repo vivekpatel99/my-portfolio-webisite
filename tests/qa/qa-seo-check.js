@@ -334,7 +334,7 @@ pin(
   'defaultSeo.description is not the locked Linz sentence',
   'src/lib/seoConfig.js',
   defaultSeo.description ===
-    `Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients worldwide. Expert in web scraping, n8n automation, YOLO, PyTorch, and LangChain. Top Rated Plus on Upwork. ${HOURLY_RATE_LABEL}.`,
+    `Hire Vivek Patel - Freelance AI & Computer Vision Engineer based in Linz, Austria, serving clients worldwide. Document extraction, n8n automation, and computer vision for invoices, website data, and video. Top Rated Plus on Upwork. ${HOURLY_RATE_LABEL}.`,
 );
 pin(
   'contact SEO description is not the locked Linz sentence',
@@ -396,10 +396,12 @@ if (/streetAddress|PostalAddress|postalCode|addressLocality|addressCountry|postO
   });
 }
 
-const legal = readFileSync(path.join(process.cwd(), 'src/pages/Legal.jsx'), 'utf8');
+const legal = readFileSync(path.join(process.cwd(), 'src/pages/Legal.jsx'), 'utf8')
+  + readFileSync(path.join(process.cwd(), 'src/components/PrivacyPolicyContent.jsx'), 'utf8');
 const footer = readFileSync(path.join(process.cwd(), 'src/components/Footer.jsx'), 'utf8');
 const contact = readFileSync(path.join(process.cwd(), 'src/pages/Contact.jsx'), 'utf8');
-const dataPolicy = readFileSync(path.join(process.cwd(), 'src/pages/DataPolicy.jsx'), 'utf8');
+const dataPolicy = readFileSync(path.join(process.cwd(), 'src/pages/DataPolicy.jsx'), 'utf8')
+  + readFileSync(path.join(process.cwd(), 'src/components/CookiePolicyContent.jsx'), 'utf8');
 pin(
   'Legal.jsx missing EEA GDPR sentences',
   'src/pages/Legal.jsx',

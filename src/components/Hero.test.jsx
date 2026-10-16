@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { HERO_DETECTED_FIELD_WINDOWS, HERO_INVOICE_FIELDS } from '@/lib/heroDetectedFields';
 import Hero from './Hero';
 import { HOURLY_RATE_LABEL } from '@/config/pricing';
+import { socialLinks } from '@/config/links';
 
 afterEach(() => {
   cleanup();
@@ -21,6 +22,15 @@ const renderHero = () =>
   );
 
 describe('Hero invoice proof fold (#176)', () => {
+  it('provides a nearby profile source for both Upwork credentials', () => {
+    const { container } = renderHero();
+    const credentials = container.querySelector('[aria-label="Detected credentials"]');
+    const source = screen.getByRole('link', { name: 'View Upwork profile for credentials and client feedback' });
+    expect(source.getAttribute('href')).toBe(socialLinks.upwork);
+    expect(credentials.contains(source)).toBe(true);
+    expect(source.tabIndex).toBe(0);
+  });
+
   it('renders Top Rated Plus credential in hero invoice', () => {
     renderHero();
     const credential = screen.getByText('Top Rated Plus', { exact: true });
@@ -112,7 +122,7 @@ describe('Hero invoice proof fold (#176)', () => {
 
   it('renders bio after proofs and rate/location per invoice fold design', () => {
     renderHero();
-    const bio = screen.getByText(/I build detectors, document extractors, and n8n workflows/);
+    const bio = screen.getByText('Manual data entry, scattered website data, and unstructured video slow teams down. I build document extraction, n8n automation, and computer vision workflows to make that information usable.');
     expect(bio).toBeTruthy();
   });
 

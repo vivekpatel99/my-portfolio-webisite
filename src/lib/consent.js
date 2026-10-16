@@ -6,6 +6,17 @@ export const DEFAULT_COOKIE_CONSENT_PREFERENCES = {
 };
 
 let unpersistedPreferences = null;
+let analyticsConsentRevision = 0;
+
+// A rejected choice invalidates work begun under an earlier acceptance, even
+// when consent is granted again before the request finishes.
+export const readAnalyticsConsentRevision = () => analyticsConsentRevision;
+
+// A storage change from another tab supersedes a choice retained after a
+// failed local write. Subsequent reads must observe that tab's stored choice.
+export function refreshCookieConsentFromStorage() {
+  unpersistedPreferences = null;
+}
 
 function normalizePreferences(preferences) {
   return {
@@ -45,6 +56,7 @@ export function saveCookieConsentPreferences(preferences) {
   }
 
   const safePreferences = normalizePreferences(preferences);
+  if (!safePreferences.analytics) analyticsConsentRevision += 1;
 
   try {
     window.localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(safePreferences));

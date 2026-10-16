@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { analyticsPageParameters, registerInquiryAnalytics } from '@/lib/inquiryAnalytics';
 
 const GA_TRACKING_ID = import.meta.env.VITE_GA_TRACKING_ID?.trim();
 const GA_SCRIPT_ID = 'google-analytics-gtag';
@@ -57,18 +58,16 @@ const GoogleAnalytics = ({ hasConsent }) => {
 
     window[`ga-disable-${GA_TRACKING_ID}`] = false;
 
-    if (typeof window.gtag === 'function') {
-      return;
+    if (typeof window.gtag !== 'function') {
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function gtag() {
+        window.dataLayer.push(arguments);
+      };
+      window.gtag('js', new Date());
     }
-
-    window.dataLayer = window.dataLayer || [];
-    window.gtag = function gtag() {
-      window.dataLayer.push(arguments);
-    };
     window.gtag('consent', 'update', {
       analytics_storage: 'granted',
     });
-    window.gtag('js', new Date());
 
     if (!document.getElementById(GA_SCRIPT_ID)) {
       const script = document.createElement('script');
@@ -77,6 +76,7 @@ const GoogleAnalytics = ({ hasConsent }) => {
       script.async = true;
       document.head.appendChild(script);
     }
+    return registerInquiryAnalytics(GA_TRACKING_ID);
   }, [hasConsent]);
 
   useEffect(() => {
@@ -88,9 +88,9 @@ const GoogleAnalytics = ({ hasConsent }) => {
     }
 
     window.gtag('config', GA_TRACKING_ID, {
-      page_path: `${location.pathname}${location.search}${location.hash}`,
+      ...analyticsPageParameters(location.pathname),
     });
-  }, [hasConsent, location.pathname, location.search, location.hash]);
+  }, [hasConsent, location.pathname]);
 
   return null;
 };

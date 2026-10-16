@@ -1,0 +1,67 @@
+# Inquiry context (#364)
+
+Service detail and public project article inquiry links now carry one validated
+identifier: `/contact/?service=<id>` or `/contact/?project=<slug>`. Both SPA
+links and generated static article/service links use the same public lookup.
+Unknown, withdrawn, duplicate or mixed identifiers fall back to ordinary
+contact behavior. Labels and description seeds come from public content;
+arbitrary query text is ignored.
+
+A completely empty description receives an editable “I'd like to discuss
+<public name>.” line and a visible “Inquiry about <public name>” cue. Existing
+name, email and budget values are preserved. A populated description or pending
+send preserves the existing draft and its original context. Context stays in
+document memory, outside the unchanged lead payload; no draft browser-storage
+persistence or hidden form fields were added.
+An untouched generated description does not trigger unload protection; it can
+be reconstructed from its public context URL. Entering another field or editing
+the description restores protection for the visitor's unsent data.
+
+Success clears the context with the submitted fields. Returning to a completed
+contact entry prevents re-seeding; when no later draft has been started, the
+receipt and empty fields remain available. A fresh CTA visit, including the same
+service/project, can seed a new inquiry. Failures keep the context for retry.
+React Router's existing entry key distinguishes the two navigation cases; no
+private form data is added to history state.
+Successful-entry markers are retained for every completed inquiry in this
+document. The originating entry key is captured when submission starts, so
+visiting another CTA during a send cannot move its completion marker. Returning
+to either of two completed inquiries keeps the cleared form when there is no
+later unsent draft; visiting an unsubmitted entry can still begin a new inquiry.
+The draft and its latest feedback remain shared across contact entries. If a
+visitor starts inquiry B after completing A, then returns to A while B is unsent
+or has failed, B's fields, visible context and retry feedback remain intact.
+Restoring A's old blank form would overwrite that populated inquiry, contrary
+to #364's preservation requirement. Completion markers do not replace newer
+visitor input with historical snapshots.
+
+The cue uses ordinary readable prose inside the existing sensitive form region.
+DESIGN.md FM-01's existing field, label, validation and feedback behavior is
+preserved. Desktop (1280px) and mobile (390px) visual inspection found no
+horizontal overflow or new field boundaries.
+
+Verification includes public-identifier tests for every current service and
+published project, SPA/static project CTA tests, editable seed and unchanged
+payload tests, draft/remount/success/failure tests, and a synthetic Chromium
+desktop/WebKit mobile journey. The browser journey covers service and project
+arrival, preserving an edited draft through another CTA, pending navigation,
+successful return, and a fresh same-service inquiry. All browser submissions
+use an in-memory Convex transport; no real lead was sent.
+
+The production build and targeted ESLint syntax/control-flow checks passed.
+Apache HTTPS QA verifies each static service's exact contextual estimate URL,
+alongside directory redirects, canonical metadata, content, sitemap entries,
+and real 404 responses for unknown services. Its old bare-contact assertion
+was updated after reproducing the CI failure locally.
+The full unit suite and browser lifecycle regression checks are delivery gates
+recorded in the associated PR. Local prerequisites included FFmpeg tools and
+the repository's pinned Playwright container for WebKit libraries.
+
+This changes inquiry context only. Consent and success measurement are handled
+separately in #370. Production deployment remains a separate release decision.
+
+## Withdrawal on 16 October 2026
+
+The owner rejected the contextual inquiry treatment during the develop walkthrough. Service and project actions again open plain Contact, without an inquiry label or generated description. Existing tab-memory drafts, submission feedback, and consented accepted-inquiry measurement remain. Accepted inquiries now carry no service/project identifier. The implementation evidence above is historical.
+
+Revert verification: production build passed; 192 targeted unit/integration tests passed with Node native Web Storage disabled for jsdom; 12 synthetic Chromium desktop and reduced-motion WebKit mobile checks passed. Coverage includes blank service/project inquiries, legacy-query handling, drafts, pending completion, history navigation, and consented accepted-inquiry measurement. Added the service/testimonial stylesheets to the static-route fixture to cover the earlier clickable-card integration. No live inquiry was submitted.

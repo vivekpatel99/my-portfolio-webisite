@@ -1,5 +1,6 @@
 import { expect, test } from './qa-test.js';
 import { testimonials as testimonialData } from '../../src/data/testimonials.js';
+import { socialLinks } from '../../src/config/links.js';
 
 // Longer than one 6s rotation interval, so an unexpected advance is observable.
 const OVER_ONE_INTERVAL_MS = 7_000;
@@ -68,9 +69,11 @@ test('tapping the quote holds focus but resumes rotation when focus leaves witho
   test.setTimeout(60_000);
   const { counter, quote } = await openCarousel(page);
 
+  // Exercise touch compatibility events without opening the external profile in this focus test.
+  await quote.evaluate((element) => element.addEventListener('click', (event) => event.preventDefault(), { once: true }));
   await quote.tap();
-  await quote.focus();
-  await expect(quote).toBeFocused();
+  await quote.getByRole('link').focus();
+  await expect(quote.getByRole('link')).toBeFocused();
   const heldAt = await counter.textContent();
   await page.clock.runFor(OVER_ONE_INTERVAL_MS);
   await expect(counter).toHaveText(heldAt);
@@ -85,12 +88,17 @@ test('tapping the quote holds focus but resumes rotation when focus leaves witho
   await expect(counter).not.toHaveText(resumedFrom, { timeout: OVER_ONE_INTERVAL_MS + 2_000 });
 });
 
-test('keyboard traversal reaches quote and slides; chosen slide persists 20s', async ({ page }) => {
+test('keyboard traversal reaches the named card action and slides; chosen slide persists 20s', async ({ page }) => {
   test.setTimeout(90_000);
-  const { carousel, counter, quote, slides } = await openCarousel(page);
+  const { carousel, counter, slides } = await openCarousel(page);
 
-  await quote.focus();
-  await expect(quote).toBeFocused();
+  const profileLink = carousel.getByRole('link', { name: 'View my Upwork profile (opens in a new tab)' });
+  await profileLink.focus();
+  await expect(profileLink).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  expect(await carousel.evaluate(element => element.contains(document.activeElement))).toBe(false);
+  await page.keyboard.press('Tab');
+  await expect(profileLink).toBeFocused();
   for (let index = 0; index < slideCount; index += 1) {
     await page.keyboard.press('Tab');
     await expect(slides.nth(index)).toBeFocused();
@@ -108,13 +116,14 @@ test('keyboard traversal reaches quote and slides; chosen slide persists 20s', a
   await expect(counter).toHaveText(counterFor(1));
 });
 
-test('focusing the quote or a control stops auto-advance until focus leaves', async ({ page }) => {
+test('focusing the profile link or a control stops auto-advance until focus leaves', async ({ page }) => {
   test.setTimeout(60_000);
-  const { counter, quote, slides } = await openCarousel(page);
+  const { carousel, counter, quote, slides } = await openCarousel(page);
   await page.mouse.move(1, 1);
 
-  for (const target of [quote, slides.nth(4)]) {
+  for (const target of [carousel.getByRole('link'), slides.nth(4)]) {
     await target.focus();
+    await expect(quote).toHaveAttribute('aria-live', 'polite');
     const heldAt = await counter.textContent();
     await page.clock.runFor(OVER_ONE_INTERVAL_MS);
     await expect(counter).toHaveText(heldAt);
@@ -132,7 +141,7 @@ test('overlapping hover and focus reasons each keep rotation stopped', async ({ 
   const { carousel, counter, quote } = await openCarousel(page);
 
   await carousel.hover();
-  await quote.focus();
+  await quote.getByRole('link').focus();
   await page.mouse.move(1, 1);
   const heldByFocus = await counter.textContent();
   await page.clock.runFor(OVER_ONE_INTERVAL_MS);
@@ -191,8 +200,8 @@ test('controls are non-overlapping targets of at least 44x44 with decorative dia
   expect(marks.find((mark) => mark.current).markColor).toBe('rgb(139, 92, 246)');
 });
 
-test('focused quote and controls show a visible outline during keyboard traversal', async ({ page }) => {
-  const { quote, slides } = await openCarousel(page);
+test('focused card action and controls show a visible outline during keyboard traversal', async ({ page }) => {
+  const { carousel, quote, slides } = await openCarousel(page);
   const expectVisibleOutline = async (target) => {
     await expect(target).toBeFocused();
     const outline = await target.evaluate((element) => {
@@ -203,8 +212,15 @@ test('focused quote and controls show a visible outline during keyboard traversa
     expect(outline.width).toBeGreaterThanOrEqual(2);
   };
 
-  await quote.focus();
-  await expectVisibleOutline(quote);
+  const profileLink = carousel.getByRole('link');
+  await profileLink.focus();
+  await expectVisibleOutline(profileLink);
+  const cardOutline = await quote.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return { style: style.outlineStyle, width: parseFloat(style.outlineWidth) };
+  });
+  expect(cardOutline.style).not.toBe('none');
+  expect(cardOutline.width).toBeGreaterThanOrEqual(2);
   await page.keyboard.press('Tab');
   await expectVisibleOutline(slides.first());
   for (let index = 1; index < slideCount; index += 1) {
@@ -212,6 +228,68 @@ test('focused quote and controls show a visible outline during keyboard traversa
     await expectVisibleOutline(slides.nth(index));
   }
 });
+
+for (const width of [320, 390]) {
+  test(`profile sources and recorded feedback dates fit ${width}px and remain keyboard accessible`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 844 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    const { carousel, quote, slides } = await openCarousel(page);
+    const expectWithinViewport = async (locator) => {
+      await expect(locator).toBeVisible();
+      const box = await locator.boundingBox();
+      expect(box.x).toBeGreaterThanOrEqual(0);
+      expect(box.x + box.width).toBeLessThanOrEqual(width);
+    };
+    const checkSummarySource = async (source) => {
+      await expect(source).toHaveAttribute('href', socialLinks.upwork);
+      await page.keyboard.press('Tab');
+      await source.focus();
+      await expect(source).toBeFocused();
+      await expectWithinViewport(source);
+      const outline = await source.evaluate((link) => ({
+        style: getComputedStyle(link).outlineStyle,
+        width: parseFloat(getComputedStyle(link).outlineWidth),
+      }));
+      expect(outline.style).not.toBe('none');
+      expect(outline.width).toBeGreaterThanOrEqual(2);
+    };
+
+    await checkSummarySource(page.getByRole('group', { name: 'Detected credentials' })
+      .getByRole('link', { name: 'View Upwork profile for credentials and client feedback' }));
+
+    for (const [index, review] of testimonialData.entries()) {
+      await slides.nth(index).click();
+      await expect(quote.locator('blockquote')).toContainText(review.content);
+      await expect(quote).toContainText(review.clientName);
+      const source = carousel.getByRole('link', { name: 'View my Upwork profile (opens in a new tab)' });
+      await expect(source).toHaveAttribute('href', socialLinks.upwork);
+      await expect(source).toHaveAttribute('target', '_blank');
+      await expect(source).toHaveAttribute('rel', 'noopener noreferrer');
+      await expect(quote.getByRole('link')).toHaveCount(1);
+      await expect(source.locator('a, button, [tabindex]')).toHaveCount(0);
+      await expect(quote.locator('.source')).toHaveText(review.source);
+      await source.focus();
+      await expect(source).toBeFocused();
+      await expectWithinViewport(source);
+      await expectWithinViewport(quote);
+      const date = quote.locator('time');
+      if (review.feedbackDate) {
+        await expect(date).toHaveAttribute('datetime', review.feedbackDate.slice(0, 7));
+        await expect(date).toHaveText(new Intl.DateTimeFormat('en-GB', {
+          month: 'long', year: 'numeric', timeZone: 'UTC',
+        }).format(new Date(`${review.feedbackDate}T00:00:00Z`)));
+        await expectWithinViewport(date);
+      } else {
+        await expect(date).toHaveCount(0);
+      }
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    }
+
+    await page.goto('/contact/');
+    await checkSummarySource(page.getByRole('link', { name: 'View Upwork profile for credentials and client feedback' }));
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  });
+}
 
 test('reduced motion shows autoplay off, offers no playback control, and keeps manual slides usable', async ({ page, hasTouch }) => {
   test.setTimeout(60_000);
@@ -264,4 +342,68 @@ test('a manually chosen slide stays stopped after reduced motion is switched off
   await leaveCarousel(page);
   await page.clock.runFor(PERSISTENT_PAUSE_MS);
   await expect(counter).toHaveText(counterFor(1));
+});
+
+test('the card opens the exact public profile by pointer and its single named native link by keyboard', async ({ page, context, hasTouch }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await context.route(socialLinks.upwork, (route) => route.fulfill({
+    contentType: 'text/html', body: '<title>Local profile destination check</title>',
+  }));
+  const { carousel, slides } = await openCarousel(page);
+  const card = carousel.locator('.testimonial-card');
+  const link = card.getByRole('link', { name: 'View my Upwork profile (opens in a new tab)' });
+  const openProfile = async (activateCard) => {
+    const popupPromise = page.waitForEvent('popup');
+    await activateCard();
+    const popup = await popupPromise;
+    await popup.waitForURL(socialLinks.upwork);
+    expect(await popup.evaluate(() => window.opener)).toBeNull();
+    await popup.close();
+  };
+  await openProfile(() => hasTouch ? card.tap({ position: { x: 12, y: 20 } }) : card.click({ position: { x: 12, y: 20 } }));
+  await slides.nth(7).click();
+  await expect(card.locator('.source')).toHaveText('Direct');
+  await expect(card).not.toHaveAttribute('tabindex');
+  await link.focus();
+  await expect(link).toBeFocused();
+  await expect(link).toHaveAccessibleName('View my Upwork profile (opens in a new tab)');
+  await expect(link).toHaveAttribute('href', socialLinks.upwork);
+  await openProfile(() => page.keyboard.press('Enter'));
+  await link.focus();
+  await page.keyboard.press('Tab');
+  await expect(slides.first()).toBeFocused();
+  await expect(card.locator('blockquote')).toContainText(testimonialData[7].content);
+});
+
+test('dragging review text selects it without opening the profile; middle click remains native', async ({ page, context, hasTouch }) => {
+  test.skip(hasTouch, 'Mouse text selection and middle click are desktop interactions.');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await context.route(socialLinks.upwork, (route) => route.fulfill({
+    contentType: 'text/html', body: '<title>Local profile destination check</title>',
+  }));
+  const { carousel } = await openCarousel(page);
+  const card = carousel.locator('.testimonial-card');
+  const link = card.getByRole('link');
+  await card.locator('blockquote').scrollIntoViewIfNeeded();
+  const textPoints = await card.locator('blockquote').evaluate((quote) => {
+    const text = quote.childNodes[1];
+    const range = document.createRange();
+    range.setStart(text, 2);
+    range.setEnd(text, 12);
+    const rect = range.getClientRects()[0];
+    return { startX: rect.left + 1, endX: rect.right - 1, y: rect.top + rect.height / 2 };
+  });
+  const initialPages = context.pages().length;
+  await page.mouse.move(textPoints.startX, textPoints.y);
+  await page.mouse.down();
+  await page.mouse.move(textPoints.endX, textPoints.y, { steps: 12 });
+  await page.mouse.up();
+  expect(await page.evaluate(() => getSelection().toString().length)).toBeGreaterThan(0);
+  expect(context.pages()).toHaveLength(initialPages);
+  await page.evaluate(() => getSelection().removeAllRanges());
+  const popupPromise = context.waitForEvent('page');
+  await link.click({ button: 'middle' });
+  const popup = await popupPromise;
+  await popup.waitForURL(socialLinks.upwork);
+  await popup.close();
 });

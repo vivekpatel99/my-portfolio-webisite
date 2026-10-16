@@ -2,10 +2,11 @@
  * @vitest-environment jsdom
  */
 import React from 'react';
-import { render, screen, cleanup, fireEvent, act } from '@testing-library/react';
+import { render, screen, cleanup, fireEvent, createEvent, act } from '@testing-library/react';
 import { describe, expect, it, vi, afterEach, beforeEach } from 'vitest';
 import Testimonials from './Testimonials';
 import { testimonials } from '@/data/testimonials';
+import { socialLinks } from '@/config/links';
 
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 
@@ -157,24 +158,160 @@ describe('Testimonials Carousel', () => {
     expect(quoteArea.textContent).not.toContain(testimonials[0].content);
   });
 
-  it('renders source chip for testimonials with source field', () => {
-    const { container } = render(<Testimonials />);
-    
-    const sourceChips = container.querySelectorAll('.source');
-    expect(sourceChips.length).toBeGreaterThan(0);
-    
-    const firstChip = sourceChips[0];
-    expect(['Upwork', 'Fiverr', 'Direct']).toContain(firstChip.textContent);
+  it('shows the profile source and recorded month/year for each Upwork quote', () => {
+    render(<Testimonials />);
+    const dates = ['September 2026', 'June 2026', 'May 2026', 'April 2026', 'March 2026', 'January 2026', 'January 2026'];
+    dates.forEach((date, index) => {
+      fireEvent.click(slideButtons()[index]);
+      const link = screen.getByRole('link', { name: 'View my Upwork profile (opens in a new tab)' });
+      expect(link.getAttribute('href')).toBe(socialLinks.upwork);
+      expect(link.textContent).toBe('View my Upwork profile (opens in a new tab)');
+      expect(document.querySelector('.source').textContent).toBe('Upwork');
+      expect(link.tabIndex).toBe(0);
+      const time = document.querySelector('#testimonials time');
+      expect(time.textContent).toBe(date);
+      expect(time.getAttribute('datetime')).toBe(testimonials[index].feedbackDate.slice(0, 7));
+      expectShowing(index);
+      expect(screen.getByRole('img', { name: 'Rated 5 out of 5' })).toBeTruthy();
+    });
   });
 
-  it('displays correct source for first testimonial', () => {
-    const { container } = render(<Testimonials />);
-    
-    const quoteArea = container.querySelector('.quote-area');
-    const sourceChip = quoteArea?.querySelector('.source');
-    
-    expect(sourceChip).toBeTruthy();
-    expect(sourceChip.textContent).toBe(testimonials[0].source);
+  it('gives every slide one short native footer link with independently readable quote and metadata', () => {
+    render(<Testimonials />);
+    testimonials.forEach((review, index) => {
+      fireEvent.click(slideButtons()[index]);
+      const links = screen.getAllByRole('link');
+      expect(links).toHaveLength(1);
+      const link = screen.getByRole('link', { name: 'View my Upwork profile (opens in a new tab)' });
+      expect(link.getAttribute('href')).toBe(socialLinks.upwork);
+      expect(link.getAttribute('target')).toBe('_blank');
+      expect(link.getAttribute('rel')).toBe('noopener noreferrer');
+      expect(link.textContent).toBe('View my Upwork profile (opens in a new tab)');
+      expect(link.hasAttribute('aria-labelledby')).toBe(false);
+      expect(link.tabIndex).toBe(0);
+      const card = slideRegion();
+      expect(card.querySelector('blockquote').textContent).toContain(review.content);
+      expect(card.querySelector('.source').textContent).toBe(review.source);
+      for (const content of card.querySelectorAll('blockquote, .source, time, article, [role=img]')) {
+        expect(link.contains(content)).toBe(false);
+      }
+      expect(link.querySelector('a, button, [tabindex]')).toBeNull();
+      slideButtons().forEach((button) => expect(link.contains(button)).toBe(false));
+    });
+  });
+
+  it('cancels selected, moved and cancelled pointer clicks anywhere in the card, then consumes the gesture state', () => {
+    render(<Testimonials />);
+    const link = screen.getByRole('link');
+    const quote = slideRegion().querySelector('blockquote');
+    const cue = link;
+    vi.spyOn(link, 'click').mockImplementation(() => {});
+    const pointer = (type, target, x = 20, y = 20) => {
+      // Supply coordinates even on jsdom versions without a native PointerEvent.
+      const event = new Event(type, { bubbles: true });
+      Object.assign(event, { clientX: x, clientY: y, pointerType: 'touch' });
+      fireEvent(target, event);
+    };
+    const clickWasCancelled = (target, detail = 1) => {
+      const event = createEvent.click(target, { detail, cancelable: true });
+      // Inspect cancellation after React's handler, then prevent jsdom navigation.
+      let cancelled;
+      const observe = (click) => { cancelled = click.defaultPrevented; click.preventDefault(); };
+      document.addEventListener('click', observe, { once: true });
+      fireEvent(target, event);
+      return cancelled;
+    };
+
+    for (const target of [quote, cue]) {
+      pointer('pointerdown', target);
+      const range = document.createRange();
+      range.selectNodeContents(quote);
+      window.getSelection().addRange(range);
+      expect(clickWasCancelled(target)).toBe(true);
+      expect(clickWasCancelled(target, 0)).toBe(false);
+      window.getSelection().removeAllRanges();
+
+      pointer('pointerdown', target);
+      pointer('pointermove', target, 40);
+      pointer('pointerup', target); // Returning to the start does not erase the drag.
+      expect(clickWasCancelled(target)).toBe(true);
+
+      pointer('pointerdown', target);
+      pointer('pointerup', target, 20, 40);
+      expect(clickWasCancelled(target)).toBe(true);
+
+      pointer('pointerdown', target);
+      pointer('pointercancel', target);
+      expect(clickWasCancelled(target)).toBe(true);
+      expect(clickWasCancelled(target)).toBe(false); // Cancelled state was consumed.
+      expect(clickWasCancelled(target, 0)).toBe(false); // Native keyboard activation.
+
+      pointer('pointerdown', target);
+      pointer('pointerup', target, 25);
+      expect(clickWasCancelled(target)).toBe(false);
+    }
+  });
+
+  it('forwards ordinary card clicks once, while footer activation stays native', () => {
+    render(<Testimonials />);
+    const link = screen.getByRole('link');
+    const nativeClick = vi.spyOn(link, 'click');
+    const activations = vi.fn();
+    link.addEventListener('click', activations);
+    // Cancel navigation after React handles the event so the native-link branch is exercised.
+    const preventNavigation = (event) => event.preventDefault();
+    document.addEventListener('click', preventNavigation);
+    try {
+      fireEvent.click(slideRegion().querySelector('blockquote'), { detail: 1 });
+      expect(nativeClick).toHaveBeenCalledTimes(1);
+      expect(activations).toHaveBeenCalledTimes(1);
+      fireEvent.click(link.querySelector('.sr-only'), { detail: 1 });
+      expect(nativeClick).toHaveBeenCalledTimes(1);
+      expect(activations).toHaveBeenCalledTimes(2);
+    } finally {
+      document.removeEventListener('click', preventNavigation);
+    }
+  });
+
+  it('does not forward default-prevented, modified, middle or keyboard clicks on the group', () => {
+    render(<Testimonials />);
+    const link = screen.getByRole('link');
+    const forward = vi.spyOn(link, 'click').mockImplementation(() => {});
+    const quote = slideRegion().querySelector('blockquote');
+    const prevented = createEvent.click(quote, { detail: 1 });
+    prevented.preventDefault();
+    fireEvent(quote, prevented);
+    for (const modifier of ['metaKey', 'ctrlKey', 'shiftKey', 'altKey']) {
+      fireEvent.click(quote, { detail: 1, [modifier]: true });
+    }
+    fireEvent.click(quote, { detail: 1, button: 1 });
+    fireEvent.click(slideRegion(), { detail: 0 });
+    expect(forward).not.toHaveBeenCalled();
+  });
+
+  it('exposes only the named native profile link as the card action, keeping the slide readable', () => {
+    render(<Testimonials />);
+    const card = slideRegion();
+    const link = screen.getByRole('link', { name: 'View my Upwork profile (opens in a new tab)' });
+    expect(card.tabIndex).toBe(-1);
+    expect(link.tabIndex).toBe(0);
+    expect(link.getAttribute('href')).toBe(socialLinks.upwork);
+    expect(link.contains(card.querySelector('blockquote'))).toBe(false);
+    expect(card.querySelectorAll('[tabindex="0"]')).toHaveLength(1);
+  });
+
+  it('keeps Direct sources separate and omits missing dates', () => {
+    render(<Testimonials />);
+    fireEvent.click(slideButtons()[7]);
+    expect(screen.getByRole('link').getAttribute('href')).toBe(socialLinks.upwork);
+    expect(screen.getByText('Direct')).toBeTruthy();
+    expect(document.querySelector('#testimonials time').textContent).toBe('October 2025');
+    for (const index of [8, 9]) {
+      fireEvent.click(slideButtons()[index]);
+      expect(screen.getByRole('link').getAttribute('href')).toBe(socialLinks.upwork);
+      expect(document.querySelector('#testimonials time')).toBeNull();
+      expect(screen.getByText('Direct')).toBeTruthy();
+    }
   });
 });
 
@@ -221,17 +358,17 @@ describe('Testimonials carousel controls (#225)', () => {
     expectShowing(1);
   });
 
-  it('focusing the quote stops rotation and leaving it resumes', () => {
+  it('focusing the profile link stops rotation and leaving it resumes', () => {
     installMotionPreference(false);
     render(<Testimonials />);
     const quote = slideRegion();
-    expect(quote.tabIndex).toBe(0);
+    expect(quote.tabIndex).toBe(-1);
 
-    fireEvent.focus(quote);
+    fireEvent.focus(quote.querySelector('a'));
     advance(20_000);
     expectShowing(0);
 
-    fireEvent.blur(quote, { relatedTarget: null });
+    fireEvent.blur(quote.querySelector('a'), { relatedTarget: null });
     advance(INTERVAL_MS);
     expectShowing(1);
   });
@@ -250,14 +387,28 @@ describe('Testimonials carousel controls (#225)', () => {
     expectShowing(0);
   });
 
-  it('moving focus between quote and controls does not resume rotation', () => {
+  it('holds rotation and enables polite announcements while the source link has focus', () => {
+    installMotionPreference(false);
+    render(<Testimonials />);
+    const link = screen.getByRole('link', { name: 'View my Upwork profile (opens in a new tab)' });
+    fireEvent.focus(link);
+    expect(slideRegion().getAttribute('aria-live')).toBe('polite');
+    advance(20_000);
+    expectShowing(0);
+    fireEvent.blur(link, { relatedTarget: null });
+    expect(slideRegion().getAttribute('aria-live')).toBe('off');
+    advance(INTERVAL_MS);
+    expectShowing(1);
+  });
+
+  it('moving focus between profile link and controls does not resume rotation', () => {
     installMotionPreference(false);
     render(<Testimonials />);
     const quote = slideRegion();
     const control = slideButtons()[0];
 
-    fireEvent.focus(quote);
-    fireEvent.blur(quote, { relatedTarget: control });
+    fireEvent.focus(quote.querySelector('a'));
+    fireEvent.blur(quote.querySelector('a'), { relatedTarget: control });
     fireEvent.focus(control);
     advance(20_000);
     expectShowing(0);
@@ -270,12 +421,12 @@ describe('Testimonials carousel controls (#225)', () => {
     const quote = slideRegion();
 
     hoverWithMouse(boundary);
-    fireEvent.focus(quote);
+    fireEvent.focus(quote.querySelector('a'));
     unhoverWithMouse(boundary);
     advance(20_000);
     expectShowing(0);
 
-    fireEvent.blur(quote, { relatedTarget: null });
+    fireEvent.blur(quote.querySelector('a'), { relatedTarget: null });
     advance(INTERVAL_MS);
     expectShowing(1);
   });
@@ -286,9 +437,9 @@ describe('Testimonials carousel controls (#225)', () => {
     const boundary = interactionBoundary();
     const quote = slideRegion();
 
-    fireEvent.focus(quote);
+    fireEvent.focus(quote.querySelector('a'));
     hoverWithMouse(boundary);
-    fireEvent.blur(quote, { relatedTarget: null });
+    fireEvent.blur(quote.querySelector('a'), { relatedTarget: null });
     advance(20_000);
     expectShowing(0);
 
@@ -371,18 +522,18 @@ describe('Testimonials carousel controls (#225)', () => {
     expectShowing(2);
   });
 
-  it('keeps genuine quote focus holding rotation across a preference round trip', () => {
+  it('keeps genuine profile-link focus holding rotation across a preference round trip', () => {
     const preference = installMotionPreference(false);
     render(<Testimonials />);
-    act(() => slideRegion().focus());
+    act(() => slideRegion().querySelector('a').focus());
 
     act(() => preference.setReduced(true));
     act(() => preference.setReduced(false));
-    expect(document.activeElement).toBe(slideRegion());
+    expect(document.activeElement).toBe(slideRegion().querySelector('a'));
     advance(20_000);
     expectShowing(0);
 
-    act(() => slideRegion().blur());
+    act(() => slideRegion().querySelector('a').blur());
     advance(INTERVAL_MS);
     expectShowing(1);
   });

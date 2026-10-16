@@ -300,6 +300,44 @@ describe('Header', () => {
     expect(screen.queryByText(/NAV ·/i)).toBeNull();
   });
 
+  it('provides an optional native navigation disclosure without activating the JavaScript drawer', async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <MemoryRouter initialEntries={['/legal/']}>
+        <Header staticNavigation />
+        <main id="main-content">Policy</main>
+      </MemoryRouter>,
+    );
+    const details = container.querySelector('details');
+    const summary = details.querySelector('summary');
+    expect(summary.getAttribute('aria-label')).toBe('Toggle navigation menu');
+    expect(summary.hasAttribute('disabled')).toBe(false);
+    expect(details.open).toBe(false);
+    await user.click(summary);
+    expect(details.open).toBe(true);
+    const navigation = within(details).getByRole('navigation', { name: 'Navigation menu' });
+    expect(within(navigation).getAllByRole('link')).toHaveLength(5);
+    for (const [name, href] of [
+      ['Services', '/#services'],
+      ['About', '/#about'],
+      ['Case Studies', '/case-studies/'],
+      ['Testimonials', '/#testimonials'],
+      ['Request a Project Estimate', '/contact/'],
+    ]) {
+      expect(within(navigation).getByRole('link', { name, exact: true }).getAttribute('href')).toBe(href);
+    }
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.getElementById('main-content').hasAttribute('inert')).toBe(false);
+    await user.click(summary);
+    expect(details.open).toBe(false);
+  });
+
+  it('keeps native navigation out of the normal JavaScript header', () => {
+    const { container } = render(<MemoryRouter><Header /></MemoryRouter>);
+    expect(container.querySelector('details')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Toggle navigation menu' })).toBeTruthy();
+  });
+
   it('serves the 30px logo from 60px/90px derivatives in the bar and the drawer (#252)', async () => {
     const user = userEvent.setup();
     render(

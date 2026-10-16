@@ -16,6 +16,7 @@ export const artifactPaths = Object.freeze({
 const suites = Object.freeze({
   'qa-a11y.spec.js': { label: 'accessibility' },
   'qa-budget.spec.js': { label: 'budget-dropdown' },
+  'qa-card-diagrams.spec.js': { label: 'card-diagrams' },
   'qa-consent.spec.js': { label: 'consent' },
   'qa-contact.spec.js': { label: 'contact-validation' },
   'qa-cursor.spec.js': { label: 'cursor-availability' },
@@ -29,6 +30,9 @@ const suites = Object.freeze({
   'qa-responsive.spec.js': { label: 'responsive-layout' },
   'qa-route-recovery.spec.js': { label: 'route-recovery' },
   'qa-service-loading.spec.js': { label: 'service-loading' },
+  'qa-static-contact.spec.js': { label: 'static-contact' },
+  'qa-static-home.spec.js': { label: 'static-home' },
+  'qa-static-policies.spec.js': { label: 'static-policies' },
   'qa-routes.spec.js': { label: 'routing' },
   'qa-testimonials.spec.js': { label: 'testimonials-carousel' },
   'qa-upgrade-interactions.spec.js': { label: 'upgrade-interactions' },
