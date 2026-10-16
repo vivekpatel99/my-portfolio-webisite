@@ -145,6 +145,12 @@ const Testimonials = () => {
                             if (cardGesture.current) cardGesture.current.cancelled = true;
                         }}
                         onClick={handleCardClick}
+                        onKeyDown={(event) => {
+                            if (event.target !== event.currentTarget || event.defaultPrevented
+                                || (event.key !== 'Enter' && event.key !== ' ')) return;
+                            event.preventDefault();
+                            if (!event.repeat) profileLinkRef.current?.click();
+                        }}
                     >
                         <DetectionLabel>
                             TESTIMONIAL · <b className="font-medium">{testimonial.clientName}</b>

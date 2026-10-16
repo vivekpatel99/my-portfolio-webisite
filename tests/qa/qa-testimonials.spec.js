@@ -337,7 +337,7 @@ test('a manually chosen slide stays stopped after reduced motion is switched off
   await expect(counter).toHaveText(counterFor(1));
 });
 
-test('the card opens the exact public profile by pointer and its footer link by keyboard', async ({ page, context, hasTouch }) => {
+test('the card opens the exact public profile by pointer, Enter and Space; footer stays native', async ({ page, context, hasTouch }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await context.route(socialLinks.upwork, (route) => route.fulfill({
     contentType: 'text/html', body: '<title>Local profile destination check</title>',
@@ -356,6 +356,11 @@ test('the card opens the exact public profile by pointer and its footer link by 
   await openProfile(() => hasTouch ? card.tap({ position: { x: 12, y: 20 } }) : card.click({ position: { x: 12, y: 20 } }));
   await slides.nth(7).click();
   await expect(card.locator('.source')).toHaveText('Direct');
+  for (const key of ['Enter', 'Space']) {
+    await card.focus();
+    await expect(card).toBeFocused();
+    await openProfile(() => page.keyboard.press(key));
+  }
   await card.focus();
   await page.keyboard.press('Tab');
   await expect(link).toBeFocused();

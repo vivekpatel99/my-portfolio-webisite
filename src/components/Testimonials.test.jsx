@@ -289,6 +289,19 @@ describe('Testimonials Carousel', () => {
     expect(forward).not.toHaveBeenCalled();
   });
 
+  it.each(['Enter', ' '])('opens the profile once when the focused card receives %s', (key) => {
+    render(<Testimonials />);
+    const card = slideRegion();
+    const link = screen.getByRole('link');
+    const openProfile = vi.spyOn(link, 'click').mockImplementation(() => {});
+    fireEvent.keyDown(card, { key });
+    expect(openProfile).toHaveBeenCalledTimes(1);
+    fireEvent.keyDown(card, { key, repeat: true });
+    fireEvent.keyDown(link, { key });
+    fireEvent.keyDown(card, { key: 'ArrowRight' });
+    expect(openProfile).toHaveBeenCalledTimes(1);
+  });
+
   it('keeps Direct sources separate and omits missing dates', () => {
     render(<Testimonials />);
     fireEvent.click(slideButtons()[7]);
