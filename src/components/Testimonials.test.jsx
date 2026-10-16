@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import React from 'react';
-import { render, screen, cleanup, fireEvent, act } from '@testing-library/react';
+import { render, screen, cleanup, fireEvent, createEvent, act } from '@testing-library/react';
 import { describe, expect, it, vi, afterEach, beforeEach } from 'vitest';
 import Testimonials from './Testimonials';
 import { testimonials } from '@/data/testimonials';
@@ -163,9 +163,10 @@ describe('Testimonials Carousel', () => {
     const dates = ['September 2026', 'June 2026', 'May 2026', 'April 2026', 'March 2026', 'January 2026', 'January 2026'];
     dates.forEach((date, index) => {
       fireEvent.click(slideButtons()[index]);
-      const link = screen.getByRole('link', { name: "View Vivek Patel's Upwork profile for this review" });
+      const link = screen.getByRole('link', { name: 'View my Upwork profile (opens in a new tab)' });
       expect(link.getAttribute('href')).toBe(socialLinks.upwork);
-      expect(link.textContent).toBe('Upwork profile');
+      expect(link.textContent).toBe('View my Upwork profile (opens in a new tab)');
+      expect(document.querySelector('.source').textContent).toBe('Upwork');
       expect(link.tabIndex).toBe(0);
       const time = document.querySelector('#testimonials time');
       expect(time.textContent).toBe(date);
@@ -175,15 +176,128 @@ describe('Testimonials Carousel', () => {
     });
   });
 
+  it('gives every slide one short native footer link with independently readable quote and metadata', () => {
+    render(<Testimonials />);
+    testimonials.forEach((review, index) => {
+      fireEvent.click(slideButtons()[index]);
+      const links = screen.getAllByRole('link');
+      expect(links).toHaveLength(1);
+      const link = screen.getByRole('link', { name: 'View my Upwork profile (opens in a new tab)' });
+      expect(link.getAttribute('href')).toBe(socialLinks.upwork);
+      expect(link.getAttribute('target')).toBe('_blank');
+      expect(link.getAttribute('rel')).toBe('noopener noreferrer');
+      expect(link.textContent).toBe('View my Upwork profile (opens in a new tab)');
+      expect(link.hasAttribute('aria-labelledby')).toBe(false);
+      expect(link.tabIndex).toBe(0);
+      const card = slideRegion();
+      expect(card.querySelector('blockquote').textContent).toContain(review.content);
+      expect(card.querySelector('.source').textContent).toBe(review.source);
+      for (const content of card.querySelectorAll('blockquote, .source, time, article, [role=img]')) {
+        expect(link.contains(content)).toBe(false);
+      }
+      expect(link.querySelector('a, button, [tabindex]')).toBeNull();
+      slideButtons().forEach((button) => expect(link.contains(button)).toBe(false));
+    });
+  });
+
+  it('cancels selected, moved and cancelled pointer clicks anywhere in the card, then consumes the gesture state', () => {
+    render(<Testimonials />);
+    const link = screen.getByRole('link');
+    const quote = slideRegion().querySelector('blockquote');
+    const cue = link;
+    vi.spyOn(link, 'click').mockImplementation(() => {});
+    const pointer = (type, target, x = 20, y = 20) => {
+      // Supply coordinates even on jsdom versions without a native PointerEvent.
+      const event = new Event(type, { bubbles: true });
+      Object.assign(event, { clientX: x, clientY: y, pointerType: 'touch' });
+      fireEvent(target, event);
+    };
+    const clickWasCancelled = (target, detail = 1) => {
+      const event = createEvent.click(target, { detail, cancelable: true });
+      // Inspect cancellation after React's handler, then prevent jsdom navigation.
+      let cancelled;
+      const observe = (click) => { cancelled = click.defaultPrevented; click.preventDefault(); };
+      document.addEventListener('click', observe, { once: true });
+      fireEvent(target, event);
+      return cancelled;
+    };
+
+    for (const target of [quote, cue]) {
+      pointer('pointerdown', target);
+      const range = document.createRange();
+      range.selectNodeContents(quote);
+      window.getSelection().addRange(range);
+      expect(clickWasCancelled(target)).toBe(true);
+      expect(clickWasCancelled(target, 0)).toBe(false);
+      window.getSelection().removeAllRanges();
+
+      pointer('pointerdown', target);
+      pointer('pointermove', target, 40);
+      pointer('pointerup', target); // Returning to the start does not erase the drag.
+      expect(clickWasCancelled(target)).toBe(true);
+
+      pointer('pointerdown', target);
+      pointer('pointerup', target, 20, 40);
+      expect(clickWasCancelled(target)).toBe(true);
+
+      pointer('pointerdown', target);
+      pointer('pointercancel', target);
+      expect(clickWasCancelled(target)).toBe(true);
+      expect(clickWasCancelled(target)).toBe(false); // Cancelled state was consumed.
+      expect(clickWasCancelled(target, 0)).toBe(false); // Native keyboard activation.
+
+      pointer('pointerdown', target);
+      pointer('pointerup', target, 25);
+      expect(clickWasCancelled(target)).toBe(false);
+    }
+  });
+
+  it('forwards ordinary card clicks once, while footer activation stays native', () => {
+    render(<Testimonials />);
+    const link = screen.getByRole('link');
+    const nativeClick = vi.spyOn(link, 'click');
+    const activations = vi.fn();
+    link.addEventListener('click', activations);
+    // Cancel navigation after React handles the event so the native-link branch is exercised.
+    const preventNavigation = (event) => event.preventDefault();
+    document.addEventListener('click', preventNavigation);
+    try {
+      fireEvent.click(slideRegion().querySelector('blockquote'), { detail: 1 });
+      expect(nativeClick).toHaveBeenCalledTimes(1);
+      expect(activations).toHaveBeenCalledTimes(1);
+      fireEvent.click(link.querySelector('.sr-only'), { detail: 1 });
+      expect(nativeClick).toHaveBeenCalledTimes(1);
+      expect(activations).toHaveBeenCalledTimes(2);
+    } finally {
+      document.removeEventListener('click', preventNavigation);
+    }
+  });
+
+  it('does not forward default-prevented, modified, middle or keyboard clicks on the group', () => {
+    render(<Testimonials />);
+    const link = screen.getByRole('link');
+    const forward = vi.spyOn(link, 'click').mockImplementation(() => {});
+    const quote = slideRegion().querySelector('blockquote');
+    const prevented = createEvent.click(quote, { detail: 1 });
+    prevented.preventDefault();
+    fireEvent(quote, prevented);
+    for (const modifier of ['metaKey', 'ctrlKey', 'shiftKey', 'altKey']) {
+      fireEvent.click(quote, { detail: 1, [modifier]: true });
+    }
+    fireEvent.click(quote, { detail: 1, button: 1 });
+    fireEvent.click(slideRegion(), { detail: 0 });
+    expect(forward).not.toHaveBeenCalled();
+  });
+
   it('keeps Direct sources separate and omits missing dates', () => {
     render(<Testimonials />);
     fireEvent.click(slideButtons()[7]);
-    expect(screen.queryByRole('link')).toBeNull();
+    expect(screen.getByRole('link').getAttribute('href')).toBe(socialLinks.upwork);
     expect(screen.getByText('Direct')).toBeTruthy();
     expect(document.querySelector('#testimonials time').textContent).toBe('October 2025');
     for (const index of [8, 9]) {
       fireEvent.click(slideButtons()[index]);
-      expect(screen.queryByRole('link')).toBeNull();
+      expect(screen.getByRole('link').getAttribute('href')).toBe(socialLinks.upwork);
       expect(document.querySelector('#testimonials time')).toBeNull();
       expect(screen.getByText('Direct')).toBeTruthy();
     }
@@ -265,7 +379,7 @@ describe('Testimonials carousel controls (#225)', () => {
   it('holds rotation and enables polite announcements while the source link has focus', () => {
     installMotionPreference(false);
     render(<Testimonials />);
-    const link = screen.getByRole('link', { name: "View Vivek Patel's Upwork profile for this review" });
+    const link = screen.getByRole('link', { name: 'View my Upwork profile (opens in a new tab)' });
     fireEvent.focus(slideRegion());
     fireEvent.blur(slideRegion(), { relatedTarget: link });
     fireEvent.focus(link);

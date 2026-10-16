@@ -1,3 +1,4 @@
+import './Testimonials.css';
 import React, { useState, useEffect, useRef, useId } from 'react';
 import { Star } from 'lucide-react';
 import { testimonials } from '@/data/testimonials';
@@ -17,6 +18,8 @@ const getReducedMotionQuery = () => (
 
 const Testimonials = () => {
     const starGradientId = useId();
+    const profileLinkRef = useRef(null);
+    const cardGesture = useRef(null);
     const [activeIndex, setActiveIndex] = useState(0);
     const [prefersReducedMotion, setPrefersReducedMotion] = useState(
         () => getReducedMotionQuery()?.matches ?? false
@@ -76,6 +79,32 @@ const Testimonials = () => {
         }
     };
 
+    const trackCardMovement = (event) => {
+        const gesture = cardGesture.current;
+        if (gesture && Math.hypot(event.clientX - gesture.x, event.clientY - gesture.y) > 10) {
+            gesture.cancelled = true;
+        }
+    };
+    const handleCardClick = (event) => {
+        const gesture = cardGesture.current;
+        cardGesture.current = null;
+        // Keyboard activation stays native, even if text remains selected.
+        if (event.detail === 0 || event.defaultPrevented) return;
+        const selection = window.getSelection();
+        const selectingCardText = selection && !selection.isCollapsed
+            && (event.currentTarget.contains(selection.anchorNode)
+                || event.currentTarget.contains(selection.focusNode));
+        if (gesture?.cancelled || selectingCardText) {
+            event.preventDefault();
+            return;
+        }
+        // Footer clicks keep native modified-click behavior and must not be forwarded twice.
+        if (event.target.closest('a')) return;
+        if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+            profileLinkRef.current?.click();
+        }
+    };
+
     const testimonial = testimonials[activeIndex];
 
     return (
@@ -106,7 +135,16 @@ const Testimonials = () => {
                         aria-label={`${activeIndex + 1} of ${testimonials.length}`}
                         aria-live={isRotating ? 'off' : 'polite'}
                         tabIndex={0}
-                        className="field detection-panel relative min-h-[337px] flex flex-col focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a78bfa] transition-colors"
+                        className="field testimonial-card detection-panel relative min-h-[337px] flex flex-col min-w-0 transition-colors motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a78bfa]"
+                        onPointerDown={(event) => {
+                            cardGesture.current = { x: event.clientX, y: event.clientY, cancelled: false };
+                        }}
+                        onPointerMove={trackCardMovement}
+                        onPointerUp={trackCardMovement}
+                        onPointerCancel={() => {
+                            if (cardGesture.current) cardGesture.current.cancelled = true;
+                        }}
+                        onClick={handleCardClick}
                     >
                         <DetectionLabel>
                             TESTIMONIAL · <b className="font-medium">{testimonial.clientName}</b>
@@ -144,19 +182,17 @@ const Testimonials = () => {
                                 <div className="identity min-w-0">
                                     <strong className="text-sm font-[650]">{testimonial.clientName}</strong>
                                     <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mt-2 text-xs text-[#9ca3af]">
-                                        {testimonial.source === 'Upwork' ? (
-                                            <a
-                                                href={socialLinks.upwork}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                aria-label="View Vivek Patel's Upwork profile for this review"
-                                                className="source text-[#a78bfa] underline underline-offset-4 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a78bfa]"
-                                            >
-                                                Upwork profile
-                                            </a>
-                                        ) : testimonial.source ? (
-                                            <span className="source">{testimonial.source}</span>
-                                        ) : null}
+                                        {testimonial.source ? <span className="source">{testimonial.source}</span> : null}
+                                        <a
+                                            ref={profileLinkRef}
+                                            href={socialLinks.upwork}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            tabIndex={0}
+                                            className="testimonial-link text-[#a78bfa] underline underline-offset-4"
+                                        >
+                                            View my Upwork profile{' '}<span className="sr-only">(opens in a new tab)</span>
+                                        </a>
                                         {testimonial.feedbackDate ? (
                                             <span>
                                                 Feedback · <time dateTime={testimonial.feedbackDate.slice(0, 7)}>
@@ -174,7 +210,6 @@ const Testimonials = () => {
                                 </div>
                             </footer>
                         </article>
-
                     </div>
 
                     {/* Diamonds are decorative marks inside unrotated, larger hit targets. */}

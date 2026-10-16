@@ -69,6 +69,8 @@ test('tapping the quote holds focus but resumes rotation when focus leaves witho
   test.setTimeout(60_000);
   const { counter, quote } = await openCarousel(page);
 
+  // Exercise touch compatibility events without opening the external profile in this focus test.
+  await quote.evaluate((element) => element.addEventListener('click', (event) => event.preventDefault(), { once: true }));
   await quote.tap();
   await quote.focus();
   await expect(quote).toBeFocused();
@@ -93,7 +95,7 @@ test('keyboard traversal reaches quote and slides; chosen slide persists 20s', a
   await quote.focus();
   await expect(quote).toBeFocused();
   await page.keyboard.press('Tab');
-  await expect(carousel.getByRole('link', { name: "View Vivek Patel's Upwork profile for this review" })).toBeFocused();
+  await expect(carousel.getByRole('link', { name: 'View my Upwork profile (opens in a new tab)' })).toBeFocused();
   for (let index = 0; index < slideCount; index += 1) {
     await page.keyboard.press('Tab');
     await expect(slides.nth(index)).toBeFocused();
@@ -251,17 +253,18 @@ for (const width of [320, 390]) {
       await slides.nth(index).click();
       await expect(quote.locator('blockquote')).toContainText(review.content);
       await expect(quote).toContainText(review.clientName);
-      const source = carousel.getByRole('link', { name: "View Vivek Patel's Upwork profile for this review" });
-      if (review.source === 'Upwork') {
-        await expect(source).toHaveAttribute('href', socialLinks.upwork);
-        await quote.focus();
-        await page.keyboard.press('Tab');
-        await expect(source).toBeFocused();
-        await expectWithinViewport(source);
-      } else {
-        await expect(source).toHaveCount(0);
-        await expect(quote.getByText('Direct', { exact: true })).toBeVisible();
-      }
+      const source = carousel.getByRole('link', { name: 'View my Upwork profile (opens in a new tab)' });
+      await expect(source).toHaveAttribute('href', socialLinks.upwork);
+      await expect(source).toHaveAttribute('target', '_blank');
+      await expect(source).toHaveAttribute('rel', 'noopener noreferrer');
+      await expect(quote.getByRole('link')).toHaveCount(1);
+      await expect(source.locator('a, button, [tabindex]')).toHaveCount(0);
+      await expect(quote.locator('.source')).toHaveText(review.source);
+      await quote.focus();
+      await page.keyboard.press('Tab');
+      await expect(source).toBeFocused();
+      await expectWithinViewport(source);
+      await expectWithinViewport(quote);
       const date = quote.locator('time');
       if (review.feedbackDate) {
         await expect(date).toHaveAttribute('datetime', review.feedbackDate.slice(0, 7));
@@ -332,4 +335,63 @@ test('a manually chosen slide stays stopped after reduced motion is switched off
   await leaveCarousel(page);
   await page.clock.runFor(PERSISTENT_PAUSE_MS);
   await expect(counter).toHaveText(counterFor(1));
+});
+
+test('the card opens the exact public profile by pointer and its footer link by keyboard', async ({ page, context, hasTouch }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await context.route(socialLinks.upwork, (route) => route.fulfill({
+    contentType: 'text/html', body: '<title>Local profile destination check</title>',
+  }));
+  const { carousel, slides } = await openCarousel(page);
+  const card = carousel.locator('.testimonial-card');
+  const link = card.getByRole('link', { name: 'View my Upwork profile (opens in a new tab)' });
+  const openProfile = async (activateCard) => {
+    const popupPromise = page.waitForEvent('popup');
+    await activateCard();
+    const popup = await popupPromise;
+    await popup.waitForURL(socialLinks.upwork);
+    expect(await popup.evaluate(() => window.opener)).toBeNull();
+    await popup.close();
+  };
+  await openProfile(() => hasTouch ? card.tap({ position: { x: 12, y: 20 } }) : card.click({ position: { x: 12, y: 20 } }));
+  await slides.nth(7).click();
+  await expect(card.locator('.source')).toHaveText('Direct');
+  await card.focus();
+  await page.keyboard.press('Tab');
+  await expect(link).toBeFocused();
+  await openProfile(() => page.keyboard.press('Enter'));
+  await expect(card.locator('blockquote')).toContainText(testimonialData[7].content);
+});
+
+test('dragging review text selects it without opening the profile; middle click remains native', async ({ page, context, hasTouch }) => {
+  test.skip(hasTouch, 'Mouse text selection and middle click are desktop interactions.');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await context.route(socialLinks.upwork, (route) => route.fulfill({
+    contentType: 'text/html', body: '<title>Local profile destination check</title>',
+  }));
+  const { carousel } = await openCarousel(page);
+  const card = carousel.locator('.testimonial-card');
+  const link = card.getByRole('link');
+  await card.locator('blockquote').scrollIntoViewIfNeeded();
+  const textPoints = await card.locator('blockquote').evaluate((quote) => {
+    const text = quote.childNodes[1];
+    const range = document.createRange();
+    range.setStart(text, 2);
+    range.setEnd(text, 12);
+    const rect = range.getClientRects()[0];
+    return { startX: rect.left + 1, endX: rect.right - 1, y: rect.top + rect.height / 2 };
+  });
+  const initialPages = context.pages().length;
+  await page.mouse.move(textPoints.startX, textPoints.y);
+  await page.mouse.down();
+  await page.mouse.move(textPoints.endX, textPoints.y, { steps: 12 });
+  await page.mouse.up();
+  expect(await page.evaluate(() => getSelection().toString().length)).toBeGreaterThan(0);
+  expect(context.pages()).toHaveLength(initialPages);
+  await page.evaluate(() => getSelection().removeAllRanges());
+  const popupPromise = context.waitForEvent('page');
+  await link.click({ button: 'middle' });
+  const popup = await popupPromise;
+  await popup.waitForURL(socialLinks.upwork);
+  await popup.close();
 });
