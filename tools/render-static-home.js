@@ -1,7 +1,7 @@
 import path from 'node:path';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { StaticRouter } from 'react-router-dom/server.js';
+import { StaticRouter } from 'react-router-dom';
 import { LazyMotion, domAnimation } from 'framer-motion';
 import { Helmet } from 'react-helmet';
 import { createServer } from 'vite';
@@ -17,6 +17,8 @@ async function renderStaticPage(pagePath, location, { staticNavigation = false }
     resolve: { alias: { '@': path.resolve('src') } },
     server: { middlewareMode: true, hmr: false, watch: null },
     optimizeDeps: { noDiscovery: true },
+    // Match Node 24's ESM entry for React Router's conditional exports.
+    ssr: { resolve: { externalConditions: ['node', 'module-sync'] } },
   });
   try {
     const [{ default: Page }, { default: Header }, { default: SkipLink }] = await Promise.all([

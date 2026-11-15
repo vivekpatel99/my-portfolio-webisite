@@ -9,7 +9,8 @@ import '@/components/DetectionFrame.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <ErrorBoundary>
-      <BrowserRouter>
+      {/* Preserve synchronous navigation and native history restoration during the v7 upgrade. */}
+      <BrowserRouter useTransitions={false}>
         <ScrollToTop />
         <App />
       </BrowserRouter>
