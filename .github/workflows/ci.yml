@@ -82,10 +82,7 @@ jobs:
             exit 1
           fi
 
-          if grep -RInE '(https?|wss?)://(localhost|127\.0\.0\.1|0\.0\.0\.0|\[::1\])(:[0-9]+)?|https?:\\?/\\?/(yourserver\.io|(placeholder|your-deployment|example)[-.a-z0-9]*\.convex\.cloud)' dist; then
-            echo "::error title=Unsafe backend URL found::Fresh dist must not contain local or placeholder backend URLs."
-            exit 1
-          fi
+          node tools/check-production-urls.js dist
       - name: Ensure generated dist is not tracked
         shell: bash
         run: |

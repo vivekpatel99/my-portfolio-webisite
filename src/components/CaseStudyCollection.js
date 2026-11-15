@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useRef, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 import { useLocation, useNavigate, useNavigationType } from 'react-router-dom';
 import { collectionCaseStudies } from '../data/caseStudies.js';
 import {
@@ -22,8 +22,8 @@ const initialVisibleCount = (storyCount) => {
   return Math.min(loadedCount, storyCount);
 };
 
-// Article departures capture the current position for explicit returns and back/forward.
-// Entries without a snapshot keep native browser scroll restoration.
+// Native back/forward keeps browser scroll restoration. Explicit article returns use
+// a position captured at article navigation, rather than the earlier Load more position.
 const persistLoadedPage = (loadedCount) => {
   if (typeof history === 'undefined' || typeof history.replaceState !== 'function') return;
   history.replaceState({ ...historyRecord(), loadedCount }, '');
@@ -39,7 +39,6 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies, children = null 
     && typeof window !== 'undefined'
     && Boolean(window.history.state?.caseStudyCollection)
   );
-  const restoreArticleDeparture = useRef(restorableEntry && !resumeRequested);
   const [initialState] = useState(() => (
     restorableEntry
       ? getInitialBrowsingState({
@@ -93,13 +92,6 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies, children = null 
     navigate({ pathname: location.pathname, search: search ? `?${search}` : '', hash: location.hash }, { replace: true, state: location.state });
     window.history.replaceState({ ...window.history.state, loadedCount: initialState.loadedCount, caseStudyCollection: initialState }, '');
   }, [initialState, resumeRequested, location, navigate]);
-
-  useEffect(() => {
-    if (restoreArticleDeparture.current) {
-      // Router transitions can commit after WebKit attempts native restoration.
-      window.scrollTo({ top: initialState.scrollY, left: 0, behavior: 'instant' });
-    }
-  }, [initialState]);
 
   const saveBeforeArticle = (event) => {
     const link = event.target?.closest?.('a[href]');

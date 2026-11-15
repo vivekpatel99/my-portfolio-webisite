@@ -150,12 +150,12 @@ describe('CaseStudyCollection', () => {
     expect(JSON.parse(window.sessionStorage.getItem(CASE_STUDY_BROWSING_STORAGE_KEY))).toEqual({ loadedCount: 12, scrollY: 0 });
   });
 
-  it('restores an article departure snapshot after back navigation commits', () => {
+  it('leaves native restoration intact for a collection entry with a generic snapshot', () => {
     const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
-    window.history.replaceState({ caseStudyCollection: { loadedCount: 12, scrollY: 1388 } }, '');
+    window.history.replaceState({ caseStudyCollection: { loadedCount: 12, scrollY: 0 } }, '');
     render(<MemoryRouter initialEntries={['/case-studies/']}><CaseStudyCollection stories={manyStories(12)} /></MemoryRouter>);
-    expect(screen.getAllByRole('link', { name: /Read case study:/ })).toHaveLength(12);
-    expect(scrollTo).toHaveBeenCalledWith({ top: 1388, left: 0, behavior: 'instant' });
+    expect(screen.getAllByRole('article')).toHaveLength(12);
+    expect(scrollTo).not.toHaveBeenCalled();
     scrollTo.mockRestore();
   });
 
