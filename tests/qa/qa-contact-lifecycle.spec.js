@@ -282,6 +282,7 @@ async function openServiceInquiry(page, service) {
   // A lazy service navigation can still show the homepage's two estimate links.
   // Wait for the intended service destination before activating its CTA.
   await expect(page).toHaveURL(new RegExp(`/services/${service.id}/?$`));
+  await expect(page.getByRole('heading', { name: service.title, exact: true, level: 1 })).toBeVisible();
   const link = page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true });
   await expect(link).toHaveAccessibleName('Request a Project Estimate');
   await link.click();
@@ -441,6 +442,22 @@ for (const { scenario, name, email, title, description } of [
     expect(transport.state.mutations).toHaveLength(0);
   });
 }
+
+test('preserves native collection scroll after leaving through the footer', async ({ page, contactTransport: transport }) => {
+  await page.goto('/case-studies/');
+  await page.getByRole('button', { name: 'Load more', exact: true }).click();
+  const cards = page.locator('[id^="case-study-grid-"]').getByRole('link', { name: /Read case study:/ });
+  await expect(cards).toHaveCount(12);
+  const contactLink = page.getByRole('contentinfo').getByRole('link', { name: 'Contact Me', exact: true });
+  await contactLink.scrollIntoViewIfNeeded();
+  const departureY = await page.evaluate(() => window.scrollY);
+  await contactLink.click();
+  await expect(page.getByLabel('Full Name *')).toBeVisible();
+  await page.goBack();
+  await expect(cards).toHaveCount(12);
+  await expect.poll(async () => Math.abs((await page.evaluate(() => window.scrollY)) - departureY)).toBeLessThanOrEqual(100);
+  expect(transport.state.mutations).toHaveLength(0);
+});
 
 test('preserves a dirty draft through featured and collection article navigation', async ({ page, contactTransport: transport }) => {
   await page.goto('/contact/');

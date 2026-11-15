@@ -2,7 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 import path from 'path';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { StaticRouter } from 'react-router-dom/server.js';
+import { StaticRouter } from 'react-router-dom';
 import { absoluteUrl, routeSeo, SITE_NAME } from '../src/lib/seoConfig.js';
 import { getCaseStudyBySlug } from '../src/data/caseStudies.js';
 import CaseStudyArticle from '../src/components/CaseStudyArticle.js';

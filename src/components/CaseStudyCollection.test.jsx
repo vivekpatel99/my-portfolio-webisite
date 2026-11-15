@@ -5,7 +5,7 @@ import React from 'react';
 import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router-dom';
-import { StaticRouter } from 'react-router-dom/server';
+import { StaticRouter } from 'react-router-dom';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { CASE_STUDY_BROWSING_STORAGE_KEY, clearBrowsingState } from '../lib/caseStudyBrowsing.js';
@@ -148,6 +148,15 @@ describe('CaseStudyCollection', () => {
     await user.click(screen.getByRole('button', { name: 'Load more' }));
     expect(window.history.state.caseStudyCollection).toEqual({ loadedCount: 12, scrollY: 0 });
     expect(JSON.parse(window.sessionStorage.getItem(CASE_STUDY_BROWSING_STORAGE_KEY))).toEqual({ loadedCount: 12, scrollY: 0 });
+  });
+
+  it('leaves native restoration intact for a collection entry with a generic snapshot', () => {
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    window.history.replaceState({ caseStudyCollection: { loadedCount: 12, scrollY: 0 } }, '');
+    render(<MemoryRouter initialEntries={['/case-studies/']}><CaseStudyCollection stories={manyStories(12)} /></MemoryRouter>);
+    expect(screen.getAllByRole('article')).toHaveLength(12);
+    expect(scrollTo).not.toHaveBeenCalled();
+    scrollTo.mockRestore();
   });
 
   it('resume=1 with history snapshot prefers snapshot over stale session', () => {
