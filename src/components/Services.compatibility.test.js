@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 import { renderToStaticMarkup } from 'react-dom/server';
 import * as router from 'react-router-dom';
-import { StaticRouter } from 'react-router-dom/server';
+import { StaticRouter } from 'react-router-dom';
 import { expect, it } from 'vitest';
 import { transformWithEsbuild } from 'vite';
 import * as frames from './DetectionFrame';

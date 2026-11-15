@@ -282,6 +282,7 @@ async function openServiceInquiry(page, service) {
   // A lazy service navigation can still show the homepage's two estimate links.
   // Wait for the intended service destination before activating its CTA.
   await expect(page).toHaveURL(new RegExp(`/services/${service.id}/?$`));
+  await expect(page.getByRole('heading', { name: service.title, exact: true, level: 1 })).toBeVisible();
   const link = page.locator('main').getByRole('link', { name: 'Request a Project Estimate', exact: true });
   await expect(link).toHaveAccessibleName('Request a Project Estimate');
   await link.click();

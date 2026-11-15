@@ -4,7 +4,7 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { imageSize } from 'image-size';
 import React from 'react';
-import { StaticRouter } from 'react-router-dom/server.js';
+import { StaticRouter } from 'react-router-dom';
 import postcss from 'postcss';
 import tailwindcss from 'tailwindcss';
 import CaseStudyCard from '../src/components/CaseStudyCard.js';
