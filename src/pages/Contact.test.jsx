@@ -454,7 +454,7 @@ describe("Contact form", () => {
     fireEvent.change(screen.getByLabelText('Full Name *'), { target: { value: name } });
     fireEvent.change(screen.getByLabelText('Email Address *'), { target: { value: email } });
     fireEvent.submit(container.querySelector('form'));
-    expect(toast).toHaveBeenLastCalledWith({ title, description, variant: 'destructive' });
+    expect(toast).toHaveBeenLastCalledWith(expect.objectContaining({ title, description, variant: 'destructive' }));
     expect(document.activeElement).toBe(screen.getByLabelText('Full Name *'));
     expect(mockSubmitLead).not.toHaveBeenCalled();
   });

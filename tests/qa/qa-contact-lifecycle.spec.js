@@ -816,12 +816,13 @@ test('switching Contact to German preserves a pending draft, query, and budget t
   const email = form.getByLabel('E-Mail-Adresse *');
   const description = form.getByLabel('Projektbeschreibung *');
   const budget = form.getByRole('button', { name: /^Budgetrahmen / });
+  const budgetValue = form.locator('input[name="budget"]');
   const submit = form.locator('button[type="submit"]');
   await expect(name).toHaveValue('Synthetic QA Contact');
   await expect(email).toHaveValue('qa-contact@example.invalid');
   await expect(description).toHaveValue('Synthetic transport lifecycle test.');
   await expect(budget).toHaveText(/5\.000 € – 10\.000 €/);
-  await expect(budget).toHaveValue(SELECTED_BUDGET);
+  await expect(budgetValue).toHaveValue(SELECTED_BUDGET);
   await expect(submit).toBeDisabled();
   await expect(submit).toHaveAccessibleName('Wird gesendet …');
 
@@ -844,7 +845,7 @@ test('switching Contact to German preserves a pending draft, query, and budget t
   await expect(name).toHaveValue('');
   await expect(email).toHaveValue('');
   await expect(description).toHaveValue('');
-  await expect(budget).toHaveValue('');
+  await expect(budgetValue).toHaveValue('');
 });
 
 test('later Contact visits retain a completed receipt without repeating outcome focus or announcement', async ({ page, contactTransport: transport }) => {

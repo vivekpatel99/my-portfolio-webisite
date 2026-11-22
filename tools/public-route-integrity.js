@@ -86,7 +86,8 @@ export const internalLinksFromHtml = (html) =>
     .filter(Boolean);
 
 export const literalPageLinksFromSource = (source) =>
-  [...source.matchAll(/\b(?:to|href)\s*[:=]\s*(["'])([^"']*)\1/g)]
+  [...source.matchAll(/\b(?:to|href)\s*[:=]\s*(["'])([^"'\r\n]*)\1/g)]
+    .filter((match) => !match[2].includes('${'))
     .map((match) => pagePathFromHref(match[2]))
     .filter(Boolean);
 
