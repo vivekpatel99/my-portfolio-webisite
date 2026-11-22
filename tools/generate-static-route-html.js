@@ -2,31 +2,24 @@ import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 import path from 'path';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { StaticRouter } from 'react-router-dom';
+import { alternatePaths, localeFromPath, translatedRoutePairs } from '../src/lib/localizedRoutes.js';
 import { absoluteUrl, routeSeo, SITE_NAME } from '../src/lib/seoConfig.js';
 import { getCaseStudyBySlug } from '../src/data/caseStudies.js';
 import CaseStudyArticle from '../src/components/CaseStudyArticle.js';
-import CaseStudiesContent from '../src/components/CaseStudiesContent.js';
-import ServiceDetailContent from '../src/components/ServiceDetailContent.js';
-import { getServiceOfferById } from '../src/data/serviceOffers.js';
 import {
   assertCaseStudyRouteSources,
   assertStaticCaseStudyRoutes,
   assertSafeStaticOutput,
   removeStaleProjectHtml,
 } from './case-study-route-integrity.js';
-import { assertPublicLinksRouted, assertServiceRouteSources } from './public-route-integrity.js';
-import {
-  renderStaticHome,
-  renderStaticContact,
-  renderStaticPrivacyPolicy,
-  renderStaticCookiePolicy,
-} from './render-static-home.js';
+import { assertLocalizedRouteSources, assertPublicLinksRouted, assertServiceRouteSources } from './public-route-integrity.js';
+import { renderStaticPages } from './render-static-home.js';
 
 const distDir = path.join(process.cwd(), 'dist');
 const deploymentHtaccess = readFileSync(path.join(process.cwd(), 'dist/.htaccess'), 'utf8');
 assertCaseStudyRouteSources({ htaccess: deploymentHtaccess });
 assertServiceRouteSources({ htaccess: deploymentHtaccess });
+assertLocalizedRouteSources();
 const staticRoutes = Object.keys(routeSeo).filter((route) => route !== '/');
 assertSafeStaticOutput(distDir, staticRoutes);
 const removedStaleProjectHtml = removeStaleProjectHtml(distDir);
@@ -124,29 +117,28 @@ function applySeo(html, seo) {
     ],
   ];
 
-  let nextHtml = html;
+  let nextHtml = html.replace(/(<html\b[^>]*\blang=)"[^"]*"/i, `$1"${localeFromPath(seo.path)}"`);
   for (const [pattern, tag] of replacements) {
     nextHtml = replaceOrInsert(nextHtml, pattern, tag);
   }
 
+  const keywordsTag = /<meta[^>]+name=["']keywords["'][^>]*>/i;
   if (seo.keywords) {
     nextHtml = replaceOrInsert(
       nextHtml,
-      /<meta[^>]+name=["']keywords["'][^>]*>/i,
+      keywordsTag,
       `<meta data-react-helmet="true" name="keywords" content="${escapeAttr(seo.keywords)}" />`,
     );
+  } else {
+    nextHtml = nextHtml.replace(/^[ \t]*<meta[^>]+name=["']keywords["'][^>]*>[ \t]*\r?\n/gmi, '');
   }
 
-  nextHtml = nextHtml.replace(/<link\b(?=[^>]*\brel=["']alternate["'])[^>]*>/gi, (tag) => {
-    const hreflang = tag.match(/\bhreflang=["']([^"']+)["']/i)?.[1];
-    if (!hreflang) {
-      return tag;
-    }
-
-    return `<link data-react-helmet="true" rel="alternate" hreflang="${escapeAttr(hreflang)}" href="${escapeAttr(url)}" />`;
-  });
-
-  return nextHtml;
+  const alternates = Object.entries(alternatePaths(seo.path)).map(([lang, route]) =>
+    `  <link data-react-helmet="true" rel="alternate" hreflang="${lang}" href="${escapeAttr(absoluteUrl(route))}" />\n`,
+  ).join('');
+  return nextHtml
+    .replace(/^[ \t]*<link\b(?=[^>]*\brel=["']alternate["'])(?=[^>]*\bhreflang=)[^>]*>[ \t]*\r?\n/gmi, '')
+    .replace('</head>', () => `${alternates}</head>`);
 }
 
 function applyNoIndex(html) {
@@ -157,51 +149,23 @@ function applyNoIndex(html) {
   );
 }
 
-const rootHtml = applySeo(indexHtml, routeSeo['/']);
 const rootMarker = '<div id="root"></div>';
-if (rootHtml.split(rootMarker).length !== 2) throw new Error('Static route shell must contain exactly one empty root element');
-const homeContent = await renderStaticHome();
-writeFileSync(indexPath, rootHtml.replace(rootMarker, () => `<div id="root"><!--static-home-->${homeContent}<!--/static-home--></div>`));
-const contactContent = await renderStaticContact();
-const privacyPolicyContent = await renderStaticPrivacyPolicy();
-const cookiePolicyContent = await renderStaticCookiePolicy();
+if (indexHtml.split(rootMarker).length !== 2) throw new Error('Static route shell must contain exactly one empty root element');
+const pairedPages = await renderStaticPages(translatedRoutePairs.flatMap(({ en, de }) => [en, de]));
+const withContent = (html, content) => html.replace(rootMarker, () => `<div id="root">${content}</div>`);
+const rootHtml = applySeo(indexHtml, routeSeo['/']);
+writeFileSync(indexPath, withContent(rootHtml, `<!--static-home-->${pairedPages.get('/')}<!--/static-home-->`));
 
 const renderStaticRoute = (route) => {
-  const html = applySeo(rootHtml, routeSeo[route]);
-  if (route === '/contact' || route === '/legal' || route === '/data-policy') {
-    const content = route === '/contact' ? contactContent
-      : route === '/legal' ? privacyPolicyContent : cookiePolicyContent;
-    const rootMarker = '<div id="root"></div>';
-    if (html.split(rootMarker).length !== 2) throw new Error('Static route shell must contain exactly one empty root element');
-    return html.replace(rootMarker, () => `<div id="root">${content}</div>`);
-  }
-  if (route.startsWith('/services/')) {
-    const service = getServiceOfferById(route.slice('/services/'.length));
-    if (!service) throw new Error(`Static service route has no service offer: ${route}`);
-    const content = renderToStaticMarkup(
-      React.createElement(StaticRouter, { location: route }, React.createElement(ServiceDetailContent, { service })),
-    );
-    const rootMarker = '<div id="root"></div>';
-    if (html.split(rootMarker).length !== 2) throw new Error('Static route shell must contain exactly one empty root element');
-    return html.replace(rootMarker, () => `<div id="root">${content}</div>`);
-  }
-  if (route === '/case-studies') {
-    const collection = renderToStaticMarkup(
-      React.createElement(StaticRouter, { location: route }, React.createElement(CaseStudiesContent)),
-    );
-    const rootMarker = '<div id="root"></div>';
-    if (html.split(rootMarker).length !== 2) throw new Error('Static route shell must contain exactly one empty root element');
-    return html.replace(rootMarker, () => `<div id="root">${collection}</div>`);
-  }
+  const html = applySeo(indexHtml, routeSeo[route]);
+  if (pairedPages.has(route)) return withContent(html, pairedPages.get(route));
   if (!route.startsWith('/project/')) return html;
   const slug = route.slice('/project/'.length);
   const story = getCaseStudyBySlug(slug);
   if (!story) throw new Error(`Static case-study route has no public story: ${route}`);
   const backHref = story.projectStatus === 'ongoing' ? '/case-studies/#in-progress' : '/case-studies/';
   const article = renderToStaticMarkup(React.createElement(CaseStudyArticle, { story, backHref }));
-  const rootMarker = '<div id="root"></div>';
-  if (html.split(rootMarker).length !== 2) throw new Error('Static route shell must contain exactly one empty root element');
-  return html.replace(rootMarker, () => `<div id="root">${article}</div>`);
+  return withContent(html, article);
 };
 
 const stripHeroPreload = (html) =>
@@ -210,10 +174,11 @@ const stripHeroPreload = (html) =>
 for (const route of staticRoutes) {
   const routeDir = path.join(distDir, route);
   mkdirSync(routeDir, { recursive: true });
-  writeFileSync(path.join(routeDir, 'index.html'), stripHeroPreload(renderStaticRoute(route)));
+  const html = renderStaticRoute(route);
+  writeFileSync(path.join(routeDir, 'index.html'), route === '/de' ? html : stripHeroPreload(html));
 }
 
-writeFileSync(path.join(distDir, '404.html'), stripHeroPreload(applyNoIndex(applySeo(rootHtml, notFoundSeo))));
+writeFileSync(path.join(distDir, '404.html'), stripHeroPreload(applyNoIndex(applySeo(indexHtml, notFoundSeo))));
 
 assertStaticCaseStudyRoutes(distDir);
 const checkedLinkCount = assertPublicLinksRouted(distDir);

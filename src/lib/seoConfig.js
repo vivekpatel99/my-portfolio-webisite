@@ -1,6 +1,7 @@
 import { caseStudySlugs, getCaseStudyBySlug } from '../data/caseStudies.js';
-import { serviceOffers, serviceRouteForId } from '../data/serviceOffers.js';
-import { HOURLY_RATE_LABEL } from '../config/pricing.js';
+import { getServiceOfferById, serviceOffers, serviceRouteForId } from '../data/serviceOffers.js';
+import { HOURLY_RATE_EUR, HOURLY_RATE_LABEL } from '../config/pricing.js';
+import { translatedRoutePairs } from './localizedRoutes.js';
 
 export const SITE_URL = 'https://www.vivekapatel.com';
 export const SITE_NAME = 'Vivek Patel';
@@ -35,7 +36,7 @@ export const normalizeSitePath = (pathOrUrl = '/') => {
   return `${path.replace(/\/+$/, '')}/`;
 };
 
-export const routeSeo = {
+const englishSeo = {
   '/': defaultSeo,
   '/contact': {
     title: 'Contact | Vivek Patel, AI & Computer Vision Engineer',
@@ -100,6 +101,46 @@ export const routeSeo = {
       ];
     }),
   ),
+};
+
+const germanSeo = {
+  '/': {
+    title: 'Vivek Patel | Freelancer für KI und Computer Vision',
+    description: `Freelancer für KI und Computer Vision aus Linz, Österreich, mit Kunden weltweit. Dokumentenextraktion, n8n-Automatisierung und Computer Vision für Rechnungen, Webdaten und Videos. Top Rated Plus auf Upwork. ${HOURLY_RATE_EUR} € pro Stunde.`,
+  },
+  '/contact': {
+    title: 'Kontakt | Vivek Patel, KI und Computer Vision',
+    description: `Besprechen Sie Ihren Workflow und fragen Sie eine Kostenschätzung für Ihr Projekt an. Vivek Patel arbeitet als Freelancer für Computer Vision, Web Scraping und n8n-Automatisierung aus Linz, Österreich, mit Kunden weltweit. ${HOURLY_RATE_EUR} € pro Stunde.`,
+  },
+  '/legal': {
+    title: 'Datenschutzerklärung | Vivek Patel',
+    description: 'Wie vivekapatel.com personenbezogene Daten gemäß DSGVO erhebt, verwendet und schützt.',
+  },
+  '/data-policy': {
+    title: 'Cookie-Richtlinie | Vivek Patel',
+    description: 'Welche Cookies vivekapatel.com verwendet, wozu sie dienen und wie Sie sie verwalten können.',
+  },
+  '/case-studies': {
+    title: 'Fallstudien | Vivek Patel, KI und Computer Vision',
+    description: 'Ausgewählte Fallstudien zu KI, Automatisierung, Datenextraktion und Computer Vision von Vivek Patel.',
+  },
+  ...Object.fromEntries(serviceOffers.map(({ id }) => {
+    const service = getServiceOfferById(id, 'de');
+    return [serviceRouteForId(id), {
+      title: `${service.name} | Vivek Patel`,
+      description: service.summary,
+    }];
+  })),
+};
+
+export const routeSeo = {
+  ...englishSeo,
+  ...Object.fromEntries(translatedRoutePairs.map(({ en, de }) => [de, {
+    type: englishSeo[en].type,
+    image: englishSeo[en].image,
+    ...germanSeo[en],
+    path: de,
+  }])),
 };
 
 export const absoluteUrl = (pathOrUrl = '/') => {

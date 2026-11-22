@@ -1,22 +1,27 @@
 import './Testimonials.css';
 import React, { useState, useEffect, useRef, useId } from 'react';
 import { Star } from 'lucide-react';
+import { useLocale } from '@/lib/locale.js';
 import { testimonials } from '@/data/testimonials';
 import { socialLinks } from '@/config/links';
 import { DetectionHeading, DetectionLabel } from './DetectionFrame';
 
 const INTERVAL = 6000;
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
-// Keep the English site's month/year stable across visitor and build time zones.
-const feedbackDateFormatter = new Intl.DateTimeFormat('en-GB', {
-    month: 'long', year: 'numeric', timeZone: 'UTC',
-});
+// Keep month/year stable across visitor and build time zones.
+const dateOptions = { month: 'long', year: 'numeric', timeZone: 'UTC' };
+const feedbackDateFormatters = {
+    en: new Intl.DateTimeFormat('en-GB', dateOptions),
+    de: new Intl.DateTimeFormat('de-AT', dateOptions),
+};
 
 const getReducedMotionQuery = () => (
     typeof window === 'undefined' ? null : window.matchMedia?.(REDUCED_MOTION_QUERY) ?? null
 );
 
 const Testimonials = () => {
+    const locale = useLocale();
+    const german = locale === 'de';
     const starGradientId = useId();
     const profileLinkRef = useRef(null);
     const cardGesture = useRef(null);
@@ -106,24 +111,26 @@ const Testimonials = () => {
     };
 
     const testimonial = testimonials[activeIndex];
+    const clientName = german && testimonial.clientName === 'Upwork Client'
+        ? 'Upwork-Kunde' : testimonial.clientName;
 
     return (
         <section id="testimonials" className="section relative py-[92px] px-5 sm:px-12 overflow-hidden bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.035),transparent_42%),#0C0D0D]">
             <div className="inner relative z-[2] w-full max-w-[1120px] mx-auto">
                 <div className="section-head mb-[54px]">
-                    <DetectionHeading label="Testimonials" className="text-[clamp(2.35rem,4vw,4rem)] leading-[0.98] tracking-[-0.045em] uppercase font-[730]">
-                        CLIENT <span className="text-[#8B5CF6]">RESULTS</span>
+                    <DetectionHeading label={german ? "Kundenstimmen" : "Testimonials"} className="text-[clamp(2.35rem,4vw,4rem)] leading-[0.98] tracking-[-0.045em] uppercase font-[730]">
+                        {german ? 'ERGEBNISSE FÜR' : 'CLIENT'} <span className="text-[#8B5CF6]">{german ? 'KUNDEN' : 'RESULTS'}</span>
                     </DetectionHeading>
                     <p className="sub mt-[17px] text-[#9ca3af] text-[15px] leading-[1.6]">
-                        Real projects. Real impact.
+                        {german ? 'Rückmeldungen aus der Zusammenarbeit.' : 'Real projects. Real impact.'}
                     </p>
                 </div>
 
                 <div
                     ref={carouselRef}
                     role="region"
-                    aria-roledescription="carousel"
-                    aria-label="Client testimonials"
+                    aria-roledescription={german ? 'Karussell' : 'carousel'}
+                    aria-label={german ? 'Kundenstimmen' : 'Client testimonials'}
                     onPointerEnter={handlePointerEnter}
                     onPointerLeave={handlePointerLeave}
                     onFocus={handleFocusIn}
@@ -131,8 +138,8 @@ const Testimonials = () => {
                 >
                     <div
                         role="group"
-                        aria-roledescription="slide"
-                        aria-label={`${activeIndex + 1} of ${testimonials.length}`}
+                        aria-roledescription={german ? 'Folie' : 'slide'}
+                        aria-label={`${activeIndex + 1} ${german ? 'von' : 'of'} ${testimonials.length}`}
                         aria-live={isRotating ? 'off' : 'polite'}
                         className="field testimonial-card detection-panel relative min-h-[337px] flex flex-col min-w-0 transition-colors motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a78bfa]"
                         onPointerDown={(event) => {
@@ -146,21 +153,21 @@ const Testimonials = () => {
                         onClick={handleCardClick}
                     >
                         <DetectionLabel>
-                            TESTIMONIAL · <b className="font-medium">{testimonial.clientName}</b>
+                            {german ? 'KUNDENSTIMME' : 'TESTIMONIAL'} · <b className="font-medium">{clientName}</b>
                         </DetectionLabel>
 
                         {/* Quote area */}
                         <article className="quote-area py-[24px] md:py-[34px] px-5 md:px-12 flex flex-col flex-1">
                             <div className="project font-mono mt-2 text-[#9ca3af] text-[10px]">
-                                PROJECT · <span className="text-[#c1b8da]">{testimonial.projectTitle || testimonial.project || 'Automated Data Extraction Workflow'}</span>
+                                {german ? 'PROJEKT' : 'PROJECT'} · <span lang="en" className="text-[#c1b8da]">{testimonial.projectTitle || testimonial.project || 'Automated Data Extraction Workflow'}</span>
                             </div>
-                            <blockquote className="quote mt-[19px] max-w-[790px] text-[clamp(1.2rem,2.35vw,2.12rem)] leading-[1.42] tracking-[-0.025em] font-[430]">
+                            <blockquote lang="en" className="quote mt-[19px] max-w-[790px] text-[clamp(1.2rem,2.35vw,2.12rem)] leading-[1.42] tracking-[-0.025em] font-[430]">
                                 <span className="text-[#8B5CF6] mr-[5px]">“</span>
                                 {testimonial.content}
                                 <span className="text-[#8B5CF6]">”</span>
                             </blockquote>
                             {testimonial.rating === 5 && (
-                                <span role="img" aria-label="Rated 5 out of 5" className="inline-flex self-center items-center gap-1.5 mt-6 drop-shadow-[0_0_5px_rgba(251,191,36,0.45)]">
+                                <span role="img" aria-label={german ? 'Bewertung: 5 von 5 Sternen' : 'Rated 5 out of 5'} className="inline-flex self-center items-center gap-1.5 mt-6 drop-shadow-[0_0_5px_rgba(251,191,36,0.45)]">
                                     {[1, 2, 3, 4, 5].map((star) => (
                                         <Star key={star} size={24} fill={`url(#${starGradientId})`} stroke="#FFE6A0" strokeWidth={1} aria-hidden="true">
                                             {star === 1 && (
@@ -179,9 +186,9 @@ const Testimonials = () => {
                             )}
                             <footer className="tf-foot flex items-end justify-between gap-5 mt-auto pt-[31px] flex-wrap">
                                 <div className="identity min-w-0">
-                                    <strong className="text-sm font-[650]">{testimonial.clientName}</strong>
+                                    <strong className="text-sm font-[650]">{clientName}</strong>
                                     <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mt-2 text-xs text-[#9ca3af]">
-                                        {testimonial.source ? <span className="source">{testimonial.source}</span> : null}
+                                        {testimonial.source ? <span className="source">{german && testimonial.source === 'Direct' ? 'Direkt' : testimonial.source}</span> : null}
                                         <a
                                             ref={profileLinkRef}
                                             href={socialLinks.upwork}
@@ -190,19 +197,20 @@ const Testimonials = () => {
                                             tabIndex={0}
                                             className="testimonial-link text-[#a78bfa] underline underline-offset-4"
                                         >
-                                            View my Upwork profile{' '}<span className="sr-only">(opens in a new tab)</span>
+                                            {german ? 'Mein Upwork-Profil ansehen' : 'View my Upwork profile'}{' '}
+                                            <span className="sr-only">{german ? '(öffnet in einem neuen Tab)' : '(opens in a new tab)'}</span>
                                         </a>
                                         {testimonial.feedbackDate ? (
                                             <span>
-                                                Feedback · <time dateTime={testimonial.feedbackDate.slice(0, 7)}>
-                                                    {feedbackDateFormatter.format(new Date(`${testimonial.feedbackDate}T00:00:00Z`))}
+                                                {german ? 'Bewertung' : 'Feedback'} · <time dateTime={testimonial.feedbackDate.slice(0, 7)}>
+                                                    {feedbackDateFormatters[locale].format(new Date(`${testimonial.feedbackDate}T00:00:00Z`))}
                                                 </time>
                                             </span>
                                         ) : null}
                                     </div>
                                 </div>
                                 <div className="count shrink-0 whitespace-nowrap font-mono text-[9px] text-[#9ca3af] leading-[1.8]">
-                                    Field<br/>
+                                    {german ? 'Feld' : 'Field'}<br/>
                                     <b className="text-[#a78bfa] font-medium">
                                         {String(activeIndex + 1).padStart(2, '0')} / {String(testimonials.length).padStart(2, '0')}
                                     </b>
@@ -213,14 +221,14 @@ const Testimonials = () => {
 
                     {/* Diamonds are decorative marks inside unrotated, larger hit targets. */}
                     <div className="controls flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mt-[27px]">
-                        <div className="dots markers flex flex-wrap items-center justify-center" role="group" aria-label={`${testimonials.length} carousel slides`}>
+                        <div className="dots markers flex flex-wrap items-center justify-center" role="group" aria-label={`${testimonials.length} ${german ? 'Stimmen im Karussell' : 'carousel slides'}`}>
                             {testimonials.map((_, index) => (
                                 <button
                                     key={index}
                                     type="button"
                                     disabled={typeof window === 'undefined'}
                                     className="dot detection-utility inline-flex items-center justify-center w-11 h-11 p-0 border-0 bg-transparent"
-                                    aria-label={`Slide ${index + 1}`}
+                                    aria-label={`${german ? 'Kundenstimme' : 'Slide'} ${index + 1}`}
                                     aria-current={index === activeIndex ? 'true' : undefined}
                                     onClick={() => goToSlide(index)}
                                 >
@@ -233,7 +241,7 @@ const Testimonials = () => {
                         </div>
                         {prefersReducedMotion && (
                             <span className="autoplay-status inline-flex items-center min-h-[44px] px-3 font-mono text-[10px] uppercase tracking-[0.15em] text-[#9ca3af]">
-                                Autoplay off · Reduced motion
+                                {german ? 'Automatischer Wechsel aus · Bewegung reduziert' : 'Autoplay off · Reduced motion'}
                             </span>
                         )}
                     </div>

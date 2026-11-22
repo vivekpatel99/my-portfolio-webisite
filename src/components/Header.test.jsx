@@ -316,12 +316,13 @@ describe('Header', () => {
     await user.click(summary);
     expect(details.open).toBe(true);
     const navigation = within(details).getByRole('navigation', { name: 'Navigation menu' });
-    expect(within(navigation).getAllByRole('link')).toHaveLength(5);
+    expect(within(navigation).getAllByRole('link')).toHaveLength(6);
     for (const [name, href] of [
       ['Services', '/#services'],
       ['About', '/#about'],
       ['Case Studies', '/case-studies/'],
       ['Testimonials', '/#testimonials'],
+      ['Deutsch', '/de/legal/'],
       ['Request a Project Estimate', '/contact/'],
     ]) {
       expect(within(navigation).getByRole('link', { name, exact: true }).getAttribute('href')).toBe(href);

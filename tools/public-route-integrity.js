@@ -1,6 +1,7 @@
 import { lstatSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { serviceOffers, serviceRouteForId } from '../src/data/serviceOffers.js';
+import { localeFromPath, translatedRoutePairs } from '../src/lib/localizedRoutes.js';
 import { routeSeo, SITE_URL } from '../src/lib/seoConfig.js';
 import { assertSameCaseStudySlugs } from './case-study-route-integrity.js';
 
@@ -30,6 +31,20 @@ export const assertServiceRouteSources = ({ ids = serviceOffers.map((offer) => o
     if (seo[route]?.path !== route) throw new Error(`SEO route ${route} must use ${route} as its canonical path`);
   }
   assertSameCaseStudySlugs(ids, serviceIdsFromDeploymentConfig(htaccess), 'Service deployment routing');
+};
+
+export const assertLocalizedRouteSources = (seo = routeSeo) => {
+  const publishedGermanPaths = new Set(translatedRoutePairs.map(({ de }) => de));
+  for (const route of Object.keys(seo)) {
+    if (localeFromPath(route) === 'de' && !publishedGermanPaths.has(route)) {
+      throw new Error(`Unexpected German SEO route: ${route}`);
+    }
+  }
+  for (const { en, de } of translatedRoutePairs) {
+    for (const route of [en, de]) {
+      if (seo[route]?.path !== route) throw new Error(`SEO route ${route} must use ${route} as its canonical path`);
+    }
+  }
 };
 
 const isRegularFile = (filePath) => {

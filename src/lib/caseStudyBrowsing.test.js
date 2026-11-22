@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   CASE_STUDY_BROWSING_STORAGE_KEY,
+  caseStudyArticleHref,
   clearBrowsingState,
   collectionReturnHref,
   consumeCollectionOriginLocation,
@@ -28,6 +29,16 @@ describe('case study browsing state', () => {
 
     clearBrowsingState({ storage: session });
     expect(session.getItem(CASE_STUDY_BROWSING_STORAGE_KEY)).toBeNull();
+  });
+
+  it('restores saved collection positions for the requested language', () => {
+    const session = storage();
+    const options = { storage: session, eligibleCount: 20 };
+    saveBrowsingState({ loadedCount: 12, scrollY: 480 }, { ...options, locale: 'de' });
+    saveBrowsingState({ loadedCount: 18, scrollY: 900 }, options);
+
+    expect(readBrowsingState({ ...options, locale: 'de' })).toEqual({ loadedCount: 12, scrollY: 480 });
+    expect(readBrowsingState(options)).toEqual({ loadedCount: 18, scrollY: 900 });
   });
 
   it('defaults corrupt, unavailable, negative, and non-finite values safely', () => {
@@ -131,6 +142,19 @@ describe('collection article return href', () => {
     expect(collectionReturnHref({ search: '?from=collection' })).toBe('/case-studies/?resume=1');
     expect(collectionReturnHref({ pathname: '/project/bookmark/' })).toBe('/case-studies/');
     expect(collectionReturnHref()).toBe('/case-studies/');
+  });
+
+  it('keeps the English article URL and returns visitors to the German listing', () => {
+    const href = caseStudyArticleHref('example', { fromCollection: true, locale: 'de' });
+    expect(href).toBe('/project/example/?from=collection&lang=de');
+
+    const location = new URL(href, 'https://www.vivekapatel.com');
+    expect(collectionReturnHref(location)).toBe('/de/case-studies/?resume=1');
+
+    const consumed = consumeCollectionOriginLocation(location);
+    expect(consumed).toEqual({ search: '?lang=de', state: { fromCollection: true } });
+    expect(collectionReturnHref(consumed)).toBe('/de/case-studies/?resume=1');
+    expect(collectionReturnHref({ search: '?lang=de' })).toBe('/de/case-studies/');
   });
 
   it('consumes from=collection into history state and leaves other search params', () => {

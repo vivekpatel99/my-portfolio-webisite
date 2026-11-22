@@ -4,6 +4,8 @@ import { ArrowLeft, RotateCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { focusNavigationTarget } from '@/lib/focusTarget';
 import { clearPendingRetryGeneration, retryLazyRoutes } from '@/lib/lazyRoute';
+import { shellCopy } from '@/data/shellCopy';
+import { localizedPath, useLocale } from '@/lib/locale';
 import { Seo } from '@/lib/seo';
 
 export const ROUTE_ERROR_HEADING = "This page didn't load";
@@ -11,6 +13,8 @@ export const ROUTE_ERROR_HEADING = "This page didn't load";
 const RouteErrorFallback = ({ onRetry }) => {
   const headingRef = useRef(null);
   const { pathname } = useLocation();
+  const locale = useLocale();
+  const copy = shellCopy[locale];
 
   useEffect(() => {
     focusNavigationTarget(headingRef.current);
@@ -23,23 +27,22 @@ const RouteErrorFallback = ({ onRetry }) => {
       data-route-error
     >
       <Seo
-        title="Page unavailable | Vivek Patel"
-        description="The requested page could not be loaded. Try again or return to the homepage."
+        title={`${copy.unavailable} | Vivek Patel`}
+        description={copy.routeErrorMeta}
         path={pathname}
         noindex
       />
       <div className="container mx-auto px-6 max-w-3xl">
-        <p className="text-accent-purple-text font-semibold uppercase tracking-wide mb-4">Page unavailable</p>
+        <p className="text-accent-purple-text font-semibold uppercase tracking-wide mb-4">{copy.unavailable}</p>
         <h1
           id="route-error-heading"
           ref={headingRef}
           className="text-4xl md:text-6xl font-bold mb-6 focus:outline-none"
         >
-          {ROUTE_ERROR_HEADING}
+          {copy.routeError}
         </h1>
         <p className="text-lg text-gray-300 mb-8">
-          Something interrupted loading this page. Check your connection and try again,
-          or return to the homepage.
+          {copy.routeErrorDescription}
         </p>
         <div className="flex flex-wrap gap-4">
           <Button
@@ -48,16 +51,16 @@ const RouteErrorFallback = ({ onRetry }) => {
             className="detection-utility bg-accent-purple text-white hover:bg-accent-purple/90"
           >
             <RotateCw className="mr-2 h-5 w-5" aria-hidden="true" />
-            Retry
+            {copy.retry}
           </Button>
           <Button
             asChild
             variant="outline"
             className="detection-utility border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
           >
-            <Link to="/">
+            <Link to={localizedPath('/', locale)}>
               <ArrowLeft className="mr-2 h-5 w-5" aria-hidden="true" />
-              Back to Home
+              {copy.backHome}
             </Link>
           </Button>
         </div>
@@ -72,7 +75,7 @@ function focusRecoveredRouteContent() {
   // Still showing the recovery UI (retry failed again).
   if (main.querySelector('[data-route-error]')) return false;
   // Suspense fallback while the remounted lazy factory loads.
-  if (main.querySelector('[role="status"][aria-label="Loading page"]')) return false;
+  if (main.querySelector('[data-route-loading]')) return false;
 
   const heading = main.querySelector('h1');
   focusNavigationTarget(heading || main);

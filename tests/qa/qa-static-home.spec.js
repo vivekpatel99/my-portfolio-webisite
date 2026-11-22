@@ -45,7 +45,7 @@ test.describe('homepage without JavaScript', () => {
       expect(response.status()).toBe(200);
       await expectReadableHome(page);
       await expect(page.locator('header')).toHaveCount(1);
-      await expect(page.getByRole('button', { name: 'Toggle navigation menu', includeHidden: true })).toBeDisabled();
+      await expect(page.locator('header details summary')).toHaveAttribute('aria-label', 'Toggle navigation menu');
       for (const wrapper of await page.locator('[data-section-animator]').all()) {
         await expect(wrapper).toHaveCSS('transform', 'none');
       }
@@ -99,9 +99,9 @@ for (const width of [1440, 320]) {
     try {
       await page.goto('/', { waitUntil: 'commit' });
       const heading = page.getByRole('heading', { level: 1 });
-      const menu = page.getByRole('button', { name: 'Toggle navigation menu', includeHidden: true });
+      const menu = page.locator('header button[aria-controls="mobile-menu"]');
       await expect(page.locator('header')).toHaveCSS('height', '69px');
-      await expect(menu).toBeDisabled();
+      await expect(page.locator('header details summary')).toHaveCount(1);
       const staticBox = await heading.boundingBox();
       release();
       await expect(menu).toBeEnabled();

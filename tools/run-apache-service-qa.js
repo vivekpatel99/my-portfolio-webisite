@@ -6,6 +6,8 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { JSDOM } from 'jsdom';
+import { translatedRoutePairs } from '../src/lib/localizedRoutes.js';
+import { caseStudySlugs } from '../src/data/caseStudies.js';
 import { serviceOffers, serviceRouteForId } from '../src/data/serviceOffers.js';
 import { absoluteUrl, routeSeo, SITE_URL } from '../src/lib/seoConfig.js';
 
@@ -142,7 +144,27 @@ DocumentRoot "/usr/local/apache2/htdocs"
     }
     checked += 1;
   }
-  for (const pathname of ['/services/unknown-service', '/services/unknown-service/', '/services/unknown-service/?source=route-qa']) {
+  for (const { de, en } of translatedRoutePairs) {
+    const path = `${de}/`;
+    const response = await fetchLocal(port, path);
+    assert.equal(response.status, 200, path);
+    const dom = new JSDOM(response.html);
+    try {
+      const document = dom.window.document;
+      assert.equal(document.documentElement.lang, 'de', path);
+      assert.equal(document.querySelector('link[rel="canonical"]')?.href, absoluteUrl(de), path);
+      assert.equal(document.querySelector('link[rel="alternate"][hreflang="en"]')?.href, absoluteUrl(en), path);
+      assert.ok(document.querySelector('#main-content h1'), path);
+    } finally {
+      dom.window.close();
+    }
+    checked += 1;
+  }
+  for (const pathname of [
+    '/services/unknown-service', '/services/unknown-service/', '/services/unknown-service/?source=route-qa',
+    '/de/services/unknown-service/', '/de/unknown/',
+    ...caseStudySlugs.map((slug) => `/de/project/${slug}/`),
+  ]) {
     const response = await fetchLocal(port, pathname);
     assert.equal(response.status, 404, `${pathname}: expected real HTTP 404`);
     const dom = new JSDOM(response.html);
@@ -159,7 +181,10 @@ DocumentRoot "/usr/local/apache2/htdocs"
   for (const service of serviceOffers) {
     assert.ok(sitemap.html.includes(`<loc>${absoluteUrl(serviceRouteForId(service.id))}</loc>`), `${service.id}: sitemap entry`);
   }
-  console.log(`Apache service QA passed: ${checked} route responses and all service sitemap entries.`);
+  for (const { de } of translatedRoutePairs) {
+    assert.ok(sitemap.html.includes(`<loc>${absoluteUrl(de)}</loc>`), `${de}: sitemap entry`);
+  }
+  console.log(`Apache route QA passed: ${checked} route responses and all service and German sitemap entries.`);
 } catch (error) {
   failure = error;
   console.error(error);

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { absoluteUrl, defaultSeo, SITE_NAME } from '@/lib/seoConfig';
+import { useLocale } from '@/lib/locale';
+import { alternatePaths, findTranslatedRoute } from '@/lib/localizedRoutes';
+import { absoluteUrl, defaultSeo, routeSeo, SITE_NAME } from '@/lib/seoConfig';
 
 export { absoluteUrl, defaultSeo, routeSeo } from '@/lib/seoConfig';
 
@@ -13,12 +15,17 @@ export const Seo = ({
   image = defaultSeo.image,
   noindex = false,
 }) => {
+  const locale = useLocale();
+  const pair = findTranslatedRoute(path);
+  if (locale === 'de' && pair && !noindex) {
+    ({ title, description, keywords, path, type, image } = routeSeo[pair.de]);
+  }
   const url = absoluteUrl(path);
   const imageUrl = absoluteUrl(image);
 
   return React.createElement(
     Helmet,
-    null,
+    { htmlAttributes: { lang: locale } },
     React.createElement('title', null, title),
     React.createElement('meta', { name: 'description', content: description }),
     React.createElement('meta', {
@@ -27,8 +34,9 @@ export const Seo = ({
     }),
     keywords ? React.createElement('meta', { name: 'keywords', content: keywords }) : null,
     React.createElement('link', { rel: 'canonical', href: url }),
-    React.createElement('link', { rel: 'alternate', hrefLang: 'en', href: url }),
-    React.createElement('link', { rel: 'alternate', hrefLang: 'x-default', href: url }),
+    ...Object.entries(alternatePaths(path)).map(([hrefLang, alternate]) =>
+      React.createElement('link', { rel: 'alternate', hrefLang, href: absoluteUrl(alternate) }),
+    ),
     React.createElement('meta', { property: 'og:site_name', content: SITE_NAME }),
     React.createElement('meta', { property: 'og:type', content: type }),
     React.createElement('meta', { property: 'og:url', content: url }),

@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { localizedPath, useLocale } from '@/lib/locale.js';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { HERO_DETECTED_FIELD_WINDOWS, HERO_INVOICE_FIELDS } from '@/lib/heroDetectedFields';
 import { profileImages, socialLinks } from '@/config/links';
 import { DetectionLabel } from './DetectionFrame';
-import { HOURLY_RATE_LABEL } from '@/config/pricing';
+import { localizedHourlyRate } from '@/config/pricing';
 
 const BACKGROUND_LIGHTS = [
   { top: '9%', left: '4%', w: 64, h: 44, dur: 15, delay: 0, dx: 16, dy: -14, op: 0.78, depth: 0.55 },
@@ -22,17 +23,17 @@ const PARALLAX_EASING = 0.1;
 const PARALLAX_SETTLE_EPSILON_PX = 0.05;
 
 const OCR_FIELD_LABELS = {
-  name: { label: 'Name', score: '0.99' },
-  role: { label: 'Role', score: '0.97' },
-  credential: { label: 'Credential', score: '0.98' },
-  success: { label: 'Success', score: '0.96' },
-  rate: { label: 'Rate', score: '0.95' },
-  location: { label: 'Location', score: '0.94' },
+  name: { label: 'Name', de: 'Name', score: '0.99' },
+  role: { label: 'Role', de: 'Rolle', score: '0.97' },
+  credential: { label: 'Credential', de: 'Status', score: '0.98' },
+  success: { label: 'Success', de: 'Erfolg', score: '0.96' },
+  rate: { label: 'Rate', de: 'Satz', score: '0.95' },
+  location: { label: 'Location', de: 'Ort', score: '0.94' },
 };
 
-const FieldLabel = ({ field }) => (
+const FieldLabel = ({ field, german }) => (
   <span className="hero-field-label">
-    <span>{OCR_FIELD_LABELS[field].label}</span><span className="hero-field-score" aria-hidden="true"> · {OCR_FIELD_LABELS[field].score}</span>
+    <span>{german ? OCR_FIELD_LABELS[field].de : OCR_FIELD_LABELS[field].label}</span><span className="hero-field-score" aria-hidden="true"> · {OCR_FIELD_LABELS[field].score}</span>
   </span>
 );
 
@@ -85,6 +86,8 @@ const useDocumentVisible = () => {
 };
 
 const Hero = () => {
+  const locale = useLocale();
+  const german = locale === 'de';
   const heroRef = useRef(null);
   const bgLightsRef = useRef([]);
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
@@ -279,7 +282,7 @@ const Hero = () => {
           <div className="relative flex items-center justify-between gap-4 flex-wrap mb-5 md:mb-7">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/[0.12] bg-white/[0.03]">
               <span className="w-[7px] h-[7px] rounded-full bg-[#8B5CF6] shadow-[0_0_8px_rgba(139,92,246,0.65)]" />
-              <span className="text-[11px] font-mono tracking-wider uppercase text-gray-400">Inference online</span>
+              <span className="text-[11px] font-mono tracking-wider uppercase text-gray-400">{german ? 'Inferenz aktiv' : 'Inference online'}</span>
             </div>
           </div>
 
@@ -293,9 +296,9 @@ const Hero = () => {
                   background: 'linear-gradient(165deg, #141318 0%, #0f1012 55%, #0e0e10 100%)',
                   boxShadow: '0 24px 64px rgba(0,0,0,0.45), 0 0 48px rgba(139,92,246,0.1)'
                 }}
-                aria-label="Profile invoice field parse"
+                aria-label={german ? 'Extrahierte Felder der Profilrechnung' : 'Profile invoice field parse'}
               >
-                <DetectionLabel>Profile Invoice</DetectionLabel>
+                <DetectionLabel>{german ? 'Profilrechnung' : 'Profile Invoice'}</DetectionLabel>
 
                 {/* Header */}
                 <div className="flex justify-end items-start mb-1 pb-1.5 border-b border-white/[0.08] max-md:mb-1 max-md:pb-1">
@@ -307,7 +310,7 @@ const Hero = () => {
                 <div className="max-md:grid max-md:grid-cols-[minmax(0,0.95fr)_minmax(0,1.85fr)] max-md:gap-x-2 max-[359px]:grid-cols-1">
                   <div className="mb-1 max-md:min-w-0">
                     <div {...fieldBoxProps('name', '')}>
-                      <FieldLabel field="name" />
+                      <FieldLabel field="name" german={german} />
                       <span className="hero-field-value">
                         <span className="text-[1.3rem] font-semibold tracking-tight text-white max-md:text-[0.95rem]">Vivek Patel</span>
                       </span>
@@ -316,10 +319,10 @@ const Hero = () => {
 
                   <div className="mb-1 max-md:min-w-0">
                     <div {...fieldBoxProps('role', '')}>
-                      <FieldLabel field="role" />
+                      <FieldLabel field="role" german={german} />
                       <div className="hero-field-value">
                         <h1 className="text-[clamp(1.25rem,2.1vw,1.65rem)] font-bold text-white tracking-tight leading-[1.2] max-md:text-[1rem] max-md:leading-[1.1]">
-                          Computer Vision & AI Engineer
+                          {german ? 'Ingenieur für Computer Vision und KI' : 'Computer Vision & AI Engineer'}
                         </h1>
                       </div>
                     </div>
@@ -327,43 +330,43 @@ const Hero = () => {
                 </div>
 
                 {/* Proofs folded under role */}
-                <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 mb-4 max-md:gap-x-3 max-[359px]:grid-cols-1 max-[359px]:gap-y-2" role="group" aria-label="Detected credentials">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 mb-4 max-md:gap-x-3 max-[359px]:grid-cols-1 max-[359px]:gap-y-2" role="group" aria-label={german ? 'Erfasste Referenzen' : 'Detected credentials'}>
                   <div className="min-w-0">
                     <div {...fieldBoxProps('credential', '')}>
-                      <FieldLabel field="credential" />
+                      <FieldLabel field="credential" german={german} />
                       <span className="hero-field-value flex items-center gap-[7px]">
                         <span className="flex-shrink-0 w-3 h-3 text-purple-400 opacity-90 max-[359px]:hidden" aria-hidden="true">
                           <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" className="w-full h-full">
                             <path d="M7 1.5l1.4 2.8 3.1.45-2.25 2.2.53 3.1L7 8.6 4.22 10.05l.53-3.1L2.5 4.75l3.1-.45L7 1.5z"/>
                           </svg>
                         </span>
-                        <span className="text-[0.88rem] font-semibold tracking-[-0.01em] text-white leading-[1.2] whitespace-nowrap max-md:text-[0.84rem] max-md:whitespace-normal max-[359px]:text-[0.75rem] max-[359px]:whitespace-nowrap">Top Rated Plus</span>
+                        <span className="text-[0.88rem] font-semibold tracking-[-0.01em] text-white leading-[1.2] whitespace-nowrap max-md:text-[0.84rem] max-md:whitespace-normal max-[359px]:text-[0.75rem] max-[359px]:whitespace-nowrap" lang="en">Top Rated Plus</span>
                       </span>
                     </div>
-                    <p className="mt-[5px] ml-[2px] font-mono text-[9px] leading-[1.2] tracking-[0.04em] text-gray-400">Upwork freelancer</p>
+                    <p className="mt-[5px] ml-[2px] font-mono text-[9px] leading-[1.2] tracking-[0.04em] text-gray-400">{german ? 'Freelancer auf Upwork' : 'Upwork freelancer'}</p>
                   </div>
                   <div className="min-w-0">
                     <div {...fieldBoxProps('success', '')}>
-                      <FieldLabel field="success" />
+                      <FieldLabel field="success" german={german} />
                       <span className="hero-field-value flex items-center gap-[7px]">
                         <span className="flex-shrink-0 w-3 h-3 text-purple-400 opacity-90 max-[359px]:hidden" aria-hidden="true">
                           <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" className="w-full h-full">
                             <path d="M2.5 7.2l3.2 3.1L11.5 3.8"/>
                           </svg>
                         </span>
-                        <span className="text-[0.88rem] font-semibold tracking-[-0.01em] text-white leading-[1.2] whitespace-nowrap max-md:text-[0.84rem] max-md:whitespace-normal max-[359px]:text-[0.75rem] max-[359px]:whitespace-nowrap">100% Job Success</span>
+                        <span className="text-[0.88rem] font-semibold tracking-[-0.01em] text-white leading-[1.2] whitespace-nowrap max-md:text-[0.84rem] max-md:whitespace-normal max-[359px]:text-[0.75rem] max-[359px]:whitespace-nowrap">{german ? '100 % Auftragserfolg' : '100% Job Success'}</span>
                       </span>
                     </div>
-                    <p className="mt-[5px] ml-[2px] font-mono text-[9px] leading-[1.2] tracking-[0.04em] text-gray-400">Client delivery record</p>
+                    <p className="mt-[5px] ml-[2px] font-mono text-[9px] leading-[1.2] tracking-[0.04em] text-gray-400">{german ? 'Erfolgsquote auf Upwork' : 'Client delivery record'}</p>
                   </div>
                   <a
                     href={socialLinks.upwork}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label="View Upwork profile for credentials and client feedback"
+                    aria-label={german ? 'Upwork-Profil mit Referenzen und Kundenbewertungen ansehen' : 'View Upwork profile for credentials and client feedback'}
                     className="col-span-2 max-[359px]:col-span-1 justify-self-start mt-2 text-xs text-[#a78bfa] underline underline-offset-4 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a78bfa]"
                   >
-                    View Upwork profile
+                    {german ? 'Upwork-Profil ansehen' : 'View Upwork profile'}
                   </a>
                 </div>
 
@@ -371,17 +374,17 @@ const Hero = () => {
                 <div className="grid grid-cols-2 gap-x-[18px] gap-y-3 mb-2.5 max-md:mb-1.5 max-md:gap-y-2 max-[359px]:mb-0 max-[359px]:gap-x-2">
                   <div>
                     <div {...fieldBoxProps('rate', '')}>
-                      <FieldLabel field="rate" />
+                      <FieldLabel field="rate" german={german} />
                       <span className="hero-field-value">
-                        <span className="font-mono text-[1.05rem] font-semibold text-white leading-[1.2]">{HOURLY_RATE_LABEL}</span>
+                        <span className="font-mono text-[1.05rem] font-semibold text-white leading-[1.2]">{localizedHourlyRate(locale)}</span>
                       </span>
                     </div>
                   </div>
                   <div>
                     <div {...fieldBoxProps('location', '')}>
-                      <FieldLabel field="location" />
+                      <FieldLabel field="location" german={german} />
                       <span className="hero-field-value">
-                        <span className="font-medium text-[0.92rem] text-white leading-[1.3]">Linz, Austria</span>
+                        <span className="font-medium text-[0.92rem] text-white leading-[1.3]">{german ? 'Linz, Österreich' : 'Linz, Austria'}</span>
                       </span>
                     </div>
                   </div>
@@ -390,7 +393,7 @@ const Hero = () => {
                 {/* Bio */}
                 <div className="mb-2.5 max-md:mb-1 max-[359px]:mb-0">
                   <p className="text-[0.78rem] leading-[1.4] text-gray-400 font-normal max-md:text-[0.72rem]">
-                    Manual data entry, scattered website data, and unstructured video slow teams down. I build document extraction, n8n automation, and computer vision workflows to make that information usable.
+                    {german ? 'Manuelle Dateneingabe, verstreute Webdaten und unstrukturierte Videos bremsen Teams aus. Ich entwickle Lösungen für die Dokumentenextraktion, n8n-Automatisierungen und Computer-Vision-Workflows, die diese Informationen nutzbar machen.' : 'Manual data entry, scattered website data, and unstructured video slow teams down. I build document extraction, n8n automation, and computer vision workflows to make that information usable.'}
                   </p>
                 </div>
 
@@ -410,19 +413,19 @@ const Hero = () => {
 
             <div className="relative z-[1] flex flex-wrap gap-3 mt-1 lg:mt-4 lg:col-start-1 lg:row-start-2 max-md:flex-col max-md:mt-4">
               <Link
-                to="/contact/"
+                to={localizedPath("/contact/", locale)}
                 className="detection-panel detection-action detection-action--labeled detection-action--primary inline-flex min-w-[220px] max-md:w-full"
               >
-                <DetectionLabel aria-hidden="true">Inquiry</DetectionLabel>
-                Request a Project Estimate
+                <DetectionLabel aria-hidden="true">{german ? 'Anfrage' : 'Inquiry'}</DetectionLabel>
+                {german ? 'Kostenschätzung anfragen' : 'Request a Project Estimate'}
                 <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
               </Link>
               <a
                 href="#portfolio"
                 className="detection-panel detection-action detection-action--labeled inline-flex min-w-[150px] max-md:w-full"
               >
-                <DetectionLabel aria-hidden="true">PREVIOUS WORK</DetectionLabel>
-                View Case Studies
+                <DetectionLabel aria-hidden="true">{german ? 'BISHERIGE ARBEITEN' : 'PREVIOUS WORK'}</DetectionLabel>
+                {german ? 'Fallstudien ansehen' : 'View Case Studies'}
                 <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
               </a>
             </div>
@@ -455,7 +458,7 @@ const Hero = () => {
                 {/* Purple L-brackets (static on top) */}
                 <div className="absolute inset-1 pointer-events-none z-[3]" aria-hidden="true">
                   <div className="hero-field-label absolute top-0 left-[29px] -translate-y-1/2 z-[4] [--hero-label-height:12px]">
-                    engineer<span className="hero-field-score"> · 0.99</span>
+                    {german ? 'Ingenieur' : 'engineer'}<span className="hero-field-score"> · 0.99</span>
                   </div>
                   <span className="absolute top-0 left-0 w-6 h-6 border-l-[2.5px] border-t-[2.5px] border-[#8B5CF6]" style={{ filter: 'drop-shadow(0 0 4px rgba(139,92,246,0.55))' }} />
                   <span className="absolute top-0 right-0 w-6 h-6 border-r-[2.5px] border-t-[2.5px] border-[#8B5CF6]" style={{ filter: 'drop-shadow(0 0 4px rgba(139,92,246,0.55))' }} />
@@ -478,7 +481,7 @@ const Hero = () => {
                       sizes="(min-width: 768px) 425px, 389px"
                       width="1008"
                       height="1367"
-                      alt="Tracked engineer portrait"
+                      alt={german ? 'Porträt von Vivek Patel mit Erfassungsrahmen' : 'Tracked engineer portrait'}
                       className="absolute block max-w-none h-auto left-1/2 -translate-x-1/2"
                       // The original's first hair pixel is at y=182 of 1008px width.
                       // At 1.8x width it sits 32.5% of the frame width below image top.
@@ -499,7 +502,7 @@ const Hero = () => {
 
                   </div>
                   <span aria-hidden="true" className="absolute bottom-[22px] left-[22px] z-[4] inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-[#8B5CF6]/35 font-mono text-[11px] text-purple-200 tracking-wide backdrop-blur-sm max-lg:bottom-0 max-lg:left-3 max-lg:translate-y-1/2 max-lg:whitespace-nowrap max-md:text-[10px] max-md:px-2 max-md:py-1">
-                    ID 001 · TRACKED
+                    {german ? 'ID 001 · ERFASST' : 'ID 001 · TRACKED'}
                   </span>
                   <span aria-hidden="true" className="absolute bottom-[22px] right-[22px] z-[4] inline-flex items-center gap-1.5 px-[9px] py-[5px] rounded-md bg-[rgba(18,18,22,0.88)] border border-red-400/35 font-mono text-[11px] text-red-400 tracking-wide backdrop-blur-sm max-lg:bottom-0 max-lg:right-3 max-lg:translate-y-1/2 max-lg:whitespace-nowrap max-md:text-[10px] max-md:px-2 max-md:py-1">
                     <span className="w-[7px] h-[7px] rounded-full bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.7)]" />

@@ -1,5 +1,9 @@
+import { localizedPath } from './localizedRoutes.js';
+
 export const CASE_STUDY_BROWSING_STORAGE_KEY = 'case-studies-browsing';
 export const DEFAULT_CASE_STUDY_PAGE_SIZE = 6;
+
+const storageKey = (locale) => locale === 'de' ? `${CASE_STUDY_BROWSING_STORAGE_KEY}-de` : CASE_STUDY_BROWSING_STORAGE_KEY;
 
 const browserStorage = () => {
   try {
@@ -35,6 +39,7 @@ export const readBrowsingState = ({
   eligibleCount = 0,
   pageSize = DEFAULT_CASE_STUDY_PAGE_SIZE,
   snapshot,
+  locale,
 } = {}) => {
   if (snapshot && typeof snapshot === 'object' && !Array.isArray(snapshot)) {
     return normalizeState(snapshot, eligibleCount, pageSize);
@@ -42,7 +47,7 @@ export const readBrowsingState = ({
   if (!storage) return normalizeState({}, eligibleCount, pageSize);
 
   try {
-    const raw = storage.getItem(CASE_STUDY_BROWSING_STORAGE_KEY);
+    const raw = storage.getItem(storageKey(locale));
     if (!raw) return normalizeState({}, eligibleCount, pageSize);
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return normalizeState({}, eligibleCount, pageSize);
@@ -56,6 +61,7 @@ export const saveBrowsingState = (
   state,
   {
     storage = browserStorage(),
+    locale,
     eligibleCount = 0,
     pageSize = DEFAULT_CASE_STUDY_PAGE_SIZE,
   } = {},
@@ -64,18 +70,18 @@ export const saveBrowsingState = (
   if (!storage) return normalized;
 
   try {
-    storage.setItem(CASE_STUDY_BROWSING_STORAGE_KEY, JSON.stringify(normalized));
+    storage.setItem(storageKey(locale), JSON.stringify(normalized));
   } catch {
     // Storage can be disabled or full; browsing still works for this visit.
   }
   return normalized;
 };
 
-export const clearBrowsingState = ({ storage = browserStorage() } = {}) => {
+export const clearBrowsingState = ({ storage = browserStorage(), locale } = {}) => {
   if (!storage) return;
 
   try {
-    storage.removeItem(CASE_STUDY_BROWSING_STORAGE_KEY);
+    storage.removeItem(storageKey(locale));
   } catch {
     // Storage can be disabled; there is nothing else to clear.
   }
@@ -89,9 +95,21 @@ export const isCollectionArticleOrigin = (location) => {
   return false;
 };
 
-export const collectionReturnHref = (location) => (
-  isCollectionArticleOrigin(location) ? '/case-studies/?resume=1' : '/case-studies/'
+export const caseStudyArticleHref = (slug, { fromCollection = false, locale = 'en' } = {}) => {
+  const params = new URLSearchParams();
+  if (fromCollection) params.set('from', 'collection');
+  if (locale === 'de') params.set('lang', 'de');
+  return `/project/${slug}/${params.size ? `?${params}` : ''}`;
+};
+
+export const isGermanArticleOrigin = (location) => (
+  new URLSearchParams(location?.search).get('lang') === 'de'
 );
+
+export const collectionReturnHref = (location) => {
+  const path = localizedPath('/case-studies/', isGermanArticleOrigin(location) ? 'de' : 'en');
+  return isCollectionArticleOrigin(location) ? `${path}?resume=1` : path;
+};
 
 export const consumeCollectionOriginLocation = (location) => {
   const params = new URLSearchParams(location?.search ?? '');
@@ -114,9 +132,10 @@ export const getInitialBrowsingState = ({
   resume = false,
   pageSize = DEFAULT_CASE_STUDY_PAGE_SIZE,
   snapshot,
+  locale,
 } = {}) => {
   if (resume || navigationType === 'POP') {
-    return readBrowsingState({ storage, eligibleCount, pageSize, snapshot });
+    return readBrowsingState({ storage, eligibleCount, pageSize, snapshot, locale });
   }
 
   return normalizeState({}, eligibleCount, pageSize);

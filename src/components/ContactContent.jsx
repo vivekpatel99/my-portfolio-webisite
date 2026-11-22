@@ -2,6 +2,8 @@ import React from 'react';
 import { Github, Linkedin, Mail } from 'lucide-react';
 import { DetectionLabel } from '@/components/DetectionFrame';
 import { socialLinks } from '@/config/links';
+import { contactCopy } from '@/lib/contactCopy';
+import { useLocale } from '@/lib/locale.js';
 
 // Custom logo components for platform links
 const UpworkIcon = () => (
@@ -21,30 +23,25 @@ const FreelancerMapIcon = () => (
 );
 
 const platformLinks = [
-  { name: 'Upwork', edgeLabel: 'FREELANCE PLATFORM', icon: UpworkIcon, url: socialLinks.upwork },
-  { name: 'Freelancer.com', edgeLabel: 'FREELANCE PLATFORM', icon: FreelancerIcon, url: socialLinks.freelancer },
-  { name: 'FreelancerMap', edgeLabel: 'FREELANCE PLATFORM', icon: FreelancerMapIcon, url: socialLinks.freelancerMap },
-  { name: 'Email', edgeLabel: 'DIRECT CONTACT', icon: Mail, url: socialLinks.emailHref }
-];
-
-const nextSteps = [
-  'I review the project goals, data sources, and technical risks.',
-  'You receive a suggested scope, timeline, and first milestone.',
-  'If it is a fit, we start with a focused build or optimization sprint.',
+  { name: 'Upwork', icon: UpworkIcon, url: socialLinks.upwork },
+  { name: 'Freelancer.com', icon: FreelancerIcon, url: socialLinks.freelancer },
+  { name: 'FreelancerMap', icon: FreelancerMapIcon, url: socialLinks.freelancerMap },
+  { icon: Mail, url: socialLinks.emailHref }
 ];
 
 // Shared by the JavaScript form and the build-time contact fallback.
 export default function ContactContent({ children }) {
+  const copy = contactCopy[useLocale()];
   return (
       <section className="contact relative bg-[#0C0D0D] text-white py-12 px-7 md:px-10 min-h-[900px]">
         <div className="inner relative z-[2] max-w-[1100px] mx-auto">
           {/* Hero */}
           <div className="hero text-center max-w-[720px] mx-auto mb-7">
             <h1 className="text-[clamp(1.75rem,3.6vw,2.85rem)] font-bold tracking-[-0.02em] leading-[1.1] uppercase mb-[14px]">
-              REQUEST A <span className="accent text-[#8B5CF6]">PROJECT ESTIMATE</span>
+              {copy.titleLead} <span className="accent text-[#8B5CF6]">{copy.titleAccent}</span>
             </h1>
             <p className="text-base leading-[1.55] text-[#9ca3af]">
-              Share the workflow, data problem, or computer-vision bottleneck you want solved. I typically respond within 24 hours with fit, next steps, and the clearest scope path.
+              {copy.intro}
             </p>
           </div>
 
@@ -52,12 +49,12 @@ export default function ContactContent({ children }) {
           <ul className="proof flex flex-wrap justify-center gap-7 mb-3">
             <li className="flex items-center gap-[10px]">
               <span className="num text-[1.35rem] font-bold text-[#8B5CF6]">100%</span>
-              <span className="lab text-xs leading-[1.25] text-[#9ca3af]">Job Success<br />on Upwork</span>
+              <span className="lab text-xs leading-[1.25] text-[#9ca3af]">{copy.jobSuccess[0]}<br />{copy.jobSuccess[1]}</span>
             </li>
             <li className="sep w-px h-9 bg-[rgba(255,255,255,0.1)]" role="presentation" aria-hidden="true"></li>
             <li className="flex items-center gap-[10px]">
               <span className="num text-[1.35rem] font-bold text-[#8B5CF6]">5★</span>
-              <span className="lab text-xs leading-[1.25] text-[#9ca3af]">Average<br />Rating</span>
+              <span className="lab text-xs leading-[1.25] text-[#9ca3af]">{copy.rating[0]}<br />{copy.rating[1]}</span>
             </li>
           </ul>
           <p className="text-center text-sm mb-9">
@@ -65,10 +62,10 @@ export default function ContactContent({ children }) {
               href={socialLinks.upwork}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="View Upwork profile for credentials and client feedback"
+              aria-label={copy.upworkProfileLabel}
               className="text-[#a78bfa] underline underline-offset-4 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a78bfa]"
             >
-              View Upwork profile
+              {copy.upworkProfile}
             </a>
           </p>
 
@@ -76,23 +73,23 @@ export default function ContactContent({ children }) {
           <div className="layout grid grid-cols-1 md:grid-cols-[0.82fr_1.18fr] gap-7 items-start">
             {/* Aside */}
             <div className="aside detection-panel bg-[rgba(255,255,255,0.03)] p-6 px-[22px]">
-              <DetectionLabel aria-hidden="true">PROCESS · NEXT STEPS</DetectionLabel>
+              <DetectionLabel aria-hidden="true">{copy.processLabel}</DetectionLabel>
               <h2 className="text-[1.15rem] font-bold uppercase tracking-[-0.01em] mb-[18px]">
-                WHAT HAPPENS NEXT
+                {copy.processTitle}
               </h2>
               <div className="space-y-[14px]">
-                {nextSteps.map((step, index) => (
+                {copy.nextSteps.map((step, index) => (
                   <div key={step} className="step flex gap-[10px]">
                     <div className="tick flex-shrink-0 w-[14px] h-[14px] mt-[3px] border border-[rgba(139,92,246,0.7)] relative after:content-[''] after:absolute after:left-[3px] after:top-[1px] after:w-[5px] after:h-2 after:border-r-[1.5px] after:border-b-[1.5px] after:border-[#8B5CF6] after:rotate-[40deg]"></div>
                     <p className="text-[0.85rem] leading-[1.5] text-[#9ca3af]">
-                      <strong className="text-white font-semibold">Step {index + 1}:</strong> {step}
+                      <strong className="text-white font-semibold">{copy.step} {index + 1}:</strong> {step}
                     </p>
                   </div>
                 ))}
               </div>
               <div className="email-note detection-panel mt-[22px] bg-[rgba(139,92,246,0.08)] p-[14px]">
-                <DetectionLabel aria-hidden="true">EMAIL</DetectionLabel>
-                <p className="q text-[0.8rem] text-[#9ca3af] mb-[6px]">Prefer email?</p>
+                <DetectionLabel aria-hidden="true">{copy.email.toUpperCase()}</DetectionLabel>
+                <p className="q text-[0.8rem] text-[#9ca3af] mb-[6px]">{copy.preferEmail}</p>
                 <a href={socialLinks.emailHref} className="text-[0.9rem] font-semibold text-white hover:text-[#a78bfa] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#c4b5fd] focus-visible:outline-offset-4 [overflow-wrap:anywhere]">
                   {socialLinks.contactEmail}
                 </a>
@@ -106,24 +103,25 @@ export default function ContactContent({ children }) {
           {/* Platform links */}
           <div className="text-center mt-24">
             <h2 className="text-xl font-bold text-white mb-8 uppercase">
-              Or connect on your preferred platform
+              {copy.platforms}
             </h2>
             <div className="flex flex-wrap justify-center gap-4">
               {platformLinks.map((link) => {
                 const Icon = link.icon;
+                const name = link.name ?? copy.email;
                 return (
                   <a
-                    key={link.name}
+                    key={link.url}
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={`Connect with Vivek Patel on ${link.name}`}
+                    aria-label={copy.connectLabel(name)}
                     className="detection-panel detection-action detection-action--labeled inline-flex"
                     style={{ minWidth: '170px' }}
                   >
-                    <DetectionLabel aria-hidden="true">{link.edgeLabel}</DetectionLabel>
+                    <DetectionLabel aria-hidden="true">{link.name ? copy.platformLabel : copy.directContactLabel}</DetectionLabel>
                     <Icon aria-hidden="true" />
-                    {link.name}
+                    {name}
                   </a>
                 );
               })}
@@ -131,8 +129,8 @@ export default function ContactContent({ children }) {
           </div>
 
           <div className="flex justify-center space-x-6 mt-12">
-            <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile" className="inline-flex items-center justify-center p-2.5 text-gray-400 hover:text-[#8B5CF6] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A78BFA]"><Linkedin size={24} /></a>
-            <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub profile" className="inline-flex items-center justify-center p-2.5 text-gray-400 hover:text-[#8B5CF6] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A78BFA]"><Github size={24} /></a>
+            <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" aria-label={copy.linkedIn} className="inline-flex items-center justify-center p-2.5 text-gray-400 hover:text-[#8B5CF6] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A78BFA]"><Linkedin size={24} /></a>
+            <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" aria-label={copy.github} className="inline-flex items-center justify-center p-2.5 text-gray-400 hover:text-[#8B5CF6] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A78BFA]"><Github size={24} /></a>
           </div>
         </div>
       </section>

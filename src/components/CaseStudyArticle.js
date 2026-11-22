@@ -1,5 +1,6 @@
 import React from 'react';
 import RelatedWork from './RelatedWork.js';
+import { localizedPath } from '../lib/localizedRoutes.js';
 import { storyRelatedWork } from '../data/relatedWork.js';
 import { Link, useInRouterContext } from 'react-router-dom';
 import { DetectionLabel } from './DetectionFrame.js';
@@ -56,7 +57,11 @@ const renderBlocks = (nodes, keyPrefix) => nodes.map((node, index) => {
   }
 });
 
-export const CaseStudyArticle = ({ story, backHref = '/#portfolio' }) => {
+export const CaseStudyArticle = ({
+  story,
+  backHref = '/#portfolio',
+  germanCollectionHref = localizedPath('/case-studies/', 'de'),
+}) => {
   const inRouter = useInRouterContext();
   const NavigationLink = inRouter ? Link : 'a';
   const destination = inRouter ? 'to' : 'href';
@@ -64,6 +69,12 @@ export const CaseStudyArticle = ({ story, backHref = '/#portfolio' }) => {
     'article', { className: 'case-study-article' },
     React.createElement('nav', { className: 'case-study-navigation', 'aria-label': 'Case study navigation' },
       React.createElement(NavigationLink, { className: 'case-study-back detection-panel detection-action detection-action--compact inline-flex', [destination]: backHref }, '← View case studies'),
+      React.createElement(NavigationLink, {
+        className: 'detection-panel detection-action detection-action--compact inline-flex',
+        [destination]: germanCollectionHref,
+        lang: 'de',
+        hrefLang: 'de',
+      }, 'Fallstudien auf Deutsch'),
       React.createElement(NavigationLink, { className: 'case-study-home detection-panel detection-action detection-action--compact inline-flex', [destination]: '/' }, 'Back to home'),
     ),
     story.category ? React.createElement('p', { className: 'case-study-category' }, story.category) : null,

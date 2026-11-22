@@ -24,6 +24,17 @@ describe('shared policy content', () => {
     expect(html).not.toMatch(/opacity:0|transform:|<noscript/);
   });
 
+  it.each([
+    ['/de/legal/', PrivacyPolicyContent, 'Datenschutzerklärung', 'Stand: 1. Juni 2026', '/de/data-policy/'],
+    ['/de/data-policy/', CookiePolicyContent, 'Cookie-Richtlinie', 'Stand: 30. August 2026', '/de/legal/'],
+  ])('prerenders the German policy with localized native links on %s', (path, Content, heading, date, crossPath) => {
+    const html = renderToStaticMarkup(<MemoryRouter initialEntries={[path]}><Content /></MemoryRouter>);
+    expect(html).toMatch(new RegExp(`<h1\\b[^>]*>${heading}</h1>`));
+    expect(html).toContain(date);
+    expect(html).toContain(`href="${crossPath}"`);
+    expect(html).toContain(`href="${socialLinks.emailHref}"`);
+  });
+
   it('explains unavailable consent controls without exposing a dead button', () => {
     render(<MemoryRouter><CookiePolicyContent /></MemoryRouter>);
     expect(screen.getByText(/Cookie consent controls need JavaScript\./)).toBeTruthy();

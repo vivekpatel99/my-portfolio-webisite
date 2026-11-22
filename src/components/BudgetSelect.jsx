@@ -4,14 +4,16 @@ import { Check, ChevronDown } from 'lucide-react';
 import { BUDGET_LABELS, BUDGET_OPTIONS } from '@/lib/budgetOptions';
 import { SENSITIVE_TELEMETRY_REGION_PROPS } from '@/lib/sensitiveTelemetry';
 
-const EMPTY_LABEL = 'Select your budget range';
-const STALE_LABEL = 'Choose a listed range or leave blank';
+import { contactCopy } from '@/lib/contactCopy';
+import { useLocale } from '@/lib/locale.js';
 
 export default function BudgetSelect({ value, onChange, disabled, error }) {
+  const copy = contactCopy[useLocale()];
+  const budgetLabels = copy.budgetLabels ?? BUDGET_LABELS;
   const buttonRef = useRef(null);
   const [optionsElement, setOptionsElement] = useState(null);
   const stale = Boolean(value && !BUDGET_OPTIONS.includes(value));
-  const label = stale ? STALE_LABEL : BUDGET_LABELS[value] ?? EMPTY_LABEL;
+  const label = stale ? copy.budgetStale : budgetLabels[value] ?? copy.budgetEmpty;
 
   const optionsRef = useCallback((element) => {
     if (element && buttonRef.current) {
@@ -46,13 +48,13 @@ export default function BudgetSelect({ value, onChange, disabled, error }) {
         className="contact-detection-frame"
         data-filled={Boolean(value)}
       >
-        <label htmlFor="budget" className="contact-detection-label">Budget Range</label>
+        <label htmlFor="budget" className="contact-detection-label">{copy.budgetLabel}</label>
         <ListboxButton
           ref={buttonRef}
           id="budget"
           value={value}
           className="contact-detection-control contact-detection-select"
-          aria-label={`Budget Range ${label}`}
+          aria-label={`${copy.budgetLabel} ${label}`}
           aria-invalid={Boolean(error)}
           onKeyDown={(event) => {
             if (event.key !== 'Enter') return;
@@ -61,7 +63,7 @@ export default function BudgetSelect({ value, onChange, disabled, error }) {
             if (!event.repeat) event.currentTarget.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true }));
           }}
         >
-          <span className="sr-only">Budget Range </span>
+          <span className="sr-only">{copy.budgetLabel} </span>
           <span>{label}</span>
           <ChevronDown size={16} aria-hidden="true" className="contact-budget-chevron" />
         </ListboxButton>
@@ -74,16 +76,16 @@ export default function BudgetSelect({ value, onChange, disabled, error }) {
           {...SENSITIVE_TELEMETRY_REGION_PROPS}
         >
           {stale ? (
-            <ListboxOption value={value} disabled aria-label={STALE_LABEL} className="contact-budget-option">
-              <span>{STALE_LABEL}</span>
+            <ListboxOption value={value} disabled aria-label={copy.budgetStale} className="contact-budget-option">
+              <span>{copy.budgetStale}</span>
               <span className="contact-budget-check" aria-hidden="true"><Check size={18} /></span>
             </ListboxOption>
           ) : null}
           {['', ...BUDGET_OPTIONS].map((option) => (
-            <ListboxOption key={option} value={option} aria-label={BUDGET_LABELS[option] ?? EMPTY_LABEL} className="contact-budget-option">
+            <ListboxOption key={option} value={option} aria-label={budgetLabels[option] ?? copy.budgetEmpty} className="contact-budget-option">
               {({ selected }) => (
                 <>
-                  <span>{BUDGET_LABELS[option] ?? EMPTY_LABEL}</span>
+                  <span>{budgetLabels[option] ?? copy.budgetEmpty}</span>
                   <span className="contact-budget-check" aria-hidden="true">
                     {selected ? <Check size={18} /> : null}
                   </span>

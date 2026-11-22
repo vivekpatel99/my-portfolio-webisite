@@ -4,8 +4,9 @@ import { serviceRelatedWork } from '../data/relatedWork.js';
 import { DetectionLabel } from './DetectionFrame.js';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { HOURLY_FROM_LABEL } from '../config/pricing.js';
-import { serviceOffers, serviceTimelineLabel } from '../data/serviceOffers.js';
+import { localizedHourlyFrom } from '../config/pricing.js';
+import { localizedPath } from '../lib/localizedRoutes.js';
+import { getServiceOfferById, serviceOffers, serviceTimelineLabel } from '../data/serviceOffers.js';
 
 // Plain .js (no JSX) so tools/generate-static-route-html.js can prerender the
 // same service content in Node that the SPA renders in the browser.
@@ -32,7 +33,11 @@ const scopeList = (heading, items, index) => React.createElement(
   ),
 );
 
-const ServiceDetailContent = ({ service, backRef }) => {
+const ServiceDetailContent = ({ service, backRef, locale = 'en' }) => {
+  const german = locale === 'de';
+  const copy = german ? getServiceOfferById(service.id, locale) ?? service : service;
+  const servicesHref = german ? localizedPath(SERVICES_SECTION_HREF, locale) : SERVICES_SECTION_HREF;
+  const engagementLabel = german ? 'Auftragsdetails' : 'Engagement details';
   const offerNumber = String(serviceOffers.findIndex((offer) => offer.id === service.id) + 1).padStart(2, '0');
 
   return React.createElement(
@@ -47,9 +52,9 @@ const ServiceDetailContent = ({ service, backRef }) => {
       { className: 'relative mx-auto max-w-[1180px] px-6 md:px-12' },
       React.createElement(
         Link,
-        { ref: backRef, to: SERVICES_SECTION_HREF, className: 'detection-text-action mb-12 gap-2 text-sm md:mb-16' },
+        { ref: backRef, to: servicesHref, className: 'detection-text-action mb-12 gap-2 text-sm md:mb-16' },
         React.createElement(ArrowLeft, { size: 16, 'aria-hidden': true }),
-        'Back to Services',
+        german ? 'Zurück zu den Leistungen' : 'Back to Services',
       ),
       React.createElement(
         'div',
@@ -60,56 +65,56 @@ const ServiceDetailContent = ({ service, backRef }) => {
           React.createElement(
             'p',
             { className: 'mb-6 font-mono text-[11px] uppercase tracking-[0.19em] text-[#a78bfa]' },
-            'SERVICE · OFFER ', offerNumber,
+            german ? 'LEISTUNG · ANGEBOT ' : 'SERVICE · OFFER ', offerNumber,
           ),
-          React.createElement('h1', { className: 'max-w-[760px] text-[clamp(2.25rem,5.4vw,4.25rem)] font-bold uppercase leading-[1.06] tracking-[-0.035em]' }, service.title),
+          React.createElement('h1', { className: 'max-w-[760px] [overflow-wrap:anywhere] hyphens-auto text-[clamp(2.25rem,5.4vw,4.25rem)] font-bold uppercase leading-[1.06] tracking-[-0.035em]' }, copy.title),
           React.createElement('div', { 'aria-hidden': true, className: 'my-8 h-px w-20 bg-[#8B5CF6]' }),
-          React.createElement('p', { className: 'max-w-[640px] text-base leading-[1.75] text-[#b6b8c2] sm:text-lg' }, service.summary),
+          React.createElement('p', { className: 'max-w-[640px] text-base leading-[1.75] text-[#b6b8c2] sm:text-lg' }, copy.summary),
         ),
         React.createElement(
           'aside',
-          { 'aria-label': 'Engagement details', className: 'detection-panel bg-[#121116]/80 p-6 sm:p-8' },
-          React.createElement(DetectionLabel, { 'aria-hidden': true }, 'ENGAGEMENT DETAILS'),
+          { 'aria-label': engagementLabel, className: 'detection-panel bg-[#121116]/80 p-6 sm:p-8' },
+          React.createElement(DetectionLabel, { 'aria-hidden': true }, german ? engagementLabel : 'ENGAGEMENT DETAILS'),
           React.createElement(
             'dl',
             { className: 'mb-8 border-y border-white/10' },
             React.createElement(
               'div',
               { className: 'grid grid-cols-[72px_1fr] gap-4 border-b border-white/10 py-4 sm:grid-cols-[90px_1fr]' },
-              React.createElement('dt', { className: 'font-mono text-[11px] uppercase tracking-[0.12em] text-[#8f919e]' }, 'Rate'),
-              React.createElement('dd', { className: 'text-sm font-semibold text-white sm:text-base' }, HOURLY_FROM_LABEL),
+              React.createElement('dt', { className: 'font-mono text-[11px] uppercase tracking-[0.12em] text-[#8f919e]' }, german ? 'Satz' : 'Rate'),
+              React.createElement('dd', { className: 'text-sm font-semibold text-white sm:text-base' }, localizedHourlyFrom(locale)),
             ),
             React.createElement(
               'div',
               { className: 'grid grid-cols-[72px_1fr] gap-4 py-4 sm:grid-cols-[90px_1fr]' },
-              React.createElement('dt', { className: 'font-mono text-[11px] uppercase tracking-[0.12em] text-[#8f919e]' }, 'Timeline'),
-              React.createElement('dd', { className: 'text-sm font-semibold text-white sm:text-base' }, serviceTimelineLabel(service)),
+              React.createElement('dt', { className: 'font-mono text-[11px] uppercase tracking-[0.12em] text-[#8f919e]' }, german ? 'Dauer' : 'Timeline'),
+              React.createElement('dd', { className: 'text-sm font-semibold text-white sm:text-base' }, serviceTimelineLabel(copy, locale)),
             ),
           ),
           React.createElement(
             'div',
             { className: 'flex flex-col gap-3' },
             React.createElement(Link, {
-              to: '/contact',
+              to: german ? localizedPath('/contact/', locale) : '/contact',
               className: 'detection-panel detection-action detection-action--labeled detection-action--primary inline-flex',
-            }, React.createElement(DetectionLabel, { 'aria-hidden': true }, 'Inquiry'), 'Request a Project Estimate', React.createElement(ArrowRight, { size: 16, className: 'shrink-0', 'aria-hidden': true })),
+            }, React.createElement(DetectionLabel, { 'aria-hidden': true }, german ? 'Anfrage' : 'Inquiry'), german ? 'Kostenschätzung anfragen' : 'Request a Project Estimate', React.createElement(ArrowRight, { size: 16, className: 'shrink-0', 'aria-hidden': true })),
             React.createElement(Link, {
-              to: SERVICES_SECTION_HREF,
+              to: servicesHref,
               className: 'detection-panel detection-action detection-action--labeled inline-flex',
-            }, React.createElement(DetectionLabel, { 'aria-hidden': true }, 'SERVICE OFFERS'), 'View All Services'),
+            }, React.createElement(DetectionLabel, { 'aria-hidden': true }, german ? 'LEISTUNGEN' : 'SERVICE OFFERS'), german ? 'Alle Leistungen ansehen' : 'View All Services'),
           ),
         ),
       ),
       React.createElement(
         'div',
         { className: 'detection-panel mt-16 bg-[#101014]/70 md:mt-20' },
-        React.createElement(DetectionLabel, { 'aria-hidden': true }, 'PROJECT SCOPE'),
+        React.createElement(DetectionLabel, { 'aria-hidden': true }, german ? 'LEISTUNGSUMFANG' : 'PROJECT SCOPE'),
         React.createElement('div', { className: 'grid divide-y divide-white/10 md:grid-cols-2 md:divide-x md:divide-y-0' },
-          scopeList('In scope', service.inScope, '01'),
-          scopeList('Out of scope', service.outOfScope, '02'),
+          scopeList(german ? 'Enthalten' : 'In scope', copy.inScope, '01'),
+          scopeList(german ? 'Nicht enthalten' : 'Out of scope', copy.outOfScope, '02'),
         ),
       ),
-      React.createElement(RelatedWork, { slugs: serviceRelatedWork[service.id] }),
+      React.createElement(RelatedWork, { slugs: serviceRelatedWork[service.id], locale }),
     ),
   );
 };

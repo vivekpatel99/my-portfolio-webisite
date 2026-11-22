@@ -1,4 +1,7 @@
-export function serviceTimelineLabel({ minWeeks, maxWeeks, timelineLabel }) {
+import { germanServiceOffers } from './serviceOffers.de.js';
+
+export function serviceTimelineLabel({ minWeeks, maxWeeks, timelineLabel }, locale = 'en') {
+  if (locale === 'de') return timelineLabel ?? `In der Regel ${minWeeks}–${maxWeeks} Wochen`;
   return timelineLabel ?? `Typically ${minWeeks}–${maxWeeks} weeks`;
 }
 
@@ -63,4 +66,7 @@ export const serviceOffers = [
   },
 ];
 
-export const getServiceOfferById = (id) => serviceOffers.find((offer) => offer.id === id);
+const germanOffers = serviceOffers.map((offer) => ({ ...offer, ...germanServiceOffers[offer.id] }));
+
+export const getServiceOffers = (locale) => locale === 'de' ? germanOffers : serviceOffers;
+export const getServiceOfferById = (id, locale) => getServiceOffers(locale).find((offer) => offer.id === id);

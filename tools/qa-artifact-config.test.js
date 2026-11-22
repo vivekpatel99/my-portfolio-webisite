@@ -15,6 +15,7 @@ const FRAGMENTS_SPEC = 'qa-fragments.spec.js';
 const EVIDENCE_LABELS_SPEC = 'qa-evidence-labels.spec.js';
 const CARD_DIAGRAMS_SPEC = 'qa-card-diagrams.spec.js';
 const STATIC_CONTACT_SPEC = 'qa-static-contact.spec.js';
+const LANGUAGE_SPEC = 'qa-language.spec.js';
 const STATIC_HOME_SPEC = 'qa-static-home.spec.js';
 const STATIC_POLICIES_SPEC = 'qa-static-policies.spec.js';
 const targetURLs = { previewURL: 'http://127.0.0.1:3000', prodURL: 'https://www.example.test' };
@@ -106,12 +107,13 @@ describe('sanitized CI Playwright configuration', () => {
     expect([...defaultProjects['prod-desktop']].sort()).toEqual(shared);
     expect([...defaultProjects['preview-desktop']].sort()).toEqual([...shared, TESTIMONIALS_SPEC, HERO_OCR_SPEC, EVIDENCE_LABELS_SPEC, CARD_DIAGRAMS_SPEC].sort());
     expect([...localProjects['preview-mobile']].sort())
-      .toEqual([...shared, 'qa-budget.spec.js', 'qa-focus.spec.js', FRAGMENTS_SPEC, HERO_MOTION_SPEC, ROUTE_RECOVERY_SPEC, 'qa-service-loading.spec.js', STATIC_HOME_SPEC, STATIC_CONTACT_SPEC, STATIC_POLICIES_SPEC, TESTIMONIALS_SPEC, HERO_OCR_SPEC, EVIDENCE_LABELS_SPEC, CARD_DIAGRAMS_SPEC].sort());
+      .toEqual([...shared, 'qa-budget.spec.js', 'qa-focus.spec.js', FRAGMENTS_SPEC, HERO_MOTION_SPEC, ROUTE_RECOVERY_SPEC, 'qa-service-loading.spec.js', LANGUAGE_SPEC, STATIC_HOME_SPEC, STATIC_CONTACT_SPEC, STATIC_POLICIES_SPEC, TESTIMONIALS_SPEC, HERO_OCR_SPEC, EVIDENCE_LABELS_SPEC, CARD_DIAGRAMS_SPEC].sort());
     for (const specs of Object.values(defaultProjects)) {
       expect(specs).not.toContain('qa-budget.spec.js');
       expect(specs).not.toContain(HERO_MOTION_SPEC);
       expect(specs).not.toContain(ROUTE_RECOVERY_SPEC);
       expect(specs).not.toContain('qa-service-loading.spec.js');
+      expect(specs).not.toContain(LANGUAGE_SPEC);
       expect(specs).not.toContain(STATIC_HOME_SPEC);
       expect(specs).not.toContain(STATIC_CONTACT_SPEC);
       expect(specs).not.toContain(STATIC_POLICIES_SPEC);

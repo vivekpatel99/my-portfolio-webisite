@@ -10,6 +10,7 @@ import { transformWithEsbuild } from 'vite';
 import * as frames from './DetectionFrame';
 import * as catalog from '@/data/serviceOffers';
 import * as pricing from '@/config/pricing';
+import * as locale from '@/lib/locale.js';
 
 it('renders service offers without lookbehind support after the Safari 14 transform', async () => {
   const source = readFileSync(new URL('./Services.jsx', import.meta.url), 'utf8');
@@ -23,6 +24,7 @@ it('renders service offers without lookbehind support after the Safari 14 transf
     './DetectionFrame': frames,
     '@/data/serviceOffers': catalog,
     '@/config/pricing': pricing,
+    '@/lib/locale.js': locale,
   };
   runInNewContext(code, {
     module,
