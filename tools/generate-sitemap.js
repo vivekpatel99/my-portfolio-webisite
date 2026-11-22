@@ -1,8 +1,9 @@
 import { execFileSync } from 'child_process';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { findTranslatedRoute } from '../src/lib/localizedRoutes.js';
 import { absoluteUrl, routeSeo } from '../src/lib/seoConfig.js';
 import { assertCaseStudyRouteSources, assertSitemapCaseStudyRoutes } from './case-study-route-integrity.js';
-import { assertServiceRouteSources } from './public-route-integrity.js';
+import { assertLocalizedRouteSources, assertServiceRouteSources } from './public-route-integrity.js';
 
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -56,11 +57,12 @@ const priorityForRoute = (route) => {
 const deploymentHtaccess = readFileSync('dist/.htaccess', 'utf8');
 assertCaseStudyRouteSources({ htaccess: deploymentHtaccess });
 assertServiceRouteSources({ htaccess: deploymentHtaccess });
+assertLocalizedRouteSources();
 
 const allPages = Object.keys(routeSeo).map((route) => ({
     loc: absoluteUrl(routeSeo[route].path ?? route),
     lastmod,
-    priority: priorityForRoute(route),
+    priority: priorityForRoute(findTranslatedRoute(route)?.en ?? route),
 }));
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

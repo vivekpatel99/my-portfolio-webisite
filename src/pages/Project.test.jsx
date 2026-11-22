@@ -150,6 +150,18 @@ describe('Project collection return link', () => {
     expect(screen.getByRole('link', { name: '← View case studies' }).getAttribute('href')).toBe('/case-studies/?resume=1');
   });
 
+  it('shows a German collection return link from the original English article route', async () => {
+    const project = caseStudies.find(({ slug }) => slug === 'ai-invoice-processing-automation');
+    renderProject(`/project/${project.slug}/?from=collection&lang=de&source=test`);
+
+    expect(screen.getByRole('heading', { name: project.title })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Fallstudien auf Deutsch' }).getAttribute('href'))
+      .toBe('/de/case-studies/?resume=1');
+    await waitFor(() => expect(screen.getByText('?lang=de&source=test')).toBeTruthy());
+    expect(screen.getByRole('link', { name: 'Fallstudien auf Deutsch' }).getAttribute('href'))
+      .toBe('/de/case-studies/?resume=1');
+  });
+
   it('consumes the collection query into history state and cleans the URL', async () => {
     const project = caseStudies[0];
     if (!project) return;

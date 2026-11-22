@@ -2,7 +2,8 @@ import { execFileSync } from 'child_process';
 import { readFileSync, existsSync } from 'fs';
 import path from 'path';
 import { caseStudies } from '../../publication/public-case-studies.js';
-import { defaultSeo, routeSeo } from '../../src/lib/seoConfig.js';
+import { alternatePaths, translatedRoutePairs } from '../../src/lib/localizedRoutes.js';
+import { absoluteUrl, defaultSeo, routeSeo } from '../../src/lib/seoConfig.js';
 import { serviceOffers } from '../../src/data/serviceOffers.js';
 import { resolveLoopbackRedirectUrl, resolveQaTargets } from './qa-local-only.js';
 import { HOURLY_RATE_LABEL } from '../../src/config/pricing.js';
@@ -38,6 +39,18 @@ const expectedRoutes = [
     canonical: 'https://www.vivekapatel.com/data-policy/',
     title: /Cookie Policy/i,
   },
+  {
+    route: 'case-studies',
+    path: '/case-studies',
+    canonical: absoluteUrl('/case-studies'),
+    title: /Case Studies/i,
+  },
+  ...translatedRoutePairs.map(({ de }) => ({
+    route: de,
+    path: de,
+    canonical: absoluteUrl(de),
+    title: /Vivek Patel/i,
+  })),
   ...serviceOffers.map((offer) => ({
     route: `service-${offer.id}`,
     path: `/services/${offer.id}`,
@@ -135,6 +148,8 @@ function getAlternateLinks(head) {
 for (const [env, base] of resolveQaTargets({ localOnly, previewURL: PREVIEW, prodURL: PROD })) {
   for (const routeConfig of expectedRoutes) {
     const { route, path: pathSuffix, canonical: expectedCanonical, title: expectedTitle } = routeConfig;
+    // This prospective check can also run against the currently released English site.
+    if (env === 'prod' && pathSuffix.startsWith('/de')) continue;
     const url = `${base}${previewPath(pathSuffix)}`;
     const head = localOnly ? fetchLocalHead(url) : fetchHead(url);
     if (!head) {
@@ -169,13 +184,14 @@ for (const [env, base] of resolveQaTargets({ localOnly, previewURL: PREVIEW, pro
       findings.push({ env, route, issue: `Bad og:url: ${ogUrl}`, severity: 'P1' });
     }
 
-    for (const hreflang of ['en', 'x-default']) {
-      const alternate = alternates.find((link) => link.hreflang === hreflang);
-      if (!alternate || alternate.href !== expectedCanonical) {
+    for (const [hreflang, target] of Object.entries(alternatePaths(pathSuffix))) {
+      if (env === 'prod' && hreflang === 'de') continue;
+      const alternate = alternates.filter((link) => link.hreflang === hreflang);
+      if (alternate.length !== 1 || alternate[0].href !== absoluteUrl(target)) {
         findings.push({
           env,
           route,
-          issue: `Bad ${hreflang} alternate href: ${alternate?.href ?? 'missing'}`,
+          issue: `Bad ${hreflang} alternate href: ${alternate[0]?.href ?? 'missing'}`,
           severity: 'P1',
         });
       }
@@ -271,7 +287,7 @@ if (seoConfig.includes('94%')) {
 }
 
 const hero = readFileSync(path.join(process.cwd(), 'src/components/Hero.jsx'), 'utf8');
-if ((hero.match(/\{HOURLY_RATE_LABEL\}/g) || []).length !== 1 || hero.includes('Starting at')) {
+if ((hero.match(/\{localizedHourlyRate\(locale\)\}/g) || []).length !== 1 || hero.includes('Starting at')) {
   findings.push({
     issue: `Hero.jsx must show ${HOURLY_RATE_LABEL} exactly once, in the invoice RATE field (#195)`,
     severity: 'P1',
@@ -397,9 +413,11 @@ if (/streetAddress|PostalAddress|postalCode|addressLocality|addressCountry|postO
 }
 
 const legal = readFileSync(path.join(process.cwd(), 'src/pages/Legal.jsx'), 'utf8')
-  + readFileSync(path.join(process.cwd(), 'src/components/PrivacyPolicyContent.jsx'), 'utf8');
+  + readFileSync(path.join(process.cwd(), 'src/components/PrivacyPolicyContent.jsx'), 'utf8')
+  + readFileSync(path.join(process.cwd(), 'src/data/policyCopy.js'), 'utf8');
 const footer = readFileSync(path.join(process.cwd(), 'src/components/Footer.jsx'), 'utf8');
-const contact = readFileSync(path.join(process.cwd(), 'src/pages/Contact.jsx'), 'utf8');
+const contact = readFileSync(path.join(process.cwd(), 'src/pages/Contact.jsx'), 'utf8')
+  + readFileSync(path.join(process.cwd(), 'src/lib/contactCopy.js'), 'utf8');
 const dataPolicy = readFileSync(path.join(process.cwd(), 'src/pages/DataPolicy.jsx'), 'utf8')
   + readFileSync(path.join(process.cwd(), 'src/components/CookiePolicyContent.jsx'), 'utf8');
 pin(

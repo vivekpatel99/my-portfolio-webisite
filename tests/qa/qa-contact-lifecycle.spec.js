@@ -523,7 +523,7 @@ test('case study navigation leaves modified clicks unprevented', async ({ page }
     const links = route.startsWith('/project/')
       ? page.locator('.case-study-navigation a, .case-study-cta a')
       : page.getByRole('link', { name: 'Vivek Patel home', exact: true });
-    await expect(links).toHaveCount(route.startsWith('/project/') ? 3 : 1);
+    await expect(links).toHaveCount(route.startsWith('/project/') ? 4 : 1);
     for (const link of await links.all()) {
       for (const options of [{ ctrlKey: true }, { metaKey: true }, { shiftKey: true }, { altKey: true }, { button: 1 }]) {
         const prevented = await link.evaluate((element, clickOptions) => {
@@ -550,7 +550,7 @@ for (const activation of ['modified', 'middle']) {
       const links = route.startsWith('/project/')
         ? page.locator('.case-study-navigation a, .case-study-cta a')
         : page.getByRole('link', { name: 'Vivek Patel home', exact: true });
-      await expect(links).toHaveCount(route.startsWith('/project/') ? 3 : 1);
+      await expect(links).toHaveCount(route.startsWith('/project/') ? 4 : 1);
       for (const link of await links.all()) {
         const href = await link.getAttribute('href');
         const options = activation === 'middle' ? { button: 'middle' } : { modifiers: ['ControlOrMeta'] };
@@ -793,6 +793,60 @@ for (const timing of ['before return', 'after return']) {
     await expect(failureToastLocator(page)).toHaveCount(0, { timeout: 1_000 });
   });
 }
+
+test('switching Contact to German preserves a pending draft, query, and budget through a retry', async ({ page, context, contactTransport: transport }) => {
+  await context.addInitScript(() => localStorage.setItem('cookie_consent_preferences', JSON.stringify({ analytics: false, necessary: true })));
+  const query = '?service=ai-workflow-buildout&utm_source=linkedin';
+  await page.goto(`/contact/${query}`);
+  await fillContactForm(page);
+  await page.getByRole('button', { name: 'Send project request', exact: true }).click();
+  await expect.poll(() => transport.state.mutations.length).toBe(1);
+
+  let navigation = page.locator('header');
+  if (page.viewportSize().width < 768) {
+    await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
+    navigation = page.getByRole('dialog', { name: 'Navigation menu', exact: true });
+  }
+  await navigation.getByRole('link', { name: 'Deutsch', exact: true }).click();
+  await expect(page).toHaveURL(new URL(`/de/contact/${query}`, page.url()).href);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+
+  const form = page.locator('form[data-sensitive-telemetry]');
+  const name = form.getByLabel('Vollständiger Name *');
+  const email = form.getByLabel('E-Mail-Adresse *');
+  const description = form.getByLabel('Projektbeschreibung *');
+  const budget = form.getByRole('button', { name: /^Budgetrahmen / });
+  const budgetValue = form.locator('input[name="budget"]');
+  const submit = form.locator('button[type="submit"]');
+  await expect(name).toHaveValue('Synthetic QA Contact');
+  await expect(email).toHaveValue('qa-contact@example.invalid');
+  await expect(description).toHaveValue('Synthetic transport lifecycle test.');
+  await expect(budget).toHaveText(/5\.000 € – 10\.000 €/);
+  await expect(budgetValue).toHaveValue(SELECTED_BUDGET);
+  await expect(submit).toBeDisabled();
+  await expect(submit).toHaveAccessibleName('Wird gesendet …');
+
+  transport.releasePending('failure', GLOBAL_RATE_LIMIT_ERROR);
+  const failure = 'Die Website erhält derzeit zu viele Anfragen. Bitte warten Sie einige Minuten und versuchen Sie es erneut.';
+  const failureToast = page.getByRole('region', { name: 'Benachrichtigungen (F8)' }).getByRole('status');
+  await expect(failureToast.getByText(failure, { exact: true })).toBeVisible();
+  await expect(failureToast.getByRole('button', { name: 'Benachrichtigung schließen' })).toHaveCount(1);
+  await expect(form.locator('#contact-submit-error')).toContainText(failure);
+  await expect(submit).toBeFocused();
+  await expect(submit).toHaveAccessibleName('Projektanfrage senden');
+  await submit.press('Enter');
+
+  await expect.poll(() => transport.state.mutations.length).toBe(2);
+  expect(transport.state.mutations[1].args[0]).toEqual(transport.state.mutations[0].args[0]);
+  expect(transport.state.mutations[1].args[0].budget).toBe(SELECTED_BUDGET);
+  const receipt = form.getByRole('status', { name: 'Anfrage erhalten' });
+  await expect(receipt).toBeFocused();
+  await expect(failureToast).toHaveCount(0);
+  await expect(name).toHaveValue('');
+  await expect(email).toHaveValue('');
+  await expect(description).toHaveValue('');
+  await expect(budgetValue).toHaveValue('');
+});
 
 test('later Contact visits retain a completed receipt without repeating outcome focus or announcement', async ({ page, contactTransport: transport }) => {
   await page.goto('/contact/');

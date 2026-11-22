@@ -17,6 +17,7 @@ afterEach(cleanup);
 describe('case study internal navigation', () => {
   const articleLinks = [
     ['← View case studies', '/case-studies/?resume=1'],
+    ['Fallstudien auf Deutsch', '/de/case-studies/'],
     ['Back to home', '/'],
     ['Discuss a similar project', '/contact/'],
   ];
@@ -45,7 +46,8 @@ describe('case study internal navigation', () => {
 
   it('keeps standalone article rendering usable without a router', () => {
     const markup = renderToStaticMarkup(<CaseStudyArticle story={story} />);
-    for (const href of ['/#portfolio', '/', '/contact/']) expect(markup).toContain(`href="${href}"`);
+    for (const href of ['/#portfolio', '/de/case-studies/', '/', '/contact/']) expect(markup).toContain(`href="${href}"`);
+    expect(markup).toContain('lang="de" hrefLang="de">Fallstudien auf Deutsch</a>');
     expect(markup).toContain('Discuss a similar project');
     expect(markup).not.toContain('In progress');
   });

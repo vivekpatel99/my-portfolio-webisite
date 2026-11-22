@@ -26,6 +26,7 @@ const suites = Object.freeze({
   'qa-fragments.spec.js': { label: 'fragment-navigation' },
   'qa-hero-motion.spec.js': { label: 'hero-motion' },
   'qa-hero-ocr-labels.spec.js': { label: 'hero-ocr-labels' },
+  'qa-language.spec.js': { label: 'language-switching' },
   'qa-local-navigation.spec.js': { label: 'local-navigation' },
   'qa-responsive.spec.js': { label: 'responsive-layout' },
   'qa-route-recovery.spec.js': { label: 'route-recovery' },

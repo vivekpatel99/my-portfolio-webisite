@@ -7,7 +7,8 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import ServiceDetail from './ServiceDetail';
 import { HOURLY_FROM_LABEL } from '@/config/pricing';
-import { serviceOffers, serviceTimelineLabel } from '@/data/serviceOffers';
+import { getServiceOffers, serviceOffers, serviceRouteForId, serviceTimelineLabel } from '@/data/serviceOffers';
+import { localizedPath } from '@/lib/locale.js';
 
 vi.mock('@/components/ui/button', () => ({
   Button: ({ children, asChild, ...props }) => {
@@ -97,6 +98,27 @@ describe('ServiceDetail', () => {
     expect(screen.getByText(HOURLY_FROM_LABEL)).toBeTruthy();
     expect(HOURLY_FROM_LABEL).toContain('€');
     expect(HOURLY_FROM_LABEL).not.toContain('$');
+  });
+
+  it.each(getServiceOffers('de'))('renders German service content for $id', (service) => {
+    const path = localizedPath(serviceRouteForId(service.id), 'de');
+    render(
+      <MemoryRouter initialEntries={[path]}>
+        <Routes>
+          <Route path={path} element={<ServiceDetail serviceId={service.id} />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole('heading', { level: 1, name: service.title })).toBeTruthy();
+    expect(screen.getByText(service.summary)).toBeTruthy();
+    expect(screen.getByText(serviceTimelineLabel(service, 'de'))).toBeTruthy();
+    expect(screen.getByText(service.inScope[0])).toBeTruthy();
+    expect(screen.getByText(service.outOfScope[0])).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Kostenschätzung anfragen' }).getAttribute('href'))
+      .toBe(localizedPath('/contact/', 'de'));
+    expect(screen.getByRole('link', { name: 'Zurück zu den Leistungen' }).getAttribute('href'))
+      .toBe('/de/#services');
   });
 
   it('renders all three service offers correctly', () => {

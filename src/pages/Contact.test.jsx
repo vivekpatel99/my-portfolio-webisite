@@ -127,6 +127,64 @@ describe("Contact form", () => {
     expect(source.tabIndex).toBe(0);
   });
 
+  it('localizes German validation and range labels while submitting the canonical budget value', async () => {
+    const { container } = render(
+      <MemoryRouter initialEntries={['/de/contact/']}>
+        <Contact />
+      </MemoryRouter>,
+    );
+    const form = container.querySelector('form');
+    fireEvent.submit(form);
+    expect(screen.getByText('Bitte geben Sie Ihren Namen ein.')).toBeTruthy();
+    expect(screen.getByText('Bitte geben Sie Ihre E-Mail-Adresse ein.')).toBeTruthy();
+    expect(screen.getByText('Bitte beschreiben Sie Ihr Projekt.')).toBeTruthy();
+    expect(document.activeElement).toBe(screen.getByLabelText('Vollständiger Name *'));
+
+    fillValidLead(container);
+    fireEvent.click(screen.getByRole('button', { name: /Budgetrahmen auswählen/ }));
+    fireEvent.click(screen.getByRole('option', { name: '5.000 € – 10.000 €' }));
+    fireEvent.submit(form);
+    expect(await screen.findByRole('status', { name: 'Anfrage erhalten' })).toBeTruthy();
+    expect(mockSubmitLead).toHaveBeenCalledWith({
+      name: 'Jane Doe',
+      email: 'jane@example.com',
+      budget: '€5k-€10k',
+      description: 'Need help.',
+    });
+  });
+
+  it('keeps an in-flight English draft and presents its submission error in German after switching', async () => {
+    let navigate;
+    const Navigation = () => { navigate = useNavigate(); return null; };
+    let rejectSubmission;
+    mockSubmitLead.mockImplementationOnce(() => new Promise((_resolve, reject) => { rejectSubmission = reject; }));
+    const view = render(
+      <MemoryRouter initialEntries={['/contact']}>
+        <Navigation />
+        <Routes>
+          <Route path="/contact" element={<Contact key="en" />} />
+          <Route path="/de/contact" element={<Contact key="de" />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+    fillValidLead(view.container);
+    fireEvent.submit(view.container.querySelector('form'));
+    act(() => navigate('/de/contact/'));
+    expect(screen.getByRole('button', { name: 'Wird gesendet …' }).disabled).toBe(true);
+    await act(async () => rejectSubmission({ data: GLOBAL_RATE_LIMIT_ERROR }));
+    expect(screen.getByText('Die Website erhält derzeit zu viele Anfragen. Bitte warten Sie einige Minuten und versuchen Sie es erneut.')).toBeTruthy();
+    expect(toast).toHaveBeenCalledWith(expect.objectContaining({
+      translations: {
+        de: {
+          title: 'Anfrage konnte nicht gesendet werden',
+          description: 'Die Website erhält derzeit zu viele Anfragen. Bitte warten Sie einige Minuten und versuchen Sie es erneut.',
+        },
+      },
+    }));
+    expect(screen.getByLabelText('Vollständiger Name *').value).toBe('Jane Doe');
+    expect(mockSubmitLead).toHaveBeenCalledTimes(1);
+  });
+
   it('#265: restores every unsent field after navigation unmounts the contact route', () => {
     const first = render(<Contact />);
     fillValidLead(first.container, { budget: '€5k-€10k' });
@@ -396,7 +454,7 @@ describe("Contact form", () => {
     fireEvent.change(screen.getByLabelText('Full Name *'), { target: { value: name } });
     fireEvent.change(screen.getByLabelText('Email Address *'), { target: { value: email } });
     fireEvent.submit(container.querySelector('form'));
-    expect(toast).toHaveBeenLastCalledWith({ title, description, variant: 'destructive' });
+    expect(toast).toHaveBeenLastCalledWith(expect.objectContaining({ title, description, variant: 'destructive' }));
     expect(document.activeElement).toBe(screen.getByLabelText('Full Name *'));
     expect(mockSubmitLead).not.toHaveBeenCalled();
   });
@@ -550,11 +608,11 @@ describe("Contact form", () => {
     fireEvent.change(container.querySelector('input[name="email"]'), { target: { value: "private@example.com" } });
     fireEvent.change(container.querySelector('textarea[name="description"]'), { target: { value: "Private valid text." } });
     fireEvent.submit(container.querySelector("form"));
-    await waitFor(() => expect(toast).toHaveBeenCalledWith({
+    await waitFor(() => expect(toast).toHaveBeenCalledWith(expect.objectContaining({
       title: "Submission Failed",
       description: CONTACT_LEAD_VALIDATION_ERROR,
       variant: "destructive",
-    }));
+    })));
     expect(mockSubmitLead).toHaveBeenCalledTimes(1);
     expect(captureException).not.toHaveBeenCalled();
     expect(JSON.stringify(toast.mock.calls)).not.toContain("Private");
@@ -930,11 +988,11 @@ describe('#230: contact outcome focus and receipt', () => {
     await act(async () => {
       first.reject(errorWithMessage(DIAGNOSTIC_MESSAGE));
     });
-    expect(toast).toHaveBeenCalledWith({
+    expect(toast).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Submission Failed',
       description: SAFE_SUBMIT_FAILURE,
       variant: 'destructive',
-    });
+    }));
     expectNoDiagnostics();
 
     const retry = submitButton();
@@ -1127,11 +1185,11 @@ describe("Contact form submission failures (#231)", () => {
     fillValidLead(container);
     fireEvent.submit(container.querySelector("form"));
 
-    await waitFor(() => expect(toast).toHaveBeenCalledWith({
+    await waitFor(() => expect(toast).toHaveBeenCalledWith(expect.objectContaining({
       title: "Submission Failed",
       description: SAFE_SUBMIT_FAILURE,
       variant: "destructive",
-    }));
+    })));
     expectNoDiagnostics();
     expect(captureException).toHaveBeenCalledTimes(1);
     expect(captureException.mock.calls[0][0]).toBe(rejection);
@@ -1150,11 +1208,11 @@ describe("Contact form submission failures (#231)", () => {
     fillValidLead(container);
     fireEvent.submit(container.querySelector("form"));
 
-    await waitFor(() => expect(toast).toHaveBeenCalledWith({
+    await waitFor(() => expect(toast).toHaveBeenCalledWith(expect.objectContaining({
       title: "Submission Failed",
       description: expected,
       variant: "destructive",
-    }));
+    })));
     expectNoDiagnostics();
     expect(captureException).toHaveBeenCalledTimes(captured ? 1 : 0);
   });

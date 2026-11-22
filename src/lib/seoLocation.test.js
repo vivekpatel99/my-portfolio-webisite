@@ -44,9 +44,9 @@ describe('public location copy', () => {
   const hero = readSrc('src/components/Hero.jsx');
   const seoConfig = readSrc('src/lib/seoConfig.js');
   const indexHtml = replacePricingTokens(readSrc('index.html'));
-  const legal = readSrc('src/pages/Legal.jsx') + readSrc('src/components/PrivacyPolicyContent.jsx');
+  const legal = readSrc('src/pages/Legal.jsx') + readSrc('src/components/PrivacyPolicyContent.jsx') + readSrc('src/data/policyCopy.js');
   const footer = readSrc('src/components/Footer.jsx');
-  const contact = readSrc('src/pages/Contact.jsx');
+  const contact = readSrc('src/pages/Contact.jsx') + readSrc('src/lib/contactCopy.js');
   const dataPolicy = readSrc('src/pages/DataPolicy.jsx') + readSrc('src/components/CookiePolicyContent.jsx');
   const jsonLd = parseJsonLd(indexHtml);
   const person = jsonLd.find((node) => node['@type'] === 'Person');
@@ -61,7 +61,7 @@ describe('public location copy', () => {
     expect(hero.match(/Linz, Austria/g)).toHaveLength(1);
     expect(hero).not.toContain('Based in Linz, Austria');
     expect(hero).not.toContain(`Starting at ${HOURLY_RATE_LABEL}`);
-    expect(hero.match(/\{HOURLY_RATE_LABEL\}/g)).toHaveLength(1);
+    expect(hero.match(/\{localizedHourlyRate\(locale\)\}/g)).toHaveLength(1);
     expect(hero.replace(/\s+/g, ' ')).not.toMatch(LEFTOVER_BASE);
   });
 

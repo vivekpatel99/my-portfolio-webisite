@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { DetectionLabel } from './DetectionFrame';
 import { ArrowRight } from 'lucide-react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { shellCopy } from '@/data/shellCopy';
+import { useLocale, localizedPath } from '@/lib/locale';
+import { findTranslatedRoute } from '@/lib/localizedRoutes';
 import { logos } from '@/config/links';
 import { focusNavigationTarget, isModifiedClick } from '@/lib/focusTarget';
 
@@ -20,22 +23,38 @@ const Header = ({ staticNavigation = false }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const locale = useLocale();
+  const copy = shellCopy[locale];
+  const home = localizedPath('/', locale);
+  const contact = localizedPath('/contact/', locale);
+  const collection = localizedPath('/case-studies/', locale);
+
   const navLinks = [
-    { name: 'Services', href: '/#services' },
-    { name: 'About', href: '/#about' },
-    { name: 'Case Studies', href: '/case-studies/' },
-    { name: 'Testimonials', href: '/#testimonials' },
+    { name: copy.services, href: `${home}#services` },
+    { name: copy.about, href: `${home}#about` },
+    { name: copy.caseStudies, href: collection },
+    { name: copy.testimonials, href: `${home}#testimonials` },
   ];
 
-  const isActiveLink = (href) => {
-    if (href === '/case-studies/') {
-      return location.pathname.startsWith('/case-studies');
-    }
-    if (href.startsWith('/#')) {
-      const hash = href.substring(1);
-      return location.pathname === '/' && location.hash === hash;
-    }
-    return location.pathname === href;
+  const currentPage = findTranslatedRoute(location.pathname);
+  const targetLocale = locale === 'en' ? 'de' : 'en';
+  const languageSwitch = currentPage ? (
+    <Link
+      to={localizedPath(`${location.pathname}${location.search}${location.hash}`, targetLocale)}
+      state={location.state}
+      onClick={(event) => { if (!isModifiedClick(event)) setIsOpen(false); }}
+      lang={targetLocale}
+      hrefLang={targetLocale}
+      className="detection-utility inline-flex min-h-11 items-center self-start px-2 text-sm text-[#d1d5db] hover:text-white"
+    >
+      {targetLocale === 'de' ? 'Deutsch' : 'English'}
+    </Link>
+  ) : null;
+
+  const currentType = (href) => {
+    if (href === collection && currentPage?.en === '/case-studies') return 'page';
+    if (href.includes('#') && currentPage?.en === '/' && href === `${home}${location.hash}`) return 'location';
+    return undefined;
   };
 
   const handleToggle = () => {
@@ -144,16 +163,16 @@ const Header = ({ staticNavigation = false }) => {
     const href = e.currentTarget.getAttribute('href');
     const [path, id] = href.split('#');
 
-    if (path === '/' && id) {
+    if (path === home && id) {
       const nextHash = `#${id}`;
 
-      if (location.pathname === '/' && location.hash === nextHash) {
+      if (currentPage?.en === '/' && location.hash === nextHash) {
         const target = document.getElementById(decodeURIComponent(id));
         target?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
         // Defer so a closing mobile menu restores inert/focus first; the target wins.
         window.setTimeout(() => focusNavigationTarget(target), 0);
       } else {
-        navigate(`/#${id}`);
+        navigate(href);
       }
     } else {
       navigate(href);
@@ -167,7 +186,7 @@ const Header = ({ staticNavigation = false }) => {
   const handleHomeClick = (e) => {
     if (isModifiedClick(e)) return;
     e.preventDefault();
-    navigate('/');
+    navigate(home);
     if (isOpen) {
       setIsOpen(false);
     }
@@ -185,34 +204,35 @@ const Header = ({ staticNavigation = false }) => {
         className="sticky top-0 z-40 bg-gradient-to-b from-[rgba(139,92,246,0.05)] to-[rgba(12,13,13,0.92)] backdrop-blur-[14px] border-b border-[rgba(139,92,246,0.38)]"
       >
         <div
-          className="max-w-[1120px] mx-auto px-7 flex items-center gap-[22px]"
+          className="max-w-[1120px] mx-auto px-7 flex items-center gap-3 lg:gap-[22px]"
           style={{ height: 'calc(var(--site-header-height) - 1px)' }}
         >
-          <Link to="/" onClick={handleHomeClick} className="detection-utility flex items-center flex-shrink-0" aria-label="Vivek Patel home">
+          <Link to={home} onClick={handleHomeClick} className="detection-utility flex items-center flex-shrink-0" aria-label={copy.homeLink}>
             <img src={logos.logo} srcSet={logos.logoSrcSet} alt="" width="30" height="30" className="w-[30px] h-[30px] object-contain" />
           </Link>
 
-          <nav className="hidden md:flex items-center gap-7 ml-auto">
+          <nav className="hidden md:flex items-center gap-4 lg:gap-7 ml-auto">
             {navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
                 onClick={handleSmoothScroll}
-                aria-current={isActiveLink(link.href) ? (link.href.startsWith('/#') ? 'location' : 'page') : undefined}
-                className={`detection-nav-link text-[0.92rem] py-[10px] pb-3 ${isActiveLink(link.href) ? 'detection-panel detection-panel--nav-selected text-white' : 'text-[#9ca3af]'} hover:text-white transition-colors`}
+                aria-current={currentType(link.href)}
+                className={`detection-nav-link text-[0.92rem] py-[10px] pb-3 ${currentType(link.href) ? 'detection-panel detection-panel--nav-selected text-white' : 'text-[#9ca3af]'} hover:text-white transition-colors`}
               >
                 {link.name}
               </a>
             ))}
           </nav>
+          {languageSwitch && <div className="hidden md:flex">{languageSwitch}</div>}
 
           <Link
             ref={desktopEstimateRef}
-            to="/contact/"
+            to={contact}
             className="detection-panel detection-action detection-action--labeled detection-action--primary detection-action--compact hidden md:inline-flex"
           >
-            <DetectionLabel aria-hidden="true">Inquiry</DetectionLabel>
-            Request Estimate
+            <DetectionLabel aria-hidden="true">{copy.inquiry}</DetectionLabel>
+            {copy.estimate}
             <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           </Link>
 
@@ -220,33 +240,34 @@ const Header = ({ staticNavigation = false }) => {
             <details className="md:hidden ml-auto">
               <summary
                 className="detection-utility w-11 h-11 flex items-center justify-center cursor-pointer list-none [&::-webkit-details-marker]:hidden"
-                aria-label="Toggle navigation menu"
+                aria-label={copy.toggleMenu}
                 aria-controls="static-mobile-menu"
               >
                 <span aria-hidden="true" className="relative block w-[18px] h-[1.5px] bg-white before:content-[''] before:block before:w-[18px] before:h-[1.5px] before:bg-white before:absolute before:left-0 before:-top-[6px] after:content-[''] after:block after:w-[18px] after:h-[1.5px] after:bg-white after:absolute after:left-0 after:top-[6px]"></span>
               </summary>
               <nav
                 id="static-mobile-menu"
-                aria-label="Navigation menu"
+                aria-label={copy.menu}
                 className="absolute left-0 right-0 top-full bg-[#0C0D0D] border-b border-[rgba(139,92,246,0.38)] px-7 py-4 flex flex-col items-start gap-2"
               >
                 {navLinks.map((link) => (
                   <a
                     key={link.name}
                     href={link.href}
-                    aria-current={isActiveLink(link.href) ? (link.href.startsWith('/#') ? 'location' : 'page') : undefined}
-                    className={`detection-nav-link text-[0.92rem] py-[10px] pb-3 ${isActiveLink(link.href) ? 'detection-panel detection-panel--nav-selected text-white' : 'text-[#9ca3af]'} hover:text-white transition-colors`}
+                    aria-current={currentType(link.href)}
+                    className={`detection-nav-link text-[0.92rem] py-[10px] pb-3 ${currentType(link.href) ? 'detection-panel detection-panel--nav-selected text-white' : 'text-[#9ca3af]'} hover:text-white transition-colors`}
                   >
                     {link.name}
                   </a>
                 ))}
+                {languageSwitch}
                 <a
-                  href="/contact/"
-                  aria-label="Request a Project Estimate"
+                  href={contact}
+                  aria-label={copy.estimateLabel}
                   className="detection-panel detection-action detection-action--labeled detection-action--primary detection-action--compact inline-flex w-full mt-3"
                 >
-                  <DetectionLabel aria-hidden="true">Inquiry</DetectionLabel>
-                  Request Estimate
+                  <DetectionLabel aria-hidden="true">{copy.inquiry}</DetectionLabel>
+                  {copy.estimate}
                   <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 </a>
               </nav>
@@ -257,7 +278,7 @@ const Header = ({ staticNavigation = false }) => {
               disabled={typeof window === 'undefined'}
               onClick={handleToggle}
               className="detection-utility md:hidden w-11 h-11 flex items-center justify-center ml-auto"
-              aria-label="Toggle navigation menu"
+              aria-label={copy.toggleMenu}
               aria-expanded={isOpen}
               aria-controls="mobile-menu"
             >
@@ -274,19 +295,19 @@ const Header = ({ staticNavigation = false }) => {
           id="mobile-menu"
           role="dialog"
           aria-modal="true"
-          aria-label="Navigation menu"
+          aria-label={copy.menu}
           className="fixed inset-0 bg-[#0C0D0D] z-50 md:hidden flex flex-col overflow-y-auto px-5 pb-7 overscroll-contain touch-none"
           style={{ overscrollBehavior: 'contain', touchAction: 'pan-y' }}
         >
           <div className="h-[68px] flex items-center justify-between border-b border-[rgba(139,92,246,0.38)]">
-            <Link to="/" onClick={handleHomeClick} className="detection-utility flex items-center" aria-label="Vivek Patel home">
+            <Link to={home} onClick={handleHomeClick} className="detection-utility flex items-center" aria-label={copy.homeLink}>
               <img src={logos.logo} srcSet={logos.logoSrcSet} alt="" width="30" height="30" className="w-[30px] h-[30px] object-contain" />
             </Link>
             <button
               ref={closeButtonRef}
               onClick={() => setIsOpen(false)}
               className="detection-utility w-11 h-11 relative"
-              aria-label="Close navigation menu"
+              aria-label={copy.closeMenu}
             >
               <span className="absolute left-3 top-[21px] w-5 h-[1.5px] bg-white rotate-45"></span>
               <span className="absolute left-3 top-[21px] w-5 h-[1.5px] bg-white -rotate-45"></span>
@@ -299,22 +320,23 @@ const Header = ({ staticNavigation = false }) => {
                 key={link.name}
                 href={link.href}
                 onClick={handleSmoothScroll}
-                aria-current={isActiveLink(link.href) ? (link.href.startsWith('/#') ? 'location' : 'page') : undefined}
-                className={`detection-nav-link text-[1.55rem] font-[650] tracking-[-0.02em] ${isActiveLink(link.href) ? 'detection-panel detection-panel--nav-selected text-white' : 'text-[#9ca3af]'} hover:text-white transition-colors`}
+                aria-current={currentType(link.href)}
+                className={`detection-nav-link text-[1.55rem] font-[650] tracking-[-0.02em] ${currentType(link.href) ? 'detection-panel detection-panel--nav-selected text-white' : 'text-[#9ca3af]'} hover:text-white transition-colors`}
               >
                 {link.name}
               </a>
             ))}
           </nav>
 
+          {languageSwitch}
           <Link
-            to="/contact/"
+            to={contact}
             onClick={handleEstimateClick}
-            aria-label="Request a Project Estimate"
+            aria-label={copy.estimateLabel}
             className="detection-panel detection-action detection-action--labeled detection-action--primary detection-action--compact inline-flex w-full"
           >
-            <DetectionLabel aria-hidden="true">Inquiry</DetectionLabel>
-            Request Estimate
+            <DetectionLabel aria-hidden="true">{copy.inquiry}</DetectionLabel>
+            {copy.estimate}
             <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           </Link>
         </div>

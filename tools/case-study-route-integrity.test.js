@@ -1,4 +1,5 @@
 // @vitest-environment node
+import { translatedRoutePairs } from '../src/lib/localizedRoutes.js';
 import { execFileSync } from 'node:child_process';
 import {
   cpSync,
@@ -52,6 +53,13 @@ function fixture({ hourlyRateEur = HOURLY_RATE_EUR } = {}) {
     'src/lib/featuredCaseStudies.js',
     'src/lib/seoConfig.js',
     'src/lib/seo.js',
+    'src/lib/locale.js',
+    'src/lib/localizedRoutes.js',
+    'src/lib/contactCopy.js',
+    'src/data/shellCopy.js',
+    'src/data/policyCopy.js',
+    'src/data/caseStudies.de.js',
+    'src/data/serviceOffers.de.js',
     'src/lib/heroDetectedFields.js',
     'src/pages/Home.jsx',
     'src/pages/ContactFallback.jsx',
@@ -147,7 +155,7 @@ describe('case-study route integrity', () => {
     expect(home).toContain('href="/case-studies/"');
     expect(home).toContain('Profile Invoice');
     expect(home).toContain('aria-label="Vivek Patel home"');
-    expect(home).not.toContain('<details');
+    expect(home).toContain('id="static-mobile-menu"');
     expect(home).not.toContain('translateY(12px)');
     for (const service of ['data-extraction-automation-sprint', 'computer-vision-production-optimization', 'ai-workflow-buildout']) {
       expect(home).toContain(`href="/services/${service}"`);
@@ -156,6 +164,7 @@ describe('case-study route integrity', () => {
       ...caseStudySlugs.map((slug) => `project/${slug}/index.html`),
       ...['data-extraction-automation-sprint', 'computer-vision-production-optimization', 'ai-workflow-buildout']
         .map((id) => `services/${id}/index.html`)];
+    outputs.push(...translatedRoutePairs.map(({ de }) => `${de.slice(1)}/index.html`));
     const firstOutputs = outputs.map((file) => readFileSync(path.join(directory, 'dist', file), 'utf8'));
     run(directory, 'generate-static-route-html');
     expect(outputs.map((file) => readFileSync(path.join(directory, 'dist', file), 'utf8'))).toEqual(firstOutputs);
@@ -172,7 +181,7 @@ describe('case-study route integrity', () => {
     expect(contact).toContain('The project request form needs JavaScript.');
     expect(contact).toContain('Connect with Vivek Patel on Upwork');
     expect(contact).not.toMatch(/<(?:form|input|textarea)\b/);
-    expect(contact).not.toContain('<details');
+    expect(contact).toContain('id="static-mobile-menu"');
     const privacy = readFileSync(path.join(directory, 'dist/legal/index.html'), 'utf8');
     const cookies = readFileSync(path.join(directory, 'dist/data-policy/index.html'), 'utf8');
     for (const [html, heading, crossPath] of [

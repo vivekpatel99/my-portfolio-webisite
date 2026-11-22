@@ -81,6 +81,16 @@ describe('public link routing check', () => {
     expect(literalPageLinksFromSource(source)).toEqual(['/services/missing', '/', '/contact', '/legal/']);
   });
 
+  it('ignores prose and interpolated selectors in source', () => {
+    const source = [
+      'greeting: "Write to:",',
+      'email: "user@example.com",',
+      'document.querySelector(`a[href="${backHref}"]`)',
+      '<a href="/contact/">Contact</a>',
+    ].join('\n');
+    expect(literalPageLinksFromSource(source)).toEqual(['/contact/']);
+  });
+
   it('matches Apache static resolution: directory index or regular file only', () => {
     const dist = distFixture({ 'index.html': '', 'services/known/index.html': '', 'robots.txt': '' });
     expect(staticOutputServesPath(dist, '/')).toBe(true);

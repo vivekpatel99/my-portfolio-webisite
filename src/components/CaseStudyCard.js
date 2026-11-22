@@ -1,5 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { germanCardCopy } from '../data/caseStudies.de.js';
+import { caseStudyArticleHref } from '../lib/caseStudyBrowsing.js';
+import { useLocale } from '../lib/locale.js';
 import { caseStudyDisplaySrc } from '../lib/caseStudyThumbnails.js';
 import { DetectionLabel } from './DetectionFrame.js';
 
@@ -18,11 +21,15 @@ const MONTH_NAMES = [
   'Dec',
 ];
 
-const formatCompletionDate = (completedAt) => {
+const formatCompletionDate = (completedAt, locale) => {
   const match = typeof completedAt === 'string' ? completedAt.match(/^(\d{4})-(0[1-9]|1[0-2])$/) : null;
   if (!match) return null;
 
   const [, year, month] = match;
+  if (locale === 'de') {
+    return new Intl.DateTimeFormat('de', { month: 'short', year: 'numeric', timeZone: 'UTC' })
+      .format(new Date(`${year}-${month}-01T00:00:00Z`));
+  }
   return `${MONTH_NAMES[Number(month) - 1]} ${year}`;
 };
 
@@ -38,8 +45,15 @@ const CaseStudyCard = ({
   headingLevel = 3,
   priorityImage = false,
 }) => {
-  const completionDate = formatCompletionDate(project.completedAt);
-  const cardCaption = project.cardCaption || project.image?.caption;
+  const locale = useLocale();
+  const german = locale === 'de';
+  const copy = german ? germanCardCopy(project) : {};
+  const title = copy.title ?? (project.cardTitle || project.title);
+  const completionDate = formatCompletionDate(project.completedAt, locale);
+  const cardCaption = copy.caption ?? (project.cardCaption || project.image?.caption);
+  const category = copy.category ?? project.category;
+  const label = german ? 'FALLSTUDIE' : 'CASE STUDY';
+  const completedLabel = german ? 'Abgeschlossen' : 'Completed';
   const upworkLink = project.externalLinks?.find((link) => link.label === 'Upwork project');
   const headingTag = headingLevel === 2 ? 'h2' : 'h3';
 
@@ -47,22 +61,23 @@ const CaseStudyCard = ({
     'article',
     { className: 'card case-study-card detection-panel relative flex flex-col bg-[#0C0D0D]' },
     React.createElement(DetectionLabel, { className: 'cat' },
-      project.category ? `${project.category.toUpperCase()} · CASE STUDY` : 'CASE STUDY',
+      category ? `${category.toUpperCase()} · ${label}` : label,
     ),
     React.createElement(
       Link,
       {
-        to: fromCollection ? `/project/${project.slug}/?from=collection` : `/project/${project.slug}/`,
+        to: caseStudyArticleHref(project.slug, { fromCollection, locale }),
         state: fromCollection ? { fromCollection: true } : undefined,
         className: 'case-study-card-link block focus:outline-none',
-        'aria-label': `Read case study: ${project.cardTitle || project.title}`,
+        'aria-label': german ? `${title} (Fallstudie auf Englisch)` : `Read case study: ${title}`,
+        hrefLang: german ? 'en' : undefined,
       },
       React.createElement(
         'div',
         { className: 'media relative min-h-[300px] bg-[#111] overflow-hidden' },
         project.image ? React.createElement('img', {
           className: 'absolute inset-0 w-full h-full object-contain object-top block',
-          alt: project.image.alt, src: caseStudyDisplaySrc(project.image),
+          alt: copy.alt ?? project.image.alt, src: caseStudyDisplaySrc(project.image),
           width: project.image.width, height: project.image.height,
           loading: priorityImage ? 'eager' : 'lazy',
           fetchpriority: priorityImage ? 'high' : undefined,
@@ -71,7 +86,8 @@ const CaseStudyCard = ({
         React.createElement(
           'div',
           { className: 'media-meta absolute left-4 right-14 bottom-4 z-[2]' },
-          React.createElement(headingTag, { className: 'text-[1.05rem] font-[650] tracking-[-0.015em] leading-[1.3] text-white' }, project.cardTitle || project.title),
+          React.createElement(headingTag, { className: 'text-[1.05rem] font-[650] tracking-[-0.015em] leading-[1.3] text-white' }, title),
+          german ? React.createElement('span', { className: 'mt-1 block text-xs text-[#d8caff]' }, 'Fallstudie auf Englisch') : null,
         ),
         React.createElement('span', { className: 'glyph-hit absolute right-3 bottom-3 z-[3] w-11 h-11 grid place-items-center text-[#d8caff]', 'aria-hidden': true }, React.createElement(ArrowGlyph)),
       ),
@@ -79,7 +95,7 @@ const CaseStudyCard = ({
     React.createElement(
       'div',
       { className: 'body p-5 flex flex-col gap-4 flex-1' },
-      React.createElement('p', { className: 'summary text-[0.875rem] leading-[1.5] text-[#9ca3af]' }, project.summary),
+      React.createElement('p', { className: 'summary text-[0.875rem] leading-[1.5] text-[#9ca3af]' }, copy.summary ?? project.summary),
       cardCaption ? React.createElement('p', { className: 'card-caption text-xs leading-relaxed text-[#9ca3af]' }, cardCaption) : null,
       React.createElement(
         'div',
@@ -87,11 +103,11 @@ const CaseStudyCard = ({
         upworkLink ? React.createElement('a', {
           href: upworkLink.href, target: '_blank', rel: 'noopener noreferrer',
           className: 'case-study-card-external field font-mono text-[11px] leading-[1.3] tracking-[0.04em] text-[#9ca3af]',
-        }, React.createElement('span', { className: 'text-[#a78bfa] border-b border-[rgba(167,139,250,0.35)] hover:text-white hover:border-[#8B5CF6]' }, 'Upwork project')) : null,
+        }, React.createElement('span', { className: 'text-[#a78bfa] border-b border-[rgba(167,139,250,0.35)] hover:text-white hover:border-[#8B5CF6]' }, german ? 'Upwork-Projekt' : 'Upwork project')) : null,
         completionDate ? React.createElement('time', {
-          dateTime: project.completedAt, 'aria-label': `Completed ${completionDate}`,
+          dateTime: project.completedAt, 'aria-label': `${completedLabel} ${completionDate}`,
           className: 'field font-mono text-[11px] leading-[1.3] tracking-[0.04em] text-[#9ca3af] ml-auto',
-        }, 'Completed ', React.createElement('span', { className: 'text-[#9ca3af]' }, completionDate)) : null,
+        }, `${completedLabel} `, React.createElement('span', { className: 'text-[#9ca3af]' }, completionDate)) : null,
       ),
     ),
   );

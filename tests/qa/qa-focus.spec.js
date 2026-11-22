@@ -5,7 +5,7 @@ const clearFocusToBody = (page) => page.evaluate(() => document.activeElement?.b
 // Issue #234: every mobile-drawer action must stay reachable in short viewports.
 const MENU_ACTIONS = [
   'Vivek Patel home', 'Close navigation menu', 'Services', 'About', 'Case Studies',
-  'Testimonials', 'Request a Project Estimate',
+  'Testimonials', 'Deutsch', 'Request a Project Estimate',
 ];
 const DRAWER_VIEWPORTS = [
   { width: 568, height: 256 },
@@ -159,7 +159,7 @@ test.describe('keyboard focus regressions', () => {
       element.getAttribute('aria-label') || element.querySelector('img')?.alt || element.textContent.trim()
     )))).toEqual([
       'Vivek Patel home', 'Close navigation menu', 'Services', 'About', 'Case Studies',
-      'Testimonials', 'Request a Project Estimate',
+      'Testimonials', 'Deutsch', 'Request a Project Estimate',
     ]);
 
     // Traverse the complete sequence in both directions, including links that
@@ -167,12 +167,12 @@ test.describe('keyboard focus regressions', () => {
     await page.keyboard.press('Shift+Tab');
     await expect(focusables.nth(0)).toBeFocused();
     await page.keyboard.press('Shift+Tab');
-    await expect(focusables.nth(6)).toBeFocused();
-    for (const index of [5, 4, 3, 2, 1, 0]) {
+    await expect(focusables.nth(7)).toBeFocused();
+    for (const index of [6, 5, 4, 3, 2, 1, 0]) {
       await page.keyboard.press('Shift+Tab');
       await expect(focusables.nth(index)).toBeFocused();
     }
-    for (const index of [1, 2, 3, 4, 5, 6, 0]) {
+    for (const index of [1, 2, 3, 4, 5, 6, 7, 0]) {
       await page.keyboard.press('Tab');
       await expect(focusables.nth(index)).toBeFocused();
     }

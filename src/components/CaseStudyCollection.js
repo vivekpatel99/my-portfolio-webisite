@@ -2,10 +2,13 @@ import React, { useEffect, useId, useState } from 'react';
 import { useLocation, useNavigate, useNavigationType } from 'react-router-dom';
 import { collectionCaseStudies } from '../data/caseStudies.js';
 import {
+  caseStudyArticleHref,
   getInitialBrowsingState,
   isCollectionArticleOrigin,
   saveBrowsingState,
 } from '../lib/caseStudyBrowsing.js';
+import { useLocale } from '../lib/locale.js';
+import { germanCardCopy } from '../data/caseStudies.de.js';
 import { DetectionLabel } from './DetectionFrame.js';
 import CaseStudyCard from './CaseStudyCard.js';
 
@@ -30,6 +33,8 @@ const persistLoadedPage = (loadedCount) => {
 };
 
 const CaseStudyCollection = ({ stories = collectionCaseStudies, children = null }) => {
+  const locale = useLocale();
+  const german = locale === 'de';
   const location = useLocation();
   const navigate = useNavigate();
   const navigationType = useNavigationType();
@@ -45,6 +50,7 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies, children = null 
         eligibleCount: stories.length,
         navigationType: 'POP',
         resume: restorableEntry,
+        locale,
         snapshot: typeof window !== 'undefined' ? window.history.state?.caseStudyCollection : undefined,
       })
       : { loadedCount: initialVisibleCount(stories.length), scrollY: 0 }
@@ -61,7 +67,7 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies, children = null 
   const persistBrowsingState = (loadedCount = visibleCount, scrollY = 0) => {
     const savedState = saveBrowsingState(
       { loadedCount, scrollY },
-      { eligibleCount: stories.length },
+      { eligibleCount: stories.length, locale },
     );
     if (typeof window !== 'undefined') {
       window.history.replaceState({
@@ -112,8 +118,8 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies, children = null 
 
   if (stories.length === 0) {
     return boundary(
-      React.createElement('p', { role: 'status', 'aria-live': 'polite', className: 'mb-6 text-sm text-gray-400' }, 'Showing 0 of 0 case studies'),
-      React.createElement('p', { className: 'rounded-lg border border-white/10 bg-white/[0.04] p-8 text-center text-gray-400' }, 'No case studies are available yet.'),
+      React.createElement('p', { role: 'status', 'aria-live': 'polite', className: 'mb-6 text-sm text-gray-400' }, german ? '0 von 0 Fallstudien angezeigt' : 'Showing 0 of 0 case studies'),
+      React.createElement('p', { className: 'rounded-lg border border-white/10 bg-white/[0.04] p-8 text-center text-gray-400' }, german ? 'Derzeit sind keine Fallstudien verfügbar.' : 'No case studies are available yet.'),
     );
   }
 
@@ -130,7 +136,9 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies, children = null 
   const status = React.createElement(
     'p',
     { role: 'status', 'aria-live': 'polite', className: 'mb-10 text-sm text-gray-400' },
-    `Showing ${visibleStories.length} of ${stories.length} case studies`,
+    german
+      ? `${visibleStories.length} von ${stories.length} Fallstudien angezeigt`
+      : `Showing ${visibleStories.length} of ${stories.length} case studies`,
   );
   const grid = React.createElement(
     'div',
@@ -149,8 +157,12 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies, children = null 
       null,
       React.createElement(
         'nav',
-        { 'aria-label': 'More case studies' },
-        stories.slice(visibleCount).map((story) => React.createElement('a', { key: story.slug, href: `/project/${story.slug}/` }, story.title)),
+        { 'aria-label': german ? 'Weitere Fallstudien' : 'More case studies' },
+        stories.slice(visibleCount).map((story) => React.createElement('a', {
+          key: story.slug,
+          href: caseStudyArticleHref(story.slug, { locale }),
+          hrefLang: german ? 'en' : undefined,
+        }, german ? `${germanCardCopy(story).title ?? story.title} (auf Englisch)` : story.title)),
       ),
     )
     : null;
@@ -168,8 +180,8 @@ const CaseStudyCollection = ({ stories = collectionCaseStudies, children = null 
         'aria-disabled': !hasMore || isStaticRender,
         'aria-controls': gridId,
       },
-      React.createElement(DetectionLabel, { 'aria-hidden': true }, hasMore ? 'MORE WORK' : 'ALL WORK SHOWN'),
-      hasMore ? 'Load more' : 'All case studies shown',
+      React.createElement(DetectionLabel, { 'aria-hidden': true }, hasMore ? (german ? 'WEITERE PROJEKTE' : 'MORE WORK') : (german ? 'ALLE PROJEKTE' : 'ALL WORK SHOWN')),
+      hasMore ? (german ? 'Mehr laden' : 'Load more') : (german ? 'Alle Fallstudien angezeigt' : 'All case studies shown'),
     )
     : null;
 

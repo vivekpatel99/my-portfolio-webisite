@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useLocation, useNavigationType } from 'react-router-dom';
+import { findTranslatedRoute } from '@/lib/localizedRoutes';
 import { focusNavigationTarget } from '@/lib/focusTarget';
 
 const prefersReducedMotion = () =>
@@ -9,6 +10,7 @@ const prefersReducedMotion = () =>
 const ScrollToTop = () => {
   const { pathname, hash, key } = useLocation();
   const navigationType = useNavigationType();
+  const route = findTranslatedRoute(pathname)?.en;
   const isInitialRenderRef = useRef(true);
 
   useEffect(() => {
@@ -21,7 +23,7 @@ const ScrollToTop = () => {
       // WebKit needs a frame after drawer inert cleanup before main can receive focus.
       const frameId = window.requestAnimationFrame(() => {
         const main = document.getElementById('main-content');
-        if ((pathname === '/contact' || pathname === '/contact/')
+        if (route === '/contact'
           && main?.contains(document.activeElement)
           && document.activeElement?.hasAttribute('data-contact-outcome-focus')) return;
         if (!main?.querySelector('[data-route-error]')) focusNavigationTarget(main);
@@ -29,7 +31,7 @@ const ScrollToTop = () => {
       return () => window.cancelAnimationFrame(frameId);
     };
 
-    if (!hash && (pathname === '/case-studies' || pathname === '/case-studies/')) {
+    if (!hash && route === '/case-studies') {
       if (navigationType === 'PUSH') window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       return focusMainAfterNavigation();
     }
@@ -62,7 +64,7 @@ const ScrollToTop = () => {
 
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     return focusMainAfterNavigation();
-  }, [pathname, hash, key, navigationType]);
+  }, [route, hash, key, navigationType]);
 
   return null;
 };

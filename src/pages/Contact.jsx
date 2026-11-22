@@ -13,23 +13,72 @@ import { useContactDraft } from '@/lib/useContactDraft';
 import { captureException } from '@/lib/sentryTelemetry';
 import BudgetSelect from '@/components/BudgetSelect';
 import { SENSITIVE_TELEMETRY_REGION_PROPS } from '@/lib/sensitiveTelemetry';
-import { CONTACT_LEAD_VALIDATION_ERROR, validateContactFields } from '../../convex/lib/leadValidation';
-
-const descriptionPrompts = [
-  'What data, documents, images, or workflow should be automated?',
-  'What does a successful output look like?',
-  'Do you already have code, samples, screenshots, or a deadline?',
-];
-
-const ACTIONABLE_SUBMIT_ERRORS = new Set([
+import { contactCopy } from '@/lib/contactCopy';
+import { useLocale } from '@/lib/locale.js';
+import {
   CONTACT_LEAD_VALIDATION_ERROR,
-  'The site is receiving too many requests. Please wait a few minutes and try again.',
-  'This email already sent several messages recently. Please wait before submitting again.',
-]);
+  MAX_DESCRIPTION_LENGTH,
+  MAX_EMAIL_LENGTH,
+  MAX_NAME_LENGTH,
+  validateContactFields,
+} from '../../convex/lib/leadValidation';
+
+const GLOBAL_RATE_LIMIT_ERROR =
+  'The site is receiving too many requests. Please wait a few minutes and try again.';
+const EMAIL_RATE_LIMIT_ERROR =
+  'This email already sent several messages recently. Please wait before submitting again.';
 const SUBMIT_FAILURE_FALLBACK =
   "We couldn't send your request. Please try again, or use the email address on this page.";
+const ACTIONABLE_SUBMIT_ERRORS = new Set([
+  CONTACT_LEAD_VALIDATION_ERROR,
+  GLOBAL_RATE_LIMIT_ERROR,
+  EMAIL_RATE_LIMIT_ERROR,
+]);
+const INVALID_EMAIL_ERROR = 'Enter a valid email address.';
+
+const germanFieldErrors = new Map([
+  ['Name is required.', 'Bitte geben Sie Ihren Namen ein.'],
+  ['Email is required.', 'Bitte geben Sie Ihre E-Mail-Adresse ein.'],
+  ['Project description is required.', 'Bitte beschreiben Sie Ihr Projekt.'],
+  [INVALID_EMAIL_ERROR, 'Bitte geben Sie eine gültige E-Mail-Adresse ein.'],
+  ['Choose one of the listed budget ranges, or leave it blank.', 'Bitte wählen Sie einen der angegebenen Budgetrahmen oder lassen Sie das Feld frei.'],
+  ['Remove line breaks and hidden control characters from your full name.', 'Bitte entfernen Sie Zeilenumbrüche und unsichtbare Steuerzeichen aus Ihrem Namen.'],
+  ['Remove hidden control characters from your project description.', 'Bitte entfernen Sie unsichtbare Steuerzeichen aus Ihrer Projektbeschreibung.'],
+]);
+
+for (const [englishLabel, germanLabel, limit] of [
+  ['Full name', 'Der vollständige Name', MAX_NAME_LENGTH],
+  ['Email address', 'Die E-Mail-Adresse', MAX_EMAIL_LENGTH],
+  ['Project description', 'Die Projektbeschreibung', MAX_DESCRIPTION_LENGTH],
+]) {
+  const englishMessage = `${englishLabel} must be ${limit} characters or fewer.`;
+  const germanMessage = `${germanLabel} darf höchstens ${limit.toLocaleString('de-DE')} Zeichen lang sein.`;
+  germanFieldErrors.set(englishMessage, germanMessage);
+  germanFieldErrors.set(
+    `${englishMessage} Remove extra surrounding whitespace.`,
+    `${germanMessage} Bitte entfernen Sie überflüssige Leerzeichen am Anfang und Ende.`,
+  );
+}
+
+const germanSubmitErrors = new Map([
+  [CONTACT_LEAD_VALIDATION_ERROR, 'Bitte prüfen Sie Ihre Angaben und versuchen Sie es erneut.'],
+  [GLOBAL_RATE_LIMIT_ERROR, 'Die Website erhält derzeit zu viele Anfragen. Bitte warten Sie einige Minuten und versuchen Sie es erneut.'],
+  [EMAIL_RATE_LIMIT_ERROR, 'Von dieser E-Mail-Adresse wurden in kurzer Zeit mehrere Anfragen gesendet. Bitte warten Sie, bevor Sie es erneut versuchen.'],
+  [SUBMIT_FAILURE_FALLBACK, 'Bitte versuchen Sie es erneut oder nutzen Sie die E-Mail-Adresse auf dieser Seite.'],
+]);
+
+const germanSubmitErrorMessage = (message) => (
+  germanSubmitErrors.get(message) ?? germanSubmitErrors.get(SUBMIT_FAILURE_FALLBACK)
+);
+
+const germanFieldErrorMessage = (message) => germanFieldErrors.get(message) ?? contactCopy.de.checkDetails;
 
 const Contact = () => {
+  const locale = useLocale();
+  const copy = contactCopy[locale];
+  const fieldErrorMessage = (message) => (
+    locale === 'de' ? germanFieldErrorMessage(message) : message
+  );
   const { formState, setFormState, isSubmitting, outcome, hasUnpresentedOutcome, claimOutcomePresentation, setFeedbackToast, beginSubmission, finishSubmission } = useContactDraft();
   const [fieldErrors, setFieldErrors] = useState({});
   const submittingRef = useRef(false);
@@ -37,6 +86,9 @@ const Contact = () => {
   const receiptRef = useRef(null);
   const [announcingOutcome, setAnnouncingOutcome] = useState(null);
   const presentsOutcome = Boolean(outcome && (hasUnpresentedOutcome || announcingOutcome === outcome));
+  const submitErrorMessage = locale === 'de'
+    ? germanSubmitErrorMessage(outcome?.errorMessage)
+    : outcome?.errorMessage;
   const submitLead = useMutation(api.leads.submitLead);
   const pageMotion = usePageMotion();
 
@@ -85,14 +137,18 @@ const Contact = () => {
       const firstInvalidField = Object.keys(nextErrors)[0];
       const firstError = nextErrors[firstInvalidField];
       telemetrySource.querySelector(`#${firstInvalidField}`)?.focus();
+      const titleKey = firstInvalidField === 'email' && firstError === INVALID_EMAIL_ERROR
+        ? 'invalidEmail'
+        : firstError.endsWith('is required.')
+          ? 'missingFields'
+          : 'checkDetails';
       setFeedbackToast(toast({
-        title: firstInvalidField === 'email' && firstError === 'Enter a valid email address.'
-          ? "Invalid email address."
-          : firstError.endsWith('is required.')
-            ? "Uh oh! Missing fields."
-            : "Check your project details.",
+        title: contactCopy.en[titleKey],
         description: firstError,
-        variant: "destructive",
+        translations: {
+          de: { title: contactCopy.de[titleKey], description: germanFieldErrorMessage(firstError) },
+        },
+        variant: 'destructive',
       }));
       return;
     }
@@ -117,9 +173,12 @@ const Contact = () => {
         ? convexMessage
         : SUBMIT_FAILURE_FALLBACK;
       setFeedbackToast(toast({
-        title: "Submission Failed",
+        title: contactCopy.en.failureTitle,
         description,
-        variant: "destructive",
+        translations: {
+          de: { title: contactCopy.de.failureTitle, description: germanSubmitErrorMessage(description) },
+        },
+        variant: 'destructive',
       }));
       submittingRef.current = false;
       finishSubmission(submittedFields, false, description);
@@ -142,18 +201,18 @@ const Contact = () => {
               {...SENSITIVE_TELEMETRY_REGION_PROPS}
               className="form-panel detection-panel min-w-0 bg-gradient-to-b from-[rgba(139,92,246,0.035)] to-transparent bg-[length:100%_22%] bg-no-repeat p-7 px-[26px] pb-[26px]"
             >
-              <DetectionLabel aria-hidden="true">PROJECT · REQUEST</DetectionLabel>
+              <DetectionLabel aria-hidden="true">{copy.requestLabel}</DetectionLabel>
 
               <div className="contact-detection-field mb-5">
                 <div className="contact-detection-frame" data-filled={Boolean(formState.name)}>
                   <label htmlFor="name" className="contact-detection-label">
-                    Full Name <span className="text-[#a78bfa]">*</span>
+                    {copy.nameLabel} <span className="text-[#a78bfa]">*</span>
                   </label>
                   <input
                   type="text"
                   id="name"
                   name="name"
-                  placeholder="Alex from Acme Ops"
+                  placeholder={copy.namePlaceholder}
                   autoComplete="name"
                   value={formState.name}
                   onChange={handleInputChange}
@@ -164,19 +223,19 @@ const Contact = () => {
                   aria-describedby={fieldErrors.name ? 'name-error' : undefined}
                   />
                 </div>
-                {fieldErrors.name ? <p id="name-error" role="alert" className="mt-2 text-sm text-red-400">{fieldErrors.name}</p> : null}
+                {fieldErrors.name ? <p id="name-error" role="alert" className="mt-2 text-sm text-red-400">{fieldErrorMessage(fieldErrors.name)}</p> : null}
               </div>
 
               <div className="contact-detection-field mb-5">
                 <div className="contact-detection-frame" data-filled={Boolean(formState.email)}>
                   <label htmlFor="email" className="contact-detection-label">
-                    Email Address <span className="text-[#a78bfa]">*</span>
+                    {copy.emailLabel} <span className="text-[#a78bfa]">*</span>
                   </label>
                   <input
                   type="email"
                   id="email"
                   name="email"
-                  placeholder="alex@company.com"
+                  placeholder={copy.emailPlaceholder}
                   autoComplete="email"
                   value={formState.email}
                   onChange={handleInputChange}
@@ -187,25 +246,25 @@ const Contact = () => {
                   aria-describedby={fieldErrors.email ? 'email-error' : undefined}
                   />
                 </div>
-                {fieldErrors.email ? <p id="email-error" role="alert" className="mt-2 text-sm text-red-400">{fieldErrors.email}</p> : null}
+                {fieldErrors.email ? <p id="email-error" role="alert" className="mt-2 text-sm text-red-400">{fieldErrorMessage(fieldErrors.email)}</p> : null}
               </div>
 
               <BudgetSelect
                 value={formState.budget}
                 onChange={handleSelectChange}
                 disabled={isSubmitting}
-                error={fieldErrors.budget}
+                error={fieldErrors.budget ? fieldErrorMessage(fieldErrors.budget) : undefined}
               />
 
               <div className="contact-detection-field mb-4">
                 <div className="contact-detection-frame contact-detection-frame-area" data-filled={Boolean(formState.description)}>
                   <label htmlFor="description" className="contact-detection-label">
-                    Project Description <span className="text-[#a78bfa]">*</span>
+                    {copy.descriptionLabel} <span className="text-[#a78bfa]">*</span>
                   </label>
                   <textarea
                   id="description"
                   name="description"
-                  placeholder="Example: We need invoice OCR or a data extraction workflow that exports clean records to our CRM within 4 weeks…"
+                  placeholder={copy.descriptionPlaceholder}
                   value={formState.description}
                   onChange={handleInputChange}
                   rows={5}
@@ -216,11 +275,11 @@ const Contact = () => {
                   aria-describedby={fieldErrors.description ? 'description-error' : undefined}
                   />
                 </div>
-                {fieldErrors.description ? <p id="description-error" role="alert" className="mt-2 text-sm text-red-400">{fieldErrors.description}</p> : null}
+                {fieldErrors.description ? <p id="description-error" role="alert" className="mt-2 text-sm text-red-400">{fieldErrorMessage(fieldErrors.description)}</p> : null}
                 <div className="mt-3 border border-[rgba(255,255,255,0.1)] bg-[rgba(0,0,0,0.2)] p-4">
-                  <p className="text-sm font-semibold text-white">Helpful details to include:</p>
+                  <p className="text-sm font-semibold text-white">{copy.descriptionPromptHeading}</p>
                   <ul className="mt-2 space-y-2 text-sm text-gray-400">
-                    {descriptionPrompts.map((prompt) => (
+                    {copy.descriptionPrompts.map((prompt) => (
                       <li key={prompt} className="flex gap-2">
                         <span className="text-[#8B5CF6]">•</span>
                         <span>{prompt}</span>
@@ -243,16 +302,16 @@ const Contact = () => {
                 >
                   <CheckCircle2 aria-hidden="true" className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#8B5CF6]" />
                   <div>
-                    <p id="contact-receipt-title" className="text-sm font-semibold text-white">Request received</p>
-                    <p id="contact-receipt-body" className="mt-1 text-sm text-[#9ca3af]">Your details are saved. I'll get back to you within 24 hours.</p>
+                    <p id="contact-receipt-title" className="text-sm font-semibold text-white">{copy.receiptTitle}</p>
+                    <p id="contact-receipt-body" className="mt-1 text-sm text-[#9ca3af]">{copy.receiptBody}</p>
                   </div>
                 </div>
               ) : null}
 
               {outcome?.status === 'error' ? (
                 <div id="contact-submit-error" className="mt-6 border border-red-400/40 p-4 text-sm text-red-400">
-                  <p className="font-semibold">Submission Failed</p>
-                  <p className="mt-1">{outcome.errorMessage}</p>
+                  <p className="font-semibold">{copy.failureTitle}</p>
+                  <p className="mt-1">{submitErrorMessage}</p>
                 </div>
               ) : null}
 
@@ -265,10 +324,10 @@ const Contact = () => {
                   disabled={isSubmitting}
                   className="detection-panel detection-action detection-action--labeled detection-action--primary detection-action--submit"
                 >
-                  <DetectionLabel aria-hidden="true">PROJECT · REQUEST</DetectionLabel>
-                  <span className={`action-submit-label${isSubmitting ? ' action-submit-reserve' : ''}`} aria-hidden={isSubmitting || undefined}>Send project request</span>
+                  <DetectionLabel aria-hidden="true">{copy.requestLabel}</DetectionLabel>
+                  <span className={`action-submit-label${isSubmitting ? ' action-submit-reserve' : ''}`} aria-hidden={isSubmitting || undefined}>{copy.send}</span>
                   {isSubmitting ? <Loader2 className="action-submit-spinner h-4 w-4 animate-spin" aria-hidden="true" /> : null}
-                  {isSubmitting ? <span className="action-submit-label">Sending…</span> : null}
+                  {isSubmitting ? <span className="action-submit-label">{copy.sending}</span> : null}
                 </button>
               </div>
             </form>

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Seo, routeSeo } from '@/lib/seo';
 import { getCaseStudyBySlug } from '@/data/caseStudies';
-import { collectionReturnHref, consumeCollectionOriginLocation } from '@/lib/caseStudyBrowsing';
+import { collectionReturnHref, consumeCollectionOriginLocation, isGermanArticleOrigin } from '@/lib/caseStudyBrowsing';
 import CaseStudyArticle from '@/components/CaseStudyArticle';
 import NotFound from '@/pages/NotFound';
 import '@/components/CaseStudyArticle.css';
@@ -24,14 +24,16 @@ const Project = () => {
 
   if (!project) return <NotFound />;
 
+  const germanOrigin = isGermanArticleOrigin(location);
+  const collectionHref = collectionReturnHref(location);
   const backHref = project.projectStatus === 'ongoing'
     ? '/case-studies/#in-progress'
-    : collectionReturnHref(location);
+    : germanOrigin ? '/case-studies/' : collectionHref;
 
   return (
     <>
       <Seo {...routeSeo[`/project/${project.slug}`]} />
-      <CaseStudyArticle story={project} backHref={backHref} />
+      <CaseStudyArticle story={project} backHref={backHref} germanCollectionHref={germanOrigin ? collectionHref : undefined} />
     </>
   );
 };
